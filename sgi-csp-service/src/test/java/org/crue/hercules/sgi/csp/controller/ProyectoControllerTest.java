@@ -5,11 +5,13 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.converter.ProyectoFaseConverter;
+import org.crue.hercules.sgi.csp.dto.ProyectoFaseAvisoOutput;
+import org.crue.hercules.sgi.csp.dto.ProyectoFaseOutput;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
@@ -17,7 +19,9 @@ import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoFase;
+import org.crue.hercules.sgi.csp.model.ProyectoFaseAviso;
 import org.crue.hercules.sgi.csp.model.ProyectoHito;
+import org.crue.hercules.sgi.csp.model.ProyectoHitoAviso;
 import org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajo;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
@@ -70,6 +74,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -78,11 +83,13 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 /**
  * ProyectoControllerTest
  */
 @WebMvcTest(ProyectoController.class)
-public class ProyectoControllerTest extends BaseControllerTest {
+class ProyectoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ProyectoService service;
@@ -165,6 +172,9 @@ public class ProyectoControllerTest extends BaseControllerTest {
   @MockBean
   private GastoProyectoService gastoProyectoService;
 
+  @MockBean
+  private ProyectoFaseConverter proyectoFaseConverter;
+
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
   private static final String PATH_PARAMETER_REACTIVAR = "/reactivar";
@@ -181,7 +191,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-C" })
-  public void create_ReturnsProyecto() throws Exception {
+  void create_ReturnsProyecto() throws Exception {
     // given: new Proyecto
     Proyecto proyecto = generarMockProyecto(1L);
 
@@ -208,7 +218,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-C" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a Proyecto with id filled
     Proyecto proyecto = generarMockProyecto(1L);
 
@@ -226,7 +236,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_ReturnsProyecto() throws Exception {
+  void update_ReturnsProyecto() throws Exception {
     // given: Existing Proyecto to be updated
     Proyecto proyectoExistente = generarMockProyecto(1L);
     Proyecto proyecto = generarMockProyecto(1L);
@@ -251,7 +261,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     Proyecto proyecto = generarMockProyecto(1L);
@@ -270,7 +280,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-R" })
-  public void reactivar_WithExistingId_ReturnProyecto() throws Exception {
+  void reactivar_WithExistingId_ReturnProyecto() throws Exception {
     // given: existing id
     Proyecto proyecto = generarMockProyecto(1L);
     proyecto.setActivo(false);
@@ -295,7 +305,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-R" })
-  public void reactivar_NoExistingId_Return404() throws Exception {
+  void reactivar_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -313,7 +323,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-B" })
-  public void desactivar_WithExistingId_ReturnProyecto() throws Exception {
+  void desactivar_WithExistingId_ReturnProyecto() throws Exception {
     // given: existing id
     Proyecto proyecto = generarMockProyecto(1L);
     BDDMockito.given(service.disable(ArgumentMatchers.<Long>any())).willAnswer((InvocationOnMock invocation) -> {
@@ -336,7 +346,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-B" })
-  public void desactivar_NoExistingId_Return404() throws Exception {
+  void desactivar_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -354,7 +364,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findById_WithExistingId_ReturnsProyecto() throws Exception {
+  void findById_WithExistingId_ReturnsProyecto() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
       return generarMockProyecto(invocation.getArgument(0));
@@ -376,7 +386,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ProyectoNotFoundException(1L);
@@ -393,7 +403,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAll_ReturnsPage() throws Exception {
+  void findAll_ReturnsPage() throws Exception {
     // given: Una lista con 37 Proyecto
     List<Proyecto> proyectos = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -438,7 +448,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAll_EmptyList_Returns204() throws Exception {
+  void findAll_EmptyList_Returns204() throws Exception {
     // given: no data Proyecto
     BDDMockito.given(service.findAllRestringidos(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<Proyecto>>() {
@@ -460,7 +470,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllTodos_ReturnsPage() throws Exception {
+  void findAllTodos_ReturnsPage() throws Exception {
     // given: Una lista con 37 Proyecto
     List<Proyecto> proyectos = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -506,7 +516,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllTodos_EmptyList_Returns204() throws Exception {
+  void findAllTodos_EmptyList_Returns204() throws Exception {
     // given: no data Proyecto
     BDDMockito.given(service.findAllTodosRestringidos(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<Proyecto>>() {
@@ -535,7 +545,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoHito_ReturnsPage() throws Exception {
+  void findAllProyectoHito_ReturnsPage() throws Exception {
     // given: Una lista con 37 ProyectoHito para el Proyecto
     Long proyectoId = 1L;
 
@@ -591,7 +601,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoHito_EmptyList_Returns204() throws Exception {
+  void findAllProyectoHito_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de ProyectoHito para la Proyecto
     Long proyectoId = 1L;
     List<ProyectoHito> proyectoHitos = new ArrayList<>();
@@ -627,13 +637,17 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoFase_ReturnsPage() throws Exception {
+  void findAllProyectoFase_ReturnsPage() throws Exception {
     // given: Una lista con 37 ProyectoFase para el Proyecto
     Long proyectoId = 1L;
 
-    List<ProyectoFase> proyectoFases = new ArrayList<>();
+    List<ProyectoFase> proyectoFases = new LinkedList<>();
     for (long i = 1; i <= 37; i++) {
       proyectoFases.add(generarMockProyectoFase(i));
+    }
+    List<ProyectoFaseOutput> proyectoFasesOutput = new LinkedList<>();
+    for (long i = 1; i <= 37; i++) {
+      proyectoFasesOutput.add(generarMockProyectoFaseOutput(i));
     }
 
     Integer page = 3;
@@ -654,6 +668,10 @@ public class ProyectoControllerTest extends BaseControllerTest {
             return page;
           }
         });
+
+    BDDMockito.given(this.proyectoFaseConverter.convert(ArgumentMatchers.<Page<ProyectoFase>>any()))
+        .willReturn(
+            new PageImpl<>(proyectoFasesOutput.subList(30, 37), PageRequest.of(3, 10), proyectoFasesOutput.size()));
 
     // when: Get page=3 with pagesize=10
     MvcResult requestResult = mockMvc
@@ -683,7 +701,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoFase_EmptyList_Returns204() throws Exception {
+  void findAllProyectoFase_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de ProyectoFase para la Proyecto
     Long proyectoId = 1L;
     List<ProyectoFase> proyectoFases = new ArrayList<>();
@@ -719,7 +737,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoPaqueteTrabajo_ReturnsPage() throws Exception {
+  void findAllProyectoPaqueteTrabajo_ReturnsPage() throws Exception {
     // given: Una lista con 37 ProyectoPaqueteTrabajo para el Proyecto
     Long proyectoId = 1L;
 
@@ -777,7 +795,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoPaqueteTrabajo_EmptyList_Returns204() throws Exception {
+  void findAllProyectoPaqueteTrabajo_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de ProyectoPaqueteTrabajo para la Proyecto
     Long proyectoId = 1L;
     List<ProyectoPaqueteTrabajo> proyectoPaqueteTrabajos = new ArrayList<>();
@@ -814,7 +832,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
    */
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoSocio_WithPaging_ReturnsProyectoSocioSubList() throws Exception {
+  void findAllProyectoSocio_WithPaging_ReturnsProyectoSocioSubList() throws Exception {
     // given: 37 ProyectoSocio
     Long proyectoId = 1L;
 
@@ -870,7 +888,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoSocio_EmptyList_Returns204() throws Exception {
+  void findAllProyectoSocio_EmptyList_Returns204() throws Exception {
     // given: no data ProyectoSocio
     Long proyectoId = 1L;
 
@@ -901,7 +919,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
    */
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoEquipo_WithPaging_ReturnsProyectoEquipoSubList() throws Exception {
+  void findAllProyectoEquipo_WithPaging_ReturnsProyectoEquipoSubList() throws Exception {
     // given: 37 ProyectoEquipo
     Long proyectoId = 1L;
 
@@ -958,7 +976,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoEquipo_EmptyList_Returns204() throws Exception {
+  void findAllProyectoEquipo_EmptyList_Returns204() throws Exception {
     // given: no data ProyectoEquipo
     Long proyectoId = 1L;
 
@@ -990,7 +1008,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoPeriodoSeguimiento_ReturnsPage() throws Exception {
+  void findAllProyectoPeriodoSeguimiento_ReturnsPage() throws Exception {
     // given: Una lista con 37 ProyectoPeriodoSeguimiento para el Proyecto
     Long proyectoId = 1L;
 
@@ -1049,7 +1067,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoPeriodoSeguimiento_EmptyList_Returns204() throws Exception {
+  void findAllProyectoPeriodoSeguimiento_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de ProyectoPeriodoSeguimiento para la Proyecto
     Long proyectoId = 1L;
     List<ProyectoPeriodoSeguimiento> proyectoPeriodoSeguimientos = new ArrayList<>();
@@ -1087,7 +1105,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoEntidadGestora_ReturnsPage() throws Exception {
+  void findAllProyectoEntidadGestora_ReturnsPage() throws Exception {
     // given: Una lista con 37 ProyectoEntidadGestora para el Proyecto
     Long proyectoId = 1L;
 
@@ -1144,7 +1162,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoEntidadGestora_EmptyList_Returns204() throws Exception {
+  void findAllProyectoEntidadGestora_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de ProyectoEntidadGestora para la Proyecto
     Long proyectoId = 1L;
     List<ProyectoEntidadGestora> proyectoEntidadGestoras = new ArrayList<>();
@@ -1182,7 +1200,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoProrroga_ReturnsPage() throws Exception {
+  void findAllProyectoProrroga_ReturnsPage() throws Exception {
     // given: Una lista con 37 ProyectoProrroga para el Proyecto
     Long proyectoId = 1L;
 
@@ -1239,7 +1257,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoProrroga_EmptyList_Returns204() throws Exception {
+  void findAllProyectoProrroga_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de ProyectoProrroga para la Proyecto
     Long proyectoId = 1L;
     List<ProyectoProrroga> proyectoProrrogas = new ArrayList<>();
@@ -1346,7 +1364,7 @@ public class ProyectoControllerTest extends BaseControllerTest {
     proyectoHito.setProyectoId(id == null ? 1 : id);
     proyectoHito.setFecha(Instant.parse("2020-10-19T23:59:59Z"));
     proyectoHito.setComentario("comentario-proyecto-hito-" + String.format("%03d", id));
-    proyectoHito.setGeneraAviso(true);
+    proyectoHito.setProyectoHitoAviso(ProyectoHitoAviso.builder().build());
     proyectoHito.setTipoHito(tipoHito);
 
     return proyectoHito;
@@ -1369,7 +1387,26 @@ public class ProyectoControllerTest extends BaseControllerTest {
     proyectoFase.setFechaInicio(Instant.parse("2020-10-19T00:00:00Z"));
     proyectoFase.setFechaFin(Instant.parse("2020-10-20T23:59:59Z"));
     proyectoFase.setObservaciones("observaciones-proyecto-fase-" + String.format("%03d", id));
-    proyectoFase.setGeneraAviso(true);
+    proyectoFase.setProyectoFaseAviso1(buildMockProyectoFaseAviso(1L, id));
+    proyectoFase.setProyectoFaseAviso2(buildMockProyectoFaseAviso(2L, id));
+    proyectoFase.setTipoFase(tipoFase);
+
+    return proyectoFase;
+  }
+
+  private ProyectoFaseOutput generarMockProyectoFaseOutput(Long id) {
+    ProyectoFaseOutput.TipoFase tipoFase = new ProyectoFaseOutput.TipoFase();
+    tipoFase.setId(id == null ? 1 : id);
+    tipoFase.setActivo(true);
+
+    ProyectoFaseOutput proyectoFase = new ProyectoFaseOutput();
+    proyectoFase.setId(id);
+    proyectoFase.setProyectoId(id == null ? 1 : id);
+    proyectoFase.setFechaInicio(Instant.parse("2020-10-19T00:00:00Z"));
+    proyectoFase.setFechaFin(Instant.parse("2020-10-20T23:59:59Z"));
+    proyectoFase.setObservaciones("observaciones-proyecto-fase-" + String.format("%03d", id));
+    proyectoFase.setAviso1(buildMockProyectoFaseAvisoOutput(1L, id));
+    proyectoFase.setAviso2(buildMockProyectoFaseAvisoOutput(2L, id));
     proyectoFase.setTipoFase(tipoFase);
 
     return proyectoFase;
@@ -1495,6 +1532,22 @@ public class ProyectoControllerTest extends BaseControllerTest {
         .observaciones("observaciones-proyecto-prorroga-" + (id == null ? "" : String.format("%03d", id)))
         .build();
     // @formatter:on
+  }
+
+  private ProyectoFaseAviso buildMockProyectoFaseAviso(Long id, Long proyectoFaseId) {
+    return ProyectoFaseAviso.builder()
+        .comunicadoRef("3333")
+        .id(id)
+        .tareaProgramadaRef("666")
+        .build();
+  }
+
+  private ProyectoFaseAvisoOutput buildMockProyectoFaseAvisoOutput(Long id, Long proyectoFaseId) {
+    return ProyectoFaseAvisoOutput.builder()
+        .comunicadoRef("3333")
+        .id(id)
+        .tareaProgramadaRef("666")
+        .build();
   }
 
 }

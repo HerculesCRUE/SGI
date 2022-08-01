@@ -35,7 +35,7 @@ class RequisitoIPCategoriaProfesionalServiceTest extends BaseServiceTest {
   private RequisitoIPCategoriaProfesionalService requisitoIPCategoriaProfesionalService;
 
   @BeforeEach
-  public void setup(){
+  void setup() {
     //@formatter:off
     this.requisitoIPCategoriaProfesionalService = new RequisitoIPCategoriaProfesionalService(
                                                         requisitoIPCategoriaProfesionalRepository,
@@ -47,12 +47,16 @@ class RequisitoIPCategoriaProfesionalServiceTest extends BaseServiceTest {
 
   @Test
   void updateCategoriasProfesionales_WithRequisitoIPIdNull_ThrowsIllegalArgumentException() {
-    
+
     Long requisitoIPId = 1L;
 
-    List<RequisitoIPCategoriaProfesional>categoriasProfesionales = Arrays.asList(buildMockRequisitoIPCategoriaProfesional(1L, 2L));
+    List<RequisitoIPCategoriaProfesional> categoriasProfesionales = Arrays
+        .asList(buildMockRequisitoIPCategoriaProfesional(1L, 2L));
 
-    Assertions.assertThatThrownBy(() -> this.requisitoIPCategoriaProfesionalService.updateCategoriasProfesionales(requisitoIPId, categoriasProfesionales)).isInstanceOf(IllegalArgumentException.class);
+    Assertions
+        .assertThatThrownBy(() -> this.requisitoIPCategoriaProfesionalService
+            .updateCategoriasProfesionales(requisitoIPId, categoriasProfesionales))
+        .isInstanceOf(IllegalArgumentException.class);
   }
 
   @WithMockUser(authorities = { "CSP-CON-INV-V" })
@@ -61,26 +65,29 @@ class RequisitoIPCategoriaProfesionalServiceTest extends BaseServiceTest {
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = buildMockConvocatoria(convocatoriaId);
 
-    BDDMockito.given(this.convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
-    //BDDMockito.given(SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V")).willReturn(true);
-    BDDMockito.given(this.configuracionSolicitudRepository.findByConvocatoriaId(convocatoriaId)).willReturn(Optional.of(new ConfiguracionSolicitud()));
+    BDDMockito.given(this.convocatoriaRepository.findById(ArgumentMatchers.anyLong()))
+        .willReturn(Optional.of(convocatoria));
+    // BDDMockito.given(SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V")).willReturn(true);
+    BDDMockito.given(this.configuracionSolicitudRepository.findByConvocatoriaId(convocatoriaId))
+        .willReturn(Optional.of(new ConfiguracionSolicitud()));
 
-    Assertions.assertThatThrownBy(() -> this.requisitoIPCategoriaProfesionalService.findByConvocatoria(convocatoriaId)).isInstanceOf(UserNotAuthorizedToAccessConvocatoriaException.class);
+    Assertions.assertThatThrownBy(() -> this.requisitoIPCategoriaProfesionalService.findByConvocatoria(convocatoriaId))
+        .isInstanceOf(UserNotAuthorizedToAccessConvocatoriaException.class);
   }
 
   private RequisitoIPCategoriaProfesional buildMockRequisitoIPCategoriaProfesional(Long id, Long requisitoIPId) {
     return RequisitoIPCategoriaProfesional.builder()
-    .id(id)
-    .requisitoIPId(requisitoIPId)
-    .build();
+        .id(id)
+        .requisitoIPId(requisitoIPId)
+        .build();
   }
 
   private Convocatoria buildMockConvocatoria(Long id) {
     return Convocatoria
-    .builder()
-    .id(id)
-    .activo(Boolean.TRUE)
-    .estado(Estado.BORRADOR)    
-    .build();
+        .builder()
+        .id(id)
+        .activo(Boolean.TRUE)
+        .estado(Estado.BORRADOR)
+        .build();
   }
 }

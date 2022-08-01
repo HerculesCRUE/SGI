@@ -31,7 +31,7 @@ export class ConvocatoriaPlazosFasesComponent extends FragmentComponent implemen
   formPart: ConvocatoriaPlazosFasesFragment;
   private subscriptions: Subscription[] = [];
 
-  displayedColumns = ['fechaInicio', 'fechaFin', 'tipoFase', 'observaciones', 'acciones'];
+  displayedColumns = ['fechaInicio', 'fechaFin', 'tipoFase', 'observaciones', 'aviso', 'acciones'];
   elementosPagina = [5, 10, 25, 100];
 
   msgParamEntity = {};
@@ -61,6 +61,12 @@ export class ConvocatoriaPlazosFasesComponent extends FragmentComponent implemen
     this.setupI18N();
     this.dataSource = new MatTableDataSource<StatusWrapper<IConvocatoriaFase>>();
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sortingDataAccessor = (wrapper, property) => {
+      if (property === 'aviso') {
+        return !!wrapper.value.aviso1 || !!wrapper.value.aviso2 ? 's' : 'n';
+      }
+      return wrapper.value[property];
+    }
     this.dataSource.sort = this.sort;
 
     this.subscriptions.push(this.formPart.plazosFase$.subscribe(elements => {
@@ -97,7 +103,9 @@ export class ConvocatoriaPlazosFasesComponent extends FragmentComponent implemen
       plazo: plazo ? plazo.value : {} as IConvocatoriaFase,
       idModeloEjecucion: this.actionService.modeloEjecucionId,
       readonly: this.formPart.readonly,
-      canEdit: this.formPart.canEdit
+      canEdit: this.formPart.canEdit,
+      unidadGestionId: this.actionService.unidadGestionId,
+      tituloConvocatoria: this.actionService.titulo
     };
 
     const config = {

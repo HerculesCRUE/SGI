@@ -35,7 +35,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-public class ProyectoSocioServiceTest extends BaseServiceTest {
+class ProyectoSocioServiceTest extends BaseServiceTest {
 
   @Mock
   private ProyectoSocioRepository repository;
@@ -58,14 +58,14 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
   private ProyectoSocioService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     proyectoHelper = new ProyectoHelper(proyectoEquipoRepository, proyectoResponsableEconomicoRepository);
     service = new ProyectoSocioServiceImpl(repository, equipoRepository, periodoPagoRepository, documentoRepository,
         periodoJustificacionRepository, proyectoRepository, this.proyectoHelper);
   }
 
   @Test
-  public void create_ReturnsProyectoSocio() {
+  void create_ReturnsProyectoSocio() {
     // given: new ProyectoSocio
     ProyectoSocio proyectoSocio = generarMockProyectoSocio(1L);
     proyectoSocio.setId(null);
@@ -101,7 +101,7 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: a ProyectoSocio with id filled
     ProyectoSocio proyectoSocio = generarMockProyectoSocio(1L);
 
@@ -113,7 +113,7 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithExistingId_ReturnsProyectoSocio() {
+  void update_WithExistingId_ReturnsProyectoSocio() {
     // given: existing ProyectoSocio
     ProyectoSocio proyectoSocio = generarMockProyectoSocio(1L);
     ProyectoSocio proyectoSocioActualizado = generarMockProyectoSocio(1L);
@@ -149,7 +149,7 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutId_ThrowsIllegalArgumentException() {
+  void update_WithoutId_ThrowsIllegalArgumentException() {
     // given: a ProyectoSocio without id filled
     ProyectoSocio proyectoSocio = generarMockProyectoSocio(1L);
     proyectoSocio.setId(null);
@@ -162,7 +162,7 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void update_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     ProyectoSocio proyectoSocio = generarMockProyectoSocio(1L);
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
@@ -175,7 +175,7 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_RolSocioNoCoordinador_WithProyectoAbiertoCoordinadorExterno_ThrowsIllegalArgumentException()
+  void update_RolSocioNoCoordinador_WithProyectoAbiertoCoordinadorExterno_ThrowsIllegalArgumentException()
       throws Exception {
     // given: a ProyectoSocio with RolSocio with coordinador false
     Long proyectoId = 1L;
@@ -201,7 +201,7 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_NoReturnsAnyException() {
+  void delete_WithExistingId_NoReturnsAnyException() {
     // given: existing ProyectoSocio
     Long id = 1L;
 
@@ -219,7 +219,7 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: unique ProyectoSocio with RolSocio with coordinador true
     Long id = 1L;
 
@@ -233,7 +233,7 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_LastRolSocioCoordinador_WithProyectoAbiertoCoordinadorExterno__ThrowsIllegalArgumentException()
+  void delete_LastRolSocioCoordinador_WithProyectoAbiertoCoordinadorExterno__ThrowsIllegalArgumentException()
       throws Exception {
     // given: no existing id
     Long proyectoId = 1L;
@@ -257,7 +257,7 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void existsById_WithExistingId_ReturnsTRUE() throws Exception {
+  void existsById_WithExistingId_ReturnsTRUE() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(repository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
@@ -266,12 +266,11 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
     boolean responseData = service.existsById(id);
 
     // then: returns TRUE
-    Assertions.assertThat(responseData).isNotNull();
     Assertions.assertThat(responseData).isTrue();
   }
 
   @Test
-  public void existsById_WithNoExistingId_ReturnsFALSE() throws Exception {
+  void existsById_WithNoExistingId_ReturnsFALSE() throws Exception {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(repository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.FALSE);
@@ -280,12 +279,11 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
     boolean responseData = service.existsById(id);
 
     // then: returns TRUE
-    Assertions.assertThat(responseData).isNotNull();
     Assertions.assertThat(responseData).isFalse();
   }
 
   @Test
-  public void findById_WithExistingId_ReturnsProyectoSocio() throws Exception {
+  void findById_WithExistingId_ReturnsProyectoSocio() throws Exception {
     // given: existing ProyectoSocio
     ProyectoSocio proyectoSocioExistente = generarMockProyectoSocio(1L);
 
@@ -316,7 +314,7 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
@@ -328,7 +326,7 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByProyecto_WithPaging_ReturnsPage() {
+  void findAllByProyecto_WithPaging_ReturnsPage() {
     // given: 37 ProyectoSocio
     Long proyectoId = 1L;
     List<ProyectoSocio> proyectoSocios = new ArrayList<>();
@@ -357,7 +355,7 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
 
     // then: A Page with ten ProyectoSocio are returned
     // containing id='31' to '37'
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -369,7 +367,7 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void existsProyectoSocioCoordinador_Exist_ReturnsTRUE() throws Exception {
+  void existsProyectoSocioCoordinador_Exist_ReturnsTRUE() throws Exception {
     // given: existing proyecto socio coordinador
     Long proyectoId = 1L;
     BDDMockito.given(repository.count(ArgumentMatchers.<Specification<ProyectoSocio>>any())).willReturn(1L);
@@ -378,12 +376,11 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
     boolean responseData = service.existsProyectoSocioCoordinador(proyectoId);
 
     // then: returns TRUE
-    Assertions.assertThat(responseData).isNotNull();
     Assertions.assertThat(responseData).isTrue();
   }
 
   @Test
-  public void existsProyectoSocioCoordinador_NoExist_ReturnsFALSE() throws Exception {
+  void existsProyectoSocioCoordinador_NoExist_ReturnsFALSE() throws Exception {
     // given: no existing id
     Long proyectoId = 1L;
     BDDMockito.given(repository.count(ArgumentMatchers.<Specification<ProyectoSocio>>any())).willReturn(0L);
@@ -392,7 +389,6 @@ public class ProyectoSocioServiceTest extends BaseServiceTest {
     boolean responseData = service.existsProyectoSocioCoordinador(proyectoId);
 
     // then: returns TRUE
-    Assertions.assertThat(responseData).isNotNull();
     Assertions.assertThat(responseData).isFalse();
   }
 

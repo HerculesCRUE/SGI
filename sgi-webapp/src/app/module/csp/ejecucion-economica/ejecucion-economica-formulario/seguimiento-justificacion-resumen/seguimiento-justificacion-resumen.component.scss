@@ -1,0 +1,15 @@
+:host {
+
+  .mat-cell.mat-column-responsables,
+  .mat-cell.mat-column-entidadesFinanciadoras {
+    max-width: 15vw;
+    overflow: hidden;
+    padding-right: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .table-section {
+    padding-top: 15px;
+  }
+}

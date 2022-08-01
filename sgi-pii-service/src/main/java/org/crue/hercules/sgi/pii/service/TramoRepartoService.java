@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_NOTNULL;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import javax.validation.Valid;
 
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
@@ -80,8 +84,9 @@ public class TramoRepartoService {
     Assert.isNull(tramoReparto.getId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(TramoReparto.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(TramoReparto.class))
+            .build());
 
     TramoReparto returnValue = repository.save(tramoReparto);
 
@@ -102,9 +107,10 @@ public class TramoRepartoService {
 
     Assert.notNull(tramoReparto.getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(TramoReparto.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(TramoReparto.class))
+            .build());
 
     return repository.findById(tramoReparto.getId()).map(tramorepartoExistente -> {
 
@@ -132,9 +138,10 @@ public class TramoRepartoService {
     log.debug("delete(Long id) - start");
     Assert.notNull(id,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(TramoReparto.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(TramoReparto.class))
+            .build());
     if (!repository.existsById(id)) {
       throw new TramoRepartoNotFoundException(id);
     }
@@ -152,9 +159,10 @@ public class TramoRepartoService {
     log.debug("hasTipoTramoReparto(Tipo tipo) - start");
     Assert.notNull(tipo,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("tipo"))
-            .parameter("entity", ApplicationContextSupport.getMessage(TramoReparto.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("tipo"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(TramoReparto.class))
+            .build());
     final boolean returnValue = this.repository.count(TramoRepartoSpecifications.withTipo(tipo)) > 0;
     log.debug("hasTipoTramoReparto(Tipo tipo) - end");
     return returnValue;

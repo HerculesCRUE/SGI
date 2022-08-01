@@ -91,6 +91,14 @@ public class Acta extends BaseEntity {
   @NotNull
   private Boolean inactiva;
 
+  /** Referencia al documento */
+  @Column(name = "documento_ref", nullable = true)
+  private String documentoRef;
+
+  /** Referencia a la transacción blockchain */
+  @Column(name = "transaccion_ref", nullable = true)
+  private String transaccionRef;
+
   /** Activo */
   @Column(name = "activo", columnDefinition = "boolean default true", nullable = false)
   @NotNull

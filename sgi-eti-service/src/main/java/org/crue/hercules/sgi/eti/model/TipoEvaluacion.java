@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.eti.model;
 
 import java.beans.Transient;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,7 +45,7 @@ public class TipoEvaluacion extends BaseEntity {
 
     public static Tipo fromId(Long id) {
       for (Tipo tipo : Tipo.values()) {
-        if (tipo.id == id) {
+        if (Objects.equals(tipo.id, id)) {
           return tipo;
         }
       }

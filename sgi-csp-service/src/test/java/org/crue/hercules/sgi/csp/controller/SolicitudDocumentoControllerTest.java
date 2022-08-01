@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  */
 
 @WebMvcTest(SolicitudDocumentoController.class)
-public class SolicitudDocumentoControllerTest extends BaseControllerTest {
+class SolicitudDocumentoControllerTest extends BaseControllerTest {
 
   @MockBean
   private SolicitudDocumentoService service;
@@ -34,7 +34,7 @@ public class SolicitudDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void create_ReturnsSolicitudDocumento() throws Exception {
+  void create_ReturnsSolicitudDocumento() throws Exception {
     // given: new SolicitudDocumento
     SolicitudDocumento solicitudDocumento = generarSolicitudDocumento(null, 1L, 1L);
 
@@ -69,7 +69,7 @@ public class SolicitudDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a SolicitudDocumento with id filled
     SolicitudDocumento solicitudDocumento = generarSolicitudDocumento(1L, 1L, 1L);
 
@@ -88,7 +88,7 @@ public class SolicitudDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void update_WithExistingId_ReturnsSolicitudDocumento() throws Exception {
+  void update_WithExistingId_ReturnsSolicitudDocumento() throws Exception {
     // given: existing SolicitudDocumento
     SolicitudDocumento updatedSolicitudDocumento = generarSolicitudDocumento(1L, 1L, 1L);
     updatedSolicitudDocumento.setDocumentoRef("documentoRef-modificado");
@@ -121,7 +121,7 @@ public class SolicitudDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: a SolicitudDocumento with non existing id
     SolicitudDocumento updatedSolicitudDocumento = generarSolicitudDocumento(1L, 1L, 1L);
 
@@ -142,7 +142,7 @@ public class SolicitudDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.doNothing().when(service).delete(ArgumentMatchers.anyLong());
@@ -157,7 +157,7 @@ public class SolicitudDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void delete_WithoutId_Return404() throws Exception {
+  void delete_WithoutId_Return404() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -176,7 +176,7 @@ public class SolicitudDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsSolicitudDocumento() throws Exception {
+  void findById_WithExistingId_ReturnsSolicitudDocumento() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer(new Answer<SolicitudDocumento>() {
@@ -200,7 +200,7 @@ public class SolicitudDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {

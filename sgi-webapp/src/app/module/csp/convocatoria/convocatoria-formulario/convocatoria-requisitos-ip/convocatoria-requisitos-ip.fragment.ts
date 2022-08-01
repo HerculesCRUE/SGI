@@ -9,7 +9,6 @@ import { FormFragment } from '@core/services/action-service';
 import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-requisito-ip.service';
 import { CategoriaProfesionalService } from '@core/services/sgp/categoria-profesional.service';
 import { NivelAcademicosService } from '@core/services/sgp/nivel-academico.service';
-import { SexoService } from '@core/services/sgp/sexo.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateValidator } from '@core/validators/date-validator';
 import { BehaviorSubject, Observable, of, zip } from 'rxjs';
@@ -24,10 +23,20 @@ export interface SolicitudProyectoClasificacionListado {
   nivelSeleccionado: IClasificacion;
 }
 
+export interface RequisitoIPNivelAcademicoListado extends IRequisitoIPNivelAcademico {
+  eliminable: boolean;
+}
+
+export interface RequisitoIPCategoriaProfesionalListado extends IRequisitoIPCategoriaProfesional {
+  eliminable: boolean;
+}
+
 export class ConvocatoriaRequisitosIPFragment extends FormFragment<IConvocatoriaRequisitoIP> {
   private requisitoIP: IConvocatoriaRequisitoIP;
-  nivelesAcademicos$ = new BehaviorSubject<StatusWrapper<IRequisitoIPNivelAcademico>[]>([]);
-  categoriasProfesionales$ = new BehaviorSubject<StatusWrapper<IRequisitoIPCategoriaProfesional>[]>([]);
+  nivelesAcademicos$ = new BehaviorSubject<StatusWrapper<RequisitoIPNivelAcademicoListado>[]>([]);
+  categoriasProfesionales$ = new BehaviorSubject<StatusWrapper<RequisitoIPCategoriaProfesionalListado>[]>([]);
+  nivelesAcademicosEliminados: RequisitoIPNivelAcademicoListado[] = [];
+  categoriasProfesionalesEliminadas: RequisitoIPCategoriaProfesionalListado[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -53,15 +62,25 @@ export class ConvocatoriaRequisitosIPFragment extends FormFragment<IConvocatoria
 
             return this.nivelAcademicoService.findById(requisitoIpNivelAcademico.nivelAcademico.id).pipe(
               map(nivelAcademico => {
-                const reqNivAcademico = {
+                const reqNivAcademico: RequisitoIPNivelAcademicoListado = {
                   id: requisitoIpNivelAcademico.id,
                   nivelAcademico,
                   requisitoIP: {
                     id: requisitoIPId
-                  } as IConvocatoriaRequisitoIP
-                } as IRequisitoIPNivelAcademico;
-                return new StatusWrapper<IRequisitoIPNivelAcademico>(reqNivAcademico);
+                  } as IConvocatoriaRequisitoIP,
+                  eliminable: false
+                };
+                return new StatusWrapper<RequisitoIPNivelAcademicoListado>(reqNivAcademico);
               }),
+              switchMap(requisitoIpNivelAcademicoListado =>
+                this.convocatoriaRequisitoIPService.isRequisitoNivelAcademicoEliminable(requisitoIpNivelAcademicoListado.value)
+                  .pipe(
+                    map(value => {
+                      requisitoIpNivelAcademicoListado.value.eliminable = value;
+                      return requisitoIpNivelAcademicoListado;
+                    })
+                  )
+              )
             );
           });
 
@@ -91,10 +110,20 @@ export class ConvocatoriaRequisitosIPFragment extends FormFragment<IConvocatoria
                   categoriaProfesional,
                   requisitoIP: {
                     id: requisitoIPId
-                  } as IConvocatoriaRequisitoIP
-                } as IRequisitoIPCategoriaProfesional;
-                return new StatusWrapper<IRequisitoIPCategoriaProfesional>(reqCategoriaProfesional);
+                  } as IConvocatoriaRequisitoIP,
+                  eliminable: false
+                } as RequisitoIPCategoriaProfesionalListado;
+                return new StatusWrapper<RequisitoIPCategoriaProfesionalListado>(reqCategoriaProfesional);
               }),
+              switchMap(categoriaProfesionalListado =>
+                this.convocatoriaRequisitoIPService.isRequisitoCategoriaProfesionalEliminable(categoriaProfesionalListado.value)
+                  .pipe(
+                    map(value => {
+                      categoriaProfesionalListado.value.eliminable = value;
+                      return categoriaProfesionalListado;
+                    })
+                  )
+              )
             );
           });
 
@@ -193,9 +222,10 @@ export class ConvocatoriaRequisitosIPFragment extends FormFragment<IConvocatoria
   public addNivelAcademico(nivelAcademico: INivelAcademico) {
     if (nivelAcademico) {
       const requisitoIPNivelAcademico = {
-        nivelAcademico
-      } as IRequisitoIPNivelAcademico;
-      const wrapped = new StatusWrapper<IRequisitoIPNivelAcademico>(requisitoIPNivelAcademico);
+        nivelAcademico,
+        eliminable: true
+      } as RequisitoIPNivelAcademicoListado;
+      const wrapped = new StatusWrapper<RequisitoIPNivelAcademicoListado>(requisitoIPNivelAcademico);
       wrapped.setCreated();
       const current = this.nivelesAcademicos$.value;
       current.push(wrapped);
@@ -208,9 +238,10 @@ export class ConvocatoriaRequisitosIPFragment extends FormFragment<IConvocatoria
   public addCategoriaProfesional(categoriaProfesional: ICategoriaProfesional) {
     if (categoriaProfesional) {
       const requisitoIPCategoriaProfesional = {
-        categoriaProfesional
-      } as IRequisitoIPCategoriaProfesional;
-      const wrapped = new StatusWrapper<IRequisitoIPCategoriaProfesional>(requisitoIPCategoriaProfesional);
+        categoriaProfesional,
+        eliminable: true
+      } as RequisitoIPCategoriaProfesionalListado;
+      const wrapped = new StatusWrapper<RequisitoIPCategoriaProfesionalListado>(requisitoIPCategoriaProfesional);
       wrapped.setCreated();
       const current = this.categoriasProfesionales$.value;
       current.push(wrapped);
@@ -220,13 +251,45 @@ export class ConvocatoriaRequisitosIPFragment extends FormFragment<IConvocatoria
     }
   }
 
+  public deleteNivelAcademico(wrapper: StatusWrapper<RequisitoIPNivelAcademicoListado>): void {
+    const current = this.nivelesAcademicos$.value;
+    const index = current.findIndex(
+      (value) => value === wrapper
+    );
+    if (index >= 0) {
+      if (!wrapper.created) {
+        this.nivelesAcademicosEliminados.push(wrapper.value);
+      }
+      current.splice(index, 1);
+      this.nivelesAcademicos$.next(current);
+      this.setChanges(true);
+    }
+  }
+
+  public deleteCategoriaProfesional(wrapper: StatusWrapper<RequisitoIPCategoriaProfesionalListado>): void {
+    const current = this.categoriasProfesionales$.value;
+    const index = current.findIndex(
+      (value) => value === wrapper
+    );
+    if (index >= 0) {
+      if (!wrapper.created) {
+        this.categoriasProfesionalesEliminadas.push(wrapper.value);
+      }
+      current.splice(index, 1);
+      this.categoriasProfesionales$.next(current);
+      this.setChanges(true);
+    }
+  }
+
   saveOrUpdate(): Observable<number> {
     const datosRequisitoIP = this.getValue();
     datosRequisitoIP.convocatoriaId = this.getKey() as number;
 
-    const obs = datosRequisitoIP.id ? this.update(datosRequisitoIP) :
-      this.create(datosRequisitoIP);
+    const obs = datosRequisitoIP.id ? this.update(datosRequisitoIP) : this.create(datosRequisitoIP);
     return obs.pipe(
+      tap(result => this.requisitoIP = result),
+      switchMap((result) => this.saveOrUpdateNivelesAcademicos(result)),
+      switchMap((result) => this.saveOrUpdateCategoriasProfesionales(result)),
       map((value) => {
         this.requisitoIP = value;
         return this.requisitoIP.id;
@@ -238,46 +301,21 @@ export class ConvocatoriaRequisitosIPFragment extends FormFragment<IConvocatoria
     if (!requisitoIP.id) {
       requisitoIP.id = this.getKey() as number;
     }
-    return this.convocatoriaRequisitoIPService.create(requisitoIP).pipe(
-      tap(result => this.requisitoIP = result),
-      switchMap((result) => this.saveOrUpdateNivelesAcademicos(result)),
-      switchMap((result) => this.saveOrUpdateCategoriasProfesionales(result))
-    );
+    return this.convocatoriaRequisitoIPService.create(requisitoIP);
   }
 
   private update(requisitoIP: IConvocatoriaRequisitoIP): Observable<IConvocatoriaRequisitoIP> {
-    return this.convocatoriaRequisitoIPService.update(Number(this.getKey()), requisitoIP).pipe(
-      tap(result => this.requisitoIP = result),
-      switchMap((result) => this.saveOrUpdateNivelesAcademicos(result)),
-      switchMap((result) => this.saveOrUpdateCategoriasProfesionales(result))
-    );
+    return this.convocatoriaRequisitoIPService.update(Number(this.getKey()), requisitoIP);
   }
 
-  public deleteNivelAcademico(wrapper: StatusWrapper<IRequisitoIPNivelAcademico>): void {
-    const current = this.nivelesAcademicos$.value;
-    const index = current.findIndex(
-      (value) => value === wrapper
-    );
-    if (index >= 0) {
-      current.splice(index, 1);
-      this.nivelesAcademicos$.next(current);
-      this.setChanges(true);
+  private saveOrUpdateNivelesAcademicos(requisitoIp: IConvocatoriaRequisitoIP): Observable<IConvocatoriaRequisitoIP> {
+    const hasChanges = this.nivelesAcademicosEliminados.length > 0
+      || this.nivelesAcademicos$.value.some(nivelAcademico => nivelAcademico.created);
+
+    if (!hasChanges) {
+      return of(requisitoIp);
     }
-  }
 
-  public deleteCategoriaProfesional(wrapper: StatusWrapper<IRequisitoIPCategoriaProfesional>): void {
-    const current = this.categoriasProfesionales$.value;
-    const index = current.findIndex(
-      (value) => value === wrapper
-    );
-    if (index >= 0) {
-      current.splice(index, 1);
-      this.categoriasProfesionales$.next(current);
-      this.setChanges(true);
-    }
-  }
-
-  saveOrUpdateNivelesAcademicos(requisitoIp: IConvocatoriaRequisitoIP): Observable<IConvocatoriaRequisitoIP> {
     const values = this.nivelesAcademicos$.value.map(wrapper => {
       wrapper.value.requisitoIP = requisitoIp;
       return wrapper.value;
@@ -288,13 +326,19 @@ export class ConvocatoriaRequisitosIPFragment extends FormFragment<IConvocatoria
       .pipe(
         takeLast(1),
         map((results) => {
+          this.nivelesAcademicosEliminados = [];
           this.nivelesAcademicos$.next(
             results.map(
               (value) => {
-                value.nivelAcademico = values.find(
+                const valueListado = values.find(
                   nivelAcademico => nivelAcademico.nivelAcademico.id === value.nivelAcademico.id
-                ).nivelAcademico;
-                return new StatusWrapper<IRequisitoIPNivelAcademico>(value);
+                );
+                const nivelAcademicoListado: RequisitoIPNivelAcademicoListado = {
+                  ...value,
+                  nivelAcademico: valueListado?.nivelAcademico,
+                  eliminable: valueListado?.eliminable
+                };
+                return new StatusWrapper<RequisitoIPNivelAcademicoListado>(nivelAcademicoListado);
               })
           );
         }),
@@ -302,7 +346,14 @@ export class ConvocatoriaRequisitosIPFragment extends FormFragment<IConvocatoria
       );
   }
 
-  saveOrUpdateCategoriasProfesionales(requisitoIp: IConvocatoriaRequisitoIP): Observable<IConvocatoriaRequisitoIP> {
+  private saveOrUpdateCategoriasProfesionales(requisitoIp: IConvocatoriaRequisitoIP): Observable<IConvocatoriaRequisitoIP> {
+    const hasChanges = this.categoriasProfesionalesEliminadas.length > 0
+      || this.categoriasProfesionales$.value.some(nivelAcademico => nivelAcademico.created);
+
+    if (!hasChanges) {
+      return of(requisitoIp);
+    }
+
     const values = this.categoriasProfesionales$.value.map(wrapper => {
       wrapper.value.requisitoIP = requisitoIp;
       return wrapper.value;
@@ -313,13 +364,23 @@ export class ConvocatoriaRequisitosIPFragment extends FormFragment<IConvocatoria
       .pipe(
         takeLast(1),
         map((results) => {
+          this.categoriasProfesionalesEliminadas = [];
           this.categoriasProfesionales$.next(
             results.map(
               (value) => {
+                const valueListado = values.find(
+                  categoriaProfesional => categoriaProfesional.categoriaProfesional.id === value.categoriaProfesional.id
+                );
+                const categoriaProfesionalListado: RequisitoIPCategoriaProfesionalListado = {
+                  ...value,
+                  categoriaProfesional: valueListado?.categoriaProfesional,
+                  eliminable: valueListado?.eliminable
+                };
+
                 value.categoriaProfesional = values.find(
                   categoriaProfesional => categoriaProfesional.categoriaProfesional.id === value.categoriaProfesional.id
                 ).categoriaProfesional;
-                return new StatusWrapper<IRequisitoIPCategoriaProfesional>(value);
+                return new StatusWrapper<RequisitoIPCategoriaProfesionalListado>(categoriaProfesionalListado);
               })
           );
         }),

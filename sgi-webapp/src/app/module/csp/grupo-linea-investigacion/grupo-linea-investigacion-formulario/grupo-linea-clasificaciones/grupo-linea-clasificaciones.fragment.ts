@@ -1,4 +1,5 @@
 import { IGrupoLineaClasificacion } from '@core/models/csp/grupo-linea-clasificacion';
+import { IGrupoLineaInvestigacion } from '@core/models/csp/grupo-linea-investigacion';
 import { IClasificacion } from '@core/models/sgo/clasificacion';
 import { Fragment } from '@core/services/action-service';
 import { GrupoLineaClasificacionService } from '@core/services/csp/grupo-linea-clasificacion/grupo-linea-clasificacion.service';
@@ -15,6 +16,7 @@ export interface GrupoLineaClasificacionListado {
   niveles: IClasificacion[];
   nivelesTexto: string;
   nivelSeleccionado: IClasificacion;
+  grupoLineaInvestigacion?: IGrupoLineaInvestigacion;
 }
 
 export class GrupoLineaClasificacionesFragment extends Fragment {

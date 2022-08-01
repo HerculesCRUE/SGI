@@ -11,13 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ModeloTipoHitoRepositoryTest extends BaseRepositoryTest {
+class ModeloTipoHitoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ModeloTipoHitoRepository repository;
 
   @Test
-  public void findByModeloEjecucionIdAndTipoHitoId_ReturnsModeloTipoHito() throws Exception {
+  void findByModeloEjecucionIdAndTipoHitoId_ReturnsModeloTipoHito() throws Exception {
 
     // given: data ModeloTipoHito to find by ModeloEjecucion and TipoHito
     ModeloEjecucion modeloEjecucion = new ModeloEjecucion(null, "nombre-me-1", "descripcion-me-1", Boolean.TRUE,
@@ -45,7 +45,7 @@ public class ModeloTipoHitoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByModeloEjecucionIdAndTipoHitoId_ReturnsNull() throws Exception {
+  void findByModeloEjecucionIdAndTipoHitoId_ReturnsNull() throws Exception {
     // given: data ModeloTipoHito to find by ModeloEjecucion and TipoHito
     ModeloEjecucion modeloEjecucion = new ModeloEjecucion(null, "nombre-me-1", "descripcion-me-1", Boolean.TRUE,
         Boolean.FALSE, Boolean.FALSE);

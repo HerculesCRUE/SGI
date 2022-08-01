@@ -90,7 +90,9 @@ export class ActaDatosGeneralesFragment extends FormFragment<IActa> {
 
   getValue(): IActa {
     const form = this.getFormGroup().value;
-    this.acta.convocatoriaReunion = form.convocatoriaReunion;
+    if (!this.isEdit()) {
+      this.acta.convocatoriaReunion = form.convocatoriaReunion;
+    }
     this.acta.horaInicio = form.horaInicio?.getHours();
     this.acta.minutoInicio = form.horaInicio?.getMinutes();
     this.acta.horaFin = form.horaFin?.getHours();

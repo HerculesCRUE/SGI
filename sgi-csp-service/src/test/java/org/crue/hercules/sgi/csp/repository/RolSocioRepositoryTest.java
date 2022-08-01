@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class RolSocioRepositoryTest extends BaseRepositoryTest {
+class RolSocioRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private RolSocioRepository repository;
 
   @Test
-  public void findByAbreviaturaAndActivoIsTrue_ReturnsRolSocio() throws Exception {
+  void findByAbreviaturaAndActivoIsTrue_ReturnsRolSocio() throws Exception {
     // given: data RolSocio with Abreviatura to find
     RolSocio rolSocio1 = generarMockRolSocio("001", Boolean.TRUE);
     generarMockRolSocio("002", Boolean.TRUE);
@@ -36,7 +36,7 @@ public class RolSocioRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByAbreviaturaAndActivoIsTrue_ReturnsNull() throws Exception {
+  void findByAbreviaturaAndActivoIsTrue_ReturnsNull() throws Exception {
     // given: Abreviatura to find
     String abreviaturaToFind = "001";
 
@@ -48,7 +48,7 @@ public class RolSocioRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsRolSocio() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsRolSocio() throws Exception {
     // given: data RolSocio with Nombre to find
     RolSocio rolSocio1 = generarMockRolSocio("001", Boolean.TRUE);
     generarMockRolSocio("002", Boolean.TRUE);
@@ -69,7 +69,7 @@ public class RolSocioRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsNull() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsNull() throws Exception {
     // given: Nombre to find
     String nombreToFind = "001";
 

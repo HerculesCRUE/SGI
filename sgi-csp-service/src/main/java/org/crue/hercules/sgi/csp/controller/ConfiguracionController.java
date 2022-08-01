@@ -42,7 +42,7 @@ public class ConfiguracionController {
    * @return el objeto {@link Configuracion}
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E', 'CSP-EJEC-V', 'CSP-EJEC-E')")
   public ResponseEntity<Configuracion> findConfiguracion() {
     log.debug("findConfiguracion() - start");
     Configuracion configuracion = service.findConfiguracion();

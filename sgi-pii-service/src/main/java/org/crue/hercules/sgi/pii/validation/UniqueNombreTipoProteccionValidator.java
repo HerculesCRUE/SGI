@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.pii.validation;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -41,16 +42,13 @@ public class UniqueNombreTipoProteccionValidator
 
     final Boolean isSubtipo = value.getPadre() != null;
     Specification<TipoProteccion> specs = TipoProteccionSpecifications.activos();
-    specs = specs.and((root, query, cb) -> {
-      return (isSubtipo) ? cb.and(cb.isNotNull(root.get(TipoProteccion_.padre)),
-          cb.equal(root.get(TipoProteccion_.padre), value.getPadre())) : cb.isNull(root.get(TipoProteccion_.padre));
-    });
-    specs = specs.and((root, query, cb) -> {
-      return cb.equal(root.get(TipoProteccion_.nombre), value.getNombre());
-    });
+    specs = specs
+        .and((root, query, cb) -> Boolean.TRUE.equals(isSubtipo) ? cb.and(cb.isNotNull(root.get(TipoProteccion_.padre)),
+            cb.equal(root.get(TipoProteccion_.padre), value.getPadre())) : cb.isNull(root.get(TipoProteccion_.padre)));
+    specs = specs.and((root, query, cb) -> cb.equal(root.get(TipoProteccion_.nombre), value.getNombre()));
 
     List<TipoProteccion> tipoProteccion = repository.findAll(specs);
-    boolean returnValue = !tipoProteccion.stream().anyMatch(tipo -> tipo.getId() != value.getId());
+    boolean returnValue = tipoProteccion.stream().noneMatch(tipo -> !Objects.equals(tipo.getId(), value.getId()));
 
     if (!returnValue) {
       addEntityMessageParameter(context, isSubtipo);
@@ -63,7 +61,8 @@ public class UniqueNombreTipoProteccionValidator
     // can be used in the error message
     HibernateConstraintValidatorContext hibernateContext = context.unwrap(HibernateConstraintValidatorContext.class);
 
-    final String errorMessage = isSubtipo ? ApplicationContextSupport.getMessage(this.subtipoProteccionMesage)
+    final String errorMessage = Boolean.TRUE.equals(isSubtipo)
+        ? ApplicationContextSupport.getMessage(this.subtipoProteccionMesage)
         : ApplicationContextSupport.getMessage(TipoProteccion.class);
     hibernateContext.addMessageParameter("entity", errorMessage);
     // Disable default message to allow binding the message to a property

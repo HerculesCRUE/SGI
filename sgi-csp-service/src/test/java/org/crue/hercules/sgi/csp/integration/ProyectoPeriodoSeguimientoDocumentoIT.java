@@ -45,7 +45,7 @@ class ProyectoPeriodoSeguimientoDocumentoIT extends BaseIT {
       "classpath:scripts/tipo_documento.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsProyectoPeriodoSeguimientoDocumento() throws Exception {
+  void create_ReturnsProyectoPeriodoSeguimientoDocumento() throws Exception {
 
     // given: new ProyectoPeriodoSeguimientoDocumento
     ProyectoPeriodoSeguimientoDocumento newProyectoPeriodoSeguimientoDocumento = generarMockProyectoPeriodoSeguimientoDocumento(
@@ -82,7 +82,7 @@ class ProyectoPeriodoSeguimientoDocumentoIT extends BaseIT {
       "classpath:scripts/tipo_documento.sql", "classpath:scripts/proyecto_periodo_seguimiento_documento.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsProyectoPeriodoSeguimientoDocumento() throws Exception {
+  void update_ReturnsProyectoPeriodoSeguimientoDocumento() throws Exception {
 
     // given: Existing ProyectoPeriodoSeguimientoDocumento to be updated
     ProyectoPeriodoSeguimientoDocumento proyectoPeriodoSeguimientoExistente = generarMockProyectoPeriodoSeguimientoDocumento(
@@ -120,7 +120,7 @@ class ProyectoPeriodoSeguimientoDocumentoIT extends BaseIT {
       "classpath:scripts/tipo_documento.sql", "classpath:scripts/proyecto_periodo_seguimiento_documento.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing ProyectoPeriodoSeguimientoDocumento to be deleted
     Long id = 1L;
 
@@ -144,7 +144,7 @@ class ProyectoPeriodoSeguimientoDocumentoIT extends BaseIT {
       "classpath:scripts/tipo_documento.sql", "classpath:scripts/proyecto_periodo_seguimiento_documento.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsProyectoPeriodoSeguimientoDocumento() throws Exception {
+  void findById_ReturnsProyectoPeriodoSeguimientoDocumento() throws Exception {
     Long id = 1L;
 
     final ResponseEntity<ProyectoPeriodoSeguimientoDocumento> response = restTemplate.exchange(

@@ -34,7 +34,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * TipoFinalidadControllerTest
  */
 @WebMvcTest(TipoFinalidadController.class)
-public class TipoFinalidadControllerTest extends BaseControllerTest {
+class TipoFinalidadControllerTest extends BaseControllerTest {
 
   @MockBean
   private TipoFinalidadService service;
@@ -46,7 +46,7 @@ public class TipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFIN-C" })
-  public void create_ReturnsTipoFinalidad() throws Exception {
+  void create_ReturnsTipoFinalidad() throws Exception {
     // given: new TipoFinalidad
     TipoFinalidad data = generarMockTipoFinalidad(null, Boolean.TRUE);
 
@@ -77,7 +77,7 @@ public class TipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFIN-C" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a TipoFinalidad with id filled
     TipoFinalidad data = generarMockTipoFinalidad(1L, Boolean.TRUE);
 
@@ -95,7 +95,7 @@ public class TipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFIN-E" })
-  public void update_WithExistingId_ReturnsTipoFinalidad() throws Exception {
+  void update_WithExistingId_ReturnsTipoFinalidad() throws Exception {
     // given: existing TipoFinalidad
     TipoFinalidad data = generarMockTipoFinalidad(1L, Boolean.TRUE);
 
@@ -130,7 +130,7 @@ public class TipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFIN-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: a TipoFinalidad with non existing id
     TipoFinalidad data = generarMockTipoFinalidad(1L, Boolean.TRUE);
 
@@ -151,7 +151,7 @@ public class TipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFIN-R" })
-  public void reactivar_WithExistingId_ReturnTipoFinalidad() throws Exception {
+  void reactivar_WithExistingId_ReturnTipoFinalidad() throws Exception {
     // given: existing id
     TipoFinalidad tipoFinalidad = generarMockTipoFinalidad(1L, Boolean.FALSE);
 
@@ -178,7 +178,7 @@ public class TipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFIN-R" })
-  public void reactivar_NoExistingId_Return404() throws Exception {
+  void reactivar_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -196,7 +196,7 @@ public class TipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFIN-B" })
-  public void desactivar_WithExistingId_ReturnTipoFinalidad() throws Exception {
+  void desactivar_WithExistingId_ReturnTipoFinalidad() throws Exception {
     // given: existing id
     Long idBuscado = 1L;
     TipoFinalidad tipoFinalidad = generarMockTipoFinalidad(idBuscado, Boolean.TRUE);
@@ -224,7 +224,7 @@ public class TipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFIN-B" })
-  public void desactivar_NoExistingId_Return404() throws Exception {
+  void desactivar_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
     BDDMockito.willThrow(new TipoFinalidadNotFoundException(id)).given(service).disable(ArgumentMatchers.<Long>any());
@@ -241,7 +241,7 @@ public class TipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-C" })
-  public void findById_WithExistingId_ReturnsTipoFinalidad() throws Exception {
+  void findById_WithExistingId_ReturnsTipoFinalidad() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer(new Answer<TipoFinalidad>() {
       @Override
@@ -264,7 +264,7 @@ public class TipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-C" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new TipoFinalidadNotFoundException(1L);
@@ -281,7 +281,7 @@ public class TipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-INV-V" })
-  public void findAll_WithPaging_ReturnsTipoFinalidadSubList() throws Exception {
+  void findAll_WithPaging_ReturnsTipoFinalidadSubList() throws Exception {
     // given: One hundred TipoFinalidad
     List<TipoFinalidad> data = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -331,7 +331,7 @@ public class TipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-INV-V" })
-  public void findAll_EmptyList_Returns204() throws Exception {
+  void findAll_EmptyList_Returns204() throws Exception {
     // given: no data TipoFinalidad
     BDDMockito.given(service.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<TipoFinalidad>>() {
@@ -354,7 +354,7 @@ public class TipoFinalidadControllerTest extends BaseControllerTest {
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFIN-V", "CSP-TFIN-C", "CSP-TFIN-E", "CSP-TFIN-B",
       "CSP-TFIN-R" })
-  public void findAllTodos_WithPaging_ReturnsTipoFinalidadSubList() throws Exception {
+  void findAllTodos_WithPaging_ReturnsTipoFinalidadSubList() throws Exception {
     // given: One hundred TipoFinalidad
     List<TipoFinalidad> data = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -406,7 +406,7 @@ public class TipoFinalidadControllerTest extends BaseControllerTest {
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFIN-V", "CSP-TFIN-C", "CSP-TFIN-E", "CSP-TFIN-B",
       "CSP-TFIN-R" })
-  public void findAllTodos_EmptyList_Returns204() throws Exception {
+  void findAllTodos_EmptyList_Returns204() throws Exception {
     // given: no data TipoFinalidad
     BDDMockito.given(service.findAllTodos(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<TipoFinalidad>>() {

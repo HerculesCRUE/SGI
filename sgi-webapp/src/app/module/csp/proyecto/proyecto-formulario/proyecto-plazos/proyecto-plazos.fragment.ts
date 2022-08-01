@@ -1,19 +1,19 @@
-import { IProyectoPlazos } from '@core/models/csp/proyecto-plazo';
+import { IProyectoFase } from '@core/models/csp/proyecto-fase';
 import { Fragment } from '@core/services/action-service';
-import { ProyectoPlazoService } from '@core/services/csp/proyecto-plazo.service';
+import { ProyectoFaseService } from '@core/services/csp/proyecto-fase.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
 import { map, mergeMap, takeLast, tap } from 'rxjs/operators';
 
 export class ProyectoPlazosFragment extends Fragment {
-  plazos$ = new BehaviorSubject<StatusWrapper<IProyectoPlazos>[]>([]);
-  private plazosEliminados: StatusWrapper<IProyectoPlazos>[] = [];
+  plazos$ = new BehaviorSubject<StatusWrapper<IProyectoFase>[]>([]);
+  private plazosEliminados: StatusWrapper<IProyectoFase>[] = [];
 
   constructor(
     key: number,
     private proyectoService: ProyectoService,
-    private proyectoPlazoService: ProyectoPlazoService
+    private proyectoFaseService: ProyectoFaseService
   ) {
     super(key);
     this.setComplete(true);
@@ -25,7 +25,7 @@ export class ProyectoPlazosFragment extends Fragment {
         map((response) => response.items)
       ).subscribe((plazos) => {
         this.plazos$.next(plazos.map(
-          plazo => new StatusWrapper<IProyectoPlazos>(plazo))
+          plazo => new StatusWrapper<IProyectoFase>(plazo))
         );
       });
     }
@@ -36,8 +36,8 @@ export class ProyectoPlazosFragment extends Fragment {
    *
    * @param plazo plazo
    */
-  public addPlazos(plazo: IProyectoPlazos) {
-    const wrapped = new StatusWrapper<IProyectoPlazos>(plazo);
+  public addPlazos(plazo: IProyectoFase) {
+    const wrapped = new StatusWrapper<IProyectoFase>(plazo);
     wrapped.setCreated();
     const current = this.plazos$.value;
     current.push(wrapped);
@@ -46,10 +46,10 @@ export class ProyectoPlazosFragment extends Fragment {
     this.setErrors(false);
   }
 
-  public deletePlazo(wrapper: StatusWrapper<IProyectoPlazos>) {
+  public deletePlazo(wrapper: StatusWrapper<IProyectoFase>) {
     const current = this.plazos$.value;
     const index = current.findIndex(
-      (value: StatusWrapper<IProyectoPlazos>) => value === wrapper
+      (value: StatusWrapper<IProyectoFase>) => value === wrapper
     );
     if (index >= 0) {
       if (!wrapper.created) {
@@ -83,7 +83,7 @@ export class ProyectoPlazosFragment extends Fragment {
     }
     return from(this.plazosEliminados).pipe(
       mergeMap((wrapped) => {
-        return this.proyectoPlazoService.deleteById(wrapped.value.id)
+        return this.proyectoFaseService.deleteById(wrapped.value.id)
           .pipe(
             tap(() => {
               this.plazosEliminados = this.plazosEliminados.filter(deletedPlazo =>
@@ -104,12 +104,12 @@ export class ProyectoPlazosFragment extends Fragment {
     );
     return from(createdPlazos).pipe(
       mergeMap((wrappedPlazos) => {
-        return this.proyectoPlazoService.create(wrappedPlazos.value).pipe(
+        return this.proyectoFaseService.create(wrappedPlazos.value).pipe(
           map((createdPlazo) => {
             const index = this.plazos$.value.findIndex((currentPlazos) => currentPlazos === wrappedPlazos);
             const plazoListado = wrappedPlazos.value;
             plazoListado.id = createdPlazo.id;
-            this.plazos$.value[index] = new StatusWrapper<IProyectoPlazos>(plazoListado);
+            this.plazos$.value[index] = new StatusWrapper<IProyectoFase>(plazoListado);
             this.plazos$.next(this.plazos$.value);
           })
         );
@@ -124,10 +124,10 @@ export class ProyectoPlazosFragment extends Fragment {
     }
     return from(updatePlazos).pipe(
       mergeMap((wrappedPlazos) => {
-        return this.proyectoPlazoService.update(wrappedPlazos.value.id, wrappedPlazos.value).pipe(
+        return this.proyectoFaseService.update(wrappedPlazos.value.id, wrappedPlazos.value).pipe(
           map((updatedPlazos) => {
             const index = this.plazos$.value.findIndex((currentPlazos) => currentPlazos === wrappedPlazos);
-            this.plazos$.value[index] = new StatusWrapper<IProyectoPlazos>(updatedPlazos);
+            this.plazos$.value[index] = new StatusWrapper<IProyectoFase>(updatedPlazos);
           })
         );
       })

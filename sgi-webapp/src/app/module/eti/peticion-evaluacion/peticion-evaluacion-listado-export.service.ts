@@ -8,11 +8,10 @@ import { IVinculacion } from '@core/models/sgp/vinculacion';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { AbstractTableExportService, IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
 import { ReportService } from '@core/services/rep/report.service';
-import { SgiAuthService } from '@sgi/framework/auth';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of, zip } from 'rxjs';
+import { concat, Observable, of, zip } from 'rxjs';
 import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
 import { PeticionEvaluacionAsignacionTareasListadoExportService } from './peticion-evaluacion-asignacion-tareas-listado-export.service';
 import { PeticionEvaluacionEquipoInvestigadorListadoExportService } from './peticion-evaluacion-equipo-investigador-listado-export.service';
@@ -58,7 +57,6 @@ export class PeticionEvaluacionListadoExportService extends
 
   constructor(
     protected readonly logger: NGXLogger,
-    private authService: SgiAuthService,
     private readonly peticionEvaluacionService: PeticionEvaluacionService,
     private readonly peticionEvaluacionGeneralListadoExportService: PeticionEvaluacionGeneralListadoExportService,
     private readonly peticionEvaluacionEquipoInvestigadorListadoExportService: PeticionEvaluacionEquipoInvestigadorListadoExportService,
@@ -139,7 +137,7 @@ export class PeticionEvaluacionListadoExportService extends
 
   private getDataReportInner(peticionData: IPeticionEvaluacionReportData, reportOptions: IPeticionEvaluacionReportOptions):
     Observable<IPeticionEvaluacionReportData> {
-    return merge(
+    return concat(
       this.getDataReportListadoGeneral(peticionData),
       this.getDataReportEquipoInvestigador(peticionData, reportOptions),
       this.getDataReportAsignacionTareas(peticionData, reportOptions),

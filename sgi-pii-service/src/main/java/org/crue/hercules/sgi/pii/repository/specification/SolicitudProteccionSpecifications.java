@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.pii.repository.specification;
 
 import javax.persistence.criteria.Predicate;
 
+import org.crue.hercules.sgi.framework.data.jpa.domain.Activable_;
 import org.crue.hercules.sgi.pii.model.Invencion_;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion_;
@@ -20,7 +21,7 @@ public class SolicitudProteccionSpecifications {
       Predicate queryPredicate = cb.and(
           cb.equal(root.get(SolicitudProteccion_.viaProteccion).get(ViaProteccion_.id), idViaProteccion),
           cb.equal(root.get(SolicitudProteccion_.invencion).get(Invencion_.id), idInvencion),
-          cb.equal(root.get(SolicitudProteccion_.activo), Boolean.TRUE));
+          cb.equal(root.get(Activable_.activo), Boolean.TRUE));
       if (solicitudProteccionId != null) {
         return cb.and(queryPredicate, cb.notEqual(root.get(SolicitudProteccion_.id), solicitudProteccionId));
       }
@@ -30,18 +31,15 @@ public class SolicitudProteccionSpecifications {
 
   public static Specification<SolicitudProteccion> solicitudesByViaProteccionPaisEspecifico(Long solicitudProteccionId,
       Long idInvencion, Long idViaProteccion, String pais) {
-    return (root, query, cb) -> {
-      return cb.and(cb.equal(root.get(SolicitudProteccion_.paisProteccionRef), pais),
-          SolicitudProteccionSpecifications
-              .solicitudesByViaProteccion(solicitudProteccionId, idInvencion, idViaProteccion)
-              .toPredicate(root, query, cb));
-    };
+    return (root, query, cb) -> cb.and(cb.equal(root.get(SolicitudProteccion_.paisProteccionRef), pais),
+        SolicitudProteccionSpecifications
+            .solicitudesByViaProteccion(solicitudProteccionId, idInvencion, idViaProteccion)
+            .toPredicate(root, query, cb));
   }
 
   public static Specification<SolicitudProteccion> byInvencionId(Long invencionId) {
-    return (root, query, cb) -> {
-      return cb.and(cb.equal(root.get(SolicitudProteccion_.invencion).get(Invencion_.id), invencionId));
-    };
+    return (root, query, cb) -> cb
+        .and(cb.equal(root.get(SolicitudProteccion_.invencion).get(Invencion_.id), invencionId));
   }
 
 }

@@ -1,5 +1,8 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -35,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class RepartoEquipoInventorService {
+
   private final RepartoEquipoInventorRepository repository;
   private final RepartoRepository repartoRepository;
   private final Validator validator;
@@ -115,8 +119,10 @@ public class RepartoEquipoInventorService {
     Assert.isNull(repartoEquipoInventor.getId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(RepartoEquipoInventor.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(RepartoEquipoInventor.class))
+            .build());
 
     checkRepartoIsUpdatable(repartoEquipoInventor.getRepartoId());
     RepartoEquipoInventor returnValue = repository.save(repartoEquipoInventor);
@@ -139,8 +145,10 @@ public class RepartoEquipoInventorService {
     Assert.notNull(repartoEquipoInventor.getId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(RepartoEquipoInventor.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(RepartoEquipoInventor.class))
+            .build());
 
     checkRepartoIsUpdatable(repartoEquipoInventor.getRepartoId());
     return repository.findById(repartoEquipoInventor.getId()).map(repartoEquipoInventorExistente -> {
@@ -169,8 +177,10 @@ public class RepartoEquipoInventorService {
     Assert.notNull(id,
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(RepartoEquipoInventor.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(RepartoEquipoInventor.class))
+            .build());
 
     Optional<RepartoEquipoInventor> optionalRepartoEquipoInventor = repository.findById(id);
 

@@ -24,7 +24,7 @@ import org.mockito.invocation.InvocationOnMock;
 /**
  * ProrrogaDocumentoServiceTest
  */
-public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
+class ProrrogaDocumentoServiceTest extends BaseServiceTest {
 
   @Mock
   private ProrrogaDocumentoRepository repository;
@@ -36,12 +36,12 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   private ProrrogaDocumentoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ProrrogaDocumentoServiceImpl(repository, proyectoProrrogaRepository, modeloTipoDocumentoRepository);
   }
 
   @Test
-  public void create_ReturnsProrrogaDocumento() {
+  void create_ReturnsProrrogaDocumento() {
     // given: new ProrrogaDocumento
     ProrrogaDocumento newProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     newProrrogaDocumento.setId(null);
@@ -81,7 +81,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: new ProrrogaDocumento with Id
     ProrrogaDocumento newProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
 
@@ -94,7 +94,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutProyectoProrroga_ThrowsIllegalArgumentException() {
+  void create_WithoutProyectoProrroga_ThrowsIllegalArgumentException() {
     // given: new ProrrogaDocumento without ProyectoProrroga
     ProrrogaDocumento newProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     newProrrogaDocumento.setId(null);
@@ -109,7 +109,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutNombre_ThrowsIllegalArgumentException() {
+  void create_WithoutNombre_ThrowsIllegalArgumentException() {
     // given: new ProrrogaDocumento without Nombre
     ProrrogaDocumento newProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     newProrrogaDocumento.setId(null);
@@ -123,7 +123,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutDocumentoRef_ThrowsIllegalArgumentException() {
+  void create_WithoutDocumentoRef_ThrowsIllegalArgumentException() {
     // given: new ProrrogaDocumento without DocumentoRef
     ProrrogaDocumento newProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     newProrrogaDocumento.setId(null);
@@ -137,7 +137,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutVisible_ThrowsIllegalArgumentException() {
+  void create_WithoutVisible_ThrowsIllegalArgumentException() {
     // given: new ProrrogaDocumento without Visible
     ProrrogaDocumento newProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     newProrrogaDocumento.setId(null);
@@ -152,7 +152,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingProyectoProrroga_ThrowsNotFoundException() {
+  void create_WithNoExistingProyectoProrroga_ThrowsNotFoundException() {
     // given: new ProrrogaDocumento with no existing ProyectoProrroga
     ProrrogaDocumento newProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     newProrrogaDocumento.setId(null);
@@ -167,7 +167,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingModeloEjecucion_ThrowsIllegalArgumentException() {
+  void create_WithNoExistingModeloEjecucion_ThrowsIllegalArgumentException() {
     // given: new ProrrogaDocumento with no existing ModeloEjecucion
     ProrrogaDocumento newProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     newProrrogaDocumento.setId(null);
@@ -185,7 +185,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDisabledModeloEjecucion_ThrowsIllegalArgumentException() {
+  void create_WithDisabledModeloEjecucion_ThrowsIllegalArgumentException() {
     // given: new ProrrogaDocumento with disabled ModeloEjecucion
     ProrrogaDocumento newProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     newProrrogaDocumento.setId(null);
@@ -205,7 +205,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutModeloTipoDocumento_ThrowsIllegalArgumentException() {
+  void create_WithoutModeloTipoDocumento_ThrowsIllegalArgumentException() {
     // given: new ProrrogaDocumento without ModeloTipoDocumento
     ProrrogaDocumento newProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     newProrrogaDocumento.setId(null);
@@ -228,7 +228,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
+  void create_WithTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
     // given: new ProrrogaDocumento with TipoDocumento disabled
     ProrrogaDocumento newProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     newProrrogaDocumento.setId(null);
@@ -252,7 +252,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithModeloTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
+  void create_WithModeloTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
     // given: new ProrrogaDocumento with ModeloTipoDocumento disabled
     ProrrogaDocumento newProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     newProrrogaDocumento.setId(null);
@@ -277,7 +277,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsProrrogaDocumento() {
+  void update_ReturnsProrrogaDocumento() {
     // given: updated ProrrogaDocumento
     ProrrogaDocumento originalProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
@@ -318,7 +318,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutId_ThrowsIllegalArgumentException() {
+  void update_WithoutId_ThrowsIllegalArgumentException() {
     // given: a updated ProrrogaDocumento with id filled
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     updatedProrrogaDocumento.setId(null);
@@ -332,7 +332,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutProyectoProrroga_ThrowsIllegalArgumentException() {
+  void update_WithoutProyectoProrroga_ThrowsIllegalArgumentException() {
     // given: a updated ProrrogaDocumento without ProyectoProrroga
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     updatedProrrogaDocumento.setProyectoProrrogaId(null);
@@ -346,7 +346,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutNombre_ThrowsIllegalArgumentException() {
+  void update_WithoutNombre_ThrowsIllegalArgumentException() {
     // given: a updated ProrrogaDocumento without Nombre
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     updatedProrrogaDocumento.setNombre(null);
@@ -359,7 +359,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutDocumentoRef_ThrowsIllegalArgumentException() {
+  void update_WithoutDocumentoRef_ThrowsIllegalArgumentException() {
     // given: a updated ProrrogaDocumento without DocumentoRef
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     updatedProrrogaDocumento.setDocumentoRef(null);
@@ -372,7 +372,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutVisible_ThrowsIllegalArgumentException() {
+  void update_WithoutVisible_ThrowsIllegalArgumentException() {
     // given: a updated ProrrogaDocumento without Visible
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     updatedProrrogaDocumento.setVisible(null);
@@ -386,7 +386,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingId_ThrowsNotFoundException() {
+  void update_WithNoExistingId_ThrowsNotFoundException() {
     // given: a updated ProrrogaDocumento with no existing Id
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
 
@@ -398,7 +398,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingProyectoProrroga_ThrowsNotFoundException() {
+  void update_WithNoExistingProyectoProrroga_ThrowsNotFoundException() {
     // given: a updated ProrrogaDocumento with no existing Prorroga
     ProrrogaDocumento originalProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
@@ -416,7 +416,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingModeloEjecucion_ThrowsIllegalArgumentException() {
+  void update_WithNoExistingModeloEjecucion_ThrowsIllegalArgumentException() {
     // given: ProrrogaDocumento with no existing ModeloEjecucion
     ProrrogaDocumento originalProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
@@ -438,7 +438,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDisabledModeloEjecucion_ThrowsIllegalArgumentException() {
+  void update_WithDisabledModeloEjecucion_ThrowsIllegalArgumentException() {
     // given: ProrrogaDocumento with disabled ModeloEjecucion
     ProrrogaDocumento originalProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
@@ -463,7 +463,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutModeloTipoDocumento_ThrowsIllegalArgumentException() {
+  void update_WithoutModeloTipoDocumento_ThrowsIllegalArgumentException() {
     // given: ProrrogaDocumento without ModeloTipoDocumento
     ProrrogaDocumento originalProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
@@ -490,7 +490,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
+  void update_WithTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
     // given: ProrrogaDocumento with TipoDocumento disabled
     ProrrogaDocumento originalProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
@@ -520,7 +520,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithModeloTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
+  void update_WithModeloTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
     // given: ProrrogaDocumento with ModeloTipoDocumento disabled
     ProrrogaDocumento originalProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
@@ -551,7 +551,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_DoesNotThrowAnyException() {
+  void delete_WithExistingId_DoesNotThrowAnyException() {
     // given: existing prorrogaDocumento
     Long id = 1L;
 
@@ -566,7 +566,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
+  void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
     // given: no id
     Long id = null;
 
@@ -578,7 +578,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -592,7 +592,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsProrrogaDocumento() {
+  void findById_ReturnsProrrogaDocumento() {
     // given: existing ProrrogaDocumento
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -617,7 +617,7 @@ public class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsProrrogaDocumentoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsProrrogaDocumentoNotFoundException() throws Exception {
     // given: Ningun ProrrogaDocumento con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());

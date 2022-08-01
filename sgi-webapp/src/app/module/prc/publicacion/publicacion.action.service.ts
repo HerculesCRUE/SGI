@@ -9,8 +9,8 @@ import { Observable } from 'rxjs';
 import { concatMap, map, tap } from 'rxjs/operators';
 import { CvnValorCampoService } from '../shared/cvn/services/cvn-valor-campo.service';
 import { ProduccionCientificaInitializerService } from '../shared/produccion-cientifica-initializer.service';
-import { PRODUCCION_CIENTIFICA_ROUTE_PARAMS } from '../shared/produccion-cientifica-route-params';
-import { IProduccionCientificaData, PRODUCCION_CIENTIFICA_DATA_KEY } from '../shared/produccion-cientifica.resolver';
+import { PRODUCCION_CIENTIFICA_DATA_KEY, PRODUCCION_CIENTIFICA_ROUTE_PARAMS } from '../shared/produccion-cientifica-route-params';
+import { IProduccionCientificaData } from '../shared/produccion-cientifica.resolver';
 import { PublicacionDatosGeneralesFragment } from './publicacion-formulario/publicacion-datos-generales/publicacion-datos-generales.fragment';
 
 @Injectable()
@@ -61,21 +61,21 @@ export class PublicacionActionService extends ActionService {
   validar(): Observable<IProduccionCientifica> {
     return this.produccionCientificaService.validar(this.data.produccionCientifica?.id)
       .pipe(
-        tap(produccionCientifica => this.datosGenerales.emitProduccionCientifica(produccionCientifica))
+        tap(produccionCientifica => this.datosGenerales.refreshDatosGenerales(produccionCientifica))
       );
   }
 
   rechazar(estadoProduccionCientifica: IEstadoProduccionCientificaRequest): Observable<IProduccionCientifica> {
     return this.produccionCientificaService.rechazar(this.data.produccionCientifica?.id, estadoProduccionCientifica)
       .pipe(
-        tap(produccionCientifica => this.datosGenerales.emitProduccionCientifica(produccionCientifica))
+        tap(produccionCientifica => this.datosGenerales.refreshDatosGenerales(produccionCientifica))
       );
   }
 
   validarInvestigador(): Observable<IProduccionCientifica> {
     return this.produccionCientificaService.validar(this.data.produccionCientifica?.id)
       .pipe(
-        tap(produccionCientifica => this.datosGenerales.emitProduccionCientifica(produccionCientifica)),
+        tap(produccionCientifica => this.datosGenerales.refreshDatosGenerales(produccionCientifica)),
         concatMap(produccionCientifica => this.updateCanEdit(produccionCientifica))
       );
   }
@@ -83,7 +83,7 @@ export class PublicacionActionService extends ActionService {
   rechazarInvestigador(estadoProduccionCientifica: IEstadoProduccionCientificaRequest): Observable<IProduccionCientifica> {
     return this.produccionCientificaService.rechazar(this.data.produccionCientifica?.id, estadoProduccionCientifica)
       .pipe(
-        tap(produccionCientifica => this.datosGenerales.emitProduccionCientifica(produccionCientifica)),
+        tap(produccionCientifica => this.datosGenerales.refreshDatosGenerales(produccionCientifica)),
         concatMap(produccionCientifica => this.updateCanEdit(produccionCientifica))
       );
   }

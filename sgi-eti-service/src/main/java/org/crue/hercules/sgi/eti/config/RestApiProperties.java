@@ -26,4 +26,8 @@ public class RestApiProperties {
    * URL base de los end-points del módulo de COM.
    */
   private String comUrl;
+  /**
+   * URL base de los end-points del módulo de CNF.
+   */
+  private String cnfUrl;
 }

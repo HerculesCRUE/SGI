@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.service.impl;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoSocioEquipoNotFoundException;
@@ -88,8 +89,8 @@ public class SolicitudProyectoSocioEquipoServiceImpl implements SolicitudProyect
 
     // Periodos eliminados
     List<SolicitudProyectoSocioEquipo> solicitudProyectoEquipoEliminar = existentes.stream()
-        .filter(periodo -> !solicitudProyectoEquipoSocios.stream().map(SolicitudProyectoSocioEquipo::getId)
-            .anyMatch(id -> id == periodo.getId()))
+        .filter(periodo -> solicitudProyectoEquipoSocios.stream().map(SolicitudProyectoSocioEquipo::getId)
+            .noneMatch(id -> Objects.equals(id, periodo.getId())))
         .collect(Collectors.toList());
 
     if (!solicitudProyectoEquipoEliminar.isEmpty()) {
@@ -111,7 +112,7 @@ public class SolicitudProyectoSocioEquipoServiceImpl implements SolicitudProyect
     solicitudProyectoEquipoConMesInicio.sort(Comparator.comparing(SolicitudProyectoSocioEquipo::getMesInicio)
         .thenComparing(Comparator.comparing(SolicitudProyectoSocioEquipo::getPersonaRef)));
 
-    List<SolicitudProyectoSocioEquipo> solicitudProyectoEquipoAll = new ArrayList<SolicitudProyectoSocioEquipo>();
+    List<SolicitudProyectoSocioEquipo> solicitudProyectoEquipoAll = new ArrayList<>();
     solicitudProyectoEquipoAll.addAll(solicitudProyectoEquipoMesInicioNull);
     solicitudProyectoEquipoAll.addAll(solicitudProyectoEquipoConMesInicio);
 
@@ -122,11 +123,13 @@ public class SolicitudProyectoSocioEquipoServiceImpl implements SolicitudProyect
       // la que se estan actualizando los periodos
       if (solicitudProyectoSocioEquipo.getId() != null) {
         SolicitudProyectoSocioEquipo existente = existentes.stream()
-            .filter(equipoSocio -> equipoSocio.getId() == solicitudProyectoSocioEquipo.getId()).findFirst()
+            .filter(equipoSocio -> Objects.equals(equipoSocio.getId(), solicitudProyectoSocioEquipo.getId()))
+            .findFirst()
             .orElseThrow(() -> new SolicitudProyectoSocioEquipoNotFoundException(solicitudProyectoSocioEquipo.getId()));
 
         Assert.isTrue(
-            existente.getSolicitudProyectoSocioId() == solicitudProyectoSocioEquipo.getSolicitudProyectoSocioId(),
+            Objects.equals(existente.getSolicitudProyectoSocioId(),
+                solicitudProyectoSocioEquipo.getSolicitudProyectoSocioId()),
             "No se puede modificar la solicitud proyecto socio del SolicitudProyectoSocioEquipo");
       }
 
@@ -140,12 +143,13 @@ public class SolicitudProyectoSocioEquipoServiceImpl implements SolicitudProyect
       Assert.notNull(solicitudProyectoSocioEquipo.getPersonaRef(),
           "La persona ref no puede ser null para realizar la acción sobre SolicitudProyectoSocioEquipo");
 
-      Assert.isTrue(solicitudProyectoEquipoSocioAnterior == null || (solicitudProyectoEquipoSocioAnterior != null
-          && (!solicitudProyectoEquipoSocioAnterior.getPersonaRef().equals(solicitudProyectoSocioEquipo.getPersonaRef())
+      Assert.isTrue(
+          solicitudProyectoEquipoSocioAnterior == null || (!solicitudProyectoEquipoSocioAnterior.getPersonaRef()
+              .equals(solicitudProyectoSocioEquipo.getPersonaRef())
               || (solicitudProyectoEquipoSocioAnterior.getPersonaRef()
                   .equals(solicitudProyectoSocioEquipo.getPersonaRef())
                   && (solicitudProyectoSocioEquipo.getMesInicio() > solicitudProyectoEquipoSocioAnterior
-                      .getMesFin())))),
+                      .getMesFin()))),
           "El periodo se solapa con otro existente");
 
       solicitudProyectoEquipoSocioAnterior = solicitudProyectoSocioEquipo;

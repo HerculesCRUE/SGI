@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_NOTNULL;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -66,8 +70,9 @@ public class TipoProcedimientoService {
 
     Assert.isNull(tipoProcedimiento.getId(),
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(TipoProcedimiento.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(TipoProcedimiento.class))
+            .build());
 
     tipoProcedimiento.setActivo(true);
 
@@ -95,12 +100,13 @@ public class TipoProcedimientoService {
   public TipoProcedimiento activar(Long id) {
 
     Assert.notNull(id,
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(TipoProcedimiento.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(TipoProcedimiento.class))
+            .build());
 
     return this.tipoProcedimientoRepository.findById(id).map(tipoProcedimiento -> {
-      if (tipoProcedimiento.getActivo()) {
+      if (tipoProcedimiento.getActivo().booleanValue()) {
         return tipoProcedimiento;
       }
       // Invocar validaciones asociadas a OnActivar
@@ -125,13 +131,14 @@ public class TipoProcedimientoService {
   public TipoProcedimiento desactivar(Long id) {
 
     Assert.notNull(id,
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(TipoProcedimiento.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(TipoProcedimiento.class))
+            .build());
 
     return this.tipoProcedimientoRepository.findById(id).map(tipoProcedimiento -> {
 
-      if (!tipoProcedimiento.getActivo()) {
+      if (!tipoProcedimiento.getActivo().booleanValue()) {
         return tipoProcedimiento;
       }
       tipoProcedimiento.setActivo(false);
@@ -144,9 +151,10 @@ public class TipoProcedimientoService {
   public TipoProcedimiento update(@Valid TipoProcedimiento tipoProcedimiento) {
 
     Assert.notNull(tipoProcedimiento.getId(),
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(TipoProcedimiento.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(TipoProcedimiento.class))
+            .build());
 
     return this.tipoProcedimientoRepository.findById(tipoProcedimiento.getId()).map(foundedTipoProteccion -> {
 

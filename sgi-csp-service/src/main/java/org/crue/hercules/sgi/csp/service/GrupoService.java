@@ -7,6 +7,8 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -32,6 +34,7 @@ import org.crue.hercules.sgi.csp.model.GrupoTipo;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.repository.GrupoEquipoRepository;
+import org.crue.hercules.sgi.csp.repository.GrupoPersonaAutorizadaRepository;
 import org.crue.hercules.sgi.csp.repository.GrupoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.GrupoPredicateResolver;
@@ -69,6 +72,7 @@ public class GrupoService {
   private final SolicitudRepository solicitudRepository;
   private final RolProyectoService rolProyectoService;
   private final GrupoEquipoRepository grupoEquipoRepository;
+  private final GrupoPersonaAutorizadaRepository grupoPersonaAutorizadaRepository;
   private final GrupoAuthorityHelper authorityHelper;
 
   /**
@@ -485,6 +489,35 @@ public class GrupoService {
     List<Long> returnValue = repository.findIds(specs);
 
     log.debug("findIdsGruposModificados(String query) - end");
+
+    return returnValue;
+  }
+
+  /**
+   * Devuelve la lista de investigadores principales y personas autorizadas de los
+   * {@link Grupo} a los que pertenecen las personaRef
+   *
+   * @param query información del filtro.
+   * @return lista de investigadores principales y personas autorizadas de los
+   *         {@link Grupo}
+   */
+  public List<String> findPersonaRefInvestigadoresPrincipalesAndAutorizadas(String query) {
+    log.debug("findPersonaRefInvestigadoresPrincipalesAndAutorizadas(String query) - start");
+
+    Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
+
+    Specification<Grupo> specs = GrupoSpecifications.activos().and(GrupoSpecifications.distinct())
+        .and(SgiRSQLJPASupport.toSpecification(query, GrupoPredicateResolver.getInstance(sgiConfigProperties)));
+
+    List<String> returnValue = repository.findIds(specs).stream()
+        .flatMap(
+            grupoId -> Stream.concat(
+                grupoEquipoRepository.findPersonaRefInvestigadoresPrincipales(grupoId, fechaActual).stream(),
+                grupoPersonaAutorizadaRepository.findPersonaRefs(grupoId, fechaActual).stream()))
+        .distinct()
+        .collect(Collectors.toList());
+
+    log.debug("findPersonaRefInvestigadoresPrincipalesAndAutorizadas(String query) - end");
 
     return returnValue;
   }

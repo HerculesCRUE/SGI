@@ -28,7 +28,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ProyectoEquipoControllerTest
  */
 @WebMvcTest(ProyectoEquipoController.class)
-public class ProyectoEquipoControllerTest extends BaseControllerTest {
+class ProyectoEquipoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ProyectoEquipoService service;
@@ -38,7 +38,7 @@ public class ProyectoEquipoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_ReturnsProyectoEquipoList() throws Exception {
+  void update_ReturnsProyectoEquipoList() throws Exception {
     // given: una lista con uno de los ProyectoEquipo
     // actualizado,
     // otro nuevo y sin los otros 3 periodos existentes
@@ -89,7 +89,7 @@ public class ProyectoEquipoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     ProyectoEquipo proyectoEquipo = generarMockProyectoEquipo(1L, Instant.parse("2020-04-02T00:00:00Z"),
@@ -110,7 +110,7 @@ public class ProyectoEquipoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsProyectoEquipo() throws Exception {
+  void findById_WithExistingId_ReturnsProyectoEquipo() throws Exception {
     // given: existing id
     Long proyectoEquipoId = 1L;
 
@@ -136,7 +136,7 @@ public class ProyectoEquipoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     Long proyectoEquipoId = 1L;
 

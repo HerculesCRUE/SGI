@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  */
 
 @WebMvcTest(ModeloTipoFinalidadController.class)
-public class ModeloTipoFinalidadControllerTest extends BaseControllerTest {
+class ModeloTipoFinalidadControllerTest extends BaseControllerTest {
 
   @MockBean
   private ModeloTipoFinalidadService service;
@@ -35,7 +35,7 @@ public class ModeloTipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void create_ReturnsTipoFinalidad() throws Exception {
+  void create_ReturnsTipoFinalidad() throws Exception {
     // given: new ModeloTipoFinalidad
     ModeloTipoFinalidad data = generarModeloTipoFinalidad(null, 1L, 1L);
 
@@ -67,7 +67,7 @@ public class ModeloTipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ModeloTipoFinalidad with id filled
     ModeloTipoFinalidad data = generarModeloTipoFinalidad(1L, 1L, 1L);
 
@@ -86,7 +86,7 @@ public class ModeloTipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     ModeloTipoFinalidad data = generarModeloTipoFinalidad(1L, 1L, 1L);
     BDDMockito.given(service.disable(ArgumentMatchers.<Long>any())).willReturn(data);
@@ -102,7 +102,7 @@ public class ModeloTipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
-  public void delete_NoExistingId_Return404() throws Exception {
+  void delete_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -123,7 +123,7 @@ public class ModeloTipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsModeloTipoFinalidad() throws Exception {
+  void findById_WithExistingId_ReturnsModeloTipoFinalidad() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer(new Answer<ModeloTipoFinalidad>() {
       @Override
@@ -146,7 +146,7 @@ public class ModeloTipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ModeloTipoFinalidadNotFoundException(1L);

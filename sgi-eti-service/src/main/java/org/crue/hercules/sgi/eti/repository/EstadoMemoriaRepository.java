@@ -20,5 +20,7 @@ public interface EstadoMemoriaRepository
   // int limit);
 
   List<EstadoMemoria> findAllByMemoriaIdOrderByFechaEstadoDesc(Long idMemoria);
+  
+  EstadoMemoria findTopByMemoriaIdOrderByFechaEstadoDesc(Long idMemoria);
 
 }

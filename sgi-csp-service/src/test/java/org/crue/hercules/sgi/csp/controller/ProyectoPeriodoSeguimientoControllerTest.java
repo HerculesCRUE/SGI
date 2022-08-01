@@ -39,7 +39,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ProyectoPeriodoSeguimientoControllerTest
  */
 @WebMvcTest(ProyectoPeriodoSeguimientoController.class)
-public class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest {
+class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ProyectoPeriodoSeguimientoService service;
@@ -56,7 +56,7 @@ public class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void create_ReturnsProyectoPeriodoSeguimiento() throws Exception {
+  void create_ReturnsProyectoPeriodoSeguimiento() throws Exception {
     // given: new ProyectoPeriodoSeguimiento
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
     proyectoPeriodoSeguimiento.setId(1L);
@@ -86,7 +86,7 @@ public class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ProyectoPeriodoSeguimiento with id filled
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
 
@@ -105,7 +105,7 @@ public class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_ReturnsProyectoPeriodoSeguimiento() throws Exception {
+  void update_ReturnsProyectoPeriodoSeguimiento() throws Exception {
     // given: Existing ProyectoPeriodoSeguimiento to be updated
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoExistente = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
@@ -132,7 +132,7 @@ public class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
@@ -152,7 +152,7 @@ public class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.doNothing().when(service).delete(ArgumentMatchers.anyLong());
@@ -170,7 +170,7 @@ public class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void delete_NoExistingId_Return404() throws Exception {
+  void delete_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -189,7 +189,7 @@ public class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void existsById_WithExistingId_Returns200() throws Exception {
+  void existsById_WithExistingId_Returns200() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(service.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
@@ -205,7 +205,7 @@ public class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void existsById_WithNoExistingId_Returns204() throws Exception {
+  void existsById_WithNoExistingId_Returns204() throws Exception {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(service.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.FALSE);
@@ -221,7 +221,7 @@ public class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findById_WithExistingId_ReturnsProyectoPeriodoSeguimiento() throws Exception {
+  void findById_WithExistingId_ReturnsProyectoPeriodoSeguimiento() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
@@ -245,7 +245,7 @@ public class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ProyectoPeriodoSeguimientoNotFoundException(1L);
@@ -268,7 +268,7 @@ public class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoPeriodoSeguimientoDocumento_ReturnsPage() throws Exception {
+  void findAllProyectoPeriodoSeguimientoDocumento_ReturnsPage() throws Exception {
     // given: Una lista con 37 ProyectoPeriodoSeguimiento para el Proyecto
     Long proyectoId = 1L;
 
@@ -332,7 +332,7 @@ public class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoPeriodoSeguimientoDocumento_EmptyList_Returns204() throws Exception {
+  void findAllProyectoPeriodoSeguimientoDocumento_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de ProyectoPeriodoSeguimientoDocumento para la
     // Proyecto
     Long proyectoId = 1L;
@@ -366,7 +366,7 @@ public class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void existsDocumentosById_WithExistingId_Returns200() throws Exception {
+  void existsDocumentosById_WithExistingId_Returns200() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito
@@ -385,7 +385,7 @@ public class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void existsDocumentosById_WithNoExistingId_Returns204() throws Exception {
+  void existsDocumentosById_WithNoExistingId_Returns204() throws Exception {
     // given: no existing id
     Long id = 1L;
     BDDMockito

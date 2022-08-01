@@ -5,6 +5,10 @@ import org.crue.hercules.sgi.pii.model.RepartoEquipoInventor;
 import org.crue.hercules.sgi.pii.model.RepartoEquipoInventor_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RepartoEquipoInventorSpecifications {
   /**
    * {@link RepartoEquipoInventor} de la entidad {@link Reparto} con el id
@@ -15,8 +19,6 @@ public class RepartoEquipoInventorSpecifications {
    *         entidad {@link Reparto} con el id indicado.
    */
   public static Specification<RepartoEquipoInventor> byRepartoId(Long id) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(RepartoEquipoInventor_.repartoId), id);
-    };
+    return (root, query, cb) -> cb.equal(root.get(RepartoEquipoInventor_.repartoId), id);
   }
 }

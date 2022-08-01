@@ -31,7 +31,7 @@ class SgiApiTpServiceTest extends BaseServiceTest {
   private SgiApiTpService sgiApiTaskService;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     BDDMockito.given(restApiProperties.getTpUrl()).willReturn("http://localhost");
     this.sgiApiTaskService = new SgiApiTpService(restApiProperties, restTemplate);
   }

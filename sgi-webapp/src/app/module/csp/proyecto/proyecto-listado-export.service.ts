@@ -24,7 +24,7 @@ import { ReportService } from '@core/services/rep/report.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of, zip } from 'rxjs';
+import { concat, Observable, of, zip } from 'rxjs';
 import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
 import { ProyectoAreaConocimientoListadoExportService } from './proyecto-area-conocimiento-listado-export.service';
 import { ProyectoCalendarioFacturacionListadoExportService } from './proyecto-calendario-facturacion-listado-export.service';
@@ -233,7 +233,7 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
   }
 
   private getDataReportInner(proyectoData: IProyectoReportData, reportOptions: IProyectoReportOptions): Observable<IProyectoReportData> {
-    return merge(
+    return concat(
       this.getDataReportListadoGeneral(proyectoData),
       this.getDataReportAreasConocimiento(proyectoData, reportOptions),
       this.getDataReportClasificaciones(proyectoData, reportOptions),
@@ -252,7 +252,7 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
       this.getDataReportPartidaPresupuestaria(proyectoData, reportOptions),
       this.getDataReportPresupuesto(proyectoData, reportOptions),
       this.getDataReportCalendarioJustificacion(proyectoData, reportOptions),
-      this.getDataReportCalendarioFacturacion(proyectoData, reportOptions),
+      this.getDataReportCalendarioFacturacion(proyectoData, reportOptions)
     ).pipe(
       takeLast(1),
       catchError((err) => {

@@ -12,13 +12,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * ConceptoGastoRepositoryTest
  */
 @DataJpaTest
-public class ConceptoGastoRespositoryTest extends BaseRepositoryTest {
+class ConceptoGastoRespositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ConceptoGastoRepository repository;
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsConceptoGasto() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsConceptoGasto() throws Exception {
     // given: 2 ConceptoGasto de los que 1 coincide con el nombre buscado
     ConceptoGasto conceptoGasto1 = new ConceptoGasto(null, "nombre-1", "descripcion-1", true, true);
     entityManager.persistAndFlush(conceptoGasto1);
@@ -40,7 +40,7 @@ public class ConceptoGastoRespositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByNombreAndActivoIsTrue_NoExiste_ReturnsNull() throws Exception {
+  void findByNombreAndActivoIsTrue_NoExiste_ReturnsNull() throws Exception {
     // given: 2 ConceptoGasto que no coinciden con el nombre buscado
     ConceptoGasto conceptoGasto1 = new ConceptoGasto(null, "nombre-1", "descripcion-1", true, true);
     entityManager.persistAndFlush(conceptoGasto1);

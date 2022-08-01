@@ -54,7 +54,7 @@ export class PublicacionEditarComponent extends ActionComponent implements OnIni
     super(router, route, actionService, dialogService);
     this.subscriptions.push(
       this.actionService.isProduccionCientificaDisabled$()
-        .subscribe(isEditable => this.isProduccionCientificaDisabled = isEditable)
+        .subscribe(isDisabled => this.isProduccionCientificaDisabled = isDisabled)
     );
   }
 

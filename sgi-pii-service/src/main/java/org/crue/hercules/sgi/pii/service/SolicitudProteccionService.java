@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_NOTNULL;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -75,8 +79,10 @@ public class SolicitudProteccionService {
 
     Assert.isNull(solicitudProteccion.getId(),
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(SolicitudProteccion.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(SolicitudProteccion.class))
+            .build());
 
     solicitudProteccion.setActivo(true);
 
@@ -97,15 +103,19 @@ public class SolicitudProteccionService {
 
     Assert.notNull(solicitudProteccion.getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(SolicitudProteccion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(SolicitudProteccion.class))
+            .build());
 
     Assert.notNull(solicitudProteccion.getViaProteccion().getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage(ViaProteccion.class))
-            .parameter("entity", ApplicationContextSupport.getMessage(SolicitudProteccion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ViaProteccion.class))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(SolicitudProteccion.class))
+            .build());
 
     Optional<ViaProteccion> viaProteccionOptional = this.viaProteccionRepository
         .findById(solicitudProteccion.getViaProteccion().getId());
@@ -113,28 +123,36 @@ public class SolicitudProteccionService {
         .ifPresent(viaProteccion -> {
           Assert.notNull(solicitudProteccion.getEstado(),
               // Defer message resolution untill is needed
-              () -> ProblemMessage.builder().key(Assert.class, "notNull")
-                  .parameter("field",
+              () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+                  .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD,
                       ApplicationContextSupport
                           .getMessage("org.crue.hercules.sgi.pii.model.SolicitudProteccion.estado"))
-                  .parameter("entity", ApplicationContextSupport.getMessage(SolicitudProteccion.class)).build());
+                  .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                      ApplicationContextSupport.getMessage(SolicitudProteccion.class))
+                  .build());
           if (solicitudProteccion.getEstado().equals(EstadoSolicitudProteccion.CADUCADA)) {
             Assert.notNull(solicitudProteccion.getFechaCaducidad(),
                 // Defer message resolution untill is needed
-                () -> ProblemMessage.builder().key(Assert.class, "notNull")
-                    .parameter("field", ApplicationContextSupport.getMessage("fechaCaducidad"))
-                    .parameter("entity", ApplicationContextSupport.getMessage(SolicitudProteccion.class)).build());
+                () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+                    .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("fechaCaducidad"))
+                    .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                        ApplicationContextSupport.getMessage(SolicitudProteccion.class))
+                    .build());
             Assert.notNull(solicitudProteccion.getTipoCaducidad(),
                 // Defer message resolution untill is needed
-                () -> ProblemMessage.builder().key(Assert.class, "notNull")
-                    .parameter("field", ApplicationContextSupport.getMessage("tipoCaducidad"))
-                    .parameter("entity", ApplicationContextSupport.getMessage(SolicitudProteccion.class)).build());
+                () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+                    .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("tipoCaducidad"))
+                    .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                        ApplicationContextSupport.getMessage(SolicitudProteccion.class))
+                    .build());
             if (Boolean.TRUE.equals(viaProteccion.getPaisEspecifico())) {
               Assert.notNull(solicitudProteccion.getPaisProteccionRef(),
                   // Defer message resolution untill is needed
-                  () -> ProblemMessage.builder().key(Assert.class, "notNull")
-                      .parameter("field", ApplicationContextSupport.getMessage("pais"))
-                      .parameter("entity", ApplicationContextSupport.getMessage(SolicitudProteccion.class)).build());
+                  () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+                      .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("pais"))
+                      .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                          ApplicationContextSupport.getMessage(SolicitudProteccion.class))
+                      .build());
             }
           }
         });
@@ -192,9 +210,11 @@ public class SolicitudProteccionService {
   public SolicitudProteccion activar(Long id) {
 
     Assert.notNull(id,
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(SolicitudProteccion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(SolicitudProteccion.class))
+            .build());
 
     return this.solicitudProteccionRepository.findById(id).map(solicitudProteccion -> {
       if (Boolean.TRUE.equals(solicitudProteccion.getActivo())) {
@@ -222,9 +242,11 @@ public class SolicitudProteccionService {
   public SolicitudProteccion desactivar(Long id) {
 
     Assert.notNull(id,
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(SolicitudProteccion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(SolicitudProteccion.class))
+            .build());
 
     return this.solicitudProteccionRepository.findById(id).map(solicitudProteccion -> {
 

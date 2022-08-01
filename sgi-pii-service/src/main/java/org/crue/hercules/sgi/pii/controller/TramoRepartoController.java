@@ -64,7 +64,7 @@ public class TramoRepartoController {
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthority('PII-TRE-V', 'PII-TRE-C', 'PII-TRE-E', 'PII-TRE-B', 'PII-TRE-R', 'PII-INV-V', 'PII-INV-E')")
-  ResponseEntity<Page<TramoRepartoOutput>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<TramoRepartoOutput>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodos(String query, Pageable paging) - start");
     Page<TramoReparto> page = service.findAll(query, paging);
@@ -86,7 +86,7 @@ public class TramoRepartoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthority('PII-TRE-V', 'PII-TRE-C', 'PII-TRE-E', 'PII-TRE-B', 'PII-TRE-R')")
-  TramoRepartoOutput findById(@PathVariable Long id) {
+  public TramoRepartoOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     TramoReparto returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -101,7 +101,7 @@ public class TramoRepartoController {
    */
   @PostMapping
   @PreAuthorize("hasAuthority('PII-TRE-C')")
-  ResponseEntity<TramoRepartoOutput> create(@Valid @RequestBody TramoRepartoInput tramoReparto) {
+  public ResponseEntity<TramoRepartoOutput> create(@Valid @RequestBody TramoRepartoInput tramoReparto) {
     log.debug("create(TramoReparto tramoReparto) - start");
     TramoReparto returnValue = service.create(convert(tramoReparto));
     log.debug("create(TramoReparto tramoReparto) - end");
@@ -117,7 +117,7 @@ public class TramoRepartoController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('PII-TRE-E')")
-  TramoRepartoOutput update(@Valid @RequestBody TramoRepartoInput tramoReparto, @PathVariable Long id) {
+  public TramoRepartoOutput update(@Valid @RequestBody TramoRepartoInput tramoReparto, @PathVariable Long id) {
     log.debug("update(TramoReparto tramoReparto, Long id) - start");
     TramoReparto returnValue = service.update(convert(id, tramoReparto));
     log.debug("update(TramoReparto tramoReparto, Long id) - end");
@@ -128,11 +128,10 @@ public class TramoRepartoController {
    * Elimina la entidad {@link TramoReparto} con id indicado.
    * 
    * @param id Identificador de {@link TramoReparto}.
-   * @return {@link TramoReparto} actualizado.
    */
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthority('PII-TRE-B')")
-  void delete(@PathVariable Long id) {
+  public void delete(@PathVariable Long id) {
     log.debug("delete(Long id) - start");
     service.delete(id);
     log.debug("delete(Long id) - end");
@@ -147,9 +146,9 @@ public class TramoRepartoController {
    */
   @RequestMapping(path = "", method = RequestMethod.HEAD, params = { "tipo" })
   @PreAuthorize("hasAnyAuthority('PII-TRE-V', 'PII-TRE-C', 'PII-TRE-E')")
-  public ResponseEntity<?> existTipoTramoReparto(@RequestParam(required = true) Tipo tipo) {
+  public ResponseEntity<Void> existTipoTramoReparto(@RequestParam(required = true) Tipo tipo) {
     log.debug("ResponseEntity<?> existTipoTramoReparto(Tipo tipo) - start");
-    final ResponseEntity<?> returnValue = service.existTipoTramoReparto(tipo) ? new ResponseEntity<>(HttpStatus.OK)
+    final ResponseEntity<Void> returnValue = service.existTipoTramoReparto(tipo) ? new ResponseEntity<>(HttpStatus.OK)
         : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     log.debug("ResponseEntity<?> existTipoTramoReparto(Tipo tipo) - end");
 
@@ -164,9 +163,9 @@ public class TramoRepartoController {
    */
   @RequestMapping(path = "/{id}/modificable", method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthority('PII-TRE-V', 'PII-TRE-C', 'PII-TRE-E')")
-  public ResponseEntity<?> isTramoRepartoModificable(@PathVariable Long id) {
+  public ResponseEntity<Void> isTramoRepartoModificable(@PathVariable Long id) {
     log.debug("ResponseEntity<?> isTramoRepartoModificable(Long id) - start");
-    final ResponseEntity<?> returnValue = service.isTramoRepartoModificable(id) ? new ResponseEntity<>(HttpStatus.OK)
+    final ResponseEntity<Void> returnValue = service.isTramoRepartoModificable(id) ? new ResponseEntity<>(HttpStatus.OK)
         : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     log.debug("ResponseEntity<?> isTramoRepartoModificable(Long id) - end");
 
@@ -178,7 +177,7 @@ public class TramoRepartoController {
   }
 
   private Page<TramoRepartoOutput> convert(Page<TramoReparto> page) {
-    List<TramoRepartoOutput> content = page.getContent().stream().map((sectorAplicacion) -> convert(sectorAplicacion))
+    List<TramoRepartoOutput> content = page.getContent().stream().map(this::convert)
         .collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());

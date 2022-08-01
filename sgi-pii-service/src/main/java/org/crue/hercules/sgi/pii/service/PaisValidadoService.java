@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_NOTNULL;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.pii.exceptions.PaisValidadoNotFoundException;
@@ -62,8 +66,9 @@ public class PaisValidadoService {
     Assert.isNull(paisValidado.getId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(PaisValidado.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(PaisValidado.class))
+            .build());
     this.commonValidations(paisValidado);
 
     PaisValidado returnValue = this.repository.save(paisValidado);
@@ -100,9 +105,10 @@ public class PaisValidadoService {
     log.debug("deleteById(Long id) - start");
     Assert.notNull(id,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(PaisValidado.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(PaisValidado.class))
+            .build());
     if (!this.repository.existsById(id)) {
       throw new PaisValidadoNotFoundException(id);
     }
@@ -113,29 +119,33 @@ public class PaisValidadoService {
   private void commonValidations(PaisValidado paisValidado) {
     Assert.notNull(paisValidado.getSolicitudProteccionId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field",
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD,
                 ApplicationContextSupport
                     .getMessage("org.crue.hercules.sgi.pii.model.SolicitudProteccion.solicitudProteccion"))
-            .parameter("entity", ApplicationContextSupport.getMessage(PaisValidado.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(PaisValidado.class))
+            .build());
     Assert.notNull(paisValidado.getFechaValidacion(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field",
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD,
                 ApplicationContextSupport.getMessage("org.crue.hercules.sgi.pii.model.PaisValidado.fechaValidacion"))
-            .parameter("entity", ApplicationContextSupport.getMessage(PaisValidado.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(PaisValidado.class))
+            .build());
     Assert.notNull(paisValidado.getCodigoInvencion(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field",
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD,
                 ApplicationContextSupport.getMessage("org.crue.hercules.sgi.pii.model.PaisValidado.codigoInvencion"))
-            .parameter("entity", ApplicationContextSupport.getMessage(PaisValidado.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(PaisValidado.class))
+            .build());
     Assert.notNull(paisValidado.getPaisRef(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field",
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD,
                 ApplicationContextSupport.getMessage("org.crue.hercules.sgi.pii.model.PaisValidado.paisRef"))
-            .parameter("entity", ApplicationContextSupport.getMessage(PaisValidado.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(PaisValidado.class))
+            .build());
     if (!this.solicitudRepository.existsById(paisValidado.getSolicitudProteccionId())) {
       throw new SolicitudProteccionNotFoundException(paisValidado.getSolicitudProteccionId());
     }

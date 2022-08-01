@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * SolicitudProyectoEntidadFinanciadoraAjenaControllerTest
  */
 @WebMvcTest(SolicitudProyectoEntidadFinanciadoraAjenaController.class)
-public class SolicitudProyectoEntidadFinanciadoraAjenaControllerTest extends BaseControllerTest {
+class SolicitudProyectoEntidadFinanciadoraAjenaControllerTest extends BaseControllerTest {
 
   @MockBean
   private SolicitudProyectoEntidadFinanciadoraAjenaService service;
@@ -47,7 +47,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaControllerTest extends Bas
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void create_ReturnsModeloSolicitudProyectoEntidadFinanciadoraAjena() throws Exception {
+  void create_ReturnsModeloSolicitudProyectoEntidadFinanciadoraAjena() throws Exception {
     // given: new SolicitudProyectoEntidadFinanciadoraAjena
     SolicitudProyectoEntidadFinanciadoraAjena solicitudProyectoEntidadFinanciadoraAjena = generarMockSolicitudProyectoEntidadFinanciadoraAjena(
         1L);
@@ -83,7 +83,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaControllerTest extends Bas
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a SolicitudProyectoEntidadFinanciadoraAjena with id filled
     SolicitudProyectoEntidadFinanciadoraAjena solicitudProyectoEntidadFinanciadoraAjena = generarMockSolicitudProyectoEntidadFinanciadoraAjena(
         1L);
@@ -103,7 +103,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaControllerTest extends Bas
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void update_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() throws Exception {
+  void update_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() throws Exception {
     // given: Existing SolicitudProyectoEntidadFinanciadoraAjena to be updated
     SolicitudProyectoEntidadFinanciadoraAjena solicitudProyectoEntidadFinanciadoraAjenaExistente = generarMockSolicitudProyectoEntidadFinanciadoraAjena(
         1L);
@@ -142,7 +142,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaControllerTest extends Bas
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     SolicitudProyectoEntidadFinanciadoraAjena solicitudProyectoEntidadFinanciadoraAjena = generarMockSolicitudProyectoEntidadFinanciadoraAjena(
@@ -164,7 +164,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaControllerTest extends Bas
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.doNothing().when(service).delete(ArgumentMatchers.anyLong());
@@ -182,7 +182,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaControllerTest extends Bas
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void delete_NoExistingId_Return404() throws Exception {
+  void delete_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -201,7 +201,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaControllerTest extends Bas
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() throws Exception {
+  void findById_WithExistingId_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
       return generarMockSolicitudProyectoEntidadFinanciadoraAjena(invocation.getArgument(0));
@@ -226,7 +226,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaControllerTest extends Bas
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new SolicitudProyectoEntidadFinanciadoraAjenaNotFoundException(1L);

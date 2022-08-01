@@ -38,7 +38,7 @@ import org.springframework.data.jpa.domain.Specification;
  * FuenteFinanciacionServiceTest
  */
 @Import({ FuenteFinanciacionService.class, ApplicationContextSupport.class })
-public class FuenteFinanciacionServiceTest extends BaseServiceTest {
+class FuenteFinanciacionServiceTest extends BaseServiceTest {
 
   @MockBean
   private FuenteFinanciacionRepository repository;
@@ -63,7 +63,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_ReturnsFuenteFinanciacion() {
+  void create_ReturnsFuenteFinanciacion() {
     // given: Un nuevo FuenteFinanciacion
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(null);
 
@@ -91,7 +91,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo FuenteFinanciacion que ya tiene id
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(1L);
 
@@ -106,7 +106,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutTipoAmbitoGeograficoId_ThrowsValidationException() {
+  void create_WithoutTipoAmbitoGeograficoId_ThrowsValidationException() {
     // given: Un nuevo FuenteFinanciacion
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(null);
     fuenteFinanciacion.getTipoAmbitoGeografico().setId(null);
@@ -121,7 +121,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutTipoOrigenFuenteFinanciacionId_ThrowsValidationException() {
+  void create_WithoutTipoOrigenFuenteFinanciacionId_ThrowsValidationException() {
     // given: Un nuevo FuenteFinanciacion
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(null);
     fuenteFinanciacion.getTipoOrigenFuenteFinanciacion().setId(null);
@@ -136,7 +136,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedNombre_ThrowsValidationException() {
+  void create_WithDuplicatedNombre_ThrowsValidationException() {
     // given: Un nuevo FuenteFinanciacion con un nombre que ya existe
     FuenteFinanciacion fuenteFinanciacionNew = generarMockFuenteFinanciacion(null, "nombreRepetido");
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(1L, "nombreRepetido");
@@ -154,7 +154,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoActivoTipoAmbitoGeografico_ThrowsValidationException() {
+  void create_WithNoActivoTipoAmbitoGeografico_ThrowsValidationException() {
     // given: Un nuevo FuenteFinanciacion
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(null);
 
@@ -170,7 +170,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoActivoTipoOrigenFuenteFinanciacion_ThrowsValidationException() {
+  void create_WithNoActivoTipoOrigenFuenteFinanciacion_ThrowsValidationException() {
     // given: Un nuevo FuenteFinanciacion
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(null);
 
@@ -186,7 +186,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsFuenteFinanciacion() {
+  void update_ReturnsFuenteFinanciacion() {
     // given: Un nuevo FuenteFinanciacion con el nombre actualizado
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(1L);
     FuenteFinanciacion fuenteFinanciacionNombreActualizado = generarMockFuenteFinanciacion(1L, "NombreActualizado");
@@ -216,7 +216,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_NoActivo_ThrowsValidationException() {
+  void update_NoActivo_ThrowsValidationException() {
     // given: Un FuenteFinanciacion no activo
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(1L, "FuenteFinanciacion");
 
@@ -233,7 +233,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDuplicatedNombre_ThrowsValidationException() {
+  void update_WithDuplicatedNombre_ThrowsValidationException() {
     // given: Un FuenteFinanciacion actualizado con un nombre que ya existe
     FuenteFinanciacion fuenteFinanciacionActualizado = generarMockFuenteFinanciacion(1L, "nombreRepetido");
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(2L, "nombreRepetido");
@@ -253,7 +253,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutTipoAmbitoGeografico_ThrowsIllegalArgumentException() {
+  void update_WithoutTipoAmbitoGeografico_ThrowsIllegalArgumentException() {
     // given: Un FuenteFinanciacion actualizado
     FuenteFinanciacion fuenteFinanciacionExistente = generarMockFuenteFinanciacion(1L);
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(1L);
@@ -274,7 +274,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutTipoOrigenFuenteFinanciacion_ThrowsIllegalArgumentExceptionException() {
+  void update_WithoutTipoOrigenFuenteFinanciacion_ThrowsIllegalArgumentExceptionException() {
     // given: Un FuenteFinanciacion actualizado
     FuenteFinanciacion fuenteFinanciacionExistente = generarMockFuenteFinanciacion(1L);
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(1L);
@@ -295,7 +295,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoActivoTipoAmbitoGeografico_ThrowsValidationException() {
+  void update_WithNoActivoTipoAmbitoGeografico_ThrowsValidationException() {
     // given: Un FuenteFinanciacion actualizado
     FuenteFinanciacion fuenteFinanciacionExistente = generarMockFuenteFinanciacion(1L);
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(1L);
@@ -316,7 +316,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_NoActivaFuenteFinanciacion_ThrowsValidationException() {
+  void update_NoActivaFuenteFinanciacion_ThrowsValidationException() {
     // given: Un FuenteFinanciacion actualizado
     Long id = 1L;
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(id);
@@ -333,7 +333,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_ReturnsFuenteFinanciacion() {
+  void enable_ReturnsFuenteFinanciacion() {
     // given: Un FuenteFinanciacion inactivo existente
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(1L);
     fuenteFinanciacion.setActivo(false);
@@ -361,7 +361,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithDuplicatedNombre_ThrowsValidationException() {
+  void enable_WithDuplicatedNombre_ThrowsValidationException() {
     // given: Un FuenteFinanciacion inactivo con un nombre que ya existe activo
     Long id = 1L;
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(id, "nombreRepetido");
@@ -382,7 +382,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithIdNotExist_ThrowsFuenteFinanciacionNotFoundException() {
+  void enable_WithIdNotExist_ThrowsFuenteFinanciacionNotFoundException() {
     // given: Un id de un FuenteFinanciacion que no existe
     Long idNoExiste = 1L;
 
@@ -398,7 +398,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_ReturnsFuenteFinanciacion() {
+  void disable_ReturnsFuenteFinanciacion() {
     // given: Un nuevo FuenteFinanciacion activo
     FuenteFinanciacion fuenteFinanciacion = generarMockFuenteFinanciacion(1L);
 
@@ -417,12 +417,12 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(fuenteFinanciacionActualizado.getId()).as("getId()").isEqualTo(1L);
     Assertions.assertThat(fuenteFinanciacionActualizado.getNombre()).as("getNombre()")
         .isEqualTo(fuenteFinanciacion.getNombre());
-    Assertions.assertThat(fuenteFinanciacionActualizado.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(fuenteFinanciacionActualizado.getActivo()).as("getActivo()").isFalse();
 
   }
 
   @Test
-  public void disable_WithIdNotExist_ThrowsFuenteFinanciacionNotFoundException() {
+  void disable_WithIdNotExist_ThrowsFuenteFinanciacionNotFoundException() {
     // given: Un id de un FuenteFinanciacion que no existe
     Long idNoExiste = 1L;
 
@@ -438,7 +438,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findActivos_ReturnsPage() {
+  void findActivos_ReturnsPage() {
     // given: Una lista con 37 FuenteFinanciacion
     List<FuenteFinanciacion> fuenteFinanciaciones = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -467,7 +467,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
     Page<FuenteFinanciacion> page = service.findActivos(null, paging);
 
     // then: Devuelve la pagina 3 con los FuenteFinanciacion del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -478,7 +478,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 FuenteFinanciacion
     List<FuenteFinanciacion> fuenteFinanciaciones = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -507,7 +507,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
     Page<FuenteFinanciacion> page = service.findAll(null, paging);
 
     // then: Devuelve la pagina 3 con los FuenteFinanciacion del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -518,7 +518,7 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsFuenteFinanciacion() {
+  void findById_ReturnsFuenteFinanciacion() {
     // given: Un FuenteFinanciacion con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.of(generarMockFuenteFinanciacion(idBuscado)));
@@ -530,11 +530,11 @@ public class FuenteFinanciacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(fuenteFinanciacion).as("isNotNull()").isNotNull();
     Assertions.assertThat(fuenteFinanciacion.getId()).as("getId()").isEqualTo(idBuscado);
     Assertions.assertThat(fuenteFinanciacion.getNombre()).as("getNombre()").isEqualTo("nombre-1");
-    Assertions.assertThat(fuenteFinanciacion.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(fuenteFinanciacion.getActivo()).as("getActivo()").isTrue();
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsFuenteFinanciacionNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsFuenteFinanciacionNotFoundException() throws Exception {
     // given: Ningun FuenteFinanciacion con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());

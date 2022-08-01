@@ -48,7 +48,11 @@ export class ActaComentariosComponent extends FragmentComponent implements OnIni
   }
 
   get disabledButtonComentarios() {
-    return !this.formPart.showAddComentarios;
+    if (this.actionService.getLengthMemorias() > 0) {
+      return !this.formPart.showAddComentarios;
+    } else {
+      return true;
+    }
   }
 
   get readonly() {
@@ -73,6 +77,7 @@ export class ActaComentariosComponent extends FragmentComponent implements OnIni
   ngOnInit() {
     super.ngOnInit();
     this.setupI18N();
+    this.actionService.initializeMemorias();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.subscriptions.push(this.formPart.comentarios$.subscribe(elements => {

@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_NOTNULL;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -57,8 +61,9 @@ public class TipoProteccionService {
     Assert.isNull(tipoProteccion.getId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(TipoProteccion.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(TipoProteccion.class))
+            .build());
 
     tipoProteccion.setActivo(true);
     TipoProteccion returnValue = repository.save(tipoProteccion);
@@ -80,9 +85,10 @@ public class TipoProteccionService {
 
     Assert.notNull(tipoProteccion.getId(),
         // Defer message resolution until is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(TipoProteccion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(TipoProteccion.class))
+            .build());
 
     return repository.findById(tipoProteccion.getId()).map(tipoProteccionExistente -> {
 
@@ -110,12 +116,13 @@ public class TipoProteccionService {
 
     Assert.notNull(id,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(TipoProteccion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(TipoProteccion.class))
+            .build());
 
     return repository.findById(id).map(tipoProteccion -> {
-      if (tipoProteccion.getActivo()) {
+      if (tipoProteccion.getActivo().booleanValue()) {
         // Si esta activo no se hace nada
         return tipoProteccion;
       }
@@ -145,12 +152,13 @@ public class TipoProteccionService {
 
     Assert.notNull(id,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(TipoProteccion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(TipoProteccion.class))
+            .build());
 
     return repository.findById(id).map(tipoProteccion -> {
-      if (!tipoProteccion.getActivo()) {
+      if (!tipoProteccion.getActivo().booleanValue()) {
         // Si no esta activo no se hace nada
         return tipoProteccion;
       }

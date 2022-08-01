@@ -7,10 +7,9 @@ import { IPais } from '@core/models/sgo/pais';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
 import { AbstractTableExportService, IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
 import { ReportService } from '@core/services/rep/report.service';
-import { SgiAuthService } from '@sgi/framework/auth';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of, zip } from 'rxjs';
+import { concat, Observable, of, zip } from 'rxjs';
 import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
 import { SolicitudProteccionGeneralListadoExportService } from './solicitud-proteccion-general-listado-export.service';
 
@@ -28,7 +27,6 @@ IReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
-    private authService: SgiAuthService,
     private readonly invencionService: InvencionService,
     private readonly solicitudProteccionGeneralListadoExportService: SolicitudProteccionGeneralListadoExportService,
     protected reportService: ReportService
@@ -92,7 +90,7 @@ IReportOptions> {
 
   private getDataReportInner(invencionData: ISolicitudProteccionReportData, reportOptions: IReportOptions):
     Observable<ISolicitudProteccionReportData> {
-    return merge(
+    return concat(
       this.getDataReportListadoGeneral(invencionData),
     ).pipe(
       takeLast(1),

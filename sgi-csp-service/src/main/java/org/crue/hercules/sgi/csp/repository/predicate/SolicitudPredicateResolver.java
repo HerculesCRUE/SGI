@@ -20,6 +20,9 @@ import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante_;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase_;
 import org.crue.hercules.sgi.csp.model.Convocatoria_;
+import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
+import org.crue.hercules.sgi.csp.model.EstadoSolicitud.Estado;
+import org.crue.hercules.sgi.csp.model.EstadoSolicitud_;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.Solicitud_;
@@ -35,7 +38,8 @@ public class SolicitudPredicateResolver implements SgiRSQLPredicateResolver<Soli
   private enum Property {
     REFERENCIA_CONVOCATORIA("referenciaConvocatoria"),
     PLAN_INVESTIGACION("planInvestigacion"),
-    ABIERTO_PLAZO_PRESENTACION_SOLICITUD("abiertoPlazoPresentacionSolicitud");
+    ABIERTO_PLAZO_PRESENTACION_SOLICITUD("abiertoPlazoPresentacionSolicitud"),
+    PENDIENTE("pendiente");
 
     private String code;
 
@@ -132,6 +136,21 @@ public class SolicitudPredicateResolver implements SgiRSQLPredicateResolver<Soli
     return cb.and(plazoInicio, plazoFin);
   }
 
+  private Predicate buildByPendiente(ComparisonNode node, Root<Solicitud> root, CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    boolean applyFilter = Boolean.parseBoolean(node.getArguments().get(0));
+    if (!applyFilter) {
+      return cb.isTrue(cb.literal(true));
+    }
+
+    root.join(Solicitud_.solicitudRrhh);
+    Join<Solicitud, EstadoSolicitud> joinEstado = root.join(Solicitud_.estado);
+
+    return cb.equal(joinEstado.get(EstadoSolicitud_.estado), Estado.SOLICITADA);
+  }
+
   @Override
   public boolean isManaged(ComparisonNode node) {
     Property property = Property.fromCode(node.getSelector());
@@ -153,6 +172,8 @@ public class SolicitudPredicateResolver implements SgiRSQLPredicateResolver<Soli
         return buildByPlanInvestigacion(node, root, criteriaBuilder);
       case ABIERTO_PLAZO_PRESENTACION_SOLICITUD:
         return buildByAbiertoPlazoPresentacionSolicitudes(node, root, criteriaBuilder);
+      case PENDIENTE:
+        return buildByPendiente(node, root, criteriaBuilder);
       default:
         return null;
     }

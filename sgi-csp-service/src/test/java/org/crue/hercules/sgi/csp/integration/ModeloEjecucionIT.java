@@ -51,7 +51,7 @@ class ModeloEjecucionIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsModeloEjecucion() throws Exception {
+  void create_ReturnsModeloEjecucion() throws Exception {
 
     ModeloEjecucion modeloEjecucion = generarMockModeloEjecucion(null);
 
@@ -65,15 +65,15 @@ class ModeloEjecucionIT extends BaseIT {
     Assertions.assertThat(modeloEjecucionCreado.getNombre()).as("getNombre()").isEqualTo(modeloEjecucion.getNombre());
     Assertions.assertThat(modeloEjecucionCreado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(modeloEjecucion.getDescripcion());
-    Assertions.assertThat(modeloEjecucionCreado.getActivo()).as("getActivo()").isEqualTo(true);
-    Assertions.assertThat(modeloEjecucionCreado.getExterno()).as("getExterno()").isEqualTo(false);
-    Assertions.assertThat(modeloEjecucionCreado.getContrato()).as("getContrato()").isEqualTo(false);
+    Assertions.assertThat(modeloEjecucionCreado.getActivo()).as("getActivo()").isTrue();
+    Assertions.assertThat(modeloEjecucionCreado.getExterno()).as("getExterno()").isFalse();
+    Assertions.assertThat(modeloEjecucionCreado.getContrato()).as("getContrato()").isFalse();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsModeloEjecucion() throws Exception {
+  void update_ReturnsModeloEjecucion() throws Exception {
     Long idModeloEjecucion = 1L;
     ModeloEjecucion modeloEjecucion = generarMockModeloEjecucion(idModeloEjecucion, "nombre-actualizado");
 
@@ -89,15 +89,15 @@ class ModeloEjecucionIT extends BaseIT {
         .isEqualTo(modeloEjecucion.getNombre());
     Assertions.assertThat(modeloEjecucionActualizado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(modeloEjecucion.getDescripcion());
-    Assertions.assertThat(modeloEjecucionActualizado.getActivo()).as("getActivo()").isEqualTo(true);
-    Assertions.assertThat(modeloEjecucionActualizado.getExterno()).as("getExterno()").isEqualTo(false);
-    Assertions.assertThat(modeloEjecucionActualizado.getContrato()).as("getContrato()").isEqualTo(false);
+    Assertions.assertThat(modeloEjecucionActualizado.getActivo()).as("getActivo()").isTrue();
+    Assertions.assertThat(modeloEjecucionActualizado.getExterno()).as("getExterno()").isFalse();
+    Assertions.assertThat(modeloEjecucionActualizado.getContrato()).as("getContrato()").isFalse();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void reactivar_ReturnModeloEjecucion() throws Exception {
+  void reactivar_ReturnModeloEjecucion() throws Exception {
     Long idModeloEjecucion = 1L;
 
     final ResponseEntity<ModeloEjecucion> response = restTemplate.exchange(
@@ -115,7 +115,7 @@ class ModeloEjecucionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void desactivar_ReturnModeloEjecucion() throws Exception {
+  void desactivar_ReturnModeloEjecucion() throws Exception {
     Long idModeloEjecucion = 1L;
 
     final ResponseEntity<ModeloEjecucion> response = restTemplate.exchange(
@@ -133,7 +133,7 @@ class ModeloEjecucionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsModeloEjecucion() throws Exception {
+  void findById_ReturnsModeloEjecucion() throws Exception {
     Long idModeloEjecucion = 1L;
 
     final ResponseEntity<ModeloEjecucion> response = restTemplate.exchange(
@@ -145,13 +145,13 @@ class ModeloEjecucionIT extends BaseIT {
     Assertions.assertThat(modeloEjecucion.getId()).as("getId()").isEqualTo(idModeloEjecucion);
     Assertions.assertThat(modeloEjecucion.getNombre()).as("getNombre()").isEqualTo("nombre-1");
     Assertions.assertThat(modeloEjecucion.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-1");
-    Assertions.assertThat(modeloEjecucion.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(modeloEjecucion.getActivo()).as("getActivo()").isTrue();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsModeloEjecucionSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsModeloEjecucionSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
@@ -167,7 +167,7 @@ class ModeloEjecucionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ModeloEjecucion> modelosEjecucion = response.getBody();
-    Assertions.assertThat(modelosEjecucion.size()).isEqualTo(3);
+    Assertions.assertThat(modelosEjecucion).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -184,7 +184,7 @@ class ModeloEjecucionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllTodos_WithPagingSortingAndFiltering_ReturnsModeloEjecucionSubList() throws Exception {
+  void findAllTodos_WithPagingSortingAndFiltering_ReturnsModeloEjecucionSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
@@ -200,7 +200,7 @@ class ModeloEjecucionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ModeloEjecucion> modelosEjecucion = response.getBody();
-    Assertions.assertThat(modelosEjecucion.size()).isEqualTo(3);
+    Assertions.assertThat(modelosEjecucion).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -223,7 +223,7 @@ class ModeloEjecucionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllModeloTipoEnlaces_WithPagingSortingAndFiltering_ReturnsModeloTipoEnlaceSubList() throws Exception {
+  void findAllModeloTipoEnlaces_WithPagingSortingAndFiltering_ReturnsModeloTipoEnlaceSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
@@ -242,7 +242,7 @@ class ModeloEjecucionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ModeloTipoEnlace> modeloTipoEnlaces = response.getBody();
-    Assertions.assertThat(modeloTipoEnlaces.size()).isEqualTo(3);
+    Assertions.assertThat(modeloTipoEnlaces).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -255,7 +255,7 @@ class ModeloEjecucionIT extends BaseIT {
     Assertions.assertThat(modeloTipoEnlaces.get(2).getTipoEnlace().getNombre())
         .as("get(2).getTipoEnlace().getNombre())").isEqualTo("nombre-" + String.format("%03d", 1));
   }
-  
+
   @Test
   void findAllModeloTipoEnlaces_WithPagingSortingAndFiltering_ReturnsStatusCode204() throws Exception {
     HttpHeaders headers = new HttpHeaders();
@@ -286,7 +286,7 @@ class ModeloEjecucionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllModeloTipoFases_WithPagingSortingAndFiltering_ReturnsModeloTipoFaseSubList() throws Exception {
+  void findAllModeloTipoFases_WithPagingSortingAndFiltering_ReturnsModeloTipoFaseSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
@@ -305,7 +305,7 @@ class ModeloEjecucionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ModeloTipoFase> modeloTipoFases = response.getBody();
-    Assertions.assertThat(modeloTipoFases.size()).isEqualTo(3);
+    Assertions.assertThat(modeloTipoFases).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -318,7 +318,7 @@ class ModeloEjecucionIT extends BaseIT {
     Assertions.assertThat(modeloTipoFases.get(2).getTipoFase().getNombre()).as("get(2).getTipoFase().getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 1));
   }
-  
+
   @Test
   void findAllModeloTipoFases_WithPagingSortingAndFiltering_ReturnsStatusCode204() throws Exception {
     HttpHeaders headers = new HttpHeaders();
@@ -343,7 +343,7 @@ class ModeloEjecucionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllModeloTipoFasesConvocatoria_WithPagingSortingAndFiltering_ReturnsModeloTipoFaseSubList()
+  void findAllModeloTipoFasesConvocatoria_WithPagingSortingAndFiltering_ReturnsModeloTipoFaseSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
@@ -363,7 +363,7 @@ class ModeloEjecucionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ModeloTipoFase> modeloTipoFases = response.getBody();
-    Assertions.assertThat(modeloTipoFases.size()).isEqualTo(3);
+    Assertions.assertThat(modeloTipoFases).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -376,7 +376,7 @@ class ModeloEjecucionIT extends BaseIT {
     Assertions.assertThat(modeloTipoFases.get(2).getTipoFase().getNombre()).as("get(2).getTipoFase().getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 1));
   }
-  
+
   @Test
   void findAllModeloTipoFasesConvocatoria_WithPagingSortingAndFiltering_ReturnsStatusCode204()
       throws Exception {
@@ -402,7 +402,7 @@ class ModeloEjecucionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllModeloTipoFasesProyecto_WithPagingSortingAndFiltering_ReturnsModeloTipoFaseSubList()
+  void findAllModeloTipoFasesProyecto_WithPagingSortingAndFiltering_ReturnsModeloTipoFaseSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
@@ -422,7 +422,7 @@ class ModeloEjecucionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ModeloTipoFase> modeloTipoFases = response.getBody();
-    Assertions.assertThat(modeloTipoFases.size()).isEqualTo(3);
+    Assertions.assertThat(modeloTipoFases).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -435,7 +435,7 @@ class ModeloEjecucionIT extends BaseIT {
     Assertions.assertThat(modeloTipoFases.get(2).getTipoFase().getNombre()).as("get(2).getTipoFase().getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 1));
   }
-  
+
   @Test
   void findAllModeloTipoFasesProyecto_WithPagingSortingAndFiltering_ReturnsStatusCode204()
       throws Exception {
@@ -467,7 +467,7 @@ class ModeloEjecucionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllModeloTipoDocumentos_WithPagingSortingAndFiltering_ReturnsModeloTipoDocumentoSubList()
+  void findAllModeloTipoDocumentos_WithPagingSortingAndFiltering_ReturnsModeloTipoDocumentoSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
@@ -487,7 +487,7 @@ class ModeloEjecucionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ModeloTipoDocumento> modeloTipoDocumentos = response.getBody();
-    Assertions.assertThat(modeloTipoDocumentos.size()).isEqualTo(3);
+    Assertions.assertThat(modeloTipoDocumentos).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -510,7 +510,7 @@ class ModeloEjecucionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllModeloTipoFinalidades_WithPagingSortingAndFiltering_ReturnsModeloTipoFinalidadSubList()
+  void findAllModeloTipoFinalidades_WithPagingSortingAndFiltering_ReturnsModeloTipoFinalidadSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
@@ -530,7 +530,7 @@ class ModeloEjecucionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ModeloTipoFinalidad> tiposFinalidad = response.getBody();
-    Assertions.assertThat(tiposFinalidad.size()).isEqualTo(3);
+    Assertions.assertThat(tiposFinalidad).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -553,7 +553,7 @@ class ModeloEjecucionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllModeloTipoHitos_WithPagingSortingAndFiltering_ReturnsModeloTipoHitoSubList() throws Exception {
+  void findAllModeloTipoHitos_WithPagingSortingAndFiltering_ReturnsModeloTipoHitoSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
@@ -572,7 +572,7 @@ class ModeloEjecucionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ModeloTipoHito> modeloTipoHitos = response.getBody();
-    Assertions.assertThat(modeloTipoHitos.size()).isEqualTo(3);
+    Assertions.assertThat(modeloTipoHitos).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -589,7 +589,7 @@ class ModeloEjecucionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllModeloTipoHitosConvocatoria_WithPagingSortingAndFiltering_ReturnsModeloTipoHitoSubList()
+  void findAllModeloTipoHitosConvocatoria_WithPagingSortingAndFiltering_ReturnsModeloTipoHitoSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
@@ -609,7 +609,7 @@ class ModeloEjecucionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ModeloTipoHito> modeloTipoHitos = response.getBody();
-    Assertions.assertThat(modeloTipoHitos.size()).isEqualTo(3);
+    Assertions.assertThat(modeloTipoHitos).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -626,7 +626,7 @@ class ModeloEjecucionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllModeloTipoHitosProyecto_WithPagingSortingAndFiltering_ReturnsModeloTipoHitoSubList()
+  void findAllModeloTipoHitosProyecto_WithPagingSortingAndFiltering_ReturnsModeloTipoHitoSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
@@ -646,7 +646,7 @@ class ModeloEjecucionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ModeloTipoHito> modeloTipoHitos = response.getBody();
-    Assertions.assertThat(modeloTipoHitos.size()).isEqualTo(3);
+    Assertions.assertThat(modeloTipoHitos).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -663,7 +663,7 @@ class ModeloEjecucionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllModeloTipoHitosSolicitud_WithPagingSortingAndFiltering_ReturnsModeloTipoHitoSubList()
+  void findAllModeloTipoHitosSolicitud_WithPagingSortingAndFiltering_ReturnsModeloTipoHitoSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
@@ -683,7 +683,7 @@ class ModeloEjecucionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ModeloTipoHito> modeloTipoHitos = response.getBody();
-    Assertions.assertThat(modeloTipoHitos.size()).isEqualTo(3);
+    Assertions.assertThat(modeloTipoHitos).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -706,7 +706,7 @@ class ModeloEjecucionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllModeloUnidades_WithPagingSortingAndFiltering_ReturnsModeloUnidadSubList() throws Exception {
+  void findAllModeloUnidades_WithPagingSortingAndFiltering_ReturnsModeloUnidadSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
@@ -725,7 +725,7 @@ class ModeloEjecucionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ModeloUnidad> unidadesModelo = response.getBody();
-    Assertions.assertThat(unidadesModelo.size()).isEqualTo(3);
+    Assertions.assertThat(unidadesModelo).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -738,7 +738,7 @@ class ModeloEjecucionIT extends BaseIT {
     Assertions.assertThat(unidadesModelo.get(2).getUnidadGestionRef()).as("get(2).getUnidadGestion())")
         .isEqualTo("unidad-" + String.format("%03d", 1));
   }
- 
+
   @Test
   void findAllModeloUnidades_WithPagingSortingAndFiltering_ReturnsStatusCode204() throws Exception {
     HttpHeaders headers = new HttpHeaders();

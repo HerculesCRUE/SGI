@@ -9,8 +9,7 @@ import { PublicacionListadoComponent } from './publicacion-listado/publicacion-l
 import { PUBLICACION_ROUTE_NAMES } from './publicacion-route-names';
 import { PublicacionDatosGeneralesComponent } from './publicacion-formulario/publicacion-datos-generales/publicacion-datos-generales.component';
 import { FragmentGuard } from '@core/guards/detail-form.guard';
-import { PRODUCCION_CIENTIFICA_ROUTE_PARAMS } from '../shared/produccion-cientifica-route-params';
-import { PRODUCCION_CIENTIFICA_DATA_KEY } from '../shared/produccion-cientifica.resolver';
+import { PRODUCCION_CIENTIFICA_DATA_KEY, PRODUCCION_CIENTIFICA_ROUTE_PARAMS } from '../shared/produccion-cientifica-route-params';
 import { MSG_PARAMS } from '@core/i18n';
 import { ProduccionCientificaInvGuard } from '../shared/produccion-cientifica-inv.guard';
 import { ProduccionCientificaInvResolver } from '../shared/produccion-cientifica-inv.resolver';

@@ -33,7 +33,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * SolicitudModalidadServiceTest
  */
-public class SolicitudModalidadServiceTest extends BaseServiceTest {
+class SolicitudModalidadServiceTest extends BaseServiceTest {
 
   @Mock
   private SolicitudModalidadRepository repository;
@@ -53,13 +53,13 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   private SolicitudModalidadService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new SolicitudModalidadServiceImpl(repository, solicitudRepository, programaRepository,
         convocatoriaEntidadConvocanteRepository, solicitudService);
   }
 
   @Test
-  public void create_WithConvocatoria_ReturnsSolicitudModalidad() {
+  void create_WithConvocatoria_ReturnsSolicitudModalidad() {
     // given: Un nuevo SolicitudModalidad
     Long solicitudId = 1L;
     Solicitud solicitud = generarMockSolicitud(solicitudId);
@@ -98,7 +98,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudModalidad que ya tiene id
     SolicitudModalidad solicitudModalidad = generarMockSolicitudModalidad(1L);
 
@@ -109,7 +109,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutSolicitudId_ThrowsIllegalArgumentException() {
+  void create_WithoutSolicitudId_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudModalidad que no tiene solicitud
     SolicitudModalidad solicitudModalidad = generarMockSolicitudModalidad(null);
     solicitudModalidad.setSolicitudId(null);
@@ -121,7 +121,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutProgramaId_ThrowsIllegalArgumentException() {
+  void create_WithoutProgramaId_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudModalidad que no tiene programa
     SolicitudModalidad solicitudModalidad = generarMockSolicitudModalidad(null);
     solicitudModalidad.getPrograma().setId(null);
@@ -133,7 +133,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingSolicitud_ThrowsSolicitudNotFoundException() {
+  void create_WithNoExistingSolicitud_ThrowsSolicitudNotFoundException() {
     // given: Un nuevo SolicitudModalidad que tiene una solicitud que no existe
     SolicitudModalidad solicitudModalidad = generarMockSolicitudModalidad(null);
 
@@ -146,7 +146,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingPrograma_ThrowsProgramaNotFoundException() {
+  void create_WithNoExistingPrograma_ThrowsProgramaNotFoundException() {
     // given: Un nuevo SolicitudModalidad que tiene un programa que no existe
     Long solicitudId = 1L;
     Solicitud solicitud = generarMockSolicitud(solicitudId);
@@ -162,7 +162,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoValidEntidadRef_ThrowsIllegalArgumentException() {
+  void create_WithNoValidEntidadRef_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudModalidad que tiene una entidadRef y la convocatoria
     // no tiene una convocatoriaEntidadConvocante con ese entidadRef
     Long solicitudId = 1L;
@@ -184,7 +184,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoValidPrograma_ThrowsIllegalArgumentException() {
+  void create_WithNoValidPrograma_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudModalidad y la modalidad seleccionada no pertenece
     // al arbol del programa de la convocatoria
     Long solicitudId = 1L;
@@ -208,7 +208,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsSolicitudModalidad() {
+  void update_ReturnsSolicitudModalidad() {
     // given: Un nuevo SolicitudModalidad con las observaciones actualizadas
     Long solicitudId = 1L;
     Solicitud solicitud = generarMockSolicitud(solicitudId);
@@ -245,7 +245,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithProgramaNotExist_ThrowsProgramaNotFoundException() {
+  void update_WithProgramaNotExist_ThrowsProgramaNotFoundException() {
     // given: Un SolicitudModalidad actualizado con un programa que no existe
     SolicitudModalidad solicitudModalidad = generarMockSolicitudModalidad(1L);
 
@@ -258,7 +258,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsSolicitudModalidadNotFoundException() {
+  void update_WithIdNotExist_ThrowsSolicitudModalidadNotFoundException() {
     // given: Un SolicitudModalidad actualizado con un id que no existe
     SolicitudModalidad solicitudModalidad = generarMockSolicitudModalidad(1L);
 
@@ -274,7 +274,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoValidPrograma_ThrowsIllegalArgumentException() {
+  void update_WithNoValidPrograma_ThrowsIllegalArgumentException() {
     // given: Un SolicitudModalidad actualizadoy la modalidad seleccionada no
     // pertenece al arbol del programa de la convocatoria
     Long solicitudId = 1L;
@@ -300,7 +300,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithProgramaNodoRaiz_ThrowsIllegalArgumentException() {
+  void update_WithProgramaNodoRaiz_ThrowsIllegalArgumentException() {
     // given: Un SolicitudModalidad actualizado y la modalidad seleccionada es el
     // nodo raiz
     Long solicitudId = 1L;
@@ -323,7 +323,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_NoReturnsAnyException() {
+  void delete_WithExistingId_NoReturnsAnyException() {
     // given: existing SolicitudModalidad
     Long id = 1L;
 
@@ -338,7 +338,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -352,7 +352,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsSoliciud() {
+  void findById_ReturnsSoliciud() {
     // given: Un SolicitudModalidad con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.of(generarMockSolicitudModalidad(idBuscado)));
@@ -366,7 +366,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsProgramaNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsProgramaNotFoundException() throws Exception {
     // given: Ningun SolicitudModalidad con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -378,7 +378,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 SolicitudModalidad
     Long solicitudId = 1L;
     List<SolicitudModalidad> solicitudModalidadModalidades = new ArrayList<>();
@@ -408,7 +408,7 @@ public class SolicitudModalidadServiceTest extends BaseServiceTest {
     Page<SolicitudModalidad> page = service.findAllBySolicitud(solicitudId, null, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

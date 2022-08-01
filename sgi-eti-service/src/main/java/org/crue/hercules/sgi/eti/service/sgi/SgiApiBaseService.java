@@ -40,6 +40,9 @@ public abstract class SgiApiBaseService {
       case COM:
         serviceURL = restApiProperties.getComUrl();
         break;
+      case CNF:
+        serviceURL = restApiProperties.getCnfUrl();
+        break;
       default:
         throw new UnknownServiceTypeException(serviceType.name());
     }

@@ -23,7 +23,7 @@ class GrupoTipoConverterTest extends BaseServiceTest {
   private GrupoTipoConverter grupoTipoConverter;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     this.grupoTipoConverter = new GrupoTipoConverter(this.modelMapper);
   }
 

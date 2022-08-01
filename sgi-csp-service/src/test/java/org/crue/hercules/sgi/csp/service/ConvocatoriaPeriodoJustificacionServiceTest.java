@@ -46,7 +46,7 @@ import org.springframework.security.test.context.support.WithMockUser;
  * ConvocatoriaPeriodoJustificacionServiceTest
  */
 @Import({ ConvocatoriaPeriodoJustificacionServiceImpl.class })
-public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest {
+class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest {
 
   @MockBean
   private ConvocatoriaPeriodoJustificacionRepository repository;
@@ -62,7 +62,7 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
   private ConvocatoriaPeriodoJustificacionService service;
 
   @Test
-  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_ReturnsConvocatoriaPeriodoJustificacionList() {
+  void updateConvocatoriaPeriodoJustificacionesConvocatoria_ReturnsConvocatoriaPeriodoJustificacionList() {
     // given: una lista con uno de los ConvocatoriaPeriodoJustificacion actualizado,
     // otro nuevo y sin el otros existente
     Long convocatoriaId = 1L;
@@ -157,7 +157,7 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
   }
 
   @Test
-  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithNoExistingConvocatoria_ThrowsConvocatoriaNotFoundException() {
+  void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithNoExistingConvocatoria_ThrowsConvocatoriaNotFoundException() {
     // given: a ConvocatoriaEntidadGestora with non existing Convocatoria
     Long convocatoriaId = 1L;
     ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion = generarMockConvocatoriaPeriodoJustificacion(1L);
@@ -173,7 +173,7 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
   }
 
   @Test
-  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithIdNotExist_ThrowsConvocatoriaPeriodoJustificacionNotFoundException() {
+  void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithIdNotExist_ThrowsConvocatoriaPeriodoJustificacionNotFoundException() {
     // given: Un ConvocatoriaPeriodoJustificacion a actualizar con un id que no
     // existe
     Long convocatoriaId = 1L;
@@ -194,7 +194,7 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
   }
 
   @Test
-  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithMesFinalLowerThanMesInicial_ThrowsConstraintViolationException() {
+  void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithMesFinalLowerThanMesInicial_ThrowsConstraintViolationException() {
     // given: a ConvocatoriaPeriodoJustificacion with mesFinal lower than mesInicial
     Long convocatoriaId = 1L;
     ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion = generarMockConvocatoriaPeriodoJustificacion(1L);
@@ -216,7 +216,7 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
   }
 
   @Test
-  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithFechaFinBeforeFechaInicio_ThrowsConstraintViolationException() {
+  void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithFechaFinBeforeFechaInicio_ThrowsConstraintViolationException() {
     // given: a ConvocatoriaPeriodoJustificacion with FechaFinPresentacion before
     // FechaInicioPresentacion
     Long convocatoriaId = 1L;
@@ -240,7 +240,7 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
   }
 
   @Test
-  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithMesFinalGreaterThanDuracionConvocatoria_ThrowsPeriodoLongerThanConvocatoriaException() {
+  void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithMesFinalGreaterThanDuracionConvocatoria_ThrowsPeriodoLongerThanConvocatoriaException() {
     // given: a ConvocatoriaPeriodoJustificacion with mesFinal greater than duracion
     // convocatoria
     Long convocatoriaId = 1L;
@@ -264,7 +264,7 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
   }
 
   @Test
-  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithMesSolapado_ThrowsPeriodoWrongOrderException() {
+  void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithMesSolapado_ThrowsPeriodoWrongOrderException() {
     // given: a ConvocatoriaPeriodoJustificacion with mesFinal greater than duracion
     // convocatoria
     Long convocatoriaId = 1L;
@@ -289,7 +289,7 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
   }
 
   @Test
-  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithMesesAfterConvocatoriaPeriodoJustificacionFinal_ThrowsTipoFinalException() {
+  void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithMesesAfterConvocatoriaPeriodoJustificacionFinal_ThrowsTipoFinalException() {
     // given: a ConvocatoriaPeriodoJustificacion with mesInicial greater than
     // ConvocatoriaPeriodoJustificacion FINAL
     Long convocatoriaId = 1L;
@@ -315,7 +315,7 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void findAllByConvocatoria_ReturnsPage() {
+  void findAllByConvocatoria_ReturnsPage() {
     // given: Una lista con 37 ConvocatoriaEntidadGestora para la Convocatoria
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -351,7 +351,7 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
 
     // then: Devuelve la pagina 3 con los ConvocatoriaPeriodoJustificacion del 31 al
     // 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -364,7 +364,7 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
   }
 
   @Test
-  public void findById_ReturnsConvocatoriaPeriodoJustificacion() {
+  void findById_ReturnsConvocatoriaPeriodoJustificacion() {
     // given: Un ConvocatoriaPeriodoJustificacion con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -390,7 +390,7 @@ public class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsConvocatoriaPeriodoJustificacionNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsConvocatoriaPeriodoJustificacionNotFoundException() throws Exception {
     // given: Ningun ConvocatoriaPeriodoJustificacion con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());

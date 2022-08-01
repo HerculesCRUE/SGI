@@ -10,11 +10,10 @@ import { FormFragment } from '@core/services/action-service';
 import { GrupoEquipoService } from '@core/services/csp/grupo-equipo/grupo-equipo.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
-import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion.service';
 import { DateValidator } from '@core/validators/date-validator';
-import { SgiRestFindOptions, RSQLSgiRestSort, SgiRestSortDirection } from '@sgi/framework/http';
+import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, Observable, of } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
@@ -133,7 +132,7 @@ export class GrupoDatosGeneralesFragment extends FormFragment<IGrupo> {
         validators: Validators.required,
         asyncValidators: GrupoValidator.duplicatedCodigo(this.grupoService, this.grupo.id),
       }),
-      proyectoSge: new FormControl(null),
+      proyectoSge: new FormControl({ value: null, disabled: !this.isEdit() }),
       fechaInicio: new FormControl(null, Validators.required),
       fechaFin: new FormControl(null),
       palabrasClave: new FormControl(null),

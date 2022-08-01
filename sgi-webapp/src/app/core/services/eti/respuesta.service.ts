@@ -44,4 +44,14 @@ export class RespuestaService extends SgiMutableRestService<number, IRespuestaBa
     );
   }
 
+  findLastByMemoriaId(memoriaId: number): Observable<IRespuesta> {
+    return this.http.get<IRespuestaBackend>(
+      `${this.endpointUrl}/${memoriaId}/last`,
+    ).pipe(
+      map((response) => {
+        return RESPUESTA_CONVERTER.toTarget(response);
+      })
+    );
+  }
+
 }

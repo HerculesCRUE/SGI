@@ -8,9 +8,8 @@ import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reun
 import { AbstractTableExportService, IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
 import { ReportService } from '@core/services/rep/report.service';
 import { SgiAuthService } from '@sgi/framework/auth';
-import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of, zip } from 'rxjs';
+import { concat, Observable, of, zip } from 'rxjs';
 import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
 import { ConvocatoriaReunionGeneralListadoExportService } from './convocatoria-reunion-general-listado-export.service';
 import { ConvocatoriaReunionMemoriasListadoExportService } from './convocatoria-reunion-memorias-listado-export.service';
@@ -105,7 +104,7 @@ export class ConvocatoriaReunionListadoExportService extends
 
   private getDataReportInner(peticionData: IConvocatoriaReunionReportData, reportOptions: IConvocatoriaReunionReportOptions):
     Observable<IConvocatoriaReunionReportData> {
-    return merge(
+    return concat(
       this.getDataReportListadoGeneral(peticionData),
       this.getDataReportMemorias(peticionData, reportOptions)
     ).pipe(

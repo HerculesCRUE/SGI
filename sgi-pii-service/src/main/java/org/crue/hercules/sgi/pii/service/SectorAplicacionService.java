@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_NOTNULL;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -57,8 +61,9 @@ public class SectorAplicacionService {
     Assert.isNull(sectorAplicacion.getId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(SectorAplicacion.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(SectorAplicacion.class))
+            .build());
 
     sectorAplicacion.setActivo(true);
     SectorAplicacion returnValue = repository.save(sectorAplicacion);
@@ -80,9 +85,10 @@ public class SectorAplicacionService {
 
     Assert.notNull(sectorAplicacion.getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(SectorAplicacion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(SectorAplicacion.class))
+            .build());
 
     return repository.findById(sectorAplicacion.getId()).map(sectorAplicacionExistente -> {
 
@@ -109,12 +115,13 @@ public class SectorAplicacionService {
 
     Assert.notNull(id,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(SectorAplicacion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(SectorAplicacion.class))
+            .build());
 
     return repository.findById(id).map(sectorAplicacion -> {
-      if (sectorAplicacion.getActivo()) {
+      if (sectorAplicacion.getActivo().booleanValue()) {
         // Si esta activo no se hace nada
         return sectorAplicacion;
       }
@@ -144,12 +151,13 @@ public class SectorAplicacionService {
 
     Assert.notNull(id,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(SectorAplicacion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(SectorAplicacion.class))
+            .build());
 
     return repository.findById(id).map(sectorAplicacion -> {
-      if (!sectorAplicacion.getActivo()) {
+      if (!sectorAplicacion.getActivo().booleanValue()) {
         // Si no esta activo no se hace nada
         return sectorAplicacion;
       }

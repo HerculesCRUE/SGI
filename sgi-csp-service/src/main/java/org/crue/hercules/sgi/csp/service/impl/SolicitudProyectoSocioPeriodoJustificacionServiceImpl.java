@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.service.impl;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -107,7 +108,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceImpl
 
     // Id's de periodos a modificar (tienen id)
     List<Long> idsPeriodosModificados = periodos.stream().map(SolicitudProyectoSocioPeriodoJustificacion::getId)
-        .filter(id -> id != null).collect(Collectors.toList());
+        .filter(Objects::nonNull).collect(Collectors.toList());
 
     // Id's de periodos existentes en base de datos
     List<Long> idsPeriodosExistentes = periodosBD.stream().map(SolicitudProyectoSocioPeriodoJustificacion::getId)
@@ -245,7 +246,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceImpl
    */
   private void checkAndSetupPeriodos(SolicitudProyectoSocio solicitud, SolicitudProyecto solicitudProyecto,
       List<SolicitudProyectoSocioPeriodoJustificacion> periodos) {
-    if (periodos.size() == 0) {
+    if (periodos.isEmpty()) {
       // Fast check
       return;
     }
@@ -255,19 +256,6 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceImpl
     Integer mesFinal = 0;
     for (int i = 0; i < periodos.size(); i++) {
       SolicitudProyectoSocioPeriodoJustificacion periodo = periodos.get(i);
-      // Validado por anotaciones en la entidad
-      /*
-       * if (periodo.getMesInicial() .compareTo(periodo.getMesFinal()) > 0) { // Mes
-       * fin debe ser mayor o igual que mes inicio }
-       */
-      // Validado por anotaciones en la entidad
-      /*
-       * if (periodo.getFechaInicioPresentacion() != null &&
-       * periodo.getFechaFinPresentacion() != null && periodo
-       * .getFechaInicioPresentacion().compareTo(periodo.getFechaFinPresentacion()) >
-       * 0) { // La fecha de fin de presentación debe ser mayor o igual que la de
-       * inicio de // presentación }
-       */
       // Invocar validaciones anotadas en SolicitudProyectoSocioPeriodoJustificacion
       Set<ConstraintViolation<SolicitudProyectoSocioPeriodoJustificacion>> result = validator.validate(periodo);
       if (!result.isEmpty()) {

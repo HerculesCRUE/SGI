@@ -13,13 +13,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * ProgramaRepositoryTest
  */
 @DataJpaTest
-public class ProgramaRepositoryTest extends BaseRepositoryTest {
+class ProgramaRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ProgramaRepository repository;
 
   @Test
-  public void findByPadreIdInAndActivoIsTrue_ReturnsPrograma() throws Exception {
+  void findByPadreIdInAndActivoIsTrue_ReturnsPrograma() throws Exception {
     // given: 2 Programa de los que 1 coincide con el id padre buscado
     Programa programa1 = new Programa(null, "nombre-1", "descripcion-1", null, true);
     entityManager.persistAndFlush(programa1);
@@ -43,7 +43,7 @@ public class ProgramaRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByPadreIdInAndActivoIsTrue_IdNoExiste_ReturnsEmptyList() throws Exception {
+  void findByPadreIdInAndActivoIsTrue_IdNoExiste_ReturnsEmptyList() throws Exception {
     // given: 2 Programa que no coinciden con el id padre buscado
     Programa programa1 = new Programa(null, "nombre-1", "descripcion-1", null, true);
     entityManager.persistAndFlush(programa1);
@@ -57,7 +57,7 @@ public class ProgramaRepositoryTest extends BaseRepositoryTest {
     List<Programa> programaEncontrados = repository.findByPadreIdInAndActivoIsTrue(idsPadreBuscados);
 
     // then: No hay ningun Programa con el id padre buscado
-    Assertions.assertThat(programaEncontrados.size()).as("size()").isEqualTo(0);
+    Assertions.assertThat(programaEncontrados.size()).as("size()").isZero();
 
   }
 

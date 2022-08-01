@@ -15,13 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ProyectoPeriodoSeguimientoDocumentoRepositoryTest extends BaseRepositoryTest {
+class ProyectoPeriodoSeguimientoDocumentoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ProyectoPeriodoSeguimientoDocumentoRepository repository;
 
   @Test
-  public void existsByProyectoSeguimiento_ReturnsTrue() throws Exception {
+  void existsByProyectoSeguimiento_ReturnsTrue() throws Exception {
 
     // @formatter:off
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()
@@ -74,7 +74,7 @@ public class ProyectoPeriodoSeguimientoDocumentoRepositoryTest extends BaseRepos
   }
 
   @Test
-  public void existsByProyectoSeguimiento_ReturnsFalse() throws Exception {
+  void existsByProyectoSeguimiento_ReturnsFalse() throws Exception {
 
     // @formatter:off
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()
@@ -137,7 +137,7 @@ public class ProyectoPeriodoSeguimientoDocumentoRepositoryTest extends BaseRepos
   }
 
   @Test
-  public void deleteByProyectoSeguimiento_WithExistingId_NoReturnsAnyException() throws Exception {
+  void deleteByProyectoSeguimiento_WithExistingId_NoReturnsAnyException() throws Exception {
 
     // @formatter:off
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()

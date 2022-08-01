@@ -14,6 +14,8 @@ import javax.validation.Payload;
 public @interface UniqueAnioConvocatoriaBaremacionActiva {
   String message() default "{org.crue.hercules.sgi.prc.validation.UniqueAnioConvocatoriaBaremacionActiva.message}";
 
+  String field() default "anio";
+
   Class<?>[] groups() default {};
 
   Class<? extends Payload>[] payload() default {};

@@ -1,7 +1,6 @@
 package org.crue.hercules.sgi.csp.service;
 
 import javax.validation.Valid;
-import javax.validation.Validator;
 
 import org.crue.hercules.sgi.csp.exceptions.AgrupacionGastoConceptoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoAgrupacionGastoNotFoundException;
@@ -27,7 +26,7 @@ public class AgrupacionGastoConceptoService {
 
   private final AgrupacionGastoConceptoRepository repository;
 
-  public AgrupacionGastoConceptoService(Validator validator, AgrupacionGastoConceptoRepository repository) {
+  public AgrupacionGastoConceptoService(AgrupacionGastoConceptoRepository repository) {
     this.repository = repository;
   }
 

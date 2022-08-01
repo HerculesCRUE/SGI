@@ -152,7 +152,7 @@ class ProyectoAnualidadIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("2");
 
     final List<AnualidadGastoOutput> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(2);
+    Assertions.assertThat(responseData).hasSize(2);
 
     Assertions.assertThat(responseData.get(0)).isNotNull();
     Assertions.assertThat(responseData.get(1)).isNotNull();
@@ -229,7 +229,7 @@ class ProyectoAnualidadIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("2");
 
     final List<AnualidadIngresoOutput> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(2);
+    Assertions.assertThat(responseData).hasSize(2);
 
     Assertions.assertThat(responseData.get(0)).isNotNull();
     Assertions.assertThat(responseData.get(1)).isNotNull();
@@ -292,7 +292,7 @@ class ProyectoAnualidadIT extends BaseIT {
 
     final List<ProyectoAnualidadOutput> responseData = response.getBody();
 
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
@@ -376,7 +376,7 @@ class ProyectoAnualidadIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     Assertions.assertThat(response.getBody()).isNotNull();
-    Assertions.assertThat(response.getBody().size()).isEqualTo(1);
+    Assertions.assertThat(response.getBody()).hasSize(1);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {

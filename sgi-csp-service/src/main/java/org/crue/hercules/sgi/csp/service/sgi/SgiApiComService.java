@@ -4,16 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.crue.hercules.sgi.csp.config.RestApiProperties;
+import org.crue.hercules.sgi.csp.dto.com.CspComAddModCertAutorizacionPartProyectoExtData;
 import org.crue.hercules.sgi.csp.dto.com.CspComCalendarioFacturacionNotificarData;
 import org.crue.hercules.sgi.csp.dto.com.CspComCalendarioFacturacionValidarIPData;
+import org.crue.hercules.sgi.csp.dto.com.CspComCambioEstadoParticipacionAutorizacionProyectoExternoData;
+import org.crue.hercules.sgi.csp.dto.com.CspComCambioEstadoSolicitadaSolTipoRrhhData;
 import org.crue.hercules.sgi.csp.dto.com.CspComInicioPresentacionGastoData;
 import org.crue.hercules.sgi.csp.dto.com.CspComInicioPresentacionSeguimientoCientificoData;
+import org.crue.hercules.sgi.csp.dto.com.CspComModificacionEstadoParticipacionProyectoExternoData;
 import org.crue.hercules.sgi.csp.dto.com.CspComPeriodoJustificacionSocioData;
 import org.crue.hercules.sgi.csp.dto.com.CspComPresentacionSeguimientoCientificoIpData;
+import org.crue.hercules.sgi.csp.dto.com.CspComRecepcionNotificacionesCVNProyectoExtData;
 import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudCambioEstadoAlegacionesData;
 import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudCambioEstadoDefinitivoData;
 import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudCambioEstadoProvisionalData;
@@ -32,6 +34,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -147,6 +152,29 @@ public class SgiApiComService extends SgiApiBaseService {
 
   private static final String CONVOCATORIA_HITO_DEFERRABLE_RECIPIENTS_URI_FORMAT = "/convocatoriahitos/%s/deferrable-recipients";
   private static final String SOLICITUD_HITO_DEFERRABLE_RECIPIENTS_URI_FORMAT = "/solicitudhitos/%s/deferrable-recipients";
+  private static final String PROYECTO_HITO_DEFERRABLE_RECIPIENTS_URI_FORMAT = "/proyectohitos/%s/deferrable-recipients";
+  private static final String CONVOCATORIA_FASE_DEFERRABLE_RECIPIENTS_URI_FORMAT = "/convocatoriafases/%s/deferrable-recipients";
+  private static final String PROYECTO_FASE_DEFERRABLE_RECIPIENTS_URI_FORMAT = "/proyectofases/%s/deferrable-recipients";
+
+  private static final String TEMPLATE_CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO = "CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO";
+  private static final String TEMPLATE_CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_PARAM = TEMPLATE_CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO
+      + DATA;
+
+  private static final String TEMPLATE_CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO = "CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO";
+  private static final String TEMPLATE_CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_PARAM = TEMPLATE_CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO
+      + DATA;
+
+  private static final String TEMPLATE_CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO = "CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO";
+  private static final String TEMPLATE_CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_PARAM = TEMPLATE_CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO
+      + DATA;
+
+  private static final String TEMPLATE_CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO = "CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO";
+  private static final String TEMPLATE_CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_PARAM = TEMPLATE_CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO
+      + DATA;
+
+  private static final String TEMPLATE_CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH = "CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH";
+  private static final String TEMPLATE_CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_PARAM = TEMPLATE_CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH
+      + DATA;
 
   private final ObjectMapper mapper;
 
@@ -424,7 +452,7 @@ public class SgiApiComService extends SgiApiBaseService {
         "createComunicadoSolicitudPeticionEvaluacionEti(CspComSolicitudPeticionEvaluacionData data, List<Recipient> recipients) - start");
 
     ServiceType serviceType = ServiceType.COM;
-    String relativeUrl = "/emails";
+    String relativeUrl = PATH_EMAILS;
     HttpMethod httpMethod = HttpMethod.POST;
     String mergedURL = buildUri(serviceType, relativeUrl);
 
@@ -669,6 +697,108 @@ public class SgiApiComService extends SgiApiBaseService {
         TEMPLATE_CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_PARAM);
   }
 
+  public Long createProyectoHitoEmail(Long proyectoHitoId, String subject, String content,
+      List<Recipient> recipients) {
+    log.debug("createProyectoHitoEmail({}, {}, {}, {}) - start", proyectoHitoId, subject, content, recipients);
+
+    Assert.notNull(proyectoHitoId, "ProyectoHito ID is required");
+    Assert.notNull(subject, "Subject is required");
+    Assert.notNull(content, "Content is required");
+    Assert.notEmpty(recipients, "At least one Recipient is required");
+    Assert.noNullElements(recipients, "The Recipients list must not contain null elements");
+
+    Long id = this.createGenericEmailText(subject, content, recipients, new Deferrable(
+        ServiceType.CSP,
+        String.format(
+            PROYECTO_HITO_DEFERRABLE_RECIPIENTS_URI_FORMAT,
+            proyectoHitoId),
+        HttpMethod.GET))
+        .getId();
+    log.debug("createProyectoHitoEmail({}, {}, {}, {}) - end", proyectoHitoId, subject, content, recipients);
+    return id;
+  }
+
+  public EmailOutput createComunicadoModificacionAutorizacionParticipacionProyectoExterno(
+      CspComModificacionEstadoParticipacionProyectoExternoData data, List<Recipient> recipients)
+      throws JsonProcessingException {
+
+    return this.createComunicado(data, recipients,
+        TEMPLATE_CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO,
+        TEMPLATE_CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_PARAM);
+  }
+
+  public EmailOutput createComunicadoCambioEstadoAutorizacionParticipacionProyectoExterno(
+      CspComCambioEstadoParticipacionAutorizacionProyectoExternoData data, List<Recipient> recipients)
+      throws JsonProcessingException {
+
+    return this.createComunicado(data, recipients,
+        TEMPLATE_CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO,
+        TEMPLATE_CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_PARAM);
+  }
+
+  public EmailOutput createComunicadoAddModificarCertificadoAutorizacionParticipacionProyectoExterno(
+      CspComAddModCertAutorizacionPartProyectoExtData data, List<Recipient> recipients)
+      throws JsonProcessingException {
+
+    return this.createComunicado(data, recipients,
+        TEMPLATE_CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO,
+        TEMPLATE_CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_PARAM);
+  }
+
+  public EmailOutput createComunicadoRecepcionNotificacionCVNProyectoExterno(
+      CspComRecepcionNotificacionesCVNProyectoExtData data, List<Recipient> recipients)
+      throws JsonProcessingException {
+
+    return this.createComunicado(data, recipients,
+        TEMPLATE_CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO,
+        TEMPLATE_CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_PARAM);
+  }
+
+  public EmailOutput createComunicadoCambioEstadoSolicitadaSolTipoRrhh(
+      CspComCambioEstadoSolicitadaSolTipoRrhhData data, List<Recipient> recipients)
+      throws JsonProcessingException {
+
+    return this.createComunicado(data, recipients,
+        TEMPLATE_CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH,
+        TEMPLATE_CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_PARAM);
+  }
+
+  public Long createConvocatoriaFaseEmail(Long convocatoriaFaseId, String subject, String content,
+      List<Recipient> recipients) {
+    log.debug("createConvocatoriaFaseEmail({}, {}, {}, {}) - start", convocatoriaFaseId, subject, content, recipients);
+
+    Assert.notNull(convocatoriaFaseId, "ConvocatoriaFase ID is required");
+    Assert.notNull(subject, "Subject is required");
+    Assert.notNull(content, "Content is required");
+    Assert.notEmpty(recipients, "At least one Recipient is required");
+    Assert.noNullElements(recipients, "The Recipients list must not contain null elements");
+
+    Long id = this.createGenericEmailText(subject, content, recipients, new Deferrable(
+        ServiceType.CSP,
+        String.format(CONVOCATORIA_FASE_DEFERRABLE_RECIPIENTS_URI_FORMAT, convocatoriaFaseId), HttpMethod.GET))
+        .getId();
+    log.debug("createConvocatoriaFaseEmail({}, {}, {}, {}) - end", convocatoriaFaseId, subject, content, recipients);
+    return id;
+  }
+
+  public Long createProyectoFaseEmail(Long proyectoFaseId, String subject, String content,
+      List<Recipient> recipients) {
+    log.debug("createConvocatoriaFaseEmail({}, {}, {}, {}) - start", proyectoFaseId, subject, content, recipients);
+
+    Assert.notNull(proyectoFaseId, "ProyectoFase ID is required");
+    Assert.notNull(subject, "Subject is required");
+    Assert.notNull(content, "Content is required");
+    Assert.notEmpty(recipients, "At least one Recipient is required");
+    Assert.noNullElements(recipients, "The Recipients list must not contain null elements");
+
+    Long id = this.createGenericEmailText(subject, content, recipients, new Deferrable(
+        ServiceType.CSP,
+        String.format(PROYECTO_FASE_DEFERRABLE_RECIPIENTS_URI_FORMAT, proyectoFaseId), HttpMethod.GET))
+        .getId();
+    log.debug("createProyectoFaseEmail({}, {}, {}, {}) - end", proyectoFaseId, subject, content, recipients);
+    return id;
+  }
+
   private <T> EmailOutput createComunicado(T data, List<Recipient> recipients, String template, String templateParam)
       throws JsonProcessingException {
     ServiceType serviceType = ServiceType.COM;
@@ -682,4 +812,5 @@ public class SgiApiComService extends SgiApiBaseService {
         new ParameterizedTypeReference<EmailOutput>() {
         }).getBody();
   }
+
 }

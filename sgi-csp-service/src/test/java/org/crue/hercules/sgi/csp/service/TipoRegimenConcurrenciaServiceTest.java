@@ -22,7 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-public class TipoRegimenConcurrenciaServiceTest extends BaseServiceTest {
+class TipoRegimenConcurrenciaServiceTest extends BaseServiceTest {
 
   @Mock
   private TipoRegimenConcurrenciaRepository repository;
@@ -30,12 +30,12 @@ public class TipoRegimenConcurrenciaServiceTest extends BaseServiceTest {
   private TipoRegimenConcurrenciaService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new TipoRegimenConcurrenciaServiceImpl(repository);
   }
 
   @Test
-  public void findById_WithExistingId_ReturnsTipoRegimenConcurrencia() throws Exception {
+  void findById_WithExistingId_ReturnsTipoRegimenConcurrencia() throws Exception {
     // given: existing TipoRegimenConcurrencia
     TipoRegimenConcurrencia givenData = generarMockTipoRegimenConcurrencia(1L, Boolean.TRUE);
 
@@ -53,7 +53,7 @@ public class TipoRegimenConcurrenciaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
@@ -65,7 +65,7 @@ public class TipoRegimenConcurrenciaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_WithPaging_ReturnsPage() {
+  void findAll_WithPaging_ReturnsPage() {
     // given: One hundred TipoRegimenConcurrencia
     List<TipoRegimenConcurrencia> data = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -94,9 +94,9 @@ public class TipoRegimenConcurrenciaServiceTest extends BaseServiceTest {
     // then: A Page with ten TipoRegimenConcurrencia are returned containing
     // Nombre='nombre-31' to
     // 'nombre-40'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoRegimenConcurrencia item = page.getContent().get(i);

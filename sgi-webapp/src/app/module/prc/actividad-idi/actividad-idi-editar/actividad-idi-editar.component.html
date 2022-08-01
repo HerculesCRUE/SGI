@@ -1,18 +1,28 @@
 <sgi-action [actionService]="actionService">
   <ng-container menu>
-    <sgi-action-fragment-menu-item *sgiHasAnyAuthority="['PRC-VAL-V','PRC-VAL-E']"
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthority="['PRC-VAL-V','PRC-VAL-E','PRC-VAL-INV-ER']"
       [route]="[ACTIVIDAD_IDI_ROUTE_NAMES.DATOS_GENERALES]" [title]="'label.datos-generales' | translate"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
     </sgi-action-fragment-menu-item>
   </ng-container>
   <ng-container footer>
     <sgi-action-empty-footer [actionService]="actionService">
-      <sgi-action-footer-button *sgiHasAuthority="'PRC-VAL-E'" action="validar" color="accent"
-        icon="check_circle_outline" text="{{'btn.validate' | translate}}" [disabled]="isProduccionCientificaEditable">
-      </sgi-action-footer-button>
-      <sgi-action-footer-button *sgiHasAuthority="'PRC-VAL-E'" action="rechazar" color="warn" icon="highlight_off"
-        text="{{'btn.reject' | translate}}" [disabled]="isProduccionCientificaEditable">
-      </sgi-action-footer-button>
+      <ng-container *sgiHasAuthority="'PRC-VAL-E'">
+        <sgi-action-footer-button action="validar" color="accent" icon="check_circle_outline"
+          text="{{'btn.validate' | translate}}" [disabled]="isProduccionCientificaDisabled">
+        </sgi-action-footer-button>
+        <sgi-action-footer-button action="rechazar" color="warn" icon="highlight_off"
+          text="{{'btn.reject' | translate}}" [disabled]="isProduccionCientificaDisabled">
+        </sgi-action-footer-button>
+      </ng-container>
+      <ng-container *sgiHasAuthority="'PRC-VAL-INV-ER'">
+        <sgi-action-footer-button action="validarInvestigador" color="accent" icon="check_circle_outline"
+          text="{{'btn.validate' | translate}}" [disabled]="!canEdit || isProduccionCientificaDisabled">
+        </sgi-action-footer-button>
+        <sgi-action-footer-button action="rechazarInvestigador" color="warn" icon="highlight_off"
+          text="{{'btn.reject' | translate}}" [disabled]="!canEdit || isProduccionCientificaDisabled">
+        </sgi-action-footer-button>
+      </ng-container>
     </sgi-action-empty-footer>
   </ng-container>
 </sgi-action>

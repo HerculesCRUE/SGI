@@ -12,13 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ConvocatoriaPeriodoJustificacionRepositoryTest extends BaseRepositoryTest {
+class ConvocatoriaPeriodoJustificacionRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ConvocatoriaPeriodoJustificacionRepository repository;
 
   @Test
-  public void findAllByConvocatoriaId_ReturnsConvocatoriaPeriodoJustificacion() throws Exception {
+  void findAllByConvocatoriaId_ReturnsConvocatoriaPeriodoJustificacion() throws Exception {
 
     // given: 2 ConvocatoriaPeriodoJustificacion para el ConvocatoriaId buscado
     // @formatter:off
@@ -60,7 +60,7 @@ public class ConvocatoriaPeriodoJustificacionRepositoryTest extends BaseReposito
 
     // then: Se recuperan los ConvocatoriaPeriodoJustificacion con el ConvocatoriaId
     // buscado
-    Assertions.assertThat(dataFound.size()).isEqualTo(2);
+    Assertions.assertThat(dataFound).hasSize(2);
     Assertions.assertThat(dataFound.get(0).getId()).isEqualTo(convocatoriaPeriodoJustificacion1.getId());
     Assertions.assertThat(dataFound.get(0).getConvocatoriaId())
         .isEqualTo(convocatoriaPeriodoJustificacion1.getConvocatoriaId());
@@ -69,7 +69,7 @@ public class ConvocatoriaPeriodoJustificacionRepositoryTest extends BaseReposito
   }
 
   @Test
-  public void findFirstByConvocatoriaIdOrderByNumPeriodoDesc_ReturnsConvocatoriaPeriodoJustificacion()
+  void findFirstByConvocatoriaIdOrderByNumPeriodoDesc_ReturnsConvocatoriaPeriodoJustificacion()
       throws Exception {
 
     // given: 2 ConvocatoriaPeriodoJustificacion de una Convocatoria

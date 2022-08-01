@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Configuracion extends BaseEntity {
 
   /**
@@ -51,4 +53,12 @@ public class Configuracion extends BaseEntity {
   /** Validacion gastos */
   @Column(name = "validacion_gastos", columnDefinition = "boolean default false", nullable = true)
   private Boolean validacionGastos;
+
+  /** Formato identificador justificacion. */
+  @Column(name = "formato_identificador_justificacion", nullable = true, unique = true)
+  private String formatoIdentificadorJustificacion;
+
+  /** Plantilla formato identificador justificacion. */
+  @Column(name = "plantilla_formato_identificador_justificacion", nullable = true, unique = true)
+  private String plantillaFormatoIdentificadorJustificacion;
 }

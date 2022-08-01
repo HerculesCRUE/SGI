@@ -151,9 +151,11 @@ public class GrupoLineaInvestigadorService {
       GrupoLineaInvestigacion grupoLineaInvestigacion) {
 
     // Ordena los responsables por fechaInicial
-    grupoLineasInvestigadores.sort(Comparator.comparing(GrupoLineaInvestigador::getFechaInicio));
+    grupoLineasInvestigadores.sort(Comparator.comparing(GrupoLineaInvestigador::getPersonaRef)
+        .thenComparing(Comparator.comparing(GrupoLineaInvestigador::getFechaInicio)));
 
     Instant lastEnd = null;
+    String lastPersonaRef = null;
     boolean emptyFechaInicio = false;
     boolean emptyFechaFin = false;
     for (GrupoLineaInvestigador lineaInvestigador : grupoLineasInvestigadores) {
@@ -163,26 +165,34 @@ public class GrupoLineaInvestigadorService {
         // Solo puede haber un registro con la fecha de inicio vacia
         throw new GrupoLineaInvestigadorOverlapRangeException();
       }
-      if (emptyFechaFin && lineaInvestigador.getFechaFin() == null) {
+      if (emptyFechaFin && lineaInvestigador.getPersonaRef().equals(lastPersonaRef)
+          && lineaInvestigador.getFechaFin() == null) {
         // Solo puede haber un registro con la fecha de fin vacia
         throw new GrupoLineaInvestigadorOverlapRangeException();
       }
-      if (!emptyFechaInicio && lineaInvestigador.getFechaInicio() == null) {
+      if (lineaInvestigador.getPersonaRef().equals(lastPersonaRef)
+          && !emptyFechaInicio && lineaInvestigador.getFechaInicio() == null) {
         emptyFechaInicio = true;
       }
-      if (!emptyFechaFin && lineaInvestigador.getFechaFin() == null) {
-        emptyFechaFin = true;
-      }
 
-      if ((lineaInvestigador.getFechaInicio() != null
-          && lineaInvestigador.getFechaInicio().isBefore(grupoLineaInvestigacion.getFechaInicio()))
-          || (lineaInvestigador.getFechaFin() != null && fechaFinGrupo != null
-              && lineaInvestigador.getFechaFin().isAfter(fechaFinGrupo))) {
+      if (lineaInvestigador.getPersonaRef().equals(lastPersonaRef)
+          && ((lineaInvestigador.getFechaInicio() != null
+              && lineaInvestigador.getFechaInicio().isBefore(grupoLineaInvestigacion.getFechaInicio()))
+              || (lineaInvestigador.getFechaFin() != null && fechaFinGrupo != null
+                  && lineaInvestigador.getFechaFin().isAfter(fechaFinGrupo)))) {
         throw new GrupoLineaInvestigadorProjectRangeException(lineaInvestigador.getFechaInicio(),
             fechaFinGrupo);
       }
 
-      if (lastEnd != null && lineaInvestigador.getFechaInicio() != null
+      if (lineaInvestigador.getPersonaRef().equals(lastPersonaRef)
+          && !emptyFechaFin && lineaInvestigador.getFechaFin() == null) {
+        emptyFechaFin = true;
+      } else if (!lineaInvestigador.getPersonaRef().equals(lastPersonaRef)) {
+        emptyFechaFin = false;
+      }
+
+      if (lineaInvestigador.getPersonaRef().equals(lastPersonaRef)
+          && lastEnd != null && lineaInvestigador.getFechaInicio() != null
           && lineaInvestigador.getFechaInicio().isBefore(lastEnd)) {
         // La fecha de inicio no puede ser anterior a la fecha fin del anterior elemento
         throw new GrupoLineaInvestigadorOverlapRangeException();
@@ -196,6 +206,7 @@ public class GrupoLineaInvestigadorService {
       }
 
       lastEnd = lineaInvestigador.getFechaFin() != null ? lineaInvestigador.getFechaFin() : fechaFinGrupo;
+      lastPersonaRef = lineaInvestigador.getPersonaRef();
     }
   }
 

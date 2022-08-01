@@ -17,13 +17,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * ProyectoPaqueteTrabajoRepositoryTest
  */
 @DataJpaTest
-public class ProyectoPaqueteTrabajoRepositoryTest extends BaseRepositoryTest {
+class ProyectoPaqueteTrabajoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ProyectoPaqueteTrabajoRepository repository;
 
   @Test
-  public void existsProyectoPaqueteTrabajoByProyectoIdAndNombre_ReturnsTRUE() throws Exception {
+  void existsProyectoPaqueteTrabajoByProyectoIdAndNombre_ReturnsTRUE() throws Exception {
 
     // given: dos registros ProyectoPaqueteTrabajo.
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo1 = generarMockProyectoPaqueteTrabajo("-001");
@@ -43,7 +43,7 @@ public class ProyectoPaqueteTrabajoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void existsProyectoPaqueteTrabajoByProyectoIdAndNombre_ReturnsFALSE() throws Exception {
+  void existsProyectoPaqueteTrabajoByProyectoIdAndNombre_ReturnsFALSE() throws Exception {
 
     // given: dos registros ProyectoPaqueteTrabajo.
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo1 = generarMockProyectoPaqueteTrabajo("-001");
@@ -62,7 +62,7 @@ public class ProyectoPaqueteTrabajoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void existsProyectoPaqueteTrabajoByIdNotAndProyectoIdAndNombre_ReturnsTRUE() throws Exception {
+  void existsProyectoPaqueteTrabajoByIdNotAndProyectoIdAndNombre_ReturnsTRUE() throws Exception {
 
     // given: dos registros ProyectoPaqueteTrabajo.
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo1 = generarMockProyectoPaqueteTrabajo("-001");
@@ -83,7 +83,7 @@ public class ProyectoPaqueteTrabajoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void existsProyectoPaqueteTrabajoByIdNotAndProyectoIdAndNombre_ReturnsFALSE() throws Exception {
+  void existsProyectoPaqueteTrabajoByIdNotAndProyectoIdAndNombre_ReturnsFALSE() throws Exception {
 
     // given: dos registros ProyectoPaqueteTrabajo.
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo1 = generarMockProyectoPaqueteTrabajo("-001");

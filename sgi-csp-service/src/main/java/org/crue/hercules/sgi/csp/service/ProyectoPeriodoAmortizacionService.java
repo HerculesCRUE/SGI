@@ -1,11 +1,11 @@
 package org.crue.hercules.sgi.csp.service;
 
 import javax.validation.Valid;
-import javax.validation.Validator;
 
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoAmortizacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoAmortizacion;
 import org.crue.hercules.sgi.csp.repository.ProyectoPeriodoAmortizacionRepository;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
@@ -27,7 +27,7 @@ public class ProyectoPeriodoAmortizacionService {
 
   private final ProyectoPeriodoAmortizacionRepository repository;
 
-  public ProyectoPeriodoAmortizacionService(Validator validator, ProyectoPeriodoAmortizacionRepository repository) {
+  public ProyectoPeriodoAmortizacionService(ProyectoPeriodoAmortizacionRepository repository) {
     this.repository = repository;
   }
 
@@ -42,13 +42,7 @@ public class ProyectoPeriodoAmortizacionService {
   @Transactional
   public ProyectoPeriodoAmortizacion create(@Valid ProyectoPeriodoAmortizacion proyectoPeriodoAmortizacion) {
     log.debug("create(ProyectoPeriodoAmortizacion proyectoPeriodoAmortizacion) - start");
-
-    Assert.isNull(proyectoPeriodoAmortizacion.getId(),
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ProyectoPeriodoAmortizacion.class)).build());
-
+    AssertHelper.idIsNull(proyectoPeriodoAmortizacion.getId(), ProyectoPeriodoAmortizacion.class);
     ProyectoPeriodoAmortizacion returnValue = repository.save(proyectoPeriodoAmortizacion);
 
     log.debug("create(ProyectoPeriodoAmortizacion proyectoPeriodoAmortizacion) - end");
@@ -67,11 +61,7 @@ public class ProyectoPeriodoAmortizacionService {
   public ProyectoPeriodoAmortizacion update(@Valid ProyectoPeriodoAmortizacion proyectoPeriodoAmortizacion) {
     log.debug("update(ProyectoPeriodoAmortizacion proyectoPeriodoAmortizacion) - start");
 
-    Assert.notNull(proyectoPeriodoAmortizacion.getId(),
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ProyectoPeriodoAmortizacion.class)).build());
+    AssertHelper.idNotNull(proyectoPeriodoAmortizacion.getId(), ProyectoPeriodoAmortizacion.class);
 
     return repository.findById(proyectoPeriodoAmortizacion.getId()).map(proyectoPeriodoAmortizacionExistente -> {
 

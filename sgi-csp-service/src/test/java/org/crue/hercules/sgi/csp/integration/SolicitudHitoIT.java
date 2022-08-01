@@ -21,7 +21,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de SolicitudHito.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SolicitudHitoIT extends BaseIT {
+class SolicitudHitoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/solicitudhitos";
@@ -41,7 +41,7 @@ public class SolicitudHitoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsSolicitudHito() throws Exception {
+  void create_ReturnsSolicitudHito() throws Exception {
     SolicitudHitoInput solicitudHito = generarSolicitudHito(1L, 1L);
 
     final ResponseEntity<SolicitudHitoOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH, HttpMethod.POST,
@@ -62,7 +62,7 @@ public class SolicitudHitoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsSolicitudHito() throws Exception {
+  void update_ReturnsSolicitudHito() throws Exception {
     Long idSolicitudHito = 1L;
     SolicitudHitoInput solicitudHito = generarSolicitudHito(1L, 1L);
     solicitudHito.setComentario("comentario-modificado");
@@ -82,7 +82,7 @@ public class SolicitudHitoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing SolicitudHito to be deleted
     Long id = 1L;
 
@@ -98,7 +98,7 @@ public class SolicitudHitoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsSolicitudHito() throws Exception {
+  void findById_ReturnsSolicitudHito() throws Exception {
     Long idSolicitudHito = 1L;
 
     final ResponseEntity<SolicitudHito> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,

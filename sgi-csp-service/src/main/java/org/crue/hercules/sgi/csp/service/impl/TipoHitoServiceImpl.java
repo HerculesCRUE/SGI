@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -60,10 +61,9 @@ public class TipoHitoServiceImpl implements TipoHitoService {
     log.debug("update(TipoHito tipoHitoActualizar) - start");
 
     Assert.notNull(tipoHitoActualizar.getId(), "TipoHito id no puede ser null para actualizar");
-    tipoHitoRepository.findByNombreAndActivoIsTrue(tipoHitoActualizar.getNombre()).ifPresent((tipoHitoExistente) -> {
-      Assert.isTrue(tipoHitoActualizar.getId() == tipoHitoExistente.getId(),
-          "Ya existe un TipoHito activo con el nombre '" + tipoHitoExistente.getNombre() + "'");
-    });
+    tipoHitoRepository.findByNombreAndActivoIsTrue(tipoHitoActualizar.getNombre()).ifPresent(
+        tipoHitoExistente -> Assert.isTrue(Objects.equals(tipoHitoActualizar.getId(), tipoHitoExistente.getId()),
+            "Ya existe un TipoHito activo con el nombre '" + tipoHitoExistente.getNombre() + "'"));
 
     return tipoHitoRepository.findById(tipoHitoActualizar.getId()).map(tipoHito -> {
       tipoHito.setNombre(tipoHitoActualizar.getNombre());
@@ -140,7 +140,7 @@ public class TipoHitoServiceImpl implements TipoHitoService {
     Assert.notNull(id, "TipoHito id no puede ser null para reactivar un TipoHito");
 
     return tipoHitoRepository.findById(id).map(tipoHito -> {
-      if (tipoHito.getActivo()) {
+      if (Boolean.TRUE.equals(tipoHito.getActivo())) {
         return tipoHito;
       }
 
@@ -168,7 +168,7 @@ public class TipoHitoServiceImpl implements TipoHitoService {
     Assert.notNull(id, "TipoHito id no puede ser null para desactivar un TipoHito");
 
     return tipoHitoRepository.findById(id).map(tipoHito -> {
-      if (!tipoHito.getActivo()) {
+      if (Boolean.FALSE.equals(tipoHito.getActivo())) {
         return tipoHito;
       }
 

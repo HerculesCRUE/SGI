@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_NOTNULL;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +61,9 @@ public class PeriodoTitularidadTitularService {
     log.debug(
         "saveUpdateOrDeleteBatchMode(Long periodoTitularidadId, List<PeriodoTitularidadTitular> periodoTitularidadTitulares) - start");
 
-    periodoTitularidadrepository.findById(periodoTitularidadId)
-        .orElseThrow(() -> new PeriodoTitularidadNotFoundException(periodoTitularidadId));
+    if (!periodoTitularidadrepository.existsById(periodoTitularidadId)) {
+      throw new PeriodoTitularidadNotFoundException(periodoTitularidadId);
+    }
 
     final Double totalParticipacion = periodoTitularidadTitulares.stream()
         .mapToDouble(el -> el.getParticipacion().doubleValue()).sum();
@@ -67,7 +72,9 @@ public class PeriodoTitularidadTitularService {
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder()
             .key("org.crue.hercules.sgi.pii.model.PeriodoTitularidadTitular.participacion.completa")
-            .parameter("entity", ApplicationContextSupport.getMessage(PeriodoTitularidadTitular.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(PeriodoTitularidadTitular.class))
+            .build());
 
     periodoTitularidadTitulares.forEach(elem -> {
       commonEntityValidations(elem);
@@ -75,7 +82,8 @@ public class PeriodoTitularidadTitularService {
     });
 
     repository.deleteInBatch(this.repository.findAllByPeriodoTitularidadIdAndTitularRefNotIn(periodoTitularidadId,
-        periodoTitularidadTitulares.stream().map(elem -> elem.getTitularRef()).collect(Collectors.toList())));
+        periodoTitularidadTitulares.stream().map(PeriodoTitularidadTitular::getTitularRef)
+            .collect(Collectors.toList())));
 
     final Map<String, PeriodoTitularidadTitular> existingTitularesMap = this.repository
         .findAllByPeriodoTitularidadId(periodoTitularidadId).stream()
@@ -99,19 +107,23 @@ public class PeriodoTitularidadTitularService {
   private void commonEntityValidations(PeriodoTitularidadTitular periodoTitularidadTitular) {
     Assert.notNull(periodoTitularidadTitular.getTitularRef(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field",
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD,
                 ApplicationContextSupport
                     .getMessage("org.crue.hercules.sgi.pii.model.PeriodoTitularidadTitular.getTitularRef"))
-            .parameter("entity", ApplicationContextSupport.getMessage(PeriodoTitularidadTitular.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(PeriodoTitularidadTitular.class))
+            .build());
 
     Assert.notNull(periodoTitularidadTitular.getParticipacion(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field",
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD,
                 ApplicationContextSupport
                     .getMessage("org.crue.hercules.sgi.pii.model.PeriodoTitularidadTitular.participacion"))
-            .parameter("entity", ApplicationContextSupport.getMessage(PeriodoTitularidadTitular.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(PeriodoTitularidadTitular.class))
+            .build());
   }
 
   /**
@@ -123,8 +135,10 @@ public class PeriodoTitularidadTitularService {
    */
   public List<PeriodoTitularidadTitular> findAllByPeriodoTitularidadId(Long periodoTitularidadId)
       throws PeriodoTitularidadNotFoundException {
-    periodoTitularidadrepository.findById(periodoTitularidadId)
-        .orElseThrow(() -> new PeriodoTitularidadNotFoundException(periodoTitularidadId));
+
+    if (!periodoTitularidadrepository.existsById(periodoTitularidadId)) {
+      throw new PeriodoTitularidadNotFoundException(periodoTitularidadId);
+    }
 
     return this.repository.findAllByPeriodoTitularidadId(periodoTitularidadId);
   }

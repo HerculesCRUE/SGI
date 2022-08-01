@@ -14,6 +14,7 @@ import {
 } from '@sgi/framework/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { PROYECTO_PERIODO_JUSTIFICACION_IDENTIFICADOR_JUSTIFICACION_REQUEST_CONVERTER } from './proyecto-periodo-justificacion-identificador-justificacion-request.converter';
 import { IProyectoPeriodoJustificacionRequest } from './proyecto-periodo-justificacion-request';
 import { PROYECTO_PERIODO_JUSTIFICACION_REQUEST_CONVERTER } from './proyecto-periodo-justificacion-request.converter';
 import { IProyectoPeriodoJustificacionResponse } from './proyecto-periodo-justificacion-response';
@@ -94,6 +95,21 @@ export class ProyectoPeriodoJustificacionService extends _ProyectoPeriodoJstific
       PROYECTO_PERIODO_JUSTIFICACION_REQUEST_CONVERTER.fromTargetArray(entities)
     ).pipe(
       map((response => PROYECTO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER.toTargetArray(response)))
+    );
+  }
+
+  /**
+   * Actualiza el Identificador de Justificacion del ProyectoPeriodoJustificacion.
+   * 
+   * @param proyectoPeriodoJustificacion ProyectoPeriodoJustificacion a actualizar.
+   * @returns ProyectoPeriodoJustificacion actualizado.
+   */
+  updateIdentificadorJustificacion(proyectoPeriodoJustificacion: IProyectoPeriodoJustificacion): Observable<IProyectoPeriodoJustificacion> {
+    return this.http.patch<IProyectoPeriodoJustificacionResponse>(
+      `${this.endpointUrl}/${proyectoPeriodoJustificacion.id}/identificadorjustificacion`,
+      PROYECTO_PERIODO_JUSTIFICACION_IDENTIFICADOR_JUSTIFICACION_REQUEST_CONVERTER.fromTarget(proyectoPeriodoJustificacion)
+    ).pipe(
+      map((response) => PROYECTO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 

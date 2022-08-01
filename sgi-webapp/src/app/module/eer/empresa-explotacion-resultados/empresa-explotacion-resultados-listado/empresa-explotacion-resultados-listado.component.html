@@ -1,0 +1,175 @@
+<!-- Grupo Listado-->
+<sgi-menu-content>
+  <form class="formulario mat-elevation-z8" [formGroup]="formGroup" fxLayout="column">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- fechaConstitucionDesde -->
+      <mat-form-field class=" input-form" fxFlex="40%">
+        <mat-label>{{'eer.empresa-explotacion-resultados.fecha-constitucion-desde' | translate}}</mat-label>
+        <input matInput formControlName="fechaConstitucionDesde" [matDatepicker]="fechaConstitucionDesde">
+        <mat-datepicker-toggle matSuffix [for]="fechaConstitucionDesde"></mat-datepicker-toggle>
+        <mat-datepicker #fechaConstitucionDesde>
+        </mat-datepicker>
+      </mat-form-field>
+
+      <!-- fechaConstitucionHasta -->
+      <mat-form-field class=" input-form" fxFlex="40%" sgiEndDate>
+        <mat-label>{{'eer.empresa-explotacion-resultados.fecha-constitucion-hasta' | translate}}</mat-label>
+        <input matInput formControlName="fechaConstitucionHasta" [matDatepicker]="fechaConstitucionHasta">
+        <mat-datepicker-toggle matSuffix [for]="fechaConstitucionHasta"></mat-datepicker-toggle>
+        <mat-datepicker #fechaConstitucionHasta>
+        </mat-datepicker>
+      </mat-form-field>
+
+      <!-- fechaIncorporacionDesde -->
+      <mat-form-field class=" input-form" fxFlex="40%">
+        <mat-label>{{'eer.empresa-explotacion-resultados.fecha-incorporacion-desde' | translate}}</mat-label>
+        <input matInput formControlName="fechaIncorporacionDesde" [matDatepicker]="fechaIncorporacionDesde">
+        <mat-datepicker-toggle matSuffix [for]="fechaIncorporacionDesde"></mat-datepicker-toggle>
+        <mat-datepicker #fechaIncorporacionDesde>
+        </mat-datepicker>
+      </mat-form-field>
+
+      <!-- fechaIncorporacionHasta -->
+      <mat-form-field class=" input-form" fxFlex="40%" sgiEndDate>
+        <mat-label>{{'eer.empresa-explotacion-resultados.fecha-incorporacion-hasta' | translate}}</mat-label>
+        <input matInput formControlName="fechaIncorporacionHasta" [matDatepicker]="fechaIncorporacionHasta">
+        <mat-datepicker-toggle matSuffix [for]="fechaIncorporacionHasta"></mat-datepicker-toggle>
+        <mat-datepicker #fechaIncorporacionHasta>
+        </mat-datepicker>
+      </mat-form-field>
+    </div>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Nombre razón social -->
+      <mat-form-field fxFlex="35%">
+        <mat-label>{{'eer.empresa-explotacion-resultados.nombre-razon-social' | translate}}</mat-label>
+        <input matInput type="text"
+          placeholder="{{'eer.empresa-explotacion-resultados.nombre-razon-social' | translate}}"
+          formControlName="nombreRazonSocial">
+      </mat-form-field>
+
+      <!-- Entidad -->
+      <div fxLayout="row" fxFlex="30%">
+        <mat-form-field fxFlex>
+          <mat-label>{{ 'eer.empresa-explotacion-resultados.entidad' | translate }}</mat-label>
+          <sgi-select-empresa placeholder="{{'eer.empresa-explotacion-resultados.entidad' | translate}}"
+            formControlName="entidad">
+          </sgi-select-empresa>
+        </mat-form-field>
+      </div>
+
+      <!-- Objeto social -->
+      <mat-form-field fxFlex="35%">
+        <mat-label>{{'eer.empresa-explotacion-resultados.objeto-social' | translate}}</mat-label>
+        <input matInput type="text" placeholder="{{'eer.empresa-explotacion-resultados.objeto-social' | translate}}"
+          formControlName="objetoSocial">
+      </mat-form-field>
+    </div>
+
+    <!-- Acciones -->
+    <div class="buttons-final">
+      <div class="col filter-button">
+        <button color="primary" mat-raised-button (click)="onSearch()">
+          <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+        </button>
+        <button color="warn" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+          translate}}
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="empresas$ | async" matSort matSortActive="id" matSortDirection="desc"
+      matSortDisableClear>
+
+      <!-- Número identificación fiscal Column -->
+      <ng-container matColumnDef="identificacionFiscal">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eer.empresa-explotacion-resultados.identificacion-fiscal' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.entidad?.numeroIdentificacion}}
+        </td>
+      </ng-container>
+
+      <!-- Nombre Razón social Column -->
+      <ng-container matColumnDef="nombreRazonSocial">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eer.empresa-explotacion-resultados.nombre-razon-social' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.nombreRazonSocial ? element.nombreRazonSocial : element.entidad?.nombre}}
+        </td>
+      </ng-container>
+
+      <!-- Objeto social Column -->
+      <ng-container matColumnDef="objetoSocial">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eer.empresa-explotacion-resultados.objeto-social' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.objetoSocial}}
+        </td>
+      </ng-container>
+
+      <!-- Fecha Constitución Column -->
+      <ng-container matColumnDef="fechaConstitucion">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eer.empresa-explotacion-resultados.fecha-constitucion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.fechaConstitucion | luxon:'shortDate'}}
+        </td>
+      </ng-container>
+
+      <!-- Fecha Incorporación Column -->
+      <ng-container matColumnDef="fechaIncorporacion">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eer.empresa-explotacion-resultados.fecha-incorporacion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.fechaIncorporacion | luxon:'shortDate'}}
+        </td>
+      </ng-container>
+
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'label.actions' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container *sgiHasAuthorityForAnyUO="'EER-EER-V'">
+            <a mat-icon-button matTooltip="{{'btn.view' | translate}}" [routerLink]="[element.id]" color="primary">
+              <mat-icon>visibility</mat-icon>
+            </a>
+          </ng-container>
+          <ng-container *sgiHasAuthorityForAnyUO="'EER-EER-E'">
+            <a *ngIf="element.activo === true" mat-icon-button matTooltip="{{'btn.edit' | translate}}"
+              [routerLink]="[element.id]" color="primary">
+              <mat-icon>border_color</mat-icon>
+            </a>
+          </ng-container>
+          <ng-container *sgiHasAuthorityForAnyUO="'EER-EER-B'">
+            <button *ngIf="element.activo === true" mat-icon-button color="warn"
+              matTooltip="{{'btn.delete' | translate}}" (click)="deactivate(element)">
+              <mat-icon>highlight_off</mat-icon>
+            </button>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+      </ng-container>
+    </table>
+    <div class="paginator-export">
+      <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+  <sgi-menu-content-footer>
+    <sgi-footer-crear *sgiHasAuthorityForAnyUO="'EER-EER-C'" [texto]="textoCrear" [route]="ROUTE_NAMES.NEW">
+    </sgi-footer-crear>
+  </sgi-menu-content-footer>
+</sgi-menu-content>

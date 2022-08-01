@@ -9,9 +9,8 @@ import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
 import { AbstractTableExportService, IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
 import { ReportService } from '@core/services/rep/report.service';
-import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of, zip } from 'rxjs';
+import { concat, Observable, of, zip } from 'rxjs';
 import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
 import { EvaluacionEvaluacionesAnterioresListadoExportService } from './evaluacion-evaluaciones-anteriores-listado-export.service';
 import { EvaluacionGeneralListadoExportService } from './evaluacion-general-listado-export.service';
@@ -43,7 +42,6 @@ export class EvaluacionListadoExportService extends
 
   constructor(
     protected readonly logger: NGXLogger,
-    private authService: SgiAuthService,
     private readonly evaluacionService: EvaluacionService,
     private readonly evaluadorService: EvaluadorService,
     private readonly evaluacionGeneralListadoExportService: EvaluacionGeneralListadoExportService,
@@ -117,7 +115,7 @@ export class EvaluacionListadoExportService extends
 
   private getDataReportInner(evaluacionData: IEvaluacionReportData, reportOptions: IEvaluacionReportOptions):
     Observable<IEvaluacionReportData> {
-    return merge(
+    return concat(
       this.getDataReportListadoGeneral(evaluacionData),
       this.getDataReportEvaluacionesAnteriores(evaluacionData, reportOptions)
     ).pipe(

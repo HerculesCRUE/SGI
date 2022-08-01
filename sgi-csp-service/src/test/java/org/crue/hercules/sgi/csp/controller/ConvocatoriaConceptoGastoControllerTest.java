@@ -39,7 +39,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ConvocatoriaConceptoGastoControllerTest
  */
 @WebMvcTest(ConvocatoriaConceptoGastoController.class)
-public class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest {
+class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ConvocatoriaConceptoGastoService service;
@@ -52,7 +52,7 @@ public class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void create_ReturnsConvocatoriaConceptoGasto() throws Exception {
+  void create_ReturnsConvocatoriaConceptoGasto() throws Exception {
     // given: new ConvocatoriaConceptoGasto
     ConvocatoriaConceptoGasto convocatoriaConceptoGasto = generarMockConvocatoriaConceptoGasto(null);
 
@@ -83,7 +83,7 @@ public class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ConvocatoriaConceptoGasto with id filled
     ConvocatoriaConceptoGasto convocatoriaConceptoGasto = generarMockConvocatoriaConceptoGasto(1L);
 
@@ -102,7 +102,7 @@ public class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void update_ReturnsConvocatoriaConceptoGasto() throws Exception {
+  void update_ReturnsConvocatoriaConceptoGasto() throws Exception {
     // given: Existing ConvocatoriaConceptoGasto to be updated
     ConvocatoriaConceptoGasto convocatoriaConceptoGastoExistente = generarMockConvocatoriaConceptoGasto(1L);
     ConvocatoriaConceptoGasto convocatoriaConceptoGasto = generarMockConvocatoriaConceptoGasto(1L);
@@ -127,7 +127,7 @@ public class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     ConvocatoriaConceptoGasto convocatoriaConceptoGasto = generarMockConvocatoriaConceptoGasto(1L);
@@ -147,7 +147,7 @@ public class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void findById_WithExistingId_ReturnsConvocatoriaConceptoGasto() throws Exception {
+  void findById_WithExistingId_ReturnsConvocatoriaConceptoGasto() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
       return generarMockConvocatoriaConceptoGasto(invocation.getArgument(0));
@@ -166,7 +166,7 @@ public class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ConvocatoriaConceptoGastoNotFoundException(1L);
@@ -183,7 +183,7 @@ public class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E", "CSP-SOL-V" })
-  public void findAll_WithPaging_ReturnsConvocatoriaConceptoGastoSubList() throws Exception {
+  void findAll_WithPaging_ReturnsConvocatoriaConceptoGastoSubList() throws Exception {
     // given: One hundred ConvocatoriaConceptoGasto
     List<ConvocatoriaConceptoGasto> conceptosGasto = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -235,7 +235,7 @@ public class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.doNothing().when(service).delete(ArgumentMatchers.anyLong());
@@ -253,7 +253,7 @@ public class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void delete_NoExistingId_Return404() throws Exception {
+  void delete_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -278,7 +278,7 @@ public class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void findAllConvocatoriaConceptoGastoCodigoEc_ReturnsPage() throws Exception {
+  void findAllConvocatoriaConceptoGastoCodigoEc_ReturnsPage() throws Exception {
     // given: Una lista con 37 ConvocatoriaConceptoGastoCodigoEc para la
     // Convocatoria
     Long convocatoriaId = 1L;
@@ -323,7 +323,7 @@ public class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void findAllConvocatoriaConceptoGastoCodigoEc_EmptyList_Returns204() throws Exception {
+  void findAllConvocatoriaConceptoGastoCodigoEc_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de ConvocatoriaConceptoGastoCodigoEc para la
     // Convocatoria
 

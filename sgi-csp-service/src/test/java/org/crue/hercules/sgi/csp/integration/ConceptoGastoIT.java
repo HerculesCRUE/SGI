@@ -22,7 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de ConceptoGasto.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ConceptoGastoIT extends BaseIT {
+class ConceptoGastoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
@@ -36,7 +36,8 @@ public class ConceptoGastoIT extends BaseIT {
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization",
         String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CON-E", "CSP-CON-V", "CSP-CON-INV-V",
-            "CSP-SOL-E", "CSP-SOL-V", "CSP-TGTO-V", "CSP-TGTO-C", "CSP-TGTO-E", "CSP-TGTO-B", "CSP-TGTO-R", "CSP-PRO-E", "AUTH")));
+            "CSP-SOL-E", "CSP-SOL-V", "CSP-TGTO-V", "CSP-TGTO-C", "CSP-TGTO-E", "CSP-TGTO-B", "CSP-TGTO-R", "CSP-PRO-E",
+            "AUTH")));
 
     HttpEntity<ConceptoGasto> request = new HttpEntity<>(entity, headers);
     return request;
@@ -45,7 +46,7 @@ public class ConceptoGastoIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsConceptoGasto() throws Exception {
+  void create_ReturnsConceptoGasto() throws Exception {
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(null);
 
     final ResponseEntity<ConceptoGasto> response = restTemplate.exchange(CONTROLLER_BASE_PATH, HttpMethod.POST,
@@ -58,13 +59,13 @@ public class ConceptoGastoIT extends BaseIT {
     Assertions.assertThat(conceptoGastoCreado.getNombre()).as("getNombre()").isEqualTo(conceptoGasto.getNombre());
     Assertions.assertThat(conceptoGastoCreado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(conceptoGasto.getDescripcion());
-    Assertions.assertThat(conceptoGastoCreado.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(conceptoGastoCreado.getActivo()).as("getActivo()").isTrue();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsConceptoGasto() throws Exception {
+  void update_ReturnsConceptoGasto() throws Exception {
     Long idConceptoGasto = 1L;
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(idConceptoGasto, "nombre-actualizado");
 
@@ -84,7 +85,7 @@ public class ConceptoGastoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void desactivar_ReturnConceptoGasto() throws Exception {
+  void desactivar_ReturnConceptoGasto() throws Exception {
     Long idConceptoGasto = 1L;
 
     final ResponseEntity<ConceptoGasto> response = restTemplate.exchange(
@@ -98,13 +99,13 @@ public class ConceptoGastoIT extends BaseIT {
     Assertions.assertThat(conceptoGasto.getNombre()).as("getNombre()").isEqualTo("nombre-001");
     Assertions.assertThat(conceptoGasto.getDescripcion()).as("descripcion-001")
         .isEqualTo(conceptoGasto.getDescripcion());
-    Assertions.assertThat(conceptoGasto.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(conceptoGasto.getActivo()).as("getActivo()").isFalse();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void reactivar_ReturnConceptoGasto() throws Exception {
+  void reactivar_ReturnConceptoGasto() throws Exception {
     Long idConceptoGasto = 1L;
 
     final ResponseEntity<ConceptoGasto> response = restTemplate.exchange(
@@ -118,13 +119,13 @@ public class ConceptoGastoIT extends BaseIT {
     Assertions.assertThat(conceptoGasto.getNombre()).as("getNombre()").isEqualTo("nombre-001");
     Assertions.assertThat(conceptoGasto.getDescripcion()).as("descripcion-001")
         .isEqualTo(conceptoGasto.getDescripcion());
-    Assertions.assertThat(conceptoGasto.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(conceptoGasto.getActivo()).as("getActivo()").isTrue();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsConceptoGasto() throws Exception {
+  void findById_ReturnsConceptoGasto() throws Exception {
     Long idConceptoGasto = 1L;
 
     final ResponseEntity<ConceptoGasto> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -137,13 +138,13 @@ public class ConceptoGastoIT extends BaseIT {
     Assertions.assertThat(conceptoGasto.getNombre()).as("getNombre()").isEqualTo("nombre-001");
     Assertions.assertThat(conceptoGasto.getDescripcion()).as("descripcion-001")
         .isEqualTo(conceptoGasto.getDescripcion());
-    Assertions.assertThat(conceptoGasto.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(conceptoGasto.getActivo()).as("getActivo()").isTrue();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsConceptoGastoSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsConceptoGastoSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
@@ -159,7 +160,7 @@ public class ConceptoGastoIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ConceptoGasto> conceptoGastoes = response.getBody();
-    Assertions.assertThat(conceptoGastoes.size()).isEqualTo(3);
+    Assertions.assertThat(conceptoGastoes).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -176,7 +177,7 @@ public class ConceptoGastoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllTodos_WithPagingSortingAndFiltering_ReturnsConceptoGastoSubList() throws Exception {
+  void findAllTodos_WithPagingSortingAndFiltering_ReturnsConceptoGastoSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
@@ -192,7 +193,7 @@ public class ConceptoGastoIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ConceptoGasto> conceptoGastoes = response.getBody();
-    Assertions.assertThat(conceptoGastoes.size()).isEqualTo(3);
+    Assertions.assertThat(conceptoGastoes).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -205,7 +206,7 @@ public class ConceptoGastoIT extends BaseIT {
     Assertions.assertThat(conceptoGastoes.get(2).getNombre()).as("get(2).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 1));
   }
- 
+
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = "classpath:scripts/concepto_gasto.sql")
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
@@ -218,7 +219,8 @@ public class ConceptoGastoIT extends BaseIT {
 
     Long proyectoId = 1L;
 
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_NO_PROYECTO_AGRUPACION).queryParam("s", sort)
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_NO_PROYECTO_AGRUPACION)
+        .queryParam("s", sort)
         .queryParam("q", filter).buildAndExpand(proyectoId).toUri();
 
     final ResponseEntity<List<ConceptoGasto>> response = restTemplate.exchange(uri, HttpMethod.GET,
@@ -227,7 +229,7 @@ public class ConceptoGastoIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ConceptoGasto> conceptoGastoes = response.getBody();
-    Assertions.assertThat(conceptoGastoes.size()).isEqualTo(2);
+    Assertions.assertThat(conceptoGastoes).hasSize(2);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");

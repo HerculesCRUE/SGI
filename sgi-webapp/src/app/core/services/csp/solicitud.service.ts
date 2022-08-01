@@ -36,6 +36,7 @@ import { IGrupo } from '@core/models/csp/grupo';
 import { IRequisitoEquipoNivelAcademico } from '@core/models/csp/requisito-equipo-nivel-academico';
 import { IRequisitoIPCategoriaProfesional } from '@core/models/csp/requisito-ip-categoria-profesional';
 import { IRequisitoIPNivelAcademico } from '@core/models/csp/requisito-ip-nivel-academico';
+import { ISolicitanteExterno } from '@core/models/csp/solicitante-externo';
 import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudDocumento } from '@core/models/csp/solicitud-documento';
 import { ISolicitudGrupo } from '@core/models/csp/solicitud-grupo';
@@ -53,6 +54,7 @@ import { ISolicitudProyectoPresupuestoTotalConceptoGasto } from '@core/models/cs
 import { ISolicitudProyectoPresupuestoTotales } from '@core/models/csp/solicitud-proyecto-presupuesto-totales';
 import { ISolicitudProyectoResponsableEconomico } from '@core/models/csp/solicitud-proyecto-responsable-economico';
 import { ISolicitudProyectoSocio } from '@core/models/csp/solicitud-proyecto-socio';
+import { ISolicitudRrhh } from '@core/models/csp/solicitud-rrhh';
 import { environment } from '@env';
 import { SgiMutableRestService, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
@@ -68,10 +70,12 @@ import { IRequisitoIPCategoriaProfesionalResponse } from './requisito-ip-categor
 import { REQUISITOIP_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER } from './requisito-ip-categoria-profesional/requisito-ip-categoria-profesional-response.converter';
 import { IRequisitoIPNivelAcademicoResponse } from './requisito-ip-nivel-academico/requisito-ip-nivel-academico-response';
 import { REQUISITOIP_NIVELACADEMICO_RESPONSE_CONVERTER } from './requisito-ip-nivel-academico/requisito-ip-nivel-academico-response.converter';
-import { ISolicitudHitoResponse } from './solicitud-hito/solicitud-hito-response';
-import { SOLICITUD_HITO_RESPONSE_CONVERTER } from './solicitud-hito/solicitud-hito-response.converter';
+import { ISolicitanteExternoResponse } from './solicitante-externo/solicitante-externo-response';
+import { SOLICITANTE_EXTERNO_RESPONSE_CONVERTER } from './solicitante-externo/solicitante-externo-response.converter';
 import { ISolicitudGrupoResponse } from './solicitud-grupo/solicitud-grupo-response';
 import { SOLICITUD_GRUPO_RESPONSE_CONVERTER } from './solicitud-grupo/solicitud-grupo-response-converter';
+import { ISolicitudHitoResponse } from './solicitud-hito/solicitud-hito-response';
+import { SOLICITUD_HITO_RESPONSE_CONVERTER } from './solicitud-hito/solicitud-hito-response.converter';
 import { SolicitudModalidadService } from './solicitud-modalidad.service';
 import { SOLICITUD_PALABRACLAVE_REQUEST_CONVERTER } from './solicitud-palabra-clave/solicitud-palabra-clave-request.converter';
 import { ISolicitudPalabraClaveResponse } from './solicitud-palabra-clave/solicitud-palabra-clave-response';
@@ -80,6 +84,8 @@ import { ISolicitudProyectoEntidadResponse } from './solicitud-proyecto-entidad/
 import { SOLICITUD_PROYECTO_ENTIDAD_RESPONSE_CONVERTER } from './solicitud-proyecto-entidad/solicitud-proyecto-entidad-response.converter';
 import { ISolicitudProyectoResponsableEconomicoResponse } from './solicitud-proyecto-responsable-economico/solicitud-proyecto-responsable-economico-response';
 import { SOLICITUD_PROYECTO_RESPONSABLE_ECONOMICO_RESPONSE_CONVERTER } from './solicitud-proyecto-responsable-economico/solicitud-proyecto-responsable-economico-response.converter';
+import { ISolicitudRrhhResponse } from './solicitud-rrhh/solicitud-rrhh-response';
+import { SOLICITUD_RRHH_RESPONSE_CONVERTER } from './solicitud-rrhh/solicitud-rrhh-response.converter';
 
 @Injectable({
   providedIn: 'root'
@@ -224,6 +230,19 @@ export class SolicitudService extends SgiMutableRestService<number, ISolicitudBa
       `${this.endpointUrl}/${solicitudId}/solicitudproyecto`
     ).pipe(
       map(response => SOLICITUD_PROYECTO_CONVERTER.toTarget(response))
+    );
+  }
+
+  /**
+   * Devuelve los datos de rrhh de una solicitud
+   *
+   * @param solicitudId Id de la solicitud
+   */
+  findSolicitudRrhh(solicitudId: number): Observable<ISolicitudRrhh> {
+    return this.http.get<ISolicitudRrhhResponse>(
+      `${this.endpointUrl}/${solicitudId}/solicitudrrhh`
+    ).pipe(
+      map(response => SOLICITUD_RRHH_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -413,6 +432,7 @@ export class SolicitudService extends SgiMutableRestService<number, ISolicitudBa
       map((response => ESTADO_SOLICITUD_CONVERTER.toTarget(response)))
     );
   }
+
   /**
    * Devuelve el listado de solicitudes que puede ver un investigador
    *
@@ -420,6 +440,15 @@ export class SolicitudService extends SgiMutableRestService<number, ISolicitudBa
    */
   findAllInvestigador(options?: SgiRestFindOptions): Observable<SgiRestListResult<ISolicitud>> {
     return this.find<ISolicitudBackend, ISolicitud>(`${this.endpointUrl}/investigador`, options, SOLICITUD_CONVERTER);
+  }
+
+  /**
+   * Devuelve el listado de solicitudes que puede ver un tutor
+   *
+   * @param options opciones de búsqueda.
+   */
+  findAllTutor(options?: SgiRestFindOptions): Observable<SgiRestListResult<ISolicitud>> {
+    return this.find<ISolicitudBackend, ISolicitud>(`${this.endpointUrl}/tutor`, options, SOLICITUD_CONVERTER);
   }
 
   /**
@@ -616,6 +645,13 @@ export class SolicitudService extends SgiMutableRestService<number, ISolicitudBa
     );
   }
 
+  modificableEstadoAsTutor(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/modificableestadoastutor`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
   /**
    * Devuelve el código de registro interno de la solicitud
    *
@@ -646,6 +682,31 @@ export class SolicitudService extends SgiMutableRestService<number, ISolicitudBa
       GRUPO_REQUEST_CONVERTER.fromTarget(grupo)
     ).pipe(
       map(response => GRUPO_RESPONSE_CONVERTER.toTarget(response))
+    );
+  }
+
+  /**
+   * Actualiza el solicitante de la Solicitud con el id indicado.
+   *
+   * @param id Identificador de la Solicitud
+   * @param solicitanteRef identificador del solicitante
+   */
+  updateSolicitante(id: number, solicitanteRef: string): Observable<void> {
+    return this.http.patch<void>(`${this.endpointUrl}/${id}/solicitante`,
+      solicitanteRef
+    );
+  }
+
+  /**
+   * Devuelve los datos del solicitante externo
+   *
+   * @param id Identificador de la Solicitud
+   */
+  findSolicitanteExterno(id: number): Observable<ISolicitanteExterno> {
+    return this.http.get<ISolicitanteExternoResponse>(
+      `${this.endpointUrl}/${id}/solicitanteexterno`
+    ).pipe(
+      map(response => SOLICITANTE_EXTERNO_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 

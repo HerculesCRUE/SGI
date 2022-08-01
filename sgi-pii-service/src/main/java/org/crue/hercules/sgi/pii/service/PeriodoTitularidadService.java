@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_NOTNULL;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import java.time.Instant;
 import java.util.Optional;
 
@@ -56,21 +60,24 @@ public class PeriodoTitularidadService {
     Assert.isNull(periodoTitularidad.getId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(PeriodoTitularidad.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(PeriodoTitularidad.class))
+            .build());
     Assert.notNull(periodoTitularidad.getInvencionId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("invencionId"))
-            .parameter("entity", ApplicationContextSupport.getMessage(PeriodoTitularidad.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("invencionId"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(PeriodoTitularidad.class))
+            .build());
     Assert.isTrue(fechaFinPrevious == null || periodoTitularidad.getFechaInicio().compareTo(fechaFinPrevious) >= 0,
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key("org.crue.hercules.sgi.pii.model.PeriodoTitularidad.fechaInicio.posterior")
-            .parameter("entity", ApplicationContextSupport.getMessage(PeriodoTitularidad.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(PeriodoTitularidad.class))
+            .build());
 
     Optional<PeriodoTitularidad> previous = repository
         .findByInvencionIdAndFechaFinIsNull(periodoTitularidad.getInvencionId());
-    previous.ifPresent((previousVigente) -> {
+    previous.ifPresent(previousVigente -> {
       previousVigente.setFechaFin(fechaFinPrevious);
       repository.save(previousVigente);
     });
@@ -93,9 +100,10 @@ public class PeriodoTitularidadService {
 
     Assert.notNull(periodoTitularidad.getId(),
         // Defer message resolution until is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(PeriodoTitularidad.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(PeriodoTitularidad.class))
+            .build());
 
     return repository.findById(periodoTitularidad.getId()).map(periodoTitularidadExistente -> {
 
@@ -175,9 +183,10 @@ public class PeriodoTitularidadService {
     log.debug("deleteById(Long id) - start");
     Assert.notNull(id,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(PeriodoTitularidad.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(PeriodoTitularidad.class))
+            .build());
 
     if (!repository.existsById(id)) {
       throw new PeriodoTitularidadNotFoundException(id);

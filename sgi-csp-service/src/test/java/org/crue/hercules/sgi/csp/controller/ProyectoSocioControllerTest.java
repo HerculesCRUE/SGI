@@ -43,7 +43,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ProyectoSocioControllerTest
  */
 @WebMvcTest(ProyectoSocioController.class)
-public class ProyectoSocioControllerTest extends BaseControllerTest {
+class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @MockBean
   private ProyectoSocioService service;
@@ -63,7 +63,7 @@ public class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void create_ReturnsProyectoSocio() throws Exception {
+  void create_ReturnsProyectoSocio() throws Exception {
     // given: new ProyectoSocio
     ProyectoSocio proyectoSocio = generarMockProyectoSocio(1L);
 
@@ -96,7 +96,7 @@ public class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ProyectoSocio with id filled
     ProyectoSocio newProyectoSocio = generarMockProyectoSocio(1L);
 
@@ -114,7 +114,7 @@ public class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_WithExistingId_ReturnsProyectoSocio() throws Exception {
+  void update_WithExistingId_ReturnsProyectoSocio() throws Exception {
     // given: existing ProyectoSocio
     ProyectoSocio proyectoSocioExistente = generarMockProyectoSocio(1L);
     ProyectoSocio proyectoSocio = generarMockProyectoSocio(1L);
@@ -149,7 +149,7 @@ public class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: a ProyectoSocio with non existing id
     ProyectoSocio proyectoSocio = generarMockProyectoSocio(1L);
 
@@ -170,7 +170,7 @@ public class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.doNothing().when(service).delete(ArgumentMatchers.anyLong());
@@ -188,7 +188,7 @@ public class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void delete_NoExistingId_Return404() throws Exception {
+  void delete_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -206,7 +206,7 @@ public class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void existsById_WithExistingId_Returns200() throws Exception {
+  void existsById_WithExistingId_Returns200() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(service.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
@@ -222,7 +222,7 @@ public class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void existsById_WithNoExistingId_Returns204() throws Exception {
+  void existsById_WithNoExistingId_Returns204() throws Exception {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(service.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.FALSE);
@@ -238,7 +238,7 @@ public class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findById_WithExistingId_ReturnsProyectoSocio() throws Exception {
+  void findById_WithExistingId_ReturnsProyectoSocio() throws Exception {
     // given: existing id
     ProyectoSocio proyectoSocioExistente = generarMockProyectoSocio(1L);
     BDDMockito.given(service.findById(ArgumentMatchers.<Long>any())).willReturn(proyectoSocioExistente);
@@ -256,7 +256,7 @@ public class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ProyectoSocioNotFoundException(1L);
@@ -279,7 +279,7 @@ public class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoSocioPeriodoPago_ReturnsPage() throws Exception {
+  void findAllProyectoSocioPeriodoPago_ReturnsPage() throws Exception {
     // given: Una lista con 37 ProyectoSocioPeriodoPago para la
     // ProyectoSocioPeriodoPago
     Long proyectoSocioId = 1L;
@@ -340,7 +340,7 @@ public class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoSocioPeriodoPago_Returns204() throws Exception {
+  void findAllProyectoSocioPeriodoPago_Returns204() throws Exception {
     // given: Una lista vacia de ProyectoSocioPeriodoPago para la
     // ProyectoSocio
     Long proyectoSocioId = 1L;
@@ -377,7 +377,7 @@ public class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoSocioEquipo_ReturnsPage() throws Exception {
+  void findAllProyectoSocioEquipo_ReturnsPage() throws Exception {
     // given: Una lista con 37 ProyectoSocioEquipo para la
     // ProyectoSocioEquipo
     Long proyectoSocioId = 1L;
@@ -437,7 +437,7 @@ public class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoSocioEquipo_Returns204() throws Exception {
+  void findAllProyectoSocioEquipo_Returns204() throws Exception {
     // given: Una lista vacia de ProyectoSocioEquipo para la
     // ProyectoSocio
     Long proyectoSocioId = 1L;
@@ -474,7 +474,7 @@ public class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoSocioPeriodoJustificacion_ReturnsPage() throws Exception {
+  void findAllProyectoSocioPeriodoJustificacion_ReturnsPage() throws Exception {
     // given: Una lista con 37 ProyectoSocioPeriodoJustificacion para el
     // ProyectoSocio
     Long proyectoSocioId = 1L;
@@ -535,7 +535,7 @@ public class ProyectoSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoSocioPeriodoJustificacion_EmptyList_Returns204() throws Exception {
+  void findAllProyectoSocioPeriodoJustificacion_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de ProyectoSocioPeriodoJustificacion para la
     // ProyectoSocio
     Long proyectoSocioId = 1L;

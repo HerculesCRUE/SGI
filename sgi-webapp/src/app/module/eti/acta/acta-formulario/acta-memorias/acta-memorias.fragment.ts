@@ -13,6 +13,7 @@ export interface MemoriaListado {
   /** Version */
   version: number;
   dictamen: IDictamen;
+  idEvaluacion: number;
 }
 
 export class ActaMemoriasFragment extends Fragment {
@@ -24,6 +25,7 @@ export class ActaMemoriasFragment extends Fragment {
   constructor(key: number, private service: ConvocatoriaReunionService) {
     super(key);
     this.selectedIdConvocatoria = key;
+    this.setComplete(true);
   }
 
   onInitialize(): void {
@@ -47,7 +49,8 @@ export class ActaMemoriasFragment extends Fragment {
                   id: evaluacionesSinDuplicados[idEvaluacion].memoria?.id,
                   numReferencia: evaluacionesSinDuplicados[idEvaluacion].memoria?.numReferencia,
                   version: evaluacionesSinDuplicados[idEvaluacion].version,
-                  dictamen: evaluacionesSinDuplicados[idEvaluacion].dictamen
+                  dictamen: evaluacionesSinDuplicados[idEvaluacion].dictamen,
+                  idEvaluacion: idEvaluacion as unknown as number
                 };
               });
             return memorias;
@@ -57,18 +60,6 @@ export class ActaMemoriasFragment extends Fragment {
           }
         })
       ).subscribe((memorias) => {
-        if (this.isEdit() && this.selectedIdConvocatoria !== this.getKey()) {
-          this.setChanges(true);
-          this.setComplete(this.selectedIdConvocatoria ? true : false);
-        }
-        else if (this.isEdit() && this.selectedIdConvocatoria === this.getKey()) {
-          this.setChanges(false);
-          this.setComplete(false);
-        }
-        else {
-          this.setChanges(this.selectedIdConvocatoria ? true : false);
-          this.setComplete(this.selectedIdConvocatoria ? true : false);
-        }
         this.memorias$.next(memorias);
       });
     }

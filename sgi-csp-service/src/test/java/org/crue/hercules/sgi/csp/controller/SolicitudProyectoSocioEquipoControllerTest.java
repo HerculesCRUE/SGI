@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * SolicitudProyectoSocioEquipoControllerTest
  */
 @WebMvcTest(SolicitudProyectoSocioEquipoController.class)
-public class SolicitudProyectoSocioEquipoControllerTest extends BaseControllerTest {
+class SolicitudProyectoSocioEquipoControllerTest extends BaseControllerTest {
 
   @MockBean
   private SolicitudProyectoSocioEquipoService service;
@@ -37,7 +37,7 @@ public class SolicitudProyectoSocioEquipoControllerTest extends BaseControllerTe
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void update_WithExistingId_ReturnsSolicitudProyectoSocioEquipo() throws Exception {
+  void update_WithExistingId_ReturnsSolicitudProyectoSocioEquipo() throws Exception {
     // given: una lista con uno de los ConvocatoriaPeriodoJustificacion actualizado,
     // otro nuevo y sin los otros 3 periodos existentes
     Long solicitudProyectoSocioId = 1L;
@@ -83,7 +83,7 @@ public class SolicitudProyectoSocioEquipoControllerTest extends BaseControllerTe
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     SolicitudProyectoSocioEquipo solicitudProyectoSocioEquipo = generarSolicitudProyectoSocioEquipo(1L, 1L);
@@ -105,7 +105,7 @@ public class SolicitudProyectoSocioEquipoControllerTest extends BaseControllerTe
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void findById_WithExistingId_ReturnsSolicitudProyectoSocioEquipo() throws Exception {
+  void findById_WithExistingId_ReturnsSolicitudProyectoSocioEquipo() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong()))
@@ -130,7 +130,7 @@ public class SolicitudProyectoSocioEquipoControllerTest extends BaseControllerTe
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {

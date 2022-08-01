@@ -37,7 +37,7 @@ import org.springframework.data.jpa.domain.Specification;
  * SolicitudProyectoSocioPeriodoPagoServiceTest
  */
 @ExtendWith(MockitoExtension.class)
-public class SolicitudProyectoSocioPeriodoPagoServiceTest {
+class SolicitudProyectoSocioPeriodoPagoServiceTest {
 
   @Mock
   private SolicitudProyectoSocioPeriodoPagoRepository repository;
@@ -54,13 +54,13 @@ public class SolicitudProyectoSocioPeriodoPagoServiceTest {
   private SolicitudService solicitudService;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new SolicitudProyectoSocioPeriodoPagoServiceImpl(repository, solicitudProyectoSocioRepository,
         solicitudService, solicitudProyectoRepository);
   }
 
   @Test
-  public void update_ReturnsSolicitudProyectoSocioPeriodoPago() {
+  void update_ReturnsSolicitudProyectoSocioPeriodoPago() {
     // given: una lista con uno de los SolicitudProyectoSocioPeriodoPago
     // actualizado,
     // otro nuevo y sin el otros existente
@@ -142,7 +142,7 @@ public class SolicitudProyectoSocioPeriodoPagoServiceTest {
   }
 
   @Test
-  public void update_WithSolicitudProyectoSocioNotExist_ThrowsSolicitudProyectoSocioNotFoundException() {
+  void update_WithSolicitudProyectoSocioNotExist_ThrowsSolicitudProyectoSocioNotFoundException() {
     // given: a SolicitudProyectoSocioPeriodoPago with non existing
     // SolicitudProyectoSocio
     Long solicitudProyectoSocioId = 1L;
@@ -160,7 +160,7 @@ public class SolicitudProyectoSocioPeriodoPagoServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsSolicitudProyectoSocioPeriodoPagoNotFoundException() {
+  void update_WithIdNotExist_ThrowsSolicitudProyectoSocioPeriodoPagoNotFoundException() {
     // given: Un SolicitudProyectoSocioPeriodoPago actualizado con un id que no
     // existe
     Long solicitudProyectoId = 1L;
@@ -194,7 +194,7 @@ public class SolicitudProyectoSocioPeriodoPagoServiceTest {
   }
 
   @Test
-  public void update_WithSolicitudProyectoSocioChange_ThrowsIllegalArgumentException() {
+  void update_WithSolicitudProyectoSocioChange_ThrowsIllegalArgumentException() {
     // given:Se actualiza SolicitudProyectoSocio
     Long solicitudProyectoId = 1L;
     Long solicitudProyectoSocioId = 1L;
@@ -230,7 +230,7 @@ public class SolicitudProyectoSocioPeriodoPagoServiceTest {
   }
 
   @Test
-  public void update_WithMesSuperiorDuracion_ThrowsIllegalArgumentException() {
+  void update_WithMesSuperiorDuracion_ThrowsIllegalArgumentException() {
     // given: Se actualiza SolicitudProyectoSocioPeriodoPago cuyo mes es superior a
     // la
     // duración de solicitud de proyecto
@@ -267,7 +267,7 @@ public class SolicitudProyectoSocioPeriodoPagoServiceTest {
   }
 
   @Test
-  public void update_WithMesSolapamiento_ThrowsIllegalArgumentException() {
+  void update_WithMesSolapamiento_ThrowsIllegalArgumentException() {
     // given: Se actualiza SolicitudProyectoSocioPeriodoPago cuyo mes es superior a
     // la
     // duración de solicitud de proyecto
@@ -303,7 +303,7 @@ public class SolicitudProyectoSocioPeriodoPagoServiceTest {
   }
 
   @Test
-  public void update_WithoutMes_ThrowsIllegalArgumentException() {
+  void update_WithoutMes_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudProyectoSocioPeriodoPago que no tiene mes
     Long solicitudProyectoId = 1L;
     Long solicitudProyectoSocioId = 1L;
@@ -336,7 +336,7 @@ public class SolicitudProyectoSocioPeriodoPagoServiceTest {
   }
 
   @Test
-  public void findById_ReturnsSolicitudProyectoSocioPeriodoPago() {
+  void findById_ReturnsSolicitudProyectoSocioPeriodoPago() {
     // given: Un SolicitudProyectoSocioPeriodoPago con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -351,7 +351,7 @@ public class SolicitudProyectoSocioPeriodoPagoServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsSolicitudProyectoSocioPeriodoPagoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsSolicitudProyectoSocioPeriodoPagoNotFoundException() throws Exception {
     // given: Ningun SolicitudProyectoSocioPeriodoPago con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -363,7 +363,7 @@ public class SolicitudProyectoSocioPeriodoPagoServiceTest {
   }
 
   @Test
-  public void findAllBySolicitudProyectoSocio_ReturnsPage() {
+  void findAllBySolicitudProyectoSocio_ReturnsPage() {
     // given: Una lista con 37 SolicitudProyectoSocioPeriodoPago
     Long solicitudId = 1L;
     List<SolicitudProyectoSocioPeriodoPago> solicitudProyectoSocioPeriodoPago = new ArrayList<>();
@@ -395,7 +395,7 @@ public class SolicitudProyectoSocioPeriodoPagoServiceTest {
     Page<SolicitudProyectoSocioPeriodoPago> page = service.findAllBySolicitudProyectoSocio(solicitudId, null, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

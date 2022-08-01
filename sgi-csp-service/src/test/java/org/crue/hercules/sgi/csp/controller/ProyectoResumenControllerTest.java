@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ProyectoResumenController
  */
 @WebMvcTest(ProyectoResumenController.class)
-public class ProyectoResumenControllerTest extends BaseControllerTest {
+class ProyectoResumenControllerTest extends BaseControllerTest {
 
   @MockBean
   private ProyectoService service;
@@ -98,7 +98,7 @@ public class ProyectoResumenControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-PRC-V" })
-  public void findProyectoResumenById_WithExistingId_ReturnsProyectoResumen() throws Exception {
+  void findProyectoResumenById_WithExistingId_ReturnsProyectoResumen() throws Exception {
     // given: existing id
     BDDMockito.given(service.findProyectoResumenById(ArgumentMatchers.anyLong()))
         .willAnswer((InvocationOnMock invocation) -> {
@@ -120,7 +120,7 @@ public class ProyectoResumenControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-PRC-V" })
-  public void findProyectoResumenById_WithNoExistingId_Returns404() throws Exception {
+  void findProyectoResumenById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findProyectoResumenById(ArgumentMatchers.anyLong()))
         .will((InvocationOnMock invocation) -> {

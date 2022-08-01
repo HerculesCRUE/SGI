@@ -12,13 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ConvocatoriaEntidadFinanciadoraRepositoryTest extends BaseRepositoryTest {
+class ConvocatoriaEntidadFinanciadoraRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ConvocatoriaEntidadFinanciadoraRepository repository;
 
   @Test
-  public void findAllByConvocatoriaId_ReturnsListConvocatoriaEntidadFinanciadora() throws Exception {
+  void findAllByConvocatoriaId_ReturnsListConvocatoriaEntidadFinanciadora() throws Exception {
 
     // given: 2 ConvocatoriaEntidadFinanciadora de los que 1 coincide con el
     // ConvocatoriaId a buscar
@@ -67,14 +67,14 @@ public class ConvocatoriaEntidadFinanciadoraRepositoryTest extends BaseRepositor
     // then: Se comprueba que los elementos retornados pertenecen al convocatoriaId
     // solicitado
     Assertions.assertThat(dataFound).isNotNull();
-    Assertions.assertThat(dataFound.size()).isEqualTo(5);
+    Assertions.assertThat(dataFound).hasSize(5);
     dataFound.stream().forEach((entidad) -> {
       Assertions.assertThat(entidad.getConvocatoriaId()).isEqualTo(convocatoriaIdBuscado);
     });
   }
 
   @Test
-  public void findAllByConvocatoriaId_ReturnsEmptyList() throws Exception {
+  void findAllByConvocatoriaId_ReturnsEmptyList() throws Exception {
     // given: 2 ConvocatoriaEntidadFinanciadora de los que 1 coincide con el
     // ConvocatoriaId a buscar
     Convocatoria convocatoria1 = Convocatoria.builder()

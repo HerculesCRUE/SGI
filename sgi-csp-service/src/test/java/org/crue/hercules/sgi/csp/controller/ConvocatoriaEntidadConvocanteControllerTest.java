@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ConvocatoriaEntidadConvocanteControllerTest
  */
 @WebMvcTest(ConvocatoriaEntidadConvocanteController.class)
-public class ConvocatoriaEntidadConvocanteControllerTest extends BaseControllerTest {
+class ConvocatoriaEntidadConvocanteControllerTest extends BaseControllerTest {
 
   @MockBean
   private ConvocatoriaEntidadConvocanteService service;
@@ -37,7 +37,7 @@ public class ConvocatoriaEntidadConvocanteControllerTest extends BaseControllerT
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void create_ReturnsModeloConvocatoriaEntidadConvocante() throws Exception {
+  void create_ReturnsModeloConvocatoriaEntidadConvocante() throws Exception {
     // given: new ConvocatoriaEntidadConvocante
     ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante = generarMockConvocatoriaEntidadConvocante(1L);
 
@@ -67,7 +67,7 @@ public class ConvocatoriaEntidadConvocanteControllerTest extends BaseControllerT
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ConvocatoriaEntidadConvocante with id filled
     ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante = generarMockConvocatoriaEntidadConvocante(1L);
 
@@ -86,7 +86,7 @@ public class ConvocatoriaEntidadConvocanteControllerTest extends BaseControllerT
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void update_ReturnsConvocatoriaEntidadConvocante() throws Exception {
+  void update_ReturnsConvocatoriaEntidadConvocante() throws Exception {
     // given: Existing ConvocatoriaEntidadConvocante to be updated
     ConvocatoriaEntidadConvocante convocatoriaEntidadConvocanteExistente = generarMockConvocatoriaEntidadConvocante(1L);
     ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante = generarMockConvocatoriaEntidadConvocante(1L);
@@ -116,7 +116,7 @@ public class ConvocatoriaEntidadConvocanteControllerTest extends BaseControllerT
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante = generarMockConvocatoriaEntidadConvocante(1L);
@@ -136,7 +136,7 @@ public class ConvocatoriaEntidadConvocanteControllerTest extends BaseControllerT
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.doNothing().when(service).delete(ArgumentMatchers.anyLong());
@@ -154,7 +154,7 @@ public class ConvocatoriaEntidadConvocanteControllerTest extends BaseControllerT
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void delete_NoExistingId_Return404() throws Exception {
+  void delete_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -173,7 +173,7 @@ public class ConvocatoriaEntidadConvocanteControllerTest extends BaseControllerT
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsConvocatoriaEntidadConvocante() throws Exception {
+  void findById_WithExistingId_ReturnsConvocatoriaEntidadConvocante() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
       return generarMockConvocatoriaEntidadConvocante(invocation.getArgument(0));
@@ -195,7 +195,7 @@ public class ConvocatoriaEntidadConvocanteControllerTest extends BaseControllerT
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ConvocatoriaEntidadConvocanteNotFoundException(1L);

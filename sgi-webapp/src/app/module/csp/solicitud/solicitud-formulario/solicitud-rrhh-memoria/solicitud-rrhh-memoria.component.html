@@ -1,0 +1,42 @@
+<sgi-fragment
+  title="{{'menu.csp.solicitud.solicitud-rrhh' | translate}} - {{'menu.csp.solicitud.solicitud-rrhh.memoria' | translate}}">
+
+  <form [formGroup]="formGroup" fxLayout="column">
+    <div fxFlex fxLayout="row">
+      <!-- Titulo trabajo -->
+      <mat-form-field>
+        <mat-label>{{'csp.solicitud.solicitud-rrhh.titulo-trabajo' | translate}}</mat-label>
+        <input matInput type="text" placeholder="{{'csp.solicitud.solicitud-rrhh.titulo-trabajo' | translate}}"
+          formControlName="tituloTrabajo" required>
+        <mat-error *ngIf="formGroup.controls.tituloTrabajo.errors?.required">
+          {{'error.required.entity' | translate:msgParamTituloTrabajoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row">
+      <!-- Resumen -->
+      <mat-form-field>
+        <mat-label>{{'csp.solicitud.solicitud-rrhh.resumen' | translate}}</mat-label>
+        <textarea matInput formControlName="resumen" type="text" id="comentariosEstado"
+          placeholder="{{'csp.solicitud.solicitud-rrhh.resumen' | translate}}" cdkTextareaAutosize
+          #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" required></textarea>
+        <mat-error *ngIf="formGroup.controls.resumen.errors?.required">
+          {{'error.required.entity' | translate:msgParamResumenEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row">
+      <!-- Obsrvaciones -->
+      <mat-form-field>
+        <mat-label>{{'csp.solicitud.solicitud-rrhh.observaciones' | translate}}</mat-label>
+        <textarea matInput formControlName="observaciones" type="text" id="comentariosEstado"
+          placeholder="{{'csp.solicitud.solicitud-rrhh.observaciones' | translate}}" cdkTextareaAutosize
+          #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
+      </mat-form-field>
+    </div>
+
+  </form>
+
+</sgi-fragment>

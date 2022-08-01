@@ -14,6 +14,7 @@ import { MatExpansionPanel } from '@angular/material/expansion';
 import { Event, NavigationEnd, Router } from '@angular/router';
 import { ActionFragmentMenuItemComponent } from '@shared/action-fragment-menu-item/action-fragment-menu-item.component';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { delay } from 'rxjs/operators';
 
 interface Status {
   changes: boolean;
@@ -53,7 +54,7 @@ export class ActionFragmentMenuGroupComponent implements AfterViewInit, AfterCon
   ngAfterViewInit(): void {
     this.menuItems.forEach(item => {
       if (item.fragment) {
-        this.subscriptions.push(item.fragment.status$.subscribe(() => {
+        this.subscriptions.push(item.fragment.status$.pipe(delay(0)).subscribe(() => {
           this.mergeStatus();
         }));
       }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -64,12 +65,12 @@ public class TipoFinalidadServiceImpl implements TipoFinalidadService {
     log.debug("update(TipoFinalidad tipoFinalidad) - start");
 
     Assert.notNull(tipoFinalidad.getId(), "Id no puede ser null para actualizar TipoFinalidad");
-    repository.findByNombreAndActivoIsTrue(tipoFinalidad.getNombre()).ifPresent((tipoFinalidadExistente) -> {
-      Assert.isTrue(tipoFinalidad.getId() == tipoFinalidadExistente.getId(),
-          "Ya existe un TipoFinalidad activo con el nombre '" + tipoFinalidadExistente.getNombre() + "'");
-    });
+    repository.findByNombreAndActivoIsTrue(tipoFinalidad.getNombre())
+        .ifPresent(tipoFinalidadExistente -> Assert.isTrue(
+            Objects.equals(tipoFinalidad.getId(), tipoFinalidadExistente.getId()),
+            "Ya existe un TipoFinalidad activo con el nombre '" + tipoFinalidadExistente.getNombre() + "'"));
 
-    return repository.findById(tipoFinalidad.getId()).map((data) -> {
+    return repository.findById(tipoFinalidad.getId()).map(data -> {
       data.setNombre(tipoFinalidad.getNombre());
       data.setDescripcion(tipoFinalidad.getDescripcion());
 
@@ -93,7 +94,7 @@ public class TipoFinalidadServiceImpl implements TipoFinalidadService {
     Assert.notNull(id, "TipoFinalidad id no puede ser null para reactivar un TipoFinalidad");
 
     return repository.findById(id).map(tipoFinalidad -> {
-      if (tipoFinalidad.getActivo()) {
+      if (Boolean.TRUE.equals(tipoFinalidad.getActivo())) {
         return tipoFinalidad;
       }
 
@@ -121,7 +122,7 @@ public class TipoFinalidadServiceImpl implements TipoFinalidadService {
     Assert.notNull(id, "TipoFinalidad id no puede ser null para desactivar un TipoFinalidad");
 
     return repository.findById(id).map(tipoFinalidad -> {
-      if (!tipoFinalidad.getActivo()) {
+      if (Boolean.FALSE.equals(tipoFinalidad.getActivo())) {
         return tipoFinalidad;
       }
 

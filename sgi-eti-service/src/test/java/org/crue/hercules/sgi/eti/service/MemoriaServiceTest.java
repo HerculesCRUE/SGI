@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.eti.service;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -65,7 +67,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * MemoriaServiceTest
  */
-public class MemoriaServiceTest extends BaseServiceTest {
+class MemoriaServiceTest extends BaseServiceTest {
 
   @Mock
   private MemoriaRepository memoriaRepository;
@@ -137,7 +139,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void find_WithId_ReturnsMemoria() {
+  void find_WithId_ReturnsMemoria() {
 
     BDDMockito.given(memoriaRepository.findById(1L))
         .willReturn(Optional.of(generarMockMemoria(1L, "numRef-5598", "Memoria1", 1, 1L)));
@@ -152,7 +154,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void find_NotFound_ThrowsMemoriaNotFoundException() throws Exception {
+  void find_NotFound_ThrowsMemoriaNotFoundException() throws Exception {
     BDDMockito.given(memoriaRepository.findById(1L)).willReturn(Optional.empty());
 
     Assertions.assertThatThrownBy(() -> memoriaService.findById(1L)).isInstanceOf(MemoriaNotFoundException.class);
@@ -183,7 +185,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findByComite_NotFound_ThrowsComiteNotFoundException() throws Exception {
+  void findByComite_NotFound_ThrowsComiteNotFoundException() throws Exception {
     BDDMockito.given(comiteRepository.findByIdAndActivoTrue(1L)).willReturn(Optional.empty());
 
     Assertions.assertThatThrownBy(() -> memoriaService.findByComiteAndPeticionEvaluacion(1L, 1L, null))
@@ -191,7 +193,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findByComiteAndPeticionEvaluacion_ComiteIdNull() throws Exception {
+  void findByComiteAndPeticionEvaluacion_ComiteIdNull() throws Exception {
 
     try {
       // when: Creamos la memoria
@@ -205,7 +207,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findByComiteAndPeticionEvaluacion_PeticionEvaluacionIdNull() throws Exception {
+  void findByComiteAndPeticionEvaluacion_PeticionEvaluacionIdNull() throws Exception {
 
     try {
       // when: Creamos la memoria
@@ -220,7 +222,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_ReturnsMemoriaTipoMemoriaNuevo() {
+  void create_ReturnsMemoriaTipoMemoriaNuevo() {
     // given: Una nueva Memoria
     Memoria memoriaNew = generarMockMemoria(null, "numRef-5598", "MemoriaNew", 1, 1L);
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
@@ -247,7 +249,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_ReturnsMemoriaTipoMemoriaRatificacion() {
+  void create_ReturnsMemoriaTipoMemoriaRatificacion() {
     // given: Una nueva Memoria
     Memoria memoriaNew = generarMockMemoria(null, "numRef-5598", "MemoriaNew", 1, 1L);
     TipoMemoria tipoMemoria = generarMockTipoMemoria(3L, "TipoMemoria3", true);
@@ -285,7 +287,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_MemoriaIdNull() {
+  void create_MemoriaIdNull() {
     // given: Una nueva Memoria
     Memoria memoriaNew = generarMockMemoria(1L, "numRef-5598", "MemoriaNew", 1, 1L);
 
@@ -301,7 +303,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_PeticionEvaluacionIdNull() {
+  void create_PeticionEvaluacionIdNull() {
     // given: Una nueva Memoria
     Memoria memoriaNew = generarMockMemoria(null, "numRef-5598", "MemoriaNew", 1, 1L);
 
@@ -318,7 +320,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_ThrowPeticionEvaluacionNotFound() {
+  void create_ThrowPeticionEvaluacionNotFound() {
     // given: Una nueva Memoria
     Memoria memoriaNew = generarMockMemoria(null, "numRef-5598", "MemoriaNew", 1, 1L);
 
@@ -334,7 +336,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_ThrowComiteNotFound() {
+  void create_ThrowComiteNotFound() {
     // given: Una nueva Memoria
     Memoria memoriaNew = generarMockMemoria(null, "numRef-5598", "MemoriaNew", 1, 1L);
 
@@ -352,7 +354,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_FailTipoMemoria() {
+  void create_FailTipoMemoria() {
     // given: Una nueva Memoria
     Memoria memoriaNew = generarMockMemoria(null, "numRef-5598", "MemoriaNew", 1, 1L);
 
@@ -379,7 +381,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void createModificada_ReturnsMemoria() {
+  void createModificada_ReturnsMemoria() {
     // given: Una nueva Memoria
     Memoria memoriaNew = generarMockMemoria(null, "", "MemoriaNew", 1, 1L);
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
@@ -425,7 +427,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void createModificada_MemoriaWithId_ThrowsIllegalArgumentException() {
+  void createModificada_MemoriaWithId_ThrowsIllegalArgumentException() {
     // given: Una nueva Memoria que ya tiene id
     Memoria memoriaNew = generarMockMemoria(1L, "numRef-5598", "MemoriaNew", 1, 1L);
     // when: Creamos la Memoria
@@ -435,7 +437,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void createModificada_MemoriaIdNull() {
+  void createModificada_MemoriaIdNull() {
     // given: Una nueva Memoria
     Memoria memoriaNew = generarMockMemoria(1L, "numRef-5598", "MemoriaNew", 1, 1L);
 
@@ -451,7 +453,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void createModificada_PeticionEvaluacionIdNull() {
+  void createModificada_PeticionEvaluacionIdNull() {
     // given: Una nueva Memoria
     Memoria memoriaNew = generarMockMemoria(null, "numRef-5598", "MemoriaNew", 1, 1L);
 
@@ -468,7 +470,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void createModificada_ThrowPeticionEvaluacionNotFound() {
+  void createModificada_ThrowPeticionEvaluacionNotFound() {
     // given: Una nueva Memoria
     Memoria memoriaNew = generarMockMemoria(null, "numRef-5598", "MemoriaNew", 1, 1L);
 
@@ -484,7 +486,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void createModificada_ThrowComiteNotFound() {
+  void createModificada_ThrowComiteNotFound() {
     // given: Una nueva Memoria
     Memoria memoriaNew = generarMockMemoria(null, "numRef-5598", "MemoriaNew", 1, 1L);
 
@@ -503,7 +505,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void createModificada_FailTipoMemoria() {
+  void createModificada_FailTipoMemoria() {
     // given: Una nueva Memoria
     Memoria memoriaNew = generarMockMemoria(null, "", "MemoriaNew", 1, 1L);
 
@@ -530,7 +532,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_EstadoActualEnElaboracion_ReturnsMemoria() {
+  void update_EstadoActualEnElaboracion_ReturnsMemoria() {
     // given: Una nueva Memoria con el servicio actualizado
     Memoria memoriaServicioActualizado = generarMockMemoria(1L, "numRef-99", "Memoria 1 actualizada", 1, 1L);
 
@@ -550,7 +552,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_EstadoActualCompletada_ReturnsMemoria() {
+  void update_EstadoActualCompletada_ReturnsMemoria() {
     // given: Una nueva Memoria inactiva
     Memoria memoriaServicioActualizado = generarMockMemoria(1L, "numRef-99", "Memoria 1 actualizada", 1, 2L);
     memoriaServicioActualizado.setActivo(Boolean.FALSE);
@@ -571,7 +573,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ThrowsMemoriaNotFoundException() {
+  void update_ThrowsMemoriaNotFoundException() {
     // given: Una nueva Memoria a actualizar
     Memoria memoria = generarMockMemoria(1L, "numRef-5598", "Memoria1", 1, 1L);
 
@@ -581,7 +583,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutId_ThrowsIllegalArgumentException() {
+  void update_WithoutId_ThrowsIllegalArgumentException() {
 
     // given: Una Memoria que venga sin id
     Memoria memoria = generarMockMemoria(null, "numRef-5598", "Memoria1", 1, 1L);
@@ -594,7 +596,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_EstadoActualInvalid_ThrowsIllegalArgumentException() {
+  void update_EstadoActualInvalid_ThrowsIllegalArgumentException() {
 
     // given: Una nueva Memoria con activo a false
     Memoria memoriaInactiva = generarMockMemoria(1L, "numRef-99", "Memoria", 1, 1L);
@@ -616,7 +618,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithoutId_ThrowsIllegalArgumentException() {
+  void delete_WithoutId_ThrowsIllegalArgumentException() {
     // given: Sin id
     Assertions.assertThatThrownBy(
         // when: Delete sin id
@@ -626,7 +628,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_NonExistingId_ThrowsMemoriaNotFoundException() {
+  void delete_NonExistingId_ThrowsMemoriaNotFoundException() {
     // given: Id no existe
     BDDMockito.given(memoriaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.FALSE);
 
@@ -638,7 +640,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_DeletesMemoria() {
+  void delete_WithExistingId_DeletesMemoria() {
     // given: Id existente
     BDDMockito.given(memoriaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
     BDDMockito.doNothing().when(memoriaRepository).deleteById(ArgumentMatchers.anyLong());
@@ -651,7 +653,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_Unlimited_ReturnsFullMemoriaPeticionEvaluacionist() {
+  void findAll_Unlimited_ReturnsFullMemoriaPeticionEvaluacionist() {
     // given: One hundred Memoria
     List<MemoriaPeticionEvaluacion> memorias = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -672,7 +674,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_WithPaging_ReturnsPage() {
+  void findAll_WithPaging_ReturnsPage() {
     // given: One hundred Memorias
     List<MemoriaPeticionEvaluacion> memorias = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -713,7 +715,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllMemoriasAsignablesConvocatoria_Unlimited_ReturnsFullMemoriaList() {
+  void findAllMemoriasAsignablesConvocatoria_Unlimited_ReturnsFullMemoriaList() {
     // given: idConvocatoria, One hundred Memoria
     Long idConvocatoria = 1L;
     List<Memoria> memorias = new ArrayList<>();
@@ -733,7 +735,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllMemoriasAsignablesConvocatoria_WithPaging_ReturnsPage() {
+  void findAllMemoriasAsignablesConvocatoria_WithPaging_ReturnsPage() {
     // given: idConvocatoria, One hundred Memoria
     Long idConvocatoria = 1L;
     List<Memoria> memorias = new ArrayList<>();
@@ -758,7 +760,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllAsignablesTipoConvocatoriaOrdExt_Unlimited_ReturnsFullMemoriaList() {
+  void findAllAsignablesTipoConvocatoriaOrdExt_Unlimited_ReturnsFullMemoriaList() {
 
     // given: search query with comité y fecha límite de una convocatoria de tipo
     // ordinario o extraordinario
@@ -788,7 +790,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllAsignablesTipoConvocatoriaSeguimiento_Unlimited_ReturnsFullMemoriaList() {
+  void findAllAsignablesTipoConvocatoriaSeguimiento_Unlimited_ReturnsFullMemoriaList() {
 
     // given: search query with comité y fecha límite de una convocatoria de tipo
     // seguimiento
@@ -817,7 +819,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findMemoriaByPeticionEvaluacionMaxVersion_Unlimited_ReturnsFullMemoriaPeticionEvaluacionList() {
+  void findMemoriaByPeticionEvaluacionMaxVersion_Unlimited_ReturnsFullMemoriaPeticionEvaluacionList() {
 
     List<MemoriaPeticionEvaluacion> memorias = new ArrayList<>();
     for (int i = 1; i <= 10; i++) {
@@ -838,7 +840,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findMemoriaByPeticionEvaluacionMaxVersion_WithPaging_ReturnsPage() {
+  void findMemoriaByPeticionEvaluacionMaxVersion_WithPaging_ReturnsPage() {
     // given: idPEticionEvaluacion, One hundred MemoriaPeticionEvaluacion
     Long idPeticionEvaluacion = 1L;
     List<MemoriaPeticionEvaluacion> memorias = new ArrayList<>();
@@ -863,7 +865,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllMemoriasWithPersonaRefCreadorPeticionesEvaluacionOrResponsableMemoria_Unlimited_ReturnsFullMemoriaPeticionEvaluacionList() {
+  void findAllMemoriasWithPersonaRefCreadorPeticionesEvaluacionOrResponsableMemoria_Unlimited_ReturnsFullMemoriaPeticionEvaluacionList() {
 
     List<MemoriaPeticionEvaluacion> memorias = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -888,7 +890,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllMemoriasWithPersonaRefCreadorPeticionesEvaluacionOrResponsableMemoria_WithPaging_ReturnsPage() {
+  void findAllMemoriasWithPersonaRefCreadorPeticionesEvaluacionOrResponsableMemoria_WithPaging_ReturnsPage() {
     // given: One hundred MemoriaPeticionEvaluacion
     List<MemoriaPeticionEvaluacion> memorias = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -930,7 +932,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void getEstadoAnteriorMemoria_returnMemoria() {
+  void getEstadoAnteriorMemoria_returnMemoria() {
     // Descomentar si el mock no es una memoria de tipo retrospectiva
     // BDDMockito.given(estadoMemoriaRepository.findAllByMemoriaIdOrderByFechaEstadoDesc(ArgumentMatchers.anyLong()))
     // .willReturn(generarEstadosMemoria(2L));
@@ -946,7 +948,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void updateEstadoAnteriorMemoria_returnsMemoriaNull() {
+  void updateEstadoAnteriorMemoria_returnsMemoriaNull() {
 
     Memoria memoria = generarMockMemoria(1L, "numRef-5598", "Memoria1", 1, 3L);
 
@@ -963,7 +965,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void updateEstadoAnteriorMemoriaEnEvaluacion_returnsMemoriaNull() {
+  void updateEstadoAnteriorMemoriaEnEvaluacion_returnsMemoriaNull() {
     TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
     tipoEstadoMemoria.setId(Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION);
 
@@ -978,7 +980,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void updateEstadoAnteriorMemoriaEnSecretaria_returnsMemoriaNull() {
+  void updateEstadoAnteriorMemoriaEnSecretaria_returnsMemoriaNull() {
     TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
     tipoEstadoMemoria.setId(Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA);
 
@@ -1188,7 +1190,7 @@ public class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_archivarNoPresentados() {
+  void update_archivarNoPresentados() {
     // given: Memorias a archivar
     Memoria memoria = generarMockMemoria(1L, "numRef-99", "Memoria", 1, 1L);
     Memoria memoriaServicioActualizado = generarMockMemoria(1L, "numRef-99", "MemoriaAct", 1, 1L);
@@ -1204,9 +1206,11 @@ public class MemoriaServiceTest extends BaseServiceTest {
     TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
     tipoEstadoMemoria.setId(Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO);
     EstadoMemoria estadoMemoria = new EstadoMemoria(null, memoria, tipoEstadoMemoria, Instant.now());
-    BDDMockito.given(estadoMemoriaRepository.save(ArgumentMatchers.<EstadoMemoria>any())).willReturn(estadoMemoria);
+
     memoriaServicioActualizado.setEstadoActual(tipoEstadoMemoria);
-    BDDMockito.given(memoriaRepository.save(ArgumentMatchers.<Memoria>any())).willReturn(memoriaServicioActualizado);
+    BDDMockito.given(this.estadoMemoriaRepository.findTopByMemoriaIdOrderByFechaEstadoDesc(anyLong())).willReturn(estadoMemoria);
+
+
 
     // when: Actualizamos la Memoria con el estado archivado
     memoriaService.archivarNoPresentados();

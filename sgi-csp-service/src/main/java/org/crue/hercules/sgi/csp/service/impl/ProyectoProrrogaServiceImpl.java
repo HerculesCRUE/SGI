@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -155,7 +156,7 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
 
       // Solamente se puede modificar la última prórroga
       if (ultimoProyectoProrroga.isPresent()) {
-        Assert.isTrue(proyectoProrroga.getId() == ultimoProyectoProrroga.get().getId(),
+        Assert.isTrue(Objects.equals(proyectoProrroga.getId(), ultimoProyectoProrroga.get().getId()),
             "Sólo se permite eliminar la última prórroga");
       }
       return proyectoProrroga;
@@ -249,7 +250,7 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
 
     // Se actualizan los miembros de equipo cuya fecha de fin coincida con la fecha
     // de fin del proyecto o sea mayor a la nueva fecha de fin del proyecto
-    List<ProyectoEquipo> miembros = new ArrayList<ProyectoEquipo>();
+    List<ProyectoEquipo> miembros = new ArrayList<>();
     Instant fechaFin = proyecto.get().getFechaFinDefinitiva() != null ? proyecto.get().getFechaFinDefinitiva()
         : proyecto.get().getFechaFin();
     List<ProyectoEquipo> miembrosFechaFinEqual = proyectoEquipoRepository
@@ -328,7 +329,7 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
             "Fecha de concesión debe ser posterior a la de la última prórroga");
       } else {
         // Se trata de una modificación
-        Assert.isTrue(datosProyectoProrroga.getId() == ultimoProyectoProrroga.get().getId(),
+        Assert.isTrue(Objects.equals(datosProyectoProrroga.getId(), ultimoProyectoProrroga.get().getId()),
             "Sólo se permite modificar la última prórroga");
 
         // Se recupera el ProyectoProrroga inmediatamente anterior
@@ -399,7 +400,6 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
    * 
    * @param proyectoId identificador del {@link Proyecto}
    */
-  @Transactional
   private void recalcularNumProrroga(Long proyectoId) {
     List<ProyectoProrroga> listadoProyectoProrrogaBD = repository.findAllByProyectoIdOrderByFechaConcesion(proyectoId);
 

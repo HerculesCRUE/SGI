@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.validation.Valid;
 
@@ -65,7 +66,7 @@ public class SolicitudProyectoEquipoController {
     log.debug("updateMiembrosEquipo(Long solicitudId, List<SolicitudProyectoEquipo> solicitudProyectoEquipos) - start");
 
     solicitudProyectoEquipos.stream().forEach(solicitudProyectoEquipo -> {
-      if (solicitudProyectoEquipo.getSolicitudProyectoId() != solicitudProyectoId) {
+      if (!Objects.equals(solicitudProyectoEquipo.getSolicitudProyectoId(), solicitudProyectoId)) {
         throw new NoRelatedEntitiesException(SolicitudProyectoEquipo.class, Solicitud.class);
       }
     });

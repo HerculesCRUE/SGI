@@ -131,7 +131,7 @@ class ProyectoConceptoGastoCodigoEcIT extends BaseIT {
     List<ProyectoConceptoGastoCodigoEc> responseData = response.getBody();
 
     Assertions.assertThat(responseData.isEmpty()).isFalse();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
     Assertions.assertThat(responseData.get(0).getId()).isEqualTo(1L);
     Assertions.assertThat(responseData.get(1).getId()).isEqualTo(3L);
     Assertions.assertThat(responseData.get(2).getId()).isEqualTo(5L);
@@ -182,7 +182,7 @@ class ProyectoConceptoGastoCodigoEcIT extends BaseIT {
 
     Assertions.assertThat(responseData).isNotNull();
     Assertions.assertThat(responseData.isEmpty()).isFalse();
-    Assertions.assertThat(responseData.size()).isEqualTo(2);
+    Assertions.assertThat(responseData).hasSize(2);
 
     List<ProyectoConceptoGastoCodigoEc> sortedResponseData = responseData.stream()
         .sorted(new Comparator<ProyectoConceptoGastoCodigoEc>() {

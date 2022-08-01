@@ -17,7 +17,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 
-public class ProyectoDocumentoIT extends BaseIT {
+class ProyectoDocumentoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/proyectodocumentos";
@@ -97,7 +97,7 @@ public class ProyectoDocumentoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsProyectoDocumento() throws Exception {
+  void update_ReturnsProyectoDocumento() throws Exception {
     String roles = "CSP-PRO-E";
     Long idProyectoDocumento = 1L;
     ProyectoDocumento proyectoDocumento = generarMockProyectoDocumento(1L);
@@ -171,7 +171,7 @@ public class ProyectoDocumentoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsProyectoDocumento() throws Exception {
+  void findById_ReturnsProyectoDocumento() throws Exception {
     String roles = "AUTH";
     Long idProyecto = 1L;
 

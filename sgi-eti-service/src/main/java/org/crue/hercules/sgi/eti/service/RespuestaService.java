@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.eti.service;
 
+import java.util.Optional;
+
 import org.crue.hercules.sgi.eti.exceptions.RespuestaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Respuesta;
 import org.springframework.data.domain.Page;
@@ -64,4 +66,12 @@ public interface RespuestaService {
   Respuesta findByMemoriaIdAndApartadoId(Long idMemoria, Long idApartado);
 
   Page<Respuesta> findByMemoriaId(Long idMemoria, Pageable page);
+
+  /**
+   * Obtiene la última Respuesta de una Memoria
+   * 
+   * @param idMemoria Identificador de la Memoria
+   * @return Respuesta
+   */
+  Optional<Respuesta> findLastByMemoriaId(Long idMemoria);
 }

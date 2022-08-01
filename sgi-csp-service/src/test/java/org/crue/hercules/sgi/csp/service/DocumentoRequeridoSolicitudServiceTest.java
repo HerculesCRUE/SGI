@@ -43,7 +43,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
+class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
 
   @Mock
   private DocumentoRequeridoSolicitudRepository documentoRequeridoSolicitudRepository;
@@ -61,14 +61,14 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   private DocumentoRequeridoSolicitudService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new DocumentoRequeridoSolicitudServiceImpl(documentoRequeridoSolicitudRepository,
         configuracionSolicitudRepository, modeloTipoFaseRepository, modeloTipoDocumentoRepository, convocatoriaService,
         convocatoriaRepository);
   }
 
   @Test
-  public void create_ReturnsDocumentoRequeridoSolicitud() {
+  void create_ReturnsDocumentoRequeridoSolicitud() {
     // given: new DocumentoRequeridoSolicitud
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoria, 1L);
@@ -118,7 +118,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud with id filled
     DocumentoRequeridoSolicitud newDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
 
@@ -131,7 +131,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutConfiguracionId_ThrowsIllegalArgumentException() {
+  void create_WithoutConfiguracionId_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud without ConfigracionId
     DocumentoRequeridoSolicitud newDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, null);
     newDocumentoRequeridoSolicitud.setId(null);
@@ -145,7 +145,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutTipoDocumento_ThrowsIllegalArgumentException() {
+  void create_WithoutTipoDocumento_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud without TipoDocumento
     DocumentoRequeridoSolicitud newDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     newDocumentoRequeridoSolicitud.setId(null);
@@ -160,7 +160,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingConfiguracionSolicitud_ThrowsNotFoundException() {
+  void create_WithNoExistingConfiguracionSolicitud_ThrowsNotFoundException() {
     // given: a DocumentoRequeridoSolicitud without No existing
     // ConfiguracionSolicitud
     DocumentoRequeridoSolicitud newDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
@@ -177,7 +177,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutFasePresentacionSolicitudes_ThrowsIllegalArgumentException() {
+  void create_WithoutFasePresentacionSolicitudes_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud without FasePresentacionSolicitudes
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoria, 1L);
@@ -200,7 +200,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingModeloTipoFase_ThrowsIllegalArgumentException() {
+  void create_WithNoExistingModeloTipoFase_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud with FasePresentacionSolicitudes
     // TipoFase not assigned to ModeloEjecucion Convocatoria
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -228,7 +228,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithModeloTipoFaseDisabled_ThrowsIllegalArgumentException() {
+  void create_WithModeloTipoFaseDisabled_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud with FasePresentacionSolicitudes
     // TipoFase assigned to disabled ModeloEjecucion
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -257,7 +257,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithTipoFaseDisabled_ThrowsIllegalArgumentException() {
+  void create_WithTipoFaseDisabled_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud with FasePresentacionSolicitudes
     // TipoFase disabled assigned to ModeloEjecucion Convocatoria
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -285,7 +285,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingModeloTipoDocumento_ThrowsIllegalArgumentException() {
+  void create_WithNoExistingModeloTipoDocumento_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud with TipoDocumento nos assigned to
     // ModeloEjecucion or ModeloTipoFase
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -318,7 +318,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithModeloTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
+  void create_WithModeloTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud with TipoDocumento assigned to disabled
     // ModeloEjecucion
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -354,7 +354,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
+  void create_WithTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud with TipoDocumento disabled assigned to
     // ModeloEjecucion
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -388,7 +388,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
+  void create_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud when modificable returns False
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoria, 1L);
@@ -410,7 +410,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsDocumentoRequeridoSolicitud() {
+  void update_ReturnsDocumentoRequeridoSolicitud() {
     // given: update DocumentoRequeridoSolicitud
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoria, 1L);
@@ -453,7 +453,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutId_ThrowsIllegalArgumentException() {
+  void update_WithoutId_ThrowsIllegalArgumentException() {
     // given: a updated DocumentoRequeridoSolicitud with id filled
     DocumentoRequeridoSolicitud updatedDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     updatedDocumentoRequeridoSolicitud.setId(null);
@@ -467,7 +467,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingDocumentoRequeridoSolicitud_ThrowsNotFoundException() {
+  void update_WithNoExistingDocumentoRequeridoSolicitud_ThrowsNotFoundException() {
     // given: a DocumentoRequeridoSolicitud with no existing Id
     DocumentoRequeridoSolicitud updatedDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
 
@@ -482,7 +482,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutConfiguracionId_ThrowsIllegalArgumentException() {
+  void update_WithoutConfiguracionId_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud without ConfigracionId
     DocumentoRequeridoSolicitud originalDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     DocumentoRequeridoSolicitud updatedDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, null);
@@ -499,7 +499,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutTipoDocumento_ThrowsIllegalArgumentException() {
+  void update_WithoutTipoDocumento_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud without TipoDocumento
     DocumentoRequeridoSolicitud originalDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     DocumentoRequeridoSolicitud updatedDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
@@ -517,7 +517,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingConfiguracionSolicitud_ThrowsNotFoundException() {
+  void update_WithNoExistingConfiguracionSolicitud_ThrowsNotFoundException() {
     // given: a DocumentoRequeridoSolicitud with No existing ConfiguracionSolicitud
     DocumentoRequeridoSolicitud originalDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     DocumentoRequeridoSolicitud updatedDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
@@ -534,7 +534,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutFasePresentacionSolicitudes_ThrowsIllegalArgumentException() {
+  void update_WithoutFasePresentacionSolicitudes_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud without FasePresentacionSolicitudes
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoria, 1L);
@@ -560,7 +560,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingModeloTipoFase_ThrowsIllegalArgumentException() {
+  void update_WithNoExistingModeloTipoFase_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud with FasePresentacionSolicitudes
     // TipoFase not assigned to ModeloEjecucion Convocatoria
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -590,7 +590,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithModeloTipoFaseDisabled_ThrowsIllegalArgumentException() {
+  void update_WithModeloTipoFaseDisabled_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud with FasePresentacionSolicitudes
     // TipoFase assigned to disabled ModeloEjecucion
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -622,7 +622,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithTipoFaseDisabled_ThrowsIllegalArgumentException() {
+  void update_WithTipoFaseDisabled_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud with FasePresentacionSolicitudes
     // TipoFase disabled assigned to ModeloEjecucion Convocatoria
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -653,7 +653,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingModeloTipoDocumento_ThrowsIllegalArgumentException() {
+  void update_WithNoExistingModeloTipoDocumento_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud with TipoDocumento nos assigned to
     // ModeloEjecucion or ModeloTipoFase
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -689,7 +689,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_TipoDocumentoWithModeloTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
+  void update_TipoDocumentoWithModeloTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud with TipoDocumento assigned to disabled
     // ModeloEjecucion
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -728,7 +728,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithModeloTipoDocumentoDisabledAndSameTipoDocumentoId_DoesNotThrowAnyException() {
+  void update_WithModeloTipoDocumentoDisabledAndSameTipoDocumentoId_DoesNotThrowAnyException() {
     // given: a DocumentoRequeridoSolicitud with TipoDocumento assigned to disabled
     // ModeloEjecucion without updating TipoDocumento
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -766,7 +766,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_TipoDocumentoWithTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
+  void update_TipoDocumentoWithTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud with TipoDocumento disabled assigned
     // ModeloEjecucion
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -804,7 +804,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithTipoDocumentoDisabledAndSameTipoDocumentoId_DoesNotThrowAnyException() {
+  void update_WithTipoDocumentoDisabledAndSameTipoDocumentoId_DoesNotThrowAnyException() {
     // given: a DocumentoRequeridoSolicitud with TipoDocumento disabled assigned to
     // ModeloEjecucion without updating TipoDocumento
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -842,7 +842,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
+  void update_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
     // given: a DocumentoRequeridoSolicitud when modificable return false
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoria, 1L);
@@ -866,7 +866,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_DoesNotThrowAnyException() {
+  void delete_WithExistingId_DoesNotThrowAnyException() {
     // given: existing DocumentoRequeridoSolicitud
     Long id = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -888,7 +888,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
+  void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
     // given: no id
     Long id = null;
 
@@ -901,7 +901,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -916,7 +916,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findByIdConvocatoria_WithExistingId_ReturnsConfiguracionSolicitud() throws Exception {
+  void findByIdConvocatoria_WithExistingId_ReturnsConfiguracionSolicitud() throws Exception {
     // given: existing ConfiguracionSolicitud
     DocumentoRequeridoSolicitud documentoRequeridoSolicitudExistente = generarMockDocumentoRequeridoSolicitud(1L, 1L);
 
@@ -939,7 +939,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing convocatoria
     BDDMockito.given(documentoRequeridoSolicitudRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.empty());
@@ -952,7 +952,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByConvocatoria_ReturnsPage() {
+  void findAllByConvocatoria_ReturnsPage() {
     // given: Una lista con 37 DocumentoRequeridoSolicitud para la Convocatoria
     Long convocatoriaId = 1L;
     List<DocumentoRequeridoSolicitud> convocatoriasEntidadesGestoras = new ArrayList<>();
@@ -984,7 +984,7 @@ public class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
     Page<DocumentoRequeridoSolicitud> page = service.findAllByConvocatoria(convocatoriaId, null, paging);
 
     // then: Devuelve la pagina 3 con los DocumentoRequeridoSolicitud del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

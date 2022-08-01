@@ -15,12 +15,12 @@ import javax.persistence.Table;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = PaisValidado.TABLE_NAME)
@@ -28,8 +28,8 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
-public class PaisValidado {
+@Builder
+public class PaisValidado extends BaseEntity {
 
   protected static final String TABLE_NAME = "pais_validado";
   private static final String SEQUENCE_NAME = TABLE_NAME + "_seq";

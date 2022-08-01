@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 
@@ -19,11 +20,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProyectoFacturacionInput {
+public class ProyectoFacturacionInput implements Serializable {
 
   public enum TipoEstadoValidacion {
     PENDIENTE, NOTIFICADA, VALIDADA, RECHAZADA
   }
+
   private Long id;
 
   @Size(max = ProyectoFacturacion.COMENTARIO_MAX_LENGTH)
@@ -55,7 +57,7 @@ public class ProyectoFacturacionInput {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class EstadoValidacionIP {
+  public static class EstadoValidacionIP implements Serializable {
     private Long id;
     private String comentario;
     @NotNull

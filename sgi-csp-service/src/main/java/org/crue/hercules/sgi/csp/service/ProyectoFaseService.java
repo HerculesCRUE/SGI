@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.service;
 
+import org.crue.hercules.sgi.csp.dto.ProyectoFaseInput;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoFase;
 import org.springframework.data.domain.Page;
@@ -14,18 +15,19 @@ public interface ProyectoFaseService {
   /**
    * Guarda la entidad {@link ProyectoFase}.
    * 
-   * @param ProyectoFase la entidad {@link ProyectoFase} a guardar.
+   * @param proyectoFaseInput la entidad {@link ProyectoFase} a guardar.
    * @return ProyectoFase la entidad {@link ProyectoFase} persistida.
    */
-  ProyectoFase create(ProyectoFase ProyectoFase);
+  ProyectoFase create(ProyectoFaseInput proyectoFaseInput);
 
   /**
    * Actualiza la entidad {@link ProyectoFase}.
    * 
-   * @param ProyectoFaseActualizar la entidad {@link ProyectoFase} a guardar.
+   * @param id                     Id del {@link ProyectoFase}.
+   * @param proyectoFaseActualizar la entidad {@link ProyectoFase} a guardar.
    * @return ProyectoFase la entidad {@link ProyectoFase} persistida.
    */
-  ProyectoFase update(ProyectoFase ProyectoFaseActualizar);
+  ProyectoFase update(Long id, ProyectoFaseInput proyectoFaseActualizar);
 
   /**
    * Elimina la {@link ProyectoFase}.

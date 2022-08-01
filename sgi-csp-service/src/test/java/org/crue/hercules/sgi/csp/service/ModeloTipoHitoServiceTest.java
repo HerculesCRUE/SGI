@@ -32,7 +32,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * ModeloTipoHitoServiceTest
  */
-public class ModeloTipoHitoServiceTest extends BaseServiceTest {
+class ModeloTipoHitoServiceTest extends BaseServiceTest {
 
   @Mock
   private ModeloTipoHitoRepository modeloTipoHitoRepository;
@@ -44,12 +44,12 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   private ModeloTipoHitoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ModeloTipoHitoServiceImpl(modeloTipoHitoRepository, modeloEjecucionRepository, tipoHitoRepository);
   }
 
   @Test
-  public void create_ReturnsModeloTipoHito() {
+  void create_ReturnsModeloTipoHito() {
     // given: new ModeloTipoHito
     ModeloTipoHito data = generarModeloTipoHito(null, 1L, 1L);
 
@@ -85,7 +85,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: a ModeloTipoHito with id filled
     ModeloTipoHito data = generarModeloTipoHito(1L, 1L, 1L);
 
@@ -97,7 +97,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutModeloEjecucionId_ThrowsIllegalArgumentException() {
+  void create_WithoutModeloEjecucionId_ThrowsIllegalArgumentException() {
     // given: a ModeloTipoHito without ModeloEjecucionId
     ModeloTipoHito data = generarModeloTipoHito(null, null, 1L);
 
@@ -109,7 +109,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutTipoHitoId_ThrowsIllegalArgumentException() {
+  void create_WithoutTipoHitoId_ThrowsIllegalArgumentException() {
     // given: a ModeloTipoHito without TipoHitoId
     ModeloTipoHito data = generarModeloTipoHito(null, 1L, null);
 
@@ -124,7 +124,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingModeloEjecucion_404() {
+  void create_WithNoExistingModeloEjecucion_404() {
     // given: a ModeloTipoHito with non existing ModeloEjecucion
     ModeloTipoHito data = generarModeloTipoHito(null, 1L, 1L);
 
@@ -138,7 +138,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingTipoHito_404() {
+  void create_WithNoExistingTipoHito_404() {
     // given: a ModeloTipoHito with non existing TipoHito
     ModeloTipoHito data = generarModeloTipoHito(null, 1L, 1L);
 
@@ -154,7 +154,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDisabledTipoHito_ThrowsIllegalArgumentException() {
+  void create_WithDisabledTipoHito_ThrowsIllegalArgumentException() {
     // given: a ModeloTipoHito with disabled TipoHito
     ModeloTipoHito data = generarModeloTipoHito(null, 1L, 1L);
     data.getTipoHito().setActivo(Boolean.FALSE);
@@ -172,7 +172,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedModeloEjecucionIdAndTipoEnlaceIdAndActivo_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedModeloEjecucionIdAndTipoEnlaceIdAndActivo_ThrowsIllegalArgumentException() {
     // given: a ModeloTipoHito enabled with same
     // ModeloEjecucionId And TipoEnlaceId
     ModeloTipoHito modeloTipoHitoExistente = generarModeloTipoHito(1L, 1L, 1L);
@@ -194,7 +194,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedModeloEjecucionIdAndTipoEnlaceIdAndActivoFalse_ReturnEnableModeloTipoHito() {
+  void create_WithDuplicatedModeloEjecucionIdAndTipoEnlaceIdAndActivoFalse_ReturnEnableModeloTipoHito() {
     // given: a ModeloTipoHito disabled with same
     // ModeloEjecucionId And TipoEnlaceId
     ModeloTipoHito modeloTipoHitoExistente = generarModeloTipoHito(1L, 1L, 1L);
@@ -233,7 +233,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoOption_ThrowsIllegalArgumentException() {
+  void create_WithNoOption_ThrowsIllegalArgumentException() {
     // given: a ModeloTipoHito with no option selected
     ModeloTipoHito data = generarModeloTipoHito(null, 1L, 1L);
     data.setSolicitud(Boolean.FALSE);
@@ -253,7 +253,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithExistingId_ReturnsModeloTipoHito() {
+  void update_WithExistingId_ReturnsModeloTipoHito() {
     // given: existing ModeloTipoHito
     ModeloTipoHito modeloTipoHitoExistente = generarModeloTipoHito(1L, 1L, 1L);
     ModeloTipoHito modeloTipoHito = generarModeloTipoHito(1L, 1L, 1L);
@@ -293,7 +293,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutId_ThrowsIllegalArgumentException() {
+  void update_WithoutId_ThrowsIllegalArgumentException() {
     // given: a ModeloTipoHito without
     ModeloTipoHito data = generarModeloTipoHito(null, 1L, 1L);
 
@@ -305,7 +305,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_NoExistingModeloTipoHito_404() {
+  void update_NoExistingModeloTipoHito_404() {
     // given: No existing TipoHito
     ModeloTipoHito data = generarModeloTipoHito(99L, 1L, 1L);
 
@@ -319,7 +319,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_DisabledModeloTipoHito_ThrowsIllegalArgumentException() {
+  void update_DisabledModeloTipoHito_ThrowsIllegalArgumentException() {
     // given: a ModeloTipoHito to be updated is disabled
     ModeloTipoHito modeloTipoHitoExistente = generarModeloTipoHito(1L, 1L, 1L);
     modeloTipoHitoExistente.setActivo(Boolean.FALSE);
@@ -339,7 +339,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoOption_ThrowsIllegalArgumentException() {
+  void update_WithNoOption_ThrowsIllegalArgumentException() {
     // given: a ModeloTipoHito to be updated with no option selected
     ModeloTipoHito modeloTipoHitoExistente = generarModeloTipoHito(1L, 1L, 1L);
     ModeloTipoHito modeloTipoHito = generarModeloTipoHito(1L, 1L, 1L);
@@ -358,7 +358,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_WithExistingId_ReturnsModeloTipoHito() {
+  void disable_WithExistingId_ReturnsModeloTipoHito() {
     // given: existing ModeloTipoHito
     ModeloTipoHito data = generarModeloTipoHito(1L, 1L, 1L);
 
@@ -390,7 +390,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void disable_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     ModeloTipoHito data = generarModeloTipoHito(1L, 1L, 1L);
 
@@ -404,7 +404,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithExistingId_ReturnsModeloTipoHito() throws Exception {
+  void findById_WithExistingId_ReturnsModeloTipoHito() throws Exception {
     // given: existing ModeloTipoHito
     ModeloTipoHito givenData = generarModeloTipoHito(1L, 1L, 1L);
 
@@ -426,7 +426,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     BDDMockito.given(modeloTipoHitoRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
@@ -438,7 +438,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByModeloEjecucion_ReturnsPage() {
+  void findAllByModeloEjecucion_ReturnsPage() {
     // given: Una lista con 37 ModeloTipoHito para el ModeloEjecucion
     Long idModeloEjecucion = 1L;
     List<ModeloTipoHito> modeloTipoHitos = new ArrayList<>();
@@ -467,7 +467,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
     Page<ModeloTipoHito> page = service.findAllByModeloEjecucion(idModeloEjecucion, null, paging);
 
     // then: Devuelve la pagina 3 con los ModeloTipoHito del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -480,7 +480,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByModeloEjecucionActivosConvocatoria_ReturnsPage() {
+  void findAllByModeloEjecucionActivosConvocatoria_ReturnsPage() {
     // given: Una lista con 37 ModeloTipoHito activos para convocatorias para el
     // ModeloEjecucion
     Long idModeloEjecucion = 1L;
@@ -510,7 +510,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
     Page<ModeloTipoHito> page = service.findAllByModeloEjecucionActivosConvocatoria(idModeloEjecucion, null, paging);
 
     // then: Devuelve la pagina 3 con los ModeloTipoHito del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -523,7 +523,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByModeloEjecucionActivosProyecto_ReturnsPage() {
+  void findAllByModeloEjecucionActivosProyecto_ReturnsPage() {
     // given: Una lista con 37 ModeloTipoHito activos para convocatorias para el
     // ModeloEjecucion
     Long idModeloEjecucion = 1L;
@@ -553,7 +553,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
     Page<ModeloTipoHito> page = service.findAllByModeloEjecucionActivosProyecto(idModeloEjecucion, null, paging);
 
     // then: Devuelve la pagina 3 con los ModeloTipoHito del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -566,7 +566,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByModeloEjecucionActivosSolicitud_ReturnsPage() {
+  void findAllByModeloEjecucionActivosSolicitud_ReturnsPage() {
     // given: Una lista con 37 ModeloTipoHito activos para convocatorias para el
     // ModeloEjecucion
     Long idModeloEjecucion = 1L;
@@ -596,7 +596,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
     Page<ModeloTipoHito> page = service.findAllByModeloEjecucionActivosSolicitud(idModeloEjecucion, null, paging);
 
     // then: Devuelve la pagina 3 con los ModeloTipoHito del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -614,7 +614,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
    * @param id id del TipoHito
    * @return el objeto TipoHito
    */
-  public TipoHito generarMockTipoHito(Long id) {
+  TipoHito generarMockTipoHito(Long id) {
     return generarMockTipoHito(id, "nombre-" + id);
   }
 
@@ -624,7 +624,7 @@ public class ModeloTipoHitoServiceTest extends BaseServiceTest {
    * @param id id del TipoHito
    * @return el objeto TipoHito
    */
-  public TipoHito generarMockTipoHito(Long id, String nombre) {
+  TipoHito generarMockTipoHito(Long id, String nombre) {
     TipoHito tipoHito = new TipoHito();
     tipoHito.setId(id);
     tipoHito.setNombre(nombre);

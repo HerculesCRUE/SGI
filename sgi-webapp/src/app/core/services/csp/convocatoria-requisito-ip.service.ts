@@ -74,6 +74,22 @@ export class ConvocatoriaRequisitoIPService extends _ConvocatoriaRequisitoIPServ
   }
 
   /**
+   * Comprueba si el IRequisitoIPNivelAcademico se puede eliminar
+   *
+   * @param requisitoNivelAcademico IRequisitoIPNivelAcademico
+   */
+  isRequisitoNivelAcademicoEliminable(requisitoNivelAcademico: IRequisitoIPNivelAcademico): Observable<boolean> {
+    if (!!!requisitoNivelAcademico?.requisitoIP?.id || !!!requisitoNivelAcademico?.id) {
+      return of(true);
+    }
+
+    const url = `${this.endpointUrl}/${requisitoNivelAcademico.requisitoIP.id}/niveles/${requisitoNivelAcademico.id}/eliminable`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  /**
    * Actualiza los niveles académicos asociados al RequisitoIP con el id indicado
    * @param id Identificador del RequisitoIP
    * @param nivelesAcademicos niveles academicos a actualizar
@@ -91,7 +107,7 @@ export class ConvocatoriaRequisitoIPService extends _ConvocatoriaRequisitoIPServ
    * @param id Identificador del RequisitoIP
    */
   findCategoriaProfesional(id: number): Observable<IRequisitoIPCategoriaProfesional[]> {
-    const endpointUrl = `${this.endpointUrl}/${id}/categoriasprofesionalesrequisitosequipo`;
+    const endpointUrl = `${this.endpointUrl}/${id}/categoriasprofesionales`;
     const params = new HttpParams().set('id', id.toString());
     return this.http.get<IRequisitoIPCategoriaProfesionalResponse[]>(endpointUrl, { params })
       .pipe(
@@ -102,13 +118,29 @@ export class ConvocatoriaRequisitoIPService extends _ConvocatoriaRequisitoIPServ
   }
 
   /**
+   * Comprueba si el IRequisitoIPNivelAcademico se puede eliminar
+   *
+   * @param requisitoCategoriaProfesional IRequisitoIPCategoriaProfesional
+   */
+  isRequisitoCategoriaProfesionalEliminable(requisitoCategoriaProfesional: IRequisitoIPCategoriaProfesional): Observable<boolean> {
+    if (!!!requisitoCategoriaProfesional?.requisitoIP?.id || !!!requisitoCategoriaProfesional?.id) {
+      return of(true);
+    }
+
+    const url = `${this.endpointUrl}/${requisitoCategoriaProfesional.requisitoIP.id}/categoriasprofesionales/${requisitoCategoriaProfesional.id}/eliminable`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  /**
    * Actualiza las categorías académicas asociados al RequisitoIP con el id indicado
    * @param id Identificador del RequisitoIP
    * @param nivelesAcademicos niveles academicos a actualizar
    */
   updateCategoriasProfesionales(id: number, nivelesAcademicos: IRequisitoIPCategoriaProfesional[]):
     Observable<IRequisitoIPCategoriaProfesional[]> {
-    return this.http.patch<IRequisitoIPCategoriaProfesionalResponse[]>(`${this.endpointUrl}/${id}/categoriasprofesionalesrequisitosequipo`,
+    return this.http.patch<IRequisitoIPCategoriaProfesionalResponse[]>(`${this.endpointUrl}/${id}/categoriasprofesionales`,
       REQUISITOIP_CATEGORIA_PROFESIONAL_REQUEST_CONVERTER.fromTargetArray(nivelesAcademicos)
     ).pipe(
       map((response => REQUISITOIP_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER.toTargetArray(response)))

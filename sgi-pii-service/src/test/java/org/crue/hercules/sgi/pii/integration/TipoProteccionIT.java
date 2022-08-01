@@ -24,7 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de TipoProteccion.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TipoProteccionIT extends BaseIT {
+class TipoProteccionIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = TipoProteccionController.MAPPING;
@@ -51,7 +51,7 @@ public class TipoProteccionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findActivos_WithPagingSortingAndFiltering_ReturnsTipoProteccionSubList() throws Exception {
+  void findActivos_WithPagingSortingAndFiltering_ReturnsTipoProteccionSubList() throws Exception {
     String[] roles = { "PII-TPR-V", "PII-TPR-C", "PII-TPR-E", "PII-TPR-B", "PII-TPR-R", "PII-INV-V", "PII-INV-C",
         "PII-INV-E", "PII-INV-B", "PII-INV-R", "PII-INV-MOD-V" };
 
@@ -73,7 +73,7 @@ public class TipoProteccionIT extends BaseIT {
     // then: Respuesta OK, retorna la información de la página correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoProteccionOutput> tipoProteccionOutput = response.getBody();
-    Assertions.assertThat(tipoProteccionOutput.size()).isEqualTo(3);
+    Assertions.assertThat(tipoProteccionOutput).hasSize(3);
     Assertions.assertThat(response.getHeaders().getFirst("X-Page")).isEqualTo("0");
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("3");
@@ -93,7 +93,7 @@ public class TipoProteccionIT extends BaseIT {
    })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsTipoProteccionSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsTipoProteccionSubList() throws Exception {
     String[] roles = {"PII-TPR-V", "PII-TPR-C", "PII-TPR-E", "PII-TPR-B", "PII-TPR-R"};   
     // first page, 3 elements per page sorted by nombre desc
     HttpHeaders headers = new HttpHeaders();
@@ -112,7 +112,7 @@ public class TipoProteccionIT extends BaseIT {
     // given: Proyecto data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoProteccionOutput> tipoProteccionOutPut = response.getBody();
-    Assertions.assertThat(tipoProteccionOutPut.size()).isEqualTo(3);
+    Assertions.assertThat(tipoProteccionOutPut).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
@@ -134,7 +134,7 @@ public class TipoProteccionIT extends BaseIT {
    })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findSubtiposProteccion_WithPagingSortingAndFiltering_ReturnsTipoProteccionSubList() throws Exception {
+  void findSubtiposProteccion_WithPagingSortingAndFiltering_ReturnsTipoProteccionSubList() throws Exception {
     String[] roles = {"PII-TPR-V", "PII-TPR-C", "PII-TPR-E", "PII-TPR-B", "PII-TPR-R", "PII-INV-V", "PII-INV-C", "PII-INV-E"};   
     Long idTipoProteccion = 3L;
 
@@ -156,7 +156,7 @@ public class TipoProteccionIT extends BaseIT {
     // given: Proyecto data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoProteccionOutput> tipoProteccionOutput = response.getBody();
-    Assertions.assertThat(tipoProteccionOutput.size()).isEqualTo(2);
+    Assertions.assertThat(tipoProteccionOutput).hasSize(2);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
@@ -176,7 +176,7 @@ public class TipoProteccionIT extends BaseIT {
    })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllSubtiposProteccion_WithPagingSortingAndFiltering_ReturnsTipoProteccionSubList() throws Exception {
+  void findAllSubtiposProteccion_WithPagingSortingAndFiltering_ReturnsTipoProteccionSubList() throws Exception {
     String[] roles = {"PII-TPR-V", "PII-TPR-C", "PII-TPR-E", "PII-TPR-B", "PII-TPR-R", "PII-INV-V", "PII-INV-C", "PII-INV-E"};   
     Long idTipoProteccion = 3L;
 
@@ -198,7 +198,7 @@ public class TipoProteccionIT extends BaseIT {
     // given: Proyecto data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoProteccionOutput> tipoProteccionOutput = response.getBody();
-    Assertions.assertThat(tipoProteccionOutput.size()).isEqualTo(2);
+    Assertions.assertThat(tipoProteccionOutput).hasSize(2);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
@@ -218,7 +218,7 @@ public class TipoProteccionIT extends BaseIT {
    })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsTipoProteccion() throws Exception {
+  void findById_ReturnsTipoProteccion() throws Exception {
     String[] roles = {"PII-TPR-V", "PII-TPR-C", "PII-TPR-E", "PII-TPR-B", "PII-TPR-R"};   
     Long tipoProteccionId = 1L;
 
@@ -244,7 +244,7 @@ public class TipoProteccionIT extends BaseIT {
    })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void activar_ReturnsTipoProteccionActivo() throws Exception {
+  void activar_ReturnsTipoProteccionActivo() throws Exception {
     String[] roles = {"PII-TPR-R"};   
     Long tipoProteccionId = 6L;
 
@@ -270,7 +270,7 @@ public class TipoProteccionIT extends BaseIT {
    })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void desactivar_ReturnsTipoProteccionInactivo() throws Exception {
+  void desactivar_ReturnsTipoProteccionInactivo() throws Exception {
     String[] roles = {"PII-TPR-B"};   
     Long tipoProteccionId = 1L;
 

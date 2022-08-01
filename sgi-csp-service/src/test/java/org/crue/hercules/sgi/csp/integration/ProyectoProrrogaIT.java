@@ -26,7 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de ProyectoProrroga.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProyectoProrrogaIT extends BaseIT {
+class ProyectoProrrogaIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/proyecto-prorrogas";
@@ -53,7 +53,7 @@ public class ProyectoProrrogaIT extends BaseIT {
       "classpath:scripts/estado_proyecto.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsProyectoProrroga() throws Exception {
+  void create_ReturnsProyectoProrroga() throws Exception {
     // given: new ProyectoProrroga
     ProyectoProrroga newProyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     newProyectoProrroga.setId(null);
@@ -89,7 +89,7 @@ public class ProyectoProrrogaIT extends BaseIT {
       "classpath:scripts/estado_proyecto.sql", "classpath:scripts/proyecto_prorroga.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsProyectoProrroga() throws Exception {
+  void update_ReturnsProyectoProrroga() throws Exception {
     Long idProyectoProrroga = 5L;
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     proyectoProrroga.setObservaciones("observaciones-modificadas");
@@ -128,7 +128,7 @@ public class ProyectoProrrogaIT extends BaseIT {
       "classpath:scripts/prorroga_documento.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     Long idProyectoProrroga = 5L;
 
     final ResponseEntity<ProyectoProrroga> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -146,7 +146,7 @@ public class ProyectoProrrogaIT extends BaseIT {
       "classpath:scripts/estado_proyecto.sql", "classpath:scripts/proyecto_prorroga.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void existsById_Returns200() throws Exception {
+  void existsById_Returns200() throws Exception {
     // given: existing id
     Long id = 1L;
     // when: exists by id
@@ -158,7 +158,7 @@ public class ProyectoProrrogaIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void existsById_Returns204() throws Exception {
+  void existsById_Returns204() throws Exception {
     // given: no existing id
     Long id = 1L;
     // when: exists by id
@@ -177,7 +177,7 @@ public class ProyectoProrrogaIT extends BaseIT {
       "classpath:scripts/estado_proyecto.sql", "classpath:scripts/proyecto_prorroga.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsProyectoProrroga() throws Exception {
+  void findById_ReturnsProyectoProrroga() throws Exception {
     Long idProyectoProrroga = 1L;
 
     final ResponseEntity<ProyectoProrroga> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -219,7 +219,7 @@ public class ProyectoProrrogaIT extends BaseIT {
       "classpath:scripts/prorroga_documento.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllProrrogaDocumento_WithPagingSortingAndFiltering_ReturnsProrrogaDocumentoSubList()
+  void findAllProrrogaDocumento_WithPagingSortingAndFiltering_ReturnsProrrogaDocumentoSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-PRO-V")));
@@ -239,7 +239,7 @@ public class ProyectoProrrogaIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ProrrogaDocumento> convocatoriasDocumentos = response.getBody();
-    Assertions.assertThat(convocatoriasDocumentos.size()).isEqualTo(3);
+    Assertions.assertThat(convocatoriasDocumentos).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");

@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.pii.validation;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -38,12 +39,10 @@ public class UniqueNombreViaProteccionValidator
 
     Specification<ViaProteccion> specs = ViaProteccionSpecifications.activos();
 
-    specs = specs.and((root, query, cb) -> {
-      return cb.equal(root.get(ViaProteccion_.nombre), value.getNombre());
-    });
+    specs = specs.and((root, query, cb) -> cb.equal(root.get(ViaProteccion_.nombre), value.getNombre()));
 
     List<ViaProteccion> viaProteccion = viaProteccionRepository.findAll(specs);
-    boolean hasNotExistingName = !viaProteccion.stream().anyMatch(via -> via.getId() != value.getId());
+    boolean hasNotExistingName = viaProteccion.stream().noneMatch(via -> !Objects.equals(via.getId(), value.getId()));
 
     if (!hasNotExistingName) {
       addEntityMessageParameter(context);

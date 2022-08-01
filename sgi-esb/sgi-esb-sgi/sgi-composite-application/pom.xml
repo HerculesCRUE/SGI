@@ -13,6 +13,8 @@
   <properties>
     <org.crue.hercules.sgi.esb.sgi.endpoint_._sgicsp-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgi.endpoint_._sgicsp-endpoint>
     <org.crue.hercules.sgi.esb.sgi.api_._sgicsp-api>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgi.api_._sgicsp-api>
+    <org.crue.hercules.sgi.esb.sgi.endpoint_._sgieer-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgi.endpoint_._sgieer-endpoint>
+    <org.crue.hercules.sgi.esb.sgi.api_._sgieer-api>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgi.api_._sgieer-api>
     <org.crue.hercules.sgi.esb.sgi.endpoint_._sgipii-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgi.endpoint_._sgipii-endpoint>
     <org.crue.hercules.sgi.esb.sgi.api_._sgipii-api>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgi.api_._sgipii-api>
     <org.crue.hercules.sgi.esb.sgi.endpoint_._sgiprc-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgi.endpoint_._sgiprc-endpoint>
@@ -35,6 +37,18 @@
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgi.endpoint</groupId>
       <artifactId>sgicsp-endpoint</artifactId>
+      <version>${revision}</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgi.api</groupId>
+      <artifactId>sgieer-api</artifactId>
+      <version>${revision}</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgi.endpoint</groupId>
+      <artifactId>sgieer-endpoint</artifactId>
       <version>${revision}</version>
       <type>xml</type>
     </dependency>

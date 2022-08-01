@@ -111,7 +111,8 @@ export class ProyectoProyectosSgeComponent extends FragmentComponent implements 
       extended: true,
       selectedProyectos: this.dataSource.data.map((proyectoProyectoSge) => proyectoProyectoSge.value.proyectoSge),
       proyectoSgiId: this.formPart.getKey() as number,
-      selectAndNotify: true
+      selectAndNotify: true,
+      grupoInvestigacion: null
     };
 
     const config = {

@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.exceptions.ConceptoGastoNotFoundException;
@@ -196,16 +197,16 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
 
     Assert.notNull(id, "ProyectoConceptoGasto id no puede ser null para eliminar un ProyectoConceptoGasto");
 
-    repository.findById(id).map(proyectoProyectoConceptoGasto -> proyectoProyectoConceptoGasto)
-        .orElseThrow(() -> new ProyectoConceptoGastoNotFoundException(id));
+    if (!repository.existsById(id)) {
+      throw new ProyectoConceptoGastoNotFoundException(id);
+    }
 
     List<ProyectoConceptoGastoCodigoEc> codigosEconomicos = proyectoConceptoGastoCodigoEcRepository
         .findAllByProyectoConceptoGastoId(id);
 
     if (codigosEconomicos != null) {
-      codigosEconomicos.stream().forEach(codigoEconomico -> {
-        proyectoConceptoGastoCodigoEcRepository.deleteById(codigoEconomico.getId());
-      });
+      codigosEconomicos.stream()
+          .forEach(codigoEconomico -> proyectoConceptoGastoCodigoEcRepository.deleteById(codigoEconomico.getId()));
     }
 
     repository.deleteById(id);
@@ -306,11 +307,10 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
           return true;
         }
       } else {
-        return conceptosGastoProyecto.size() > 0;
+        return !conceptosGastoProyecto.isEmpty();
       }
     }).orElseThrow(() -> new ProyectoConceptoGastoNotFoundException(id));
 
-    // final boolean existe = repository.existsById(id);
     log.debug("hasDifferencesCodigosEcConvocatoria(final Long id)  - end", id);
     return returnValue;
   }
@@ -319,8 +319,8 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
       List<ConvocatoriaConceptoGastoCodigoEc> conceptosGastoConvocatoria) {
 
     ConvocatoriaConceptoGastoCodigoEc conceptoGastoConvocatoriaEncontrado = conceptosGastoConvocatoria.stream()
-        .filter(conceptoGastoConvocatoria -> conceptoGastoConvocatoria.getId() == conceptoGastoProyecto
-            .getConvocatoriaConceptoGastoCodigoEcId())
+        .filter(conceptoGastoConvocatoria -> Objects.equals(conceptoGastoConvocatoria.getId(), conceptoGastoProyecto
+            .getConvocatoriaConceptoGastoCodigoEcId()))
         .findFirst().orElse(null);
 
     if (conceptoGastoConvocatoriaEncontrado != null) {

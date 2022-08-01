@@ -3,7 +3,8 @@
   <property name="schemaPrefix" value="" />
 
   <!-- aviso restrospectiva -->
-  <changeSet context="dev" author="master" id="0000000000006-aviso-retrospectiva">
+  <!-- TODO: Mover al fichero adecuado ya que no se trata de datos de prueba -->
+  <changeSet context="!test" author="master" id="0000000000006-aviso-retrospectiva">
     <update tableName="configuracion">
       <column name="dias_aviso_retrospectiva" valueNumeric="3"></column>
     </update>

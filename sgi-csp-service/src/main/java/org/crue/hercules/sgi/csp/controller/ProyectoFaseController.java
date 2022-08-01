@@ -1,10 +1,19 @@
 package org.crue.hercules.sgi.csp.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.groups.Default;
 
+import org.crue.hercules.sgi.csp.converter.ProyectoFaseConverter;
+import org.crue.hercules.sgi.csp.dto.ProyectoFaseInput;
+import org.crue.hercules.sgi.csp.dto.ProyectoFaseOutput;
+import org.crue.hercules.sgi.csp.dto.com.Recipient;
 import org.crue.hercules.sgi.csp.model.BaseEntity.Update;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
 import org.crue.hercules.sgi.csp.model.ProyectoFase;
+import org.crue.hercules.sgi.csp.model.ProyectoFaseAviso;
+import org.crue.hercules.sgi.csp.service.ProyectoFaseAvisoService;
 import org.crue.hercules.sgi.csp.service.ProyectoFaseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -28,51 +38,40 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/proyectofases")
 @Slf4j
+@RequiredArgsConstructor
 public class ProyectoFaseController {
 
-  /** ProyectoFase service */
   private final ProyectoFaseService service;
-
-  /**
-   * Instancia un nuevo ProyectoFaseController.
-   * 
-   * @param service {@link ProyectoFaseService}
-   */
-  public ProyectoFaseController(ProyectoFaseService service) {
-    this.service = service;
-  }
+  private final ProyectoFaseConverter proyectoFaseConverter;
+  private final ProyectoFaseAvisoService proyectoFaseAvisoService;
 
   /**
    * Crea un nuevo {@link ProyectoFase}.
    * 
-   * @param proyectoFase {@link ProyectoFase} que se quiere crear.
-   * @return Nuevo {@link ProyectoFase} creado.
+   * @param proyectoFaseInput {@link ProyectoFaseInput} que se quiere crear.
+   * @return Nuevo {@link ProyectoFaseOutput} creado.
    */
   @PostMapping
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  public ResponseEntity<ProyectoFase> create(@Valid @RequestBody ProyectoFase proyectoFase) {
-    log.debug("create(ProyectoFase proyectoFase) - start");
-    ProyectoFase returnValue = service.create(proyectoFase);
-    log.debug("create(ProyectoFase proyectoFase) - end");
-    return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
+  public ResponseEntity<ProyectoFaseOutput> create(@Valid @RequestBody ProyectoFaseInput proyectoFaseInput) {
+
+    return new ResponseEntity<>(proyectoFaseConverter.convert(service.create(proyectoFaseInput)), HttpStatus.CREATED);
   }
 
   /**
    * Actualiza el {@link ProyectoFase} con el id indicado.
    * 
-   * @param proyectoFase {@link ProyectoFase} a actualizar.
-   * @param id           id {@link ProyectoFase} a actualizar.
-   * @return {@link ProyectoFase} actualizado.
+   * @param proyectoFaseInput {@link ProyectoFaseInput} a actualizar.
+   * @param id                id {@link ProyectoFase} a actualizar.
+   * @return {@link ProyectoFaseOutput} actualizado.
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  public ProyectoFase update(@Validated({ Update.class, Default.class }) @RequestBody ProyectoFase proyectoFase,
+  public ResponseEntity<ProyectoFaseOutput> update(
+      @Validated({ Update.class, Default.class }) @RequestBody ProyectoFaseInput proyectoFaseInput,
       @PathVariable Long id) {
-    log.debug("update(ProyectoFase proyectoFase, Long id) - start");
-    proyectoFase.setId(id);
-    ProyectoFase returnValue = service.update(proyectoFase);
-    log.debug("update(ProyectoFase proyectoFase, Long id) - end");
-    return returnValue;
+
+    return ResponseEntity.ok(proyectoFaseConverter.convert(service.update(id, proyectoFaseInput)));
   }
 
   /**
@@ -93,15 +92,27 @@ public class ProyectoFaseController {
    * Devuelve el {@link ProyectoFase} con el id indicado.
    * 
    * @param id Identificador de {@link ProyectoFase}.
-   * @return {@link ProyectoFase} correspondiente al id.
+   * @return {@link ProyectoFaseOutput} correspondiente al id.
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  public ProyectoFase findById(@PathVariable Long id) {
-    log.debug("findById(Long id) - start");
-    ProyectoFase returnValue = service.findById(id);
-    log.debug("findById(Long id) - end");
-    return returnValue;
+  public ResponseEntity<ProyectoFaseOutput> findById(@PathVariable Long id) {
+
+    return ResponseEntity.ok(proyectoFaseConverter.convert(service.findById(id)));
+  }
+
+  /**
+   * Retorna el listado de destinatarios para incluir en el envio de email de una
+   * {@link ProyectoFase}, en base a los flags de
+   * {@link ProyectoFaseAviso}
+   * 
+   * @param id identificador de {@link ConvocatoriaFase}
+   * @return Listado de {@link Recipient}
+   */
+  @GetMapping("/{id}/deferrable-recipients")
+  @PreAuthorize("isClient() and hasAuthority('SCOPE_sgi-csp')")
+  public List<Recipient> resolveDeferrableRecipients(@PathVariable Long id) {
+    return proyectoFaseAvisoService.getDeferredRecipients(id);
   }
 
 }

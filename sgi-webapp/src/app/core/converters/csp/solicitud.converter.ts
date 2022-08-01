@@ -21,7 +21,7 @@ class SolicitudConverter extends SgiBaseConverter<ISolicitudBackend, ISolicitud>
       convocatoriaId: value.convocatoriaId,
       convocatoriaExterna: value.convocatoriaExterna,
       creador: { id: value.creadorRef } as IPersona,
-      solicitante: { id: value.solicitanteRef } as IPersona,
+      solicitante: value.solicitanteRef ? { id: value.solicitanteRef } as IPersona : null,
       formularioSolicitud: value.formularioSolicitud,
       tipoSolicitudGrupo: value.tipoSolicitudGrupo,
       unidadGestion: { id: +value.unidadGestionRef } as IUnidadGestion,

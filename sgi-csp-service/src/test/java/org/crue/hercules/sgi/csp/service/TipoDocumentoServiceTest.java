@@ -25,7 +25,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * TipoDocumentoServiceTest
  */
-public class TipoDocumentoServiceTest extends BaseServiceTest {
+class TipoDocumentoServiceTest extends BaseServiceTest {
 
   @Mock
   private TipoDocumentoRepository tipoDocumentoRepository;
@@ -33,12 +33,12 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
   private TipoDocumentoService tipoDocumentoService;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     tipoDocumentoService = new TipoDocumentoServiceImpl(tipoDocumentoRepository);
   }
 
   @Test
-  public void create_ReturnsTipoDocumento() {
+  void create_ReturnsTipoDocumento() {
     // given: Un nuevo TipoDocumento
     TipoDocumento tipoDocumento = generarMockTipoDocumento(null);
 
@@ -62,7 +62,7 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo TipoDocumento que ya tiene id
     TipoDocumento tipoDocumentoNew = generarMockTipoDocumento(1L);
 
@@ -74,7 +74,7 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNombreRepetido_ThrowsIllegalArgumentException() {
+  void create_WithNombreRepetido_ThrowsIllegalArgumentException() {
     // given: Un nuevo TipoDocumento con un nombre que ya existe
     TipoDocumento tipoDocumentoNew = generarMockTipoDocumento(null, "nombreRepetido");
     TipoDocumento tipoDocumento = generarMockTipoDocumento(1L, "nombreRepetido");
@@ -90,7 +90,7 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsTipoDocumento() {
+  void update_ReturnsTipoDocumento() {
     // given: Un nuevo TipoDocumento con el nombre actualizado
     TipoDocumento tipoDocumento = generarMockTipoDocumento(1L);
     TipoDocumento tipoDocumentoNombreActualizado = generarMockTipoDocumento(1L, "NombreActualizado");
@@ -115,7 +115,7 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsTipoDocumentoNotFoundException() {
+  void update_WithIdNotExist_ThrowsTipoDocumentoNotFoundException() {
     // given: Un TipoDocumento a actualizar con un id que no existe
     TipoDocumento tipoDocumento = generarMockTipoDocumento(1L, "TipoDocumento");
 
@@ -126,7 +126,7 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_ReturnsTipoDocumento() {
+  void enable_ReturnsTipoDocumento() {
     // given: Un nuevo TipoDocumento inactivo
     TipoDocumento tipoDocumento = generarMockTipoDocumento(1L);
     tipoDocumento.setActivo(Boolean.FALSE);
@@ -157,7 +157,7 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
+  void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
     // given: Un id de un TipoDocumento que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(tipoDocumentoRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -168,7 +168,7 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void enable_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un TipoDocumento inactivo con nombre existente
     TipoDocumento tipoDocumentoExistente = generarMockTipoDocumento(2L);
     TipoDocumento tipoDocumento = generarMockTipoDocumento(1L);
@@ -188,7 +188,7 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_ReturnsTipoDocumento() {
+  void disable_ReturnsTipoDocumento() {
     // given: Un nuevo TipoDocumento activo
     TipoDocumento tipoDocumento = generarMockTipoDocumento(1L);
 
@@ -213,12 +213,12 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
     Assertions.assertThat(tipoDocumentoActualizado.getNombre()).as("getNombre()").isEqualTo(tipoDocumento.getNombre());
     Assertions.assertThat(tipoDocumentoActualizado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(tipoDocumento.getDescripcion());
-    Assertions.assertThat(tipoDocumentoActualizado.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(tipoDocumentoActualizado.getActivo()).as("getActivo()").isFalse();
 
   }
 
   @Test
-  public void disable_WithIdNotExist_ThrowsTipoDocumentoNotFoundException() {
+  void disable_WithIdNotExist_ThrowsTipoDocumentoNotFoundException() {
     // given: Un id de un TipoDocumento que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(tipoDocumentoRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -229,7 +229,7 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNombreRepetido_ThrowsIllegalArgumentException() {
+  void update_WithNombreRepetido_ThrowsIllegalArgumentException() {
     // given: Un nuevo TipoDocumento con un nombre que ya existe
     TipoDocumento tipoDocumentoUpdated = generarMockTipoDocumento(1L, "nombreRepetido");
     TipoDocumento tipoDocumento = generarMockTipoDocumento(2L, "nombreRepetido");
@@ -245,7 +245,7 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 TipoDocumento
     List<TipoDocumento> tiposDocumento = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -273,7 +273,7 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
     Page<TipoDocumento> page = tipoDocumentoService.findAll(null, paging);
 
     // then: Devuelve la pagina 3 con los TipoDocumento del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -284,7 +284,7 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllTodos_ReturnsPage() {
+  void findAllTodos_ReturnsPage() {
     // given: Una lista con 37 TipoDocumento
     List<TipoDocumento> tiposDocumento = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -312,7 +312,7 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
     Page<TipoDocumento> page = tipoDocumentoService.findAllTodos(null, paging);
 
     // then: Devuelve la pagina 3 con los TipoDocumento del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -323,7 +323,7 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsTipoDocumento() {
+  void findById_ReturnsTipoDocumento() {
     // given: Un TipoDocumento con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(tipoDocumentoRepository.findById(idBuscado))
@@ -337,12 +337,12 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
     Assertions.assertThat(tipoDocumento.getId()).as("getId()").isEqualTo(idBuscado);
     Assertions.assertThat(tipoDocumento.getNombre()).as("getNombre()").isEqualTo("nombre-1");
     Assertions.assertThat(tipoDocumento.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-1");
-    Assertions.assertThat(tipoDocumento.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(tipoDocumento.getActivo()).as("getActivo()").isTrue();
 
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsTipoDocumentoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsTipoDocumentoNotFoundException() throws Exception {
     // given: Ningun TipoDocumento con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(tipoDocumentoRepository.findById(idBuscado)).willReturn(Optional.empty());

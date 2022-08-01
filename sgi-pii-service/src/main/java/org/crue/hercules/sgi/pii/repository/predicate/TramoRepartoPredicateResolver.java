@@ -10,8 +10,8 @@ import javax.persistence.criteria.Subquery;
 
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLPredicateResolver;
 import org.crue.hercules.sgi.pii.model.TramoReparto;
-import org.crue.hercules.sgi.pii.model.TramoReparto_;
 import org.crue.hercules.sgi.pii.model.TramoReparto.Tipo;
+import org.crue.hercules.sgi.pii.model.TramoReparto_;
 
 import cz.jirutka.rsql.parser.ast.ComparisonNode;
 import cz.jirutka.rsql.parser.ast.ComparisonOperator;
@@ -73,8 +73,7 @@ public class TramoRepartoPredicateResolver implements SgiRSQLPredicateResolver<T
     return cb.equal(root.get(TramoReparto_.hasta), subquery);
   }
 
-  private Predicate buildByBetweenDesdeHasta(ComparisonNode node, Root<TramoReparto> root, CriteriaQuery<?> query,
-      CriteriaBuilder cb) {
+  private Predicate buildByBetweenDesdeHasta(ComparisonNode node, Root<TramoReparto> root, CriteriaBuilder cb) {
     ComparisonOperator operator = node.getOperator();
     if (!operator.equals(RSQLOperators.EQUAL)) {
       // Unsupported Operator
@@ -114,11 +113,18 @@ public class TramoRepartoPredicateResolver implements SgiRSQLPredicateResolver<T
   @Override
   public Predicate toPredicate(ComparisonNode node, Root<TramoReparto> root, CriteriaQuery<?> query,
       CriteriaBuilder criteriaBuilder) {
-    switch (Property.fromCode(node.getSelector())) {
+
+    final Property property = Property.fromCode(node.getSelector());
+
+    if (property == null) {
+      return null;
+    }
+
+    switch (property) {
       case MAX_HASTA:
         return buildByMaxHasta(node, root, query, criteriaBuilder);
       case BETWEEN_DESDE_HASTA:
-        return buildByBetweenDesdeHasta(node, root, query, criteriaBuilder);
+        return buildByBetweenDesdeHasta(node, root, criteriaBuilder);
       default:
         return null;
     }

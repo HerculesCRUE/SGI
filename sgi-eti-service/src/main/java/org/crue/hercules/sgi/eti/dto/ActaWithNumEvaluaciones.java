@@ -49,9 +49,15 @@ public class ActaWithNumEvaluaciones implements Serializable {
   /** Número de evaluaciones no evaluadas. */
   private Integer numEvaluacionesNoEvaluadas;
 
+  /** Referencia al documento */
+  private String documentoRef;
+
+  /** Referencia a la transacción blockchain */
+  private String transaccionRef;
+
   public ActaWithNumEvaluaciones(Long id, String comite, Instant fechaEvaluacion, Integer numeroActa,
       String convocatoria, Long numEvaluaciones, Long numRevisiones, Long numEvaluacionesNoEvaluadas,
-      TipoEstadoActa estadoActa) {
+      TipoEstadoActa estadoActa, String documentoRef, String transaccionRef) {
     this.id = id;
     this.comite = comite;
     this.fechaEvaluacion = fechaEvaluacion;
@@ -62,5 +68,7 @@ public class ActaWithNumEvaluaciones implements Serializable {
     this.numTotal = (this.numEvaluaciones + this.numRevisiones);
     this.estadoActa = estadoActa;
     this.numEvaluacionesNoEvaluadas = numEvaluacionesNoEvaluadas.intValue();
+    this.documentoRef = documentoRef;
+    this.transaccionRef = transaccionRef;
   }
 }

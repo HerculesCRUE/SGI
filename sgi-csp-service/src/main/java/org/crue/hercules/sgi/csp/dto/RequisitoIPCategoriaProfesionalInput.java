@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class RequisitoIPCategoriaProfesionalInput {
+
+  private Long id;
+
   /** RequisitoIP Id */
   private Long requisitoIPId;
 

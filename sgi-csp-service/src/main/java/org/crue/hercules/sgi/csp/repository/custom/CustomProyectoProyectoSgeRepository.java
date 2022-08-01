@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.repository.custom;
 
+import org.crue.hercules.sgi.csp.dto.ProyectoSeguimientoEjecucionEconomica;
 import org.crue.hercules.sgi.csp.dto.RelacionEjecucionEconomica;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
 import org.springframework.data.domain.Page;
@@ -24,4 +25,15 @@ public interface CustomProyectoProyectoSgeRepository {
   Page<RelacionEjecucionEconomica> findRelacionesEjecucionEconomica(Specification<ProyectoProyectoSge> specification,
       Pageable pageable);
 
+  /**
+   * Obtiene datos economicos de los {@link ProyectoProyectoSge}
+   * 
+   * @param specification condiciones que deben cumplir.
+   * @param pageable      paginación.
+   * @return el listado de entidades {@link ProyectoSeguimientoEjecucionEconomica}
+   *         paginadas
+   *         y filtradas.
+   */
+  Page<ProyectoSeguimientoEjecucionEconomica> findProyectosSeguimientoEjecucionEconomica(
+      Specification<ProyectoProyectoSge> specification, Pageable pageable);
 }

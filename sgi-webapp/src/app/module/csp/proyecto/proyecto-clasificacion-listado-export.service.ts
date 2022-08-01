@@ -53,7 +53,7 @@ export class ProyectoClasificacionListadoExportService extends AbstractTableExpo
         return from(responseClasificacion).pipe(
           mergeMap((proyectoClasificacion) => {
             return this.getClasificacion(proyectoClasificacion);
-          }),
+          }, this.DEFAULT_CONCURRENT),
           map(() => responseClasificacion)
         );
       }),

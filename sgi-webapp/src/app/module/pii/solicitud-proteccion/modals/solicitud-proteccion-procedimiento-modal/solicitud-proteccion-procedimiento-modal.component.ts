@@ -7,8 +7,10 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IProcedimiento } from '@core/models/pii/procedimiento';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
+import { DateTime } from 'luxon';
 
 const SOLICITUD_PROTECCION_PROCEDIMIENTO_FECHA = marker('pii.solicitud-proteccion.procedimiento.fecha');
+const SOLICITUD_PROTECCION_FECHA_LIMITE = marker('pii.solicitud-proteccion.procedimiento.fecha-limite');
 const SOLICITUD_PROTECCION_TIPO_PROCEDIMIENTO = marker('pii.tipo-procedimiento');
 const SOLICITUD_PROTECCION_ACCION = marker('pii.solicitud-proteccion.procedimiento.accion');
 const SOLICITUD_PROTECCION_COMENTARIOS = marker('pii.solicitud-proteccion.procedimiento.comentarios');
@@ -36,6 +38,7 @@ export class SolicitudProteccionProcedimientoModalComponent
   msgParamTipoProcedimientoEntity = {};
   msgParamAccionATomarEntity = {};
   msgParamComentariosEntity = {};
+  msgParamFechaLimiteAccionEntity = {};
   textSaveOrUpdate: string;
   textModalTitle: string;
 
@@ -90,7 +93,41 @@ export class SolicitudProteccionProcedimientoModalComponent
       },
     );
 
+    this.subscriptions.push(
+      this.onGenerarAvisoValueChangeSubscription(formGroup)
+    );
+    this.subscriptions.push(
+      this.onFechaValueChangeSubscription(formGroup)
+    );
+
     return formGroup;
+  }
+
+  private onFechaValueChangeSubscription(formGroup: FormGroup) {
+    return formGroup.controls.fecha.valueChanges.subscribe((date: DateTime) => {
+      const now = DateTime.local(DateTime.now().year, DateTime.now().month, DateTime.now().day, 0, 0, 0, 0);
+
+      if (date && date < now) {
+        formGroup.controls.generarAviso.setValue(false);
+        formGroup.controls.generarAviso.disable({ onlySelf: true });
+      } else {
+        formGroup.controls.generarAviso.enable({ onlySelf: true });
+      }
+    });
+  }
+
+  private onGenerarAvisoValueChangeSubscription(formGroup: FormGroup) {
+    return formGroup.controls.generarAviso.valueChanges.subscribe((value: boolean) => {
+      if (value) {
+        formGroup.controls.fechaLimiteAccion.setValidators([Validators.required]);
+        formGroup.controls.accionATomar.setValidators([Validators.required, Validators.maxLength(this.ACCIONES_A_TOMAR_MAX_LENGTH)]);
+      } else {
+        formGroup.controls.fechaLimiteAccion.setValidators([]);
+        formGroup.controls.accionATomar.setValidators([Validators.maxLength(this.ACCIONES_A_TOMAR_MAX_LENGTH)]);
+      }
+      formGroup.controls.fechaLimiteAccion.updateValueAndValidity({ onlySelf: true });
+      formGroup.controls.accionATomar.updateValueAndValidity({ onlySelf: true });
+    });
   }
 
   ngOnInit(): void {
@@ -115,13 +152,19 @@ export class SolicitudProteccionProcedimientoModalComponent
       this.msgParamTipoProcedimientoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
     this.translate.get(
       SOLICITUD_PROTECCION_ACCION,
-      { ...MSG_PARAMS.CARDINALIRY.SINGULAR }
+      { ...MSG_PARAMS.CARDINALIRY.PLURAL }
     ).subscribe((value) =>
-      this.msgParamAccionATomarEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+      this.msgParamAccionATomarEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE });
     this.translate.get(
       SOLICITUD_PROTECCION_COMENTARIOS
     ).subscribe((value) =>
       this.msgParamComentariosEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+
+    this.translate.get(
+      SOLICITUD_PROTECCION_FECHA_LIMITE,
+      { ...MSG_PARAMS.CARDINALIRY.SINGULAR }
+    ).subscribe((value: any) =>
+      this.msgParamFechaLimiteAccionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
   }
 
   public isEditionMode() {

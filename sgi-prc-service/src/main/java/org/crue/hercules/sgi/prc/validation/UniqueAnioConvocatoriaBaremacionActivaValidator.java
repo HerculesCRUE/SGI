@@ -15,9 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class UniqueAnioConvocatoriaBaremacionActivaValidator
     implements ConstraintValidator<UniqueAnioConvocatoriaBaremacionActiva, ConvocatoriaBaremacion> {
   private ConvocatoriaBaremacionRepository repository;
+  private String field;
 
   public UniqueAnioConvocatoriaBaremacionActivaValidator(ConvocatoriaBaremacionRepository repository) {
     this.repository = repository;
+  }
+
+  @Override
+  public void initialize(UniqueAnioConvocatoriaBaremacionActiva constraintAnnotation) {
+    ConstraintValidator.super.initialize(constraintAnnotation);
+    field = constraintAnnotation.field();
   }
 
   @Override
@@ -40,5 +47,10 @@ public class UniqueAnioConvocatoriaBaremacionActivaValidator
     // can be used in the error message
     HibernateConstraintValidatorContext hibernateContext = context.unwrap(HibernateConstraintValidatorContext.class);
     hibernateContext.addMessageParameter("entity", ApplicationContextSupport.getMessage(ConvocatoriaBaremacion.class));
+    // Disable default message to allow binding the message to a property
+    hibernateContext.disableDefaultConstraintViolation();
+    // Build a custom message for a property using the default message
+    hibernateContext.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+        .addPropertyNode(ApplicationContextSupport.getMessage(field)).addConstraintViolation();
   }
 }

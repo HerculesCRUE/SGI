@@ -152,7 +152,9 @@ export class ProyectoEditarComponent extends ActionComponent implements OnInit {
       estadoNuevo: null,
       comentario: null,
       proyecto: this.actionService.proyecto,
-      proyectoHasMiembrosEquipo: this.actionService.hasMiembrosEquipo
+      miembrosEquipoPersonaRefs: this.actionService.miembrosEquipoPersonaRefs,
+      solicitanteRefSolicitud: this.actionService.solicitanteRefSolicitud,
+      solicitudFormularioSolicitud: this.actionService.solicitudFormularioSolicitud
     };
     const config = {
       data

@@ -8,10 +8,7 @@ import { environment } from '@env';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { SgiMutableRestService } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { PROYECTO_ANUALIDAD_PARTIDA_REQUEST_CONVERTER } from './proyecto-anualidad-partida/proyecto-anualidad-partida-request.converter';
-import { IProyectoAnualidadPartidaResponse } from './proyecto-anualidad-partida/proyecto-anualidad-partida-response';
-import { PROYECTO_ANUALIDAD_PARTIDA_RESPONSE_CONVERTER } from './proyecto-anualidad-partida/proyecto-anualidad-partida-response.converter';
 
 @Injectable({
   providedIn: 'root'

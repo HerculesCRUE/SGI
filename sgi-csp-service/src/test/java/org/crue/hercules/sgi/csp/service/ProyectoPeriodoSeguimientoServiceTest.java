@@ -35,7 +35,7 @@ import org.springframework.data.jpa.domain.Specification;
  * ProyectoPeriodoSeguimientoServiceTest
  */
 
-public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
+class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
 
   @Mock
   private ProyectoPeriodoSeguimientoRepository repository;
@@ -47,13 +47,13 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   private ProyectoPeriodoSeguimientoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ProyectoPeriodoSeguimientoServiceImpl(repository, proyectoRepository,
         proyectoPeriodoSeguimientoDocumentoRepository);
   }
 
   @Test
-  public void create_ReturnsProyectoPeriodoSeguimiento() {
+  void create_ReturnsProyectoPeriodoSeguimiento() {
     // given: Un nuevo ProyectoPeriodoSeguimiento
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
     proyectoPeriodoSeguimiento.setId(null);
@@ -80,7 +80,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ProyectoPeriodoSeguimiento que ya tiene id
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
     // when: Creamos el ProyectoPeriodoSeguimiento
@@ -91,7 +91,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutProyectoId_ThrowsIllegalArgumentException() {
+  void create_WithoutProyectoId_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento without ProyectoId
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
     proyectoPeriodoSeguimiento.setId(null);
@@ -106,7 +106,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutFechaInicio_ThrowsIllegalArgumentException() {
+  void create_WithoutFechaInicio_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento without FechaInicio
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
     proyectoPeriodoSeguimiento.setId(null);
@@ -121,7 +121,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutFechaFin_ThrowsIllegalArgumentException() {
+  void create_WithoutFechaFin_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento without FechaFin
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
     proyectoPeriodoSeguimiento.setId(null);
@@ -136,7 +136,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutFechaInicioPresentacion_ThrowsIllegalArgumentException() {
+  void create_WithoutFechaInicioPresentacion_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento without FechaInicioPresentacion
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
     proyectoPeriodoSeguimiento.setId(null);
@@ -164,7 +164,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutFechaFinPresentacion_ThrowsIllegalArgumentException() {
+  void create_WithoutFechaFinPresentacion_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento without FechaFinPresentacion
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
     proyectoPeriodoSeguimiento.setId(null);
@@ -192,7 +192,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
+  void create_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
     // given: a ProyectoPeriodoSeguimiento with non existing Proyecto
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
     proyectoPeriodoSeguimiento.setId(null);
@@ -205,7 +205,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithInvalidFechas_ThrowsIllegalArgumentException() {
+  void create_WithInvalidFechas_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento WithInvalidFechas
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
     proyectoPeriodoSeguimiento.setId(null);
@@ -225,7 +225,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithInvalidFechasPresentacion_ThrowsIllegalArgumentException() {
+  void create_WithInvalidFechasPresentacion_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento WithInvalidFechas
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
     proyectoPeriodoSeguimiento.setId(null);
@@ -245,7 +245,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsProyectoPeriodoSeguimiento() {
+  void update_ReturnsProyectoPeriodoSeguimiento() {
     // given: Un nuevo ProyectoPeriodoSeguimiento con el tipoHito actualizado
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoActualizado = generarMockProyectoPeriodoSeguimiento(1L);
@@ -272,7 +272,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsProyectoPeriodoSeguimientoNotFoundException() {
+  void update_WithIdNotExist_ThrowsProyectoPeriodoSeguimientoNotFoundException() {
     // given: Un ProyectoPeriodoSeguimiento a actualizar con un id que no existe
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
 
@@ -285,7 +285,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutProyectoId_ThrowsIllegalArgumentException() {
+  void update_WithoutProyectoId_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento without ProyectoId
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoOriginal = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
@@ -304,7 +304,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutFechaInicio_ThrowsIllegalArgumentException() {
+  void update_WithoutFechaInicio_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento without FechaInicio
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoOriginal = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
@@ -323,7 +323,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutFechaFin_ThrowsIllegalArgumentException() {
+  void update_WithoutFechaFin_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento without FechaFin
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoOriginal = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
@@ -342,7 +342,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutFechaInicioPresentacion_ThrowsIllegalArgumentException() {
+  void update_WithoutFechaInicioPresentacion_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento without FechaInicioPresentacion
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoOriginal = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
@@ -374,7 +374,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutFechaFinPresentacion_ThrowsIllegalArgumentException() {
+  void update_WithoutFechaFinPresentacion_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento without FechaFinPresentacion
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoOriginal = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
@@ -406,7 +406,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
+  void update_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
     // given: a ProyectoPeriodoSeguimiento with non existing Proyecto
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoOriginal = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
@@ -423,7 +423,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithInvalidFechas_ThrowsIllegalArgumentException() {
+  void update_WithInvalidFechas_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento WithInvalidFechas
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoOriginal = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
@@ -447,7 +447,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithInvalidFechasPresentacion_ThrowsIllegalArgumentException() {
+  void update_WithInvalidFechasPresentacion_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento WithInvalidFechas
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoOriginal = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
@@ -471,7 +471,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_NoReturnsAnyException() {
+  void delete_WithExistingId_NoReturnsAnyException() {
     // given: existing ProyectoPeriodoSeguimiento
     Long id = 1L;
 
@@ -491,7 +491,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -505,7 +505,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void existsById_WithExistingId_ReturnsTRUE() throws Exception {
+  void existsById_WithExistingId_ReturnsTRUE() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(repository.existsById(ArgumentMatchers.<Long>any())).willReturn(Boolean.TRUE);
@@ -514,12 +514,11 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
     boolean responseData = service.existsById(id);
 
     // then: returns TRUE
-    Assertions.assertThat(responseData).isNotNull();
     Assertions.assertThat(responseData).isTrue();
   }
 
   @Test
-  public void existsById_WithNoExistingId_ReturnsFALSE() throws Exception {
+  void existsById_WithNoExistingId_ReturnsFALSE() throws Exception {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(repository.existsById(ArgumentMatchers.<Long>any())).willReturn(Boolean.FALSE);
@@ -528,12 +527,11 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
     boolean responseData = service.existsById(id);
 
     // then: returns TRUE
-    Assertions.assertThat(responseData).isNotNull();
     Assertions.assertThat(responseData).isFalse();
   }
 
   @Test
-  public void findById_ReturnsProyectoPeriodoSeguimiento() {
+  void findById_ReturnsProyectoPeriodoSeguimiento() {
     // given: Un ProyectoPeriodoSeguimiento con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -548,7 +546,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsProyectoPeriodoSeguimientoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsProyectoPeriodoSeguimientoNotFoundException() throws Exception {
     // given: Ningun ProyectoPeriodoSeguimiento con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -560,7 +558,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByProyecto_ReturnsPage() {
+  void findAllByProyecto_ReturnsPage() {
     // given: Una lista con 37 ProyectoPeriodoSeguimiento para la Proyecto
     Long proyectoId = 1L;
     List<ProyectoPeriodoSeguimiento> proyectosEntidadesConvocantes = new ArrayList<>();
@@ -588,7 +586,7 @@ public class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
     Page<ProyectoPeriodoSeguimiento> page = service.findAllByProyecto(proyectoId, null, paging);
 
     // then: Devuelve la pagina 3 con los ProyectoPeriodoSeguimiento del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

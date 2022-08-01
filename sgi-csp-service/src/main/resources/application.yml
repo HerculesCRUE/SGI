@@ -5,6 +5,7 @@ server:
       # Disble the default error page displayed in browsers in case of a server error
       enabled: false
 sgi:
+  web-url: "http://sgi.crue.com"
   time-zone: "Europe/Madrid"
   rest:
     api:
@@ -100,7 +101,7 @@ spring:
   profiles: dev
   liquibase:
     # Set Liquibase contexts same as spring profiles
-    contexts: dev
+    contexts: dev    
 #  # H2 console
 #  h2:
 #    console:

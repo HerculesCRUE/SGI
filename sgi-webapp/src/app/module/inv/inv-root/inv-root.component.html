@@ -45,9 +45,15 @@
       title="{{'menu.csp.autorizaciones-proyectos-externos' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}"
       [route]="[INV_ROUTE_NAMES.AUTORIZACIONES]">
     </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAuthorityForAnyUO="'CSP-SOL-INV-ER'" [route]="[INV_ROUTE_NAMES.VALIDACION_TUTOR]"
+      title="{{'menu.principal.inv.validacion-tutor' | translate}}">
+    </sgi-menu-subitem>
     <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-INV-VR'] "
       title="{{'csp.grupo' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}" [route]="[INV_ROUTE_NAMES.GRUPOS]">
     </sgi-menu-subitem>
+    <sgi-menu-subitem-external *ngIf="!!nombreSistemaGestionExterno && !!urlSistemaGestionExterno"
+      [title]="nombreSistemaGestionExterno" [route]="urlSistemaGestionExterno">
+    </sgi-menu-subitem-external>
   </sgi-menu-group>
 
   <!-- PRC -->

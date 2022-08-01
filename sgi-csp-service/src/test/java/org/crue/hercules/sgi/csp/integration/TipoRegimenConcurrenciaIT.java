@@ -22,7 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de TipoRegimenConcurrencia.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TipoRegimenConcurrenciaIT extends BaseIT {
+class TipoRegimenConcurrenciaIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/tiporegimenconcurrencias";
@@ -42,7 +42,7 @@ public class TipoRegimenConcurrenciaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsTipoRegimenConcurrencia() throws Exception {
+  void findById_ReturnsTipoRegimenConcurrencia() throws Exception {
     Long id = 1L;
 
     final ResponseEntity<TipoRegimenConcurrencia> response = restTemplate.exchange(
@@ -59,7 +59,7 @@ public class TipoRegimenConcurrenciaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsTipoRegimenConcurrenciaSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsTipoRegimenConcurrenciaSubList() throws Exception {
 
     // given: data for TipoRegimenConcurrencia
 
@@ -80,7 +80,7 @@ public class TipoRegimenConcurrenciaIT extends BaseIT {
     // given: TipoRegimenConcurrencia data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoRegimenConcurrencia> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");

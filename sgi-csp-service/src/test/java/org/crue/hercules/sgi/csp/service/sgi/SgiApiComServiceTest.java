@@ -40,7 +40,7 @@ class SgiApiComServiceTest extends BaseServiceTest {
   private SgiApiComService emailService;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     BDDMockito.given(this.restApiProperties.getComUrl()).willReturn("smtp.gmail.com");
     this.emailService = new SgiApiComService(this.restApiProperties, this.restTemplate, this.objectMapper);
   }

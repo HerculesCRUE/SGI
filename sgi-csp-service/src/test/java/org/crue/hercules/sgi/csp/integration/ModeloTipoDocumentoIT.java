@@ -22,7 +22,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de ModeloTipoDocumento.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ModeloTipoDocumentoIT extends BaseIT {
+class ModeloTipoDocumentoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/modelotipodocumentos";
@@ -42,7 +42,7 @@ public class ModeloTipoDocumentoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsModeloTipoDocumento() throws Exception {
+  void create_ReturnsModeloTipoDocumento() throws Exception {
 
     // given: new ModeloTipoDocumento
     ModeloTipoDocumento modeloTipoDocumento = generarMockModeloTipoDocumento(1L, 1L, 1L);
@@ -66,13 +66,13 @@ public class ModeloTipoDocumentoIT extends BaseIT {
     Assertions.assertThat(modeloTipoDocumentoResponse.getModeloTipoFase()).as("getModeloTipoFase()").isNotNull();
     Assertions.assertThat(modeloTipoDocumentoResponse.getModeloTipoFase().getId()).as("getModeloTipoFase().getId()")
         .isEqualTo(modeloTipoDocumento.getModeloTipoFase().getId());
-    Assertions.assertThat(modeloTipoDocumentoResponse.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(modeloTipoDocumentoResponse.getActivo()).as("getActivo()").isTrue();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing ModeloTipoDocumento to be disabled
     Long id = 1L;
 
@@ -87,7 +87,7 @@ public class ModeloTipoDocumentoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsModeloTipoDocumento() throws Exception {
+  void findById_ReturnsModeloTipoDocumento() throws Exception {
     Long id = 1L;
 
     final ResponseEntity<ModeloTipoDocumento> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -107,7 +107,7 @@ public class ModeloTipoDocumentoIT extends BaseIT {
     Assertions.assertThat(modeloTipoDocumentoResponse.getModeloTipoFase()).as("getModeloTipoFase()").isNotNull();
     Assertions.assertThat(modeloTipoDocumentoResponse.getModeloTipoFase().getId()).as("getModeloTipoFase().getId()")
         .isEqualTo(1L);
-    Assertions.assertThat(modeloTipoDocumentoResponse.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(modeloTipoDocumentoResponse.getActivo()).as("getActivo()").isTrue();
   }
 
   /**

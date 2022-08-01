@@ -28,7 +28,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de SolicitudProyectoSocio.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SolicitudProyectoSocioIT extends BaseIT {
+class SolicitudProyectoSocioIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/solicitudproyectosocio";
@@ -50,7 +50,7 @@ public class SolicitudProyectoSocioIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsSolicitudProyectoSocio() throws Exception {
+  void create_ReturnsSolicitudProyectoSocio() throws Exception {
     SolicitudProyectoSocio solicitudProyectoSocio = generarSolicitudProyectoSocio(null, 1L, 1L);
 
     final ResponseEntity<SolicitudProyectoSocio> response = restTemplate.exchange(CONTROLLER_BASE_PATH, HttpMethod.POST,
@@ -77,7 +77,7 @@ public class SolicitudProyectoSocioIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsSolicitudProyectoSocio() throws Exception {
+  void update_ReturnsSolicitudProyectoSocio() throws Exception {
     Long idSolicitudProyectoSocio = 1L;
     SolicitudProyectoSocio solicitudProyectoSocio = generarSolicitudProyectoSocio(1L, 1L, 1L);
     solicitudProyectoSocio.setMesFin(10);
@@ -99,7 +99,7 @@ public class SolicitudProyectoSocioIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing SolicitudProyectoSocio to be deleted
     Long id = 1L;
 
@@ -116,7 +116,7 @@ public class SolicitudProyectoSocioIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsSolicitudProyectoSocio() throws Exception {
+  void findById_ReturnsSolicitudProyectoSocio() throws Exception {
     Long idSolicitudProyectoSocio = 1L;
 
     final ResponseEntity<SolicitudProyectoSocio> response = restTemplate.exchange(
@@ -148,7 +148,7 @@ public class SolicitudProyectoSocioIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllSolicitudProyectoSocioPeriodoPago_WithPagingSortingAndFiltering_ReturnsSolicitudPeriodoPagoSubList()
+  void findAllSolicitudProyectoSocioPeriodoPago_WithPagingSortingAndFiltering_ReturnsSolicitudPeriodoPagoSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-SOL-E")));
@@ -169,7 +169,7 @@ public class SolicitudProyectoSocioIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<SolicitudProyectoSocioPeriodoPago> solicitudProyectoSocioPeriodoPago = response.getBody();
-    Assertions.assertThat(solicitudProyectoSocioPeriodoPago.size()).isEqualTo(1);
+    Assertions.assertThat(solicitudProyectoSocioPeriodoPago).hasSize(1);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -184,7 +184,7 @@ public class SolicitudProyectoSocioIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllSolicitudProyectoSocioEquipo_WithPagingSortingAndFiltering_ReturnsSolicitudProyectoSocioSubList()
+  void findAllSolicitudProyectoSocioEquipo_WithPagingSortingAndFiltering_ReturnsSolicitudProyectoSocioSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-SOL-E")));
@@ -205,7 +205,7 @@ public class SolicitudProyectoSocioIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<SolicitudProyectoSocioEquipo> solicitudProyectoSocioEquipo = response.getBody();
-    Assertions.assertThat(solicitudProyectoSocioEquipo.size()).isEqualTo(1);
+    Assertions.assertThat(solicitudProyectoSocioEquipo).hasSize(1);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -243,7 +243,7 @@ public class SolicitudProyectoSocioIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<SolicitudProyectoSocioPeriodoJustificacion> solicitudProyectoSocioPeriodoJustificacion = response
         .getBody();
-    Assertions.assertThat(solicitudProyectoSocioPeriodoJustificacion.size()).isEqualTo(1);
+    Assertions.assertThat(solicitudProyectoSocioPeriodoJustificacion).hasSize(1);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");

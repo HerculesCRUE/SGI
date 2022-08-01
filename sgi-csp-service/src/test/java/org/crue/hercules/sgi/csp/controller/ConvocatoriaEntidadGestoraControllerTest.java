@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  */
 
 @WebMvcTest(ConvocatoriaEntidadGestoraController.class)
-public class ConvocatoriaEntidadGestoraControllerTest extends BaseControllerTest {
+class ConvocatoriaEntidadGestoraControllerTest extends BaseControllerTest {
 
   @MockBean
   private ConvocatoriaEntidadGestoraService service;
@@ -33,7 +33,7 @@ public class ConvocatoriaEntidadGestoraControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void create_ReturnsConvocatoriaEntidadGestora() throws Exception {
+  void create_ReturnsConvocatoriaEntidadGestora() throws Exception {
     // given: new ConvocatoriaEntidadGestora
     ConvocatoriaEntidadGestora convocatoriaEntidadGestora = generarConvocatoriaEntidadGestora(null, 1L, "entidad-001");
 
@@ -65,7 +65,7 @@ public class ConvocatoriaEntidadGestoraControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ConvocatoriaEntidadGestora with id filled
     ConvocatoriaEntidadGestora convocatoriaEntidadGestora = generarConvocatoriaEntidadGestora(1L, 1L, "entidad-001");
 
@@ -84,7 +84,7 @@ public class ConvocatoriaEntidadGestoraControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.doNothing().when(service).delete(ArgumentMatchers.anyLong());
@@ -99,7 +99,7 @@ public class ConvocatoriaEntidadGestoraControllerTest extends BaseControllerTest
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void delete_WithoutId_Return404() throws Exception {
+  void delete_WithoutId_Return404() throws Exception {
     // given: no existing id
     Long id = 1L;
 

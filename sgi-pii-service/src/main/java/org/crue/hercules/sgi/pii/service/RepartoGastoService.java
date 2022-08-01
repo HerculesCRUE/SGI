@@ -1,5 +1,8 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -35,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class RepartoGastoService {
+
   private final RepartoGastoRepository repository;
   private final RepartoRepository repartoRepository;
   private final Validator validator;
@@ -112,8 +116,9 @@ public class RepartoGastoService {
     Assert.isNull(repartoGasto.getId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(RepartoGasto.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(RepartoGasto.class))
+            .build());
 
     checkRepartoIsUpdatable(repartoGasto.getRepartoId());
     RepartoGasto returnValue = repository.save(repartoGasto);
@@ -135,8 +140,9 @@ public class RepartoGastoService {
     Assert.notNull(repartoGasto.getId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(RepartoGasto.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(RepartoGasto.class))
+            .build());
 
     checkRepartoIsUpdatable(repartoGasto.getRepartoId());
     return repository.findById(repartoGasto.getId()).map(repartoGastoExistente -> {
@@ -162,8 +168,9 @@ public class RepartoGastoService {
     Assert.notNull(id,
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(RepartoGasto.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(RepartoGasto.class))
+            .build());
 
     Optional<RepartoGasto> optionalRepartoGasto = repository.findById(id);
 

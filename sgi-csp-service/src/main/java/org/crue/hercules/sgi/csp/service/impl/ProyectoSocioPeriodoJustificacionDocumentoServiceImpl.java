@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.ProyectoSocioPeriodoJustificacionNotFoundException;
@@ -69,8 +70,9 @@ public class ProyectoSocioPeriodoJustificacionDocumentoServiceImpl
     log.debug(
         "update(Long proyectoSocioId, List<ProyectoSocioPeriodoJustificacionDocumento> proyectoSocioPeriodoJustificaciones) - start");
 
-    proyectoSocioRepository.findById(proyectoSocioId)
-        .orElseThrow(() -> new ProyectoSocioPeriodoJustificacionNotFoundException(proyectoSocioId));
+    if (!proyectoSocioRepository.existsById(proyectoSocioId)) {
+      throw new ProyectoSocioPeriodoJustificacionNotFoundException(proyectoSocioId);
+    }
 
     List<ProyectoSocioPeriodoJustificacionDocumento> proyectoSocioPeriodoJustificacionesBD = repository
         .findAllByProyectoSocioPeriodoJustificacionId(proyectoSocioId);
@@ -78,8 +80,9 @@ public class ProyectoSocioPeriodoJustificacionDocumentoServiceImpl
     // Periodos eliminados
     List<ProyectoSocioPeriodoJustificacionDocumento> periodoJustificacionesEliminar = proyectoSocioPeriodoJustificacionesBD
         .stream()
-        .filter(periodo -> !proyectoSocioPeriodoJustificaciones.stream()
-            .map(ProyectoSocioPeriodoJustificacionDocumento::getId).anyMatch(id -> id == periodo.getId()))
+        .filter(periodo -> proyectoSocioPeriodoJustificaciones.stream()
+            .map(ProyectoSocioPeriodoJustificacionDocumento::getId)
+            .noneMatch(id -> Objects.equals(id, periodo.getId())))
         .collect(Collectors.toList());
 
     if (!periodoJustificacionesEliminar.isEmpty()) {
@@ -91,14 +94,16 @@ public class ProyectoSocioPeriodoJustificacionDocumentoServiceImpl
       // estan actualizando los periodos
       if (proyectoSocioPeriodoJustificacionDocumento.getId() != null) {
         ProyectoSocioPeriodoJustificacionDocumento proyectoSocioPeriodoJustificacionDocumentoBD = proyectoSocioPeriodoJustificacionesBD
-            .stream().filter(periodo -> periodo.getId() == proyectoSocioPeriodoJustificacionDocumento.getId())
+            .stream()
+            .filter(periodo -> Objects.equals(periodo.getId(), proyectoSocioPeriodoJustificacionDocumento.getId()))
             .findFirst().orElseThrow(() -> new ProyectoSocioPeriodoJustificacionDocumentoNotFoundException(
                 proyectoSocioPeriodoJustificacionDocumento.getId()));
 
         Assert.isTrue(
-            proyectoSocioPeriodoJustificacionDocumentoBD
-                .getProyectoSocioPeriodoJustificacionId() == proyectoSocioPeriodoJustificacionDocumento
-                    .getProyectoSocioPeriodoJustificacionId(),
+            Objects.equals(proyectoSocioPeriodoJustificacionDocumentoBD
+                .getProyectoSocioPeriodoJustificacionId(),
+                proyectoSocioPeriodoJustificacionDocumento
+                    .getProyectoSocioPeriodoJustificacionId()),
             "No se puede modificar el proyecto socio del ProyectoSocioPeriodoJustificacionDocumento");
       }
     }

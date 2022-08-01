@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class TipoRegimenConcurrenciaRepositoryTest extends BaseRepositoryTest {
+class TipoRegimenConcurrenciaRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private TipoRegimenConcurrenciaRepository repository;
 
   @Test
-  public void findByNombre_ReturnsTipoRegimenConcurrencia() throws Exception {
+  void findByNombre_ReturnsTipoRegimenConcurrencia() throws Exception {
     // given: data TipoRegimenConcurrencia with nombre to find
     TipoRegimenConcurrencia data = generarMockTipoRegimenConcurrencia(1L, Boolean.TRUE);
     entityManager.persistAndFlush(data);
@@ -33,7 +33,7 @@ public class TipoRegimenConcurrenciaRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByNombre_ReturnsNull() throws Exception {
+  void findByNombre_ReturnsNull() throws Exception {
     // given: data TipoRegimenConcurrencia with nombre to find
     TipoRegimenConcurrencia data = generarMockTipoRegimenConcurrencia(1L, Boolean.TRUE);
     entityManager.persistAndFlush(generarMockTipoRegimenConcurrencia(2L, Boolean.TRUE));

@@ -33,6 +33,10 @@ import lombok.experimental.SuperBuilder;
 @UniqueNombreViaProteccion(groups = { OnActualizar.class, OnActivar.class, OnCrear.class })
 @ActivableIsActivo(entityClass = ViaProteccion.class, groups = { OnActualizar.class })
 public class ViaProteccion extends BaseActivableEntity {
+  /*
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
   protected static final String TABLE_NAME = "via_proteccion";
   private static final String SEQUENCE_NAME = TABLE_NAME + "_seq";

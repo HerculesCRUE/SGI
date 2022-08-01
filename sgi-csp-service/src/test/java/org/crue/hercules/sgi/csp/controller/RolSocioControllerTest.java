@@ -34,7 +34,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * RolSocioControllerTest
  */
 @WebMvcTest(RolSocioController.class)
-public class RolSocioControllerTest extends BaseControllerTest {
+class RolSocioControllerTest extends BaseControllerTest {
 
   @MockBean
   private RolSocioService service;
@@ -44,7 +44,7 @@ public class RolSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsRolSocio() throws Exception {
+  void findById_WithExistingId_ReturnsRolSocio() throws Exception {
     // given: existing id
     RolSocio rolSocioExistente = generarMockRolSocio(1L);
     BDDMockito.given(service.findById(ArgumentMatchers.<Long>any())).willReturn(rolSocioExistente);
@@ -62,7 +62,7 @@ public class RolSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new RolSocioNotFoundException(1L);
@@ -79,7 +79,7 @@ public class RolSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAll_WithPaging_ReturnsRolSocioSubList() throws Exception {
+  void findAll_WithPaging_ReturnsRolSocioSubList() throws Exception {
     // given: One hundred RolSocio
     List<RolSocio> rolSocios = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -133,7 +133,7 @@ public class RolSocioControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAll_EmptyList_Returns204() throws Exception {
+  void findAll_EmptyList_Returns204() throws Exception {
     // given: no data RolSocio
     BDDMockito.given(service.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<RolSocio>>() {

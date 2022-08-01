@@ -15,12 +15,17 @@ import org.crue.hercules.sgi.csp.dto.ConvocatoriaTituloOutput;
 import org.crue.hercules.sgi.csp.dto.DocumentoOutput;
 import org.crue.hercules.sgi.csp.dto.EstadoAutorizacionOutput;
 import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNOutput;
+import org.crue.hercules.sgi.csp.model.Autorizacion;
 import org.crue.hercules.sgi.csp.model.CertificadoAutorizacion;
 import org.crue.hercules.sgi.csp.model.EstadoAutorizacion;
 import org.crue.hercules.sgi.csp.repository.EstadoAutorizacionRepository;
+import org.crue.hercules.sgi.csp.service.AutorizacionComService;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -69,6 +74,9 @@ class AutorizacionIT extends BaseIT {
   private static final String PATH_PARAMETER_SOLICITANTE_REF = "/{solicitanteRef}";
   private static final String PATH_PARAMETER_ID_AUTORIZACION = "/{idAutorizacion}";
   private static final String PATH_DOCUMENTO = "/documento";
+
+  @MockBean
+  private AutorizacionComService autorizacionComService;
 
   private HttpEntity<Object> buildRequest(HttpHeaders headers, Object entity, String... roles)
       throws Exception {
@@ -219,6 +227,9 @@ class AutorizacionIT extends BaseIT {
     String roles = "CSP-AUT-INV-ER";
     Long idAutorizacion = 3L;
 
+    BDDMockito.willDoNothing().given(this.autorizacionComService)
+        .enviarComunicadoModificadaAutorizacionParticipacionProyectoExterno(ArgumentMatchers.<Autorizacion>any());
+
     final ResponseEntity<AutorizacionOutput> response = restTemplate.exchange(
         CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_PRESENTAR,
         HttpMethod.PATCH, buildRequest(null, null, roles), AutorizacionOutput.class, idAutorizacion);
@@ -290,7 +301,7 @@ class AutorizacionIT extends BaseIT {
     // given: Proyecto data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<AutorizacionWithFirstEstado> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
 
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
@@ -333,7 +344,7 @@ class AutorizacionIT extends BaseIT {
     // given: Proyecto data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<AutorizacionWithFirstEstado> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
 
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
@@ -459,7 +470,7 @@ class AutorizacionIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     final List<EstadoAutorizacion> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
 
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
@@ -512,7 +523,7 @@ class AutorizacionIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     final List<CertificadoAutorizacion> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
 
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
@@ -609,7 +620,7 @@ class AutorizacionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     Assertions.assertThat(response.getBody()).isNotNull();
-    Assertions.assertThat(response.getBody().size()).isEqualTo(2);
+    Assertions.assertThat(response.getBody()).hasSize(2);
   }
 
   @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = {

@@ -64,7 +64,8 @@ public class SectorAplicacionController {
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthority('PII-SEA-V', 'PII-SEA-C', 'PII-SEA-E', 'PII-SEA-B', 'PII-SEA-R', 'PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R')")
-  ResponseEntity<Page<SectorAplicacionOutput>> findActivos(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<SectorAplicacionOutput>> findActivos(
+      @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<SectorAplicacion> page = service.findActivos(query, paging);
@@ -88,7 +89,7 @@ public class SectorAplicacionController {
    */
   @GetMapping("/todos")
   @PreAuthorize("hasAnyAuthority('PII-SEA-V', 'PII-SEA-C', 'PII-SEA-E', 'PII-SEA-B', 'PII-SEA-R', 'PII-INV-E')")
-  ResponseEntity<Page<SectorAplicacionOutput>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<SectorAplicacionOutput>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodos(String query, Pageable paging) - start");
     Page<SectorAplicacion> page = service.findAll(query, paging);
@@ -110,7 +111,7 @@ public class SectorAplicacionController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthority('PII-SEA-V', 'PII-SEA-C', 'PII-SEA-E', 'PII-SEA-B', 'PII-SEA-R')")
-  SectorAplicacionOutput findById(@PathVariable Long id) {
+  public SectorAplicacionOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     SectorAplicacion returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -125,7 +126,7 @@ public class SectorAplicacionController {
    */
   @PostMapping
   @PreAuthorize("hasAuthority('PII-SEA-C')")
-  ResponseEntity<SectorAplicacionOutput> create(@Valid @RequestBody SectorAplicacionInput sectorAplicacion) {
+  public ResponseEntity<SectorAplicacionOutput> create(@Valid @RequestBody SectorAplicacionInput sectorAplicacion) {
     log.debug("create(SectorAplicacion sectorAplicacion) - start");
     SectorAplicacion returnValue = service.create(convert(sectorAplicacion));
     log.debug("create(SectorAplicacion sectorAplicacion) - end");
@@ -141,7 +142,8 @@ public class SectorAplicacionController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('PII-SEA-E')")
-  SectorAplicacionOutput update(@Valid @RequestBody SectorAplicacionInput sectorAplicacion, @PathVariable Long id) {
+  public SectorAplicacionOutput update(@Valid @RequestBody SectorAplicacionInput sectorAplicacion,
+      @PathVariable Long id) {
     log.debug("update(SectorAplicacion sectorAplicacion, Long id) - start");
     SectorAplicacion returnValue = service.update(convert(id, sectorAplicacion));
     log.debug("update(SectorAplicacion sectorAplicacion, Long id) - end");
@@ -156,7 +158,7 @@ public class SectorAplicacionController {
    */
   @PatchMapping("/{id}/activar")
   @PreAuthorize("hasAuthority('PII-SEA-R')")
-  SectorAplicacionOutput activar(@PathVariable Long id) {
+  public SectorAplicacionOutput activar(@PathVariable Long id) {
     log.debug("reactivar(Long id) - start");
     SectorAplicacion returnValue = service.activar(id);
     log.debug("reactivar(Long id) - end");
@@ -167,10 +169,11 @@ public class SectorAplicacionController {
    * Desactiva el {@link SectorAplicacion} con id indicado.
    * 
    * @param id Identificador de {@link SectorAplicacion}.
+   * @return objeto de tiop {@link SectorAplicacionOutput}
    */
   @PatchMapping("/{id}/desactivar")
   @PreAuthorize("hasAuthority('PII-SEA-B')")
-  SectorAplicacionOutput desactivar(@PathVariable Long id) {
+  public SectorAplicacionOutput desactivar(@PathVariable Long id) {
     log.debug("desactivar(Long id) - start");
     SectorAplicacion returnValue = service.desactivar(id);
     log.debug("desactivar(Long id) - end");
@@ -193,7 +196,7 @@ public class SectorAplicacionController {
 
   private Page<SectorAplicacionOutput> convert(Page<SectorAplicacion> page) {
     List<SectorAplicacionOutput> content = page.getContent().stream()
-        .map((sectorAplicacion) -> convert(sectorAplicacion)).collect(Collectors.toList());
+        .map(this::convert).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }

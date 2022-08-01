@@ -1,0 +1,30 @@
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
+  <form [formGroup]="formGroup">
+    <!-- Miembro -->
+    <div fxLayout="row">
+      <mat-form-field>
+        <mat-label>
+          {{'eer.empresa-equipo-emprendedor.miembro' | translate}}
+        </mat-label>
+        <sgi-select-persona placeholder="{{'eer.empresa-equipo-emprendedor.miembro' | translate}}"
+          formControlName="miembro" [tipoColectivo]="TIPO_COLECTIVO.MIEMBRO_EQUIPO_EMPRESA_EXPLOTACION_RESULTADOS"
+          required>
+        </sgi-select-persona>
+        <mat-error *ngIf="formGroup.controls.miembro.errors?.required">
+          {{'error.required.entity' | translate:msgParamMiembroEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.miembro.errors?.contains">
+          {{'error.csp.persona-equipo.duplicate' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

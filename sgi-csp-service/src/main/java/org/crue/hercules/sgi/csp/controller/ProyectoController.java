@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.crue.hercules.sgi.csp.converter.ProyectoFaseConverter;
 import org.crue.hercules.sgi.csp.dto.AnualidadGastoOutput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaTituloOutput;
 import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNOutput;
@@ -16,6 +17,7 @@ import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadResumen;
 import org.crue.hercules.sgi.csp.dto.ProyectoDto;
 import org.crue.hercules.sgi.csp.dto.ProyectoEquipoDto;
 import org.crue.hercules.sgi.csp.dto.ProyectoFacturacionOutput;
+import org.crue.hercules.sgi.csp.dto.ProyectoFaseOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoPalabraClaveInput;
 import org.crue.hercules.sgi.csp.dto.ProyectoPalabraClaveOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
@@ -116,12 +118,16 @@ public class ProyectoController {
   /** El path que gestiona este controlador */
   public static final String PATH_SEPARATOR = "/";
   public static final String REQUEST_MAPPING = PATH_SEPARATOR + "proyectos";
-  public static final String PATH_ID = PATH_SEPARATOR + "{id}";
-  public static final String PATH_INVESTIGADORES_PRINCIPALES = PATH_ID + PATH_SEPARATOR + "investigadoresprincipales";
+
   public static final String PATH_PROYECTOS_COMPETITIVOS_PERSONAS = PATH_SEPARATOR + "competitivos-personas";
-  private static final String PATH_ANUALIDAD_GASTOS = PATH_ID + PATH_SEPARATOR + "anualidad-gastos";
-  private static final String PATH_ANUALIDAD_INGRESOS = PATH_ID + PATH_SEPARATOR + "anualidad-ingresos";
-  private static final String PATH_GASTOS_PROYECTO = PATH_ID + PATH_SEPARATOR + "gastos-proyecto";
+
+  public static final String PATH_ID = PATH_SEPARATOR + "{id}";
+  public static final String PATH_ANUALIDAD_GASTOS = PATH_ID + PATH_SEPARATOR + "anualidad-gastos";
+  public static final String PATH_ANUALIDAD_INGRESOS = PATH_ID + PATH_SEPARATOR + "anualidad-ingresos";
+  public static final String PATH_CAMBIAR_ESTADO = PATH_ID + PATH_SEPARATOR + "cambiar-estado";
+  public static final String PATH_GASTOS_PROYECTO = PATH_ID + PATH_SEPARATOR + "gastos-proyecto";
+  public static final String PATH_INVESTIGADORES_PRINCIPALES = PATH_ID + PATH_SEPARATOR + "investigadoresprincipales";
+  public static final String PATH_SOLICITUD = PATH_ID + PATH_SEPARATOR + "solicitud";
 
   private final ModelMapper modelMapper;
 
@@ -211,6 +217,8 @@ public class ProyectoController {
 
   /** Convocatoria service */
   private final ConvocatoriaService convocatoriaService;
+
+  private final ProyectoFaseConverter proyectoFaseConverter;
 
   /**
    * Crea nuevo {@link Proyecto}
@@ -393,7 +401,7 @@ public class ProyectoController {
    */
   @GetMapping("/{id}/proyectofases")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  public ResponseEntity<Page<ProyectoFase>> findAllProyectoFase(@PathVariable Long id,
+  public ResponseEntity<Page<ProyectoFaseOutput>> findAllProyectoFase(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllProyectoFase(Long id, String query, Pageable paging) - start");
     Page<ProyectoFase> page = proyectoFaseService.findAllByProyecto(id, query, paging);
@@ -404,7 +412,7 @@ public class ProyectoController {
     }
 
     log.debug("findAllProyectoFase(Long id, String query, Pageable paging) - end");
-    return new ResponseEntity<>(page, HttpStatus.OK);
+    return new ResponseEntity<>(this.proyectoFaseConverter.convert(page), HttpStatus.OK);
   }
 
   /**
@@ -730,7 +738,7 @@ public class ProyectoController {
    * @param proyecto {@link Proyecto} a crear
    * @return Nuevo {@link Proyecto} creado.
    */
-  @PostMapping("/{id}/solicitud")
+  @PostMapping(PATH_SOLICITUD)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-C')")
   public ResponseEntity<Proyecto> createProyectoBySolicitud(@PathVariable Long id, @RequestBody Proyecto proyecto) {
     log.debug("createProyectoBySolicitud(@PathVariable Long id) - start");
@@ -1001,7 +1009,7 @@ public class ProyectoController {
    * @param estadoProyecto nuevo {@link EstadoProyecto}.
    * @return {@link Proyecto} actualizado.
    */
-  @PatchMapping("/{id}/cambiar-estado")
+  @PatchMapping(PATH_CAMBIAR_ESTADO)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   public Proyecto cambiarEstado(@PathVariable Long id, @RequestBody EstadoProyecto estadoProyecto) {
     log.debug("cambiarEstado(EstadoProyecto estadoProyecto) - start");

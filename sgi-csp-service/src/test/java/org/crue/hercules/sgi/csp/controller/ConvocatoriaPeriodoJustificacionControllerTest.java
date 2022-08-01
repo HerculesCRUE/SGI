@@ -28,7 +28,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ConvocatoriaPeriodoJustificacionControllerTest
  */
 @WebMvcTest(ConvocatoriaPeriodoJustificacionController.class)
-public class ConvocatoriaPeriodoJustificacionControllerTest extends BaseControllerTest {
+class ConvocatoriaPeriodoJustificacionControllerTest extends BaseControllerTest {
 
   @MockBean
   private ConvocatoriaPeriodoJustificacionService service;
@@ -41,7 +41,7 @@ public class ConvocatoriaPeriodoJustificacionControllerTest extends BaseControll
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_ReturnsConvocatoriaPeriodoJustificacionList()
+  void updateConvocatoriaPeriodoJustificacionesConvocatoria_ReturnsConvocatoriaPeriodoJustificacionList()
       throws Exception {
     // given: una lista con uno de los ConvocatoriaPeriodoJustificacion actualizado,
     // otro nuevo y sin los otros 3 periodos existentes
@@ -109,7 +109,7 @@ public class ConvocatoriaPeriodoJustificacionControllerTest extends BaseControll
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithNoExistingId_Returns404() throws Exception {
+  void updateConvocatoriaPeriodoJustificacionesConvocatoria_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion = generarMockConvocatoriaPeriodoJustificacion(1L);
@@ -131,7 +131,7 @@ public class ConvocatoriaPeriodoJustificacionControllerTest extends BaseControll
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsConvocatoriaPeriodoJustificacion() throws Exception {
+  void findById_WithExistingId_ReturnsConvocatoriaPeriodoJustificacion() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
       return generarMockConvocatoriaPeriodoJustificacion(invocation.getArgument(0));
@@ -159,7 +159,7 @@ public class ConvocatoriaPeriodoJustificacionControllerTest extends BaseControll
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ConvocatoriaPeriodoJustificacionNotFoundException(1L);

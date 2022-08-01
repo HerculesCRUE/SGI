@@ -21,4 +21,8 @@ export interface IActaWithNumEvaluacionesBackend {
   estadoActa: TipoEstadoActa;
   /** Número de evaluacines no evaluadas. */
   numEvaluacionesNoEvaluadas: number;
+  /** Referencia al documento */
+  documentoRef: string;
+  /** Referencia a la transacción blockchain */
+  transaccionRef: string;
 }

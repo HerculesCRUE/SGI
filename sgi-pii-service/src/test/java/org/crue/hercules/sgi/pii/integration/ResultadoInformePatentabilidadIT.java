@@ -23,7 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de ResultadoInformePatentabilidad.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ResultadoInformePatentabilidadIT extends BaseIT {
+class ResultadoInformePatentabilidadIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = ResultadoInformePatentabilidadController.MAPPING;
@@ -49,7 +49,7 @@ public class ResultadoInformePatentabilidadIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsResultadoInformePatentabilidad() throws Exception {
+  void create_ReturnsResultadoInformePatentabilidad() throws Exception {
 
     String[] roles = { "PII-RIP-C" };
     ResultadoInformePatentabilidad nuevoResultadoInformePatentabilidad = generarMockResultadoInformePatentabilidad(
@@ -76,7 +76,7 @@ public class ResultadoInformePatentabilidadIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsResultadoInformePatentabilidad() throws Exception {
+  void update_ReturnsResultadoInformePatentabilidad() throws Exception {
 
     String[] roles = { "PII-RIP-E" };
     Long idResultadoInformePatentabilidad = 1L;
@@ -108,7 +108,7 @@ public class ResultadoInformePatentabilidadIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsResultadoInformePatentabilidadSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsResultadoInformePatentabilidadSubList() throws Exception {
 
     String[] roles = { "PII-RIP-V", "PII-RIP-C", "PII-RIP-E", "PII-RIP-B", "PII-RIP-R" };
 
@@ -130,7 +130,7 @@ public class ResultadoInformePatentabilidadIT extends BaseIT {
     // then: Respuesta OK, retorna la información de la página correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ResultadoInformePatentabilidad> resultadoInformePatentabilidad = response.getBody();
-    Assertions.assertThat(resultadoInformePatentabilidad.size()).isEqualTo(4);
+    Assertions.assertThat(resultadoInformePatentabilidad).hasSize(4);
     Assertions.assertThat(response.getHeaders().getFirst("X-Page")).isEqualTo("0");
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("4");
@@ -152,7 +152,7 @@ public class ResultadoInformePatentabilidadIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findActivos_WithPagingSortingAndFiltering_ReturnsResultadoInformePatentabilidadSubList()
+  void findActivos_WithPagingSortingAndFiltering_ReturnsResultadoInformePatentabilidadSubList()
       throws Exception {
     String[] roles = { "PII-RIP-V", "PII-RIP-C", "PII-RIP-E", "PII-RIP-B", "PII-RIP-R", "PII-INV-V", "PII-INV-E" };
 
@@ -174,7 +174,7 @@ public class ResultadoInformePatentabilidadIT extends BaseIT {
     // then: Respuesta OK, retorna la información de la página correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ResultadoInformePatentabilidad> resultadoInformePatentabilidad = response.getBody();
-    Assertions.assertThat(resultadoInformePatentabilidad.size()).isEqualTo(3);
+    Assertions.assertThat(resultadoInformePatentabilidad).hasSize(3);
     Assertions.assertThat(response.getHeaders().getFirst("X-Page")).isEqualTo("0");
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("3");

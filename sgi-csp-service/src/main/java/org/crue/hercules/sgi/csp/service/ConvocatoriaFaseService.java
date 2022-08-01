@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.List;
+
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaFaseInput;
+import org.crue.hercules.sgi.csp.dto.com.Recipient;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
 import org.springframework.data.domain.Page;
@@ -14,19 +18,23 @@ public interface ConvocatoriaFaseService {
   /**
    * Guarda la entidad {@link ConvocatoriaFase}.
    * 
-   * @param convocatoriaFase la entidad {@link ConvocatoriaFase} a guardar.
-   * @return ConvocatoriaFase la entidad {@link ConvocatoriaFase} persistida.
+   * @param convocatoriaFase la entidad {@link ConvocatoriaFaseInput} a
+   *                         guardar.
+   * @return ConvocatoriaFase la entidad {@link ConvocatoriaFase}
+   *         persistida.
    */
-  ConvocatoriaFase create(ConvocatoriaFase convocatoriaFase);
+  ConvocatoriaFase create(ConvocatoriaFaseInput convocatoriaFase);
 
   /**
    * Actualiza la entidad {@link ConvocatoriaFase}.
    * 
-   * @param convocatoriaFaseActualizar la entidad {@link ConvocatoriaFase} a
+   * @param convocatoriaFaseId         id de la {@link ConvocatoriaFase}
+   * @param convocatoriaFaseActualizar la entidad {@link ConvocatoriaFaseInput} a
    *                                   guardar.
-   * @return ConvocatoriaFase la entidad {@link ConvocatoriaFase} persistida.
+   * @return ConvocatoriaFase la entidad {@link ConvocatoriaFase}
+   *         persistida.
    */
-  ConvocatoriaFase update(ConvocatoriaFase convocatoriaFaseActualizar);
+  ConvocatoriaFase update(Long convocatoriaFaseId, ConvocatoriaFaseInput convocatoriaFaseActualizar);
 
   /**
    * Elimina la {@link ConvocatoriaFase}.
@@ -63,4 +71,6 @@ public interface ConvocatoriaFaseService {
    *         cualquier otro caso.
    */
   boolean existsByConvocatoriaId(Long convocatoriaId);
+
+  List<Recipient> getDeferredRecipients(Long convocatoriaFaseId);
 }

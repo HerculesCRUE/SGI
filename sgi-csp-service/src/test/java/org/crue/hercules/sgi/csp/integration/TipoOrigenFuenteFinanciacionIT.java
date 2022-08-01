@@ -22,7 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de TipoOrigenFuenteFinanciacion.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TipoOrigenFuenteFinanciacionIT extends BaseIT {
+class TipoOrigenFuenteFinanciacionIT extends BaseIT {
 
   private static final String TIPO_ORIGEN_FUENTE_FINANCIACION_CONTROLLER_BASE_PATH = "/tipoorigenfuentefinanciaciones";
 
@@ -42,7 +42,7 @@ public class TipoOrigenFuenteFinanciacionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsTipoOrigenFuenteFinanciacionSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsTipoOrigenFuenteFinanciacionSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-TDOC-V")));
     headers.add("X-Page", "0");
@@ -59,7 +59,7 @@ public class TipoOrigenFuenteFinanciacionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoOrigenFuenteFinanciacion> tipoAmbitoGeograficos = response.getBody();
-    Assertions.assertThat(tipoAmbitoGeograficos.size()).isEqualTo(3);
+    Assertions.assertThat(tipoAmbitoGeograficos).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");

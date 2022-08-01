@@ -22,7 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de TipoHito.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TipoHitoIT extends BaseIT {
+class TipoHitoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
@@ -44,7 +44,7 @@ public class TipoHitoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_WithId_ReturnsTipoHito() throws Exception {
+  void findById_WithId_ReturnsTipoHito() throws Exception {
     final ResponseEntity<TipoHito> response = restTemplate.exchange(TIPO_HITO_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
         HttpMethod.GET, buildRequest(null, null), TipoHito.class, 1L);
 
@@ -55,12 +55,12 @@ public class TipoHitoIT extends BaseIT {
     Assertions.assertThat(tipoHito.getId()).as("getId()").isEqualTo(1L);
     Assertions.assertThat(tipoHito.getNombre()).as("getNombre()").isEqualTo("TipoHito1");
     Assertions.assertThat(tipoHito.getDescripcion()).as("getDescripcion()").isEqualTo("Descripcion1");
-    Assertions.assertThat(tipoHito.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(tipoHito.getActivo()).as("getActivo()").isTrue();
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsTipoHito() throws Exception {
+  void create_ReturnsTipoHito() throws Exception {
 
     TipoHito tipoHito = generarMockTipoHito(null);
 
@@ -73,14 +73,14 @@ public class TipoHitoIT extends BaseIT {
     Assertions.assertThat(tipoHitoCreado.getId()).as("getId()").isNotNull();
     Assertions.assertThat(tipoHitoCreado.getNombre()).as("getNombre()").isEqualTo(tipoHito.getNombre());
     Assertions.assertThat(tipoHitoCreado.getDescripcion()).as("getDescripcion()").isEqualTo(tipoHito.getDescripcion());
-    Assertions.assertThat(tipoHitoCreado.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(tipoHitoCreado.getActivo()).as("getActivo()").isTrue();
 
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void reactivar_ReturnTipoHito() throws Exception {
+  void reactivar_ReturnTipoHito() throws Exception {
     Long idTipoHito = 1L;
 
     final ResponseEntity<TipoHito> response = restTemplate.exchange(
@@ -98,7 +98,7 @@ public class TipoHitoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void desactivar_ReturnTipoHito() throws Exception {
+  void desactivar_ReturnTipoHito() throws Exception {
     Long idTipoHito = 1L;
 
     final ResponseEntity<TipoHito> response = restTemplate.exchange(
@@ -116,7 +116,7 @@ public class TipoHitoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsTipoHito() throws Exception {
+  void update_ReturnsTipoHito() throws Exception {
     Long idTipoHito = 1L;
     TipoHito tipoHito = generarMockTipoHito(idTipoHito, "nombre-actualizado");
 
@@ -130,13 +130,13 @@ public class TipoHitoIT extends BaseIT {
     Assertions.assertThat(tipoHitoActualizado.getNombre()).as("getNombre()").isEqualTo(tipoHito.getNombre());
     Assertions.assertThat(tipoHitoActualizado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(tipoHito.getDescripcion());
-    Assertions.assertThat(tipoHitoActualizado.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(tipoHitoActualizado.getActivo()).as("getActivo()").isTrue();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsTipoHitoSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsTipoHitoSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-TDOC-V")));
     headers.add("X-Page", "0");
@@ -153,7 +153,7 @@ public class TipoHitoIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoHito> tiposHito = response.getBody();
-    Assertions.assertThat(tiposHito.size()).isEqualTo(3);
+    Assertions.assertThat(tiposHito).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
@@ -170,7 +170,7 @@ public class TipoHitoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllTodos_WithPagingSortingAndFiltering_ReturnsTipoHitoSubList() throws Exception {
+  void findAllTodos_WithPagingSortingAndFiltering_ReturnsTipoHitoSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-TDOC-V")));
     headers.add("X-Page", "0");
@@ -187,7 +187,7 @@ public class TipoHitoIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoHito> tiposHito = response.getBody();
-    Assertions.assertThat(tiposHito.size()).isEqualTo(3);
+    Assertions.assertThat(tiposHito).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");

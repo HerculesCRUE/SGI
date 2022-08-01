@@ -12,13 +12,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * TipoDocumentoRepositoryTest
  */
 @DataJpaTest
-public class TipoDocumentoRepositoryTest extends BaseRepositoryTest {
+class TipoDocumentoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private TipoDocumentoRepository repository;
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsTipoDocumento() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsTipoDocumento() throws Exception {
 
     // given: 2 TipoDocumento de los que 1 coincide con el nombre buscado
     TipoDocumento tipoDocumento1 = new TipoDocumento(null, "nombre-tipoDocumento1", "descripcion-tipoDocumento1", true);
@@ -45,7 +45,7 @@ public class TipoDocumentoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByNombreAndActivoIsTrueNoExiste_ReturnsNull() throws Exception {
+  void findByNombreAndActivoIsTrueNoExiste_ReturnsNull() throws Exception {
 
     // given: 2 TipoDocumento que no coinciden con el nombre buscado
     TipoDocumento tipoDocumento1 = new TipoDocumento(null, "nombre-tipoDocumento1", "descripcion-tipoDocumento1", true);

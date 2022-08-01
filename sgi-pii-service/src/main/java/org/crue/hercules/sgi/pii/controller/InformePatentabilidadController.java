@@ -50,7 +50,7 @@ public class InformePatentabilidadController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B')")
-  InformePatentabilidadOutput findById(@PathVariable Long id) {
+  public InformePatentabilidadOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     InformePatentabilidad returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -66,7 +66,7 @@ public class InformePatentabilidadController {
    */
   @PostMapping
   @PreAuthorize("hasAuthority('PII-INV-E')")
-  ResponseEntity<InformePatentabilidadOutput> create(
+  public ResponseEntity<InformePatentabilidadOutput> create(
       @Valid @RequestBody InformePatentabilidadInput informePatentabilidad) {
     log.debug("create(InformePatentabilidad informePatentabilidad) - start");
     InformePatentabilidad returnValue = service.create(convert(informePatentabilidad));
@@ -83,7 +83,7 @@ public class InformePatentabilidadController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('PII-INV-E')")
-  InformePatentabilidadOutput update(@Valid @RequestBody InformePatentabilidadInput informePatentabilidad,
+  public InformePatentabilidadOutput update(@Valid @RequestBody InformePatentabilidadInput informePatentabilidad,
       @PathVariable Long id) {
     log.debug("update(InformePatentabilidad informePatentabilidad, Long id) - start");
     InformePatentabilidad returnValue = service.update(convert(id, informePatentabilidad));
@@ -99,7 +99,7 @@ public class InformePatentabilidadController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthority('PII-INV-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("delete(Long id) - start");
     service.deleteById(id);
     log.debug("delete(Long id) - end");

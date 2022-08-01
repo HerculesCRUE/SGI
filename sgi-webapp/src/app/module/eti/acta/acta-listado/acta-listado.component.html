@@ -135,14 +135,21 @@
             </a>
           </ng-container>
           <ng-container>
-            <button mat-button matTooltip="{{'btn.show.file' | translate}}" (click)="visualizarInforme(acta.id)">
+            <button mat-button matTooltip="{{'btn.show.file' | translate}}" (click)="visualizarInforme(acta)">
               <mat-icon color="primary">picture_as_pdf</mat-icon>
             </button>
           </ng-container>
-          <ng-container *sgiHasAnyAuthorityForAnyUO="['ETI-ACT-FIN','ETI-ACT-INV-DESR','ETI-ACT-DESR']">
+          <ng-container *sgiHasAnyAuthorityForAnyUO="['ETI-ACT-FIN','ETI-ACT-DESR']">
             <button *ngIf="hasFinalizarActa(acta)" mat-button (click)="finishActa(acta.id)"
               matTooltip="{{'eti.acta.finalizar' | translate}}">
               <mat-icon color="primary">https</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAuthorityForAnyUO="'ETI-ACT-FIN'">
+            <button *ngIf="acta.transaccionRef!== null && blockchainEnable" mat-button
+              (click)="confirmarRegistroBlockchain(acta.id)"
+              matTooltip="{{'eti.acta.confirmar-blockchain' | translate}}">
+              <mat-icon color="primary">fact_check</mat-icon>
             </button>
           </ng-container>
         </td>

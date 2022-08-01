@@ -31,7 +31,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * ConvocatoriaConceptoGastoServiceTest
  */
-public class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
+class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
 
   @Mock
   private ConvocatoriaConceptoGastoRepository repository;
@@ -47,13 +47,13 @@ public class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
   ConfiguracionSolicitudRepository configuracionSolicitudRepository;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ConvocatoriaConceptoGastoServiceImpl(repository, convocatoriaRepository, conceptoGastoRepository,
         convocatoriaConceptoGastoCodigoEcRepository, configuracionSolicitudRepository);
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ConvocatoriaConceptoGasto que ya tiene id
     ConvocatoriaConceptoGasto newConvocatoriaConceptoGasto = generarMockConvocatoriaConceptoGasto(1L);
 
@@ -65,7 +65,7 @@ public class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutConvocatoria_ThrowsIllegalArgumentException() {
+  void create_WithoutConvocatoria_ThrowsIllegalArgumentException() {
     // given: Un nuevo ConvocatoriaConceptoGasto sin convocatoria
     ConvocatoriaConceptoGasto convocatoriaConceptoGasto = generarMockConvocatoriaConceptoGasto(null);
     convocatoriaConceptoGasto.setConvocatoriaId(null);
@@ -78,7 +78,7 @@ public class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithConceptoGastoInactivo_ThrowsIllegalArgumentException() {
+  void create_WithConceptoGastoInactivo_ThrowsIllegalArgumentException() {
     // given: Un nuevo ConvocatoriaConceptoGasto con el ConceptoGasto inactivo
     ConvocatoriaConceptoGasto convocatoriaConceptoGasto = generarMockConvocatoriaConceptoGasto(null);
     convocatoriaConceptoGasto.getConceptoGasto().setActivo(false);
@@ -93,7 +93,7 @@ public class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithConceptoGastoIdNoExists_ThrowsConceptoGastoNotFoundException() {
+  void update_WithConceptoGastoIdNoExists_ThrowsConceptoGastoNotFoundException() {
     // given: Un nuevo ConvocatoriaConceptoGasto sin tipo de enlace
     ConvocatoriaConceptoGasto convocatoriaConceptoGastoActualizar = generarMockConvocatoriaConceptoGasto(1L);
 
@@ -105,7 +105,7 @@ public class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
+  void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
     // given: no id
     Long id = null;
 
@@ -117,11 +117,11 @@ public class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
-    BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
+    BDDMockito.given(repository.existsById(ArgumentMatchers.anyLong())).willReturn(false);
 
     Assertions.assertThatThrownBy(
         // when: delete
@@ -131,7 +131,7 @@ public class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsConvocatoriaConceptoGasto() {
+  void findById_ReturnsConvocatoriaConceptoGasto() {
     // given: Un ConvocatoriaConceptoGasto con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -149,7 +149,7 @@ public class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsConvocatoriaConceptoGastoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsConvocatoriaConceptoGastoNotFoundException() throws Exception {
     // given: Ningun ConvocatoriaConceptoGasto con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -161,7 +161,7 @@ public class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_WithPaging_ReturnsPage() {
+  void findAll_WithPaging_ReturnsPage() {
     // given: One hundred ConvocatoriaConceptoGasto
     List<ConvocatoriaConceptoGasto> conceptosGasto = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -188,9 +188,9 @@ public class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
     Page<ConvocatoriaConceptoGasto> page = service.findAll(null, paging);
 
     // then: A Page with ten ConvocatoriaConceptoGasto are returned
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       ConvocatoriaConceptoGasto item = page.getContent().get(i);

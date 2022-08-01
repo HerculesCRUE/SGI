@@ -20,6 +20,7 @@ export class ActaAsistentesFragment extends Fragment {
     private asistenteService: AsistenteService
   ) {
     super(key);
+    this.setComplete(true);
     this.selectedIdConvocatoria = key;
   }
 
@@ -49,18 +50,6 @@ export class ActaAsistentesFragment extends Fragment {
           }
         })
       ).subscribe((asistentes) => {
-        if (this.isEdit() && this.selectedIdConvocatoria !== this.getKey()) {
-          this.setChanges(true);
-          this.setComplete(this.selectedIdConvocatoria ? true : false);
-        }
-        else if (this.isEdit() && this.selectedIdConvocatoria === this.getKey()) {
-          this.setChanges(false);
-          this.setComplete(false);
-        }
-        else {
-          this.setChanges(this.selectedIdConvocatoria ? true : false);
-          this.setComplete(this.selectedIdConvocatoria ? true : false);
-        }
         this.asistentes$.next(asistentes);
       });
     }

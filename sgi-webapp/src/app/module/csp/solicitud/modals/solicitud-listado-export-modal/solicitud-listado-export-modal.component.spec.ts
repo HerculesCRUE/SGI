@@ -22,6 +22,7 @@ import { SolicitudProyectoEquipoListadoExportService } from '../../solicitud-pro
 import { SolicitudProyectoFichaGeneralListadoExportService } from '../../solicitud-proyecto-ficha-general-listado-export.service';
 import { SolicitudProyectoResponsableEconomicoListadoExportService } from '../../solicitud-proyecto-responsable-economico-listado-export.service';
 import { SolicitudProyectoSocioListadoExportService } from '../../solicitud-proyecto-socio-listado-export.service';
+import { SolicitudRrhhListadoExportService } from '../../solicitud-rrhh-listado-export.service';
 import { ISolicitudListadoDataExportModalData, SolicitudListadoExportModalComponent } from './solicitud-listado-export-modal.component';
 
 describe('SolicitudListadoExportModalComponent', () => {
@@ -61,7 +62,8 @@ describe('SolicitudListadoExportModalComponent', () => {
         SolicitudProyectoEquipoListadoExportService,
         SolicitudProyectoResponsableEconomicoListadoExportService,
         SolicitudProyectoSocioListadoExportService,
-        SolicitudProyectoEntidadFinanciadoraListadoExportService
+        SolicitudProyectoEntidadFinanciadoraListadoExportService,
+        SolicitudRrhhListadoExportService
       ]
     })
       .compileComponents();

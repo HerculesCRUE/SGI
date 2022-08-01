@@ -23,7 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 
-public class TipoFacturacionIT extends BaseIT {
+class TipoFacturacionIT extends BaseIT {
 
   private static final String CONTROLLER_BASE_PATH = "/tiposfacturacion";
 
@@ -64,7 +64,7 @@ public class TipoFacturacionIT extends BaseIT {
     // given: TipoFacturacion data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoFacturacion> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
 
     Assertions.assertThat(responseData.get(0).getNombre()).as("get(0).getNombre())")
         .isEqualTo("nombre-facturacion-" + String.format("%03d", 1));

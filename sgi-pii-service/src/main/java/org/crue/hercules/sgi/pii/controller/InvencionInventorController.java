@@ -77,7 +77,7 @@ public class InvencionInventorController {
 
     log.debug(
         "findActiveInvencionInventores(@PathVariable Long invencionId, @RequestParam(name = 'q', required = false) String query, @RequestPageable(sort = 's') Pageable paging) - end");
-    return new ResponseEntity<>(convert(page, null), HttpStatus.OK);
+    return new ResponseEntity<>(convert(page), HttpStatus.OK);
   }
 
   /**
@@ -99,9 +99,9 @@ public class InvencionInventorController {
     return modelMapper.map(invencionInventor, InvencionInventorOutput.class);
   }
 
-  private Page<InvencionInventorOutput> convert(Page<InvencionInventor> page, Long id) {
+  private Page<InvencionInventorOutput> convert(Page<InvencionInventor> page) {
 
-    List<InvencionInventorOutput> content = page.getContent().stream().map((invencion) -> convert(invencion))
+    List<InvencionInventorOutput> content = page.getContent().stream().map(this::convert)
         .collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());

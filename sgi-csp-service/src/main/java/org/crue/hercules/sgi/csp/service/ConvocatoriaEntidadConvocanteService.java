@@ -61,13 +61,14 @@ public interface ConvocatoriaEntidadConvocanteService {
   /**
    * Obtiene las {@link ConvocatoriaEntidadConvocante} de la {@link Convocatoria}
    * para una {@link Solicitud} si el usuario que realiza la peticion es el
-   * solicitante de la {@link Solicitud}.
+   * solicitante o el tutor de la {@link Solicitud}.
    *
    * @param solicitudId el id de la {@link Convocatoria}.
    * @param pageable    la información de la paginación.
    * @return la lista de entidades {@link ConvocatoriaEntidadConvocante} de la
    *         {@link Convocatoria} paginadas.
    */
-  Page<ConvocatoriaEntidadConvocante> findAllBySolicitudAndUserIsSolicitante(Long solicitudId, Pageable pageable);
+  Page<ConvocatoriaEntidadConvocante> findAllBySolicitudAndUserIsSolicitanteOrTutor(Long solicitudId,
+      Pageable pageable);
 
 }

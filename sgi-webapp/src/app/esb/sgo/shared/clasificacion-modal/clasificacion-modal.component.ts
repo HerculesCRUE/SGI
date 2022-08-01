@@ -13,11 +13,13 @@ import { map } from 'rxjs/operators';
 
 export enum TipoClasificacion {
   SECTORES_INDUSTRIALES = 'SECTORES_INDUSTRIALES',
+  AREAS_ANEP = 'ANEP'
 }
 
 export interface ClasificacionDataModal {
   selectedClasificaciones: IClasificacion[];
   tipoClasificacion?: TipoClasificacion;
+  multiSelect: boolean;
 }
 
 interface ClasificacionListado {
@@ -104,6 +106,7 @@ export class ClasificacionModalComponent extends DialogFormComponent<Clasificaci
   readonly clasificaciones$ = new BehaviorSubject<IClasificacion[]>([]);
   clasificacionesTree$ = new BehaviorSubject<NodeClasificacion[]>([]);
   selectedClasificaciones = [] as IClasificacion[];
+  selectedNodes = [] as NodeClasificacion[];
 
   @ViewChild(MatTree, { static: true }) private matTree: MatTree<NodeClasificacion>;
   treeControl: FlatTreeControl<NodeClasificacion>;
@@ -128,10 +131,6 @@ export class ClasificacionModalComponent extends DialogFormComponent<Clasificaci
     this.treeControl = new FlatTreeControl<NodeClasificacion>(this.getLevel, this.isExpandable);
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
-    this.subscriptions.push(
-      this.clasificacionService.findAllPadres(this.data.tipoClasificacion)
-        .subscribe(response => this.clasificaciones$.next(response.items))
-    );
   }
 
   get MSG_PARAMS() {
@@ -140,6 +139,16 @@ export class ClasificacionModalComponent extends DialogFormComponent<Clasificaci
 
   ngOnInit(): void {
     super.ngOnInit();
+
+    this.subscriptions.push(
+      this.clasificacionService.findAllPadres(this.data.tipoClasificacion)
+        .subscribe(response => {
+          this.clasificaciones$.next(response.items);
+          if (response.items.length === 1) {
+            this.formGroup.controls.clasificacion.setValue(response.items[0]);
+          }
+        })
+    );
 
     this.subscriptions.push(
       this.formGroup.controls.clasificacion.valueChanges.subscribe((clasificacion: IClasificacion) => {
@@ -155,14 +164,13 @@ export class ClasificacionModalComponent extends DialogFormComponent<Clasificaci
   }
 
   protected buildFormGroup(): FormGroup {
-    const formGroup = new FormGroup({
+    return new FormGroup({
       clasificacion: new FormControl(null, Validators.required)
     });
-    return formGroup;
   }
 
   protected getValue(): ClasificacionListado[] {
-    const selectedClasificacionesListado = this.selectedClasificaciones.map(clasificacion => {
+    return this.selectedClasificaciones.map(clasificacion => {
       const clasificacionListado: ClasificacionListado = {
         clasificacion: undefined,
         niveles: [clasificacion],
@@ -171,7 +179,6 @@ export class ClasificacionModalComponent extends DialogFormComponent<Clasificaci
       };
       return this.fillClasificacionListado(clasificacionListado);
     });
-    return selectedClasificacionesListado;
   }
 
   /**
@@ -183,7 +190,15 @@ export class ClasificacionModalComponent extends DialogFormComponent<Clasificaci
   onCheckNode(node: NodeClasificacion, $event: MatCheckboxChange): void {
     node.checked = $event.checked;
     if ($event.checked) {
-      this.selectedClasificaciones.push(node.clasificacion);
+      if (this.data.multiSelect) {
+        this.selectedClasificaciones.push(node.clasificacion);
+      } else {
+        this.selectedClasificaciones = node.checked ? [node.clasificacion] : [];
+        this.selectedNodes.forEach(nodeDataSource => {
+          nodeDataSource.checked = (nodeDataSource.clasificacion.id === node.clasificacion.id);
+        });
+        this.selectedNodes = [node];
+      }
     } else {
       this.selectedClasificaciones = this.selectedClasificaciones.filter(checkedNode => checkedNode.id !== node.clasificacion.id);
     }

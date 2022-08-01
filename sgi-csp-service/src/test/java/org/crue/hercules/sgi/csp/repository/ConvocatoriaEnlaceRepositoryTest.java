@@ -18,13 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ConvocatoriaEnlaceRepositoryTest extends BaseRepositoryTest {
+class ConvocatoriaEnlaceRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ConvocatoriaEnlaceRepository repository;
 
   @Test
-  public void findByConvocatoriaIdAndUrl_ReturnsConvocatoriaEnlace() throws Exception {
+  void findByConvocatoriaIdAndUrl_ReturnsConvocatoriaEnlace() throws Exception {
     // given: data ConvocatoriaEnlace to find by Convocatoria and Url
     ConvocatoriaEnlace convocatoriaEnlace1 = generarConvocatoriaEnlace("-001");
 
@@ -46,7 +46,7 @@ public class ConvocatoriaEnlaceRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByConvocatoriaIdAndUrl_ReturnsNull() throws Exception {
+  void findByConvocatoriaIdAndUrl_ReturnsNull() throws Exception {
     // given: data ConvocatoriaEnlace to find by Convocatoria and Url
 
     ConvocatoriaEnlace convocatoriaEnlace1 = generarConvocatoriaEnlace("-001");

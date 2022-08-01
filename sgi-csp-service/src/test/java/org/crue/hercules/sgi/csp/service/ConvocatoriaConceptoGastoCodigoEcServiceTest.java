@@ -20,14 +20,12 @@ import org.mockito.Mock;
 /**
  * ConvocatoriaConceptoGastoCodigoEcServiceTest
  */
-public class ConvocatoriaConceptoGastoCodigoEcServiceTest extends BaseServiceTest {
+class ConvocatoriaConceptoGastoCodigoEcServiceTest extends BaseServiceTest {
 
   @Mock
   private ConvocatoriaConceptoGastoCodigoEcRepository repository;
   @Mock
   private ConvocatoriaConceptoGastoRepository convocatoriaConceptoGastoRepository;
-  @Mock
-  private ConvocatoriaService convocatoriaService;
   @Mock
   ConvocatoriaRepository convocatoriaRepository;
   @Mock
@@ -36,13 +34,13 @@ public class ConvocatoriaConceptoGastoCodigoEcServiceTest extends BaseServiceTes
   private ConvocatoriaConceptoGastoCodigoEcService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ConvocatoriaConceptoGastoCodigoEcServiceImpl(repository, convocatoriaConceptoGastoRepository,
-        convocatoriaService, convocatoriaRepository, configuracionSolicitudRepository);
+        convocatoriaRepository, configuracionSolicitudRepository);
   }
 
   @Test
-  public void findById_ReturnsConvocatoriaConceptoGastoCodigoEc() {
+  void findById_ReturnsConvocatoriaConceptoGastoCodigoEc() {
     // given: Un ConvocatoriaConceptoGastoCodigoEc con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -62,7 +60,7 @@ public class ConvocatoriaConceptoGastoCodigoEcServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsConvocatoriaConceptoGastoCodigoEcNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsConvocatoriaConceptoGastoCodigoEcNotFoundException() throws Exception {
     // given: Ningun ConvocatoriaConceptoGastoCodigoEc con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());

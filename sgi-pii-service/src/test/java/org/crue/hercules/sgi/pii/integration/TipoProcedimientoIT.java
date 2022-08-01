@@ -23,7 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de TipoProcedimiento.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TipoProcedimientoIT extends BaseIT {
+class TipoProcedimientoIT extends BaseIT {
 
   private static final String CONTROLLER_BASE_PATH = "/tiposprocedimiento";
   private static final String PATH_TODOS = "/todos";
@@ -46,7 +46,7 @@ public class TipoProcedimientoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsTipoProcedimientoSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsTipoProcedimientoSubList() throws Exception {
 
     String[] roles = { "PII-TPR-V", "PII-TPR-C", "PII-TPR-E", "PII-TPR-B", "PII-TPR-R" };
 
@@ -68,7 +68,7 @@ public class TipoProcedimientoIT extends BaseIT {
     // then: Respuesta OK, retorna la información de la página correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoProcedimientoOutput> tipoProcedimientoOutput = response.getBody();
-    Assertions.assertThat(tipoProcedimientoOutput.size()).isEqualTo(3);
+    Assertions.assertThat(tipoProcedimientoOutput).hasSize(3);
     Assertions.assertThat(response.getHeaders().getFirst("X-Page")).isEqualTo("0");
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("3");

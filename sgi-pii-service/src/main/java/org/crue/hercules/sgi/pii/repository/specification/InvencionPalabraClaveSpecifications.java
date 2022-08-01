@@ -5,6 +5,10 @@ import org.crue.hercules.sgi.pii.model.InvencionPalabraClave;
 import org.crue.hercules.sgi.pii.model.InvencionPalabraClave_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class InvencionPalabraClaveSpecifications {
 
   /**
@@ -15,8 +19,6 @@ public class InvencionPalabraClaveSpecifications {
    *         la {@link Invencion} con el id indicado.
    */
   public static Specification<InvencionPalabraClave> byInvencionId(Long id) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(InvencionPalabraClave_.invencionId), id);
-    };
+    return (root, query, cb) -> cb.equal(root.get(InvencionPalabraClave_.invencionId), id);
   }
 }

@@ -1,9 +1,9 @@
 <sgi-dialog-header [title]="title"></sgi-dialog-header>
 <sgi-dialog-content>
-  <form [formGroup]="formGroup">
+  <form [formGroup]="formGroup" pm fxLayout="column">
     <!-- Tipo de hito -->
-    <div fxLayout="row">
-      <mat-form-field>
+    <div fxFlex>
+      <mat-form-field fxFlex="50">
         <mat-label>{{'csp.proyecto-hito.tipo' | translate}}</mat-label>
         <sgi-select-tipo-hito formControlName="tipoHito" required [modeloEjecucionId]="data.idModeloEjecucion"
           relation="proyecto"></sgi-select-tipo-hito>
@@ -16,8 +16,8 @@
       </mat-form-field>
     </div>
     <!-- Fecha -->
-    <div fxLayout="row">
-      <mat-form-field>
+    <div fxFlex>
+      <mat-form-field fxFlex="30">
         <mat-label>{{'csp.proyecto-hito.fecha'| translate}}</mat-label>
         <input matInput [ngxMatDatetimePicker]="pickerFecha" formControlName="fecha" required>
         <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFecha"></mat-datepicker-toggle>
@@ -32,8 +32,8 @@
       </mat-form-field>
     </div>
     <!-- Comentario -->
-    <div fxLayout="row">
-      <mat-form-field>
+    <div fxFlex>
+      <mat-form-field fxFlex>
         <mat-label>{{'csp.proyecto-hito.comentario' | translate}}</mat-label>
         <textarea matInput formControlName="comentario" type="text"
           placeholder="{{'csp.proyecto-hito.comentario' | translate}}">
@@ -45,9 +45,63 @@
     </div>
     <!-- Aviso -->
     <div fxLayout="row">
-      <mat-checkbox color="primary" formControlName="aviso">
-        {{'csp.proyecto-hito.aviso' | translate}}</mat-checkbox>
+      <mat-checkbox color="primary" formControlName="generaAviso">
+        {{'csp.proyecto-hito.aviso.generar' | translate}}</mat-checkbox>
     </div>
+    <mat-card formGroupName="aviso" *ngIf="formGroup.get('generaAviso').value" fxFlex fxLayout="column">
+
+      <div fxFlex>
+        <mat-form-field color="primary" fxFlex="30">
+          <mat-label>{{'label.aviso.fecha-envio' | translate: MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+          <input matInput [ngxMatDatetimePicker]="pickerFechaEnvio" formControlName="fechaEnvio" required [min]="now">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaEnvio"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaEnvio showSeconds="true" [defaultTime]="[0,0,0]">
+          </ngx-mat-datetime-picker>
+          <mat-error *ngIf="formGroup.hasError('required','aviso.fechaEnvio')">
+            {{'error.required.entity' | translate:msgParamFechaEnvioEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.hasError('matDatetimePickerMin','aviso.fechaEnvio')">
+            {{'error.min.date' | translate: {
+            entity:'label.aviso.fecha-envio' | translate: MSG_PARAMS.CARDINALIRY.SINGULAR,
+            date: formGroup.getError('matDatetimePickerMin','aviso.fechaEnvio').min | luxon: 'short'
+            } }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div fxFlex>
+        <mat-form-field fxFlex>
+          <mat-label>{{'label.aviso.asunto' | translate: MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+          <input matInput formControlName="asunto" type="text" required />
+          <mat-error *ngIf="formGroup.hasError('required','aviso.asunto')">
+            {{'error.required.entity' | translate:msgParamAsuntoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div fxFlex>
+        <mat-form-field fxFlex>
+          <mat-label>{{'label.aviso.contenido' | translate: MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+          <textarea matInput formControlName="contenido" type="text" rows="5" required>
+              </textarea>
+          <mat-error *ngIf="formGroup.hasError('required','aviso.contenido')">
+            {{'error.required.entity' | translate:msgParamContenidoEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div fxFlex>
+        <mat-form-field fxFlex>
+          <mat-label>{{'label.aviso.destinatarios' | translate: MSG_PARAMS.CARDINALIRY.PLURAL}}</mat-label>
+          <sgi-select-email-recipients formControlName="destinatarios" required>
+          </sgi-select-email-recipients>
+          <mat-error *ngIf="formGroup.hasError('required','aviso.destinatarios')">
+            {{'error.required.entity' | translate:msgParamDestinatariosEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div fxFlex fxLayoutGap="10px">
+        <mat-checkbox color="primary" formControlName="incluirIpsProyecto">
+          {{'label.aviso.incluir-ips-proyecto' | translate: MSG_PARAMS.CARDINALIRY.PLURAL}}</mat-checkbox>
+      </div>
+    </mat-card>
   </form>
 </sgi-dialog-content>
 <mat-dialog-actions>

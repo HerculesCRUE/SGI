@@ -279,6 +279,29 @@ public class RespuestaServiceTest extends BaseServiceTest {
         .doesNotThrowAnyException();
   }
 
+  @Test
+  public void find_Last_ByMemoria_ReturnsRespuesta() {
+    BDDMockito.given(respuestaRepository.findTopByMemoriaIdOrderByApartadoBloqueOrdenDescApartadoOrdenDesc(1L))
+        .willReturn(Optional.of(generarMockRespuesta(1L)));
+
+    Optional<Respuesta> respuesta = respuestaService.findLastByMemoriaId(1L);
+    Assertions.assertThat(respuesta).isPresent();
+
+    Assertions.assertThat(respuesta.get().getId()).isEqualTo(1L);
+    Assertions.assertThat(respuesta.get().getMemoria().getId()).isEqualTo(1L);
+    Assertions.assertThat(respuesta.get().getApartado().getEsquema()).isEqualTo("{\"nombre\":\"EsquemaApartado01\"}");
+    Assertions.assertThat(respuesta.get().getValor()).isEqualTo("{\"valor\":\"Valor1\"}");
+  }
+
+  @Test
+  public void find_Last_ByMemoria_ReturnsEmpty() {
+    BDDMockito.given(respuestaRepository.findTopByMemoriaIdOrderByApartadoBloqueOrdenDescApartadoOrdenDesc(1L))
+        .willReturn(Optional.empty());
+
+    Optional<Respuesta> respuesta = respuestaService.findLastByMemoriaId(1L);
+    Assertions.assertThat(respuesta).isNotPresent();
+  }
+
   /**
    * Función que devuelve un objeto Respuesta
    * 

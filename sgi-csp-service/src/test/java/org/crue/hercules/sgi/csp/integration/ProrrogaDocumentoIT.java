@@ -20,7 +20,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de ProrrogaDocumento.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProrrogaDocumentoIT extends BaseIT {
+class ProrrogaDocumentoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/prorrogadocumentos";
@@ -55,7 +55,7 @@ public class ProrrogaDocumentoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsProrrogaDocumento() throws Exception {
+  void create_ReturnsProrrogaDocumento() throws Exception {
     // given: new ProrrogaDocumento
     ProrrogaDocumento newProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     newProrrogaDocumento.setId(null);
@@ -93,7 +93,7 @@ public class ProrrogaDocumentoIT extends BaseIT {
       "classpath:scripts/prorroga_documento.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsProrrogaDocumento() throws Exception {
+  void update_ReturnsProrrogaDocumento() throws Exception {
     Long idProrrogaDocumento = 1L;
     ProrrogaDocumento prorrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     prorrogaDocumento.setComentario("comentario-modificado");
@@ -131,7 +131,7 @@ public class ProrrogaDocumentoIT extends BaseIT {
       "classpath:scripts/prorroga_documento.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     Long idProrrogaDocumento = 5L;
 
     final ResponseEntity<ProrrogaDocumento> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -152,7 +152,7 @@ public class ProrrogaDocumentoIT extends BaseIT {
       "classpath:scripts/prorroga_documento.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void existsById_Returns200() throws Exception {
+  void existsById_Returns200() throws Exception {
     // given: existing id
     Long id = 1L;
     // when: exists by id
@@ -174,7 +174,7 @@ public class ProrrogaDocumentoIT extends BaseIT {
       "classpath:scripts/prorroga_documento.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsProrrogaDocumento() throws Exception {
+  void findById_ReturnsProrrogaDocumento() throws Exception {
     Long idProrrogaDocumento = 1L;
 
     final ResponseEntity<ProrrogaDocumento> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,

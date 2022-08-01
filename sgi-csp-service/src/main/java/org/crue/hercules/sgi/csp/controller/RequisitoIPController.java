@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
@@ -42,9 +43,15 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(RequisitoIPController.MAPPING)
 @Slf4j
 public class RequisitoIPController {
-  public static final String MAPPING = "/convocatoria-requisitoips";
-  public static final String PATH_NIVELES = "/{id}/niveles";
-  public static final String PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_EQUIPO = "/{id}/categoriasprofesionalesrequisitosequipo";
+  public static final String PATH_DELIMITER = "/";
+  public static final String MAPPING = PATH_DELIMITER + "convocatoria-requisitoips";
+  public static final String PATH_ID = PATH_DELIMITER + "{id}";
+  public static final String PATH_NIVELES = PATH_ID + "/niveles";
+  public static final String PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_EQUIPO = PATH_ID
+      + "/categoriasprofesionales";
+  public static final String PATH_NIVEL_ELIMINABLE = PATH_NIVELES + "/{nivelAcademicoId}/eliminable";
+  public static final String PATH_CATEGORIA_PROFESIONAL_ELIMINABLE = PATH_CATEGORIAS_PROFESIONALES_REQUISITOS_EQUIPO
+      + "/{categoriaProfesionalId}/eliminable";
 
   private ModelMapper modelMapper;
 
@@ -222,6 +229,45 @@ public class RequisitoIPController {
     return new ResponseEntity<>(returnValue, HttpStatus.OK);
   }
 
+  /**
+   * Hace las comprobaciones necesarias para determinar si el
+   * {@link RequisitoIPNivelAcademico}
+   * puede ser eliminado.
+   *
+   * @param id               Id del {@link RequisitoIP}.
+   * @param nivelAcademicoId Id del {@link RequisitoIPNivelAcademico}.
+   * @return {@link HttpStatus#OK} Si se permite / {@link HttpStatus#NO_CONTENT}
+   *         Si no se permite
+   */
+  @RequestMapping(path = PATH_NIVEL_ELIMINABLE, method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V')")
+  public ResponseEntity<Void> nivelAcademicoEliminable(@PathVariable Long id, @PathVariable Long nivelAcademicoId) {
+    log.debug("nivelAcademicoEliminable(Long id, Long nivelAcademicoId) - start");
+    boolean returnValue = requisitoIPNivelAcademicoService.eliminable(id, nivelAcademicoId);
+    log.debug("nivelAcademicoEliminable(Long id, Long nivelAcademicoId) - end");
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si el
+   * {@link RequisitoIPCategoriaProfesional}
+   * puede ser eliminado.
+   *
+   * @param id                     Id del {@link RequisitoIP}.
+   * @param categoriaProfesionalId Id del {@link RequisitoIPCategoriaProfesional}.
+   * @return {@link HttpStatus#OK} Si se permite / {@link HttpStatus#NO_CONTENT}
+   *         Si no se permite
+   */
+  @RequestMapping(path = PATH_CATEGORIA_PROFESIONAL_ELIMINABLE, method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V')")
+  public ResponseEntity<Void> categoriaProfesionalEliminable(@PathVariable Long id,
+      @PathVariable Long categoriaProfesionalId) {
+    log.debug("categoriaProfesionalEliminable(Long id, Long categoriaProfesionalId) - start");
+    boolean returnValue = requisitoIPCategoriaProfesionalService.eliminable(id, categoriaProfesionalId);
+    log.debug("categoriaProfesionalEliminable(Long id, Long categoriaProfesionalId) - end");
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
   private RequisitoIPCategoriaProfesionalOutput convert(RequisitoIPCategoriaProfesional entity) {
     return modelMapper.map(entity, RequisitoIPCategoriaProfesionalOutput.class);
   }
@@ -231,42 +277,30 @@ public class RequisitoIPController {
   }
 
   private RequisitoIPNivelAcademico convert(RequisitoIPNivelAcademicoInput input) {
-    return convert(null, input);
+    return modelMapper.map(input, RequisitoIPNivelAcademico.class);
   }
 
   private RequisitoIPCategoriaProfesional convert(RequisitoIPCategoriaProfesionalInput input) {
-    return convert(null, input);
+    return modelMapper.map(input, RequisitoIPCategoriaProfesional.class);
   }
 
   private List<RequisitoIPNivelAcademico> convertRequisitoIPNivelAcademicoInputs(
       List<RequisitoIPNivelAcademicoInput> inputs) {
-    return inputs.stream().map(input -> convert(input)).collect(Collectors.toList());
+    return inputs.stream().map(this::convert).collect(Collectors.toList());
   }
 
   private List<RequisitoIPCategoriaProfesional> convertRequisitoIPCategoriaProfesionalInputs(
       List<RequisitoIPCategoriaProfesionalInput> inputs) {
-    return inputs.stream().map(input -> convert(input)).collect(Collectors.toList());
-  }
-
-  private RequisitoIPNivelAcademico convert(Long id, RequisitoIPNivelAcademicoInput input) {
-    RequisitoIPNivelAcademico entity = modelMapper.map(input, RequisitoIPNivelAcademico.class);
-    entity.setId(id);
-    return entity;
-  }
-
-  private RequisitoIPCategoriaProfesional convert(Long id, RequisitoIPCategoriaProfesionalInput input) {
-    RequisitoIPCategoriaProfesional entity = modelMapper.map(input, RequisitoIPCategoriaProfesional.class);
-    entity.setId(id);
-    return entity;
+    return inputs.stream().map(this::convert).collect(Collectors.toList());
   }
 
   private List<RequisitoIPNivelAcademicoOutput> convertRequisitoIPNivelAcademicos(
       List<RequisitoIPNivelAcademico> entities) {
-    return entities.stream().map(entity -> convert(entity)).collect(Collectors.toList());
+    return entities.stream().map(this::convert).collect(Collectors.toList());
   }
 
   private List<RequisitoIPCategoriaProfesionalOutput> convertRequisitoIPCategoriaProfesionales(
       List<RequisitoIPCategoriaProfesional> entities) {
-    return entities.stream().map(entity -> convert(entity)).collect(Collectors.toList());
+    return entities.stream().map(this::convert).collect(Collectors.toList());
   }
 }

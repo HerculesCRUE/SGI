@@ -22,19 +22,19 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-public class RolSocioServiceTest extends BaseServiceTest {
+class RolSocioServiceTest extends BaseServiceTest {
 
   @Mock
   private RolSocioRepository repository;
   private RolSocioService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new RolSocioServiceImpl(repository);
   }
 
   @Test
-  public void findById_WithExistingId_ReturnsRolSocio() throws Exception {
+  void findById_WithExistingId_ReturnsRolSocio() throws Exception {
     // given: existing RolSocio
     RolSocio rolSocioExistente = generarMockRolSocio(1L);
 
@@ -57,7 +57,7 @@ public class RolSocioServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
@@ -69,7 +69,7 @@ public class RolSocioServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_WithPaging_ReturnsPage() {
+  void findAll_WithPaging_ReturnsPage() {
     // given: One hundred RolSocio
     List<RolSocio> rolSocios = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -100,9 +100,9 @@ public class RolSocioServiceTest extends BaseServiceTest {
 
     // then: A Page with ten RolSocio are returned
     // containing Abreviatura='062' to '080'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(50);
 
     for (int i = 0, j = 62; i < 10; i++, j += 2) {
@@ -113,7 +113,7 @@ public class RolSocioServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllTodos_WithPaging_ReturnsPage() {
+  void findAllTodos_WithPaging_ReturnsPage() {
     // given: One hundred RolSocio
     List<RolSocio> rolSocios = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -143,9 +143,9 @@ public class RolSocioServiceTest extends BaseServiceTest {
     // then: A Page with ten RolSocio are returned containing
     // Nombre='nombre-31' to
     // 'nombre-40'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       RolSocio item = page.getContent().get(i);

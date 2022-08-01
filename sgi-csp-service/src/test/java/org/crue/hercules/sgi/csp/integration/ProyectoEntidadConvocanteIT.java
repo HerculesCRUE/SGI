@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProyectoEntidadConvocanteIT extends BaseIT {
+class ProyectoEntidadConvocanteIT extends BaseIT {
 
   private HttpEntity<ProyectoEntidadConvocanteDto> buildRequest(HttpHeaders headers,
       ProyectoEntidadConvocanteDto entity, String... roles) throws Exception {
@@ -56,7 +56,7 @@ public class ProyectoEntidadConvocanteIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsProyectoEntidadConvocante() throws Exception {
+  void create_ReturnsProyectoEntidadConvocante() throws Exception {
     // given: new ProyectoEntidadConvocanteDto
     Long proyectoId = 1L;
     ProyectoEntidadConvocanteDto proyectoEntidadConvocante = ProyectoEntidadConvocanteDto.builder()
@@ -91,7 +91,7 @@ public class ProyectoEntidadConvocanteIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void setPrograma_WithExistingId_ReturnsProyectoEntidadConvocante() throws Exception {
+  void setPrograma_WithExistingId_ReturnsProyectoEntidadConvocante() throws Exception {
     // given: existing ProyectoEntidadConvocanteDto
     Long proyectoId = 1L;
     Long proyectoEntidadConvocanteId = 1L;
@@ -130,7 +130,7 @@ public class ProyectoEntidadConvocanteIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     Long proyectoId = 1L;
     Long proyectoEntidadConvocanteId = 1L;

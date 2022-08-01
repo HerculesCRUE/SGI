@@ -1,20 +1,21 @@
 package org.crue.hercules.sgi.csp.dto;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.Instant;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProyectoFacturacionOutput {
+public class ProyectoFacturacionOutput implements Serializable {
 
   public enum TipoEstadoValidacion {
     PENDIENTE, NOTIFICADA, VALIDADA, RECHAZADA
@@ -36,7 +37,7 @@ public class ProyectoFacturacionOutput {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class EstadoValidacionIP {
+  public static class EstadoValidacionIP implements Serializable {
     private Long id;
     private TipoEstadoValidacion estado;
   }
@@ -46,7 +47,7 @@ public class ProyectoFacturacionOutput {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class TipoFacturacion {
+  public static class TipoFacturacion implements Serializable {
     Long id;
     String nombre;
   }

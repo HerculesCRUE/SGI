@@ -1,5 +1,4 @@
-import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
-import { IConvocatoriaFaseBackend } from './convocatoria-fase-backend';
+import { IConvocatoriaFaseResponse } from '@core/services/csp/convocatoria-fase/convocatoria-fase-response';
 
 export interface IConfiguracionSolicitudBackend {
   /** Id */
@@ -9,7 +8,7 @@ export interface IConfiguracionSolicitudBackend {
   /** Tramitacion SGI */
   tramitacionSGI: boolean;
   /** Convocatoria Fase */
-  fasePresentacionSolicitudes: IConvocatoriaFaseBackend;
+  fasePresentacionSolicitudes: IConvocatoriaFaseResponse;
   /** Importe Máximo Solicitud */
   importeMaximoSolicitud: number;
 }

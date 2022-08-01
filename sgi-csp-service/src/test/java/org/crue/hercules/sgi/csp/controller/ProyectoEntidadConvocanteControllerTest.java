@@ -28,14 +28,14 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @WebMvcTest(ProyectoEntidadConvocanteController.class)
-public class ProyectoEntidadConvocanteControllerTest extends BaseControllerTest {
+class ProyectoEntidadConvocanteControllerTest extends BaseControllerTest {
 
   @MockBean
   private ProyectoEntidadConvocanteService service;
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoEntidadConvocantes_EmptyList_Returns204() throws Exception {
+  void findAllProyectoEntidadConvocantes_EmptyList_Returns204() throws Exception {
     // given: empty ProyectoEntidadConvocante list
     Long proyectoId = 1L;
     List<ProyectoEntidadConvocante> proyectoEntidadConvocantes = new ArrayList<>();
@@ -61,7 +61,7 @@ public class ProyectoEntidadConvocanteControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProyectoEntidadConvocantes_ReturnsPage() throws Exception {
+  void findAllProyectoEntidadConvocantes_ReturnsPage() throws Exception {
     // given: ProyectoEntidadConvocante list
     Long proyectoId = 1L;
 
@@ -97,7 +97,7 @@ public class ProyectoEntidadConvocanteControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void create_ReturnsProyectoEntidadConvocante() throws Exception {
+  void create_ReturnsProyectoEntidadConvocante() throws Exception {
     // given: new ProyectoEntidadConvocanteDto
     Long proyectoId = 1L;
     ProyectoEntidadConvocanteDto entidadConvocante = ProyectoEntidadConvocanteDto.builder().entidadRef("Entidad")
@@ -131,7 +131,7 @@ public class ProyectoEntidadConvocanteControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ProyectoEntidadConvocanteDto with id filled
     Long proyectoId = 1L;
     ProyectoEntidadConvocanteDto entidadConvocante = ProyectoEntidadConvocanteDto.builder().id(1L).entidadRef("Entidad")
@@ -152,7 +152,7 @@ public class ProyectoEntidadConvocanteControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void setPrograma_WithExistingId_ReturnsProyectoEntidadConvocante() throws Exception {
+  void setPrograma_WithExistingId_ReturnsProyectoEntidadConvocante() throws Exception {
     // given: existing ProyectoEntidadConvocanteDto
     Long proyectoId = 1L;
     Long entidadConvocanteId = 1L;
@@ -187,7 +187,7 @@ public class ProyectoEntidadConvocanteControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void setPrograma_WithNoExistingId_Returns404() throws Exception {
+  void setPrograma_WithNoExistingId_Returns404() throws Exception {
     // given: a ProyectoEntidadConvocanteDto with non existing id
     Long proyectoId = 1L;
     ProyectoEntidadConvocanteDto entidadConvocante = ProyectoEntidadConvocanteDto.builder().id(1L).entidadRef("Entidad")
@@ -212,7 +212,7 @@ public class ProyectoEntidadConvocanteControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void delete_NonExistingId_Return404() throws Exception {
+  void delete_NonExistingId_Return404() throws Exception {
     // given: non existing id
     Long proyectoId = 1L;
     Long entidadConvocanteId = 1L;
@@ -232,7 +232,7 @@ public class ProyectoEntidadConvocanteControllerTest extends BaseControllerTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     Long proyectoId = 1L;
     Long entidadConvocanteId = 1L;

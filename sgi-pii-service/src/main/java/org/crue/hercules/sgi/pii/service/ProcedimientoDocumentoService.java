@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_NOTNULL;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import javax.validation.Valid;
 
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
@@ -69,28 +73,36 @@ public class ProcedimientoDocumentoService {
     Assert.isNull(procedimientoDocumento.getId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ProcedimientoDocumento.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(ProcedimientoDocumento.class))
+            .build());
     Assert.notNull(procedimientoDocumento.getDocumentoRef(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field",
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD,
                 ApplicationContextSupport
                     .getMessage("org.crue.hercules.sgi.pii.model.ProcedimientoDocumento.documentoRef"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ProcedimientoDocumento.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(ProcedimientoDocumento.class))
+            .build());
     Assert.notNull(procedimientoDocumento.getNombre(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field",
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD,
                 ApplicationContextSupport.getMessage("org.crue.hercules.sgi.pii.model.ProcedimientoDocumento.nombre"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ProcedimientoDocumento.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(ProcedimientoDocumento.class))
+            .build());
     Assert.notNull(procedimientoDocumento.getProcedimientoId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field",
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD,
                 ApplicationContextSupport
                     .getMessage("org.crue.hercules.sgi.pii.model.ProcedimientoDocumento.procedimientoId"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ProcedimientoDocumento.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(ProcedimientoDocumento.class))
+            .build());
 
     ProcedimientoDocumento returnValue = procedimientoDocumentoRepository.save(procedimientoDocumento);
 
@@ -111,24 +123,32 @@ public class ProcedimientoDocumentoService {
 
     Assert.notNull(procedimientoDocumento.getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ProcedimientoDocumento.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(ProcedimientoDocumento.class))
+            .build());
     Assert.notNull(procedimientoDocumento.getDocumentoRef(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("documentoRef"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ProcedimientoDocumento.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("documentoRef"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(ProcedimientoDocumento.class))
+            .build());
     Assert.notNull(procedimientoDocumento.getNombre(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("nombre"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ProcedimientoDocumento.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("nombre"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(ProcedimientoDocumento.class))
+            .build());
     Assert.notNull(procedimientoDocumento.getProcedimientoId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("procedimientoId"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ProcedimientoDocumento.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("procedimientoId"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(ProcedimientoDocumento.class))
+            .build());
 
     return this.procedimientoDocumentoRepository.findById(procedimientoDocumento.getId())
         .map(procedimientoDocumentoExistente -> {

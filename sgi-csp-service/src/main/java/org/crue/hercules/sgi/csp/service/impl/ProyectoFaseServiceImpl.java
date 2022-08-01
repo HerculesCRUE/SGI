@@ -1,19 +1,23 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
-import java.time.Instant;
 import java.util.Optional;
 
+import org.crue.hercules.sgi.csp.dto.ProyectoFaseInput;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoFaseNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.TipoFaseNotFoundException;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFase;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoFase;
+import org.crue.hercules.sgi.csp.model.ProyectoFaseAviso;
 import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoFaseRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoFaseRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
+import org.crue.hercules.sgi.csp.repository.TipoFaseRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoFaseSpecifications;
+import org.crue.hercules.sgi.csp.service.ProyectoFaseAvisoService;
 import org.crue.hercules.sgi.csp.service.ProyectoFaseService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
@@ -36,33 +40,60 @@ public class ProyectoFaseServiceImpl implements ProyectoFaseService {
   private final ProyectoFaseRepository repository;
   private final ProyectoRepository proyectoRepository;
   private final ModeloTipoFaseRepository modeloTipoFaseRepository;
+  private final TipoFaseRepository tipoFaseRepository;
+  private final ProyectoFaseAvisoService proyectoFaseAvisoService;
 
-  public ProyectoFaseServiceImpl(ProyectoFaseRepository proyectoFaseRepository, ProyectoRepository proyectoRepository,
-      ModeloTipoFaseRepository modeloTipoFaseRepository) {
+  public ProyectoFaseServiceImpl(
+      ProyectoFaseRepository proyectoFaseRepository,
+      ProyectoRepository proyectoRepository,
+      ModeloTipoFaseRepository modeloTipoFaseRepository,
+      TipoFaseRepository tipoFaseRepository,
+      ProyectoFaseAvisoService proyectoFaseAvisoService) {
+
     this.repository = proyectoFaseRepository;
     this.proyectoRepository = proyectoRepository;
     this.modeloTipoFaseRepository = modeloTipoFaseRepository;
+    this.tipoFaseRepository = tipoFaseRepository;
+    this.proyectoFaseAvisoService = proyectoFaseAvisoService;
   }
 
   /**
    * Guarda la entidad {@link ProyectoFase}.
    * 
-   * @param proyectoFase la entidad {@link ProyectoFase} a guardar.
+   * @param proyectoFaseInput la entidad {@link ProyectoFase} a guardar.
    * @return ProyectoFase la entidad {@link ProyectoFase} persistida.
    */
   @Override
   @Transactional
-  public ProyectoFase create(ProyectoFase proyectoFase) {
-    log.debug("create(ProyectoFase ProyectoFase) - start");
+  public ProyectoFase create(ProyectoFaseInput proyectoFaseInput) {
+    log.debug("create(ProyectoFaseInput proyectoFaseInput) - start");
 
-    Assert.isNull(proyectoFase.getId(), "ProyectoFase id tiene que ser null para crear un nuevo ProyectoFase");
-    this.validarRequeridosProyectoFase(proyectoFase);
-    this.validarProyectoFase(proyectoFase, null);
+    this.validarRequeridosProyectoFase(proyectoFaseInput);
+    this.validarProyectoFase(proyectoFaseInput, null);
 
-    ProyectoFase returnValue = repository.save(proyectoFase);
+    ProyectoFase toCreate = ProyectoFase.builder()
+        .fechaFin(proyectoFaseInput.getFechaFin())
+        .fechaInicio(proyectoFaseInput.getFechaInicio())
+        .observaciones(proyectoFaseInput.getObservaciones())
+        .proyectoId(proyectoFaseInput.getProyectoId())
+        .tipoFase(tipoFaseRepository.findById(proyectoFaseInput.getTipoFaseId())
+            .orElseThrow(() -> new TipoFaseNotFoundException(proyectoFaseInput.getTipoFaseId())))
+        .build();
 
-    log.debug("create(ProyectoFase ProyectoFase) - end");
-    return returnValue;
+    ProyectoFase proyectoFase = repository.save(toCreate);
+
+    ProyectoFaseAviso aviso1 = proyectoFaseAvisoService.create(proyectoFase.getId(), proyectoFaseInput.getAviso1());
+    ProyectoFaseAviso aviso2 = proyectoFaseAvisoService.create(proyectoFase.getId(), proyectoFaseInput.getAviso2());
+
+    proyectoFase.setProyectoFaseAviso1(aviso1);
+    proyectoFase.setProyectoFaseAviso2(aviso2);
+
+    if (aviso1 != null || aviso2 != null) {
+      proyectoFase = repository.save(proyectoFase);
+    }
+
+    log.debug("create(ProyectoFaseInput proyectoFaseInput) - end");
+    return proyectoFase;
   }
 
   /**
@@ -73,26 +104,51 @@ public class ProyectoFaseServiceImpl implements ProyectoFaseService {
    */
   @Override
   @Transactional
-  public ProyectoFase update(ProyectoFase proyectoFaseActualizar) {
+  public ProyectoFase update(Long id, ProyectoFaseInput proyectoFaseActualizar) {
     log.debug("update(ProyectoFase ProyectoFaseActualizar) - start");
 
-    Assert.notNull(proyectoFaseActualizar.getId(), "ProyectoFase id no puede ser null para actualizar un ProyectoFase");
+    Assert.notNull(id, "ProyectoFase id no puede ser null para actualizar un ProyectoFase");
     this.validarRequeridosProyectoFase(proyectoFaseActualizar);
 
-    return repository.findById(proyectoFaseActualizar.getId()).map(proyectoFase -> {
+    return repository.findById(id).map(proyectoFase -> {
 
-      validarProyectoFase(proyectoFaseActualizar, proyectoFase);
+      validarProyectoFase(proyectoFaseActualizar, id);
 
       proyectoFase.setFechaInicio(proyectoFaseActualizar.getFechaInicio());
       proyectoFase.setFechaFin(proyectoFaseActualizar.getFechaFin());
       proyectoFase.setObservaciones(proyectoFaseActualizar.getObservaciones());
-      proyectoFase.setTipoFase(proyectoFaseActualizar.getTipoFase());
-      proyectoFase.setGeneraAviso(proyectoFaseActualizar.getGeneraAviso());
+      proyectoFase.setTipoFase(this.tipoFaseRepository.findById(proyectoFaseActualizar.getTipoFaseId())
+          .orElseThrow(() -> new TipoFaseNotFoundException(proyectoFaseActualizar.getTipoFaseId())));
 
-      ProyectoFase returnValue = repository.save(proyectoFase);
-      log.debug("update(ProyectoFase ProyectoFaseActualizar) - end");
-      return returnValue;
-    }).orElseThrow(() -> new ProyectoFaseNotFoundException(proyectoFaseActualizar.getId()));
+      if (proyectoFaseActualizar.getAviso1() != null && proyectoFase.getProyectoFaseAviso1() == null) {
+        ProyectoFaseAviso aviso1 = this.proyectoFaseAvisoService.create(proyectoFase.getId(),
+            proyectoFaseActualizar.getAviso1());
+        proyectoFase.setProyectoFaseAviso1(aviso1);
+      } else if (this.proyectoFaseAvisoService.deleteAvisoIfPossible(proyectoFaseActualizar.getAviso1(),
+          proyectoFase.getProyectoFaseAviso1())) {
+        proyectoFase.setProyectoFaseAviso1(null);
+      } else {
+        this.proyectoFaseAvisoService.updateAvisoIfNeeded(proyectoFaseActualizar.getAviso1(),
+            proyectoFase.getProyectoFaseAviso1(),
+            proyectoFase.getId());
+      }
+
+      if (proyectoFaseActualizar.getAviso2() != null && proyectoFase.getProyectoFaseAviso2() == null) {
+        ProyectoFaseAviso aviso2 = this.proyectoFaseAvisoService.create(proyectoFase.getId(),
+            proyectoFaseActualizar.getAviso2());
+        proyectoFase.setProyectoFaseAviso2(aviso2);
+      } else if (this.proyectoFaseAvisoService.deleteAvisoIfPossible(proyectoFaseActualizar.getAviso2(),
+          proyectoFase.getProyectoFaseAviso2())) {
+        proyectoFase.setProyectoFaseAviso2(null);
+      } else {
+        this.proyectoFaseAvisoService.updateAvisoIfNeeded(proyectoFaseActualizar.getAviso2(),
+            proyectoFase.getProyectoFaseAviso2(),
+            proyectoFase.getId());
+      }
+
+      return repository.save(proyectoFase);
+
+    }).orElseThrow(() -> new ProyectoFaseNotFoundException(id));
 
   }
 
@@ -107,9 +163,14 @@ public class ProyectoFaseServiceImpl implements ProyectoFaseService {
     log.debug("delete(Long id) - start");
 
     Assert.notNull(id, "ProyectoFase id no puede ser null para eliminar un ProyectoFase");
-    if (!repository.existsById(id)) {
+    Optional<ProyectoFase> toDelete = repository.findById(id);
+    if (!toDelete.isPresent()) {
       throw new ProyectoFaseNotFoundException(id);
     }
+    this.proyectoFaseAvisoService.deleteAvisoIfPossible(null,
+        toDelete.get().getProyectoFaseAviso1());
+    this.proyectoFaseAvisoService.deleteAvisoIfPossible(null,
+        toDelete.get().getProyectoFaseAviso2());
 
     repository.deleteById(id);
     log.debug("delete(Long id) - end");
@@ -158,8 +219,8 @@ public class ProyectoFaseServiceImpl implements ProyectoFaseService {
    * @param datosProyectoFase
    * @param datosOriginales
    */
-  private void validarProyectoFase(ProyectoFase datosProyectoFase, ProyectoFase datosOriginales) {
-    log.debug("validarProyectoFase(ProyectoFase datosProyectoFase, ProyectoFase datosOriginales) - start");
+  private void validarProyectoFase(ProyectoFaseInput datosProyectoFase, Long id) {
+    log.debug("validarProyectoFase(ProyectoFase datosProyectoFase) - start");
 
     // Se autocompletan los datos de las fechas en caso necesario.
     // Podrá darse el caso que una fase pueda recogerse en una sola fecha, en este
@@ -175,12 +236,6 @@ public class ProyectoFaseServiceImpl implements ProyectoFaseService {
     Assert.isTrue(datosProyectoFase.getFechaFin().compareTo(datosProyectoFase.getFechaInicio()) >= 0,
         "La fecha de fin debe ser posterior a la fecha de inicio");
 
-    // Si el rango de fechas es pasado, el campo "generar aviso" tomará el valor
-    // false, y no será editable.
-    if (datosProyectoFase.getFechaFin().isBefore(Instant.now())) {
-      datosProyectoFase.setGeneraAviso(false);
-    }
-
     // Se comprueba la existencia del proyecto
     Long proyectoId = datosProyectoFase.getProyectoId();
     if (!proyectoRepository.existsById(proyectoId)) {
@@ -192,11 +247,11 @@ public class ProyectoFaseServiceImpl implements ProyectoFaseService {
 
     // TipoFase
     Optional<ModeloTipoFase> modeloTipoFase = modeloTipoFaseRepository
-        .findByModeloEjecucionIdAndTipoFaseId(modeloEjecucionId, datosProyectoFase.getTipoFase().getId());
+        .findByModeloEjecucionIdAndTipoFaseId(modeloEjecucionId, datosProyectoFase.getTipoFaseId());
 
     // Está asignado al ModeloEjecucion
     Assert.isTrue(modeloTipoFase.isPresent(),
-        "TipoFase '" + datosProyectoFase.getTipoFase().getNombre() + "' no disponible para el ModeloEjecucion '"
+        "Tipo Fase no disponible para el ModeloEjecucion '"
             + ((modeloEjecucion.isPresent()) ? modeloEjecucion.get().getNombre() : "Proyecto sin modelo asignado")
             + "'");
 
@@ -208,12 +263,12 @@ public class ProyectoFaseServiceImpl implements ProyectoFaseService {
     Assert.isTrue(modeloTipoFase.get().getTipoFase().getActivo(),
         "TipoFase '" + modeloTipoFase.get().getTipoFase().getNombre() + "' no está activo");
 
-    datosProyectoFase.setTipoFase(modeloTipoFase.get().getTipoFase());
+    datosProyectoFase.setTipoFaseId(modeloTipoFase.get().getTipoFase().getId());
 
-    Assert.isTrue(!existsProyectoFaseConFechasSolapadas(datosProyectoFase),
+    Assert.isTrue(!existsProyectoFaseConFechasSolapadas(datosProyectoFase, id),
         "Ya existe un registro para la misma Fase en ese rango de fechas");
 
-    log.debug("validarProyectoFase(ProyectoFase datosProyectoFase, ProyectoFase datosOriginales) - end");
+    log.debug("validarProyectoFase(ProyectoFase datosProyectoFase) - end");
   }
 
   /**
@@ -222,13 +277,13 @@ public class ProyectoFaseServiceImpl implements ProyectoFaseService {
    * 
    * @param datosProyectoFase
    */
-  private void validarRequeridosProyectoFase(ProyectoFase datosProyectoFase) {
+  private void validarRequeridosProyectoFase(ProyectoFaseInput datosProyectoFase) {
     log.debug("validarRequeridosProyectoFase(ProyectoFase datosProyectoFase) - start");
 
     Assert.isTrue(datosProyectoFase.getProyectoId() != null,
         "Id Proyecto no puede ser null para realizar la acción sobre ProyectoFase");
 
-    Assert.isTrue(datosProyectoFase.getTipoFase() != null && datosProyectoFase.getTipoFase().getId() != null,
+    Assert.isTrue(datosProyectoFase.getTipoFaseId() != null,
         "Id Tipo Fase no puede ser null para realizar la acción sobre ProyectoFase");
 
     Assert.isTrue(datosProyectoFase.getFechaInicio() != null || datosProyectoFase.getFechaFin() != null,
@@ -242,20 +297,21 @@ public class ProyectoFaseServiceImpl implements ProyectoFaseService {
    * Comprueba que existen {@link ProyectoFase} para una {@link Proyecto} con el
    * mismo {@link TipoFase} y con las fechas y sus horas solapadas
    *
-   * @param proyectoFase {@link Proyecto} a comprobar.
+   * @param proyectoFaseInput {@link Proyecto} a comprobar.
    * 
    * @return true si exite la coincidencia
    */
 
-  private Boolean existsProyectoFaseConFechasSolapadas(ProyectoFase proyectoFase) {
+  private Boolean existsProyectoFaseConFechasSolapadas(ProyectoFaseInput proyectoFaseInput, Long id) {
 
     log.debug("existsProyectoFaseConFechasSolapadas(ProyectoFase proyectoFase) - start");
     Specification<ProyectoFase> specByRangoFechaSolapados = ProyectoFaseSpecifications
-        .byRangoFechaSolapados(proyectoFase.getFechaInicio(), proyectoFase.getFechaFin());
-    Specification<ProyectoFase> specByProyecto = ProyectoFaseSpecifications.byProyectoId(proyectoFase.getProyectoId());
+        .byRangoFechaSolapados(proyectoFaseInput.getFechaInicio(), proyectoFaseInput.getFechaFin());
+    Specification<ProyectoFase> specByProyecto = ProyectoFaseSpecifications
+        .byProyectoId(proyectoFaseInput.getProyectoId());
     Specification<ProyectoFase> specByTipoFase = ProyectoFaseSpecifications
-        .byTipoFaseId(proyectoFase.getTipoFase().getId());
-    Specification<ProyectoFase> specByIdNotEqual = ProyectoFaseSpecifications.byIdNotEqual(proyectoFase.getId());
+        .byTipoFaseId(proyectoFaseInput.getTipoFaseId());
+    Specification<ProyectoFase> specByIdNotEqual = ProyectoFaseSpecifications.byIdNotEqual(id);
 
     Specification<ProyectoFase> specs = Specification.where(specByProyecto).and(specByRangoFechaSolapados)
         .and(specByTipoFase).and(specByIdNotEqual);

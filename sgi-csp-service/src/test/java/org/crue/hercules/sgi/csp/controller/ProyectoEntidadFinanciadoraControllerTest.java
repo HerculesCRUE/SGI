@@ -28,7 +28,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ProyectoEntidadFinanciadoraControllerTest
  */
 @WebMvcTest(ProyectoEntidadFinanciadoraController.class)
-public class ProyectoEntidadFinanciadoraControllerTest extends BaseControllerTest {
+class ProyectoEntidadFinanciadoraControllerTest extends BaseControllerTest {
 
   @MockBean
   private ProyectoEntidadFinanciadoraService service;
@@ -41,7 +41,7 @@ public class ProyectoEntidadFinanciadoraControllerTest extends BaseControllerTes
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void create_ReturnsModeloProyectoEntidadFinanciadora() throws Exception {
+  void create_ReturnsModeloProyectoEntidadFinanciadora() throws Exception {
     // given: new ProyectoEntidadFinanciadora
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(1L);
 
@@ -75,7 +75,7 @@ public class ProyectoEntidadFinanciadoraControllerTest extends BaseControllerTes
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ProyectoEntidadFinanciadora with id filled
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(1L);
 
@@ -94,7 +94,7 @@ public class ProyectoEntidadFinanciadoraControllerTest extends BaseControllerTes
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_ReturnsProyectoEntidadFinanciadora() throws Exception {
+  void update_ReturnsProyectoEntidadFinanciadora() throws Exception {
     // given: Existing ProyectoEntidadFinanciadora to be updated
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadoraExistente = generarMockProyectoEntidadFinanciadora(1L);
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(1L);
@@ -129,7 +129,7 @@ public class ProyectoEntidadFinanciadoraControllerTest extends BaseControllerTes
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(1L);
@@ -149,7 +149,7 @@ public class ProyectoEntidadFinanciadoraControllerTest extends BaseControllerTes
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.doNothing().when(service).delete(ArgumentMatchers.anyLong());
@@ -167,7 +167,7 @@ public class ProyectoEntidadFinanciadoraControllerTest extends BaseControllerTes
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void delete_NoExistingId_Return404() throws Exception {
+  void delete_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -186,7 +186,7 @@ public class ProyectoEntidadFinanciadoraControllerTest extends BaseControllerTes
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findById_WithExistingId_ReturnsProyectoEntidadFinanciadora() throws Exception {
+  void findById_WithExistingId_ReturnsProyectoEntidadFinanciadora() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
       return generarMockProyectoEntidadFinanciadora(invocation.getArgument(0));
@@ -211,7 +211,7 @@ public class ProyectoEntidadFinanciadoraControllerTest extends BaseControllerTes
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ProyectoEntidadFinanciadoraNotFoundException(1L);

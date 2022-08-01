@@ -5,6 +5,10 @@ import org.crue.hercules.sgi.pii.model.PeriodoTitularidad;
 import org.crue.hercules.sgi.pii.model.PeriodoTitularidad_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PeriodoTitularidadSpecifications {
 
   /**
@@ -16,9 +20,7 @@ public class PeriodoTitularidadSpecifications {
    * @return Specification
    */
   public static Specification<PeriodoTitularidad> periodoTitularidadByInvencionId(Long invencionId) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(PeriodoTitularidad_.invencionId), invencionId);
-    };
+    return (root, query, cb) -> cb.equal(root.get(PeriodoTitularidad_.invencionId), invencionId);
   }
 
 }

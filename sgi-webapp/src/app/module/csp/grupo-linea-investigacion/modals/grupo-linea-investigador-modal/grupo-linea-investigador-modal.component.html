@@ -35,7 +35,7 @@
       <div fxFlex>
         <mat-form-field color="primary" sgiEndDate>
           <mat-label>{{'csp.grupo-linea-investigador.fecha-fin' | translate}}</mat-label>
-          <input matInput formControlName="fechaFin" [matDatepicker]="picker2" [required]="requiredFechaFin">
+          <input matInput formControlName="fechaFin" [matDatepicker]="picker2">
           <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
           <mat-datepicker #picker2></mat-datepicker>
           <mat-error *ngIf="formGroup.controls.fechaFin.errors?.required">

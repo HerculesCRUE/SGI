@@ -24,7 +24,7 @@ class GrupoPalabraClaveConverterTest extends BaseServiceTest {
   private GrupoPalabraClaveConverter grupoPalabraClaveConverter;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     this.grupoPalabraClaveConverter = new GrupoPalabraClaveConverter(this.modelMapper);
   }
 
@@ -41,7 +41,7 @@ class GrupoPalabraClaveConverterTest extends BaseServiceTest {
     List<GrupoPalabraClave> result = this.grupoPalabraClaveConverter.convertGrupoPalabrasClaveInput(inputList);
 
     Assertions.assertThat(result).isNotNull().isNotEmpty();
-    Assertions.assertThat(result.size()).isEqualTo(1);
+    Assertions.assertThat(result).hasSize(1);
     Assertions.assertThat(result.get(0).getId()).isNull();
   }
 

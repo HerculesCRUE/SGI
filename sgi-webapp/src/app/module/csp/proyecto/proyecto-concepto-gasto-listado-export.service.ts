@@ -17,7 +17,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { NGXLogger } from 'ngx-logger';
 import { from, merge, Observable, of } from 'rxjs';
-import { catchError, map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
+import { catchError, concatMap, map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
 import { IProyectoReportData, IProyectoReportOptions } from './proyecto-listado-export.service';
 
 const ELEGIBILIDAD_KEY = marker('csp.proyecto-elegibilidad');
@@ -26,7 +26,6 @@ const CONCEPTO_GASTO_CODIGO_ECONOMICO_FIELD = 'conceptoGastoCodigoEconomico';
 const CONCEPTO_GASTO_NO_PERMITIDO_CODIGO_ECONOMICO_FIELD = 'conceptoGastoCodigoEconomicoNoPermitido';
 const CONCEPTO_GASTO_KEY = marker('csp.convocatoria-elegibilidad.concepto-gasto.concepto-gasto');
 const CONCEPTO_GASTO_FIELD = 'conceptoGasto';
-const CONCEPTO_GASTO_NO_PERMITIDO_FIELD = 'conceptoGastoNoPermitido';
 
 const CONCEPTO_GASTO_PERMITIDO_KEY = marker('csp.convocatoria-concepto-gasto-permitido');
 const CONCEPTO_GASTO_NO_PERMITIDO_KEY = marker('csp.convocatoria-concepto-gasto-no-permitido');
@@ -73,15 +72,15 @@ export class ProyectoConceptoGastoListadoExportService extends AbstractTableExpo
         map(response => response.items.map(item => item as IProyectoConceptoGastoListadoExport)),
         mergeMap(responseConceptosGastoPermitidos => {
           return this.fillConceptoGasto(proyectoData, responseConceptosGastoPermitidos);
-        })),
+        }, this.DEFAULT_CONCURRENT)),
       this.proyectoService.findAllProyectoConceptosGastoNoPermitidos(proyectoData.id).pipe(
         map(response => response.items.map(item => item as IProyectoConceptoGastoListadoExport)),
         mergeMap(responseConceptosGastoNoPermitidos => {
           return this.fillConceptoGasto(proyectoData, responseConceptosGastoNoPermitidos);
-        }))
-    ).pipe(
-      takeLast(1)
-    );
+        }, this.DEFAULT_CONCURRENT))
+      , 2).pipe(
+        takeLast(1)
+      );
   }
 
   private fillConceptoGasto(
@@ -96,7 +95,7 @@ export class ProyectoConceptoGastoListadoExportService extends AbstractTableExpo
     }
 
     return from(responseConceptosGastos).pipe(
-      mergeMap(proyectoConceptoGasto => {
+      concatMap(proyectoConceptoGasto => {
         return this.getCodigosEconomicos(proyectoConceptoGasto).pipe(
           map(proyectoConceptoGastoListado => {
             proyectoData.conceptosGastos.push(proyectoConceptoGastoListado);
@@ -116,7 +115,7 @@ export class ProyectoConceptoGastoListadoExportService extends AbstractTableExpo
           return this.proyectoConceptoGastoService.findAllProyectoConceptoGastoCodigosEc(proyectoConceptoGasto.id).pipe(
             switchMap(responseCodigoEconomico => {
               return from(responseCodigoEconomico.items).pipe(
-                mergeMap(proyectoCodigoEconomico => {
+                concatMap(proyectoCodigoEconomico => {
                   return this.getCodigoEconomico(proyectoCodigoEconomico);
                 }),
                 map(() => responseCodigoEconomico)

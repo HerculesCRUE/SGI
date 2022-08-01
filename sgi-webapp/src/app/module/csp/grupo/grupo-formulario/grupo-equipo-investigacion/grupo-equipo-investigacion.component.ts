@@ -128,9 +128,10 @@ export class GrupoEquipoInvestigacionComponent extends FragmentComponent impleme
   }
 
   /**
-   * Apertura de modal de equipos (edición/creación)
+   * Apertura de modal de equipos de investigación (edición/creación)
    *
-   * @param idEquipo Identificador de equipo a editar.
+   * @param wrapper StatusWrapper<IGrupoEquipo>
+   * @param rowIndex índice de la fila del listado
    */
   openModal(wrapper?: StatusWrapper<IGrupoEquipo>, rowIndex?: number): void {
     // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación

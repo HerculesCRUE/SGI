@@ -823,7 +823,7 @@ public class EvaluacionIT extends BaseIT {
     tipoMemoria.setNombre("TipoMemoria001");
     tipoMemoria.setActivo(Boolean.TRUE);
 
-    Memoria memoria = new Memoria(2L, "numRef-001", peticionEvaluacion, comite, "Memoria" + sufijoStr, "user-00" + id,
+    Memoria memoria = new Memoria(11L, "numRef-001", peticionEvaluacion, comite, "Memoria" + sufijoStr, "user-00" + id,
         tipoMemoria, new TipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.now(), Boolean.FALSE,
         new Retrospectiva(3L, new EstadoRetrospectiva(3L, "En evaluación", Boolean.TRUE), Instant.now()), 3,
         "CodOrganoCompetente", Boolean.TRUE, null);

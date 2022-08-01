@@ -34,7 +34,7 @@ class ProyectoPalabraClaveServiceTest extends BaseServiceTest {
   private ProyectoPalabraClaveService service;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     this.proyectoHelper = new ProyectoHelper(proyectoEquipoRepository, proyectoResponsableEconomicoRepository);
     this.service = new ProyectoPalabraClaveService(this.repository, this.proyectoHelper);
   }

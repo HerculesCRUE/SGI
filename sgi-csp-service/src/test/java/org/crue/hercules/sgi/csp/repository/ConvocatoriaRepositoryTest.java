@@ -16,13 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ConvocatoriaRepositoryTest extends BaseRepositoryTest {
+class ConvocatoriaRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ConvocatoriaRepository repository;
 
   @Test
-  public void findByCodigo_ReturnsConvocatoria() throws Exception {
+  void findByCodigo_ReturnsConvocatoria() throws Exception {
     // given: data Convocatoria with codigo to find
     Convocatoria convocatoria = generarMockConvocatoria("-001");
 
@@ -53,7 +53,7 @@ public class ConvocatoriaRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByCodigo_ReturnsNull() throws Exception {
+  void findByCodigo_ReturnsNull() throws Exception {
     // given: codigo to find
     String codigo = "codigo-001";
 

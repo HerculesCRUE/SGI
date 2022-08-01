@@ -35,6 +35,7 @@ import { SelectTipoHitoComponent } from './select-tipo-hito/select-tipo-hito.com
 import { SelectUnidadGestionComponent } from './select-unidad-gestion/select-unidad-gestion.component';
 import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-modal/solicitud-presupuesto-modal.component';
 import { SelectLineaInvestigacionComponent } from './select-linea-investigacion/select-linea-investigacion.component';
+import { EntidadFinanciadoraEmpresaNombrePipe } from './pipes/entidad-financiadora-empresa-nombre.pipe';
 
 @NgModule({
   declarations: [
@@ -64,7 +65,8 @@ import { SelectLineaInvestigacionComponent } from './select-linea-investigacion/
     SelectDialogGrupoComponent,
     SelectGrupoComponent,
     SearchGrupoModalComponent,
-    SelectLineaInvestigacionComponent
+    SelectLineaInvestigacionComponent,
+    EntidadFinanciadoraEmpresaNombrePipe
   ],
   imports: [
     SharedModule,
@@ -101,7 +103,8 @@ import { SelectLineaInvestigacionComponent } from './select-linea-investigacion/
     SelectTipoFinanciacionComponent,
     SelectDialogGrupoComponent,
     SelectGrupoComponent,
-    SelectLineaInvestigacionComponent
+    SelectLineaInvestigacionComponent,
+    EntidadFinanciadoraEmpresaNombrePipe
   ]
 })
 export class CspSharedModule { }

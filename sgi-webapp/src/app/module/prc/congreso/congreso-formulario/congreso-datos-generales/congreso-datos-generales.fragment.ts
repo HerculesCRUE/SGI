@@ -138,13 +138,21 @@ export class CongresoDatosGeneralesFragment extends Fragment {
     return this.produccionCientifica$.asObservable();
   }
 
-  isProduccionCientificaEditable$(): Observable<boolean> {
+  isProduccionCientificaDisabled$(): Observable<boolean> {
     return this.getProduccionCientifica$().pipe(
       map(({ estado }) => estado?.estado === TipoEstadoProduccion.VALIDADO || estado?.estado === TipoEstadoProduccion.RECHAZADO)
     );
   }
 
-  emitProduccionCientifica(produccionCientifica: IProduccionCientifica): void {
+  refreshDatosGenerales(produccionCientifica: IProduccionCientifica): void {
     this.produccionCientifica$.next(produccionCientifica);
+    this.refreshAutores(produccionCientifica);
+  }
+
+  refreshAutores(produccionCientifica: IProduccionCientifica): void {
+    this.subscriptions.push(
+      this.initializerService.initializeAutores$(produccionCientifica)
+        .subscribe((autores) => this.autores$.next(autores))
+    );
   }
 }

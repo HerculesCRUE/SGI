@@ -14,7 +14,8 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { PrcSharedModule } from '../../../shared/prc-shared.module';
 import { ProduccionCientificaInitializerService } from '../../../shared/produccion-cientifica-initializer.service';
-import { IProduccionCientificaData, PRODUCCION_CIENTIFICA_DATA_KEY } from '../../../shared/produccion-cientifica.resolver';
+import { PRODUCCION_CIENTIFICA_DATA_KEY } from '../../../shared/produccion-cientifica-route-params';
+import { IProduccionCientificaData } from '../../../shared/produccion-cientifica.resolver';
 import { ActividadIdiActionService } from '../../actividad-idi.action.service';
 
 import { ActividadIdiDatosGeneralesComponent } from './actividad-idi-datos-generales.component';

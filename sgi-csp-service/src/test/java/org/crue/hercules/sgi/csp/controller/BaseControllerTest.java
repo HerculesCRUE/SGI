@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 // Since WebMvcTest is only sliced controller layer for the testing, it would
 // not take the security configurations.
 @Import(SecurityConfig.class)
-public abstract class BaseControllerTest {
+abstract class BaseControllerTest {
 
   @Autowired
   protected MockMvc mockMvc;

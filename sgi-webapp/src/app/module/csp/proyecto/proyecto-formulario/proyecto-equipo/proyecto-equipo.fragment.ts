@@ -1,7 +1,9 @@
+import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { ValidacionRequisitosEquipoIp } from '@core/enums/validaciones-requisitos-equipo-ip';
 import { IConvocatoriaRequisito } from '@core/models/csp/convocatoria-requisito';
 import { IConvocatoriaRequisitoEquipo } from '@core/models/csp/convocatoria-requisito-equipo';
 import { IConvocatoriaRequisitoIP } from '@core/models/csp/convocatoria-requisito-ip';
+import { Estado } from '@core/models/csp/estado-proyecto';
 import { IProyectoEquipo } from '@core/models/csp/proyecto-equipo';
 import { IRequisitoEquipoNivelAcademico } from '@core/models/csp/requisito-equipo-nivel-academico';
 import { IRequisitoIPNivelAcademico } from '@core/models/csp/requisito-ip-nivel-academico';
@@ -92,7 +94,10 @@ export class ProyectoEquipoFragment extends Fragment {
   constructor(
     private readonly logger: NGXLogger,
     key: number,
-    private convocatoriaId: number,
+    private readonly convocatoriaId: number,
+    private readonly solicitanteRefSolicitud: string,
+    private readonly estadoProyecto: Estado,
+    private readonly solicitudFormularioSolicitud: FormularioSolicitud,
     private proyectoService: ProyectoService,
     private proyectoEquipoService: ProyectoEquipoService,
     private personaService: PersonaService,
@@ -155,6 +160,7 @@ export class ProyectoEquipoFragment extends Fragment {
         ).subscribe(
           result => {
             this.equipos$.next(result);
+            this.initializeValidationSolicitanteIncluded();
           },
           error => {
             this.logger.error(error);
@@ -235,6 +241,10 @@ export class ProyectoEquipoFragment extends Fragment {
             });
         }),
         switchMap((results) => {
+          if (results.length === 0) {
+            return of(results);
+          }
+
           return from(results).pipe(
             concatMap(element => {
               return this.validateRequisitosConvocatoria(element.value.proyectoEquipo, this.convocatoriaId).pipe(
@@ -249,8 +259,7 @@ export class ProyectoEquipoFragment extends Fragment {
         }),
         takeLast(1),
         map((results) => {
-          this.equipos$.next(results
-          );
+          this.equipos$.next(results);
         }),
         tap(() => {
           if (this.isSaveOrUpdateComplete()) {
@@ -276,6 +285,23 @@ export class ProyectoEquipoFragment extends Fragment {
     } else {
       return of(null);
     }
+  }
+
+  private initializeValidationSolicitanteIncluded(): void {
+    if (this.estadoProyecto !== Estado.CONCEDIDO || this.solicitudFormularioSolicitud !== FormularioSolicitud.PROYECTO) {
+      return;
+    }
+
+    this.subscriptions.push(
+      this.equipos$.subscribe(elements => {
+        if (elements.filter(equipo =>
+          equipo.value.proyectoEquipo.persona?.id === this.solicitanteRefSolicitud).length > 0) {
+          this.setErrors(false);
+        } else {
+          this.setErrors(true);
+        }
+      })
+    );
   }
 
   private validateRequisitosIpProyectosCompetitivos(

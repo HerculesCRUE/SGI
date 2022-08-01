@@ -233,6 +233,33 @@ public class RespuestaIT extends BaseIT {
 
   }
 
+  @Test
+  public void getLastRespuesta_FromMemoria_ReturnsRespuesta() throws Exception {
+    final ResponseEntity<Respuesta> response = restTemplate.exchange(
+        RESPUESTA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/last",
+        HttpMethod.GET, buildRequest(null, null), Respuesta.class, 2L);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    final Respuesta respuesta = response.getBody();
+
+    Assertions.assertThat(respuesta.getId()).isEqualTo(2L);
+    Assertions.assertThat(respuesta.getValor()).isEqualTo("{\"valor\":\"Valor2\"}");
+  }
+
+  @Test
+  public void getLastRespuesta_FromMemoria_ReturnsEmptyRespuesta() throws Exception {
+    final ResponseEntity<Respuesta> response = restTemplate.exchange(
+        RESPUESTA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/last",
+        HttpMethod.GET, buildRequest(null, null), Respuesta.class, 9L);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+    final Respuesta respuesta = response.getBody();
+
+    Assertions.assertThat(respuesta).isNull();
+  }
+
   /**
    * Función que devuelve un objeto Respuesta
    * 

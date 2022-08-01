@@ -22,7 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de TipoFinanciacion.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TipoFinanciacionIT extends BaseIT {
+class TipoFinanciacionIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
@@ -43,7 +43,7 @@ public class TipoFinanciacionIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsTipoFinanciacion() throws Exception {
+  void create_ReturnsTipoFinanciacion() throws Exception {
 
     // given: new TipoFinanciacion
     TipoFinanciacion tipoFinanciacion = generarMockTipoFinanciacion(null);
@@ -65,7 +65,7 @@ public class TipoFinanciacionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void desactivar_ReturnTipoFinanciacion() throws Exception {
+  void desactivar_ReturnTipoFinanciacion() throws Exception {
     Long idTipoFinanciacion = 1L;
 
     final ResponseEntity<TipoFinanciacion> response = restTemplate.exchange(
@@ -79,13 +79,13 @@ public class TipoFinanciacionIT extends BaseIT {
     Assertions.assertThat(tipoFinanciacion.getNombre()).as("getNombre()").isEqualTo("nombre-001");
     Assertions.assertThat(tipoFinanciacion.getDescripcion()).as("descripcion-001")
         .isEqualTo(tipoFinanciacion.getDescripcion());
-    Assertions.assertThat(tipoFinanciacion.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(tipoFinanciacion.getActivo()).as("getActivo()").isFalse();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void reactivar_ReturnTipoFinanciacion() throws Exception {
+  void reactivar_ReturnTipoFinanciacion() throws Exception {
     Long idTipoFinanciacion = 1L;
 
     final ResponseEntity<TipoFinanciacion> response = restTemplate.exchange(
@@ -97,14 +97,14 @@ public class TipoFinanciacionIT extends BaseIT {
     TipoFinanciacion tipoFinanciacion = response.getBody();
     Assertions.assertThat(tipoFinanciacion.getId()).as("getId()").isNotNull();
     Assertions.assertThat(tipoFinanciacion.getNombre()).as("getNombre()").isEqualTo("nombre-001");
-    Assertions.assertThat(tipoFinanciacion.getDescripcion()).as("descripcion-001");
-    Assertions.assertThat(tipoFinanciacion.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(tipoFinanciacion.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-001");
+    Assertions.assertThat(tipoFinanciacion.getActivo()).as("getActivo()").isTrue();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsTipoFinanciacion() throws Exception {
+  void findById_ReturnsTipoFinanciacion() throws Exception {
     Long id = 1L;
 
     final ResponseEntity<TipoFinanciacion> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -121,7 +121,7 @@ public class TipoFinanciacionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_WithExistingId_ReturnsTipoFinanciacion() throws Exception {
+  void update_WithExistingId_ReturnsTipoFinanciacion() throws Exception {
 
     // given: Entidad existente que se va a actualizar
     TipoFinanciacion tipoFinanciacion = generarMockTipoFinanciacion(1L);
@@ -140,7 +140,7 @@ public class TipoFinanciacionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsTipoFinanciacionSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsTipoFinanciacionSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
@@ -156,7 +156,7 @@ public class TipoFinanciacionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoFinanciacion> tiposFinanciacion = response.getBody();
-    Assertions.assertThat(tiposFinanciacion.size()).isEqualTo(3);
+    Assertions.assertThat(tiposFinanciacion).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
@@ -173,7 +173,7 @@ public class TipoFinanciacionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllTodos_WithPagingSortingAndFiltering_ReturnsTipoFinanciacionSubList() throws Exception {
+  void findAllTodos_WithPagingSortingAndFiltering_ReturnsTipoFinanciacionSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "AUTH")));
     headers.add("X-Page", "0");
@@ -190,7 +190,7 @@ public class TipoFinanciacionIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoFinanciacion> tiposFinanciacion = response.getBody();
-    Assertions.assertThat(tiposFinanciacion.size()).isEqualTo(3);
+    Assertions.assertThat(tiposFinanciacion).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");

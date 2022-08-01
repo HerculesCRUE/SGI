@@ -13,10 +13,9 @@ import { AbstractTableExportFillService } from '@core/services/rep/abstract-tabl
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
 import { TranslateService } from '@ngx-translate/core';
-import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { NGXLogger } from 'ngx-logger';
 import { from, merge, Observable, of } from 'rxjs';
-import { catchError, map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
+import { catchError, concatMap, map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
 import { IConvocatoriaReportData, IConvocatoriaReportOptions } from './convocatoria-listado-export.service';
 
 const ELEGIBILIDAD_KEY = marker('csp.convocatoria-elegibilidad');
@@ -59,8 +58,6 @@ export class ConvocatoriaConceptoGastoListadoExportService extends AbstractTable
     private readonly convocatoriaService: ConvocatoriaService,
     private readonly convocatoriaConceptoGastoService: ConvocatoriaConceptoGastoService,
     private readonly codigoEconomicoGastoService: CodigoEconomicoGastoService,
-
-    private readonly luxonDatePipe: LuxonDatePipe
   ) {
     super(translate);
   }
@@ -71,12 +68,13 @@ export class ConvocatoriaConceptoGastoListadoExportService extends AbstractTable
         map(response => response.items.map(item => item as IConvocatoriaConceptoGastoListadoExport)),
         mergeMap(responseConceptosGastoPermitidos => {
           return this.fillConceptoGasto(convocatoriaData, responseConceptosGastoPermitidos);
-        })),
+        }, this.DEFAULT_CONCURRENT)),
       this.convocatoriaService.findAllConvocatoriaConceptoGastosNoPermitidos(convocatoriaData?.convocatoria?.id).pipe(
         map(response => response.items.map(item => item as IConvocatoriaConceptoGastoListadoExport)),
         mergeMap(responseConceptosGastoNoPermitidos => {
           return this.fillConceptoGasto(convocatoriaData, responseConceptosGastoNoPermitidos);
-        }))
+        }, this.DEFAULT_CONCURRENT)),
+      2
     ).pipe(
       takeLast(1)
     );
@@ -94,7 +92,7 @@ export class ConvocatoriaConceptoGastoListadoExportService extends AbstractTable
     }
 
     return from(responseConceptosGastos).pipe(
-      mergeMap(convocatoriaConceptoGasto => {
+      concatMap(convocatoriaConceptoGasto => {
         return this.getCodigosEconomicos(convocatoriaConceptoGasto).pipe(
           map(convocatoriaConceptoGastoListado => {
             convocatoriaData.conceptosGastos.push(convocatoriaConceptoGastoListado);
@@ -114,7 +112,7 @@ export class ConvocatoriaConceptoGastoListadoExportService extends AbstractTable
           return this.convocatoriaConceptoGastoService.findAllConvocatoriaConceptoGastoCodigoEcs(convocatoriaConceptoGasto.id).pipe(
             switchMap(responseCodigoEconomico => {
               return from(responseCodigoEconomico.items).pipe(
-                mergeMap(convocatoriaCodigoEconomico => {
+                concatMap(convocatoriaCodigoEconomico => {
                   return this.getCodigoEconomico(convocatoriaCodigoEconomico);
                 }),
                 map(() => responseCodigoEconomico)

@@ -12,10 +12,10 @@ import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNAsociarAutori
 import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNAsociarProyectoInput;
 import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNInput;
 import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNOutput;
-import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoJustificacionOutput.Proyecto;
 import org.crue.hercules.sgi.csp.model.Autorizacion;
 import org.crue.hercules.sgi.csp.model.NotificacionCVNEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.NotificacionProyectoExternoCVN;
+import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.service.NotificacionCVNEntidadFinanciadoraService;
 import org.crue.hercules.sgi.csp.service.NotificacionProyectoExternoCVNService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;

@@ -20,6 +20,7 @@ const CODIGO_KEY = marker('csp.grupo.codigo');
 const TIPO_GRUPO_KEY = marker('csp.grupo.tipo');
 const NOMBRE_KEY = marker('csp.grupo.nombre');
 const INVESTIGADOR_KEY = marker('csp.grupo.investigador-principal');
+const GRUPO_ESPECIAL_INVESTIGACION_KEY = marker('csp.grupo.especial-investigacion');
 
 @Injectable()
 export class GrupoGeneralListadoExportService extends AbstractTableExportFillService<IGrupoReportData, IGrupoReportOptions>{
@@ -104,6 +105,11 @@ export class GrupoGeneralListadoExportService extends AbstractTableExportFillSer
         title: this.translate.instant(TIPO_GRUPO_KEY),
         name: 'tipoGrupo',
         type: ColumnType.STRING
+      },
+      {
+        title: this.translate.instant(GRUPO_ESPECIAL_INVESTIGACION_KEY),
+        name: 'grupoEspecialInvestigacion',
+        type: ColumnType.STRING
       }
     ];
 
@@ -121,6 +127,8 @@ export class GrupoGeneralListadoExportService extends AbstractTableExportFillSer
     elementsRow.push(LuxonUtils.toBackend(grupo.fechaInicio));
     elementsRow.push(LuxonUtils.toBackend(grupo.fechaFin));
     elementsRow.push(grupo.tipo ? this.translate.instant(TIPO_MAP.get(grupo.tipo)) : '');
+    elementsRow.push(
+      this.notIsNullAndNotUndefined(grupo.especialInvestigacion) ? this.getI18nBooleanYesNo(grupo.especialInvestigacion) : '');
     return elementsRow;
   }
 }

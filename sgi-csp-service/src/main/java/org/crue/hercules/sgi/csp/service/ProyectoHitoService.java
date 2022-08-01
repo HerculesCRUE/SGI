@@ -1,7 +1,12 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.List;
+
+import org.crue.hercules.sgi.csp.dto.ProyectoHitoInput;
+import org.crue.hercules.sgi.csp.dto.com.Recipient;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoHito;
+import org.crue.hercules.sgi.csp.model.ProyectoHitoAviso;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,18 +19,18 @@ public interface ProyectoHitoService {
   /**
    * Guarda la entidad {@link ProyectoHito}.
    * 
-   * @param ProyectoHito la entidad {@link ProyectoHito} a guardar.
+   * @param proyectoHitoInput la entidad {@link ProyectoHitoInput} a guardar.
    * @return ProyectoHito la entidad {@link ProyectoHito} persistida.
    */
-  ProyectoHito create(ProyectoHito ProyectoHito);
+  ProyectoHito create(ProyectoHitoInput proyectoHitoInput);
 
   /**
-   * Actualiza la entidad {@link ProyectoHito}.
-   * 
-   * @param ProyectoHitoActualizar la entidad {@link ProyectoHito} a guardar.
+   * @param proyectoHitoId         id del {@link ProyectoHito}
+   * @param proyectoHitoActualizar datos a actualizar
+   *                               Actualiza la entidad {@link ProyectoHito}.
    * @return ProyectoHito la entidad {@link ProyectoHito} persistida.
    */
-  ProyectoHito update(ProyectoHito ProyectoHitoActualizar);
+  ProyectoHito update(Long proyectoHitoId, ProyectoHitoInput proyectoHitoActualizar);
 
   /**
    * Elimina la {@link ProyectoHito}.
@@ -61,5 +66,14 @@ public interface ProyectoHitoService {
    * @return si existe o no el proyecto
    */
   boolean existsByProyecto(Long proyectoId);
+
+  /**
+   * Obtiene el listado de destinatarios adicionales a los que enviar el email
+   * generado por un hito en base al {@link ProyectoHitoAviso} relacionadao
+   * 
+   * @param proyectoHitoId identificador de {@link ProyectoHito}
+   * @return listado de {@link Recipient}
+   */
+  List<Recipient> getDeferredRecipients(Long proyectoHitoId);
 
 }

@@ -143,7 +143,7 @@ public class InvencionController {
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R', 'PII-INV-MOD-V')")
-  ResponseEntity<Page<InvencionOutput>> findActivos(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<InvencionOutput>> findActivos(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<Invencion> page = service.findActivos(query, paging);
@@ -166,7 +166,7 @@ public class InvencionController {
    */
   @GetMapping("/todos")
   @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R')")
-  ResponseEntity<Page<InvencionOutput>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<InvencionOutput>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodos(String query, Pageable paging) - start");
     Page<Invencion> page = service.findAll(query, paging);
@@ -188,7 +188,7 @@ public class InvencionController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R', 'PII-INV-MOD-V')")
-  InvencionOutput findById(@PathVariable Long id) {
+  public InvencionOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     Invencion returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -203,7 +203,7 @@ public class InvencionController {
    */
   @PostMapping
   @PreAuthorize("hasAuthority('PII-INV-C')")
-  ResponseEntity<InvencionOutput> create(@Valid @RequestBody InvencionInput invencion) {
+  public ResponseEntity<InvencionOutput> create(@Valid @RequestBody InvencionInput invencion) {
     log.debug("create(Invencion invencion) - start");
     Invencion returnValue = service.create(convert(invencion));
     log.debug("create(Invencion invencion) - end");
@@ -219,7 +219,7 @@ public class InvencionController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('PII-INV-E')")
-  InvencionOutput update(@Valid @RequestBody InvencionInput invencion, @PathVariable Long id) {
+  public InvencionOutput update(@Valid @RequestBody InvencionInput invencion, @PathVariable Long id) {
     log.debug("update(Invencion invencion, Long id) - start");
     Invencion returnValue = service.update(convert(id, invencion));
     log.debug("update(Invencion invencion, Long id) - end");
@@ -234,7 +234,7 @@ public class InvencionController {
    */
   @PatchMapping("/{id}/activar")
   @PreAuthorize("hasAuthority('PII-INV-R')")
-  InvencionOutput activar(@PathVariable Long id) {
+  public InvencionOutput activar(@PathVariable Long id) {
     log.debug("activar(Long id) - start");
     Invencion returnValue = service.activar(id);
     log.debug("activar(Long id) - end");
@@ -245,10 +245,11 @@ public class InvencionController {
    * Desactiva la {@link Invencion} con id indicado.
    * 
    * @param id Identificador de {@link Invencion}.
+   * @return objecto de tipo {@link InvencionOutput}
    */
   @PatchMapping("/{id}/desactivar")
   @PreAuthorize("hasAuthority('PII-INV-B')")
-  InvencionOutput desactivar(@PathVariable Long id) {
+  public InvencionOutput desactivar(@PathVariable Long id) {
     log.debug("desactivar(Long id) - start");
     Invencion returnValue = service.desactivar(id);
     log.debug("desactivar(Long id) - end");
@@ -370,12 +371,14 @@ public class InvencionController {
   /**
    * Devuelve una lista de {@link InvencionDocumento} relacionados a una invencion
    * 
-   * @param id Identificador de {@link Invencion}.
+   * @param invencionId Identificador de {@link Invencion}.
+   * @param paging      opciones de paginacion
    * @return la lista de entidades {@link InvencionDocumento}
    */
   @GetMapping("/{invencionId}/invenciondocumentos")
   @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-E')")
-  ResponseEntity<Page<InvencionDocumentoOutput>> findInvencionDocumentosByInvencionId(@PathVariable Long invencionId,
+  public ResponseEntity<Page<InvencionDocumentoOutput>> findInvencionDocumentosByInvencionId(
+      @PathVariable Long invencionId,
       @RequestPageable(sort = "s") Pageable paging) {
 
     Page<InvencionDocumentoOutput> page = convertToPage(
@@ -384,17 +387,21 @@ public class InvencionController {
   }
 
   /**
+   * 
    * Devuelve una lista paginada de {@link InvencionInventor} relacionados a la
    * {@link Invencion} pasada por parámetros Devuelve una lista paginada de
    * {@link InvencionInventor} activos relacionados a la {@link Invencion} pasada
    * por parámetros
    * 
-   * @param id Identificador de {@link Invencion}.
+   * @param invencionId Identificador de {@link Invencion}.
+   * @param query       filtro
+   * @param paging      paginacion info
    * @return Lista de entidades {@link InvencionInventor} paginadas
    */
   @GetMapping(PATH_INVENCION_INVENTOR)
   @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-C', 'PII-INV-E')")
-  ResponseEntity<Page<InvencionInventorOutput>> findInvencionInventoresByInvencionId(@PathVariable Long invencionId,
+  public ResponseEntity<Page<InvencionInventorOutput>> findInvencionInventoresByInvencionId(
+      @PathVariable Long invencionId,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug(
         "findInvencionInventoresByInvencionId(@PathVariable Long invencionId, @RequestParam(name = 'q', required = false) String query, @RequestPageable(sort = 's') Pageable paging) - start");
@@ -428,7 +435,7 @@ public class InvencionController {
 
   @PatchMapping(PATH_INVENCION_INVENTOR)
   @PreAuthorize("hasAnyAuthority('PII-INV-C', 'PII-INV-E')")
-  ResponseEntity<Page<InvencionInventorOutput>> updateInventoresByInvencionId(@PathVariable Long invencionId,
+  public ResponseEntity<Page<InvencionInventorOutput>> updateInventoresByInvencionId(@PathVariable Long invencionId,
       @Valid @RequestBody List<InvencionInventorInput> invencionInventoresInput,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
 
@@ -443,12 +450,15 @@ public class InvencionController {
    * Devuelve una lista de {@link SolicitudProteccion} relacionados a una
    * invencion
    * 
-   * @param id Identificador de {@link Invencion}.
+   * @param invencionId Identificador de {@link Invencion}.
+   * @param paging      paginacion info
+   * @param query       filtro
    * @return la lista de entidades {@link SolicitudProteccion}
    */
   @GetMapping("/{invencionId}/solicitudesproteccion")
   @PreAuthorize("hasAuthority('PII-INV-E')")
-  ResponseEntity<Page<SolicitudProteccionOutput>> findSolicitudesProteccionByInvencionId(@PathVariable Long invencionId,
+  public ResponseEntity<Page<SolicitudProteccionOutput>> findSolicitudesProteccionByInvencionId(
+      @PathVariable Long invencionId,
       @RequestPageable(sort = "s") Pageable paging, @RequestParam(required = false, name = "q") String query) {
 
     Page<SolicitudProteccionOutput> page = convertToPageSolicitudProteccion(
@@ -495,12 +505,13 @@ public class InvencionController {
   /**
    * Crea un nuevo {@link PeriodoTitularidad}.
    * 
+   * @param invencionId        Identificador de {@link Invencion}
    * @param periodoTitularidad {@link PeriodoTitularidad} que se quiere crear.
    * @return Nuevo {@link PeriodoTitularidad} creado.
    */
   @PostMapping(PATH_PERIODOSTITULARIDAD)
   @PreAuthorize("hasAuthority('PII-INV-C')")
-  ResponseEntity<PeriodoTitularidadOutput> create(@PathVariable Long invencionId,
+  public ResponseEntity<PeriodoTitularidadOutput> create(@PathVariable Long invencionId,
       @Valid @RequestBody PeriodoTitularidadInput periodoTitularidad) {
     log.debug("create(@Valid @RequestBody PeriodoTitularidadInput periodoTitularidad)  - start");
 

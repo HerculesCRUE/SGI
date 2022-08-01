@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ProyectoEntidadGestoraControllerTest
  */
 @WebMvcTest(ProyectoEntidadGestoraController.class)
-public class ProyectoEntidadGestoraControllerTest extends BaseControllerTest {
+class ProyectoEntidadGestoraControllerTest extends BaseControllerTest {
 
   @MockBean
   private ProyectoEntidadGestoraService service;
@@ -32,7 +32,7 @@ public class ProyectoEntidadGestoraControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void create_ReturnsProyectoEntidadGestora() throws Exception {
+  void create_ReturnsProyectoEntidadGestora() throws Exception {
     // given: new ProyectoEntidadGestora
     ProyectoEntidadGestora proyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
     proyectoEntidadGestora.setId(null);
@@ -60,7 +60,7 @@ public class ProyectoEntidadGestoraControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ProyectoEntidadGestora with id filled
     ProyectoEntidadGestora proyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
 
@@ -79,7 +79,7 @@ public class ProyectoEntidadGestoraControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_ReturnsProyectoEntidadGestora() throws Exception {
+  void update_ReturnsProyectoEntidadGestora() throws Exception {
     // given: Existing ProyectoEntidadGestora to be updated
     ProyectoEntidadGestora proyectoEntidadGestoraExistente = generarMockProyectoEntidadGestora(1L, 1L);
     ProyectoEntidadGestora proyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
@@ -104,7 +104,7 @@ public class ProyectoEntidadGestoraControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     ProyectoEntidadGestora proyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
@@ -124,7 +124,7 @@ public class ProyectoEntidadGestoraControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.doNothing().when(service).delete(ArgumentMatchers.anyLong());
@@ -142,7 +142,7 @@ public class ProyectoEntidadGestoraControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void delete_NoExistingId_Return404() throws Exception {
+  void delete_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 

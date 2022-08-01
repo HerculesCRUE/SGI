@@ -1,5 +1,11 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.MESSAGE_KEY_ID;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_ISNULL;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_NOTNULL;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
@@ -42,11 +48,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class InvencionService {
 
-  private static final String ID = "id";
-  private static final String IS_NULL = "isNull";
-  private static final String NOT_NULL = "notNull";
-  private static final String ENTITY = "entity";
-  private static final String FIELD = "field";
   private final Validator validator;
   private final SgiConfigProperties sgiConfigProperties;
   private final InvencionRepository repository;
@@ -113,19 +114,22 @@ public class InvencionService {
 
     Assert.isNull(invencion.getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, IS_NULL)
-            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(Invencion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_ISNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_ID))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Invencion.class))
+            .build());
     Assert.notNull(invencion.getTipoProteccion(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
-            .parameter(FIELD, ApplicationContextSupport.getMessage(TipoProteccion.class))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(Invencion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(TipoProteccion.class))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Invencion.class))
+            .build());
     Assert.notNull(invencion.getTipoProteccion().getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
-            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(TipoProteccion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_ID))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(TipoProteccion.class))
+            .build());
 
     invencion.setActivo(true);
     Invencion returnValue = repository.save(invencion);
@@ -147,19 +151,22 @@ public class InvencionService {
 
     Assert.notNull(invencion.getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
-            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(Invencion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_ID))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Invencion.class))
+            .build());
     Assert.notNull(invencion.getTipoProteccion(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
-            .parameter(FIELD, ApplicationContextSupport.getMessage(TipoProteccion.class))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(Invencion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(TipoProteccion.class))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Invencion.class))
+            .build());
     Assert.notNull(invencion.getTipoProteccion().getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
-            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(TipoProteccion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_ID))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(TipoProteccion.class))
+            .build());
 
     return repository.findById(invencion.getId()).map(invencionExistente -> {
 
@@ -200,9 +207,10 @@ public class InvencionService {
 
     Assert.notNull(id,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
-            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(Invencion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_ID))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Invencion.class))
+            .build());
 
     return repository.findById(id).map(invencion -> {
       if (Boolean.TRUE.equals(invencion.getActivo())) {
@@ -230,9 +238,10 @@ public class InvencionService {
 
     Assert.notNull(id,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
-            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(Invencion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_ID))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Invencion.class))
+            .build());
 
     return repository.findById(id).map(invencion -> {
       if (Boolean.FALSE.equals(invencion.getActivo())) {

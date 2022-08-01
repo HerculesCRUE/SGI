@@ -1,0 +1,1287 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="0000000000003-param">
+    <!-- CSP Añadir-modificar certificado autorización participación proyecto externo -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_DATA" />
+      <column name="description" value="JSON con formato: {&quot;tituloProyectoExt&quot;:&quot;Proyecto ext 1&quot;,&quot;enlaceAplicacion&quot;:&quot;http://www.sgi.corp&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- CSP Cambiar estado autorización participación proyecto externo - Unidad gestión -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_DATA" />
+      <column name="description" value="JSON con formato: {&quot;fechaEstadoSolicitudPext&quot;:&quot;2022-06-11T00:00:000z&quot;,&quot;tituloPext&quot;:&quot;Proyecto 1&quot;,&quot;estadoSolicitudPext&quot;:&quot;estado Solicitud Pext&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- CSP Cambio al estado Solicitada para solicitudes de tipo RRHH -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_DATA" />
+      <column name="description" value="JSON con formato: {&quot;fechaEstado&quot;:&quot;2022-06-11T00:00:000z&quot;,&quot;nombreApellidosSolicitante&quot;:&quot;Francisco José Alonso&quot;,&quot;codigoInternoSolicitud&quot;:&quot;SOL-INT-CODE-01&quot;,&quot;tituloConvocatoria&quot;:&quot;Convocatoria RRHH&quot;,&quot;fechaProvisionalConvocatoria&quot;:&quot;2022-06-11T00:00:000z&quot;,&quot;enlaceAplicacionMenuValidacionTutor&quot;:&quot;https://sgi.test.corp.treelogic.com/inv/solicitudes/validacion-tutor&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- CSP Modificar autorización participación proyecto externo - Perfil investigador -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_DATA" />
+      <column name="description" value="JSON con formato: {&quot;fecha&quot;:&quot;2022-06-11T00:00:000z&quot;,&quot;tituloProyecto&quot;:&quot;Proyecto 1&quot;,&quot;nombreSolicitante&quot;:&quot;Manolo García&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- CSP Proyecto Hito -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_PROYECTO_TITULO" />
+      <column name="description" value="Titulo del Proyecto" />
+      <column name="type" value="STRING" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- CSP Recepción de notificaciones CVN de proyecto externo -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_DATA" />
+      <column name="description" value="JSON con formato: {&quot;tituloProyecto&quot;:&quot;Proyecto 2&quot;,&quot;nombreApellidosCreador&quot;:&quot;Francisco José Alonso&quot;,&quot;fechaCreacion&quot;:&quot;2022-06-23T00:00:000z&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Informe de Seguimiento Final Pendiente -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_COM_INF_SEG_FIN_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombre de investigacion&quot;&quot;genero de comite&quot;,&quot;referencia de memoria&quot;,&quot;tipo de actividad&quot;,&quot;titulo solicitud evaluacion&quot;,&quot;enlace de aplicacion&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Memoria con dictamen Revisión Mínima archivada automáticamente -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_COM_DICT_MEM_REV_MINIMA_ARCH_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombreInvestigacion&quot;:&quot;nombre de investigacion&quot;,&quot;referenciaMemoria&quot;:&quot;referencia de memoria&quot;,&quot;tipoActividad&quot;:&quot;tipo de actividad&quot;,&quot;tituloSolicitudEvaluacion&quot;:&quot;titulo solicitud evaluacion&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- PRC Proceso Baremacion Error -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="PRC_COM_PROCESO_BAREMACION_ERROR_DATA" />
+      <column name="description" value="JSON con formato: {&quot;anio&quot;:&quot;2022&quot;,&quot;error&quot;:&quot;texto error&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- PRC Proceso Baremacion Fin -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="PRC_COM_PROCESO_BAREMACION_FIN_DATA" />
+      <column name="description" value="JSON con formato: {&quot;anio&quot;:&quot;2022&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- PRC Validar Item -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="PRC_COM_VALIDAR_ITEM_DATA" />
+      <column name="description" value="JSON con formato: {&quot;anio&quot;:&quot;2022&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Memoria Archivada Automáticamente - ETI_COM_MEM_ARCHIVADA_AUT -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_COM_MEM_ARCHIVADA_AUT_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombre de investigacion&quot;&quot;genero de comite&quot;,&quot;referencia de memoria&quot;,&quot;tipo de actividad&quot;,&quot;titulo solicitud evaluacion&quot;,&quot;enlace de aplicacion&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- PII Fecha límite procedimiento -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="PII_COM_FECHA_LIMITE_PROCEDIMIENTO_DATA" />
+      <column name="description" value="JSON con formato: {&quot;tipoProcedimiento&quot;:&quot;tipo procedimiento&quot;,&quot;accionATomar&quot;:&quot;acción a tomar&quot;,&quot;fechaLimite&quot;:&quot;2022-06-23T00:00:000z&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- CSP Fases Convocatoria -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_CONV_FASE_FECHA_INICIO" />
+      <column name="description" value="Fecha inicio de la Fase" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_CONV_FASE_FECHA_FIN" />
+      <column name="description" value="Fecha fin de la Fase" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_CONV_TIPO_FASE" />
+      <column name="description" value="Tipo de la Fase" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_CONV_FASE_TITULO" />
+      <column name="description" value="Titulo de la Convocatoria" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_CONV_FASE_OBSERVACIONES" />
+      <column name="description" value="Observaciones de la Fase" />
+      <column name="type" value="STRING" />
+    </insert>
+
+    <!-- CSP Fases Proyecto -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_PRO_FASE_FECHA_INICIO" />
+      <column name="description" value="Fecha inicio de la Fase" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_PRO_FASE_FECHA_FIN" />
+      <column name="description" value="Fecha fin de la Fase" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_PRO_TIPO_FASE" />
+      <column name="description" value="Tipo de la Fase" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_PRO_FASE_TITULO_PROYECTO" />
+      <column name="description" value="Titulo del proyecto" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_PRO_FASE_TITULO_CONVOCATORIA" />
+      <column name="description" value="Titulo de la Convocatoria" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_PRO_FASE_OBSERVACIONES" />
+      <column name="description" value="Observaciones de la Fase" />
+      <column name="type" value="STRING" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000003-subject_tpl">
+    <!-- CSP Añadir-modificar certificado autorización participación proyecto externo -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de comunicados de Cambio de visibilidad del certificado de autorización para la participación en un proyecto externo" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000003/csp-com-add-mod-cert-autorizacion-part-pro-ex/CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_SUBJECT.ftl" />
+      <where>name='CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_SUBJECT'</where>
+    </update>
+
+    <!-- CSP Cambiar estado autorización participación proyecto externo - Unidad gestión -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de comunicados de Cambio de estado de la autorización para la participación en un proyecto externo" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000003/csp-com-cambio-estado-autorizacion-part-pro-ex/CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_SUBJECT.ftl" />
+      <where>name='CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_SUBJECT'</where>
+    </update>
+
+    <!-- CSP Cambio al estado Solicitada para solicitudes de tipo RRHH -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de comunicados de Cambio de estado a SOLICITADA de una solicitud de RRHH" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000003/csp-com-cambio-estado-solicitada-sol-tipo-rrhh/CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_SUBJECT.ftl" />
+      <where>name='CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_SUBJECT'</where>
+    </update>
+
+    <!-- CSP Modificar autorización participación proyecto externo - Perfil investigador -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de comunicados de Modificación de la autorización para la participación en un proyecto externo" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000003/csp-com-mod-autorizacion-part-pro-ex/CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_SUBJECT.ftl" />
+      <where>name='CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_SUBJECT'</where>
+    </update>
+
+    <!-- CSP Proyecto Hito -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_PROYECTO_HITO_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para Proyectos-Hitos" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000003/csp-com-proyecto-hito/CSP_PROYECTO_HITO_SUBJECT.ftl" />
+      <where>name='CSP_PROYECTO_HITO_SUBJECT'</where>
+    </update>
+
+    <!-- CSP Recepción de notificaciones CVN de proyecto externo -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de comunicados de recepcion de notificación de la creación de en un proyecto externo" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000003/csp-com-recep-not-cvn-pro-ext/CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_SUBJECT.ftl" />
+      <where>name='CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_SUBJECT'</where>
+    </update>
+
+    <!-- ETI Informe de Seguimiento Final Pendiente -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="ETI_COM_INF_SEG_FIN_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de comunicados de seguimiento final pendiente" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000003/eti-com-informe/ETI_COM_INF_SEG_FIN_SUBJECT.ftl" />
+      <where>name='ETI_COM_INF_SEG_FIN_SUBJECT'</where>
+    </update>
+
+    <!-- ETI Memoria con dictamen Revisión Mínima archivada automáticamente -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="ETI_COM_DICT_MEM_REV_MINIMA_ARCH_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de Memoria con dictamen Revisión Mínima archivada automáticamente" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000003/eti-com-dictamen/ETI_COM_DICT_MEM_REV_MINIMA_ARCH_SUBJECT.ftl" />
+      <where>name='ETI_COM_DICT_MEM_REV_MINIMA_ARCH_SUBJECT'</where>
+    </update>
+
+    <!-- PRC Proceso Baremacion Error -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="PRC_COM_PROCESO_BAREMACION_ERROR_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de error en el proceso de baremacion" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000003/prc/PRC_COM_PROCESO_BAREMACION_ERROR_SUBJECT.ftl" />
+      <where>name='PRC_COM_PROCESO_BAREMACION_ERROR_SUBJECT'</where>
+    </update>
+
+    <!-- PRC Proceso Baremacion Fin -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="PRC_COM_PROCESO_BAREMACION_FIN_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de fin del proceso de baremacion" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000003/prc/PRC_COM_PROCESO_BAREMACION_FIN_SUBJECT.ftl" />
+      <where>name='PRC_COM_PROCESO_BAREMACION_FIN_SUBJECT'</where>
+    </update>
+
+    <!-- PRC Validar Item -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="PRC_COM_VALIDAR_ITEM_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío del comunicado para validar item" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000003/prc/PRC_COM_VALIDAR_ITEM_SUBJECT.ftl" />
+      <where>name='PRC_COM_VALIDAR_ITEM_SUBJECT'</where>
+    </update>
+
+    <!-- ETI Memoria Archivada Automáticamente - ETI_COM_MEM_ARCHIVADA_AUT -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="ETI_COM_MEM_ARCHIVADA_AUT_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de comunicados de memorias archivadas por inactividad" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000003/eti-com-mem-archivada-automaticamente/ETI_COM_MEM_ARCHIVADA_AUT_SUBJECT.ftl" />
+      <where>name='ETI_COM_MEM_ARCHIVADA_AUT_SUBJECT'</where>
+    </update>
+
+    <!-- PII Fecha límite procedimiento -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="PII_COM_FECHA_LIMITE_PROCEDIMIENTO_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de comunicados de fecha límite de procedimiento" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000003/pii-com-fecha-limite-procedimiento/PII_COM_FECHA_LIMITE_PROCEDIMIENTO_SUBJECT.ftl" />
+      <where>name='PII_COM_FECHA_LIMITE_PROCEDIMIENTO_SUBJECT'</where>
+    </update>
+
+    <!-- CSP Fases Convocatoria -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_CONVOCATORIA_FASE_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de comunicados de fases de una convocatoria" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000003/csp-com-convocatoria-fases/CSP_COM_CONVOCATORIA_FASES_SUBJECT.ftl" />
+      <where>name='CSP_COM_CONVOCATORIA_FASE_SUBJECT'</where>
+    </update>
+
+    <!-- CSP Fases Proyecto -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_PROYECTO_FASE_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de comunicados de fases de un proyecto" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000003/csp-com-proyecto-fases/CSP_COM_PROYECTO_FASES_SUBJECT.ftl" />
+      <where>name='CSP_COM_PROYECTO_FASE_SUBJECT'</where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000003-subjecttpl_param">
+    <!-- CSP Añadir-modificar certificado autorización participación proyecto externo -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_DATA')" />
+    </insert>
+
+    <!-- CSP Cambiar estado autorización participación proyecto externo - Unidad gestión -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_DATA')" />
+    </insert>
+
+    <!-- CSP Cambio al estado Solicitada para solicitudes de tipo RRHH -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_DATA')" />
+    </insert>
+
+    <!-- CSP Modificar autorización participación proyecto externo - Perfil investigador -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_DATA')" />
+    </insert>
+
+    <!-- CSP Proyecto Hito -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_PROYECTO_HITO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_HITO_TIPO')" />
+    </insert>
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_PROYECTO_HITO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_CONVOCATORIA_TITULO')" />
+    </insert>
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_PROYECTO_HITO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_PROYECTO_TITULO')" />
+    </insert>
+
+    <!-- CSP Recepción de notificaciones CVN de proyecto externo -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_DATA')" />
+    </insert>
+
+    <!-- ETI Informe de Seguimiento Final Pendiente -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_INF_SEG_FIN_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_INF_SEG_FIN_DATA')" />
+    </insert>
+
+    <!-- ETI Memoria con dictamen Revisión Mínima archivada automáticamente -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_DICT_MEM_REV_MINIMA_ARCH_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_DICT_MEM_REV_MINIMA_ARCH_DATA')" />
+    </insert>
+
+    <!-- PRC Proceso Baremacion Error -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='PRC_COM_PROCESO_BAREMACION_ERROR_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='PRC_COM_PROCESO_BAREMACION_ERROR_DATA')" />
+    </insert>
+
+    <!-- PRC Proceso Baremacion Fin -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='PRC_COM_PROCESO_BAREMACION_FIN_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='PRC_COM_PROCESO_BAREMACION_FIN_DATA')" />
+    </insert>
+
+    <!-- PRC Validar Item -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='PRC_COM_VALIDAR_ITEM_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='PRC_COM_VALIDAR_ITEM_DATA')" />
+    </insert>
+
+    <!-- ETI Memoria Archivada Automáticamente - ETI_COM_MEM_ARCHIVADA_AUT -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_MEM_ARCHIVADA_AUT_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_MEM_ARCHIVADA_AUT_DATA')" />
+    </insert>
+
+    <!-- PII Fecha límite procedimiento -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='PII_COM_FECHA_LIMITE_PROCEDIMIENTO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='PII_COM_FECHA_LIMITE_PROCEDIMIENTO_DATA')" />
+    </insert>
+
+    <!-- CSP Fases Convocatoria -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CONVOCATORIA_FASE_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_CONV_TIPO_FASE')" />
+    </insert>
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CONVOCATORIA_FASE_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_CONV_FASE_TITULO')" />
+    </insert>
+
+    <!-- CSP Fases Proyecto -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_PROYECTO_FASE_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_PRO_TIPO_FASE')" />
+    </insert>
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_PROYECTO_FASE_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_PRO_FASE_TITULO_PROYECTO')" />
+    </insert>
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_PROYECTO_FASE_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_PRO_FASE_TITULO_CONVOCATORIA')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000003-content_tpl">
+    <!-- CSP Añadir-modificar certificado autorización participación proyecto externo -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de comunicados de Cambio de visibilidad del certificado de autoriazación para la participación en un proyecto externo" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/csp-com-add-mod-cert-autorizacion-part-pro-ex/CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT_text.ftl" />
+      <where>name='CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/csp-com-add-mod-cert-autorizacion-part-pro-ex/CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT_html.ftl" />
+      <where>name='CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT'</where>
+    </update>
+
+    <!-- Cambiar estado autorización participación proyecto externo - Unidad gestión -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de comunicados de Cambio de estado de autoriazación para la participación en un proyecto externo" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/csp-com-cambio-estado-autorizacion-part-pro-ex/CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT_text.ftl" />
+      <where>name='CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/csp-com-cambio-estado-autorizacion-part-pro-ex/CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT'</where>
+    </update>
+
+    <!-- CSP Cambio al estado Solicitada para solicitudes de tipo RRHH -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de comunicados de Cambio de estado a solicitada de una soolicitud de tipo RRHH" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/csp-com-cambio-estado-solicitada-sol-tipo-rrhh/CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_CONTENT_text.ftl" />
+      <where>name='CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/csp-com-cambio-estado-solicitada-sol-tipo-rrhh/CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_CONTENT'</where>
+    </update>
+
+    <!-- CSP Modificar autorización participación proyecto externo - Perfil investigador -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de comunicados de Modificación de autoriazación para la participación en un proyecto externo" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/csp-com-mod-autorizacion-part-pro-ex/CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT_text.ftl" />
+      <where>name='CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/csp-com-mod-autorizacion-part-pro-ex/CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT_html.ftl" />
+      <where>name='CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT'</where>
+    </update>
+
+    <!-- CSP Proyecto Hito -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_PROYECTO_HITO_CONTENT" />
+      <column name="description" value="Plantilla de contenido para Proyectos-Hitos" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/csp-com-proyecto-hito/CSP_PROYECTO_HITO_CONTENT_text.ftl" />
+      <where>name='CSP_PROYECTO_HITO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/csp-com-proyecto-hito/CSP_PROYECTO_HITO_CONTENT_html.ftl" />
+      <where>name='CSP_PROYECTO_HITO_CONTENT'</where>
+    </update>
+
+    <!-- CSP Recepción de notificaciones CVN de proyecto externo -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de comunicados de recepción de notificacion cvn de un proyecto externo" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/csp-com-recep-not-cvn-pro-ext/CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_CONTENT_text.ftl" />
+      <where>name='CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/csp-com-recep-not-cvn-pro-ext/CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_CONTENT_html.ftl" />
+      <where>name='CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_CONTENT'</where>
+    </update>
+
+    <!-- ETI Informe de Seguimiento Final Pendiente -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="ETI_COM_INF_SEG_FIN_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de comunicados de seguimiento final pendiente" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/eti-com-informe/ETI_COM_INF_SEG_FIN_CONTENT_text.ftl" />
+      <where>name='ETI_COM_INF_SEG_FIN_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/eti-com-informe/ETI_COM_INF_SEG_FIN_CONTENT_html.ftl" />
+      <where>name='ETI_COM_INF_SEG_FIN_CONTENT'</where>
+    </update>
+
+    <!-- ETI Memoria con dictamen Revisión Mínima archivada automáticamente -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="ETI_COM_DICT_MEM_REV_MINIMA_ARCH_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envio de Memoria con dictamen Revisión Mínima archivada automáticamente" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/eti-com-dictamen/ETI_COM_DICT_MEM_REV_MINIMA_ARCH_CONTENT_text.ftl" />
+      <where>name='ETI_COM_DICT_MEM_REV_MINIMA_ARCH_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/eti-com-dictamen/ETI_COM_DICT_MEM_REV_MINIMA_ARCH_CONTENT_html.ftl" />
+      <where>name='ETI_COM_DICT_MEM_REV_MINIMA_ARCH_CONTENT'</where>
+    </update>
+
+    <!--  PRC Proceso Baremacion Error -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="PRC_COM_PROCESO_BAREMACION_ERROR_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de error en el proceso de baremacion" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/prc/PRC_COM_PROCESO_BAREMACION_ERROR_CONTENT_text.ftl" />
+      <where>name='PRC_COM_PROCESO_BAREMACION_ERROR_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/prc/PRC_COM_PROCESO_BAREMACION_ERROR_CONTENT_html.ftl" />
+      <where>name='PRC_COM_PROCESO_BAREMACION_ERROR_CONTENT'</where>
+    </update>
+
+    <!--  PRC Proceso Baremacion Fin -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="PRC_COM_PROCESO_BAREMACION_FIN_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de fin del proceso de baremacion" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/prc/PRC_COM_PROCESO_BAREMACION_FIN_CONTENT_text.ftl" />
+      <where>name='PRC_COM_PROCESO_BAREMACION_FIN_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/prc/PRC_COM_PROCESO_BAREMACION_FIN_CONTENT_html.ftl" />
+      <where>name='PRC_COM_PROCESO_BAREMACION_FIN_CONTENT'</where>
+    </update>
+
+    <!-- PRC Validar Item -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="PRC_COM_VALIDAR_ITEM_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío del comunicado para validar item" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/prc/PRC_COM_VALIDAR_ITEM_CONTENT_text.ftl" />
+      <where>name='PRC_COM_VALIDAR_ITEM_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/prc/PRC_COM_VALIDAR_ITEM_CONTENT_html.ftl" />
+      <where>name='PRC_COM_VALIDAR_ITEM_CONTENT'</where>
+    </update>
+
+    <!-- ETI Memoria Archivada Automáticamente - ETI_COM_MEM_ARCHIVADA_AUT -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="ETI_COM_MEM_ARCHIVADA_AUT_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de comunicados de memoria archivada por inactividad" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/eti-com-mem-archivada-automaticamente/ETI_COM_MEM_ARCHIVADA_AUT_CONTENT_text.ftl" />
+      <where>name='ETI_COM_MEM_ARCHIVADA_AUT_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/eti-com-mem-archivada-automaticamente/ETI_COM_MEM_ARCHIVADA_AUT_CONTENT_html.ftl" />
+      <where>name='ETI_COM_MEM_ARCHIVADA_AUT_CONTENT'</where>
+    </update>
+
+    <!-- PII Fecha límite procedimiento -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="PII_COM_FECHA_LIMITE_PROCEDIMIENTO_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de comunicados de fecha límite de procedimiento" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/pii-com-fecha-limite-procedimiento/PII_COM_FECHA_LIMITE_PROCEDIMIENTO_CONTENT_text.ftl" />
+      <where>name='PII_COM_FECHA_LIMITE_PROCEDIMIENTO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/pii-com-fecha-limite-procedimiento/PII_COM_FECHA_LIMITE_PROCEDIMIENTO_CONTENT_html.ftl" />
+      <where>name='PII_COM_FECHA_LIMITE_PROCEDIMIENTO_CONTENT'</where>
+    </update>
+
+    <!-- PII Fin Fecha Prioridad Solicitud Proteccion -->
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/pii-com-meses-hasta-fin-prioridad-solicitud-proteccion/PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_CONTENT_text.ftl" />
+      <where>name='PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/pii-com-meses-hasta-fin-prioridad-solicitud-proteccion/PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_CONTENT_html.ftl" />
+      <where>name='PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_CONTENT'</where>
+    </update>
+
+    <!-- PII Fin Plazo Presentación Entrada Fases nacionales/Reguionales Solicitud Proteccion -->
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/pii-com-aviso-fin-plazo-presentacion-fases-nacionales-regionales-solicitud-proteccion/PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_CONTENT_text.ftl" />
+      <where>name='PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/pii-com-aviso-fin-plazo-presentacion-fases-nacionales-regionales-solicitud-proteccion/PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_CONTENT_html.ftl" />
+      <where>name='PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_CONTENT'</where>
+    </update>
+
+    <!-- CSP Fases Convocatoria -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_CONVOCATORIA_FASE_CONTENT" />
+      <column name="description" value="Plantilla de contenido para Convocatorias-Fases" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/csp-com-convocatoria-fases/CSP_COM_CONVOCATORIA_FASES_CONTENT_text.ftl" />
+      <where>name='CSP_COM_CONVOCATORIA_FASE_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/csp-com-convocatoria-fases/CSP_COM_CONVOCATORIA_FASES_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CONVOCATORIA_FASE_CONTENT'</where>
+    </update>
+
+    <!-- CSP Fases Proyecto -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_PROYECTO_FASE_CONTENT" />
+      <column name="description" value="Plantilla de contenido para Proyecto-Fases" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000003/csp-com-proyecto-fases/CSP_COM_PROYECTO_FASES_CONTENT_text.ftl" />
+      <where>name='CSP_COM_PROYECTO_FASE_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000003/csp-com-proyecto-fases/CSP_COM_PROYECTO_FASES_CONTENT_html.ftl" />
+      <where>name='CSP_COM_PROYECTO_FASE_CONTENT'</where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000003-contenttpl_param">
+    <!-- CSP Añadir-modificar certificado autorización participación proyecto externo -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_DATA')" />
+    </insert>
+
+    <!-- CSP Cambiar estado autorización participación proyecto externo - Unidad gestión -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_DATA')" />
+    </insert>
+
+    <!-- CSP Cambio al estado Solicitada para solicitudes de tipo RRHH -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_DATA')" />
+    </insert>
+
+    <!-- CSP Modificar autorización participación proyecto externo - Perfil investigador -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_DATA')" />
+    </insert>
+
+    <!-- CSP Proyecto Hito -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_PROYECTO_HITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_HITO_FECHA')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_PROYECTO_HITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_HITO_TIPO')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_PROYECTO_HITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_CONVOCATORIA_TITULO')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_PROYECTO_HITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_HITO_OBSERVACIONES')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_PROYECTO_HITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_PROYECTO_TITULO')" />
+    </insert>
+
+    <!-- CSP Recepción de notificaciones CVN de proyecto externo -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_DATA')" />
+    </insert>
+
+    <!-- ETI Informe de Seguimiento Final Pendiente -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_INF_SEG_FIN_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_INF_SEG_FIN_DATA')" />
+    </insert>
+
+    <!-- ETI Memoria con dictamen Revisión Mínima archivada automáticamente -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_DICT_MEM_REV_MINIMA_ARCH_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_DICT_MEM_REV_MINIMA_ARCH_DATA')" />
+    </insert>
+
+    <!-- PRC Proceso Baremacion Error -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='PRC_COM_PROCESO_BAREMACION_ERROR_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='PRC_COM_PROCESO_BAREMACION_ERROR_DATA')" />
+    </insert>
+
+    <!-- PRC Proceso Baremacion Fin -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='PRC_COM_PROCESO_BAREMACION_FIN_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='PRC_COM_PROCESO_BAREMACION_FIN_DATA')" />
+    </insert>
+
+    <!-- PRC Validar Item -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='PRC_COM_VALIDAR_ITEM_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='PRC_COM_VALIDAR_ITEM_DATA')" />
+    </insert>
+
+    <!-- ETI Memoria Archivada Automáticamente - ETI_COM_MEM_ARCHIVADA_AUT -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_MEM_ARCHIVADA_AUT_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_MEM_ARCHIVADA_AUT_DATA')" />
+    </insert>
+
+    <!-- PII Fecha límite procedimiento -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='PII_COM_FECHA_LIMITE_PROCEDIMIENTO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='PII_COM_FECHA_LIMITE_PROCEDIMIENTO_DATA')" />
+    </insert>
+
+    <!-- CSP Fases Proyecto -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_PROYECTO_FASE_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_PRO_FASE_FECHA_INICIO')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_PROYECTO_FASE_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_PRO_FASE_FECHA_FIN')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_PROYECTO_FASE_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_PRO_TIPO_FASE')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_PROYECTO_FASE_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_PRO_FASE_TITULO_PROYECTO')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_PROYECTO_FASE_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_PRO_FASE_TITULO_CONVOCATORIA')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_PROYECTO_FASE_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_PRO_FASE_OBSERVACIONES')" />
+    </insert>
+
+    <!-- CSP Fases Convocatoria -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CONVOCATORIA_FASE_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_CONV_FASE_FECHA_INICIO')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CONVOCATORIA_FASE_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_CONV_FASE_FECHA_FIN')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CONVOCATORIA_FASE_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_CONV_TIPO_FASE')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CONVOCATORIA_FASE_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_CONV_FASE_TITULO')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CONVOCATORIA_FASE_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_CONV_FASE_OBSERVACIONES')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000003-email_tpl">
+    <!-- CSP Añadir-modificar certificado autorización participación proyecto externo -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO" />
+      <column name="description" value="Aviso de cambio de visibilidad del certificado de la autorización para la participación en un proyecto externo (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- CSP Cambiar estado autorización participación proyecto externo - Unidad gestión -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO" />
+      <column name="description" value="Aviso de cambio de estado de la autorización para la participación en un proyecto externo (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- CSP Cambio al estado Solicitada para solicitudes de tipo RRHH -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH" />
+      <column name="description" value="Aviso de cambio de estado a SOLICITADA de una solicitud de tipo RRHH (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- CSP Modificar autorización participación proyecto externo - Perfil investigador -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO" />
+      <column name="description" value="Aviso de modificación de la autorización para la participación en un proyecto externo (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- CSP Proyecto Hito -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_PROYECTO_HITO" />
+      <column name="description" value="Email de Proyecto-Hito" />
+    </insert>
+
+    <!-- CSP Recepción de notificaciones CVN de proyecto externo -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO" />
+      <column name="description" value="Aviso de recepción de notificación CVN de un proyecto externo (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Informe de Seguimiento Final Pendiente -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="ETI_COM_INF_SEG_FIN" />
+      <column name="description" value="Aviso de evaluación de seguimiento Final pendiente (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Memoria con dictamen Revisión Mínima archivada automáticamente -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="ETI_COM_DICT_MEM_REV_MINIMA_ARCH" />
+      <column name="description" value="Aviso de Memoria con dictamen Revisión Mínima archivada automáticamente (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- PRC Proceso Baremacion Error -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="PRC_COM_PROCESO_BAREMACION_ERROR" />
+      <column name="description" value="Aviso de error del proceso de baremacion (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- PRC Proceso Baremacion Fin -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="PRC_COM_PROCESO_BAREMACION_FIN" />
+      <column name="description" value="Aviso de fin del proceso de baremacion (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- PRC Validar Item -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="PRC_COM_VALIDAR_ITEM" />
+      <column name="description" value="Aviso para validar item (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Memoria Archivada Automáticamente - ETI_COM_MEM_ARCHIVADA_AUT -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="ETI_COM_MEM_ARCHIVADA_AUT" />
+      <column name="description" value="Aviso de memoria archivada por inactividad (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- PII Fecha límite procedimiento -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="PII_COM_FECHA_LIMITE_PROCEDIMIENTO" />
+      <column name="description" value="Aviso de fecha límite de procedimiento (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- CSP Fases Convocatoria -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_CONVOCATORIA_FASE" />
+      <column name="description" value="Email para una Fase de una Convocatoria" />
+    </insert>
+
+    <!-- CSP Fases Proyecto -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_PROYECTO_FASE" />
+      <column name="description" value="Email para una Fase de un Proyecto" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000003-emailtpl_subjecttpl">
+    <!-- CSP Añadir-modificar certificado autorización participación proyecto externo -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_SUBJECT')" />
+    </insert>
+
+    <!-- CSP Cambiar estado autorización participación proyecto externo - Unidad gestión -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_SUBJECT')" />
+    </insert>
+
+    <!-- CSP Cambio al estado Solicitada para solicitudes de tipo RRHH -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_SUBJECT')" />
+    </insert>
+
+    <!-- CSP Modificar autorización participación proyecto externo - Perfil investigador -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_SUBJECT')" />
+    </insert>
+
+    <!-- CSP Proyecto Hito -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_PROYECTO_HITO')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_PROYECTO_HITO_SUBJECT')" />
+    </insert>
+
+    <!-- CSP Recepción de notificaciones CVN de proyecto externo -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_SUBJECT')" />
+    </insert>
+
+    <!-- ETI Informe de Seguimiento Final Pendiente -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_INF_SEG_FIN')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_INF_SEG_FIN_SUBJECT')" />
+    </insert>
+
+    <!-- ETI Memoria con dictamen Revisión Mínima archivada automáticamente -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_DICT_MEM_REV_MINIMA_ARCH')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_DICT_MEM_REV_MINIMA_ARCH_SUBJECT')" />
+    </insert>
+
+    <!-- PRC Proceso Baremacion Error -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='PRC_COM_PROCESO_BAREMACION_ERROR')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='PRC_COM_PROCESO_BAREMACION_ERROR_SUBJECT')" />
+    </insert>
+
+    <!-- PRC Proceso Baremacion Fin -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='PRC_COM_PROCESO_BAREMACION_FIN')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='PRC_COM_PROCESO_BAREMACION_FIN_SUBJECT')" />
+    </insert>
+
+    <!-- PRC Validar Item -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='PRC_COM_VALIDAR_ITEM')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='PRC_COM_VALIDAR_ITEM_SUBJECT')" />
+    </insert>
+
+    <!-- ETI Memoria Archivada Automáticamente - ETI_COM_MEM_ARCHIVADA_AUT -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_MEM_ARCHIVADA_AUT')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_MEM_ARCHIVADA_AUT_SUBJECT')" />
+    </insert>
+
+    <!-- PII Fecha límite procedimiento -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='PII_COM_FECHA_LIMITE_PROCEDIMIENTO')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='PII_COM_FECHA_LIMITE_PROCEDIMIENTO_SUBJECT')" />
+    </insert>
+
+    <!-- CSP Fases Convocatoria -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CONVOCATORIA_FASE')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CONVOCATORIA_FASE_SUBJECT')" />
+    </insert>
+
+    <!-- CSP Fases Proyecto -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_PROYECTO_FASE')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_PROYECTO_FASE_SUBJECT')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000003-emailtpl_contenttpl">
+    <!-- CSP Añadir-modificar certificado autorización participación proyecto externo -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_ADD_MODIFICAR_CERTIFICADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT')" />
+    </insert>
+
+    <!-- CSP Cambiar estado autorización participación proyecto externo - Unidad gestión -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CAMBIO_ESTADO_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT')" />
+    </insert>
+
+    <!-- CSP Cambio al estado Solicitada para solicitudes de tipo RRHH -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CAMBIO_ESTADO_SOLICITADA_SOL_TIPO_RRHH_CONTENT')" />
+    </insert>
+
+    <!-- CSP Modificar autorización participación proyecto externo - Perfil investigador -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_CONTENT')" />
+    </insert>
+
+    <!-- CSP Proyecto Hito -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_PROYECTO_HITO')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_PROYECTO_HITO_CONTENT')" />
+    </insert>
+
+    <!-- CSP Recepción de notificaciones CVN de proyecto externo -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_RECEPCION_NOTIFICACION_CVN_PROYECTO_EXTERNO_CONTENT')" />
+    </insert>
+
+    <!-- ETI Informe de Seguimiento Final Pendiente -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_INF_SEG_FIN')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_INF_SEG_FIN_CONTENT')" />
+    </insert>
+
+    <!-- ETI Memoria con dictamen Revisión Mínima archivada automáticamente -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_DICT_MEM_REV_MINIMA_ARCH')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_DICT_MEM_REV_MINIMA_ARCH_CONTENT')" />
+    </insert>
+
+    <!-- PRC Proceso Baremacion Error -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='PRC_COM_PROCESO_BAREMACION_ERROR')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='PRC_COM_PROCESO_BAREMACION_ERROR_CONTENT')" />
+    </insert>
+
+    <!-- PRC Proceso Baremacion Fin -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='PRC_COM_PROCESO_BAREMACION_FIN')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='PRC_COM_PROCESO_BAREMACION_FIN_CONTENT')" />
+    </insert>
+
+    <!-- PRC Validar Item -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='PRC_COM_VALIDAR_ITEM')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='PRC_COM_VALIDAR_ITEM_CONTENT')" />
+    </insert>
+
+    <!-- ETI Memoria Archivada Automáticamente - ETI_COM_MEM_ARCHIVADA_AUT -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_MEM_ARCHIVADA_AUT')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_MEM_ARCHIVADA_AUT_CONTENT')" />
+    </insert>
+
+    <!-- PII Fecha límite procedimiento -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='PII_COM_FECHA_LIMITE_PROCEDIMIENTO')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='PII_COM_FECHA_LIMITE_PROCEDIMIENTO_CONTENT')" />
+    </insert>
+
+    <!-- CSP Fases Convocatoria -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CONVOCATORIA_FASE')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CONVOCATORIA_FASE_CONTENT')" />
+    </insert>
+
+    <!-- CSP Fases Proyecto -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_PROYECTO_FASE')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_PROYECTO_FASE_CONTENT')" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

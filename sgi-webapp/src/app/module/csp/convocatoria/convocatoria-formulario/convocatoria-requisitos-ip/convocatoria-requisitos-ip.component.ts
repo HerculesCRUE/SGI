@@ -20,7 +20,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { ConvocatoriaActionService } from '../../convocatoria.action.service';
 import { CategoriaProfesionalModalComponent, CategoriaProfesionalModalData } from '../../modals/categoria-profesional-modal/categoria-profesional-modal.component';
 import { NivelAcademicoModalComponent, NivelAcademicoModalData } from '../../modals/nivel-academico-modal/nivel-academico-modal.component';
-import { ConvocatoriaRequisitosIPFragment } from './convocatoria-requisitos-ip.fragment';
+import { ConvocatoriaRequisitosIPFragment, RequisitoIPCategoriaProfesionalListado, RequisitoIPNivelAcademicoListado } from './convocatoria-requisitos-ip.fragment';
 
 const MSG_DELETE_KEY = marker('msg.delete.entity');
 const CONVOCATORIA_REQUISITOS_IP_MODALIDAD_CONTRATOS_KEY = marker('csp.convocatoria-requisito-ip.modalidad-contratos');
@@ -184,7 +184,7 @@ export class ConvocatoriaRequisitosIPComponent extends FormFragmentComponent<ICo
     );
   }
 
-  deleteNivelAcademico(wrapper: StatusWrapper<IRequisitoIPNivelAcademico>) {
+  deleteNivelAcademico(wrapper: StatusWrapper<RequisitoIPNivelAcademicoListado>) {
     this.subscriptions.push(
       this.dialogService.showConfirmation(this.textoDeleteNivelAcademico).subscribe(
         (aceptado) => {
@@ -196,7 +196,7 @@ export class ConvocatoriaRequisitosIPComponent extends FormFragmentComponent<ICo
     );
   }
 
-  deleteCategoriaProfesional(wrapper: StatusWrapper<IRequisitoIPCategoriaProfesional>) {
+  deleteCategoriaProfesional(wrapper: StatusWrapper<RequisitoIPCategoriaProfesionalListado>) {
     this.subscriptions.push(
       this.dialogService.showConfirmation(this.textoDeleteCategoriaProfesional).subscribe(
         (aceptado) => {

@@ -36,7 +36,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 /**
  * ConvocatoriaEntidadFinanciadoraServiceTest
  */
-public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
+class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Mock
   private ProyectoEntidadFinanciadoraRepository repository;
@@ -52,14 +52,14 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
   private ProyectoEntidadFinanciadoraService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ProyectoEntidadFinanciadoraServiceImpl(repository, proyectoRepository, fuenteFinanciacionRepository,
         tipoFinanciacionRepository);
   }
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_3" })
-  public void create_ReturnsProyectoEntidadFinanciadora() {
+  void create_ReturnsProyectoEntidadFinanciadora() {
     // given: Un nuevo ProyectoEntidadFinanciadora
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(null);
     Proyecto proyecto = buildProyecto(1L, "3", EstadoProyecto.Estado.CONCEDIDO);
@@ -99,7 +99,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_3" })
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ProyectoEntidadFinanciadora que ya tiene id
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(1L);
 
@@ -112,7 +112,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_3" })
-  public void create_WithNegativePorcentajeFinanciacion_ThrowsIllegalArgumentException() {
+  void create_WithNegativePorcentajeFinanciacion_ThrowsIllegalArgumentException() {
     // given: Un nuevo ProyectoEntidadFinanciadora con porcentaje negativo
     ProyectoEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(null);
     convocatoriaEntidadFinanciadora.setPorcentajeFinanciacion(BigDecimal.valueOf(-10));
@@ -129,7 +129,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C" })
-  public void create_WithoutProyectoId_ThrowsIllegalArgumentException() {
+  void create_WithoutProyectoId_ThrowsIllegalArgumentException() {
     // given: a ProyectoEntidadFinanciadora without proyectoId
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(null);
     proyectoEntidadFinanciadora.setProyectoId(null);
@@ -143,7 +143,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C" })
-  public void create_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
+  void create_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
     // given: a ProyectoEntidadFinanciadora with non existing Proyecto
     ProyectoEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(null);
 
@@ -158,7 +158,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_3" })
-  public void create_WithNoExistingFuenteFinanciacion_ThrowsFuenteFinanciacionNotFoundException() {
+  void create_WithNoExistingFuenteFinanciacion_ThrowsFuenteFinanciacionNotFoundException() {
     // given: a ProyectoEntidadFinanciadora with non existing FuenteFinanciacion
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(null);
     Proyecto proyecto = buildProyecto(1L, "3", EstadoProyecto.Estado.CONCEDIDO);
@@ -176,7 +176,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_3" })
-  public void create_WithFuenteFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
+  void create_WithFuenteFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
     // given: a ProyectoEntidadFinanciadora with FuenteFinanciacion activo=false
     ProyectoEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(null);
     Proyecto proyecto = buildProyecto(1L, "3", EstadoProyecto.Estado.CONCEDIDO);
@@ -195,7 +195,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_3" })
-  public void create_WithNoExistingTipoFinanciacion_ThrowsFuenteFinanciacionNotFoundException() {
+  void create_WithNoExistingTipoFinanciacion_ThrowsFuenteFinanciacionNotFoundException() {
     // given: a ProyectoEntidadFinanciadora with non existing TipoFinanciacion
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(null);
     Proyecto proyecto = buildProyecto(1L, "3", EstadoProyecto.Estado.CONCEDIDO);
@@ -214,7 +214,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_3" })
-  public void create_WithTipoFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
+  void create_WithTipoFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
     // given: a ProyectoEntidadFinanciadora with TipoFinanciacion activo=false
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(null);
     proyectoEntidadFinanciadora.getTipoFinanciacion().setActivo(false);
@@ -235,7 +235,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_3" })
-  public void update_ReturnsProyectoEntidadFinanciadora() {
+  void update_ReturnsProyectoEntidadFinanciadora() {
     // given: Un nuevo ProyectoEntidadFinanciadora con el porcentajeFinanciacion
     // actualizado
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(1L);
@@ -281,7 +281,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_3" })
-  public void update_WithNegativePorcentajeFinanciacion_ThrowsIllegalArgumentException() {
+  void update_WithNegativePorcentajeFinanciacion_ThrowsIllegalArgumentException() {
     // given: Un ProyectoEntidadFinanciadora con porcentaje negativo
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadoraOld = generarMockProyectoEntidadFinanciadora(1L);
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(1L);
@@ -300,7 +300,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C" })
-  public void update_WithIdNotExist_ThrowsProyectoEntidadFinanciadoraNotFoundException() {
+  void update_WithIdNotExist_ThrowsProyectoEntidadFinanciadoraNotFoundException() {
     // given: Un ProyectoEntidadFinanciadora a actualizar con un id que no existe
     ProyectoEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(1L);
 
@@ -314,7 +314,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_3" })
-  public void update_WithNoExistingFuenteFinanciacion_ThrowsFuenteFinanciacionNotFoundException() {
+  void update_WithNoExistingFuenteFinanciacion_ThrowsFuenteFinanciacionNotFoundException() {
     // given: a ProyectoEntidadFinanciadora with non existing FuenteFinanciacion
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(1L);
     Proyecto proyecto = buildProyecto(1L, "3", EstadoProyecto.Estado.CONCEDIDO);
@@ -333,7 +333,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_3" })
-  public void update_WithNoExistingTipoFinanciacion_ThrowsTipoFinanciacionNotFoundException() {
+  void update_WithNoExistingTipoFinanciacion_ThrowsTipoFinanciacionNotFoundException() {
     // given: a ProyectoEntidadFinanciadora with non existing TipoFinanciacion
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(1L);
     Proyecto proyecto = buildProyecto(1L, "3", EstadoProyecto.Estado.CONCEDIDO);
@@ -354,7 +354,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_3" })
-  public void update_WithFuenteFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
+  void update_WithFuenteFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
     // given: a ProyectoEntidadFinanciadora with FuenteFinanciacion activo=false
     ProyectoEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(1L);
     ProyectoEntidadFinanciadora convocatoriaEntidadFinanciadoraActualizada = generarMockProyectoEntidadFinanciadora(1L);
@@ -378,7 +378,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_3" })
-  public void update_WithTipoFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
+  void update_WithTipoFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
     // given: a ProyectoEntidadFinanciadora with TipoFinanciacion activo=false
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadora = generarMockProyectoEntidadFinanciadora(1L);
     ProyectoEntidadFinanciadora proyectoEntidadFinanciadoraActualizada = generarMockProyectoEntidadFinanciadora(1L);
@@ -404,7 +404,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_3" })
-  public void delete_WithExistingId_ReturnsProyectoEntidadFinanciadora() {
+  void delete_WithExistingId_ReturnsProyectoEntidadFinanciadora() {
     // given: existing ProyectoEntidadFinanciadora
     Long id = 1L;
     Proyecto proyecto = buildProyecto(1L, "3", EstadoProyecto.Estado.CONCEDIDO);
@@ -423,7 +423,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C" })
-  public void delete_WithNoExistingId_ThrowsNotFoundException() {
+  void delete_WithNoExistingId_ThrowsNotFoundException() {
     // given: no existing id
     Long id = 1L;
 
@@ -438,7 +438,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_3" })
-  public void findAllByProyecto_ReturnsPage() {
+  void findAllByProyecto_ReturnsPage() {
     // given: Una lista con 37 ProyectoEntidadFinanciadora para el Proyecto
     Long convocatoriaId = 1L;
     List<ProyectoEntidadFinanciadora> proyectosEntidadesFinanciadoras = new ArrayList<>();
@@ -466,7 +466,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
     Page<ProyectoEntidadFinanciadora> page = service.findAllByProyecto(convocatoriaId, null, paging);
 
     // then: Devuelve la pagina 3 con los ProyectoEntidadFinanciadora del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -480,7 +480,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_3" })
-  public void findById_ReturnsProyectoEntidadFinanciadora() {
+  void findById_ReturnsProyectoEntidadFinanciadora() {
     // given: Un ProyectoEntidadFinanciadora con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -496,7 +496,7 @@ public class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C" })
-  public void findById_WithIdNotExist_ThrowsProyectoEntidadFinanciadoraNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsProyectoEntidadFinanciadoraNotFoundException() throws Exception {
     // given: Ningun ProyectoEntidadFinanciadora con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());

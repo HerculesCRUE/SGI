@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.ConvocatoriaController;
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaFaseOutput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaPalabraClaveInput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaPalabraClaveOutput;
 import org.crue.hercules.sgi.csp.dto.RequisitoEquipoCategoriaProfesionalOutput;
@@ -26,7 +27,6 @@ import org.crue.hercules.sgi.csp.model.ConvocatoriaEnlace;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadGestora;
-import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPartida;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
@@ -115,7 +115,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsConvocatoria() throws Exception {
+  void create_ReturnsConvocatoria() throws Exception {
 
     // given: new Convocatoria
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -162,7 +162,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsConvocatoria() throws Exception {
+  void update_ReturnsConvocatoria() throws Exception {
 
     // given: existing Convocatoria to be updated
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -209,7 +209,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void registrar_ReturnsConvocatoria() throws Exception {
+  void registrar_ReturnsConvocatoria() throws Exception {
     // given: existing Convocatoria id to registrar
     Long convocatoriaId = 1L;
 
@@ -229,7 +229,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void enable_ReturnsConvocatoria() throws Exception {
+  void enable_ReturnsConvocatoria() throws Exception {
     // given: existing Convocatoria to be enabled
     Long id = 1L;
 
@@ -251,7 +251,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void disable_ReturnsConvocatoria() throws Exception {
+  void disable_ReturnsConvocatoria() throws Exception {
     // given: existing Convocatoria to be disabled
     Long id = 1L;
 
@@ -273,7 +273,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void modificable_WhenModificableReturnsTrue_Returns200() throws Exception {
+  void modificable_WhenModificableReturnsTrue_Returns200() throws Exception {
 
     // given: existing Convocatoria When modificable returns true
     Long id = 1L;
@@ -291,7 +291,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void modificable_ConvocatoriaRegistradaWithSolicitudesOrProyectosIsTrue_Returns204() throws Exception {
+  void modificable_ConvocatoriaRegistradaWithSolicitudesOrProyectosIsTrue_Returns204() throws Exception {
 
     // given: existing Convocatoria registrada with Solicitudes or Proyectos
     Long id = 1L;
@@ -309,7 +309,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void registrable_WhenRegistrableReturnsTrue_Returns200() throws Exception {
+  void registrable_WhenRegistrableReturnsTrue_Returns200() throws Exception {
 
     // given: existing Convocatoria When registrable returns true
     Long id = 1L;
@@ -326,7 +326,7 @@ class ConvocatoriaIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void registrable_WhenRegistrableReturnsFalse_Returns204() throws Exception {
+  void registrable_WhenRegistrableReturnsFalse_Returns204() throws Exception {
 
     // given: existing Convocatoria When registrable returns false
     Long id = 1L;
@@ -344,7 +344,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void existsById_Returns200() throws Exception {
+  void existsById_Returns200() throws Exception {
     // given: existing id
     Long id = 1L;
     // when: exists by id
@@ -356,7 +356,7 @@ class ConvocatoriaIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void existsById_Returns204() throws Exception {
+  void existsById_Returns204() throws Exception {
     // given: no existing id
     Long id = 1L;
     // when: exists by id
@@ -369,7 +369,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsConvocatoria() throws Exception {
+  void findById_ReturnsConvocatoria() throws Exception {
     Long id = 1L;
 
     final ResponseEntity<Convocatoria> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -406,7 +406,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsConvocatoriaSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsConvocatoriaSubList() throws Exception {
 
     // given: data for Convocatoria
 
@@ -428,7 +428,7 @@ class ConvocatoriaIT extends BaseIT {
     // given: Convocatoria data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<Convocatoria> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
@@ -445,7 +445,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllRestringidos_WithPagingSortingAndFiltering_ReturnsConvocatoriaSubList() throws Exception {
+  void findAllRestringidos_WithPagingSortingAndFiltering_ReturnsConvocatoriaSubList() throws Exception {
 
     // given: data for Convocatoria
 
@@ -467,7 +467,7 @@ class ConvocatoriaIT extends BaseIT {
     // given: Convocatoria data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<Convocatoria> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
@@ -484,7 +484,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllTodosRestringidos_WithPagingSortingAndFiltering_ReturnsConvocatoriaSubList() throws Exception {
+  void findAllTodosRestringidos_WithPagingSortingAndFiltering_ReturnsConvocatoriaSubList() throws Exception {
 
     // given: data for Convocatoria
 
@@ -511,7 +511,7 @@ class ConvocatoriaIT extends BaseIT {
     // given: Convocatoria data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<Convocatoria> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
@@ -527,7 +527,7 @@ class ConvocatoriaIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllTodosRestringidos_EmptyList_Returns204() throws Exception {
+  void findAllTodosRestringidos_EmptyList_Returns204() throws Exception {
 
     // given: no data for Convocatoria
     // when: find Convocatoria
@@ -559,7 +559,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllConvocatoriaEntidadConvocantes_WithPagingSortingAndFiltering_ReturnsConvocatoriaEntidadConvocanteSubList()
+  void findAllConvocatoriaEntidadConvocantes_WithPagingSortingAndFiltering_ReturnsConvocatoriaEntidadConvocanteSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CENTGES-V")));
@@ -579,7 +579,7 @@ class ConvocatoriaIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ConvocatoriaEntidadConvocante> convocatoriaEntidadConvocantes = response.getBody();
-    Assertions.assertThat(convocatoriaEntidadConvocantes.size()).isEqualTo(3);
+    Assertions.assertThat(convocatoriaEntidadConvocantes).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -602,7 +602,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllConvocatoriaEntidadFinanciadora_WithPagingSortingAndFiltering_ReturnsConvocatoriaEntidadFinanciadoraSubList()
+  void findAllConvocatoriaEntidadFinanciadora_WithPagingSortingAndFiltering_ReturnsConvocatoriaEntidadFinanciadoraSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CENTGES-V")));
@@ -622,7 +622,7 @@ class ConvocatoriaIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ConvocatoriaEntidadFinanciadora> convocatoriaEntidadFinanciadoras = response.getBody();
-    Assertions.assertThat(convocatoriaEntidadFinanciadoras.size()).isEqualTo(3);
+    Assertions.assertThat(convocatoriaEntidadFinanciadoras).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -645,7 +645,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllConvocatoriaEntidadGestora_WithPagingSortingAndFiltering_ReturnsConvocatoriaEntidadGestoraSubList()
+  void findAllConvocatoriaEntidadGestora_WithPagingSortingAndFiltering_ReturnsConvocatoriaEntidadGestoraSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CENTGES-V")));
@@ -665,7 +665,7 @@ class ConvocatoriaIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ConvocatoriaEntidadGestora> convocatoriasEntidadesGestoras = response.getBody();
-    Assertions.assertThat(convocatoriasEntidadesGestoras.size()).isEqualTo(3);
+    Assertions.assertThat(convocatoriasEntidadesGestoras).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -688,7 +688,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllConvocatoriaAreaTematica_WithPagingSortingAndFiltering_ReturnsConvocatoriaAreaTematicaSubList()
+  void findAllConvocatoriaAreaTematica_WithPagingSortingAndFiltering_ReturnsConvocatoriaAreaTematicaSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CATEM-V")));
@@ -708,7 +708,7 @@ class ConvocatoriaIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ConvocatoriaAreaTematica> convocatoriasAreasTematicas = response.getBody();
-    Assertions.assertThat(convocatoriasAreasTematicas.size()).isEqualTo(3);
+    Assertions.assertThat(convocatoriasAreasTematicas).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -731,7 +731,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllConvocatoriaDocumento_WithPagingSortingAndFiltering_ReturnsConvocatoriaDocumentoSubList()
+  void findAllConvocatoriaDocumento_WithPagingSortingAndFiltering_ReturnsConvocatoriaDocumentoSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CON-V")));
@@ -751,7 +751,7 @@ class ConvocatoriaIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ConvocatoriaDocumento> convocatoriasDocumentos = response.getBody();
-    Assertions.assertThat(convocatoriasDocumentos.size()).isEqualTo(3);
+    Assertions.assertThat(convocatoriasDocumentos).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -774,7 +774,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllConvocatoriaEnlace_WithPagingSortingAndFiltering_ReturnsConvocatoriaEnlaceSubList()
+  void findAllConvocatoriaEnlace_WithPagingSortingAndFiltering_ReturnsConvocatoriaEnlaceSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CENL-V")));
@@ -794,7 +794,7 @@ class ConvocatoriaIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ConvocatoriaEnlace> convocatoriasEnlaces = response.getBody();
-    Assertions.assertThat(convocatoriasEnlaces.size()).isEqualTo(3);
+    Assertions.assertThat(convocatoriasEnlaces).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -816,7 +816,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllConvocatoriaFase_WithPagingSortingAndFiltering_ReturnsConvocatoriaFaseSubList() throws Exception {
+  void findAllConvocatoriaFase_WithPagingSortingAndFiltering_ReturnsConvocatoriaFaseSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CENL-V")));
     headers.add("X-Page", "0");
@@ -829,12 +829,12 @@ class ConvocatoriaIT extends BaseIT {
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_FASES)
         .queryParam("s", sort).queryParam("q", filter).buildAndExpand(convocatoriaId).toUri();
 
-    final ResponseEntity<List<ConvocatoriaFase>> response = restTemplate.exchange(uri, HttpMethod.GET,
-        buildRequest(headers, null), new ParameterizedTypeReference<List<ConvocatoriaFase>>() {
+    final ResponseEntity<List<ConvocatoriaFaseOutput>> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(headers, null), new ParameterizedTypeReference<List<ConvocatoriaFaseOutput>>() {
         });
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    final List<ConvocatoriaFase> convocatoriasFases = response.getBody();
+    final List<ConvocatoriaFaseOutput> convocatoriasFases = response.getBody();
     Assertions.assertThat(convocatoriasFases.size()).isEqualTo(3);
     Assertions.assertThat(convocatoriasFases.get(0).getObservaciones()).as("get(0).getObservaciones()")
         .isEqualTo("observaciones-" + String.format("%03d", 3));
@@ -852,7 +852,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllConvocatoriaHito_WithPagingSortingAndFiltering_ReturnsConvocatoriaHitoSubList() throws Exception {
+  void findAllConvocatoriaHito_WithPagingSortingAndFiltering_ReturnsConvocatoriaHitoSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CHIT-V")));
     headers.add("X-Page", "0");
@@ -872,7 +872,7 @@ class ConvocatoriaIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     final List<ConvocatoriaHito> convocatoriasHitos = response.getBody();
-    Assertions.assertThat(convocatoriasHitos.size()).isEqualTo(3);
+    Assertions.assertThat(convocatoriasHitos).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -895,7 +895,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllConvocatoriaPeriodoJustificacion_WithPagingSortingAndFiltering_ReturnsConvocatoriaPeriodoJustificacionSubList()
+  void findAllConvocatoriaPeriodoJustificacion_WithPagingSortingAndFiltering_ReturnsConvocatoriaPeriodoJustificacionSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CENL-V")));
@@ -915,7 +915,7 @@ class ConvocatoriaIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ConvocatoriaPeriodoJustificacion> convocatoriaPeriodoJustificaciones = response.getBody();
-    Assertions.assertThat(convocatoriaPeriodoJustificaciones.size()).isEqualTo(3);
+    Assertions.assertThat(convocatoriaPeriodoJustificaciones).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -938,7 +938,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllConvocatoriaPeriodoSeguimientoCientifico_WithPagingSortingAndFiltering_ReturnsConvocatoriaPeriodoSeguimientoCientificoSubList()
+  void findAllConvocatoriaPeriodoSeguimientoCientifico_WithPagingSortingAndFiltering_ReturnsConvocatoriaPeriodoSeguimientoCientificoSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CPSCI-V")));
@@ -961,7 +961,7 @@ class ConvocatoriaIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ConvocatoriaPeriodoSeguimientoCientifico> convocatoriaPeriodoSeguimientoCientificoes = response
         .getBody();
-    Assertions.assertThat(convocatoriaPeriodoSeguimientoCientificoes.size()).isEqualTo(3);
+    Assertions.assertThat(convocatoriaPeriodoSeguimientoCientificoes).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -993,7 +993,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllConvocatoriaConceptoGastoPermitidos_WithPagingSortingAndFiltering_ReturnsConvocatoriaConceptoGastoPermitidosSubList()
+  void findAllConvocatoriaConceptoGastoPermitidos_WithPagingSortingAndFiltering_ReturnsConvocatoriaConceptoGastoPermitidosSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CGAS-V")));
@@ -1014,7 +1014,7 @@ class ConvocatoriaIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ConvocatoriaConceptoGasto> convocatoriaConceptoGastos = response.getBody();
-    Assertions.assertThat(convocatoriaConceptoGastos.size()).isEqualTo(3);
+    Assertions.assertThat(convocatoriaConceptoGastos).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -1031,7 +1031,7 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllConvocatoriaConceptoGastoNoPermitidos_WithPagingSortingAndFiltering_ReturnsConvocatoriaConceptoGastoNoPermitidosSubList()
+  void findAllConvocatoriaConceptoGastoNoPermitidos_WithPagingSortingAndFiltering_ReturnsConvocatoriaConceptoGastoNoPermitidosSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CGAS-V")));
@@ -1052,7 +1052,7 @@ class ConvocatoriaIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ConvocatoriaConceptoGasto> convocatoriaConceptoGastos = response.getBody();
-    Assertions.assertThat(convocatoriaConceptoGastos.size()).isEqualTo(3);
+    Assertions.assertThat(convocatoriaConceptoGastos).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -1102,7 +1102,7 @@ class ConvocatoriaIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     List<ConvocatoriaPalabraClaveOutput> updated = response.getBody();
-    Assertions.assertThat(updated.size()).isEqualTo(3);
+    Assertions.assertThat(updated).hasSize(3);
 
     Assertions.assertThat(updated.get(0)).isNotNull();
     Assertions.assertThat(updated.get(1)).isNotNull();
@@ -1145,7 +1145,7 @@ class ConvocatoriaIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     List<Convocatoria> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(1);
+    Assertions.assertThat(responseData).hasSize(1);
 
     Assertions.assertThat(responseData.get(0)).isNotNull();
     Assertions.assertThat(responseData.get(0).getId()).isEqualTo(1);
@@ -1221,7 +1221,7 @@ class ConvocatoriaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
     final List<ConvocatoriaPartida> convocatoriaConceptoGastos = response.getBody();
-    Assertions.assertThat(convocatoriaConceptoGastos.size()).isEqualTo(3);
+    Assertions.assertThat(convocatoriaConceptoGastos).hasSize(3);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -1352,7 +1352,7 @@ class ConvocatoriaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("2");
 
     final List<ConvocatoriaConceptoGastoCodigoEc> convocatoriaConceptoGastos = response.getBody();
-    Assertions.assertThat(convocatoriaConceptoGastos.size()).isEqualTo(2);
+    Assertions.assertThat(convocatoriaConceptoGastos).hasSize(2);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -1405,7 +1405,7 @@ class ConvocatoriaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("1");
 
     final List<ConvocatoriaConceptoGastoCodigoEc> convocatoriaConceptoGastos = response.getBody();
-    Assertions.assertThat(convocatoriaConceptoGastos.size()).isEqualTo(1);
+    Assertions.assertThat(convocatoriaConceptoGastos).hasSize(1);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -1524,7 +1524,7 @@ class ConvocatoriaIT extends BaseIT {
         });
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    Assertions.assertThat(response.getBody().size()).isEqualTo(3);
+    Assertions.assertThat(response.getBody()).hasSize(3);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -1556,7 +1556,7 @@ class ConvocatoriaIT extends BaseIT {
         });
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    Assertions.assertThat(response.getBody().size()).isEqualTo(3);
+    Assertions.assertThat(response.getBody()).hasSize(3);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -1588,7 +1588,7 @@ class ConvocatoriaIT extends BaseIT {
         });
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    Assertions.assertThat(response.getBody().size()).isEqualTo(3);
+    Assertions.assertThat(response.getBody()).hasSize(3);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -1620,7 +1620,7 @@ class ConvocatoriaIT extends BaseIT {
         });
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    Assertions.assertThat(response.getBody().size()).isEqualTo(3);
+    Assertions.assertThat(response.getBody()).hasSize(3);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {

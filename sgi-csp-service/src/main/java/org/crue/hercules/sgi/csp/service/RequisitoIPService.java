@@ -8,6 +8,7 @@ import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.RequisitoIP;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.RequisitoIPRepository;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.stereotype.Service;
@@ -27,8 +28,7 @@ public class RequisitoIPService {
   private final RequisitoIPRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
 
-  public RequisitoIPService(RequisitoIPRepository repository, ConvocatoriaRepository convocatoriaRepository,
-      ConvocatoriaService convocatoriaService) {
+  public RequisitoIPService(RequisitoIPRepository repository, ConvocatoriaRepository convocatoriaRepository) {
     this.repository = repository;
     this.convocatoriaRepository = convocatoriaRepository;
   }
@@ -43,20 +43,18 @@ public class RequisitoIPService {
   public RequisitoIP create(RequisitoIP requisitoIP) {
     log.debug("create(RequisitoIP requisitoIP) - start");
 
-    Assert.notNull(requisitoIP.getId(),
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(RequisitoIP.class)).build());
+    AssertHelper.idNotNull(requisitoIP.getId(), RequisitoIP.class);
 
     Assert.isTrue(!repository.existsById(requisitoIP.getId()),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key("org.crue.hercules.sgi.csp.exceptions.RelatedEntityAlreadyExists.message")
-            .parameter("entity", ApplicationContextSupport.getMessage(RequisitoIP.class))
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(RequisitoIP.class))
             .parameter("related", ApplicationContextSupport.getMessage(Convocatoria.class)).build());
 
-    convocatoriaRepository.findById(requisitoIP.getId())
-        .orElseThrow(() -> new ConvocatoriaNotFoundException(requisitoIP.getId()));
+    if (!convocatoriaRepository.existsById(requisitoIP.getId())) {
+      throw new ConvocatoriaNotFoundException(requisitoIP.getId());
+    }
 
     RequisitoIP returnValue = repository.save(requisitoIP);
 
@@ -76,11 +74,7 @@ public class RequisitoIPService {
   public RequisitoIP update(RequisitoIP requisitoIPActualizar, Long idConvocatoria) {
     log.debug("update(RequisitoIP requisitoIPActualizar) - start");
 
-    Assert.notNull(idConvocatoria,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(RequisitoIP.class)).build());
+    AssertHelper.idNotNull(idConvocatoria, RequisitoIP.class);
 
     return repository.findById(idConvocatoria).map(requisitoIP -> {
       requisitoIP.setFechaMinimaNivelAcademico(requisitoIPActualizar.getFechaMinimaNivelAcademico());

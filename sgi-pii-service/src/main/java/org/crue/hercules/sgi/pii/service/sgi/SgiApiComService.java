@@ -3,13 +3,11 @@ package org.crue.hercules.sgi.pii.service.sgi;
 import java.util.Arrays;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.crue.hercules.sgi.pii.config.RestApiProperties;
 import org.crue.hercules.sgi.pii.dto.com.EmailInput;
 import org.crue.hercules.sgi.pii.dto.com.EmailOutput;
 import org.crue.hercules.sgi.pii.dto.com.EmailParam;
+import org.crue.hercules.sgi.pii.dto.com.PiiComFechaLimiteProcedimientoData;
 import org.crue.hercules.sgi.pii.dto.com.PiiComMesesHastaFinPrioridadSolicitudProteccionData;
 import org.crue.hercules.sgi.pii.dto.com.Recipient;
 import org.crue.hercules.sgi.pii.dto.com.Status;
@@ -19,6 +17,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -26,8 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 public class SgiApiComService extends SgiApiBaseService {
 
   private static final String DATA = "_DATA";
-  private static final String PATH_EMAILS = "/emails";
-  private static final String PATH_PARAMETER_ID = "/{id}";
+  private static final String PATH_SEPARATOR = "/";
+  private static final String PATH_EMAILS = PATH_SEPARATOR + "emails";
+  private static final String PATH_PARAMETER_ID = PATH_SEPARATOR + "{id}";
 
   private static final String TEMPLATE_PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION = "PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION";
   private static final String TEMPLATE_PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_PARAM = TEMPLATE_PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION
@@ -35,6 +37,10 @@ public class SgiApiComService extends SgiApiBaseService {
 
   private static final String TEMPLATE_PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION = "PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION";
   private static final String TEMPLATE_PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_PARAM = TEMPLATE_PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION
+      + DATA;
+
+  private static final String TEMPLATE_PII_COM_FECHA_LIMITE_PROCEDIMIENTO = "PII_COM_FECHA_LIMITE_PROCEDIMIENTO";
+  private static final String TEMPLATE_PII_COM_FECHA_LIMITE_PROCEDIMIENTO_PARAM = TEMPLATE_PII_COM_FECHA_LIMITE_PROCEDIMIENTO
       + DATA;
 
   private final ObjectMapper mapper;
@@ -92,5 +98,13 @@ public class SgiApiComService extends SgiApiBaseService {
     return this.createComunicado(data, recipients,
         TEMPLATE_PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION,
         TEMPLATE_PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_PARAM);
+  }
+
+  public EmailOutput createComunicadoFechaLimiteProcedimiento(PiiComFechaLimiteProcedimientoData data,
+      List<Recipient> recipients) throws JsonProcessingException {
+
+    return this.createComunicado(data, recipients,
+        TEMPLATE_PII_COM_FECHA_LIMITE_PROCEDIMIENTO,
+        TEMPLATE_PII_COM_FECHA_LIMITE_PROCEDIMIENTO_PARAM);
   }
 }

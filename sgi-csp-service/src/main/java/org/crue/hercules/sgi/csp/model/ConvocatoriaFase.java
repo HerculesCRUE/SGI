@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -69,6 +70,16 @@ public class ConvocatoriaFase extends BaseEntity {
   /** Observaciones. */
   @Column(name = "observaciones", length = 2000)
   private String observaciones;
+
+  /** Aviso 1 */
+  @OneToOne
+  @JoinColumn(name = "convocatoria_fase_aviso1_id", nullable = true, foreignKey = @ForeignKey(name = "FK_CONVOCATORIAFASE_CONVOCATORIAFASEAVISO1"))
+  private ConvocatoriaFaseAviso convocatoriaFaseAviso1;
+
+  /** Aviso 2 */
+  @OneToOne
+  @JoinColumn(name = "convocatoria_fase_aviso2_id", nullable = true, foreignKey = @ForeignKey(name = "FK_CONVOCATORIAFASE_CONVOCATORIAFASEAVISO2"))
+  private ConvocatoriaFaseAviso convocatoriaFaseAviso2;
 
   // Relation mappings for JPA metamodel generation only
   @ManyToOne

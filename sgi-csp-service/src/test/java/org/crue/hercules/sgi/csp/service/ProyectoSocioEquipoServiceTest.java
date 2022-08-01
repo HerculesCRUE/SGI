@@ -32,7 +32,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-public class ProyectoSocioEquipoServiceTest extends BaseServiceTest {
+class ProyectoSocioEquipoServiceTest extends BaseServiceTest {
 
   @Mock
   private ProyectoSocioEquipoRepository repository;
@@ -43,12 +43,12 @@ public class ProyectoSocioEquipoServiceTest extends BaseServiceTest {
   private ProyectoSocioEquipoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ProyectoSocioEquipoServiceImpl(repository, proyectoSocioRepository);
   }
 
   @Test
-  public void update_ReturnsProyectoSocioEquipo() {
+  void update_ReturnsProyectoSocioEquipo() {
     // given: una lista con uno de los ProyectoSocioEquipo actualizado,
     // otro nuevo y sin el otros existente
     Long proyectoSocioId = 1L;
@@ -124,7 +124,7 @@ public class ProyectoSocioEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithtudProyectoSocioNotExist_ThrowsProyectoSocioNotFoundException() {
+  void update_WithtudProyectoSocioNotExist_ThrowsProyectoSocioNotFoundException() {
     // given: a ProyectoSocioEquipo with non existing
     // ProyectoSocio
     Long proyectoSocioId = 1L;
@@ -140,7 +140,7 @@ public class ProyectoSocioEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsProyectoSocioEquipoNotFoundException() {
+  void update_WithIdNotExist_ThrowsProyectoSocioEquipoNotFoundException() {
     // given: Un ProyectoSocioEquipo actualizado con un id que no existe
     Long proyectoSocioId = 1L;
     ProyectoSocio proyectoSocio = generarMockProyectoSocio(proyectoSocioId);
@@ -163,7 +163,7 @@ public class ProyectoSocioEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithProyectoSocioChange_ThrowsIllegalArgumentException() {
+  void update_WithProyectoSocioChange_ThrowsIllegalArgumentException() {
     // given:Se actualiza ProyectoSocio
     Long proyectoSocioId = 1L;
     ProyectoSocio proyectoSocio = generarMockProyectoSocio(proyectoSocioId);
@@ -189,7 +189,7 @@ public class ProyectoSocioEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsProyectoSocioEquipo() {
+  void findById_ReturnsProyectoSocioEquipo() {
     // given: Un ProyectoSocioEquipo con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.of(generarMockProyectoSocioEquipo(idBuscado)));
@@ -203,7 +203,7 @@ public class ProyectoSocioEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsProyectoSocioEquipoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsProyectoSocioEquipoNotFoundException() throws Exception {
     // given: Ningun ProyectoSocioEquipo con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -215,7 +215,7 @@ public class ProyectoSocioEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByProyectoSocio_ReturnsPage() {
+  void findAllByProyectoSocio_ReturnsPage() {
     // given: Una lista con 37 ProyectoSocioEquipo
     Long solicitudId = 1L;
     List<ProyectoSocioEquipo> proyectoPeriodoPago = new ArrayList<>();
@@ -244,7 +244,7 @@ public class ProyectoSocioEquipoServiceTest extends BaseServiceTest {
     Page<ProyectoSocioEquipo> page = service.findAllByProyectoSocio(solicitudId, null, paging);
 
     // then: Devuelve la pagina 3 con los ProyectoSocioPeriodoPAgo del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

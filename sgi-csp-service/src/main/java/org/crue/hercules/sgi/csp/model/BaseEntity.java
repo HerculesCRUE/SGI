@@ -21,6 +21,15 @@ public abstract class BaseEntity extends Auditable implements Identifiable, Seri
    * Es el tamaño que, por defecto, da Hiberante a un campo de tipo String.
    */
   public static final int EXTERNAL_REF_LENGTH = 255;
+  /**
+   * Longitud maxima de un texto largo
+   */
+  public static final int DEFAULT_LONG_TEXT_LENGTH = 2000;
+
+  /**
+   * Longitud maxima de un texto
+   */
+  public static final int DEFAULT_TEXT_LENGTH = 250;
 
   /** Serial version. */
   private static final long serialVersionUID = 1L;

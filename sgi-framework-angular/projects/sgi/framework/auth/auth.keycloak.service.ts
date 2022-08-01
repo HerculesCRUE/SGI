@@ -118,7 +118,8 @@ export class AuthKeycloakService extends SgiAuthService {
       isAuthenticated: this.keycloak.authenticated,
       userRefId: token.user_ref_id,
       authorities: token.realm_access?.roles ? token.realm_access.roles : [],
-      modules: token.realm_access?.roles ? extractModuleAccess(token.realm_access?.roles) : []
+      modules: token.realm_access?.roles ? extractModuleAccess(token.realm_access?.roles) : [],
+      preferredUsername: token.preferred_username
     };
   }
 

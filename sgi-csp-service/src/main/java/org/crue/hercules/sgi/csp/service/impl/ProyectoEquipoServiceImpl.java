@@ -8,13 +8,19 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
+import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
+import org.crue.hercules.sgi.csp.exceptions.MissingInvestigadorPrincipalInProyectoEquipoException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoEquipoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
+import org.crue.hercules.sgi.csp.model.EstadoProyecto.Estado;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
+import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoEquipoSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoEquipoService;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
@@ -39,13 +45,15 @@ public class ProyectoEquipoServiceImpl implements ProyectoEquipoService {
 
   private final ProyectoEquipoRepository repository;
   private final ProyectoRepository proyectoRepository;
+  private final SolicitudRepository solicitudRepository;
   private final ProyectoHelper proyectoHelper;
   private final SgiConfigProperties sgiConfigProperties;
 
   public ProyectoEquipoServiceImpl(ProyectoEquipoRepository repository, ProyectoRepository proyectoRepository,
-      ProyectoHelper proyectoHelper, SgiConfigProperties sgiConfigProperties) {
+      SolicitudRepository solicitudRepository, ProyectoHelper proyectoHelper, SgiConfigProperties sgiConfigProperties) {
     this.repository = repository;
     this.proyectoRepository = proyectoRepository;
+    this.solicitudRepository = solicitudRepository;
     this.proyectoHelper = proyectoHelper;
     this.sgiConfigProperties = sgiConfigProperties;
   }
@@ -158,6 +166,17 @@ public class ProyectoEquipoServiceImpl implements ProyectoEquipoService {
 
       proyectoEquipoAnterior = proyectoEquipo;
 
+    }
+
+    if (proyecto.getSolicitudId() != null && proyecto.getEstado().getEstado().equals(Estado.CONCEDIDO)) {
+      Solicitud solicitud = solicitudRepository.findById(proyecto.getSolicitudId())
+          .orElseThrow(() -> new SolicitudNotFoundException(proyecto.getSolicitudId()));
+
+      if (solicitud.getFormularioSolicitud().equals(FormularioSolicitud.PROYECTO)
+          && proyectoEquipoAll.stream().map(ProyectoEquipo::getPersonaRef)
+              .noneMatch(personaRef -> personaRef.equals(solicitud.getSolicitanteRef()))) {
+        throw new MissingInvestigadorPrincipalInProyectoEquipoException();
+      }
     }
 
     List<ProyectoEquipo> returnValue = repository.saveAll(proyectoEquipoAll);

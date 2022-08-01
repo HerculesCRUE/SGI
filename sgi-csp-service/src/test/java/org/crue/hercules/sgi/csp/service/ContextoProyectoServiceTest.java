@@ -19,7 +19,7 @@ import org.mockito.invocation.InvocationOnMock;
 /**
  * ContextoProyectoServiceTest
  */
-public class ContextoProyectoServiceTest extends BaseServiceTest {
+class ContextoProyectoServiceTest extends BaseServiceTest {
 
   @Mock
   private ContextoProyectoRepository repository;
@@ -29,12 +29,12 @@ public class ContextoProyectoServiceTest extends BaseServiceTest {
   private ContextoProyectoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ContextoProyectoServiceImpl(repository, proyectoRepository);
   }
 
   @Test
-  public void create_ReturnsContextoProyecto() {
+  void create_ReturnsContextoProyecto() {
     // given: Un nuevo ContextoProyecto
     ContextoProyecto contextoProyecto = generarMockContextoProyecto(null);
 
@@ -55,7 +55,7 @@ public class ContextoProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ContextoProyecto que ya tiene id
     ContextoProyecto contextoProyecto = generarMockContextoProyecto(1L);
 
@@ -66,7 +66,7 @@ public class ContextoProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutProyecto_ThrowsIllegalArgumentException() {
+  void create_WithoutProyecto_ThrowsIllegalArgumentException() {
     // given: Un nuevo ContextoProyecto sin proyecto
     ContextoProyecto contextoProyecto = generarMockContextoProyecto(null);
     contextoProyecto.setProyectoId(null);
@@ -78,7 +78,7 @@ public class ContextoProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedProyecto_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedProyecto_ThrowsIllegalArgumentException() {
     // given: Un nuevo ContextoProyecto con proyecto ya asignada
     Long proyectoId = 1L;
     ContextoProyecto contextoProyecto = generarMockContextoProyecto(null);
@@ -92,7 +92,7 @@ public class ContextoProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsContextoProyecto() {
+  void update_ReturnsContextoProyecto() {
     // given: Un nuevo ContextoProyecto con el sexo actualizado
     ContextoProyecto contextoProyecto = generarMockContextoProyecto(1L);
     ContextoProyecto contextoProyectoActualizado = generarMockContextoProyecto(1L);
@@ -114,7 +114,7 @@ public class ContextoProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsContextoProyectoNotFoundException() {
+  void update_WithIdNotExist_ThrowsContextoProyectoNotFoundException() {
     // given: Un ContextoProyecto actualizado con un id que no existe
     ContextoProyecto contextoProyecto = generarMockContextoProyecto(1L);
 
@@ -128,7 +128,7 @@ public class ContextoProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findByProyectoId_ReturnsContextoProyecto() {
+  void findByProyectoId_ReturnsContextoProyecto() {
     // given: Un ContextoProyecto con el id buscado
     Long idBuscado = 1L;
 
@@ -148,7 +148,7 @@ public class ContextoProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findByProyectoId_WithIdNotExist_ThrowsProyectoNotFoundExceptionException() throws Exception {
+  void findByProyectoId_WithIdNotExist_ThrowsProyectoNotFoundExceptionException() throws Exception {
     // given: Ninguna Proyecto con el id buscado
     Long idBuscado = 1L;
 

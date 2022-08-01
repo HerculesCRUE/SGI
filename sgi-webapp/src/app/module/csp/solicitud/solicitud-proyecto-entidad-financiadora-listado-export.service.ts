@@ -76,7 +76,7 @@ export class SolicitudProyectoEntidadFinanciadoraListadoExportService
                   );
 
               }),
-              mergeAll(),
+              mergeAll(this.DEFAULT_CONCURRENT),
               map(() => {
                 solicitudData.entidadesFinanciadorasConvocatoria = entidadesFinanciadoras;
                 return solicitudData;

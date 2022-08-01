@@ -295,12 +295,12 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
   }
 
   protected compareClasificacionSGENombreRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
-    if (!itemA || !itemB || itemA.level < 1 || itemB.level < 1) {
+    if (!itemA || !itemB || itemA.level < 2 || itemB.level < 2) {
       return 0;
     }
 
-    const nombreClasificacionSGEItemA = this.getItemLevel(itemA, 1)?.item?.clasificacionSGE?.nombre ?? '';
-    const nombreClasificacionSGEItemB = this.getItemLevel(itemB, 1)?.item?.clasificacionSGE?.nombre ?? '';
+    const nombreClasificacionSGEItemA = this.getItemLevel(itemA, 2)?.item?.clasificacionSGE?.nombre ?? '';
+    const nombreClasificacionSGEItemB = this.getItemLevel(itemB, 2)?.item?.clasificacionSGE?.nombre ?? '';
     return nombreClasificacionSGEItemA.localeCompare(nombreClasificacionSGEItemB);
   }
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
-import { ESTADO_MAP, ISolicitudProteccion } from '@core/models/pii/solicitud-proteccion';
+import { ESTADO_MAP } from '@core/models/pii/solicitud-proteccion';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { IPais } from '@core/models/sgo/pais';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
@@ -11,7 +11,6 @@ import { PaisService } from '@core/services/sgo/pais/pais.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
-import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { NGXLogger } from 'ngx-logger';
 import { from, Observable, of } from 'rxjs';
 import { map, mergeMap, switchMap } from 'rxjs/operators';
@@ -47,7 +46,6 @@ export class InvencionSolicitudesProteccionListadoExportService extends
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
-    private luxonDatePipe: LuxonDatePipe,
     private readonly invencionService: InvencionService,
     private readonly paisService: PaisService
   ) {
@@ -80,7 +78,7 @@ export class InvencionSolicitudesProteccionListadoExportService extends
                 solicitud.pais = paisResponse;
                 return data;
               }));
-          })
+          }, this.DEFAULT_CONCURRENT)
         );
       })
     );

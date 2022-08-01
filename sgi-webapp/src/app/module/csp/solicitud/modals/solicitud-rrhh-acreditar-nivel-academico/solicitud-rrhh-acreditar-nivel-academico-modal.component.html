@@ -1,0 +1,59 @@
+<sgi-dialog-header title="{{'title.csp.solicitud.solicitud-rrhh.requisitos.acreditar-requisito' | translate}}">
+</sgi-dialog-header>
+<sgi-dialog-content>
+  <form [formGroup]="formGroup" fxLayout="column">
+
+    <div fxLayout="row" fxLayoutGap="10px">
+      <!-- Nivel Academico -->
+      <mat-form-field>
+        <mat-label>{{'csp.solicitud.solicitud-rrhh.requisitos.nivel-academico' | translate}}</mat-label>
+        <input matInput formControlName="nivelAcademico"
+          placeholder="{{'csp.solicitud.solicitud-rrhh.requisitos.nivel-academico' | translate}}">
+      </mat-form-field>
+
+      <!-- Fecha minima -->
+      <mat-form-field>
+        <mat-label>{{'csp.solicitud.solicitud-rrhh.requisitos.fecha-minima'| translate}}</mat-label>
+        <input matInput [matDatepicker]="pickerFechaMinima" formControlName="fechaMinima">
+        <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaMinima">
+        </mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaMinima>
+        </mat-datepicker>
+      </mat-form-field>
+
+      <!-- Fecha maxima -->
+      <mat-form-field>
+        <mat-label>{{'csp.solicitud.solicitud-rrhh.requisitos.fecha-maxima'| translate}}</mat-label>
+        <input matInput [matDatepicker]="pickerFechaMaxima" formControlName="fechaMaxima">
+        <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaMaxima">
+        </mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaMaxima>
+        </mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div fxLayout="row" fxLayoutGap="10px">
+      <!-- Documento -->
+      <mat-form-field class="input-form" fxFlex="50">
+        <mat-label>{{'csp.solicitud.solicitud-rrhh.requisitos.documento-seleccionar' | translate}}</mat-label>
+        <sgi-file-upload #uploader
+          placeholder="{{'csp.solicitud.solicitud-rrhh.requisitos.documento-seleccionar' | translate}}"
+          formControlName="documento" required autoUpload="false" (uploadEventChange)="onUploadProgress($event)">
+        </sgi-file-upload>
+        <mat-error *ngIf="formGroup.controls.documento.errors?.required">
+          {{ 'error.required.entity' | translate:msgParamDocumentoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+
+  </form>
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

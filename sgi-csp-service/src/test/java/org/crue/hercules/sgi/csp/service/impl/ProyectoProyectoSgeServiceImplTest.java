@@ -45,7 +45,7 @@ class ProyectoProyectoSgeServiceImplTest extends BaseServiceTest {
   private ProyectoProyectoSgeService service;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     this.proyectoHelper = new ProyectoHelper(proyectoEquipoRepository, proyectoResponsableEconomicoRepository);
     this.service = new ProyectoProyectoSgeServiceImpl(repository, this.proyectoHelper, sgiConfigProperties);
   }

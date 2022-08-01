@@ -29,7 +29,6 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaPeriodoJustificacionRepo
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaPeriodoJustificacionSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPeriodoJustificacionService;
-import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
@@ -56,7 +55,7 @@ public class ConvocatoriaPeriodoJustificacionServiceImpl implements Convocatoria
 
   public ConvocatoriaPeriodoJustificacionServiceImpl(Validator validator,
       ConvocatoriaPeriodoJustificacionRepository convocatoriaPeriodoJustificacionRepository,
-      ConvocatoriaRepository convocatoriaRepository, ConvocatoriaService convocatoriaService,
+      ConvocatoriaRepository convocatoriaRepository,
       ConfiguracionSolicitudRepository configuracionSolicitudRepository) {
     this.validator = validator;
     this.repository = convocatoriaPeriodoJustificacionRepository;
@@ -207,7 +206,7 @@ public class ConvocatoriaPeriodoJustificacionServiceImpl implements Convocatoria
    * @param periodos     convocatoriaPeriodoJustificaciones
    */
   private void checkAndSetupPeriodos(Convocatoria convocatoria, List<ConvocatoriaPeriodoJustificacion> periodos) {
-    if (periodos.size() == 0) {
+    if (periodos.isEmpty()) {
       // Fast check
       return;
     }

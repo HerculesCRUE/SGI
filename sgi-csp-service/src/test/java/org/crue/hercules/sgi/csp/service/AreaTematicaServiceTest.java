@@ -26,7 +26,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * AreaTematicaServiceTest
  */
-public class AreaTematicaServiceTest extends BaseServiceTest {
+class AreaTematicaServiceTest extends BaseServiceTest {
 
   @Mock
   private AreaTematicaRepository repository;
@@ -34,12 +34,12 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   private AreaTematicaService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new AreaTematicaServiceImpl(repository);
   }
 
   @Test
-  public void create_ReturnsAreaTematica() {
+  void create_ReturnsAreaTematica() {
     // given: Un nuevo AreaTematica (grupo)
     AreaTematica areaTematica = generarMockAreaTematica(null, "nombre-1", "descripcion-1", null);
 
@@ -71,7 +71,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithPadre_ReturnsAreaTematica() {
+  void create_WithPadre_ReturnsAreaTematica() {
     // given: Un nuevo AreaTematica
     AreaTematica areaTematica = generarMockAreaTematica(null, "A-002", "descripcion-2", 1L);
 
@@ -99,7 +99,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo AreaTematica que ya tiene id
     AreaTematica areaTematica = generarMockAreaTematica(1L);
 
@@ -110,7 +110,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingPadre_ThrowsAreaTematicaNotFoundException() {
+  void create_WithNoExistingPadre_ThrowsAreaTematicaNotFoundException() {
     // given: Un nuevo AreaTematica con un padre que no existe
     AreaTematica areaTematica = generarMockAreaTematica(null, "A-002", "descripcion-2", 1L);
 
@@ -122,7 +122,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_GrupoWithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void create_GrupoWithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un nuevo AreaTematica (grupo) con un nombre que ya existe en otro
     // grupo
     AreaTematica areaTematicaNew = generarMockAreaTematica(null, "nombreRepetido", "descripcion-2", null);
@@ -144,7 +144,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_AreaTematicaWithPadreDisabled_ThrowsIllegalArgumentException() {
+  void create_AreaTematicaWithPadreDisabled_ThrowsIllegalArgumentException() {
     // given: nueva AreaTematica cuyo padre está desactivado
     // nombre(back) ==> abreviatura(front)
     AreaTematica areaTematicaNew = generarMockAreaTematica(null, "A-002", "descripcion-2", 1L);
@@ -160,7 +160,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_AreaTematicaWithNombreLengthGreaterThan5_ThrowsIllegalArgumentException() {
+  void create_AreaTematicaWithNombreLengthGreaterThan5_ThrowsIllegalArgumentException() {
     // given: Un nuevo AreaTematica cuyo nombre supera 5 caracteres
     // nombre(back) ==> abreviatura(front)
     AreaTematica areaTematicaNew = generarMockAreaTematica(null, "nombre", "descripcion-1", 1L);
@@ -175,7 +175,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_AreaTematicaWithDescripcionLengthGreaterThan50_ThrowsIllegalArgumentException() {
+  void create_AreaTematicaWithDescripcionLengthGreaterThan50_ThrowsIllegalArgumentException() {
     // given: Un nuevo AreaTematica cuya descripcion supera 50 caracteres
     // descripcion(back) ==> nombre(front)
     AreaTematica areaTematicaNew = generarMockAreaTematica(null, "A-001",
@@ -191,7 +191,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_AreaTematicaWithoutDescripcion_ThrowsIllegalArgumentException() {
+  void create_AreaTematicaWithoutDescripcion_ThrowsIllegalArgumentException() {
     // given: Un nuevo AreaTematica sin descripción
     // descripcion(back) ==> nombre(front)
     AreaTematica areaTematicaNew = generarMockAreaTematica(null, "A-001", null, 1L);
@@ -206,7 +206,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_AreaTematicaWithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void create_AreaTematicaWithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un nuevo AreaTematica con un nombre que ya existe
     AreaTematica areaTematicaNew = generarMockAreaTematica(null, "A-002", "descripcion-3", 1L);
     AreaTematica areaTematica = generarMockAreaTematica(1L, "nombreRepetidoPadre", "descripcion-1", null);
@@ -223,7 +223,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_AreaTematicaWithDuplicatedDescripcion_ThrowsIllegalArgumentException() {
+  void create_AreaTematicaWithDuplicatedDescripcion_ThrowsIllegalArgumentException() {
     // given: Un nuevo AreaTematica con una descripcion que ya existe
     AreaTematica areaTematicaNew = generarMockAreaTematica(null, "A-003", "descripcionRepetida", 1L);
     AreaTematica areaTematica = generarMockAreaTematica(1L, "nombrePadre", "descripcionPadre", null);
@@ -241,7 +241,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsAreaTematica() {
+  void update_ReturnsAreaTematica() {
     // given: Un nuevo AreaTematica con el nombre actualizado
     AreaTematica areaTematica = generarMockAreaTematica(1L);
     AreaTematica areaTematicaNombreActualizado = generarMockAreaTematica(1L, "NombreActualizado",
@@ -275,7 +275,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithPadre_ReturnsAreaTematica() {
+  void update_WithPadre_ReturnsAreaTematica() {
     // given: Un nuevo AreaTematica con el nombre actualizado
     AreaTematica areaTematica = generarMockAreaTematica(2L, "A-002", "Descripcion", 1L);
     AreaTematica areaTematicaNombreActualizado = generarMockAreaTematica(2L, "B-222", "DescripcionActualizada", 1L);
@@ -302,7 +302,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_GrupoWithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void update_GrupoWithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un AreaTematica (grupo) actualizado con un nombre que ya existe
     AreaTematica areaTematicaActualizado = generarMockAreaTematica(1L, "nombreRepetido", "Descripcion-1", null);
     AreaTematica areaTematica = generarMockAreaTematica(2L, "nombreRepetido", "Descripcion-2", null);
@@ -324,7 +324,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_AreaTematicaWithPadreDisabled_ThrowsIllegalArgumentException() {
+  void update_AreaTematicaWithPadreDisabled_ThrowsIllegalArgumentException() {
     // given: AreaTematica modificada cuyo padre está desactivado
     // nombre(back) ==> abreviatura(front)
     AreaTematica areaTematicaOriginal = generarMockAreaTematica(3L, "A-003", "descripcion-3", 1L);
@@ -343,7 +343,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_AreaTematicaWithNombreLengthGreaterThan5_ThrowsIllegalArgumentException() {
+  void update_AreaTematicaWithNombreLengthGreaterThan5_ThrowsIllegalArgumentException() {
     // given: AreaTematica modificada cuyo nombre supera 5 caracteres
     // nombre(back) ==> abreviatura(front)
     AreaTematica areaTematicaActualizado = generarMockAreaTematica(3L, "nombre", "descripcion-1", 1L);
@@ -360,7 +360,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_AreaTematicaWithDescripcionLengthGreaterThan50_ThrowsIllegalArgumentException() {
+  void update_AreaTematicaWithDescripcionLengthGreaterThan50_ThrowsIllegalArgumentException() {
     // given: AreaTematica actualizada cuya descripcion supera 50 caracteres
     // descripcion(back) ==> nombre(front)
     AreaTematica areaTematicaActualizado = generarMockAreaTematica(3L, "A-001",
@@ -378,7 +378,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_AreaTematicaWithoutDescripcion_ThrowsIllegalArgumentException() {
+  void update_AreaTematicaWithoutDescripcion_ThrowsIllegalArgumentException() {
     // given: AreaTematica actualizada sin descripción
     // descripcion(back) ==> nombre(front)
     AreaTematica areaTematicaActualizado = generarMockAreaTematica(3L, "A-001", null, 1L);
@@ -394,7 +394,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_AreaTematicaWithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void update_AreaTematicaWithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un AreaTematica actualizado con un nombre que ya existe
     AreaTematica areaTematicaActualizado = generarMockAreaTematica(3L, "A-002", "Descripcion-3", 1L);
     AreaTematica areaTematica = generarMockAreaTematica(1L, "nombreRepetidoPadre", "DescripcionPadre", null);
@@ -414,7 +414,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_AreaTematicaWithDuplicatedDescripcion_ThrowsIllegalArgumentException() {
+  void update_AreaTematicaWithDuplicatedDescripcion_ThrowsIllegalArgumentException() {
     // given: Un AreaTematica actualizado con una descripcion que ya existe
     AreaTematica areaTematicaActualizado = generarMockAreaTematica(3L, "A-003", "DescripcionRepetida", 1L);
     AreaTematica areaTematica = generarMockAreaTematica(1L, "nombrePadre", "DescripcionPadre", null);
@@ -434,7 +434,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingPadre_ThrowsAreaTematicaNotFoundException() {
+  void update_WithNoExistingPadre_ThrowsAreaTematicaNotFoundException() {
     // given: Un AreaTematica actualizado con un padre que no existe
     AreaTematica areaTematica = generarMockAreaTematica(2L, "A-002", "descripcion-2", 1L);
 
@@ -446,7 +446,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsAreaTematicaNotFoundException() {
+  void update_WithIdNotExist_ThrowsAreaTematicaNotFoundException() {
     // given: Un AreaTematica actualizado con un id que no existe
     AreaTematica areaTematica = generarMockAreaTematica(1L, "AreaTematica", "Descripcion", null);
 
@@ -458,7 +458,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_ReturnsAreaTematica() {
+  void enable_ReturnsAreaTematica() {
     // given: Un nuevo AreaTematica inactivo
     AreaTematica areaTematica = generarMockAreaTematica(1L);
     areaTematica.setActivo(false);
@@ -484,11 +484,11 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
     Assertions.assertThat(areaTematicaActualizado.getNombre()).as("getNombre()").isEqualTo(areaTematica.getNombre());
     Assertions.assertThat(areaTematicaActualizado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(areaTematica.getDescripcion());
-    Assertions.assertThat(areaTematicaActualizado.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(areaTematicaActualizado.getActivo()).as("getActivo()").isTrue();
   }
 
   @Test
-  public void enable_GrupoWithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void enable_GrupoWithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un AreaTematica inactivo con un nombre que ya existe activo
     AreaTematica areaTematica = generarMockAreaTematica(1L, "nombreRepetido", "descripcion-1", null);
     areaTematica.setActivo(false);
@@ -511,7 +511,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
+  void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
     // given: Un id de un AreaTematica que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -521,7 +521,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithPadreNotNull_ThrowsIllegalArgumentException() {
+  void enable_WithPadreNotNull_ThrowsIllegalArgumentException() {
     // given: Un id de un AreaTematica desactivado que tiene padre (no es grupo)
     AreaTematica areaTematica = generarMockAreaTematica(2L, "A-002", "descripcion-002", 1L);
     areaTematica.setActivo(Boolean.FALSE);
@@ -534,7 +534,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_ReturnsAreaTematica() {
+  void disable_ReturnsAreaTematica() {
     // given: Un nuevo AreaTematica activo
     AreaTematica areaTematica = generarMockAreaTematica(1L);
 
@@ -552,11 +552,11 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
     Assertions.assertThat(areaTematicaActualizado.getNombre()).as("getNombre()").isEqualTo(areaTematica.getNombre());
     Assertions.assertThat(areaTematicaActualizado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(areaTematica.getDescripcion());
-    Assertions.assertThat(areaTematicaActualizado.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(areaTematicaActualizado.getActivo()).as("getActivo()").isFalse();
   }
 
   @Test
-  public void disable_WithIdNotExist_ThrowsAreaTematicaNotFoundException() {
+  void disable_WithIdNotExist_ThrowsAreaTematicaNotFoundException() {
     // given: Un id de un AreaTematica que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -566,7 +566,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsAreaTematica() {
+  void findById_ReturnsAreaTematica() {
     // given: Un AreaTematica con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.of(generarMockAreaTematica(idBuscado)));
@@ -578,11 +578,11 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
     Assertions.assertThat(areaTematica).as("isNotNull()").isNotNull();
     Assertions.assertThat(areaTematica.getId()).as("getId()").isEqualTo(idBuscado);
     Assertions.assertThat(areaTematica.getNombre()).as("getNombre()").isEqualTo("nombre-1");
-    Assertions.assertThat(areaTematica.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(areaTematica.getActivo()).as("getActivo()").isTrue();
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsAreaTematicaNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsAreaTematicaNotFoundException() throws Exception {
     // given: Ningun AreaTematica con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -593,7 +593,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 AreaTematica
     List<AreaTematica> areaTematicas = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -623,7 +623,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
     Page<AreaTematica> page = service.findAll(null, paging);
 
     // then: Devuelve la pagina 3 con los AreaTematica del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -634,7 +634,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllGrupo_ReturnsPage() {
+  void findAllGrupo_ReturnsPage() {
     // given: Una lista con 37 AreaTematica sin padre (grupoes)
     List<AreaTematica> areaTematicas = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -664,7 +664,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
     Page<AreaTematica> page = service.findAllGrupo(null, paging);
 
     // then: Devuelve la pagina 3 con los AreaTematica del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -675,7 +675,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllTodosGrupo_ReturnsPage() {
+  void findAllTodosGrupo_ReturnsPage() {
     // given: Una lista con 37 AreaTematica sin padre (grupoes)
     List<AreaTematica> areaTematicas = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -705,7 +705,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
     Page<AreaTematica> page = service.findAllTodosGrupo(null, paging);
 
     // then: Devuelve la pagina 3 con los AreaTematica del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -716,7 +716,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllHijosAreaTematica_ReturnsPage() {
+  void findAllHijosAreaTematica_ReturnsPage() {
     // given: Una lista con 37 AreaTematica para un AreaTematica
     Long idPadre = 1L;
     List<AreaTematica> areaTematicas = new ArrayList<>();
@@ -747,7 +747,7 @@ public class AreaTematicaServiceTest extends BaseServiceTest {
     Page<AreaTematica> page = service.findAllHijosAreaTematica(idPadre, null, paging);
 
     // then: Devuelve la pagina 3 con los TipoEnlace del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

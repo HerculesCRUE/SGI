@@ -54,14 +54,14 @@ export class ProyectoEntidadFinanciadoraListadoExportService
       this.proyectoService.findEntidadesFinanciadorasPropias(proyectoData.id).pipe(
         mergeMap(responseEntidadesFinanciadorasPropias => {
           return this.fillEntidadFinanciadora(proyectoData, responseEntidadesFinanciadorasPropias);
-        })),
+        }, this.DEFAULT_CONCURRENT)),
       this.proyectoService.findEntidadesFinanciadorasAjenas(proyectoData.id).pipe(
         mergeMap(responseEntidadesFinanciadorasAjenas => {
           return this.fillEntidadFinanciadora(proyectoData, responseEntidadesFinanciadorasAjenas);
-        }))
-    ).pipe(
-      takeLast(1)
-    );
+        }, this.DEFAULT_CONCURRENT))
+      , 2).pipe(
+        takeLast(1)
+      );
   }
 
   private fillEntidadFinanciadora(

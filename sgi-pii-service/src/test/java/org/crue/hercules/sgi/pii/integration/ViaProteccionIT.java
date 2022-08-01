@@ -8,7 +8,9 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.pii.dto.ViaProteccionInput;
 import org.crue.hercules.sgi.pii.dto.ViaProteccionOutput;
 import org.crue.hercules.sgi.pii.enums.TipoPropiedad;
+import org.crue.hercules.sgi.pii.repository.ViaProteccionRepository;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -24,14 +26,16 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de ViaProteccion.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-
-public class ViaProteccionIT extends BaseIT {
+class ViaProteccionIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/viasproteccion";
   private static final String PATH_TODOS = "/todos";
   private static final String PATH_ACTIVAR = "/activar";
   private static final String PATH_DESACTIVAR = "/desactivar";
+
+  @Autowired
+  private ViaProteccionRepository viaProteccionRepository;
 
   private HttpEntity<ViaProteccionInput> buildRequest(HttpHeaders headers,
       ViaProteccionInput entity, String... roles) throws Exception {
@@ -52,7 +56,7 @@ public class ViaProteccionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnViaProteccionOutputSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnViaProteccionOutputSubList() throws Exception {
 
     String[] roles = { "PII-VPR-V", "PII-VPR-C", "PII-VPR-E", "PII-VPR-B", "PII-VPR-R", "PII-INV-E", "PII-INV-V" };
 
@@ -62,6 +66,8 @@ public class ViaProteccionIT extends BaseIT {
     headers.add("X-Page-Size", "5");
     String sort = "id,desc";
     String filter = "nombre=ke=-00";
+
+    Long numOfVias = this.viaProteccionRepository.count();
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_TODOS).queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -73,14 +79,15 @@ public class ViaProteccionIT extends BaseIT {
     // then: Respuesta OK, retorna la información de la página correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ViaProteccionOutput> tramoRepartoOutput = response.getBody();
-    Assertions.assertThat(tramoRepartoOutput.size()).isEqualTo(3);
+    Assertions.assertThat(tramoRepartoOutput).hasSize(numOfVias.intValue());
     Assertions.assertThat(response.getHeaders().getFirst("X-Page")).isEqualTo("0");
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
-    Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("3");
+    Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo(numOfVias.toString());
 
-    Assertions.assertThat(tramoRepartoOutput.get(0).getId()).as("id").isEqualTo(3);
-    Assertions.assertThat(tramoRepartoOutput.get(1).getId()).as("id").isEqualTo(2);
-    Assertions.assertThat(tramoRepartoOutput.get(2).getId()).as("id").isEqualTo(1);
+    Assertions.assertThat(tramoRepartoOutput.get(0).getId()).as("id").isEqualTo(4);
+    Assertions.assertThat(tramoRepartoOutput.get(1).getId()).as("id").isEqualTo(3);
+    Assertions.assertThat(tramoRepartoOutput.get(2).getId()).as("id").isEqualTo(2);
+    Assertions.assertThat(tramoRepartoOutput.get(3).getId()).as("id").isEqualTo(1);
 
   }
 

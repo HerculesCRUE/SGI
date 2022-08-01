@@ -24,7 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de ProyectoSocioPeriodoJustificacionDocumento.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProyectoSocioPeriodoJustificacionDocumentoIT extends BaseIT {
+class ProyectoSocioPeriodoJustificacionDocumentoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/proyectosocioperiodojustificaciondocumentos";
@@ -63,7 +63,7 @@ public class ProyectoSocioPeriodoJustificacionDocumentoIT extends BaseIT {
       "classpath:scripts/tipo_documento.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsProyectoSocioPeriodoJustificacionDocumentoList() throws Exception {
+  void update_ReturnsProyectoSocioPeriodoJustificacionDocumentoList() throws Exception {
 
     // given: una lista con uno nuevo y sin los otros 3 periodos existentes
     Long proyectoSocioId = 1L;
@@ -136,7 +136,7 @@ public class ProyectoSocioPeriodoJustificacionDocumentoIT extends BaseIT {
       "classpath:scripts/tipo_documento.sql", "classpath:scripts/proyecto_socio_periodo_justificacion_documento.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsProyectoSocioPeriodoJustificacionDocumento() throws Exception {
+  void findById_ReturnsProyectoSocioPeriodoJustificacionDocumento() throws Exception {
     Long idProyectoSocioPeriodoJustificacionDocumento = 1L;
 
     final ResponseEntity<ProyectoSocioPeriodoJustificacionDocumento> response = restTemplate.exchange(

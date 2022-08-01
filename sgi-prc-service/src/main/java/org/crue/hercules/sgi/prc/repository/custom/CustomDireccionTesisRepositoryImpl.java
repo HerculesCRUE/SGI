@@ -55,8 +55,10 @@ public class CustomDireccionTesisRepositoryImpl implements CustomDireccionTesisR
   private EntityManager entityManager;
 
   @Override
-  public Page<DireccionTesisResumen> findAllDireccionesTesis(String query, Pageable pageable) {
-    log.debug("findAllDireccionesTesis(String query, Pageable pageable) - start");
+  public Page<DireccionTesisResumen> findAllDireccionesTesis(Specification<ProduccionCientifica> specIsInvestigador,
+      String query, Pageable pageable) {
+    log.debug(
+        "findAllDireccionesTesis(Specification<ProduccionCientifica> specIsInvestigador, String query, Pageable pageable) - start");
 
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<DireccionTesisResumen> cq = cb.createQuery(DireccionTesisResumen.class);
@@ -118,6 +120,11 @@ public class CustomDireccionTesisRepositoryImpl implements CustomDireccionTesisR
       listPredicatesCount.add(spec.toPredicate(rootCount, countQuery, cb));
     }
 
+    if (specIsInvestigador != null) {
+      listPredicates.add(specIsInvestigador.toPredicate(root, cq, cb));
+      listPredicatesCount.add(specIsInvestigador.toPredicate(rootCount, countQuery, cb));
+    }
+
     Path<Long> pathProduccionCientificaId = root.get(ProduccionCientifica_.id);
     cq.where(listPredicates.toArray(new Predicate[] {}));
 
@@ -154,7 +161,8 @@ public class CustomDireccionTesisRepositoryImpl implements CustomDireccionTesisR
     List<DireccionTesisResumen> result = typedQuery.getResultList();
     Page<DireccionTesisResumen> returnValue = new PageImpl<>(result, pageable, count);
 
-    log.debug("findAllDireccionesTesis(String query, Pageable pageable) - end");
+    log.debug(
+        "findAllDireccionesTesis(Specification<ProduccionCientifica> specIsInvestigador, String query, Pageable pageable) - end");
 
     return returnValue;
   }

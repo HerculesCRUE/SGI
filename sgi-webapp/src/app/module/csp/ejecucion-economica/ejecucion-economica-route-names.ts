@@ -10,5 +10,7 @@ export const EJECUCION_ECONOMICA_ROUTE_NAMES = {
   VIAJES_DIETAS: 'viajes-dietas',
   PERSONAL_CONTRATADO: 'personal-contratado',
   VALIDACION_GASTOS: 'validacion-gastos',
-  FACTURAS_EMITIDAS: 'facturas-emitidas'
+  FACTURAS_EMITIDAS: 'facturas-emitidas',
+  SEGUIMIENTO_JUSTIFICACION_RESUMEN: 'seguimiento-justificacion-resumen',
+  SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS: 'seguimiento-justificacion-requerimientos',
 };

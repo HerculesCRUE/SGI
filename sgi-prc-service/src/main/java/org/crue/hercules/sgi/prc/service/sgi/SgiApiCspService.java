@@ -29,6 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SgiApiCspService extends SgiApiBaseService {
 
+  private static final String LIST_DELIMITER = ",";
+
   public SgiApiCspService(RestApiProperties restApiProperties, RestTemplate restTemplate) {
     super(restApiProperties, restTemplate);
   }
@@ -55,7 +57,7 @@ public class SgiApiCspService extends SgiApiBaseService {
             new ParameterizedTypeReference<GrupoDto>() {
             }, grupoRef).getBody();
 
-        grupoDto = Optional.of(response);
+        grupoDto = response != null ? Optional.of(response) : Optional.empty();
 
       } catch (Exception e) {
         log.error(e.getMessage(), e);
@@ -441,6 +443,37 @@ public class SgiApiCspService extends SgiApiBaseService {
       throw new MicroserviceCallException();
     }
     log.debug("findAllGruposByPersonaRef(String personaRef)- end");
+
+    return ObjectUtils.defaultIfNull(result, new ArrayList<>());
+  }
+
+  /**
+   * Devuelve la lista de investigadores principales y personas autorizadas de los
+   * grupos a los que pertences las personaRef
+   *
+   * @param personaRefs lista de indetificadodres de personas
+   * @return lista de investigadores principales
+   */
+  public List<String> findPersonaRefInvestigadoresPrincipalesAndAutorizadasByPersonaRefs(List<String> personaRefs) {
+    List<String> result = new ArrayList<>();
+    log.debug("findPersonaRefInvestigadoresPrincipalesAndAutorizadasByPersonaRefs({}) - start", personaRefs);
+
+    try {
+      ServiceType serviceType = ServiceType.CSP;
+      String relativeUrl = "/grupos/investigadoresprincipalespersonasautorizadas?q=miembroEquipo=in=\""
+          + String.join(LIST_DELIMITER, personaRefs) + "\"";
+      HttpMethod httpMethod = HttpMethod.GET;
+      String mergedURL = buildUri(serviceType, relativeUrl);
+
+      result = super.<List<String>>callEndpoint(mergedURL, httpMethod,
+          new ParameterizedTypeReference<List<String>>() {
+          }, personaRefs).getBody();
+
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      throw new MicroserviceCallException();
+    }
+    log.debug("findPersonaRefInvestigadoresPrincipalesAndAutorizadasByPersonaRefs({}) - end", personaRefs);
 
     return ObjectUtils.defaultIfNull(result, new ArrayList<>());
   }

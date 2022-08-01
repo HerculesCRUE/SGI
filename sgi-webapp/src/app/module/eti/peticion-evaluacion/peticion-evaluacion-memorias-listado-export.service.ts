@@ -3,7 +3,6 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IMemoriaPeticionEvaluacion } from '@core/models/eti/memoria-peticion-evaluacion';
 import { ESTADO_MEMORIA_MAP } from '@core/models/eti/tipo-estado-memoria';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
-import { MemoriaService } from '@core/services/eti/memoria.service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
@@ -32,8 +31,7 @@ export class PeticionEvaluacionMemoriasListadoExportService extends
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
-    private readonly peticionEvaluacionService: PeticionEvaluacionService,
-    private readonly memoriaService: MemoriaService
+    private readonly peticionEvaluacionService: PeticionEvaluacionService
   ) {
     super(translate);
   }
@@ -59,7 +57,7 @@ export class PeticionEvaluacionMemoriasListadoExportService extends
               fechaEvaluacion: memoria.fechaEvaluacion
             });
             return of(peticionData);
-          })
+          }, this.DEFAULT_CONCURRENT)
         );
       })
     );

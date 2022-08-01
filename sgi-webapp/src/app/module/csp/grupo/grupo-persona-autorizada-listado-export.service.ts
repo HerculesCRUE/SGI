@@ -20,7 +20,6 @@ import { map, switchMap } from 'rxjs/operators';
 import { IGrupoReportData, IGrupoReportOptions } from './grupo-listado-export.service';
 
 const PERSONA_AUTORIZADA_KEY = marker('csp.grupo-persona-autorizada');
-const PERSONA_SHORT_KEY = marker('csp.grupo-resp-economico');
 const PERSONA_NOMBRE_KEY = marker('csp.grupo-equipo.nombre');
 const PERSONA_APELLIDOS_KEY = marker('csp.grupo-equipo.apellidos');
 const PERSONA_EMAIL_KEY = marker('csp.grupo-equipo.email');
@@ -98,7 +97,7 @@ export class GrupoPersonaAutorizadaListadoExportService
     const columns: ISgiColumnReport[] = [];
     columns.push({
       name: PERSONA_AUTORIZADA_FIELD,
-      title: this.translate.instant(PERSONA_SHORT_KEY),
+      title: this.translate.instant(PERSONA_AUTORIZADA_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR),
       type: ColumnType.STRING
     });
     const titleI18n = this.translate.instant(PERSONA_AUTORIZADA_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR) +
@@ -181,12 +180,12 @@ export class GrupoPersonaAutorizadaListadoExportService
       const personaAutorizadaElementsRow: any[] = [];
 
       let personaAutorizadaTable = personaAutorizada?.persona?.nombre + ' ' + personaAutorizada?.persona?.apellidos;
-      personaAutorizadaTable += ' - ';
+      personaAutorizadaTable += '\n';
       personaAutorizadaTable += this.getEmailPrincipal(personaAutorizada?.persona) ?? '';
-      personaAutorizadaTable += ' - ';
+      personaAutorizadaTable += '\n';
       personaAutorizadaTable +=
         this.luxonDatePipe.transform(LuxonUtils.toBackend(personaAutorizada?.fechaInicio, true), 'shortDate') ?? '';
-      personaAutorizadaTable += ' - ';
+      personaAutorizadaTable += '\n';
       personaAutorizadaTable += this.luxonDatePipe.transform(LuxonUtils.toBackend(personaAutorizada?.fechaFin, true), 'shortDate') ?? '';
 
       personaAutorizadaElementsRow.push(personaAutorizadaTable);

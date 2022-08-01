@@ -38,15 +38,15 @@ public class ViaProteccionController {
   private final ModelMapper modelMapper;
 
   /**
-   * Devuelve una lista paginada y filtrada {@link TipoProcedimiento}.
+   * Devuelve una lista paginada y filtrada {@link ViaProteccionOutput}.
    * 
    * @param query  Filtro de búsqueda.
    * @param paging Información de Paginado.
-   * @return Lista de entidades {@link TipoProcedimiento}.
+   * @return Lista de entidades {@link ViaProteccionOutput}.
    */
   @GetMapping("/todos")
   @PreAuthorize("hasAnyAuthority('PII-VPR-V', 'PII-VPR-C', 'PII-VPR-E', 'PII-VPR-B', 'PII-VPR-R', 'PII-INV-E', 'PII-INV-V')")
-  ResponseEntity<Page<ViaProteccionOutput>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<ViaProteccionOutput>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
 
     Page<ViaProteccion> page = this.viaProteccionService.findAll(query, paging);
@@ -57,12 +57,12 @@ public class ViaProteccionController {
   /**
    * Crea un nuevo {@link ViaProteccion}.
    * 
-   * @param viaProteccion {@link ViaProteccion} que se quiere crear.
-   * @return Nuevo {@link ViaProteccion} creado.
+   * @param viaProteccionInput {@link ViaProteccionInput} que se quiere crear.
+   * @return Nuevo {@link ViaProteccionOutput} creado.
    */
   @PostMapping
   @PreAuthorize("hasAuthority('PII-VPR-C')")
-  ResponseEntity<ViaProteccionOutput> create(@Valid @RequestBody ViaProteccionInput viaProteccionInput) {
+  public ResponseEntity<ViaProteccionOutput> create(@Valid @RequestBody ViaProteccionInput viaProteccionInput) {
 
     return new ResponseEntity<>(convert(this.viaProteccionService.create(convert(null, viaProteccionInput))),
         HttpStatus.CREATED);
@@ -76,7 +76,7 @@ public class ViaProteccionController {
    */
   @PatchMapping("/{id}/activar")
   @PreAuthorize("hasAuthority('PII-VPR-R')")
-  ViaProteccionOutput activar(@PathVariable Long id) {
+  public ViaProteccionOutput activar(@PathVariable Long id) {
 
     return convert(this.viaProteccionService.activar(id));
   }
@@ -85,10 +85,11 @@ public class ViaProteccionController {
    * Desactiva el {@link ViaProteccion} con id indicado.
    * 
    * @param id Identificador de {@link ViaProteccion}.
+   * @return objeto de tipo {@link ViaProteccionOutput}
    */
   @PatchMapping("/{id}/desactivar")
   @PreAuthorize("hasAuthority('PII-VPR-B')")
-  ViaProteccionOutput desactivar(@PathVariable Long id) {
+  public ViaProteccionOutput desactivar(@PathVariable Long id) {
 
     return convert(this.viaProteccionService.desactivar(id));
   }
@@ -102,7 +103,7 @@ public class ViaProteccionController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('PII-VPR-E')")
-  ResponseEntity<ViaProteccionOutput> update(@Valid @RequestBody ViaProteccionInput viaProteccion,
+  public ResponseEntity<ViaProteccionOutput> update(@Valid @RequestBody ViaProteccionInput viaProteccion,
       @PathVariable Long id) {
     return ResponseEntity.ok(convert(this.viaProteccionService.update(convert(id, viaProteccion))));
 
@@ -123,7 +124,7 @@ public class ViaProteccionController {
   }
 
   private Page<ViaProteccionOutput> convert(Page<ViaProteccion> page) {
-    List<ViaProteccionOutput> content = page.getContent().stream().map((viaProteccion) -> convert(viaProteccion))
+    List<ViaProteccionOutput> content = page.getContent().stream().map(this::convert)
         .collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());

@@ -76,7 +76,10 @@ export class SolicitudEditarComponent extends ActionComponent implements OnInit 
 
     this.subscriptions.push(this.actionService.status$.subscribe(
       status => {
-        this.disableCambioEstado = status.changes || status.errors || (this.actionService.readonly && this.actionService.estadoAndDocumentosReadonly);
+        this.disableCambioEstado = status.changes
+          || status.errors
+          || (this.actionService.readonly && this.actionService.estadoAndDocumentosReadonly
+            && !this.actionService.modificableEstadoAsTutor);
       }
     ));
   }
@@ -181,7 +184,8 @@ export class SolicitudEditarComponent extends ActionComponent implements OnInit 
       hasRequiredDocumentos: this.actionService.hasRequiredDocumentos,
       solicitud: this.actionService.solicitud,
       solicitudProyecto: this.actionService.solicitudProyecto,
-      isSolicitanteInSolicitudEquipo: this.actionService.isSolicitanteInSolicitudEquipo
+      isSolicitanteInSolicitudEquipo: this.actionService.isSolicitanteInSolicitudEquipo,
+      isTutor: this.actionService.isTutor
     };
     const config = {
       data

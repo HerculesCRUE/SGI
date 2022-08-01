@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * TipoRegimenConcurrenciaControllerTest
  */
 @WebMvcTest(TipoRegimenConcurrenciaController.class)
-public class TipoRegimenConcurrenciaControllerTest extends BaseControllerTest {
+class TipoRegimenConcurrenciaControllerTest extends BaseControllerTest {
 
   @MockBean
   private TipoRegimenConcurrenciaService service;
@@ -43,7 +43,7 @@ public class TipoRegimenConcurrenciaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsTipoRegimenConcurrencia() throws Exception {
+  void findById_WithExistingId_ReturnsTipoRegimenConcurrencia() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer(new Answer<TipoRegimenConcurrencia>() {
       @Override
@@ -66,7 +66,7 @@ public class TipoRegimenConcurrenciaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new TipoRegimenConcurrenciaNotFoundException(1L);
@@ -83,7 +83,7 @@ public class TipoRegimenConcurrenciaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
-  public void findAll_WithPaging_ReturnsTipoRegimenConcurrenciaSubList() throws Exception {
+  void findAll_WithPaging_ReturnsTipoRegimenConcurrenciaSubList() throws Exception {
     // given: One hundred TipoRegimenConcurrencia
     List<TipoRegimenConcurrencia> data = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -134,7 +134,7 @@ public class TipoRegimenConcurrenciaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
-  public void findAll_EmptyList_Returns204() throws Exception {
+  void findAll_EmptyList_Returns204() throws Exception {
     // given: no data TipoRegimenConcurrencia
     BDDMockito.given(service.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<TipoRegimenConcurrencia>>() {

@@ -96,7 +96,11 @@ public class EstadoSolicitud extends BaseEntity {
     /** Firmada */
     FIRMADA,
     /** Renunciada */
-    RENUNCIADA;
+    RENUNCIADA,
+    /** Rechazada */
+    RECHAZADA,
+    /** Validada */
+    VALIDADA;
   }
 
   /** Id */

@@ -13,13 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ProyectoEquipoRepositoryTest extends BaseRepositoryTest {
+class ProyectoEquipoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ProyectoEquipoRepository repository;
 
   @Test
-  public void findAllByProyectoSocioId_ReturnsProyectoSocioEquipo() throws Exception {
+  void findAllByProyectoSocioId_ReturnsProyectoSocioEquipo() throws Exception {
 
     // given: 2 ProyectoEquipo de los que 1 coincide con el
     // idProyecto

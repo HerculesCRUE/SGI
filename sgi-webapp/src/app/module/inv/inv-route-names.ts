@@ -22,4 +22,5 @@ export const INV_ROUTE_NAMES = {
   VALIDACION_TESIS_TFM_TFG: 'validacion-tesis-tfm-tfg',
   VALIDACION_ACTIVIDADES_IDI: 'validacion-actividades-idi',
   INFORMES: 'informes',
+  VALIDACION_TUTOR: 'validacion-solicitudes-tutor'
 };

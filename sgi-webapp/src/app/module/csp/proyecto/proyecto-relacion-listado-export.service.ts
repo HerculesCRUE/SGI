@@ -70,7 +70,7 @@ export class ProyectoRelacionListadoExportService extends AbstractTableExportFil
         return from(responseRelacion).pipe(
           mergeMap((proyectoRelacion) => {
             return this.getRelacion(proyectoRelacion);
-          }),
+          }, this.DEFAULT_CONCURRENT),
           map(() => responseRelacion)
         );
       }),

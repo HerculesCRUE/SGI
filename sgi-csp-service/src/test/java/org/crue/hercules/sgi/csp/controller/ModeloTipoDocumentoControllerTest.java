@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ModeloTipoDocumentoControllerTest
  */
 @WebMvcTest(ModeloTipoDocumentoController.class)
-public class ModeloTipoDocumentoControllerTest extends BaseControllerTest {
+class ModeloTipoDocumentoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ModeloTipoDocumentoService service;
@@ -37,7 +37,7 @@ public class ModeloTipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void create_ReturnsModeloTipoDocumento() throws Exception {
+  void create_ReturnsModeloTipoDocumento() throws Exception {
     // given: new ModeloTipoDocumento
     ModeloTipoDocumento modeloTipoDocumento = generarMockModeloTipoDocumento(null, 1L, 1L);
 
@@ -73,7 +73,7 @@ public class ModeloTipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ModeloTipoDocumento with id filled
     ModeloTipoDocumento modeloTipoDocumento = generarMockModeloTipoDocumento(1L);
 
@@ -92,7 +92,7 @@ public class ModeloTipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void create_WithNonExistingModeloEjecucionId_Returns404() throws Exception {
+  void create_WithNonExistingModeloEjecucionId_Returns404() throws Exception {
     // given: a ModeloTipoDocumento with non existing ModeloEjecucionId
     ModeloTipoDocumento modeloTipoDocumento = generarMockModeloTipoDocumento(1L);
 
@@ -111,7 +111,7 @@ public class ModeloTipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     ModeloTipoDocumento modeloTipoDocumento = generarMockModeloTipoDocumento(1L);
     BDDMockito.given(service.disable(ArgumentMatchers.<Long>any())).willReturn(modeloTipoDocumento);
@@ -127,7 +127,7 @@ public class ModeloTipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
-  public void delete_NonExistingId_Return404() throws Exception {
+  void delete_NonExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -146,7 +146,7 @@ public class ModeloTipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsModeloTipoDocumento() throws Exception {
+  void findById_WithExistingId_ReturnsModeloTipoDocumento() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer(new Answer<ModeloTipoDocumento>() {
       @Override
@@ -169,7 +169,7 @@ public class ModeloTipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ModeloTipoDocumentoNotFoundException(1L);

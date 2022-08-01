@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IInvencionInventor } from '@core/models/pii/invencion-inventor';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
-import { IPersona } from '@core/models/sgp/persona';
-import { IVinculacion } from '@core/models/sgp/vinculacion';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
@@ -12,8 +10,8 @@ import { VinculacionService } from '@core/services/sgp/vinculacion.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { forkJoin, from, merge, Observable, of } from 'rxjs';
-import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { forkJoin, from, Observable, of } from 'rxjs';
+import { concatMap, mergeMap, switchMap } from 'rxjs/operators';
 import { IInvencionReportData, IInvencionReportOptions, IInventorMiembro } from './invencion-listado-export.service';
 
 const EQUIPO_INVENTOR_NOMBRE_FIELD = 'Nombre';
@@ -21,7 +19,6 @@ const EQUIPO_INVENTOR_APELLIDOS_FIELD = 'Apellidos';
 const EQUIPO_INVENTOR_DEPARTAMENTO_FIELD = 'Departamento';
 
 const EQUIPO_INVENTOR_MIEMBRO_KEY = marker('pii.invencion-equipo-inventor.miembro-equipo-inventor');
-const EQUIPO_INVENTOR_KEY = marker('pii.invencion-equipo-inventor');
 const EQUIPO_INVENTOR_NOMBRE_KEY = marker('pii.invencion-equipo-inventor.nombre');
 const EQUIPO_INVENTOR_APELLIDOS_KEY = marker('pii.invencion-equipo-inventor.apellidos');
 const EQUIPO_INVENTOR_DEPARTAMENTO_KEY = marker('pii.invencion-equipo-inventor.departamento');
@@ -54,7 +51,7 @@ export class InvencionEquipoInventorListadoExportService extends
         return from(inventores).pipe(
           mergeMap((inventor: IInvencionInventor) => {
             return this.addInventorMiembroToInvencionData(inventor, invencionData);
-          })
+          }, this.DEFAULT_CONCURRENT)
         );
       })
     );
@@ -66,7 +63,7 @@ export class InvencionEquipoInventorListadoExportService extends
       persona: this.personaService.findById(inventor.inventor.id),
       vinculacion: this.vinculacionService.findByPersonaId(inventor.inventor.id)
     }).pipe(
-      mergeMap(inventorMiembro => {
+      concatMap(inventorMiembro => {
         if (invencionData.equipoInventor === undefined || invencionData.equipoInventor === null) {
           invencionData.equipoInventor = [];
         }

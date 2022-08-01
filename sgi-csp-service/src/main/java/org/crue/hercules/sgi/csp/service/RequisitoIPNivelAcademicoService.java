@@ -3,10 +3,12 @@ package org.crue.hercules.sgi.csp.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.RequisitoIPNivelAcademicoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessSolicitudException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
@@ -21,6 +23,7 @@ import org.crue.hercules.sgi.csp.repository.RequisitoIPNivelAcademicoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.specification.RequisitoIPNivelAcademicoSpecifications;
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudSpecifications;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
@@ -94,21 +97,40 @@ public class RequisitoIPNivelAcademicoService {
                 || nivelAcademico.getRequisitoIPId().equals(requisitoIPId)),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key("org.crue.hercules.sgi.csp.exceptions.NoRelatedEntitiesException.message")
-            .parameter("entity", ApplicationContextSupport.getMessage(RequisitoIPNivelAcademico.class))
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(RequisitoIPNivelAcademico.class))
             .parameter("related", ApplicationContextSupport.getMessage(RequisitoIP.class)).build());
 
-    // Eliminamos los RequisitoIPNivelAcademico existentes para el requisitoIPId
-    // dado
-    repository.deleteInBulkByRequisitoIPId(requisitoIPId);
+    // Recuperamos los Niveles academicos existentes en base de datos
+    List<RequisitoIPNivelAcademico> nivelesAcademicosBD = repository.findByRequisitoIPId(requisitoIPId);
 
-    List<RequisitoIPNivelAcademico> returnValue = new ArrayList<>();
-    if (nivelesAcademicos != null && !nivelesAcademicos.isEmpty()) {
+    List<Long> idsNivelesAcademicosActualizados = nivelesAcademicos.stream().map(RequisitoIPNivelAcademico::getId)
+        .collect(Collectors.toList());
+
+    // Niveles academicos a eliminar (existen en base de datos pero no están entre
+    // los que se van a modificar)
+    List<RequisitoIPNivelAcademico> nivelesAcademicosEliminar = nivelesAcademicosBD.stream()
+        .filter(nivelAcademico -> !idsNivelesAcademicosActualizados.contains(nivelAcademico.getId()))
+        .collect(Collectors.toList());
+
+    // Eliminamos los niveles academicos no existentes en la nueva lista
+    if (!nivelesAcademicosEliminar.isEmpty()) {
+      repository.deleteAll(nivelesAcademicosEliminar);
+    }
+
+    // Id's de niveles academicos a crear (no tienen id)
+    List<RequisitoIPNivelAcademico> nivelesAcademicosCrear = nivelesAcademicos.stream()
+        .filter(nivelAcademico -> nivelAcademico.getId() == null).collect(Collectors.toList());
+
+    if (!nivelesAcademicosCrear.isEmpty()) {
       // Eliminamos duplicados de la nueva lista
-      List<RequisitoIPNivelAcademico> uniqueNivelesAcademicos = nivelesAcademicos.stream().distinct()
+      List<RequisitoIPNivelAcademico> uniqueNivelesAcademicos = nivelesAcademicosCrear.stream().distinct()
           .collect(Collectors.toList());
       // Guardamos la nueva lista
-      returnValue = repository.saveAll(uniqueNivelesAcademicos);
+      repository.saveAll(uniqueNivelesAcademicos);
     }
+
+    List<RequisitoIPNivelAcademico> returnValue = repository.findByRequisitoIPId(requisitoIPId);
 
     log.debug("updateNivelesAcademicos(Long requisitoIPId, List<RequisitoIPNivelAcademico> nivelesAcademicos) - end");
     return returnValue;
@@ -174,7 +196,30 @@ public class RequisitoIPNivelAcademicoService {
     return returnValue;
   }
 
+  /**
+   * Hace las comprobaciones necesarias para determinar si el
+   * {@link RequisitoIPNivelAcademico} puede ser eliminado.
+   *
+   * @param requisitoIpId Id del {@link RequisitoIP}.
+   * @param id            Id del {@link RequisitoIPNivelAcademico}.
+   * @return <code>true</code> Si se permite / <code>false</code>
+   *         Si no se permite
+   */
+  public boolean eliminable(Long requisitoIpId, Long id) {
+    Specification<RequisitoIPNivelAcademico> specs = RequisitoIPNivelAcademicoSpecifications.byId(id)
+        .and(RequisitoIPNivelAcademicoSpecifications.byRequisitoIPId(requisitoIpId));
+
+    Optional<RequisitoIPNivelAcademico> requisitoIpNivelAcademico = repository.findOne(specs);
+    if (!requisitoIpNivelAcademico.isPresent()) {
+      throw new RequisitoIPNivelAcademicoNotFoundException(id);
+    }
+
+    specs = specs.and(RequisitoIPNivelAcademicoSpecifications.withRelatedEntities());
+    return repository.count(specs) == 0;
+  }
+
   private boolean hasAuthorityViewInvestigador() {
     return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
   }
+
 }

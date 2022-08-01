@@ -66,8 +66,9 @@ public class ConvocatoriaEntidadGestoraServiceImpl implements ConvocatoriaEntida
     Assert.notNull(convocatoriaEntidadGestora.getEntidadRef(),
         "Entidad no puede ser null para crear ConvocatoriaEntidadGestora");
 
-    convocatoriaRepository.findById(convocatoriaEntidadGestora.getConvocatoriaId())
-        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaEntidadGestora.getConvocatoriaId()));
+    if (!convocatoriaRepository.existsById(convocatoriaEntidadGestora.getConvocatoriaId())) {
+      throw new ConvocatoriaNotFoundException(convocatoriaEntidadGestora.getConvocatoriaId());
+    }
 
     Assert.isTrue(
         !repository.findByConvocatoriaIdAndEntidadRef(convocatoriaEntidadGestora.getConvocatoriaId(),

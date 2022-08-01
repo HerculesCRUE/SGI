@@ -34,6 +34,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @ActivableIsActivo(entityClass = Invencion.class, groups = { OnActualizar.class })
 public class Invencion extends BaseActivableEntity {
+
   public static final int REF_LENGTH = 50;
   public static final int TITULO_LENGTH = 250;
   public static final int LONG_TEXT_LENGTH = 2000;

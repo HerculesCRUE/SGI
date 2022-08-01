@@ -42,7 +42,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 /**
  * ConvocatoriaDocumentoServiceTest
  */
-public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
+class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
 
   @Mock
   private ConvocatoriaDocumentoRepository repository;
@@ -58,13 +58,13 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   private ConvocatoriaDocumentoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ConvocatoriaDocumentoServiceImpl(repository, convocatoriaRepository, modeloTipoFaseRepository,
         modeloTipoDocumentoRepository, configuracionSolicitudRepository);
   }
 
   @Test
-  public void create_ReturnsConvocatoriaDocumento() {
+  void create_ReturnsConvocatoriaDocumento() {
     // given: new ConvocatoriaDocumento
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -111,7 +111,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: new ConvocatoriaDocumento with Id
     ConvocatoriaDocumento newConvocatoriaDocumento = generarMockConvocatoriaDocumento(1L, 1L, 1L, 1L);
 
@@ -124,7 +124,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutConvocatoria_ThrowsIllegalArgumentException() {
+  void create_WithoutConvocatoria_ThrowsIllegalArgumentException() {
     // given: new ConvocatoriaDocumento without Convocatoria
     ConvocatoriaDocumento newConvocatoriaDocumento = generarMockConvocatoriaDocumento(1L, 1L, 1L, 1L);
     newConvocatoriaDocumento.setId(null);
@@ -139,7 +139,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutNombre_ThrowsIllegalArgumentException() {
+  void create_WithoutNombre_ThrowsIllegalArgumentException() {
     // given: new ConvocatoriaDocumento without Nombre
     ConvocatoriaDocumento newConvocatoriaDocumento = generarMockConvocatoriaDocumento(1L, 1L, 1L, 1L);
     newConvocatoriaDocumento.setId(null);
@@ -153,7 +153,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutPublico_ThrowsIllegalArgumentException() {
+  void create_WithoutPublico_ThrowsIllegalArgumentException() {
     // given: new ConvocatoriaDocumento without Publico
     ConvocatoriaDocumento newConvocatoriaDocumento = generarMockConvocatoriaDocumento(1L, 1L, 1L, 1L);
     newConvocatoriaDocumento.setId(null);
@@ -167,7 +167,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutDocumentoRef_ThrowsIllegalArgumentException() {
+  void create_WithoutDocumentoRef_ThrowsIllegalArgumentException() {
     // given: new ConvocatoriaDocumento without DocumentoRef
     ConvocatoriaDocumento newConvocatoriaDocumento = generarMockConvocatoriaDocumento(1L, 1L, 1L, 1L);
     newConvocatoriaDocumento.setId(null);
@@ -181,7 +181,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingConvocatoria_ThrowsNotFoundException() {
+  void create_WithNoExistingConvocatoria_ThrowsNotFoundException() {
     // given: new ConvocatoriaDocumento with no existing Convocatoria
     ConvocatoriaDocumento newConvocatoriaDocumento = generarMockConvocatoriaDocumento(1L, 1L, 1L, 1L);
     newConvocatoriaDocumento.setId(null);
@@ -194,7 +194,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutTipoFase_DoesNotThrowAnyException() {
+  void create_WithoutTipoFase_DoesNotThrowAnyException() {
     // given: a ConvocatoriaDocumento without TipoFase
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -225,7 +225,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingModeloTipoFase_ThrowsIllegalArgumentException() {
+  void create_WithNoExistingModeloTipoFase_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaDocumento with TipoFase not assigned to ModeloEjecucion
     // Convocatoria
     Long convocatoriaId = 1L;
@@ -249,7 +249,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithModeloTipoFaseDisabled_ThrowsIllegalArgumentException() {
+  void create_WithModeloTipoFaseDisabled_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaDocumento with TipoFase assigned to disabled
     // ModeloEjecucion
     Long convocatoriaId = 1L;
@@ -275,7 +275,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithTipoFaseDisabled_ThrowsIllegalArgumentException() {
+  void create_WithTipoFaseDisabled_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaDocumento with TipoFase disabled assigned to
     // ModeloEjecucion Convocatoria
     Long convocatoriaId = 1L;
@@ -300,7 +300,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingModeloTipoDocumento_ThrowsIllegalArgumentException() {
+  void create_WithNoExistingModeloTipoDocumento_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaDocumento with TipoDocumento not assigned to
     // ModeloEjecucion Convocatoria
     Long convocatoriaId = 1L;
@@ -331,7 +331,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithModeloTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
+  void create_WithModeloTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaDocumento with TipoDocumento assigned to disabled
     // ModeloEjecucion
     Long convocatoriaId = 1L;
@@ -363,7 +363,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
+  void create_WithTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaDocumento with TipoDocumento disabled assigned to
     // ModeloEjecucion Convocatoria
     Long convocatoriaId = 1L;
@@ -394,7 +394,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsConvocatoriaDocumento() {
+  void update_ReturnsConvocatoriaDocumento() {
     // given: updated ConvocatoriaDocumento
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -446,7 +446,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutId_ThrowsIllegalArgumentException() {
+  void update_WithoutId_ThrowsIllegalArgumentException() {
     // given: a updated ConvocatoriaDocumento with id filled
     ConvocatoriaDocumento updatedConvocatoriaDocumento = generarMockConvocatoriaDocumento(1L, 1L, 1L, 1L);
     updatedConvocatoriaDocumento.setId(null);
@@ -460,7 +460,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutConvocatoria_ThrowsIllegalArgumentException() {
+  void update_WithoutConvocatoria_ThrowsIllegalArgumentException() {
     // given: a updated ConvocatoriaDocumento without Convocatoria
     ConvocatoriaDocumento updatedConvocatoriaDocumento = generarMockConvocatoriaDocumento(1L, 1L, 1L, 1L);
     updatedConvocatoriaDocumento.setConvocatoriaId(null);
@@ -474,7 +474,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutNombre_ThrowsIllegalArgumentException() {
+  void update_WithoutNombre_ThrowsIllegalArgumentException() {
     // given: a updated ConvocatoriaDocumento without Nombre
     ConvocatoriaDocumento updatedConvocatoriaDocumento = generarMockConvocatoriaDocumento(1L, 1L, 1L, 1L);
     updatedConvocatoriaDocumento.setNombre(null);
@@ -487,7 +487,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutPublico_ThrowsIllegalArgumentException() {
+  void update_WithoutPublico_ThrowsIllegalArgumentException() {
     // given: a updated ConvocatoriaDocumento without Publico
     ConvocatoriaDocumento updatedConvocatoriaDocumento = generarMockConvocatoriaDocumento(1L, 1L, 1L, 1L);
     updatedConvocatoriaDocumento.setPublico(null);
@@ -500,7 +500,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutDocumentoRef_ThrowsIllegalArgumentException() {
+  void update_WithoutDocumentoRef_ThrowsIllegalArgumentException() {
     // given: a updated ConvocatoriaDocumento without DocumentoRef
     ConvocatoriaDocumento updatedConvocatoriaDocumento = generarMockConvocatoriaDocumento(1L, 1L, 1L, 1L);
     updatedConvocatoriaDocumento.setDocumentoRef(null);
@@ -513,7 +513,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingId_ThrowsNotFoundException() {
+  void update_WithNoExistingId_ThrowsNotFoundException() {
     // given: a updated ConvocatoriaDocumento with no existing Id
     ConvocatoriaDocumento updatedConvocatoriaDocumento = generarMockConvocatoriaDocumento(1L, 1L, 1L, 1L);
 
@@ -525,7 +525,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingConvocatoria_ThrowsNotFoundException() {
+  void update_WithNoExistingConvocatoria_ThrowsNotFoundException() {
     // given: a updated ConvocatoriaDocumento with no existing Convocatoria
     ConvocatoriaDocumento originalConvocatoriaDocumento = generarMockConvocatoriaDocumento(1L, 1L, 1L, 1L);
     ConvocatoriaDocumento updatedConvocatoriaDocumento = generarMockConvocatoriaDocumento(1L, 1L, 1L, 1L);
@@ -541,7 +541,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutTipoFase_DoesNotThrowAnyException() {
+  void update_WithoutTipoFase_DoesNotThrowAnyException() {
     // given: a ConvocatoriaDocumento without TipoFase
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -575,7 +575,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingModeloTipoFase_ThrowsIllegalArgumentException() {
+  void update_WithNoExistingModeloTipoFase_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaDocumento with TipoFase not assigned to ModeloEjecucion
     // Convocatoria
     Long convocatoriaId = 1L;
@@ -604,7 +604,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_TipoFaseWithSameTipoFaseAndModeloTipoFaseDisabled_DoesNotThrowAnyException() {
+  void update_TipoFaseWithSameTipoFaseAndModeloTipoFaseDisabled_DoesNotThrowAnyException() {
     // given: a ConvocatoriaDocumento with the same TipoFase assigned to disabled
     // ModeloEjecucion
     Long convocatoriaId = 1L;
@@ -643,7 +643,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_TipoFaseWithSameTipoFaseDisabled_DoesNotThrowAnyException() {
+  void update_TipoFaseWithSameTipoFaseDisabled_DoesNotThrowAnyException() {
     // given: a ConvocatoriaDocumento with the same TipoFase disabled assigned to
     // ModeloEjecucion Convocatoria
     Long convocatoriaId = 1L;
@@ -682,7 +682,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_TipoFaseWithModeloTipoFaseDisabled_ThrowsIllegalArgumentException() {
+  void update_TipoFaseWithModeloTipoFaseDisabled_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaDocumento with updated TipoFase assigned to disabled
     // ModeloEjecucion
     Long convocatoriaId = 1L;
@@ -714,7 +714,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_TipoFaseWithTipoFaseDisabled_ThrowsIllegalArgumentException() {
+  void update_TipoFaseWithTipoFaseDisabled_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaDocumento with updated TipoFase disabled assigned to
     // ModeloEjecucion Convocatoria
     Long convocatoriaId = 1L;
@@ -745,7 +745,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingModeloTipoDocumento_ThrowsIllegalArgumentException() {
+  void update_WithNoExistingModeloTipoDocumento_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaDocumento with Documento not assigned to ModeloEjecucion
     // Convocatoria
     Long convocatoriaId = 1L;
@@ -781,7 +781,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_TipoDocumentoWithSameTipoDocumentoAndModeloTipoFaseDisabled_DoesNotThrowAnyException() {
+  void update_TipoDocumentoWithSameTipoDocumentoAndModeloTipoFaseDisabled_DoesNotThrowAnyException() {
     // given: a ConvocatoriaDocumento with the same TipoDocumento assigned to
     // disabled
     // ModeloEjecucion
@@ -821,7 +821,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_TipoDocumentoWithSameTipoDocumentoDisabled_DoesNotThrowAnyException() {
+  void update_TipoDocumentoWithSameTipoDocumentoDisabled_DoesNotThrowAnyException() {
     // given: a ConvocatoriaDocumento with the same Documento disabled assigned to
     // ModeloEjecucion Convocatoria
     Long convocatoriaId = 1L;
@@ -860,7 +860,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_TipoDocumentoWithModeloTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
+  void update_TipoDocumentoWithModeloTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaDocumento with updated TipoDocumento assigned to
     // disabled ModeloEjecucion
     Long convocatoriaId = 1L;
@@ -899,7 +899,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_TipoDocumentoWithTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
+  void update_TipoDocumentoWithTipoDocumentoDisabled_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaDocumento with updated TipoDocumento disabled assigned
     // to ModeloEjecucion Convocatoria
     Long convocatoriaId = 1L;
@@ -937,7 +937,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_DoesNotThrowAnyException() {
+  void delete_WithExistingId_DoesNotThrowAnyException() {
     // given: existing convocatoriaDocumento
     Long id = 1L;
 
@@ -952,7 +952,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
+  void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
     // given: no id
     Long id = null;
 
@@ -964,7 +964,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -978,7 +978,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsConvocatoriaDocumento() {
+  void findById_ReturnsConvocatoriaDocumento() {
     // given: existing ConvocatoriaDocumento
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -1003,7 +1003,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void findAllByConvocatoria_ReturnsPage() {
+  void findAllByConvocatoria_ReturnsPage() {
     // given: Una lista con 37 ConvocatoriaDocumento para la Convocatoria
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -1034,7 +1034,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
     Page<ConvocatoriaDocumento> page = service.findAllByConvocatoria(convocatoriaId, null, paging);
 
     // then: Devuelve la pagina 3 con los ConvocatoriaDocumento del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -1045,7 +1045,7 @@ public class ConvocatoriaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsConvocatoriaDocumentoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsConvocatoriaDocumentoNotFoundException() throws Exception {
     // given: no existing ConvocatoriaDocumento
     Long idBuscado = 1L;
 

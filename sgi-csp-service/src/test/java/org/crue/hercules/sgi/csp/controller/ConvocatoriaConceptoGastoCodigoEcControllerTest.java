@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ConvocatoriaConceptoGastoCodigoEcControllerTest
  */
 @WebMvcTest(ConvocatoriaConceptoGastoCodigoEcController.class)
-public class ConvocatoriaConceptoGastoCodigoEcControllerTest extends BaseControllerTest {
+class ConvocatoriaConceptoGastoCodigoEcControllerTest extends BaseControllerTest {
 
   @MockBean
   private ConvocatoriaConceptoGastoCodigoEcService service;
@@ -32,7 +32,7 @@ public class ConvocatoriaConceptoGastoCodigoEcControllerTest extends BaseControl
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsConvocatoriaConceptoGastoCodigoEc() throws Exception {
+  void findById_WithExistingId_ReturnsConvocatoriaConceptoGastoCodigoEc() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
       return generarMockConvocatoriaConceptoGastoCodigoEc(invocation.getArgument(0));
@@ -52,7 +52,7 @@ public class ConvocatoriaConceptoGastoCodigoEcControllerTest extends BaseControl
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ConvocatoriaConceptoGastoCodigoEcNotFoundException(1L);

@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.pii.validation;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -39,12 +40,11 @@ public class UniqueNombreTipoProcedimientoValidator
 
     Specification<TipoProcedimiento> specs = TipoProcedimientoSpecifications.activos();
 
-    specs = specs.and((root, query, cb) -> {
-      return cb.equal(root.get(TipoProcedimiento_.nombre), value.getNombre());
-    });
+    specs = specs.and((root, query, cb) -> cb.equal(root.get(TipoProcedimiento_.nombre), value.getNombre()));
 
     List<TipoProcedimiento> tiposProcedimiento = this.tipoProcedimientoRepository.findAll(specs);
-    boolean isRepeatedNombre = tiposProcedimiento.stream().anyMatch(tipo -> tipo.getId() != value.getId());
+    boolean isRepeatedNombre = tiposProcedimiento.stream()
+        .anyMatch(tipo -> !Objects.equals(tipo.getId(), value.getId()));
 
     if (isRepeatedNombre) {
       addEntityMessageParameter(context);

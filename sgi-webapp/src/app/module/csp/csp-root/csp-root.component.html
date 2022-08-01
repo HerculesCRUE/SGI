@@ -39,6 +39,9 @@
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['AUTH']" icon="local_library"
     title="{{'menu.csp.contratos' | translate}}">
   </sgi-menu-item>
+  <sgi-menu-item-external *ngIf="!!nombreSistemaGestionExterno && !!urlSistemaGestionExterno"
+    [route]="urlSistemaGestionExterno" icon="logout" [title]="nombreSistemaGestionExterno">
+  </sgi-menu-item-external>
 
   <sgi-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-TFASE-V', 'CSP-TFASE-C', 'CSP-TFASE-E','CSP-TFASE-B', 'CSP-TFASE-R','CSP-TFIN-V', 'CSP-TFIN-C','CSP-TFIN-E', 
       'CSP-TFIN-B', 'CSP-TFIN-R', 'CSP-TDOC-V', 'CSP-TDOC-C', 'CSP-TDOC-E', 'CSP-TDOC-B', 'CSP-TDOC-R', 'CSP-TENL-V', 'CSP-TENL-C', 'CSP-TENL-E',

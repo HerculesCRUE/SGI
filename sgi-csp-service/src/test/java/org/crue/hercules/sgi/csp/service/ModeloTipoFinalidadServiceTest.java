@@ -29,7 +29,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-public class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
+class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
 
   @Mock
   private ModeloTipoFinalidadRepository modeloTipoFinalidadRepository;
@@ -41,13 +41,13 @@ public class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
   private ModeloTipoFinalidadService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ModeloTipoFinalidadServiceImpl(modeloTipoFinalidadRepository, modeloEjecucionRepository,
         tipoFinalidadRepository);
   }
 
   @Test
-  public void create_ReturnsModeloTipoFinalidad() {
+  void create_ReturnsModeloTipoFinalidad() {
     // given: new ModeloTipoFinalidad
     ModeloTipoFinalidad data = generarModeloTipoFinalidad(null, 1L, 1L);
 
@@ -80,7 +80,7 @@ public class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: a ModeloTipoFinalidad with id filled
     ModeloTipoFinalidad data = generarModeloTipoFinalidad(1L, 1L, 1L);
 
@@ -92,7 +92,7 @@ public class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutModeloEjecucionId_ThrowsIllegalArgumentException() {
+  void create_WithoutModeloEjecucionId_ThrowsIllegalArgumentException() {
     // given: a ModeloTipoFinalidad without ModeloEjecucionId
     ModeloTipoFinalidad data = generarModeloTipoFinalidad(null, null, 1L);
 
@@ -104,7 +104,7 @@ public class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutTipoFinalidadId_ThrowsIllegalArgumentException() {
+  void create_WithoutTipoFinalidadId_ThrowsIllegalArgumentException() {
     // given: a ModeloTipoFinalidad without TipoFinalidadId
     ModeloTipoFinalidad data = generarModeloTipoFinalidad(null, 1L, null);
 
@@ -119,7 +119,7 @@ public class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingModeloEjecucion_404() {
+  void create_WithNoExistingModeloEjecucion_404() {
     // given: a ModeloTipoFinalidad with non existing ModeloEjecucion
     ModeloTipoFinalidad data = generarModeloTipoFinalidad(null, 1L, 1L);
 
@@ -133,7 +133,7 @@ public class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingTipoFinalidad_404() {
+  void create_WithNoExistingTipoFinalidad_404() {
     // given: a ModeloTipoFinalidad with non existing TipoFinalidad
     ModeloTipoFinalidad data = generarModeloTipoFinalidad(null, 1L, 1L);
 
@@ -149,7 +149,7 @@ public class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDisabledTipoFinalidad_ThrowsIllegalArgumentException() {
+  void create_WithDisabledTipoFinalidad_ThrowsIllegalArgumentException() {
     // given: a ModeloTipoFinalidad with disabled TipoFinalidad
     ModeloTipoFinalidad data = generarModeloTipoFinalidad(null, 1L, 1L);
     data.getTipoFinalidad().setActivo(Boolean.FALSE);
@@ -167,7 +167,7 @@ public class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedModeloEjecucionIdAndTipoEnlaceIdAndActivo_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedModeloEjecucionIdAndTipoEnlaceIdAndActivo_ThrowsIllegalArgumentException() {
     // given: a ModeloTipoFinalidad enabled with same
     // ModeloEjecucionId And TipoEnlaceId
     ModeloTipoFinalidad modeloTipoFinalidadExistente = generarModeloTipoFinalidad(1L, 1L, 1L);
@@ -189,7 +189,7 @@ public class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedModeloEjecucionIdAndTipoEnlaceIdAndActivoFalse_ReturnEnableModeloTipoFinalidad() {
+  void create_WithDuplicatedModeloEjecucionIdAndTipoEnlaceIdAndActivoFalse_ReturnEnableModeloTipoFinalidad() {
     // given: a ModeloTipoFinalidad disabled with same
     // ModeloEjecucionId And TipoEnlaceId
     ModeloTipoFinalidad modeloTipoFinalidadExistente = generarModeloTipoFinalidad(1L, 1L, 1L);
@@ -225,7 +225,7 @@ public class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_WithExistingId_ReturnsModeloTipoFinalidad() {
+  void disable_WithExistingId_ReturnsModeloTipoFinalidad() {
     // given: existing ModeloTipoFinalidad
     ModeloTipoFinalidad data = generarModeloTipoFinalidad(1L, 1L, 1L);
 
@@ -254,7 +254,7 @@ public class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void disable_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     ModeloTipoFinalidad data = generarModeloTipoFinalidad(1L, 1L, 1L);
 
@@ -268,7 +268,7 @@ public class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithExistingId_ReturnsModeloTipoFinalidad() throws Exception {
+  void findById_WithExistingId_ReturnsModeloTipoFinalidad() throws Exception {
     // given: existing ModeloTipoFinalidad
     ModeloTipoFinalidad givenData = generarModeloTipoFinalidad(1L, 1L, 1L);
 
@@ -288,7 +288,7 @@ public class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     BDDMockito.given(modeloTipoFinalidadRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
@@ -300,7 +300,7 @@ public class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByModeloEjecucion_ReturnsPage() {
+  void findAllByModeloEjecucion_ReturnsPage() {
     // given: Una lista con 37 ModeloTipoFinalidad para el ModeloEjecucion
     Long idModeloEjecucion = 1L;
     List<ModeloTipoFinalidad> modeloTipoFinalidades = new ArrayList<>();
@@ -329,7 +329,7 @@ public class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
     Page<ModeloTipoFinalidad> page = service.findAllByModeloEjecucion(idModeloEjecucion, null, paging);
 
     // then: Devuelve la pagina 3 con los ModeloTipoFinalidad del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

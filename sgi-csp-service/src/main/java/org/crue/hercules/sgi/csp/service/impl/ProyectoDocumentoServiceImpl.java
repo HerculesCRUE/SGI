@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.exceptions.ProyectoDocumentoNotFoundException;
@@ -227,7 +228,7 @@ public class ProyectoDocumentoServiceImpl implements ProyectoDocumentoService {
 
       // Comprobar solamente si estamos creando o se ha modificado el TipoFase
       if (datosOriginales == null || datosOriginales.getTipoFase() == null
-          || (modeloTipoFase.get().getTipoFase().getId() != datosOriginales.getTipoFase().getId())) {
+          || (!Objects.equals(modeloTipoFase.get().getTipoFase().getId(), datosOriginales.getTipoFase().getId()))) {
 
         // La asignación al ModeloEjecucion está activa
         Assert.isTrue(modeloTipoFase.get().getActivo(),
@@ -271,7 +272,8 @@ public class ProyectoDocumentoServiceImpl implements ProyectoDocumentoService {
 
       // Comprobar solamente si estamos creando o se ha modificado el documento
       if (datosOriginales == null || datosOriginales.getTipoDocumento() == null
-          || (modeloTipoDocumento.get().getTipoDocumento().getId() != datosOriginales.getTipoDocumento().getId())) {
+          || (!Objects.equals(modeloTipoDocumento.get().getTipoDocumento().getId(),
+              datosOriginales.getTipoDocumento().getId()))) {
 
         // La asignación al ModeloEjecucion está activa
         Assert.isTrue(modeloTipoDocumento.get().getActivo(),

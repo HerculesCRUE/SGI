@@ -20,7 +20,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de ConvocatoriaDocumento.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ConvocatoriaDocumentoIT extends BaseIT {
+class ConvocatoriaDocumentoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/convocatoriadocumentos";
@@ -40,7 +40,7 @@ public class ConvocatoriaDocumentoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsConvocatoriaDocumento() throws Exception {
+  void create_ReturnsConvocatoriaDocumento() throws Exception {
 
     // given: new ConvocatoriaDocumento
     ConvocatoriaDocumento convocatoriaDocumento = generarMockConvocatoriaDocumento(null, 1L, 1L);
@@ -70,7 +70,7 @@ public class ConvocatoriaDocumentoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsConvocatoriaDocumento() throws Exception {
+  void update_ReturnsConvocatoriaDocumento() throws Exception {
 
     // given: existing ConvocatoriaDocumento to be updated
     ConvocatoriaDocumento convocatoriaDocumento = generarMockConvocatoriaDocumento(1L, 1L, 1L);
@@ -102,7 +102,7 @@ public class ConvocatoriaDocumentoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing ConvocatoriaDocumento to be deleted
     Long convocatoriaDocumentoId = 1L;
 
@@ -119,7 +119,7 @@ public class ConvocatoriaDocumentoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsConvocatoriaDocumento() throws Exception {
+  void findById_ReturnsConvocatoriaDocumento() throws Exception {
     Long convocatoriaDocumentoId = 2L;
 
     final ResponseEntity<ConvocatoriaDocumento> response = restTemplate.exchange(

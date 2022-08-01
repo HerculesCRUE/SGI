@@ -315,7 +315,6 @@ public class ActaIT extends BaseIT {
     Assertions.assertThat(actas.get(1).getId()).as("1.id").isEqualTo(2);
   }
 
-  @Test
   public void finishActa_Success() throws Exception {
     // Authorization
     HttpHeaders headers = new HttpHeaders();

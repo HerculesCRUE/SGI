@@ -21,7 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 
-public class GrupoLineaInvestigacionIT extends BaseIT {
+class GrupoLineaInvestigacionIT extends BaseIT {
   private static final String CONTROLLER_BASE_PATH = GrupoLineaInvestigacionController.REQUEST_MAPPING;
   private static final String PATH_CLASIFICACION = GrupoLineaInvestigacionController.PATH_CLASIFICACIONES;
 
@@ -74,7 +74,7 @@ public class GrupoLineaInvestigacionIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     final List<GrupoLineaClasificacion> grupoLineaClasificacion = response.getBody();
-    Assertions.assertThat(grupoLineaClasificacion.size()).isEqualTo(3);
+    Assertions.assertThat(grupoLineaClasificacion).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { SgiAuthService } from '@sgi/framework/auth';
+import { Module } from '@core/module';
+import { IAuthStatus, SgiAuthService } from '@sgi/framework/auth';
 import { SelectorModuloComponent } from '../selector-modulo/selector-modulo.component';
 
 @Component({
@@ -10,6 +11,11 @@ import { SelectorModuloComponent } from '../selector-modulo/selector-modulo.comp
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent {
+
+  public modulesCount = (authStatus: IAuthStatus) => {
+    return authStatus.modules.filter((value) => Module.values.includes(Module.fromCode(value))).length;
+  }
+
   constructor(
     public matDialog: MatDialog,
     public authService: SgiAuthService

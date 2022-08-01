@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import io.micrometer.core.instrument.util.StringUtils;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -229,7 +230,7 @@ public class ConvocatoriaDocumentoServiceImpl implements ConvocatoriaDocumentoSe
 
       // Comprobar solamente si estamos creando o se ha modificado el TipoFase
       if (datosOriginales == null || datosOriginales.getTipoFase() == null
-          || (modeloTipoFase.get().getTipoFase().getId() != datosOriginales.getTipoFase().getId())) {
+          || (!Objects.equals(modeloTipoFase.get().getTipoFase().getId(), datosOriginales.getTipoFase().getId()))) {
 
         // La asignación al ModeloEjecucion está activa
         Assert.isTrue(modeloTipoFase.get().getActivo(),
@@ -274,7 +275,8 @@ public class ConvocatoriaDocumentoServiceImpl implements ConvocatoriaDocumentoSe
 
       // Comprobar solamente si estamos creando o se ha modificado el documento
       if (datosOriginales == null || datosOriginales.getTipoDocumento() == null
-          || (modeloTipoDocumento.get().getTipoDocumento().getId() != datosOriginales.getTipoDocumento().getId())) {
+          || (!Objects.equals(modeloTipoDocumento.get().getTipoDocumento().getId(),
+              datosOriginales.getTipoDocumento().getId()))) {
 
         // La asignación al ModeloEjecucion está activa
         Assert.isTrue(modeloTipoDocumento.get().getActivo(),

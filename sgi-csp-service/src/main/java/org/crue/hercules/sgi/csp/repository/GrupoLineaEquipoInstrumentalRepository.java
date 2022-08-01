@@ -20,4 +20,13 @@ public interface GrupoLineaEquipoInstrumentalRepository
    */
   List<GrupoLineaEquipoInstrumental> findAllByGrupoLineaInvestigacionId(Long grupoLineaInvestigacionId);
 
+  /**
+   * Se eliminan todos los {@link GrupoLineaEquipoInstrumental} a partir de un
+   * {@link GrupoLineaInvestigacion}
+   * 
+   * @param grupoLineaInvestigacionId Identificador de
+   *                                  {@link GrupoLineaInvestigacion}
+   */
+  void deleteAllByGrupoLineaInvestigacionId(Long grupoLineaInvestigacionId);
+
 }

@@ -118,4 +118,22 @@ public class MemoriaSpecifications {
       return cb.between(root.get(Memoria_.retrospectiva).get(Retrospectiva_.fechaRetrospectiva), fechaInicio, fechaFin);
     };
   }
+
+  public static Specification<Memoria> peticionesActivas() {
+    return (root, query, cb) -> {
+      return cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.activo), Boolean.TRUE);
+    };
+  }
+
+  public static Specification<Memoria> byPeticionFechaFin(Instant fechaInicio, Instant fechaFin) {
+    return (root, query, cb) -> {
+      return cb.between(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.fechaFin), fechaInicio, fechaFin);
+    };
+  }
+
+  public static Specification<Memoria> byEstado(Long tipoEstadoMemoria) {
+    return (root, query, cb) -> {
+      return cb.equal(root.get(Memoria_.estadoActual), tipoEstadoMemoria);
+    };
+  }
 }

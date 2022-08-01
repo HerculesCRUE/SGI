@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
+import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { SgiError, ValidationError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { Estado, ESTADO_MAP, IEstadoProyecto } from '@core/models/csp/estado-proyecto';
@@ -26,7 +27,7 @@ const PROYECTO_CONFIDENCIAL = marker('csp.proyecto.confidencial');
 const PROYECTO_COORDINADO = marker('csp.proyecto.proyecto-coordinado');
 const PROYECTO_COORDINADOR_EXTERNO = marker('csp.proyecto.coordinador-externo');
 const PROYECTO_PAQUETES_TRABAJO = marker('csp.proyecto.permite-paquetes-trabajo');
-const MSG_PROYECTO_EQUIPO_MIEMBROS = marker('msg.csp.proyecto.equipo-miembros-obligatorio');
+const MSG_PROYECTO_EQUIPO_SOLICITANTE_REQUIRED = marker('error.csp.proyecto-equipo.solicitante.required');
 const MSG_CAMBIO_ESTADO_ERROR = marker('msg.csp.proyecto.cambio-estado.error');
 
 export interface ProyectoCambioEstadoModalComponentData {
@@ -34,7 +35,9 @@ export interface ProyectoCambioEstadoModalComponentData {
   estadoNuevo: Estado;
   comentario: string;
   proyecto: IProyecto;
-  proyectoHasMiembrosEquipo: boolean;
+  miembrosEquipoPersonaRefs: string[];
+  solicitanteRefSolicitud: string;
+  solicitudFormularioSolicitud: FormularioSolicitud;
 }
 
 @Component({
@@ -52,7 +55,7 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoPro
   msgProyectoCoordinadoRequired: string;
   msgProyectoCoordinadorExternoRequired: string;
   msgProyectoPaquetesTrabajoRequired: string;
-  msgProyectoMiembrosEquipoRequired: string;
+  msgProyectoEquipoSolicitanteRequired: string;
   msgCambioEstadoError: string;
 
   readonly estadosNuevos: Map<string, string>;
@@ -89,11 +92,23 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoPro
   private setupI18N(): void {
     this.translate.get(
       PROYECTO_CAMBIO_ESTADO_COMENTARIO
-    ).subscribe((value) => this.msgParamComentarioEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamComentarioEntity = {
+        entity: value,
+        ...MSG_PARAMS.GENDER.MALE,
+        ...MSG_PARAMS.CARDINALIRY.SINGULAR
+      }
+    );
 
     this.translate.get(
       PROYECTO_CAMBIO_ESTADO_NUEVO_ESTADO
-    ).subscribe((value) => this.msgParamNuevoEstadoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamNuevoEstadoEntity = {
+        entity: value,
+        ...MSG_PARAMS.GENDER.MALE,
+        ...MSG_PARAMS.CARDINALIRY.SINGULAR
+      }
+    );
 
     this.msgProyectoFinalidadRequired = this.translate.instant(
       MSG_ENTITY_REQUIRED,
@@ -105,11 +120,26 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoPro
       { entity: this.translate.instant(PROYECTO_AMBITO_GEOGRAFICO), ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }
     );
 
-    this.msgProyectoConfidencialRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(PROYECTO_CONFIDENCIAL) });
+    this.msgProyectoConfidencialRequired = this.translate.instant(
+      MSG_FIELD_REQUIRED,
+      {
+        field: this.translate.instant(PROYECTO_CONFIDENCIAL)
+      }
+    );
     this.msgProyectoCoordinadoRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(PROYECTO_COORDINADO) });
-    this.msgProyectoCoordinadorExternoRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(PROYECTO_COORDINADOR_EXTERNO) });
-    this.msgProyectoPaquetesTrabajoRequired = this.translate.instant(MSG_FIELD_REQUIRED, { field: this.translate.instant(PROYECTO_PAQUETES_TRABAJO) });
-    this.msgProyectoMiembrosEquipoRequired = this.translate.instant(MSG_PROYECTO_EQUIPO_MIEMBROS);
+    this.msgProyectoCoordinadorExternoRequired = this.translate.instant(
+      MSG_FIELD_REQUIRED,
+      {
+        field: this.translate.instant(PROYECTO_COORDINADOR_EXTERNO)
+      }
+    );
+    this.msgProyectoPaquetesTrabajoRequired = this.translate.instant(
+      MSG_FIELD_REQUIRED,
+      {
+        field: this.translate.instant(PROYECTO_PAQUETES_TRABAJO)
+      }
+    );
+    this.msgProyectoEquipoSolicitanteRequired = this.translate.instant(MSG_PROYECTO_EQUIPO_SOLICITANTE_REQUIRED);
     this.msgCambioEstadoError = this.translate.instant(MSG_CAMBIO_ESTADO_ERROR);
   }
 
@@ -153,7 +183,11 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoPro
     const validationErrors: ValidationError[] = [];
 
     if (estado === Estado.CONCEDIDO) {
-      validationErrors.push(...this.validateRequiredFields(), ...this.validateProyectoHasMiembrosEquipo());
+      validationErrors.push(...this.validateRequiredFields());
+
+      if (!!this.data.proyecto.solicitudId && this.data.solicitudFormularioSolicitud === FormularioSolicitud.PROYECTO) {
+        validationErrors.push(...this.validateProyectoHasMiembrosEquipoSolicitante(this.data.solicitanteRefSolicitud));
+      }
     }
 
     if (validationErrors.length > 0) {
@@ -182,7 +216,8 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoPro
       problems.push(this.buildValidationError(this.msgProyectoCoordinadoRequired));
     }
 
-    if (!!this.data.proyecto.coordinado && (this.data.proyecto.coordinadorExterno === undefined || this.data.proyecto.coordinadorExterno === null)) {
+    if (!!this.data.proyecto.coordinado
+      && (this.data.proyecto.coordinadorExterno === undefined || this.data.proyecto.coordinadorExterno === null)) {
       problems.push(this.buildValidationError(this.msgProyectoCoordinadorExternoRequired));
     }
 
@@ -193,11 +228,11 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoPro
     return problems;
   }
 
-  private validateProyectoHasMiembrosEquipo(): ValidationError[] {
+  private validateProyectoHasMiembrosEquipoSolicitante(solicitanteRef: string): ValidationError[] {
     const problems: ValidationError[] = [];
 
-    if (!this.data.proyectoHasMiembrosEquipo) {
-      problems.push(this.buildValidationError(this.msgProyectoMiembrosEquipoRequired));
+    if (!this.data.miembrosEquipoPersonaRefs.includes(solicitanteRef)) {
+      problems.push(this.buildValidationError(this.msgProyectoEquipoSolicitanteRequired));
     }
 
     return problems;

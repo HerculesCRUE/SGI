@@ -3,6 +3,8 @@ package org.crue.hercules.sgi.csp.service.impl;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,7 +23,6 @@ import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEquipo;
 import org.crue.hercules.sgi.csp.repository.RolProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEquipoRepository;
-import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudProyectoEquipoSpecifications;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoEquipoService;
@@ -57,17 +58,12 @@ public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEqui
 
   private final SolicitudRepository solicitudRepository;
 
-  private final SolicitudProyectoRepository solicitudProyectoRepository;
-
   public SolicitudProyectoEquipoServiceImpl(Validator validator, SolicitudProyectoEquipoRepository repository,
-      RolProyectoRepository rolProyectoRepository, SolicitudRepository solicitudRepository,
-      SolicitudProyectoRepository solicitudProyectoRepository) {
+      RolProyectoRepository rolProyectoRepository, SolicitudRepository solicitudRepository) {
     this.validator = validator;
     this.repository = repository;
     this.rolProyectoRepository = rolProyectoRepository;
     this.solicitudRepository = solicitudRepository;
-    this.solicitudProyectoRepository = solicitudProyectoRepository;
-
   }
 
   /**
@@ -124,10 +120,11 @@ public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEqui
   @Override
   public boolean existsSolicitanteInSolicitudProyectoEquipo(Long solicitudId) {
     log.debug("existsSolicitanteInSolicitudProyectoEquipo(Long solicitudId) - start");
-    if (this.solicitudProyectoRepository.existsById(solicitudId)) {
+    Optional<Solicitud> solicitud = this.solicitudRepository.findById(solicitudId);
+    if (solicitud.isPresent()) {
       log.debug("existsSolicitanteInSolicitudProyectoEquipo(Long solicitudId) - end");
       return this.repository.existsBySolicitudProyectoIdAndPersonaRef(solicitudId,
-          this.solicitudRepository.findById(solicitudId).get().getSolicitanteRef());
+          solicitud.get().getSolicitanteRef());
     } else {
       log.debug("existsSolicitanteInSolicitudProyectoEquipo(Long solicitudId) - end");
       return false;
@@ -156,8 +153,8 @@ public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEqui
 
     // SolicitudProyectoEquipo eliminados
     List<SolicitudProyectoEquipo> solicitudProyectoEquipoEliminar = solicitudProyectoEquiposBD.stream()
-        .filter(solProyEquip -> !solicitudProyectoEquipos.stream().map(SolicitudProyectoEquipo::getId)
-            .anyMatch(id -> id == solProyEquip.getId()))
+        .filter(solProyEquip -> solicitudProyectoEquipos.stream().map(SolicitudProyectoEquipo::getId)
+            .noneMatch(id -> Objects.equals(id, solProyEquip.getId())))
         .collect(Collectors.toList());
 
     if (!solicitudProyectoEquipoEliminar.isEmpty()) {
@@ -169,8 +166,8 @@ public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEqui
 
     // SolicitudProyectoEquipo NO encontrados
     solicitudProyectoEquipos.stream().forEach(solProyEquip -> {
-      if (!solicitudProyectoEquiposBD.stream().map(SolicitudProyectoEquipo::getId)
-          .anyMatch(id -> id == solProyEquip.getId()) && solProyEquip.getId() != null) {
+      if (solicitudProyectoEquiposBD.stream().map(SolicitudProyectoEquipo::getId)
+          .noneMatch(id -> Objects.equals(id, solProyEquip.getId())) && solProyEquip.getId() != null) {
         throw new SolicitudProyectoEquipoNotFoundException(solProyEquip.getId());
       }
     });
@@ -180,9 +177,7 @@ public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEqui
 
     validateSolicitudProyectoEquipo(solicitud, solicitudProyectoEquipos);
 
-    List<SolicitudProyectoEquipo> returnValue = repository.saveAll(solicitudProyectoEquipos);
-
-    return returnValue;
+    return repository.saveAll(solicitudProyectoEquipos);
   }
 
   private void validateSolicitudProyectoEquipo(Solicitud solicitud,

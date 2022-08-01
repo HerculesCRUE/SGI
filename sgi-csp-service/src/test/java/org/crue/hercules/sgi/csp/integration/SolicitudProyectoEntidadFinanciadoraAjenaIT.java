@@ -24,7 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de SolicitudProyectoEntidadFinanciadoraAjena.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SolicitudProyectoEntidadFinanciadoraAjenaIT extends BaseIT {
+class SolicitudProyectoEntidadFinanciadoraAjenaIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/solicitudproyectoentidadfinanciadoraajenas";
@@ -46,7 +46,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() throws Exception {
+  void create_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() throws Exception {
 
     // given: new SolicitudProyectoEntidadFinanciadoraAjena
     SolicitudProyectoEntidadFinanciadoraAjena newSolicitudProyectoEntidadFinanciadoraAjena = generarMockSolicitudProyectoEntidadFinanciadoraAjena(
@@ -76,7 +76,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() throws Exception {
+  void update_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() throws Exception {
     Long idFuenteFinanciacion = 1L;
     SolicitudProyectoEntidadFinanciadoraAjena solicitudProyectoEntidadFinanciadoraAjena = generarMockSolicitudProyectoEntidadFinanciadoraAjena(
         idFuenteFinanciacion);
@@ -108,7 +108,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing SolicitudProyectoEntidadFinanciadoraAjena to be deleted
     Long id = 1L;
 
@@ -125,7 +125,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() throws Exception {
+  void findById_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() throws Exception {
     Long idSolicitudProyectoEntidadFinanciadoraAjena = 1L;
 
     final ResponseEntity<SolicitudProyectoEntidadFinanciadoraAjena> response = restTemplate.exchange(

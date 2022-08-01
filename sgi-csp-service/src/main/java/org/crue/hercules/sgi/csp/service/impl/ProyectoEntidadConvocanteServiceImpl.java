@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.Optional;
+
 import org.crue.hercules.sgi.csp.exceptions.ProgramaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoEntidadConvocanteNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
@@ -11,6 +13,7 @@ import org.crue.hercules.sgi.csp.repository.ProyectoEntidadConvocanteRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoEntidadConvocanteSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoEntidadConvocanteService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
@@ -55,7 +58,7 @@ public class ProyectoEntidadConvocanteServiceImpl implements ProyectoEntidadConv
   public ProyectoEntidadConvocante create(ProyectoEntidadConvocante proyectoEntidadConvocante) {
     log.debug("create(ProyectoEntidadConvocante proyectoEntidadConvocante) - start");
     Assert.isNull(proyectoEntidadConvocante.getId(), "ProyectoEntidadConvocante id tiene que ser null");
-    Assert.notNull(proyectoEntidadConvocante.getProyectoId(), "Proyecto id no puede ser null");
+    AssertHelper.idNotNull(proyectoEntidadConvocante.getProyectoId(), Proyecto.class);
     Proyecto proyecto = proyectoRepository.findById(proyectoEntidadConvocante.getProyectoId())
         .orElseThrow(() -> new ProyectoNotFoundException(proyectoEntidadConvocante.getProyectoId()));
     proyectoHelper.checkCanRead(proyecto);
@@ -122,13 +125,15 @@ public class ProyectoEntidadConvocanteServiceImpl implements ProyectoEntidadConv
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
     Assert.notNull(id, "ProyectoEntidadConvocante id no puede ser null");
-    repository.findById(id).map(proyectoEntidadConvocante -> {
-      Proyecto proyecto = proyectoRepository.findById(proyectoEntidadConvocante.getProyectoId())
-          .orElseThrow(() -> new ProyectoNotFoundException(proyectoEntidadConvocante.getProyectoId()));
+    Optional<ProyectoEntidadConvocante> entidadConvocante = repository.findById(id);
+    if (entidadConvocante.isPresent()) {
+      Proyecto proyecto = proyectoRepository.findById(entidadConvocante.get().getProyectoId())
+          .orElseThrow(() -> new ProyectoNotFoundException(entidadConvocante.get().getProyectoId()));
       proyectoHelper.checkCanRead(proyecto);
       repository.deleteById(id);
-      return proyectoEntidadConvocante;
-    }).orElseThrow(() -> new ProyectoEntidadConvocanteNotFoundException(id));
+    } else {
+      throw new ProyectoEntidadConvocanteNotFoundException(id);
+    }
 
     log.debug("delete(Long id) - end");
   }
@@ -144,7 +149,7 @@ public class ProyectoEntidadConvocanteServiceImpl implements ProyectoEntidadConv
    */
   public Page<ProyectoEntidadConvocante> findAllByProyecto(Long idProyecto, String query, Pageable pageable) {
     log.debug("findAllByProyecto(Long idProyecto, String query, Pageable pageable) - start");
-    Assert.notNull(idProyecto, "Proyecto id no puede ser null");
+    AssertHelper.idNotNull(idProyecto, Proyecto.class);
     Proyecto proyecto = proyectoRepository.findById(idProyecto)
         .orElseThrow(() -> new ProyectoNotFoundException(idProyecto));
     proyectoHelper.checkCanRead(proyecto);
@@ -200,7 +205,7 @@ public class ProyectoEntidadConvocanteServiceImpl implements ProyectoEntidadConv
   @Transactional
   public ProyectoEntidadConvocante update(ProyectoEntidadConvocante proyectoEntidadConvocanteActualizar) {
     log.debug("update(ProyectoEntidadConvocante proyectoEntidadConvocanteActualizar) - start");
-    Assert.notNull(proyectoEntidadConvocanteActualizar.getProyectoId(), "Proyecto id no puede ser null");
+    AssertHelper.idNotNull(proyectoEntidadConvocanteActualizar.getProyectoId(), Proyecto.class);
     Assert.notNull(proyectoEntidadConvocanteActualizar.getEntidadRef(), "EntidadRef no puede ser null");
     Proyecto proyecto = proyectoRepository.findById(proyectoEntidadConvocanteActualizar.getProyectoId())
         .orElseThrow(() -> new ProyectoNotFoundException(proyectoEntidadConvocanteActualizar.getProyectoId()));
@@ -211,7 +216,7 @@ public class ProyectoEntidadConvocanteServiceImpl implements ProyectoEntidadConv
         "No existe una asociación activa para ese Proyecto y Entidad");
 
     return repository.findByProyectoIdAndEntidadRef(proyectoEntidadConvocanteActualizar.getProyectoId(),
-        proyectoEntidadConvocanteActualizar.getEntidadRef()).map((data) -> {
+        proyectoEntidadConvocanteActualizar.getEntidadRef()).map(data -> {
           // Actualizamos el programa
           if (proyectoEntidadConvocanteActualizar.getPrograma() != null) {
             if (proyectoEntidadConvocanteActualizar.getPrograma().getId() == null) {

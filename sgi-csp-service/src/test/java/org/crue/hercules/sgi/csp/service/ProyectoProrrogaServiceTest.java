@@ -36,7 +36,7 @@ import org.springframework.security.test.context.support.WithMockUser;
  * ProyectoProrrogaServiceTest
  */
 
-public class ProyectoProrrogaServiceTest extends BaseServiceTest {
+class ProyectoProrrogaServiceTest extends BaseServiceTest {
 
   @Mock
   private ProyectoProrrogaRepository repository;
@@ -54,13 +54,13 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   private ProyectoProrrogaService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ProyectoProrrogaServiceImpl(repository, proyectoRepository, prorrogaDocumentoRepository,
         proyectoEquipoRepository, proyectoHelper);
   }
 
   @Test
-  public void create_ReturnsProyectoProrroga() {
+  void create_ReturnsProyectoProrroga() {
     // given: Un nuevo ProyectoProrroga
     ProyectoProrroga proyectoProrrogaAnterior = generarMockProyectoProrroga(1L, 1L);
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(2L, 1L);
@@ -102,7 +102,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ProyectoProrroga que ya tiene id
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     // when: Creamos el ProyectoProrroga
@@ -112,7 +112,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutProyectoId_ThrowsIllegalArgumentException() {
+  void create_WithoutProyectoId_ThrowsIllegalArgumentException() {
     // given: a ProyectoProrroga without ProyectoId
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     proyectoProrroga.setId(null);
@@ -127,7 +127,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutNumProrroga_ThrowsIllegalArgumentException() {
+  void create_WithoutNumProrroga_ThrowsIllegalArgumentException() {
     // given: a ProyectoProrroga without NumProrroga
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     proyectoProrroga.setId(null);
@@ -142,7 +142,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutTipoProrroga_ThrowsIllegalArgumentException() {
+  void create_WithoutTipoProrroga_ThrowsIllegalArgumentException() {
     // given: a ProyectoProrroga without TipoProrroga
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     proyectoProrroga.setId(null);
@@ -157,7 +157,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutFechaConcesion_ThrowsIllegalArgumentException() {
+  void create_WithoutFechaConcesion_ThrowsIllegalArgumentException() {
     // given: a ProyectoProrroga without FechaConcesion
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     proyectoProrroga.setId(null);
@@ -172,7 +172,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithTipoTiempoAndWithoutFechaFin_ThrowsIllegalArgumentException() {
+  void create_WithTipoTiempoAndWithoutFechaFin_ThrowsIllegalArgumentException() {
     // given: a ProyectoProrroga tipo Tiempo without FechaFin
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     proyectoProrroga.setId(null);
@@ -188,7 +188,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithTipoImporteAndWithoutImporte_ThrowsIllegalArgumentException() {
+  void create_WithTipoImporteAndWithoutImporte_ThrowsIllegalArgumentException() {
     // given: a ProyectoProrroga tipo Tiempo without Importe
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     proyectoProrroga.setId(null);
@@ -204,7 +204,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
+  void create_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
     // given: a ProyectoProrroga with non existing Proyecto
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     proyectoProrroga.setId(null);
@@ -217,7 +217,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithFechaConcesionBeforePreviousProrroga_ThrowsIllegalArgumentException() {
+  void create_WithFechaConcesionBeforePreviousProrroga_ThrowsIllegalArgumentException() {
     // given: a ProyectoProrroga with fechaConcesion anterior a la última prórroga
     ProyectoProrroga proyectoProrrogaAnterior = generarMockProyectoProrroga(1L, 1L);
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(2L, 1L);
@@ -238,7 +238,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_FechaFinBeforeProyectoFechaFin_ThrowsIllegalArgumentException() {
+  void create_FechaFinBeforeProyectoFechaFin_ThrowsIllegalArgumentException() {
     // given: Fecha Fin anterior a la de inicio del proyecto
     Proyecto proyecto = generarMockProyecto(1L);
     ProyectoProrroga proyectoProrrogaAnterior = generarMockProyectoProrroga(1L, 1L);
@@ -259,7 +259,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsProyectoProrroga() {
+  void update_ReturnsProyectoProrroga() {
     // given: Un nuevo ProyectoProrroga con el tipoProrroga actualizado
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     ProyectoProrroga proyectoProrrogaAnterior = generarMockProyectoProrroga(2L, 1L);
@@ -300,7 +300,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsProyectoProrrogaNotFoundException() {
+  void update_WithIdNotExist_ThrowsProyectoProrrogaNotFoundException() {
     // given: Un ProyectoProrroga a actualizar con un id que no existe
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
 
@@ -313,7 +313,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutProyectoId_ThrowsIllegalArgumentException() {
+  void update_WithoutProyectoId_ThrowsIllegalArgumentException() {
     // given: a ProyectoProrroga without ProyectoId
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     proyectoProrroga.setObservaciones("observaciones-modificada");
@@ -328,7 +328,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutNumProrroga_ThrowsIllegalArgumentException() {
+  void update_WithoutNumProrroga_ThrowsIllegalArgumentException() {
     // given: a ProyectoProrroga without NumProrroga
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     proyectoProrroga.setObservaciones("observaciones-modificada");
@@ -343,7 +343,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutTipoProrroga_ThrowsIllegalArgumentException() {
+  void update_WithoutTipoProrroga_ThrowsIllegalArgumentException() {
     // given: a ProyectoProrroga without TipoProrroga
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     proyectoProrroga.setObservaciones("observaciones-modificada");
@@ -358,7 +358,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutFechaConcesion_ThrowsIllegalArgumentException() {
+  void update_WithoutFechaConcesion_ThrowsIllegalArgumentException() {
     // given: a ProyectoProrroga without FechaConcesion
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     proyectoProrroga.setObservaciones("observaciones-modificada");
@@ -373,7 +373,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithTipoTiempoAndWithoutFechaFin_ThrowsIllegalArgumentException() {
+  void update_WithTipoTiempoAndWithoutFechaFin_ThrowsIllegalArgumentException() {
     // given: a ProyectoProrroga without FechaFin
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     proyectoProrroga.setObservaciones("observaciones-modificada");
@@ -389,7 +389,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithTipoImporteAndWithoutImporte_ThrowsIllegalArgumentException() {
+  void update_WithTipoImporteAndWithoutImporte_ThrowsIllegalArgumentException() {
     // given: a ProyectoProrroga without Importe
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     proyectoProrroga.setObservaciones("observaciones-modificada");
@@ -405,7 +405,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
+  void update_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
     // given: a ProyectoProrroga with non existing Proyecto
     ProyectoProrroga proyectoProrrogaOriginal = generarMockProyectoProrroga(1L, 1L);
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
@@ -422,7 +422,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_NotUltimaProrroga_ThrowsIllegalArgumentException() throws Exception {
+  void update_NotUltimaProrroga_ThrowsIllegalArgumentException() throws Exception {
     // given: Not ultimo ProyectoProrroga
     ProyectoProrroga proyectoProrrogaOriginal = generarMockProyectoProrroga(1L, 1L);
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
@@ -443,7 +443,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_FechaConcesionNotBeforePreviousProrroga_ThrowsIllegalArgumentException() throws Exception {
+  void update_FechaConcesionNotBeforePreviousProrroga_ThrowsIllegalArgumentException() throws Exception {
     // given: Fecha de concesión anterior a la de la última prorroga
     ProyectoProrroga proyectoProrrogaAnterior = generarMockProyectoProrroga(1L, 1L);
     ProyectoProrroga proyectoProrrogaOriginal = generarMockProyectoProrroga(2L, 1L);
@@ -469,7 +469,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_FechaFinBeforeProyectoFechaFin_ThrowsIllegalArgumentException() throws Exception {
+  void update_FechaFinBeforeProyectoFechaFin_ThrowsIllegalArgumentException() throws Exception {
     // given: Fecha Fin anterior a la de inicio del proyecto
     Proyecto proyecto = generarMockProyecto(1L);
     ProyectoProrroga proyectoProrrogaOriginal = generarMockProyectoProrroga(2L, 1L);
@@ -491,7 +491,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_NoReturnsAnyException() {
+  void delete_WithExistingId_NoReturnsAnyException() {
     // given: existing ProyectoProrroga
     Long id = 1L;
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(id, 1L);
@@ -510,7 +510,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -524,7 +524,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_NotUltimaProrroga_ThrowsIllegalArgumentException() throws Exception {
+  void delete_NotUltimaProrroga_ThrowsIllegalArgumentException() throws Exception {
     // given: Not ultimo ProyectoProrroga
     Long id = 1L;
 
@@ -541,7 +541,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void existsById_WithExistingId_ReturnsTRUE() throws Exception {
+  void existsById_WithExistingId_ReturnsTRUE() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(repository.existsById(ArgumentMatchers.<Long>any())).willReturn(Boolean.TRUE);
@@ -550,12 +550,11 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
     boolean responseData = service.existsById(id);
 
     // then: returns TRUE
-    Assertions.assertThat(responseData).isNotNull();
     Assertions.assertThat(responseData).isTrue();
   }
 
   @Test
-  public void existsById_WithNoExistingId_ReturnsFALSE() throws Exception {
+  void existsById_WithNoExistingId_ReturnsFALSE() throws Exception {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(repository.existsById(ArgumentMatchers.<Long>any())).willReturn(Boolean.FALSE);
@@ -564,12 +563,11 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
     boolean responseData = service.existsById(id);
 
     // then: returns TRUE
-    Assertions.assertThat(responseData).isNotNull();
     Assertions.assertThat(responseData).isFalse();
   }
 
   @Test
-  public void findById_ReturnsProyectoProrroga() {
+  void findById_ReturnsProyectoProrroga() {
     // given: Un ProyectoProrroga con el id buscado
     Long idBuscado = 1L;
     Long idProyecto = 1L;
@@ -586,7 +584,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsProyectoProrrogaNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsProyectoProrrogaNotFoundException() throws Exception {
     // given: Ningun ProyectoProrroga con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -599,7 +597,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllByProyecto_ReturnsPage() {
+  void findAllByProyecto_ReturnsPage() {
     // given: Una lista con 37 ProyectoProrroga para la Proyecto
     Long proyectoId = 1L;
     List<ProyectoProrroga> proyectosEntidadesConvocantes = new ArrayList<>();
@@ -627,7 +625,7 @@ public class ProyectoProrrogaServiceTest extends BaseServiceTest {
     Page<ProyectoProrroga> page = service.findAllByProyecto(proyectoId, null, paging);
 
     // then: Devuelve la pagina 3 con los ProyectoProrroga del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

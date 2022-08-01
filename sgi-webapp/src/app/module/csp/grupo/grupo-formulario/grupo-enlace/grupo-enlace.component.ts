@@ -102,9 +102,10 @@ export class GrupoEnlaceComponent extends FragmentComponent implements OnInit, O
   }
 
   /**
-   * Apertura de modal de equipos (edición/creación)
+   * Apertura de modal de enlaces (edición/creación)
    *
-   * @param idEquipo Identificador de equipo a editar.
+   * @param wrapper StatusWrapper<IGrupoEnlace>
+   * @param rowIndex índice de la fila del listado
    */
   openModal(wrapper?: StatusWrapper<IGrupoEnlace>, rowIndex?: number): void {
     // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación

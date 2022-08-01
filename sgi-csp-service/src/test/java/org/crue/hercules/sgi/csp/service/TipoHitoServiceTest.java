@@ -26,7 +26,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * TipoHitoServiceTest
  */
-public class TipoHitoServiceTest extends BaseServiceTest {
+class TipoHitoServiceTest extends BaseServiceTest {
 
   @Mock
   private TipoHitoRepository tipoHitoRepository;
@@ -34,12 +34,12 @@ public class TipoHitoServiceTest extends BaseServiceTest {
   private TipoHitoService tipoHitoService;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     tipoHitoService = new TipoHitoServiceImpl(tipoHitoRepository);
   }
 
   @Test
-  public void find_WithId_ReturnsTipoHito() {
+  void find_WithId_ReturnsTipoHito() {
     BDDMockito.given(tipoHitoRepository.findById(1L)).willReturn(Optional.of(generarMockTipoHito(1L, "TipoHito1")));
 
     TipoHito tipoHito = tipoHitoService.findById(1L);
@@ -50,14 +50,14 @@ public class TipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void find_NotFound_ThrowsTipoHitoNotFoundException() throws Exception {
+  void find_NotFound_ThrowsTipoHitoNotFoundException() throws Exception {
     BDDMockito.given(tipoHitoRepository.findById(1L)).willReturn(Optional.empty());
 
     Assertions.assertThatThrownBy(() -> tipoHitoService.findById(1L)).isInstanceOf(TipoHitoNotFoundException.class);
   }
 
   @Test
-  public void create_ReturnsTipoHito() {
+  void create_ReturnsTipoHito() {
     // given: Un nuevo TipoHito
     TipoHito tipoHito = generarMockTipoHito(null);
 
@@ -80,7 +80,7 @@ public class TipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo TipoHito que ya tiene id
     TipoHito tipoHitoNew = generarMockTipoHito(1L);
 
@@ -92,7 +92,7 @@ public class TipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsTipoHito() {
+  void update_ReturnsTipoHito() {
     // given: Un nuevo tipo Hito con el servicio actualizado
     TipoHito tipoHitoServicioActualizado = generarMockTipoHito(1L, "TipoHito1 actualizada");
 
@@ -111,7 +111,7 @@ public class TipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ThrowsTipoHitoNotFoundException() {
+  void update_ThrowsTipoHitoNotFoundException() {
     // given: Un nuevo tipo Hito a actualizar
     TipoHito tipoHito = generarMockTipoHito(1L, "TipoHito");
 
@@ -121,7 +121,7 @@ public class TipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: a TipoHito with duplicated nombre
 
     TipoHito givenData = generarMockTipoHito(1L);
@@ -141,7 +141,7 @@ public class TipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void update_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un nuevo TipoHito con un nombre que ya existe
     TipoHito tipoHitoUpdated = generarMockTipoHito(1L, "nombreRepetido");
     TipoHito tipoHito = generarMockTipoHito(2L, "nombreRepetido");
@@ -157,7 +157,7 @@ public class TipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_WithPaging_ReturnsPage() {
+  void findAll_WithPaging_ReturnsPage() {
     // given: One hundred TipoHitos
     List<TipoHito> tipoHitoList = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -186,9 +186,9 @@ public class TipoHitoServiceTest extends BaseServiceTest {
 
     // then: A Page with ten TipoHitoes are returned containing
     // descripcion='TipoHito031' to 'TipoHito040'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoHito tipoHito = page.getContent().get(i);
@@ -197,7 +197,7 @@ public class TipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllTodos_WithPaging_ReturnsPage() {
+  void findAllTodos_WithPaging_ReturnsPage() {
     // given: One hundred TipoHitos
     List<TipoHito> tipoHitoList = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -226,9 +226,9 @@ public class TipoHitoServiceTest extends BaseServiceTest {
 
     // then: A Page with ten TipoHitoes are returned containing
     // descripcion='TipoHito031' to 'TipoHito040'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoHito tipoHito = page.getContent().get(i);
@@ -237,7 +237,7 @@ public class TipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_ReturnsTipoHito() {
+  void enable_ReturnsTipoHito() {
     // given: Un nuevo TipoHito inactivo
     TipoHito tipoHito = generarMockTipoHito(1L);
     tipoHito.setActivo(Boolean.FALSE);
@@ -266,7 +266,7 @@ public class TipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
+  void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
     // given: Un id de un TipoHito que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(tipoHitoRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -277,7 +277,7 @@ public class TipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void enable_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un TipoHito inactivo con nombre existente
     TipoHito tipoHitoExistente = generarMockTipoHito(2L);
     TipoHito tipoHito = generarMockTipoHito(1L);
@@ -296,7 +296,7 @@ public class TipoHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_ReturnsTipoHito() {
+  void disable_ReturnsTipoHito() {
     // given: Un nuevo TipoHito activo
     TipoHito tipoHito = generarMockTipoHito(1L);
 
@@ -319,12 +319,12 @@ public class TipoHitoServiceTest extends BaseServiceTest {
     Assertions.assertThat(tipoHitoActualizado.getNombre()).as("getNombre()").isEqualTo(tipoHito.getNombre());
     Assertions.assertThat(tipoHitoActualizado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(tipoHito.getDescripcion());
-    Assertions.assertThat(tipoHitoActualizado.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(tipoHitoActualizado.getActivo()).as("getActivo()").isFalse();
 
   }
 
   @Test
-  public void disable_WithIdNotExist_ThrowsTipoHitoNotFoundException() {
+  void disable_WithIdNotExist_ThrowsTipoHitoNotFoundException() {
     // given: Un id de un TipoHito que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(tipoHitoRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -340,7 +340,7 @@ public class TipoHitoServiceTest extends BaseServiceTest {
    * @param id id del TipoHito
    * @return el objeto TipoHito
    */
-  public TipoHito generarMockTipoHito(Long id) {
+  TipoHito generarMockTipoHito(Long id) {
     return generarMockTipoHito(id, "nombre-" + id);
   }
 
@@ -350,7 +350,7 @@ public class TipoHitoServiceTest extends BaseServiceTest {
    * @param id id del TipoHito
    * @return el objeto TipoHito
    */
-  public TipoHito generarMockTipoHito(Long id, String nombre) {
+  TipoHito generarMockTipoHito(Long id, String nombre) {
     TipoHito tipoHito = new TipoHito();
     tipoHito.setId(id);
     tipoHito.setNombre(nombre);

@@ -1,0 +1,53 @@
+<sgi-dialog-header title="{{'csp.identificador-justificacion.title' | translate}}">
+</sgi-dialog-header>
+<sgi-dialog-content>
+  <form [formGroup]="formGroup" fxLayout="row" fxLayoutGap="10px">
+    <!-- Identificador justificación -->
+    <div fxFlex>
+      <mat-form-field>
+        <mat-label>{{'csp.identificador-justificacion.identificador-justificacion' | translate}}
+        </mat-label>
+        <input matInput formControlName="identificadorJustificacion" type="text" required
+          placeholder="{{'csp.identificador-justificacion.identificador-justificacion' | translate}}">
+        <sgi-field-info matSuffix [visible]="true"
+          message="{{'csp.identificador-justificacion.identificador-justificacion-tooltip' | translate: plantillaFormatoIdentificadorJustificacion}}">
+        </sgi-field-info>
+        <mat-error *ngIf="formGroup.controls.identificadorJustificacion.errors?.required">
+          {{'error.required.entity' | translate:msgParamIdJustificacionEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.identificadorJustificacion.errors?.pattern">
+          {{'error.csp.identificador-justificacion.identificador-justificacion.invalid-format' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.identificadorJustificacion.errors?.notAllowed">
+          {{'error.csp.identificador-justificacion.identificador-justificacion.identificador-justificacion-duplicado' |
+          translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.identificadorJustificacion.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamIdJustificacionEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Fecha presentación justificación -->
+    <div fxFlex>
+      <mat-form-field>
+        <mat-label>{{'csp.identificador-justificacion.fecha-presentacion-justificacion' | translate}}</mat-label>
+        <input matInput formControlName="fechaPresentacionJustificacion" [ngxMatDatetimePicker]="picker1">
+        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #picker1 showSeconds="true" [defaultTime]="[0,0,0]"></ngx-mat-datetime-picker>
+        <mat-error *ngIf="formGroup.controls.fechaPresentacionJustificacion.errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaJustificacionEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>
+    {{ 'btn.ok' | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

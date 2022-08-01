@@ -168,13 +168,13 @@ public class SectorLicenciadoController {
 
   private Page<SectorLicenciadoOutput> convert(Page<SectorLicenciado> page) {
     List<SectorLicenciadoOutput> content = page.getContent().stream()
-        .map((sectorLicenciado) -> convert(sectorLicenciado)).collect(Collectors.toList());
+        .map(this::convert).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
 
   private List<SectorLicenciadoOutput> convert(List<SectorLicenciado> list) {
-    return list.stream().map((sectorLicenciado) -> convert(sectorLicenciado)).collect(Collectors.toList());
+    return list.stream().map(this::convert).collect(Collectors.toList());
   }
 
   private SectorLicenciado convert(SectorLicenciadoInput sectorLicenciadoInput) {

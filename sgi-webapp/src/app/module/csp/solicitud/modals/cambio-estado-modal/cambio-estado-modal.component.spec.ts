@@ -27,7 +27,8 @@ describe('CambioEstadoModalComponent', () => {
     solicitudProyecto: undefined,
     hasRequiredDocumentos: true,
     isSolicitanteInSolicitudEquipo: true,
-    solicitud: undefined
+    solicitud: undefined,
+    isTutor: false
   };
   const state = {
     idConvocatoria: 1

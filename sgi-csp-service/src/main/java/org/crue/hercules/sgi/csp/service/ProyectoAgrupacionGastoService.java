@@ -1,7 +1,6 @@
 package org.crue.hercules.sgi.csp.service;
 
 import javax.validation.Valid;
-import javax.validation.Validator;
 
 import org.crue.hercules.sgi.csp.exceptions.ProyectoAgrupacionGastoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ProyectoAgrupacionGasto;
@@ -26,7 +25,7 @@ public class ProyectoAgrupacionGastoService {
 
   private final ProyectoAgrupacionGastoRepository repository;
 
-  public ProyectoAgrupacionGastoService(Validator validator, ProyectoAgrupacionGastoRepository repository) {
+  public ProyectoAgrupacionGastoService(ProyectoAgrupacionGastoRepository repository) {
     this.repository = repository;
   }
 

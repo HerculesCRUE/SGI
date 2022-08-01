@@ -1,0 +1,195 @@
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
+
+  <!-- Formulario -->
+  <ng-container>
+    <form [formGroup]="formGroup" fxLayout="column">
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Fecha Solicitud -->
+        <mat-form-field>
+          <mat-label>{{'eer.empresa-explotacion-resultados.fecha-solicitud' | translate}}</mat-label>
+          <input matInput formControlName="fechaSolicitud" [matDatepicker]="pickerSolicitud" required />
+          <mat-datepicker-toggle matSuffix [for]="pickerSolicitud"></mat-datepicker-toggle>
+          <mat-datepicker #pickerSolicitud></mat-datepicker>
+          <mat-error *ngIf="formGroup.controls.fechaSolicitud.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamFechaSolicitudEntity }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Tipo empresa -->
+        <mat-form-field>
+          <mat-label>{{'eer.empresa-explotacion-resultados.tipo-empresa' | translate}}</mat-label>
+          <sgi-select-enum formControlName="tipoEmpresa" [enumMap]="TIPO_EMPRESA_MAP" required>
+          </sgi-select-enum>
+        </mat-form-field>
+
+        <!-- estado -->
+        <mat-form-field>
+          <mat-label>{{'eer.empresa-explotacion-resultados.estado' | translate}}</mat-label>
+          <sgi-select-enum formControlName="estado" [enumMap]="estados" required>
+          </sgi-select-enum>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Solicitante -->
+        <mat-form-field>
+          <mat-label>{{'eer.empresa-explotacion-resultados.solicitante' | translate}}</mat-label>
+          <sgi-select-persona placeholder="{{'eer.empresa-explotacion-resultados.solicitante' | translate}}"
+            formControlName="solicitante"
+            [tipoColectivo]="TIPO_COLECTIVO.MIEMBRO_EQUIPO_EMPRESA_EXPLOTACION_RESULTADOS">
+          </sgi-select-persona>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Nombre razón social -->
+        <mat-form-field *ngIf="this.formPart.showRazonSocial">
+          <mat-label>{{'eer.empresa-explotacion-resultados.nombre-razon-social' | translate}}</mat-label>
+          <input matInput type="text"
+            placeholder="{{'eer.empresa-explotacion-resultados.nombre-razon-social' | translate}}"
+            formControlName="nombreRazonSocial" [required]="this.formPart.showRazonSocial"
+            [readonly]="!this.formPart.showRazonSocial">
+          <mat-error *ngIf="formGroup.controls.nombreRazonSocial.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamNombreRazonSocialEntity }}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.nombreRazonSocial.errors?.maxlength">
+            {{ 'error.maxlength.entity' | translate:msgParamNombreRazonSocialEntity }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Entidad -->
+        <mat-form-field>
+          <mat-label>{{'eer.empresa-explotacion-resultados.entidad' | translate}}</mat-label>
+          <sgi-select-empresa placeholder="{{'eer.empresa-explotacion-resultados.entidad' | translate}}"
+            formControlName="entidad">
+          </sgi-select-empresa>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!--Objeto social -->
+        <mat-form-field>
+          <mat-label>{{'eer.empresa-explotacion-resultados.objeto-social' | translate}}</mat-label>
+          <input matInput type="text" placeholder="{{'eer.empresa-explotacion-resultados.objeto-social' | translate}}"
+            formControlName="objetoSocial" required>
+          <mat-error *ngIf="formGroup.controls.objetoSocial.errors?.required">
+            {{ 'error.required.entity' | translate:msgParamObjetoSocialEntity }}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.objetoSocial.errors?.maxlength">
+            {{ 'error.maxlength.entity' | translate:msgParamObjetoSocialEntity }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Conocimiento tecnología -->
+        <mat-form-field fxFlex="100%">
+          <mat-label>{{(formGroup.controls.tipoEmpresa.value === TIPO_EMPRESA.EBT ?
+            'eer.empresa-explotacion-resultados.tecnologia' :'eer.empresa-explotacion-resultados.conocimiento') |
+            translate}}</mat-label>
+          <textarea matInput formControlName="conocimientoTecnologia" type="text"
+            placeholder="{{(formGroup.controls.tipoEmpresa.value === TIPO_EMPRESA.EBT ? 'eer.empresa-explotacion-resultados.tecnologia' :'eer.empresa-explotacion-resultados.conocimiento') | translate}}"
+            required>
+                  </textarea>
+          <mat-error
+            *ngIf="formGroup.controls.conocimientoTecnologia.errors?.maxlength && formGroup.controls.tipoEmpresa.value === TIPO_EMPRESA.EBT">
+            {{ 'error.maxlength.entity' | translate:msgParamTecnologiaEntity }}
+          </mat-error>
+          <mat-error
+            *ngIf="formGroup.controls.conocimientoTecnologia.errors?.required && formGroup.controls.tipoEmpresa.value === TIPO_EMPRESA.EBT">
+            {{ 'error.required.entity' | translate:msgParamTecnologiaEntity }}
+          </mat-error>
+          <mat-error
+            *ngIf="formGroup.controls.conocimientoTecnologia.errors?.maxlength && formGroup.controls.tipoEmpresa.value !== TIPO_EMPRESA.EBT">
+            {{ 'error.maxlength.entity' | translate:msgParamConocimientoEntity }}
+          </mat-error>
+          <mat-error
+            *ngIf="formGroup.controls.conocimientoTecnologia.errors?.required && formGroup.controls.tipoEmpresa.value !== TIPO_EMPRESA.EBT">
+            {{ 'error.required.entity' | translate:msgParamConocimientoEntity }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Número de protocolo -->
+        <mat-form-field>
+          <mat-label>{{'eer.empresa-explotacion-resultados.numero-protocolo' | translate}}</mat-label>
+          <input matInput type="text"
+            placeholder="{{'eer.empresa-explotacion-resultados.numero-protocolo' | translate}}"
+            formControlName="numeroProtocolo">
+          <mat-error *ngIf="formGroup.controls.numeroProtocolo.errors?.maxlength">
+            {{ 'error.maxlength.entity' | translate:msgParamNumeroProtocoloEntity }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Notario -->
+        <mat-form-field>
+          <mat-label>{{'eer.empresa-explotacion-resultados.notario' | translate}}</mat-label>
+          <input matInput type="text" placeholder="{{'eer.empresa-explotacion-resultados.notario' | translate}}"
+            formControlName="notario">
+          <mat-error *ngIf="formGroup.controls.notario.errors?.maxlength">
+            {{ 'error.maxlength.entity' | translate:msgParamNotarioEntity }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Fecha constitución -->
+        <mat-form-field>
+          <mat-label>{{'eer.empresa-explotacion-resultados.fecha-constitucion' | translate}}</mat-label>
+          <input matInput formControlName="fechaConstitucion" [matDatepicker]="pickerConstitucion" />
+          <mat-datepicker-toggle matSuffix [for]="pickerConstitucion"></mat-datepicker-toggle>
+          <mat-datepicker #pickerConstitucion></mat-datepicker>
+        </mat-form-field>
+
+        <!-- Fecha aprobación CG -->
+        <mat-form-field>
+          <mat-label>{{'eer.empresa-explotacion-resultados.fecha-aprobacion-cg' | translate}}</mat-label>
+          <input matInput formControlName="fechaAprobacionCG" [matDatepicker]="pickerAprobacionCG" />
+          <mat-datepicker-toggle matSuffix [for]="pickerAprobacionCG"></mat-datepicker-toggle>
+          <mat-datepicker #pickerAprobacionCG></mat-datepicker>
+        </mat-form-field>
+
+        <!-- Fecha incorporación -->
+        <mat-form-field>
+          <mat-label>{{'eer.empresa-explotacion-resultados.fecha-incorporacion' | translate}}</mat-label>
+          <input matInput formControlName="fechaIncorporacion" [matDatepicker]="pickerIncorporacion" />
+          <mat-datepicker-toggle matSuffix [for]="pickerIncorporacion"></mat-datepicker-toggle>
+          <mat-datepicker #pickerIncorporacion></mat-datepicker>
+        </mat-form-field>
+
+        <!-- Fecha desvinculación -->
+        <mat-form-field>
+          <mat-label>{{'eer.empresa-explotacion-resultados.fecha-desvinculacion' | translate}}</mat-label>
+          <input matInput formControlName="fechaDesvinculacion" [matDatepicker]="pickerDesvinculacion" />
+          <mat-datepicker-toggle matSuffix [for]="pickerDesvinculacion"></mat-datepicker-toggle>
+          <mat-datepicker #pickerDesvinculacion></mat-datepicker>
+        </mat-form-field>
+
+        <!-- Fecha cese -->
+        <mat-form-field>
+          <mat-label>{{'eer.empresa-explotacion-resultados.fecha-cese' | translate}}</mat-label>
+          <input matInput formControlName="fechaCese" [matDatepicker]="pickerCese" />
+          <mat-datepicker-toggle matSuffix [for]="pickerCese"></mat-datepicker-toggle>
+          <mat-datepicker #pickerCese></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Observaciones -->
+        <mat-form-field fxFlex="100%">
+          <mat-label>{{'eer.empresa-explotacion-resultados.observaciones' | translate}}</mat-label>
+          <textarea matInput formControlName="observaciones" type="text"
+            placeholder="{{'eer.empresa-explotacion-resultados.observaciones' | translate}}">
+                  </textarea>
+          <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
+            {{ 'error.maxlength.entity' | translate:msgParamObservacionesEntity }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+    </form>
+  </ng-container>
+
+</sgi-fragment>

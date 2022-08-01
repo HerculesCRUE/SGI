@@ -178,7 +178,7 @@ public interface ConvocatoriaService {
    * @param solicitudId Identificador de {@link Solicitud}.
    * @return {@link Convocatoria} correspondiente a la {@link Solicitud}.
    */
-  Convocatoria findBySolicitudIdAndUserIsSolicitante(Long solicitudId);
+  Convocatoria findBySolicitudIdAndUserIsSolicitanteOrTutor(Long solicitudId);
 
   /**
    * Devuelve la {@link Convocatoria} asociada a la {@link Autorizacion} con el id

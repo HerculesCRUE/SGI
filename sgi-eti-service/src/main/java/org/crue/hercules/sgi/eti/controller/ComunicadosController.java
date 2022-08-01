@@ -42,4 +42,12 @@ public class ComunicadosController {
     log.debug("enviarComunicadoInformeSeguimientoAnualPendiente() - end");
   }
 
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-eti'))")
+  @GetMapping("/informes-seguimiento-final-pendientes")
+  public void enviarComunicadoInformeSeguimientoFinalPendiente() throws JsonProcessingException {
+    log.debug("enviarComunicadoInformeSeguimientoFinalPendiente() - start");
+    this.memoriaService.sendComunicadoInformeSeguimientoFinalPendiente();
+    log.debug("enviarComunicadoInformeSeguimientoFinalPendiente() - end");
+  }
+
 }

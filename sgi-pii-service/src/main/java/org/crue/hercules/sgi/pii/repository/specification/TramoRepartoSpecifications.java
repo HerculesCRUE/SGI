@@ -4,10 +4,14 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
 import org.crue.hercules.sgi.pii.model.TramoReparto;
-import org.crue.hercules.sgi.pii.model.TramoReparto_;
 import org.crue.hercules.sgi.pii.model.TramoReparto.Tipo;
+import org.crue.hercules.sgi.pii.model.TramoReparto_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TramoRepartoSpecifications {
 
   /**
@@ -18,9 +22,7 @@ public class TramoRepartoSpecifications {
    *         {@link TramoReparto.Tipo} especificado.
    */
   public static Specification<TramoReparto> withTipo(Tipo tipo) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(TramoReparto_.tipo), tipo);
-    };
+    return (root, query, cb) -> cb.equal(root.get(TramoReparto_.tipo), tipo);
   }
 
   /**
@@ -33,12 +35,10 @@ public class TramoRepartoSpecifications {
    *         solapados.
    */
   public static Specification<TramoReparto> overlappedTramoRepartoNotFinal(Integer desde, Integer hasta) {
-    return (root, query, cb) -> {
-      return cb.and(cb.and(cb.or(cb.between(root.get(TramoReparto_.desde), desde, hasta),
-          cb.between(root.get(TramoReparto_.hasta), desde, hasta),
-          cb.and(cb.lessThanOrEqualTo(root.get(TramoReparto_.desde), desde),
-              cb.greaterThanOrEqualTo(root.get(TramoReparto_.hasta), hasta)))));
-    };
+    return (root, query, cb) -> cb.and(cb.and(cb.or(cb.between(root.get(TramoReparto_.desde), desde, hasta),
+        cb.between(root.get(TramoReparto_.hasta), desde, hasta),
+        cb.and(cb.lessThanOrEqualTo(root.get(TramoReparto_.desde), desde),
+            cb.greaterThanOrEqualTo(root.get(TramoReparto_.hasta), hasta)))));
   }
 
   /**
@@ -50,9 +50,7 @@ public class TramoRepartoSpecifications {
    *         solapados.
    */
   public static Specification<TramoReparto> overlappedTramoRepartoFinal(Integer desdeTramoFinal) {
-    return (root, query, cb) -> {
-      return cb.greaterThanOrEqualTo(root.get(TramoReparto_.hasta), desdeTramoFinal);
-    };
+    return (root, query, cb) -> cb.greaterThanOrEqualTo(root.get(TramoReparto_.hasta), desdeTramoFinal);
   }
 
   /**
@@ -63,9 +61,7 @@ public class TramoRepartoSpecifications {
    *         al valor esperado.
    */
   public static Specification<TramoReparto> noGapBetweenTramoReparto(Integer expectedHasta) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(TramoReparto_.hasta), expectedHasta);
-    };
+    return (root, query, cb) -> cb.equal(root.get(TramoReparto_.hasta), expectedHasta);
   }
 
   /**

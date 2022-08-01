@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.eti.service.impl;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.eti.exceptions.EvaluadorNotFoundException;
@@ -48,7 +49,7 @@ public class EvaluadorServiceImpl implements EvaluadorService {
 
     // Si el evaluador a crear es presidente se ha de mirar que no coincida el
     // presidente en el rango de fechas de los presidentes existentes
-    if (evaluador.getCargoComite().getNombre().toLowerCase().equals("presidente")) {
+    if (evaluador.getCargoComite().getNombre().equalsIgnoreCase("presidente")) {
       Assert.isTrue(isPresidenteInFechasOk(evaluador), "Existen presidentes entre las fechas seleccionadas");
     } else {
       // Un evaluador no puede estar en el mismo comité en el mismo rango de fechas
@@ -80,18 +81,18 @@ public class EvaluadorServiceImpl implements EvaluadorService {
         .and(specFechaBajaNull).and(specComite);
 
     List<Evaluador> evaluadoresFechaBajaNull = evaluadorRepository.findAll(specsFechaBajaNull).stream()
-        .filter(eval -> evaluador.getId() != null ? eval.getId() != evaluador.getId() : true)
+        .filter(eval -> evaluador.getId() != null ? !Objects.equals(eval.getId(), evaluador.getId()) : true)
         .filter(
             eval -> evaluador.getFechaBaja() != null ? eval.getFechaAlta().isBefore(evaluador.getFechaBaja()) : true)
         .collect(Collectors.toList());
 
-    if (evaluadoresFechaBajaNull.size() == 0) {
+    if (evaluadoresFechaBajaNull.isEmpty()) {
       List<Evaluador> returnValue = evaluadorRepository.findAll(specs).stream()
-          .filter(eval -> evaluador.getId() != null ? eval.getId() != evaluador.getId() : true)
+          .filter(eval -> evaluador.getId() != null ? !Objects.equals(eval.getId(), evaluador.getId()) : true)
           .collect(Collectors.toList());
       // Si existen registros en las fechas en las que opera el nuevo presidente, el
       // rango de fechas es incorrecto
-      return !(returnValue.size() > 0);
+      return returnValue.isEmpty();
     } else {
       return false;
     }
@@ -119,16 +120,16 @@ public class EvaluadorServiceImpl implements EvaluadorService {
         .and(specFechaBajaNull).and(specComite);
 
     List<Evaluador> evaluadoresFechaBajaNull = evaluadorRepository.findAll(specsFechaBajaNull).stream()
-        .filter(eval -> evaluador.getId() != null ? eval.getId() != evaluador.getId() : true)
+        .filter(eval -> evaluador.getId() != null ? !Objects.equals(eval.getId(), evaluador.getId()) : true)
         .filter(
             eval -> evaluador.getFechaBaja() != null ? eval.getFechaAlta().isBefore(evaluador.getFechaBaja()) : true)
         .collect(Collectors.toList());
 
-    if (evaluadoresFechaBajaNull.size() == 0) {
+    if (evaluadoresFechaBajaNull.isEmpty()) {
       List<Evaluador> returnValue = evaluadorRepository.findAll(specs).stream()
-          .filter(eval -> evaluador.getId() != null ? eval.getId() != evaluador.getId() : true)
+          .filter(eval -> evaluador.getId() != null ? !Objects.equals(eval.getId(), evaluador.getId()) : true)
           .collect(Collectors.toList());
-      return !(returnValue.size() > 0);
+      return returnValue.isEmpty();
     } else {
       return false;
     }
@@ -179,9 +180,9 @@ public class EvaluadorServiceImpl implements EvaluadorService {
   @Override
   public Evaluador findById(final Long id) throws EvaluadorNotFoundException {
     log.debug("Petición a get Evaluador : {}  - start", id);
-    final Evaluador Evaluador = evaluadorRepository.findById(id).orElseThrow(() -> new EvaluadorNotFoundException(id));
+    final Evaluador evaluador = evaluadorRepository.findById(id).orElseThrow(() -> new EvaluadorNotFoundException(id));
     log.debug("Petición a get Evaluador : {}  - end", id);
-    return Evaluador;
+    return evaluador;
 
   }
 
@@ -220,7 +221,7 @@ public class EvaluadorServiceImpl implements EvaluadorService {
 
     // Si el evaluador a crear es presidente se ha de mirar que no coincida el
     // presidente en el rango de fechas de los presidentes existentes
-    if (evaluadorActualizar.getCargoComite().getNombre().toLowerCase().equals("presidente")) {
+    if (evaluadorActualizar.getCargoComite().getNombre().equalsIgnoreCase("presidente")) {
       Assert.isTrue(isPresidenteInFechasOk(evaluadorActualizar), "Existen presidentes entre las fechas seleccionadas");
     } else {
       // Un evaluador no puede estar en el mismo comité en el mismo rango de fechas

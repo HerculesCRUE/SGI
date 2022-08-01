@@ -51,7 +51,7 @@ export class MemoriaFormularioFragment extends MemoriaFormlyFormFragment {
     );
   }
 
-  protected isEditable(): boolean {
+  public isEditable(): boolean {
     if (!this.memoria?.estadoActual?.id) {
       return false;
     }

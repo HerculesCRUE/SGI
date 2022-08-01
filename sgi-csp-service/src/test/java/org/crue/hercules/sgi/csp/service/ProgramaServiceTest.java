@@ -26,7 +26,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * ProgramaServiceTest
  */
-public class ProgramaServiceTest extends BaseServiceTest {
+class ProgramaServiceTest extends BaseServiceTest {
 
   @Mock
   private ProgramaRepository repository;
@@ -34,12 +34,12 @@ public class ProgramaServiceTest extends BaseServiceTest {
   private ProgramaService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ProgramaServiceImpl(repository);
   }
 
   @Test
-  public void create_ReturnsPrograma() {
+  void create_ReturnsPrograma() {
     // given: Un nuevo Programa
     Programa programa = generarMockPrograma(null, "nombre-1", null);
 
@@ -69,7 +69,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithPadre_ReturnsPrograma() {
+  void create_WithPadre_ReturnsPrograma() {
     // given: Un nuevo Programa
     Programa programa = generarMockPrograma(null, "nombre-2", 1L);
 
@@ -95,7 +95,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo Programa que ya tiene id
     Programa programa = generarMockPrograma(1L);
 
@@ -106,7 +106,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingPadre_ThrowsProgramaNotFoundException() {
+  void create_WithNoExistingPadre_ThrowsProgramaNotFoundException() {
     // given: Un nuevo Programa con un padre que no existe
     Programa programa = generarMockPrograma(null, "nombreRepetido", 1L);
 
@@ -118,7 +118,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_PlanWithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void create_PlanWithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un nuevo Programa con un nombre que ya existe
     Programa programaNew = generarMockPrograma(null, "nombreRepetido", null);
     Programa programa = generarMockPrograma(1L, "nombreRepetido", null);
@@ -138,7 +138,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_ProgramaWithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void create_ProgramaWithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un nuevo Programa con un nombre que ya existe
     Programa programaNew = generarMockPrograma(null, "nombreRepetido", 1L);
     Programa programa = generarMockPrograma(1L, "nombreRepetidoPadre", null);
@@ -155,7 +155,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsPrograma() {
+  void update_ReturnsPrograma() {
     // given: Un nuevo Programa con el nombre actualizado
     Programa programa = generarMockPrograma(1L);
     Programa programaNombreActualizado = generarMockPrograma(1L, "NombreActualizado", null);
@@ -187,7 +187,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithPadre_ReturnsPrograma() {
+  void update_WithPadre_ReturnsPrograma() {
     // given: Un nuevo Programa con el nombre actualizado
     Programa programa = generarMockPrograma(2L, "Nombre", 1L);
     Programa programaNombreActualizado = generarMockPrograma(2L, "NombreActualizado", 1L);
@@ -214,7 +214,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_PlanWithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void update_PlanWithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un Programa actualizado con un nombre que ya existe
     Programa programaActualizado = generarMockPrograma(1L, "nombreRepetido", null);
     Programa programa = generarMockPrograma(2L, "nombreRepetido", null);
@@ -235,7 +235,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ProgramaWithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void update_ProgramaWithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un Programa actualizado con un nombre que ya existe
     Programa programaActualizado = generarMockPrograma(3L, "nombreRepetido", 1L);
     Programa programa = generarMockPrograma(1L, "nombreRepetidoPadre", null);
@@ -255,7 +255,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingPadre_ThrowsProgramaNotFoundException() {
+  void update_WithNoExistingPadre_ThrowsProgramaNotFoundException() {
     // given: Un Programa actualizado con un padre que no existe
     Programa programa = generarMockPrograma(2L, "nombreRepetido", 1L);
 
@@ -267,7 +267,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsProgramaNotFoundException() {
+  void update_WithIdNotExist_ThrowsProgramaNotFoundException() {
     // given: Un Programa actualizado con un id que no existe
     Programa programa = generarMockPrograma(1L, "Programa", null);
 
@@ -279,7 +279,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_ReturnsPrograma() {
+  void enable_ReturnsPrograma() {
     // given: Un nuevo Programa inactivo
     Programa programa = generarMockPrograma(1L);
     programa.setActivo(false);
@@ -304,11 +304,11 @@ public class ProgramaServiceTest extends BaseServiceTest {
     Assertions.assertThat(programaActualizado.getNombre()).as("getNombre()").isEqualTo(programa.getNombre());
     Assertions.assertThat(programaActualizado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(programa.getDescripcion());
-    Assertions.assertThat(programaActualizado.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(programaActualizado.getActivo()).as("getActivo()").isTrue();
   }
 
   @Test
-  public void enable_PlanWithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void enable_PlanWithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un Programa inactivo con un nombre que ya existe activo
     Programa programa = generarMockPrograma(1L, "nombreRepetido", null);
     programa.setActivo(false);
@@ -330,7 +330,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
+  void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
     // given: Un id de un Programa que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -340,7 +340,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_ReturnsPrograma() {
+  void disable_ReturnsPrograma() {
     // given: Un nuevo Programa activo
     Programa programa = generarMockPrograma(1L);
 
@@ -358,11 +358,11 @@ public class ProgramaServiceTest extends BaseServiceTest {
     Assertions.assertThat(programaActualizado.getNombre()).as("getNombre()").isEqualTo(programa.getNombre());
     Assertions.assertThat(programaActualizado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(programa.getDescripcion());
-    Assertions.assertThat(programaActualizado.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(programaActualizado.getActivo()).as("getActivo()").isFalse();
   }
 
   @Test
-  public void disable_WithIdNotExist_ThrowsProgramaNotFoundException() {
+  void disable_WithIdNotExist_ThrowsProgramaNotFoundException() {
     // given: Un id de un Programa que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -372,7 +372,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsPrograma() {
+  void findById_ReturnsPrograma() {
     // given: Un Programa con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.of(generarMockPrograma(idBuscado)));
@@ -384,11 +384,11 @@ public class ProgramaServiceTest extends BaseServiceTest {
     Assertions.assertThat(programa).as("isNotNull()").isNotNull();
     Assertions.assertThat(programa.getId()).as("getId()").isEqualTo(idBuscado);
     Assertions.assertThat(programa.getNombre()).as("getNombre()").isEqualTo("nombre-1");
-    Assertions.assertThat(programa.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(programa.getActivo()).as("getActivo()").isTrue();
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsProgramaNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsProgramaNotFoundException() throws Exception {
     // given: Ningun Programa con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -399,7 +399,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 Programa
     List<Programa> programas = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -428,7 +428,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
     Page<Programa> page = service.findAll(null, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -439,7 +439,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllPlan_ReturnsPage() {
+  void findAllPlan_ReturnsPage() {
     // given: Una lista con 37 Programa sin padre (planes)
     List<Programa> programas = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -468,7 +468,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
     Page<Programa> page = service.findAllPlan(null, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -479,7 +479,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllTodosPlan_ReturnsPage() {
+  void findAllTodosPlan_ReturnsPage() {
     // given: Una lista con 37 Programa sin padre (planes)
     List<Programa> programas = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -508,7 +508,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
     Page<Programa> page = service.findAllTodosPlan(null, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -519,7 +519,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllHijosPrograma_ReturnsPage() {
+  void findAllHijosPrograma_ReturnsPage() {
     // given: Una lista con 37 Programa para un Programa
     Long idPadre = 1L;
     List<Programa> programas = new ArrayList<>();
@@ -549,7 +549,7 @@ public class ProgramaServiceTest extends BaseServiceTest {
     Page<Programa> page = service.findAllHijosPrograma(idPadre, null, paging);
 
     // then: Devuelve la pagina 3 con los TipoEnlace del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

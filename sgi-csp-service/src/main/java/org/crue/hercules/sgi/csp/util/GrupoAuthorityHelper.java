@@ -70,7 +70,8 @@ public class GrupoAuthorityHelper extends AuthorityHelper {
 
   public boolean hasAuthorityViewUnidadGestion() {
     return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-GIN-E")
-        || SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-GIN-V");
+        || SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-GIN-V")
+        || SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-GIN-PRC-V");
   }
 
   public boolean hasAuthorityEditUnidadGestion() {

@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProyectoResumenIT extends BaseIT {
+class ProyectoResumenIT extends BaseIT {
   private static final String USER_PERSONA_REF = "user";
   private static final String CONTROLLER_BASE_PATH = ProyectoResumenController.REQUEST_MAPPING;
   private static final String PATH_PARAMETER_ID = "/{id}";
@@ -48,7 +48,7 @@ public class ProyectoResumenIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsProyectoResumen() throws Exception {
+  void findById_ReturnsProyectoResumen() throws Exception {
     String rol = "CSP-PRO-PRC-V";
     Long idProyecto = 1L;
 

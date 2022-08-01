@@ -51,6 +51,10 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
   convocatoriaExternaRequired = false;
   tipoFormularioSolicitud: FormularioSolicitud;
 
+  get isSolicitanteRequired(): boolean {
+    return [FormularioSolicitud.GRUPO, FormularioSolicitud.PROYECTO].includes(this.tipoFormularioSolicitud);
+  }
+
   constructor(
     private readonly logger: NGXLogger,
     key: number,
@@ -76,6 +80,10 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
         return solicitud as SolicitudDatosGenerales;
       }),
       switchMap((solicitud) => {
+        if (!solicitud.solicitante?.id) {
+          return of(solicitud);
+        }
+
         return this.personaService.findById(solicitud.solicitante.id).pipe(
           map(solicitente => {
             solicitud.solicitante = solicitente;
@@ -179,7 +187,7 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
 
   buildPatch(solicitud: SolicitudDatosGenerales): { [key: string]: any } {
     this.solicitud = solicitud;
-    this.solicitanteRef = solicitud.solicitante.id;
+    this.solicitanteRef = solicitud.solicitante?.id;
     this.tipoFormularioSolicitud = solicitud.formularioSolicitud;
 
     let formValues: { [key: string]: any } = {
@@ -202,6 +210,10 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
         solicitante: solicitud.solicitante,
         unidadGestion: solicitud.unidadGestion
       };
+
+      if (!this.isSolicitanteRequired) {
+        this.getFormGroup().controls.solicitante.disable();
+      }
     }
 
     if (!this.readonly && solicitud?.estado?.estado === Estado.BORRADOR) {
@@ -419,6 +431,12 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
           } else {
             form.controls.tipoSolicitudGrupo.setValue(null);
             form.controls.tipoSolicitudGrupo.disable();
+          }
+
+          if (this.isSolicitanteRequired) {
+            Promise.resolve().then(() => this.getFormGroup().controls.solicitante.enable());
+          } else {
+            Promise.resolve().then(() => this.getFormGroup().controls.solicitante.disable());
           }
         }
       )

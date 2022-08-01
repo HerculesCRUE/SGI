@@ -61,10 +61,11 @@ public class ResultadoInformePatentabilidadController {
    * 
    * @param query  Filtro de búsqueda.
    * @param paging Información de paginación.
+   * @return page of {@link ResultadoInformePatentabilidadOutput} list
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthority('PII-RIP-V','PII-RIP-C','PII-RIP-E','PII-RIP-B','PII-RIP-R', 'PII-INV-V', 'PII-INV-E')")
-  ResponseEntity<Page<ResultadoInformePatentabilidadOutput>> findActivos(
+  public ResponseEntity<Page<ResultadoInformePatentabilidadOutput>> findActivos(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug(
         "findActivos(@RequestParam(name = 'q', required = false) String query, @RequestPageable(sort = 's') Pageable paging) - start");
@@ -87,10 +88,11 @@ public class ResultadoInformePatentabilidadController {
    * 
    * @param query  Filtro de búsqueda.
    * @param paging Información de paginación.
+   * @return page of {@link ResultadoInformePatentabilidadOutput} list
    */
   @GetMapping("/todos")
   @PreAuthorize("hasAnyAuthority('PII-RIP-V','PII-RIP-C','PII-RIP-E','PII-RIP-B','PII-RIP-R')")
-  ResponseEntity<Page<ResultadoInformePatentabilidadOutput>> findAll(
+  public ResponseEntity<Page<ResultadoInformePatentabilidadOutput>> findAll(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug(
         "findAll(@RequestParam(name = 'q', required = false) String query, @RequestPageable(sort = 's') Pageable paging) - start");
@@ -115,7 +117,7 @@ public class ResultadoInformePatentabilidadController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthority('PII-RIP-V', 'PII-RIP-C', 'PII-RIP-E', 'PII-RIP-B', 'PII-RIP-R')")
-  ResultadoInformePatentabilidadOutput findById(@PathVariable Long id) {
+  public ResultadoInformePatentabilidadOutput findById(@PathVariable Long id) {
     log.debug("findById(@PathVariable Long id) - start");
     ResultadoInformePatentabilidad returnValue = this.service.findById(id);
     log.debug("findById(@PathVariable Long id) - end");
@@ -131,7 +133,7 @@ public class ResultadoInformePatentabilidadController {
    */
   @PostMapping
   @PreAuthorize("hasAuthority('PII-RIP-C')")
-  ResponseEntity<ResultadoInformePatentabilidadOutput> create(
+  public ResponseEntity<ResultadoInformePatentabilidadOutput> create(
       @Valid @RequestBody ResultadoInformePatentabilidadInput resultadoInformePatentabilidadInput) {
     log.debug("create(@Valid @RequestBody ResultadoInformePatentabilidadInput resultadoInformePatentabilidad) - start");
     ResultadoInformePatentabilidad returnValue = service.create(convert(resultadoInformePatentabilidadInput));
@@ -148,7 +150,7 @@ public class ResultadoInformePatentabilidadController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('PII-RIP-E')")
-  ResultadoInformePatentabilidadOutput update(
+  public ResultadoInformePatentabilidadOutput update(
       @Valid @RequestBody ResultadoInformePatentabilidadInput resultadoInformePatentabilidad, @PathVariable Long id) {
     log.debug(
         "update(@Valid @RequestBody ResultadoInformePatentabilidad resultadoInformePatentabilidad, @PathVariable Long id) - start");
@@ -167,7 +169,7 @@ public class ResultadoInformePatentabilidadController {
    */
   @PatchMapping("/{id}/activar")
   @PreAuthorize("hasAuthority('PII-RIP-R')")
-  ResultadoInformePatentabilidadOutput activar(@PathVariable Long id) {
+  public ResultadoInformePatentabilidadOutput activar(@PathVariable Long id) {
     log.debug("activar(@PathVariable Long id) - start");
     ResultadoInformePatentabilidad returnValue = this.service.enable(id);
     log.debug("activar(@PathVariable Long id) - end");
@@ -178,10 +180,11 @@ public class ResultadoInformePatentabilidadController {
    * Desactiva el {@link ResultadoInformePatentabilidad} con id indicado.
    * 
    * @param id Identificador de {@link ResultadoInformePatentabilidad}.
+   * @return objeto de tipo {@link ResultadoInformePatentabilidadOutput}
    */
   @PatchMapping("/{id}/desactivar")
   @PreAuthorize("hasAuthority('PII-RIP-B')")
-  ResultadoInformePatentabilidadOutput desactivar(@PathVariable Long id) {
+  public ResultadoInformePatentabilidadOutput desactivar(@PathVariable Long id) {
     log.debug("desactivar(Long id) - start");
     ResultadoInformePatentabilidad returnValue = service.disable(id);
     log.debug("desactivar(Long id) - end");
@@ -207,7 +210,7 @@ public class ResultadoInformePatentabilidadController {
 
   private Page<ResultadoInformePatentabilidadOutput> convert(Page<ResultadoInformePatentabilidad> page) {
     List<ResultadoInformePatentabilidadOutput> content = page.getContent().stream()
-        .map((resultadoInformePatentabilidad) -> convert(resultadoInformePatentabilidad)).collect(Collectors.toList());
+        .map(this::convert).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }

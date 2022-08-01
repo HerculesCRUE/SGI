@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.dto.eti;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PeticionEvaluacion {
+public class PeticionEvaluacion implements Serializable {
 
   /** Id */
   private Long id;
@@ -103,7 +104,7 @@ public class PeticionEvaluacion {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class TipoActividad {
+  public static class TipoActividad implements Serializable {
     /** Id. */
     private Long id;
     /** Nombre. */
@@ -117,7 +118,7 @@ public class PeticionEvaluacion {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class TipoInvestigacionTutelada {
+  public static class TipoInvestigacionTutelada implements Serializable {
     /** Id. */
     private Long id;
     /** Nombre. */

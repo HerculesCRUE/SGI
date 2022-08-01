@@ -17,6 +17,7 @@ import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluadorRepository;
 import org.crue.hercules.sgi.eti.repository.specification.EvaluadorSpecifications;
 import org.crue.hercules.sgi.eti.service.ComentarioService;
+import org.crue.hercules.sgi.eti.util.Constantes;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -65,14 +66,7 @@ public class ComentarioServiceImpl implements ComentarioService {
           evaluacion.getMemoria().getComite().getComite(),
           comentario.getApartado().getBloque().getFormulario().getId());
 
-      Assert.isTrue(
-          evaluacion.getMemoria().getEstadoActual().getId().equals(4L)
-              || evaluacion.getMemoria().getEstadoActual().getId().equals(5L)
-              || evaluacion.getMemoria().getEstadoActual().getId().equals(13L)
-              || evaluacion.getMemoria().getEstadoActual().getId().equals(18L)
-              || evaluacion.getMemoria().getEstadoActual().getId().equals(19L)
-              || evaluacion.getMemoria().getRetrospectiva().getEstadoRetrospectiva().getId().equals(4L),
-          "La Evaluación no está en un estado adecuado para añadir comentarios.");
+      validateEstadoEvaluacion(evaluacion);
 
       log.debug("createComentarioGestor(Long evaluacionId, Comentario comentario) - end");
 
@@ -157,14 +151,7 @@ public class ComentarioServiceImpl implements ComentarioService {
           evaluacion.getMemoria().getComite().getComite(),
           comentario.getApartado().getBloque().getFormulario().getId());
 
-      Assert.isTrue(
-          evaluacion.getMemoria().getEstadoActual().getId().equals(4L)
-              || evaluacion.getMemoria().getEstadoActual().getId().equals(5L)
-              || evaluacion.getMemoria().getEstadoActual().getId().equals(13L)
-              || evaluacion.getMemoria().getEstadoActual().getId().equals(18L)
-              || evaluacion.getMemoria().getEstadoActual().getId().equals(19L)
-              || evaluacion.getMemoria().getRetrospectiva().getEstadoRetrospectiva().getId().equals(4L),
-          "La Evaluación no está en un estado adecuado para añadir comentarios.");
+      validateEstadoEvaluacion(evaluacion);
 
       log.debug("createComentarioActa(Long evaluacionId, Comentario comentario) - end");
 
@@ -207,14 +194,7 @@ public class ComentarioServiceImpl implements ComentarioService {
 
     evaluacionRepository.findById(evaluacionId).map(evaluacion -> {
 
-      Assert.isTrue(
-          evaluacion.getMemoria().getEstadoActual().getId().equals(4L)
-              || evaluacion.getMemoria().getEstadoActual().getId().equals(5L)
-              || evaluacion.getMemoria().getEstadoActual().getId().equals(13L)
-              || evaluacion.getMemoria().getEstadoActual().getId().equals(18L)
-              || evaluacion.getMemoria().getEstadoActual().getId().equals(19L)
-              || evaluacion.getMemoria().getRetrospectiva().getEstadoRetrospectiva().getId().equals(4L),
-          "La Evaluación no está en un estado adecuado para eliminar comentarios.");
+      validateEstadoEvaluacion(evaluacion);
 
       deleteComentarioEvaluacion(evaluacionId, comentarioId, 1L);
 
@@ -303,14 +283,7 @@ public class ComentarioServiceImpl implements ComentarioService {
           evaluacion.getMemoria().getComite().getComite(),
           comentarioActualizar.getApartado().getBloque().getFormulario().getId());
 
-      Assert.isTrue(
-          evaluacion.getMemoria().getEstadoActual().getId().equals(4L)
-              || evaluacion.getMemoria().getEstadoActual().getId().equals(5L)
-              || evaluacion.getMemoria().getEstadoActual().getId().equals(13L)
-              || evaluacion.getMemoria().getEstadoActual().getId().equals(18L)
-              || evaluacion.getMemoria().getEstadoActual().getId().equals(19L)
-              || evaluacion.getMemoria().getRetrospectiva().getEstadoRetrospectiva().getId().equals(4L),
-          "La Evaluación no está en un estado adecuado para actualizar comentarios.");
+      validateEstadoEvaluacion(evaluacion);
 
       log.debug("updateComentarioGestor(Long evaluacionId, Comentario comentarioActualizar) - end");
       return updateComentarioEvaluacion(evaluacionId, comentarioActualizar);
@@ -554,6 +527,26 @@ public class ComentarioServiceImpl implements ComentarioService {
         Assert.isTrue(idFormulario.equals(5L), "El bloque seleccionado no es correcto para el tipo de evaluación.");
       }
     }
+  }
+
+  private void validateEstadoEvaluacion(Evaluacion evaluacion) {
+    Assert.isTrue((evaluacion.getMemoria().getRetrospectiva() == null &&
+        evaluacion.getMemoria().getEstadoActual().getId()
+            .equals(Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA)
+        || evaluacion.getMemoria().getEstadoActual().getId().equals(Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION)
+        || evaluacion.getMemoria().getEstadoActual().getId()
+            .equals(Constantes.TIPO_ESTADO_MEMORIA_FAVORABLE_PENDIENTE_MOD_MINIMAS)
+        || evaluacion.getMemoria().getEstadoActual().getId()
+            .equals(Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_ANUAL)
+        || evaluacion.getMemoria().getEstadoActual().getId()
+            .equals(Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_SEGUIMIENTO_FINAL_ACLARACIONES)
+        || evaluacion.getMemoria().getEstadoActual().getId()
+            .equals(Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_FINAL))
+        || (evaluacion.getMemoria()
+            .getRetrospectiva() != null
+            && evaluacion.getMemoria().getRetrospectiva().getEstadoRetrospectiva().getId()
+                .equals(Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA)),
+        "La Evaluación no está en un estado adecuado para añadir comentarios.");
   }
 
 }

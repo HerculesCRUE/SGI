@@ -124,7 +124,7 @@ export class GrupoEquipoInstrumentalListadoExportService extends AbstractTableEx
       const equipoInstrumentalElementsRow: any[] = [];
 
       let equipoInstrumentalTable = grupoEquipoInstrumental?.nombre ?? '';
-      equipoInstrumentalTable += ' - ';
+      equipoInstrumentalTable += '\n';
       equipoInstrumentalTable += grupoEquipoInstrumental?.numRegistro ?? '';
 
       equipoInstrumentalElementsRow.push(equipoInstrumentalTable);

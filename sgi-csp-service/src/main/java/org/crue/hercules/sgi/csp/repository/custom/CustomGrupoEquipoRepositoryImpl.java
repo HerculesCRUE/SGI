@@ -105,8 +105,30 @@ public class CustomGrupoEquipoRepositoryImpl implements CustomGrupoEquipoReposit
     CriteriaQuery<String> cq = cb.createQuery(String.class);
     Root<GrupoEquipo> root = cq.from(GrupoEquipo.class);
 
-    cq.select(root.get(GrupoEquipo_.personaRef)).where(cb.and(
-        getPredicateRolPrincipalFecha(root, cb, grupoId, fecha)))
+    Join<GrupoEquipo, Grupo> joinGrupo = root.join(GrupoEquipo_.grupo);
+
+    Predicate grupoEquals = cb.equal(root.get(GrupoEquipo_.grupoId), grupoId);
+    Predicate greaterThanFechaInicio = cb.or(
+        cb.lessThanOrEqualTo(root.get(GrupoEquipo_.fechaInicio), fecha),
+        cb.and(
+            cb.isNull(root.get(GrupoEquipo_.fechaInicio)),
+            cb.or(
+                cb.lessThanOrEqualTo(joinGrupo.get(Grupo_.fechaInicio), fecha))));
+
+    Predicate lowerThanFechaFin = cb.or(
+        cb.greaterThanOrEqualTo(root.get(GrupoEquipo_.fechaFin),
+            fecha),
+        cb.and(
+            cb.isNull(root.get(GrupoEquipo_.fechaFin)),
+            cb.or(
+                cb.isNull(joinGrupo.get(Grupo_.fechaFin)),
+                cb.greaterThanOrEqualTo(joinGrupo.get(Grupo_.fechaFin), fecha))));
+
+    cq.select(root.get(GrupoEquipo_.personaRef))
+        .where(cb.and(
+            grupoEquals,
+            greaterThanFechaInicio,
+            lowerThanFechaFin))
         .distinct(true);
 
     List<String> returnValue = entityManager.createQuery(cq).getResultList();
@@ -293,8 +315,8 @@ public class CustomGrupoEquipoRepositoryImpl implements CustomGrupoEquipoReposit
   }
 
   /**
-   * Devuelve una lista de personaRef de los {@link GrupoEquipo} que cumplan la
-   * specification.
+   * Devuelve una lista de personaRef de los {@link GrupoEquipo} que formen parte
+   * del equipo del personaRef
    *
    * @param personaRef persona ref de {@link GrupoEquipo}
    * @param fecha      fecha para la que se hace la comprobracion

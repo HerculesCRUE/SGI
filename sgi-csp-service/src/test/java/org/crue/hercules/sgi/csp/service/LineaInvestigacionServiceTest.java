@@ -36,7 +36,7 @@ import org.springframework.data.jpa.domain.Specification;
  * LineaInvestigacionServiceTest
  */
 @Import({ LineaInvestigacionService.class, ApplicationContextSupport.class })
-public class LineaInvestigacionServiceTest extends BaseServiceTest {
+class LineaInvestigacionServiceTest extends BaseServiceTest {
 
   @MockBean
   private LineaInvestigacionRepository lineaInvestigacionRepository;
@@ -60,7 +60,7 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithId_ReturnsLineaInvestigacion() {
+  void findById_WithId_ReturnsLineaInvestigacion() {
     BDDMockito.given(lineaInvestigacionRepository.findById(1L))
         .willReturn(Optional.of(generarMockLineaInvestigacion(1L, "LineaInvestigacion1")));
 
@@ -72,7 +72,7 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void find_NotFound_ThrowsLineaInvestigacionNotFoundException() throws Exception {
+  void find_NotFound_ThrowsLineaInvestigacionNotFoundException() throws Exception {
     BDDMockito.given(lineaInvestigacionRepository.findById(1L)).willReturn(Optional.empty());
 
     Assertions.assertThatThrownBy(() -> lineaInvestigacionService.findById(1L))
@@ -80,7 +80,7 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_ReturnsLineaInvestigacion() {
+  void create_ReturnsLineaInvestigacion() {
     // given: Un nuevo LineaInvestigacion
     LineaInvestigacion lineaInvestigacion = generarMockLineaInvestigacion(null);
 
@@ -106,7 +106,7 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsLineaInvestigacion() {
+  void update_ReturnsLineaInvestigacion() {
     // given: Un nuevo tipo Fase con el servicio actualizado
     LineaInvestigacion lineaInvestigacionServicioActualizado = generarMockLineaInvestigacion(1L,
         "LineaInvestigacion1 actualizada");
@@ -129,7 +129,7 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_NoActivaLineaInvestigacion_ThrowsValidationException() {
+  void update_NoActivaLineaInvestigacion_ThrowsValidationException() {
     // given: Un LineaInvestigacion actualizado
     Long id = 1L;
     LineaInvestigacion fuenteFinanciacion = generarMockLineaInvestigacion(id);
@@ -144,7 +144,7 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_ReturnsLineaInvestigacion() {
+  void enable_ReturnsLineaInvestigacion() {
     // given: Un nuevo LineaInvestigacion inactivo
     LineaInvestigacion lineaInvestigacion = generarMockLineaInvestigacion(1L);
     lineaInvestigacion.setActivo(Boolean.FALSE);
@@ -171,7 +171,7 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
+  void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
     // given: Un id de un LineaInvestigacion que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(lineaInvestigacionRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -182,7 +182,7 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithDuplicatedNombre_ThrowsValidationException() {
+  void enable_WithDuplicatedNombre_ThrowsValidationException() {
     // given: Un LineaInvestigacion inactivo con nombre existente
     LineaInvestigacion lineaInvestigacionExistente = generarMockLineaInvestigacion(2L);
     LineaInvestigacion lineaInvestigacion = generarMockLineaInvestigacion(1L);
@@ -202,7 +202,7 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_ReturnsLineaInvestigacion() {
+  void disable_ReturnsLineaInvestigacion() {
     // given: Un nuevo LineaInvestigacion activo
     LineaInvestigacion lineaInvestigacion = generarMockLineaInvestigacion(1L);
 
@@ -226,12 +226,12 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(lineaInvestigacionActualizado.getId()).as("getId()").isEqualTo(1L);
     Assertions.assertThat(lineaInvestigacionActualizado.getNombre()).as("getNombre()")
         .isEqualTo(lineaInvestigacion.getNombre());
-    Assertions.assertThat(lineaInvestigacionActualizado.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(lineaInvestigacionActualizado.getActivo()).as("getActivo()").isFalse();
 
   }
 
   @Test
-  public void disable_WithIdNotExist_ThrowsLineaInvestigacionNotFoundException() {
+  void disable_WithIdNotExist_ThrowsLineaInvestigacionNotFoundException() {
     // given: Un id de un LineaInvestigacion que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(lineaInvestigacionRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -242,7 +242,7 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_WithPaging_ReturnsPage() {
+  void findAll_WithPaging_ReturnsPage() {
     // given: One hundred LineaInvestigacions
     List<LineaInvestigacion> lineaInvestigacionList = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -273,9 +273,9 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
 
     // then: A Page with ten LineaInvestigaciones are returned containing
     // descripcion='LineaInvestigacion031' to 'LineaInvestigacion040'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       LineaInvestigacion lineaInvestigacion = page.getContent().get(i);
@@ -284,7 +284,7 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllTodos_WithPaging_ReturnsPage() {
+  void findAllTodos_WithPaging_ReturnsPage() {
     // given: One hundred LineaInvestigacions
     List<LineaInvestigacion> lineaInvestigacionList = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -315,9 +315,9 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
 
     // then: A Page with ten LineaInvestigaciones are returned containing
     // descripcion='LineaInvestigacion031' to 'LineaInvestigacion040'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       LineaInvestigacion lineaInvestigacion = page.getContent().get(i);
@@ -326,7 +326,7 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedNombre_ThrowsValidationException() {
+  void create_WithDuplicatedNombre_ThrowsValidationException() {
     // given: a LineaInvestigacion with duplicated nombre
 
     LineaInvestigacion lineaInvestigacion = generarMockLineaInvestigacion(1L);
@@ -348,7 +348,7 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDuplicatedNombre_ThrowsValidationException() {
+  void update_WithDuplicatedNombre_ThrowsValidationException() {
     // given: Un nuevo LineaInvestigacion con un nombre que ya existe
     LineaInvestigacion lineaInvestigacionUpdated = generarMockLineaInvestigacion(1L, "nombreRepetido");
     LineaInvestigacion lineaInvestigacion = generarMockLineaInvestigacion(2L, "nombreRepetido");
@@ -371,7 +371,7 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
    * @param id id del LineaInvestigacion
    * @return el objeto LineaInvestigacion
    */
-  public LineaInvestigacion generarMockLineaInvestigacion(Long id) {
+  LineaInvestigacion generarMockLineaInvestigacion(Long id) {
     return generarMockLineaInvestigacion(id, "nombre-" + id);
   }
 
@@ -381,7 +381,7 @@ public class LineaInvestigacionServiceTest extends BaseServiceTest {
    * @param id id del LineaInvestigacion
    * @return el objeto LineaInvestigacion
    */
-  public LineaInvestigacion generarMockLineaInvestigacion(Long id, String nombre) {
+  LineaInvestigacion generarMockLineaInvestigacion(Long id, String nombre) {
     LineaInvestigacion lineaInvestigacion = new LineaInvestigacion();
     lineaInvestigacion.setId(id);
     lineaInvestigacion.setNombre(nombre);

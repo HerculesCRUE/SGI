@@ -10,7 +10,7 @@ class RequisitoIPNivelAcademicoRequestConverter extends SgiBaseConverter<IRequis
       return value as unknown as IRequisitoIPNivelAcademico;
     }
     return {
-      id: undefined,
+      id: value.id,
       requisitoIP: {
         id: value.requisitoIPId
       } as IConvocatoriaRequisitoIP,
@@ -24,6 +24,7 @@ class RequisitoIPNivelAcademicoRequestConverter extends SgiBaseConverter<IRequis
       return value as unknown as IRequisitoIPNivelAcademicoRequest;
     }
     return {
+      id: value.id,
       requisitoIPId: value.requisitoIP?.id,
       nivelAcademicoRef: value.nivelAcademico?.id,
     };

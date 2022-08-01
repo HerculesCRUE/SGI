@@ -1,7 +1,11 @@
 package org.crue.hercules.sgi.pii.service;
 
+import java.time.Instant;
+import java.time.LocalTime;
+
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
+import org.crue.hercules.sgi.pii.config.SgiConfigProperties;
 import org.crue.hercules.sgi.pii.exceptions.InvencionDocumentoNotFoundException;
 import org.crue.hercules.sgi.pii.model.InvencionDocumento;
 import org.crue.hercules.sgi.pii.repository.InvencionDocumentoRepository;
@@ -17,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class InvencionDocumentoService {
 
   private final InvencionDocumentoRepository invencionDocumentoRepository;
+  private final SgiConfigProperties sgiConfigProperties;
 
   /**
    * Devuelve una página de objetos {@link InvencionDocumento}
@@ -41,6 +46,11 @@ public class InvencionDocumentoService {
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
             .parameter("field", ApplicationContextSupport.getMessage("id"))
             .parameter("entity", ApplicationContextSupport.getMessage(InvencionDocumento.class)).build());
+
+    Instant fechaAnadido = Instant.now().atZone(this.sgiConfigProperties.getTimeZone().toZoneId())
+        .with(LocalTime.MAX).withNano(0).toInstant();
+
+    invencionDocumento.setFechaAnadido(fechaAnadido);
 
     return this.invencionDocumentoRepository.save(invencionDocumento);
   }

@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * TipoDocumentoControllerTest
  */
 @WebMvcTest(TipoDocumentoController.class)
-public class TipoDocumentoControllerTest extends BaseControllerTest {
+class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @MockBean
   private TipoDocumentoService tipoDocumentoService;
@@ -45,7 +45,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TDOC-C" })
-  public void create_ReturnsTipoDocumento() throws Exception {
+  void create_ReturnsTipoDocumento() throws Exception {
     // given: Un TipoDocumento nuevo
     String tipoDocumentoJson = "{ \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\" }";
 
@@ -75,7 +75,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TDOC-C" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: Un TipoDocumento que produce un error al crearse porque ya tiene id
     String tipoDocumentoJson = "{ \"id\": \"1\", \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\" }";
 
@@ -94,7 +94,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TDOC-E" })
-  public void update_ReturnsTipoDocumento() throws Exception {
+  void update_ReturnsTipoDocumento() throws Exception {
     // given: Un TipoDocumento a modificar
     String tipoDocumentoJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true }";
 
@@ -116,7 +116,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TDOC-E" })
-  public void update_WithIdNotExist_Returns404() throws Exception {
+  void update_WithIdNotExist_Returns404() throws Exception {
     // given: Un TipoDocumento a modificar
     String tipoDocumentoJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true }";
 
@@ -136,7 +136,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TDOC-E" })
-  public void update_WithNombreRepetido_Returns400() throws Exception {
+  void update_WithNombreRepetido_Returns400() throws Exception {
     // given: Un TipoDocumento que produce un error porque ya existe otro con el
     // mismo nombre
     String tipoDocumentoJson = "{ \"id\": \"2\", \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\" }";
@@ -156,7 +156,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TDOC-R" })
-  public void reactivar_WithExistingId_ReturnTipoDocumento() throws Exception {
+  void reactivar_WithExistingId_ReturnTipoDocumento() throws Exception {
     // given: existing id
     TipoDocumento tipoDocumento = generarMockTipoDocumento(1L);
     tipoDocumento.setActivo(Boolean.FALSE);
@@ -185,7 +185,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TDOC-R" })
-  public void reactivar_NoExistingId_Return404() throws Exception {
+  void reactivar_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -205,7 +205,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TDOC-B" })
-  public void desactivar_WithExistingId_ReturnTipoDocumento() throws Exception {
+  void desactivar_WithExistingId_ReturnTipoDocumento() throws Exception {
     // given: existing id
     Long idBuscado = 1L;
     TipoDocumento tipoDocumento = generarMockTipoDocumento(idBuscado);
@@ -234,7 +234,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TDOC-B" })
-  public void desactivar_NoExistingId_Return404() throws Exception {
+  void desactivar_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
     BDDMockito.willThrow(new TipoDocumentoNotFoundException(id)).given(tipoDocumentoService)
@@ -253,7 +253,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void findAll_ReturnsPage() throws Exception {
+  void findAll_ReturnsPage() throws Exception {
     // given: Una lista con 37 TipoDocumento
     List<TipoDocumento> tiposDocumento = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -306,7 +306,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void findAll_EmptyList_Returns204() throws Exception {
+  void findAll_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de TipoDocumento
     List<TipoDocumento> tiposDocumento = new ArrayList<>();
 
@@ -335,7 +335,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllTodos_ReturnsPage() throws Exception {
+  void findAllTodos_ReturnsPage() throws Exception {
     // given: Una lista con 37 TipoDocumento
     List<TipoDocumento> tiposDocumento = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -389,7 +389,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllTodos_EmptyList_Returns204() throws Exception {
+  void findAllTodos_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de TipoDocumento
     List<TipoDocumento> tiposDocumento = new ArrayList<>();
 
@@ -419,7 +419,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_ReturnsTipoDocumento() throws Exception {
+  void findById_ReturnsTipoDocumento() throws Exception {
     // given: Un TipoDocumento con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(tipoDocumentoService.findById(ArgumentMatchers.anyLong()))
@@ -439,7 +439,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithIdNotExist_Returns404() throws Exception {
+  void findById_WithIdNotExist_Returns404() throws Exception {
     // given: Ningun TipoDocumento con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(tipoDocumentoService.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {

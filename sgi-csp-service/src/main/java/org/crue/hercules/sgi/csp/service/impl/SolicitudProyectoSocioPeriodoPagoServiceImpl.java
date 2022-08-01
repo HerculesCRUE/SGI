@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.service.impl;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -96,8 +97,8 @@ public class SolicitudProyectoSocioPeriodoPagoServiceImpl implements SolicitudPr
 
     // Periodos pago eliminados
     List<SolicitudProyectoSocioPeriodoPago> solicitudProyectoSocioPeriodoPagoEliminar = solicitudProyectoSocioPeriodoPagosBD
-        .stream().filter(periodo -> !solicitudPeriodoPagos.stream().map(SolicitudProyectoSocioPeriodoPago::getId)
-            .anyMatch(id -> id == periodo.getId()))
+        .stream().filter(periodo -> solicitudPeriodoPagos.stream().map(SolicitudProyectoSocioPeriodoPago::getId)
+            .noneMatch(id -> Objects.equals(id, periodo.getId())))
         .collect(Collectors.toList());
 
     if (!solicitudProyectoSocioPeriodoPagoEliminar.isEmpty()) {
@@ -119,13 +120,15 @@ public class SolicitudProyectoSocioPeriodoPagoServiceImpl implements SolicitudPr
       // estan actualizando los periodos
       if (solicitudProyectoSocioPeriodoPago.getId() != null) {
         SolicitudProyectoSocioPeriodoPago solicitudProyectoSocioPeriodoPagoBD = solicitudProyectoSocioPeriodoPagosBD
-            .stream().filter(periodo -> periodo.getId() == solicitudProyectoSocioPeriodoPago.getId()).findFirst()
+            .stream().filter(periodo -> Objects.equals(periodo.getId(), solicitudProyectoSocioPeriodoPago.getId()))
+            .findFirst()
             .orElseThrow(() -> new SolicitudProyectoSocioPeriodoPagoNotFoundException(
                 solicitudProyectoSocioPeriodoPago.getId()));
 
         Assert.isTrue(
-            solicitudProyectoSocioPeriodoPagoBD.getSolicitudProyectoSocioId() == solicitudProyectoSocioPeriodoPago
-                .getSolicitudProyectoSocioId(),
+            Objects.equals(solicitudProyectoSocioPeriodoPagoBD.getSolicitudProyectoSocioId(),
+                solicitudProyectoSocioPeriodoPago
+                    .getSolicitudProyectoSocioId()),
             "No se puede modificar la solicitud proyecto socio del SolicitudProyectoSocioPeriodoPago");
       }
 
@@ -147,7 +150,7 @@ public class SolicitudProyectoSocioPeriodoPagoServiceImpl implements SolicitudPr
 
       Assert.isTrue(
           solicitudProyectoSocioPeriodoPagoAnterior == null
-              || (solicitudProyectoSocioPeriodoPagoAnterior != null && !solicitudProyectoSocioPeriodoPagoAnterior
+              || (!solicitudProyectoSocioPeriodoPagoAnterior
                   .getMes().equals(solicitudProyectoSocioPeriodoPago.getMes())),
           "El periodo se solapa con otro existente");
 

@@ -32,11 +32,15 @@ export class CongresoEditarComponent extends ActionComponent implements OnInit {
 
   CONGRESO_ROUTE_NAMES = CONGRESO_ROUTE_NAMES;
 
-  isProduccionCientificaEditable: boolean;
+  isProduccionCientificaDisabled: boolean;
   private textoValidateSuccess: string;
   private textoValidateError: string;
   private textoRejectSuccess: string;
   private textoRejectError: string;
+
+  get canEdit(): boolean {
+    return this.actionService.canEdit;
+  }
 
   constructor(
     private readonly logger: NGXLogger,
@@ -50,8 +54,8 @@ export class CongresoEditarComponent extends ActionComponent implements OnInit {
   ) {
     super(router, route, actionService, dialogService);
     this.subscriptions.push(
-      this.actionService.isProduccionCientificaEditable$()
-        .subscribe(isEditable => this.isProduccionCientificaEditable = isEditable)
+      this.actionService.isProduccionCientificaDisabled$()
+        .subscribe(isDisabled => this.isProduccionCientificaDisabled = isDisabled)
     );
   }
 
@@ -111,7 +115,7 @@ export class CongresoEditarComponent extends ActionComponent implements OnInit {
 
   }
 
-  saveOrUpdate(action?: 'validar' | 'rechazar'): void {
+  saveOrUpdate(action?: 'validar' | 'rechazar' | 'validarInvestigador' | 'rechazarInvestigador'): void {
     if (action === 'validar') {
       this.validar();
     } else if (action === 'rechazar') {
@@ -120,6 +124,17 @@ export class CongresoEditarComponent extends ActionComponent implements OnInit {
         (estadoProduccionCientifica: IEstadoProduccionCientificaRequest) => {
           if (estadoProduccionCientifica) {
             this.rechazar(estadoProduccionCientifica);
+          }
+        }
+      );
+    } else if (action === 'validarInvestigador') {
+      this.validarInvestigador();
+    } else if (action === 'rechazarInvestigador') {
+      const dialogRef = this.matDialog.open(RechazarProduccionCientificaModalComponent);
+      dialogRef.afterClosed().subscribe(
+        (estadoProduccionCientifica: IEstadoProduccionCientificaRequest) => {
+          if (estadoProduccionCientifica) {
+            this.rechazarInvestigador(estadoProduccionCientifica);
           }
         }
       );
@@ -136,6 +151,22 @@ export class CongresoEditarComponent extends ActionComponent implements OnInit {
 
   rechazar(estadoProduccionCientifica: IEstadoProduccionCientificaRequest): void {
     this.actionService.rechazar(estadoProduccionCientifica)
+      .subscribe(
+        () => this.snackBarService.showSuccess(this.textoRejectSuccess),
+        (error) => this.snackBarService.showError(this.textoRejectError)
+      );
+  }
+
+  validarInvestigador(): void {
+    this.actionService.validarInvestigador()
+      .subscribe(
+        () => this.snackBarService.showSuccess(this.textoValidateSuccess),
+        (error) => this.snackBarService.showError(this.textoValidateError)
+      );
+  }
+
+  rechazarInvestigador(estadoProduccionCientifica: IEstadoProduccionCientificaRequest): void {
+    this.actionService.rechazarInvestigador(estadoProduccionCientifica)
       .subscribe(
         () => this.snackBarService.showSuccess(this.textoRejectSuccess),
         (error) => this.snackBarService.showError(this.textoRejectError)

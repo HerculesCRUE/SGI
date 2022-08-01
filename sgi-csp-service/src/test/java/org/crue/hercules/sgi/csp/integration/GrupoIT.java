@@ -165,7 +165,7 @@ class GrupoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void existsById_Returns200() throws Exception {
+  void existsById_Returns200() throws Exception {
     // given: existing id
     String roles = "CSP-GIN-E";
     Long id = 1L;
@@ -178,7 +178,7 @@ class GrupoIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void existsById_Returns204() throws Exception {
+  void existsById_Returns204() throws Exception {
     // given: no existing id
     String roles = "CSP-GIN-E";
     Long id = 1L;
@@ -215,7 +215,7 @@ class GrupoIT extends BaseIT {
     // given: Proyecto data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<GrupoOutput> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(2);
+    Assertions.assertThat(responseData).hasSize(2);
 
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
@@ -253,7 +253,7 @@ class GrupoIT extends BaseIT {
     // given: Proyecto data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<GrupoOutput> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(2);
+    Assertions.assertThat(responseData).hasSize(2);
 
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
@@ -318,7 +318,7 @@ class GrupoIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @ParameterizedTest
   @CsvSource({ "2021" })
-  public void findAllByAnio_ok(Integer anio)
+  void findAllByAnio_ok(Integer anio)
       throws Exception {
     String roles = "CSP-PRO-PRC-V";
 
@@ -348,7 +348,7 @@ class GrupoIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @ParameterizedTest
   @CsvSource({ "2023" })
-  public void findAllByAnio_ko(Integer anio)
+  void findAllByAnio_ko(Integer anio)
       throws Exception {
     String roles = "CSP-PRO-PRC-V";
 
@@ -372,7 +372,7 @@ class GrupoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findIdsGruposModificados() throws Exception {
+  void findIdsGruposModificados() throws Exception {
     String roles = "CSP-GIN-V";
     String filter = "fechaModificacion=ge=2021-08-18T22:00:00Z";
 
@@ -439,7 +439,7 @@ class GrupoIT extends BaseIT {
           }
         })
         .collect(Collectors.toList());
-    Assertions.assertThat(responseData.size()).isEqualTo(Integer.valueOf(expectedSize));
+    Assertions.assertThat(responseData).hasSize(Integer.valueOf(expectedSize));
 
     Assertions.assertThat(responseData.get(0)).isNotNull();
     Assertions.assertThat(responseData.get(1)).isNotNull();
@@ -487,7 +487,7 @@ class GrupoIT extends BaseIT {
           }
         })
         .collect(Collectors.toList());
-    Assertions.assertThat(responseData.size()).isEqualTo(Integer.valueOf(2));
+    Assertions.assertThat(responseData).hasSize(Integer.valueOf(2));
 
     Assertions.assertThat(responseData.get(0)).isNotNull();
     Assertions.assertThat(responseData.get(1)).isNotNull();

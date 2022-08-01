@@ -54,7 +54,7 @@ export class SolicitudProyectoClasificacionListadoExportService extends Abstract
         return from(responseClasificacion).pipe(
           mergeMap((solicitudProyectoClasificacion) => {
             return this.getClasificacion(solicitudProyectoClasificacion);
-          }),
+          }, this.DEFAULT_CONCURRENT),
           map(() => responseClasificacion)
         );
       }),

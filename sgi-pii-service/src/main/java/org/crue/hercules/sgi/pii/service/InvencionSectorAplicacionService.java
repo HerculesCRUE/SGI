@@ -78,7 +78,7 @@ public class InvencionSectorAplicacionService {
     repository.deleteInBulkByInvencionId(invencionId);
 
     List<InvencionSectorAplicacion> returnValue = new ArrayList<>();
-    if (sectoresAplicacion != null && !sectoresAplicacion.isEmpty()) {
+    if (!sectoresAplicacion.isEmpty()) {
       // Eliminamos duplicados de la nueva lista
       List<InvencionSectorAplicacion> uniqueSectoresAplicacion = sectoresAplicacion.stream().distinct()
           .collect(Collectors.toList());

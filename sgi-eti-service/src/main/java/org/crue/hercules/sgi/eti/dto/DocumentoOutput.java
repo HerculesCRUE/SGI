@@ -19,5 +19,6 @@ public class DocumentoOutput {
   private LocalDateTime fechaCreacion;
   private String tipo;
   private String autorRef;
+  private String hash;
 
 }

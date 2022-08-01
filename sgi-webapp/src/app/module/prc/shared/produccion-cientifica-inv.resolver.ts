@@ -15,8 +15,6 @@ import { PRODUCCION_CIENTIFICA_ROUTE_PARAMS } from './produccion-cientifica-rout
 
 const MSG_NOT_FOUND = marker('error.load');
 
-export const PRODUCCION_CIENTIFICA_DATA_KEY = 'produccionCientificaData';
-
 export interface IProduccionCientificaData {
   canEdit: boolean;
   produccionCientifica: IProduccionCientifica;

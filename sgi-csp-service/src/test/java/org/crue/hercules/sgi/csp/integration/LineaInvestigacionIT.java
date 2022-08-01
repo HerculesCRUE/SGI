@@ -23,7 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de LineaInvestigacion.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class LineaInvestigacionIT extends BaseIT {
+class LineaInvestigacionIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
@@ -43,7 +43,7 @@ public class LineaInvestigacionIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsLineaInvestigacion() throws Exception {
+  void create_ReturnsLineaInvestigacion() throws Exception {
 
     // given: new LineaInvestigacion
     LineaInvestigacion data = LineaInvestigacion.builder().nombre("nombre-1").activo(Boolean.TRUE).build();
@@ -67,7 +67,7 @@ public class LineaInvestigacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsLineaInvestigacion() throws Exception {
+  void update_ReturnsLineaInvestigacion() throws Exception {
 
     // given: existing LineaInvestigacion to be updated
     LineaInvestigacion data = LineaInvestigacion.builder().id(2L).nombre("nombre-updated")
@@ -92,7 +92,7 @@ public class LineaInvestigacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void reactivar_ReturnLineaInvestigacion() throws Exception {
+  void reactivar_ReturnLineaInvestigacion() throws Exception {
     Long idLineaInvestigacion = 1L;
 
     final ResponseEntity<LineaInvestigacion> response = restTemplate.exchange(
@@ -114,7 +114,7 @@ public class LineaInvestigacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void desactivar_ReturnLineaInvestigacion() throws Exception {
+  void desactivar_ReturnLineaInvestigacion() throws Exception {
     Long idLineaInvestigacion = 3L;
 
     final ResponseEntity<LineaInvestigacionOutput> response = restTemplate.exchange(
@@ -135,7 +135,7 @@ public class LineaInvestigacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsLineaInvestigacion() throws Exception {
+  void findById_ReturnsLineaInvestigacion() throws Exception {
     Long id = 1L;
 
     final ResponseEntity<LineaInvestigacionOutput> response = restTemplate.exchange(
@@ -156,7 +156,7 @@ public class LineaInvestigacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsLineaInvestigacionSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsLineaInvestigacionSubList() throws Exception {
 
     // given: data for LineaInvestigacion
 
@@ -177,7 +177,7 @@ public class LineaInvestigacionIT extends BaseIT {
     // given: LineaInvestigacion data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<LineaInvestigacion> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(2);
+    Assertions.assertThat(responseData).hasSize(2);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
@@ -196,7 +196,7 @@ public class LineaInvestigacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllTodos_WithPagingSortingAndFiltering_ReturnsLineaInvestigacionSubList() throws Exception {
+  void findAllTodos_WithPagingSortingAndFiltering_ReturnsLineaInvestigacionSubList() throws Exception {
 
     // given: data for LineaInvestigacion
 
@@ -218,7 +218,7 @@ public class LineaInvestigacionIT extends BaseIT {
     // given: LineaInvestigacion data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<LineaInvestigacion> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");

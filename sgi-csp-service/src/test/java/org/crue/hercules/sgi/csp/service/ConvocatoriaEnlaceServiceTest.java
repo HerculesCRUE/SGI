@@ -30,7 +30,7 @@ import org.mockito.invocation.InvocationOnMock;
 /**
  * ConvocatoriaEnlaceServiceTest
  */
-public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
+class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
 
   @Mock
   private ConvocatoriaEnlaceRepository repository;
@@ -44,13 +44,13 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   private ConvocatoriaEnlaceService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ConvocatoriaEnlaceServiceImpl(repository, convocatoriaRepository, modeloTipoEnlaceRepository,
         configuracionSolicitudRepository);
   }
 
   @Test
-  public void create_ReturnsConvocatoriaEnlace() {
+  void create_ReturnsConvocatoriaEnlace() {
     // given: Un nuevo ConvocatoriaEnlace
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -86,7 +86,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ConvocatoriaEnlace que ya tiene id
     Long convocatoriaId = 1L;
     ConvocatoriaEnlace convocatoriaEnlace = generarMockConvocatoriaEnlace(1L, convocatoriaId);
@@ -98,7 +98,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutUrl_ThrowsIllegalArgumentException() {
+  void create_WithoutUrl_ThrowsIllegalArgumentException() {
     // given: Un nuevo ConvocatoriaEnlace sin url
     Long convocatoriaId = 1L;
     ConvocatoriaEnlace convocatoriaEnlace = generarMockConvocatoriaEnlace(null, convocatoriaId);
@@ -111,7 +111,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutConvocatoria_ThrowsIllegalArgumentException() {
+  void create_WithoutConvocatoria_ThrowsIllegalArgumentException() {
     // given: Un nuevo ConvocatoriaEnlace sin convocatoria
     ConvocatoriaEnlace convocatoriaEnlace = generarMockConvocatoriaEnlace(null, null);
 
@@ -122,7 +122,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithUrlDuplicada_ThrowsIllegalArgumentException() {
+  void create_WithUrlDuplicada_ThrowsIllegalArgumentException() {
     // given: Un nuevo ConvocatoriaEnlace con el enlace inactivo
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -143,7 +143,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutModeloEjecucion_ThrowsIllegalArgumentException() {
+  void create_WithoutModeloEjecucion_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaEnlace con Convocatoria sin Modelo de Ejecucion
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -163,7 +163,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutModeloTipoEnlace_ThrowsIllegalArgumentException() {
+  void create_WithoutModeloTipoEnlace_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaEnlace con TipoEnlace no asignado al Modelo de Ejecucion
     // de la
     // convocatoria
@@ -185,7 +185,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDisabledModeloTipoEnlace_ThrowsIllegalArgumentException() {
+  void create_WithDisabledModeloTipoEnlace_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaEnlace con la asignación de TipoEnlace al Modelo de
     // Ejecucion
     // de la convocatoria inactiva
@@ -209,7 +209,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDisabledTipoEnlace_ThrowsIllegalArgumentException() {
+  void create_WithDisabledTipoEnlace_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaEnlace TipoEnlace disabled
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -231,7 +231,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsConvocatoriaEnlace() {
+  void update_ReturnsConvocatoriaEnlace() {
     // given: Un nuevo ConvocatoriaEnlace con el nombre actualizado
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -269,7 +269,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsConvocatoriaEnlaceNotFoundException() {
+  void update_WithIdNotExist_ThrowsConvocatoriaEnlaceNotFoundException() {
     // given: Un ConvocatoriaEnlace actualizado con un id que no existe
     Long convocatoriaId = 1L;
     ConvocatoriaEnlace convocatoriaEnlace = generarMockConvocatoriaEnlace(1L, convocatoriaId);
@@ -283,7 +283,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutUrl_ThrowsIllegalArgumentException() {
+  void update_WithoutUrl_ThrowsIllegalArgumentException() {
     // given: Un ConvocatoriaEnlace actualizado con sin url
     Long convocatoriaId = 1L;
     ConvocatoriaEnlace convocatoriaEnlace = generarMockConvocatoriaEnlace(1L, convocatoriaId);
@@ -296,7 +296,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutTipoEnlace_ReturnsConvocatoriaEnlace() {
+  void update_WithoutTipoEnlace_ReturnsConvocatoriaEnlace() {
     // given: Un nuevo ConvocatoriaEnlace con el nombre actualizado
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -326,7 +326,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDuplicatedUrl_ThrowsIllegalArgumentException() {
+  void update_WithDuplicatedUrl_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEnlace con la url duplicada
     Long convocatoriaId = 1L;
     ConvocatoriaEnlace convocatoriaEnlace = generarMockConvocatoriaEnlace(1L, convocatoriaId);
@@ -344,7 +344,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutModeloEjecucion_ThrowsIllegalArgumentException() {
+  void update_WithoutModeloEjecucion_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaEnlace con Convocatoria sin Modelo de Ejecucion
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -368,7 +368,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutModeloTipoEnlace_ThrowsIllegalArgumentException() {
+  void update_WithoutModeloTipoEnlace_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaEnlace con TipoEnlace no asignado al Modelo de Ejecucion
     // de la
     // convocatoria
@@ -394,7 +394,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDisabledModeloTipoEnlace_ThrowsIllegalArgumentException() {
+  void update_WithDisabledModeloTipoEnlace_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaEnlace con la asignación de TipoEnlace al Modelo de
     // Ejecucion
     // de la convocatoria inactiva
@@ -423,7 +423,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDisabledTipoEnlace_ThrowsIllegalArgumentException() {
+  void update_WithDisabledTipoEnlace_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaEnlace TipoEnlace disabled
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -449,7 +449,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_NoReturnsAnyException() {
+  void delete_WithExistingId_NoReturnsAnyException() {
     // given: existing convocatoriaEnlace
     Long id = 1L;
 
@@ -464,7 +464,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
+  void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
     // given: no id
     Long id = null;
 
@@ -476,7 +476,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -490,7 +490,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsConvocatoriaEnlace() {
+  void findById_ReturnsConvocatoriaEnlace() {
     // given: Un ConvocatoriaEnlace con el id buscado
     Long idBuscado = 1L;
     Long convocatoriaId = 1L;
@@ -509,7 +509,7 @@ public class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsConvocatoriaEnlaceNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsConvocatoriaEnlaceNotFoundException() throws Exception {
     // given: Ningun ConvocatoriaEnlace con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());

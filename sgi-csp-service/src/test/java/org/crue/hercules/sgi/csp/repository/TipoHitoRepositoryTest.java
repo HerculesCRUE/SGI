@@ -12,13 +12,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * TipoHitoRepositoryTest
  */
 @DataJpaTest
-public class TipoHitoRepositoryTest extends BaseRepositoryTest {
+class TipoHitoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private TipoHitoRepository repository;
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsTipoHito() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsTipoHito() throws Exception {
 
     // given: 2 TipoHito de los que 1 coincide con el nombre buscado
     TipoHito tipoHito1 = new TipoHito(null, "nombre-tipoHito1", "descripcion-tipoHito1", true);
@@ -44,7 +44,7 @@ public class TipoHitoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByNombreAndActivoIsTrueNoExiste_ReturnsNull() throws Exception {
+  void findByNombreAndActivoIsTrueNoExiste_ReturnsNull() throws Exception {
 
     // given: 2 TipoHito que no coinciden con el nombre buscado
     TipoHito tipoHito1 = new TipoHito(null, "nombre-tipoHito1", "descripcion-tipoHito1", true);

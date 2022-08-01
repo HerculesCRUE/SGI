@@ -1,6 +1,6 @@
 import { IConvocatoriaFase } from '@core/models/csp/convocatoria-fase';
 import { Fragment } from '@core/services/action-service';
-import { ConvocatoriaFaseService } from '@core/services/csp/convocatoria-fase.service';
+import { ConvocatoriaFaseService } from '@core/services/csp/convocatoria-fase/convocatoria-fase.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';

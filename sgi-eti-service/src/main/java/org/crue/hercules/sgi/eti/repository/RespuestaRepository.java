@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.eti.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.Memoria;
@@ -84,4 +85,6 @@ public interface RespuestaRepository extends JpaRepository<Respuesta, Long>, Jpa
    */
   Respuesta findByApartadoBloqueOrdenAndApartadoPadreOrdenAndApartadoOrdenAndApartadoBloqueFormularioIdAndMemoriaId(
       Integer ordenBloque, Integer ordenApartadoPadre, Integer ordenApartado, Long idFormulario, Long idMemoria);
+
+  Optional<Respuesta> findTopByMemoriaIdOrderByApartadoBloqueOrdenDescApartadoOrdenDesc(Long memoriaId);
 }

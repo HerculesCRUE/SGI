@@ -61,14 +61,13 @@ public class AreaTematicaPredicateResolver implements SgiRSQLPredicateResolver<A
     }
 
     if (property.equals(Property.PADRE_ID)) {
-      return buildByPadreId(node, root, query, criteriaBuilder);
+      return buildByPadreId(node, root, criteriaBuilder);
     }
 
     return null;
   }
 
-  private Predicate buildByPadreId(ComparisonNode node, Root<AreaTematica> root, CriteriaQuery<?> query,
-      CriteriaBuilder cb) {
+  private Predicate buildByPadreId(ComparisonNode node, Root<AreaTematica> root, CriteriaBuilder cb) {
     PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL, RSQLOperators.IS_NULL);
     PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
 

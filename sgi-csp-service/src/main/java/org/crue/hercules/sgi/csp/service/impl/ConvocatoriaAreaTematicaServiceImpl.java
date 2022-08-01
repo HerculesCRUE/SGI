@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.Optional;
+
 import org.crue.hercules.sgi.csp.exceptions.AreaTematicaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaAreaTematicaNotFoundException;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
@@ -117,16 +119,16 @@ public class ConvocatoriaAreaTematicaServiceImpl implements ConvocatoriaAreaTema
 
     Assert.notNull(id, "ConvocatoriaAreaTematica id no puede ser null para eliminar un ConvocatoriaAreaTematica");
 
-    repository.findById(id).map(convocatoriaAreaTematica -> {
-
+    Optional<ConvocatoriaAreaTematica> areaTematica = repository.findById(id);
+    if (areaTematica.isPresent()) {
       // comprobar si convocatoria es modificable
       Assert.isTrue(
-          convocatoriaService.isRegistradaConSolicitudesOProyectos(convocatoriaAreaTematica.getConvocatoriaId(), null,
+          convocatoriaService.isRegistradaConSolicitudesOProyectos(areaTematica.get().getConvocatoriaId(), null,
               new String[] { "CSP-CON-E" }),
           "No se puede eliminar ConvocatoriaAreaTematica. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
-
-      return convocatoriaAreaTematica;
-    }).orElseThrow(() -> new ConvocatoriaAreaTematicaNotFoundException(id));
+    } else {
+      throw new ConvocatoriaAreaTematicaNotFoundException(id);
+    }
 
     repository.deleteById(id);
     log.debug("delete(Long id) - end");

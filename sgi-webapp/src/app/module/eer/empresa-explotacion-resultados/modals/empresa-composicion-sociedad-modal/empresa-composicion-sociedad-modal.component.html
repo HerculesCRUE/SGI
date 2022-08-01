@@ -1,0 +1,122 @@
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
+  <form [formGroup]="formGroup">
+
+    <div fxLayout="row">
+      <mat-radio-group class="radio-inline" formControlName="miembroSociedad" required>
+        <mat-radio-button color="primary" class="radio" [value]="true">
+          {{'eer.empresa-composicion-sociedad.persona' | translate}}
+        </mat-radio-button>
+        <mat-radio-button color="primary" class="radio" [value]="false">
+          {{'eer.empresa-composicion-sociedad.entidad' | translate}}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <!-- Miembro -->
+    <div fxLayout="row"
+      *ngIf="formGroup.controls.miembroSociedad.value !== null && formGroup.controls.miembroSociedad.value">
+      <mat-form-field>
+        <mat-label>
+          {{'eer.empresa-composicion-sociedad.persona' | translate}}
+        </mat-label>
+        <sgi-select-persona placeholder="{{'eer.empresa-composicion-sociedad.persona' | translate}}"
+          formControlName="miembroSociedadPersona"
+          [tipoColectivo]="TIPO_COLECTIVO.MIEMBRO_EQUIPO_EMPRESA_EXPLOTACION_RESULTADOS"
+          [required]="FormGroupUtil.hasValidator(this.formGroup,'miembroSociedadPersona','required')">
+        </sgi-select-persona>
+        <mat-error *ngIf="formGroup.controls.miembroSociedadPersona.errors?.required">
+          {{'error.required.entity' | translate:msgParamPersonaEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.miembroSociedadPersona.errors?.contains">
+          {{'error.csp.persona-equipo.duplicate' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div fxLayout="row"
+      *ngIf="formGroup.controls.miembroSociedad.value !== null && !formGroup.controls.miembroSociedad.value">
+      <!-- Entidad -->
+      <mat-form-field>
+        <mat-label>{{'eer.empresa-composicion-sociedad.entidad' | translate}}</mat-label>
+        <sgi-select-empresa placeholder="{{'eer.empresa-composicion-sociedad.entidad' | translate}}"
+          formControlName="miembroSociedadEmpresa"
+          [required]="FormGroupUtil.hasValidator(this.formGroup,'miembroSociedadEmpresa','required')">
+        </sgi-select-empresa>
+        <mat-error *ngIf="formGroup.controls.miembroSociedadEmpresa.errors?.required">
+          {{'error.required.entity' | translate:msgParamEntidadEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div fxLayout="row">
+      <!-- Fecha inicio -->
+      <mat-form-field fxFlex="25%">
+        <mat-label>{{'eer.empresa-composicion-sociedad.fecha-inicio' | translate}}</mat-label>
+        <input matInput formControlName="fechaInicio" [matDatepicker]="pickerfechaInicio" required />
+        <mat-datepicker-toggle matSuffix [for]="pickerfechaInicio"></mat-datepicker-toggle>
+        <mat-datepicker #pickerfechaInicio></mat-datepicker>
+        <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaInicioEntity}}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Participación -->
+      <mat-form-field fxFlex="25%">
+        <mat-label>{{'eer.empresa-composicion-sociedad.participacion' | translate}}</mat-label>
+        <input matInput formControlName="participacion" type="number" required>
+        <mat-error *ngIf="formGroup.controls.participacion.errors?.required">
+          {{'error.required.entity' | translate:msgParamParticipacionEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.participacion.errors?.min">
+          {{ 'error.min.entity' | translate:msgParamParticipacionEntity }}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.participacion.errors?.max">
+          {{ 'error.max.entity' | translate:msgParamParticipacionEntity }}
+        </mat-error>
+        <mat-error
+          *ngIf="formGroup.controls.participacion.errors?.invalidSum && !formGroup.controls.participacion.errors?.max">
+          {{ 'eer.empresa-composicion-sociedad.participacion.sum-error' | translate:msgParamParticipacionEntity }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Tipo aportación -->
+      <mat-form-field fxFlex="25%">
+        <mat-label>{{'eer.empresa-composicion-sociedad.tipo-aportacion' | translate}}</mat-label>
+        <sgi-select-enum formControlName="tipoAportacion" [enumMap]="TIPO_APORTACION_MAP" required>
+        </sgi-select-enum>
+      </mat-form-field>
+
+      <!-- Capital social -->
+      <mat-form-field fxFlex="25%">
+        <mat-label>{{'eer.empresa-composicion-sociedad.capital-social' | translate}}</mat-label>
+        <input matInput formControlName="capitalSocial" type="number"
+          placeholder="{{'eer.empresa-composicion-sociedad.capital-social' | translate}}" min="0">
+        <mat-error *ngIf="formGroup.controls.capitalSocial.errors?.min">
+          {{'error.min.digit' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.capitalSocial.errors?.max">
+          {{'error.max.digit' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div fxLayout="row">
+      <!-- Fecha fin -->
+      <mat-form-field sgiEndDate fxFlex="25%">
+        <mat-label>{{'eer.empresa-composicion-sociedad.fecha-fin' | translate}}</mat-label>
+        <input matInput formControlName="fechaFin" [matDatepicker]="pickerFechaFin" />
+        <mat-datepicker-toggle matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaFin></mat-datepicker>
+        <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
+          {{'error.after.fecha-fin' | translate}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

@@ -1,6 +1,6 @@
 package org.crue.hercules.sgi.pii.model;
 
-import java.time.LocalDate;
+import java.time.Instant;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -44,7 +43,7 @@ public class InvencionDocumento extends BaseEntity {
   private Long id;
 
   @Column(name = "fecha_anadido", nullable = false)
-  private LocalDate fechaAnadido;
+  private Instant fechaAnadido;
 
   @Column(name = "nombre", nullable = false, length = NOMBRE_LENGTH)
   private String nombre;
@@ -62,8 +61,4 @@ public class InvencionDocumento extends BaseEntity {
   @Setter(AccessLevel.NONE)
   private final Invencion invencion = null;
 
-  @PrePersist
-  private void beforePersist() {
-    this.fechaAnadido = LocalDate.now();
-  }
 }

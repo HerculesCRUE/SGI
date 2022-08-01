@@ -124,5 +124,14 @@
     "changeOrigin": true,
     "secure": false,
     "logLevel": "debug"
+  },
+  "/api/eer": {
+    "target": "http://sgi-eer-service:4290",
+    "pathRewrite": {
+      "^/api/eer": ""
+    },
+    "changeOrigin": true,
+    "secure": false,
+    "logLevel": "debug"
   }
 }

@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
@@ -148,7 +149,7 @@ public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService 
       String url = convocatoriaEnlaceActualizar.getUrl();
       Optional<ConvocatoriaEnlace> optional = repository.findByConvocatoriaIdAndUrl(convocatoriaId, url);
       if (optional.isPresent()) {
-        Assert.isTrue(optional.get().getId() == convocatoriaEnlaceActualizar.getId(),
+        Assert.isTrue(Objects.equals(optional.get().getId(), convocatoriaEnlaceActualizar.getId()),
             "Ya existe esa url para esta Convocatoria");
       }
 
@@ -176,7 +177,8 @@ public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService 
 
           // La asignación al ModeloEjecucion está activa
           Assert.isTrue(
-              modeloTipoEnlace.get().getTipoEnlace().getId() == convocatoriaEnlaceActualizar.getTipoEnlace().getId()
+              Objects.equals(modeloTipoEnlace.get().getTipoEnlace().getId(),
+                  convocatoriaEnlaceActualizar.getTipoEnlace().getId())
                   && modeloTipoEnlace.get().getActivo(),
               "ModeloTipoEnlace '" + modeloTipoEnlace.get().getTipoEnlace().getNombre()
                   + "' no está activo para el ModeloEjecucion '"
@@ -184,7 +186,8 @@ public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService 
 
           // El TipoEnlace está activo
           Assert.isTrue(
-              modeloTipoEnlace.get().getTipoEnlace().getId() == convocatoriaEnlaceActualizar.getTipoEnlace().getId()
+              Objects.equals(modeloTipoEnlace.get().getTipoEnlace().getId(),
+                  convocatoriaEnlaceActualizar.getTipoEnlace().getId())
                   && modeloTipoEnlace.get().getTipoEnlace().getActivo(),
               TIPO_ENLACE_TEMPLATE + modeloTipoEnlace.get().getTipoEnlace().getNombre() + "' no está activo");
           convocatoriaEnlaceActualizar.setTipoEnlace(modeloTipoEnlace.get().getTipoEnlace());

@@ -54,6 +54,12 @@ function mediate(mc) {
       case 'PERSONA_AUTORIZADA_GRUPO':
         colectivosId = '1,2,3,4';
         break;
+      case 'TUTOR_CSP':
+        colectivosId = '2,3';
+        break;
+      case 'MIEMBRO_EQUIPO_EMPRESA_EXPLOTACION_RESULTADOS':
+        colectivosId = '1,2,3,4';
+        break;
       default:
         colectivosId = '0';
         break;

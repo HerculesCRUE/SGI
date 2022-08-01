@@ -15,13 +15,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * ContextoProyectoRepositoryTest
  */
 @DataJpaTest
-public class ContextoProyectoRepositoryTest extends BaseRepositoryTest {
+class ContextoProyectoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ContextoProyectoRepository repository;
 
   @Test
-  public void findByProyectoId_ReturnsContextoProyecto() throws Exception {
+  void findByProyectoId_ReturnsContextoProyecto() throws Exception {
 
     // given: 2 ContextoProyecto de los que 1 coincide con el idProyecto buscado
     Proyecto proyecto1 = entityManager.persistAndFlush(generarMockProyecto(1L));
@@ -46,7 +46,7 @@ public class ContextoProyectoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByProyectoNoExiste_ReturnsNull() throws Exception {
+  void findByProyectoNoExiste_ReturnsNull() throws Exception {
 
     // given: 2 ContextoProyecto que no coinciden con el idProyecto buscado
     Proyecto proyecto1 = entityManager.persistAndFlush(generarMockProyecto(1L));

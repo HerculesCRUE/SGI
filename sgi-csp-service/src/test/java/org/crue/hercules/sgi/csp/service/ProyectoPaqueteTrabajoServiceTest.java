@@ -29,7 +29,7 @@ import org.springframework.data.jpa.domain.Specification;
  * ProyectoPaqueteTrabajoServiceTest
  */
 
-public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
+class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
 
   @Mock
   private ProyectoPaqueteTrabajoRepository repository;
@@ -40,12 +40,12 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   private ProyectoPaqueteTrabajoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ProyectoPaqueteTrabajoServiceImpl(repository, proyectoRepository);
   }
 
   @Test
-  public void create_ReturnsProyectoPaqueteTrabajo() {
+  void create_ReturnsProyectoPaqueteTrabajo() {
     // given: Un nuevo ProyectoPaqueteTrabajo
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setId(null);
@@ -87,7 +87,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ProyectoPaqueteTrabajo que ya tiene id
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     // when: Creamos el ProyectoPaqueteTrabajo
@@ -98,7 +98,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutProyectoId_ThrowsIllegalArgumentException() {
+  void create_WithoutProyectoId_ThrowsIllegalArgumentException() {
     // given: a ProyectoPaqueteTrabajo without ProyectoId
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setId(null);
@@ -113,7 +113,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutTipoPaqueteTrabajoId_ThrowsIllegalArgumentException() {
+  void create_WithoutTipoPaqueteTrabajoId_ThrowsIllegalArgumentException() {
     // given: a ProyectoPaqueteTrabajo without Nombre
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setId(null);
@@ -128,7 +128,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutFechaInicio_ThrowsIllegalArgumentException() {
+  void create_WithoutFechaInicio_ThrowsIllegalArgumentException() {
     // given: a ProyectoPaqueteTrabajo without FechaInicio
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setId(null);
@@ -143,7 +143,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutFechaFin_ThrowsIllegalArgumentException() {
+  void create_WithoutFechaFin_ThrowsIllegalArgumentException() {
     // given: a ProyectoPaqueteTrabajo without FechaFin
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setId(null);
@@ -158,7 +158,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutPersonaMes_ThrowsIllegalArgumentException() {
+  void create_WithoutPersonaMes_ThrowsIllegalArgumentException() {
     // given: a ProyectoPaqueteTrabajo without PersonaMes
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setId(null);
@@ -173,7 +173,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithFechaInicioGreaterThanFechaFin_ThrowsIllegalArgumentException() {
+  void create_WithFechaInicioGreaterThanFechaFin_ThrowsIllegalArgumentException() {
     // given: Fecha Inicio > fechaFin
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setId(null);
@@ -187,7 +187,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
+  void create_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
     // given: a ProyectoPaqueteTrabajo with non existing Proyecto
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setId(null);
@@ -202,7 +202,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithProyectoWithPermitePaquetesTrabajoFalse_ThrowsIllegalArgumentException() throws Exception {
+  void create_WithProyectoWithPermitePaquetesTrabajoFalse_ThrowsIllegalArgumentException() throws Exception {
     // given: Proyecto with field PermitePaquetesTrabajo = FALSE or NULL
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setId(null);
@@ -220,7 +220,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedNombreInProyecto_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedNombreInProyecto_ThrowsIllegalArgumentException() {
     // given: a ProyectoPaqueteTrabajo with duplicated nombre in proyecto
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setId(null);
@@ -241,7 +241,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDatesOutsideProyectoRange_ThrowsIllegalArgumentException() {
+  void create_WithDatesOutsideProyectoRange_ThrowsIllegalArgumentException() {
     // given: a ProyectoPaqueteTrabajo with dates aoutside Proyecto Range
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setId(null);
@@ -265,7 +265,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsProyectoPaqueteTrabajo() {
+  void update_ReturnsProyectoPaqueteTrabajo() {
     // given: Un nuevo ProyectoPaqueteTrabajo con el tipoPaqueteTrabajo actualizado
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajoActualizado = generarMockProyectoPaqueteTrabajo(1L, 1L);
@@ -305,7 +305,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsProyectoPaqueteTrabajoNotFoundException() {
+  void update_WithIdNotExist_ThrowsProyectoPaqueteTrabajoNotFoundException() {
     // given: Un ProyectoPaqueteTrabajo a actualizar con un id que no existe
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
 
@@ -318,7 +318,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutProyectoId_ThrowsIllegalArgumentException() {
+  void update_WithoutProyectoId_ThrowsIllegalArgumentException() {
     // given: a ProyectoPaqueteTrabajo without ProyectoId
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setDescripcion("descripcion-modificada");
@@ -333,7 +333,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutNombre_ThrowsIllegalArgumentException() {
+  void update_WithoutNombre_ThrowsIllegalArgumentException() {
     // given: a ProyectoPaqueteTrabajo without Nombre
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setDescripcion("descripcion-modificada");
@@ -348,7 +348,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutFechaInicio_ThrowsIllegalArgumentException() {
+  void update_WithoutFechaInicio_ThrowsIllegalArgumentException() {
     // given: a ProyectoPaqueteTrabajo without FechaInicio
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setDescripcion("descripcion-modificada");
@@ -363,7 +363,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutFechaFin_ThrowsIllegalArgumentException() {
+  void update_WithoutFechaFin_ThrowsIllegalArgumentException() {
     // given: a ProyectoPaqueteTrabajo without FechaFin
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setDescripcion("descripcion-modificada");
@@ -378,7 +378,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutPersonaMes_ThrowsIllegalArgumentException() {
+  void update_WithoutPersonaMes_ThrowsIllegalArgumentException() {
     // given: a ProyectoPaqueteTrabajo without FechaFin
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setDescripcion("descripcion-modificada");
@@ -393,7 +393,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithFechaInicioGreaterThanFechaFin_ThrowsIllegalArgumentException() {
+  void update_WithFechaInicioGreaterThanFechaFin_ThrowsIllegalArgumentException() {
     // given: Fecha Inicio > fechaFin
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajoOriginal = generarMockProyectoPaqueteTrabajo(1L, 1L);
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
@@ -412,7 +412,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
+  void update_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
     // given: a ProyectoPaqueteTrabajo with non existing Proyecto
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajoOriginal = generarMockProyectoPaqueteTrabajo(1L, 1L);
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
@@ -430,7 +430,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithProyectoWithPermitePaquetesTrabajoFalse_ThrowsIllegalArgumentException() throws Exception {
+  void update_WithProyectoWithPermitePaquetesTrabajoFalse_ThrowsIllegalArgumentException() throws Exception {
     // given: Proyecto with field PermitePaquetesTrabajo = FALSE or NULL
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajoOriginal = generarMockProyectoPaqueteTrabajo(1L, 1L);
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
@@ -451,7 +451,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDuplicatedNombreInProyecto_ThrowsIllegalArgumentException() {
+  void update_WithDuplicatedNombreInProyecto_ThrowsIllegalArgumentException() {
     // given: a ProyectoPaqueteTrabajo with duplicated nombre in proyecto
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajoOriginal = generarMockProyectoPaqueteTrabajo(1L, 1L);
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
@@ -475,7 +475,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDatesOutsideProyectoRange_ThrowsIllegalArgumentException() {
+  void update_WithDatesOutsideProyectoRange_ThrowsIllegalArgumentException() {
     // given: a ProyectoPaqueteTrabajo with dates aoutside Proyecto Range
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajoOriginal = generarMockProyectoPaqueteTrabajo(1L, 1L);
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
@@ -502,7 +502,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_NoReturnsAnyException() {
+  void delete_WithExistingId_NoReturnsAnyException() {
     // given: existing ProyectoPaqueteTrabajo
     Long id = 1L;
 
@@ -519,7 +519,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -533,7 +533,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithProyectoWithPermitePaquetesTrabajoFalse_ThrowsIllegalArgumentException() throws Exception {
+  void delete_WithProyectoWithPermitePaquetesTrabajoFalse_ThrowsIllegalArgumentException() throws Exception {
     // given: Proyecto with field PermitePaquetesTrabajo = FALSE or NULL
     Long id = 1L;
 
@@ -550,7 +550,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsProyectoPaqueteTrabajo() {
+  void findById_ReturnsProyectoPaqueteTrabajo() {
     // given: Un ProyectoPaqueteTrabajo con el id buscado
     Long idBuscado = 1L;
     Long idProyecto = 1L;
@@ -567,7 +567,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsProyectoPaqueteTrabajoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsProyectoPaqueteTrabajoNotFoundException() throws Exception {
     // given: Ningun ProyectoPaqueteTrabajo con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -579,7 +579,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByProyecto_ReturnsPage() {
+  void findAllByProyecto_ReturnsPage() {
     // given: Una lista con 37 ProyectoPaqueteTrabajo para la Proyecto
     Long proyectoId = 1L;
     List<ProyectoPaqueteTrabajo> proyectosEntidadesConvocantes = new ArrayList<>();
@@ -607,7 +607,7 @@ public class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
     Page<ProyectoPaqueteTrabajo> page = service.findAllByProyecto(proyectoId, null, paging);
 
     // then: Devuelve la pagina 3 con los ProyectoPaqueteTrabajo del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

@@ -7,13 +7,12 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IGrupo } from '@core/models/csp/grupo';
 import { IGrupoEquipoInstrumental } from '@core/models/csp/grupo-equipo-instrumental';
 import { IGrupoLineaEquipoInstrumental } from '@core/models/csp/grupo-linea-equipo-instrumental';
-import { IPersona } from '@core/models/sgp/persona';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, from } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 const MSG_ANADIR = marker('btn.add');
@@ -125,10 +124,10 @@ export class GrupoLineaEquipoInstrumentalModalComponent extends DialogFormCompon
   displayerEquipoInstrumental(equipoInstrumental: StatusWrapper<IGrupoEquipoInstrumental> | IGrupoEquipoInstrumental): string {
     const eq = equipoInstrumental as IGrupoEquipoInstrumental;
     if (eq?.nombre) {
-      return eq?.nombre ? (eq?.nombre + ' - ' + eq?.numRegistro) : '';
+      return eq?.nombre ? (eq?.nombre + (eq?.numRegistro ? (' - ' + eq?.numRegistro) : '')) : '';
     } else {
       const wrapperEq = equipoInstrumental as StatusWrapper<IGrupoEquipoInstrumental>;
-      return wrapperEq?.value?.nombre ? (wrapperEq?.value?.nombre + ' - ' + wrapperEq?.value?.numRegistro) : '';
+      return wrapperEq?.value?.nombre ? (wrapperEq?.value?.nombre + (wrapperEq?.value?.numRegistro ? (' - ' + wrapperEq?.value?.numRegistro) : '')) : '';
     }
   }
 

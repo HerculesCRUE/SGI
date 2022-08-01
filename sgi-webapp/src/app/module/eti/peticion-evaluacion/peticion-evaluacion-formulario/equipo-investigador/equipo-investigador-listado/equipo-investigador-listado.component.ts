@@ -74,6 +74,7 @@ export class EquipoInvestigadorListadoComponent extends FragmentComponent implem
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
+    this.actionService.initializeMemorias();
 
     this.datasource.paginator = this.paginator;
     this.datasource.sort = this.sort;
@@ -168,7 +169,8 @@ export class EquipoInvestigadorListadoComponent extends FragmentComponent implem
         memoria.estadoActual.id === ESTADO_MEMORIA.PENDIENTE_CORRECCIONES ||
         memoria.estadoActual.id === ESTADO_MEMORIA.NO_PROCEDE_EVALUAR;
     });
-    return (this.sgiAuthService.authStatus$?.getValue()?.userRefId !== personaRef) && ((memorias.length > 0) || this.listadoFragment.memorias.length === 0);
+    return (this.sgiAuthService.authStatus$?.getValue()?.userRefId !== personaRef)
+      && ((memorias.length === this.listadoFragment.memorias.length));
   }
 
 }

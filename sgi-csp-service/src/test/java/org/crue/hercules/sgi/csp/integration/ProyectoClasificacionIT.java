@@ -16,7 +16,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 
-public class ProyectoClasificacionIT extends BaseIT {
+class ProyectoClasificacionIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/proyecto-clasificaciones";
@@ -47,7 +47,7 @@ public class ProyectoClasificacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsProyectoClasificacion() throws Exception {
+  void create_ReturnsProyectoClasificacion() throws Exception {
     String roles = "CSP-PRO-E";
     ProyectoClasificacion proyectoClasificacion = generarMockProyectoClasificacion(null);
 
@@ -80,7 +80,7 @@ public class ProyectoClasificacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_ReturnDoNotGetProyectoClasificacion() throws Exception {
+  void delete_ReturnDoNotGetProyectoClasificacion() throws Exception {
     // given: existing ProyectoClasificacion to be deleted
     String roles = "CSP-PRO-E";
     Long id = 1L;

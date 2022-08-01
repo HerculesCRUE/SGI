@@ -42,7 +42,6 @@ export interface GrupoLineaInvestigadorModalData {
 export class GrupoLineaInvestigadorModalComponent extends DialogFormComponent<GrupoLineaInvestigadorModalData> implements OnInit {
 
   textSaveOrUpdate: string;
-  requiredFechaFin;
 
   miembrosEquipo$ = new BehaviorSubject<StatusWrapper<IPersona>[]>([]);
 
@@ -77,7 +76,6 @@ export class GrupoLineaInvestigadorModalComponent extends DialogFormComponent<Gr
       }
       return a.fechaInicio.toMillis() - b.fechaInicio.toMillis();
     });
-    this.requiredFechaFin = this.data.selectedEntidades?.some(select => !!!select.fechaFin);
 
     this.subscriptions.push(
       this.grupoService.findMiembrosEquipo(this.data.idGrupo).pipe(
@@ -164,41 +162,53 @@ export class GrupoLineaInvestigadorModalComponent extends DialogFormComponent<Gr
       }
     );
 
-    this.setupValidators(formGroup);
-
-    this.subscriptions.push(formGroup.controls.fechaInicio.valueChanges.subscribe(
-      (value: DateTime) => {
-        if (this.data.selectedEntidades.length > 0
-          && value
-          && value.toMillis() <= this.data.selectedEntidades[0].fechaInicio.toMillis()
-        ) {
-          this.requiredFechaFin = true;
-        }
-        else {
-          this.requiredFechaFin = this.data.selectedEntidades.some(select => !!!select.fechaFin);
-        }
-      }
-    ));
-
     this.subscriptions.push(formGroup.controls.fechaInicio.statusChanges.subscribe(
       () => {
         if (formGroup.controls.fechaFin.value) {
           formGroup.controls.fechaFin.markAsTouched();
           formGroup.controls.fechaFin.updateValueAndValidity();
+        } else {
+          this.validateFechaFinNull();
         }
       }
     ));
 
+    this.subscriptions.push(formGroup.controls.miembro.valueChanges.subscribe(
+      (value) => {
+        this.setupValidators(formGroup, value.value);
+        formGroup.controls.fechaInicio.markAsTouched();
+        formGroup.controls.fechaInicio.updateValueAndValidity();
+        this.validateFechaFinNull(value.value);
+      }
+    ));
+
+    this.subscriptions.push(formGroup.controls.fechaFin.valueChanges.subscribe(
+      (value) => {
+        if (value === null) {
+          this.validateFechaFinNull();
+        }
+      }
+    ));
+
+    if (this.data?.entidad?.persona) {
+      this.setupValidators(formGroup, this.data?.entidad?.persona);
+    }
+
     return formGroup;
   }
 
-  private setupValidators(formGroup: FormGroup): void {
-    const intervals: Interval[] = this.data.selectedEntidades?.map(responsableEconomico => {
-      return Interval.fromDateTimes(
-        responsableEconomico.fechaInicio ? responsableEconomico.fechaInicio : this.data.fechaInicioMin,
-        responsableEconomico.fechaFin ? responsableEconomico.fechaFin : this.data.fechaFinMax
-      );
-    });
+  private setupValidators(formGroup: FormGroup, persona?: IPersona): void {
+
+    const miembroBuscado = this.data.selectedEntidades?.find(miembro => miembro.persona.id === persona?.id);
+
+    const intervals: Interval[] = this.data.selectedEntidades?.filter(
+      miembro => miembroBuscado?.persona?.id === miembro.persona?.id)
+      .map(miembro => {
+        return Interval.fromDateTimes(
+          miembro.fechaInicio ? miembro.fechaInicio : this.data.fechaInicioMin,
+          miembro.fechaFin ? miembro.fechaFin : this.data.fechaFinMax
+        );
+      });
 
     formGroup.controls.fechaInicio.setValidators([
       Validators.required,
@@ -207,23 +217,12 @@ export class GrupoLineaInvestigadorModalComponent extends DialogFormComponent<Gr
       DateValidator.notOverlapsDependentForStart(intervals, formGroup.controls.fechaFin)
     ]);
 
-    if (this.requiredFechaFin) {
-      formGroup.controls.fechaFin.setValidators([
-        Validators.required,
-        DateValidator.isAfterOther(formGroup.controls.fechaInicio),
-        DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax),
-        DateValidator.notOverlaps(intervals),
-        DateValidator.notOverlapsDependentForEnd(intervals, formGroup.controls.fechaInicio)
-      ]);
-    }
-    else {
-      formGroup.controls.fechaFin.setValidators([
-        DateValidator.isAfterOther(formGroup.controls.fechaInicio),
-        DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax),
-        DateValidator.notOverlaps(intervals),
-        DateValidator.notOverlapsDependentForEnd(intervals, formGroup.controls.fechaInicio)
-      ]);
-    }
+    formGroup.controls.fechaFin.setValidators([
+      DateValidator.isAfterOther(formGroup.controls.fechaInicio),
+      DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax),
+      DateValidator.notOverlaps(intervals),
+      DateValidator.notOverlapsDependentForEnd(intervals, formGroup.controls.fechaInicio)
+    ]);
   }
 
   protected getValue(): GrupoLineaInvestigadorModalData {
@@ -234,6 +233,22 @@ export class GrupoLineaInvestigadorModalComponent extends DialogFormComponent<Gr
     this.data.entidad.fechaInicio = this.formGroup.get('fechaInicio').value;
     this.data.entidad.fechaFin = this.formGroup.get('fechaFin').value;
     return this.data;
+  }
+
+  private validateFechaFinNull(persona?: IPersona) {
+    const fechaFinForm = this.formGroup.get('fechaFin');
+    if (!fechaFinForm.value) {
+      const miembroBuscado = this.data.selectedEntidades?.find(
+        miembro => miembro.persona.id === (persona?.id ?? this.formGroup.get('miembro').value?.id));
+      const fechaInicio: DateTime = this.formGroup.get('fechaInicio').value;
+      if (miembroBuscado && miembroBuscado.fechaFin !== null && fechaInicio.toMillis() <= miembroBuscado.fechaFin.toMillis()) {
+        fechaFinForm.setErrors({ overlaps: true });
+        fechaFinForm.markAsTouched({ onlySelf: true });
+      } else if (fechaFinForm.errors) {
+        delete fechaFinForm.errors.overlaps;
+        fechaFinForm.updateValueAndValidity({ onlySelf: true });
+      }
+    }
   }
 
   displayerMiembroEquipo(persona: StatusWrapper<IPersona> | IPersona): string {

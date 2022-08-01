@@ -107,7 +107,8 @@ export class GrupoLineaClasificacionesComponent extends FragmentComponent implem
    */
   openModal(): void {
     const data: ClasificacionDataModal = {
-      selectedClasificaciones: this.formPart.clasificaciones$.value.map(wrapper => wrapper.value.nivelSeleccionado)
+      selectedClasificaciones: this.formPart.clasificaciones$.value.map(wrapper => wrapper.value.nivelSeleccionado),
+      multiSelect: true
     };
     const config = {
       data

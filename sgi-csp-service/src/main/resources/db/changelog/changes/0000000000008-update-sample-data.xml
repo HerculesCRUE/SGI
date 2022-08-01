@@ -1,0 +1,72 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="dev" author="master" id="0000000000008-tipo_requerimiento">
+    <insert tableName="tipo_requerimiento">
+      <column name="id" valueSequenceNext="tipo_requerimiento_seq" />
+      <column name="nombre" value="Requerimiento documental" />
+    </insert>
+    <insert tableName="tipo_requerimiento">
+      <column name="id" valueSequenceNext="tipo_requerimiento_seq" />
+      <column name="nombre" value="Resolución requerimiento documental" />
+    </insert>
+    <insert tableName="tipo_requerimiento">
+      <column name="id" valueSequenceNext="tipo_requerimiento_seq" />
+      <column name="nombre" value="Requerimiento subsanación" />
+    </insert>
+    <insert tableName="tipo_requerimiento">
+      <column name="id" valueSequenceNext="tipo_requerimiento_seq" />
+      <column name="nombre" value="Acuerdo de inicio de procedimiento de reintegro" />
+    </insert>
+    <insert tableName="tipo_requerimiento">
+      <column name="id" valueSequenceNext="tipo_requerimiento_seq" />
+      <column name="nombre" value="Resolución del procedimiento de reintegro" />
+    </insert>
+    <insert tableName="tipo_requerimiento">
+      <column name="id" valueSequenceNext="tipo_requerimiento_seq" />
+      <column name="nombre" value="Informe de cierre" />
+    </insert>
+    <insert tableName="tipo_requerimiento">
+      <column name="id" valueSequenceNext="tipo_requerimiento_seq" />
+      <column name="nombre" value="Resolución de recurso" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000008-requerimiento_justificacion">
+    <insert tableName="requerimiento_justificacion">
+      <column name="id" valueSequenceNext="requerimiento_justificacion_seq" />
+      <column name="tipo_requerimiento_id" valueComputed="(select id from ${schemaPrefix}tipo_requerimiento where nombre='Requerimiento documental')" />
+      <column name="proyecto_proyecto_sge_id" valueComputed="(select id from ${schemaPrefix}proyecto_proyecto_sge where proyecto_sge_ref='33939')" />
+      <column name="num_requerimiento" valueNumeric="1" />
+      <column name="fecha_notificacion" valueDate="2022-07-14T23:00:00" />
+      <column name="fecha_fin_alegacion" valueDate="2022-08-01T22:59:59" />
+      <column name="importe_aceptado" valueNumeric="500.53" />
+      <column name="importe_rechazado" valueNumeric="600.34" />
+      <column name="importe_reintegrar" valueNumeric="700.32" />
+    </insert>
+    <insert tableName="requerimiento_justificacion">
+      <column name="id" valueSequenceNext="requerimiento_justificacion_seq" />
+      <column name="tipo_requerimiento_id" valueComputed="(select id from ${schemaPrefix}tipo_requerimiento where nombre='Resolución requerimiento documental')" />
+      <column name="proyecto_proyecto_sge_id" valueComputed="(select id from ${schemaPrefix}proyecto_proyecto_sge where proyecto_sge_ref='33939')" />
+      <column name="requerimiento_previo_id" valueComputed="(select id from ${schemaPrefix}requerimiento_justificacion where proyecto_proyecto_sge_id = (select id from ${schemaPrefix}proyecto_proyecto_sge where proyecto_sge_ref='33939') and num_requerimiento = 1)" />
+      <column name="num_requerimiento" valueNumeric="2" />
+      <column name="fecha_notificacion" valueDate="2022-07-15T23:00:00" />
+      <column name="fecha_fin_alegacion" valueDate="2022-08-01T22:59:59" />
+      <column name="importe_aceptado" valueNumeric="200.53" />
+      <column name="importe_rechazado" valueNumeric="300.34" />
+      <column name="importe_reintegrar" valueNumeric="400.32" />
+    </insert>
+    <insert tableName="requerimiento_justificacion">
+      <column name="id" valueSequenceNext="requerimiento_justificacion_seq" />
+      <column name="tipo_requerimiento_id" valueComputed="(select id from ${schemaPrefix}tipo_requerimiento where nombre='Requerimiento subsanación')" />
+      <column name="proyecto_proyecto_sge_id" valueComputed="(select id from ${schemaPrefix}proyecto_proyecto_sge where proyecto_sge_ref='33939')" />
+      <column name="num_requerimiento" valueNumeric="3" />
+      <column name="fecha_notificacion" valueDate="2022-07-16T23:00:00" />
+      <column name="fecha_fin_alegacion" valueDate="2022-08-01T22:59:59" />
+      <column name="importe_aceptado" valueNumeric="5.53" />
+      <column name="importe_rechazado" valueNumeric="32.34" />
+      <column name="importe_reintegrar" valueNumeric="0.00" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

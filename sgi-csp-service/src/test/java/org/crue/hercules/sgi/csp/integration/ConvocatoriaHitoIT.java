@@ -20,7 +20,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de ConvocatoriaHito.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ConvocatoriaHitoIT extends BaseIT {
+class ConvocatoriaHitoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/convocatoriahitos";
@@ -41,7 +41,7 @@ public class ConvocatoriaHitoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsConvocatoriaHito() throws Exception {
+  void create_ReturnsConvocatoriaHito() throws Exception {
     // given: new ConvocatoriaHito
     ConvocatoriaHitoInput newConvocatoriaHito = generarMockConvocatoriaHitoInput(null);
     // when: create ConvocatoriaHito
@@ -62,7 +62,7 @@ public class ConvocatoriaHitoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsConvocatoriaHito() throws Exception {
+  void update_ReturnsConvocatoriaHito() throws Exception {
     Long idConvocatoriaHito = 1L;
     ConvocatoriaHitoInput convocatoriaHito = generarMockConvocatoriaHitoInput(1L);
 
@@ -89,7 +89,7 @@ public class ConvocatoriaHitoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     Long idConvocatoriaHito = 1L;
 
     final ResponseEntity<Void> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -101,7 +101,7 @@ public class ConvocatoriaHitoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsConvocatoriaHito() throws Exception {
+  void findById_ReturnsConvocatoriaHito() throws Exception {
     Long idConvocatoriaHito = 1L;
 
     final ResponseEntity<ConvocatoriaHitoOutput> response = restTemplate.exchange(

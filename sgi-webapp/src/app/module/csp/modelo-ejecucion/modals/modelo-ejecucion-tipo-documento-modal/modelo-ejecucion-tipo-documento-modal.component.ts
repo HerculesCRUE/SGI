@@ -99,7 +99,7 @@ export class ModeloEjecucionTipoDocumentoModalComponent extends DialogFormCompon
     this.translate.get(
       MODELO_EJECUCUION_TIPO_DOCUMENTO_FASE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamFaseEntiy = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamFaseEntiy = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       MODELO_EJECUCUION_TIPO_DOCUMENTO_TIPO_KEY,

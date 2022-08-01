@@ -62,7 +62,7 @@ public class ProrrogaDocumentoServiceImpl implements ProrrogaDocumentoService {
         "ProrrogaDocumento id tiene que ser null para crear un nuevo ProrrogaDocumento");
 
     validarRequeridosProrrogaDocumento(prorrogaDocumento);
-    validarProrrogaDcoumento(prorrogaDocumento, null);
+    validarProrrogaDcoumento(prorrogaDocumento);
 
     ProrrogaDocumento returnValue = repository.save(prorrogaDocumento);
 
@@ -89,8 +89,7 @@ public class ProrrogaDocumentoServiceImpl implements ProrrogaDocumentoService {
 
     return repository.findById(prorrogaDocumentoActualizar.getId()).map(prorrogaDocumento -> {
 
-      // prorrogaDocumentoActualizar.setProyectoProrroga(prorrogaDocumento.getProyectoProrroga());
-      validarProrrogaDcoumento(prorrogaDocumentoActualizar, prorrogaDocumento);
+      validarProrrogaDcoumento(prorrogaDocumentoActualizar);
 
       prorrogaDocumento.setNombre(prorrogaDocumentoActualizar.getNombre());
       prorrogaDocumento.setDocumentoRef(prorrogaDocumentoActualizar.getDocumentoRef());
@@ -184,11 +183,10 @@ public class ProrrogaDocumentoServiceImpl implements ProrrogaDocumentoService {
    * de utilizados para crear o modificar la entidad
    *
    * @param datosProrrogaDocumento
-   * @param datosOriginales
    */
-  private void validarProrrogaDcoumento(ProrrogaDocumento datosProrrogaDocumento, ProrrogaDocumento datosOriginales) {
+  private void validarProrrogaDcoumento(ProrrogaDocumento datosProrrogaDocumento) {
     log.debug(
-        "validarProrrogaDcoumento(ProrrogaDocumento prorrogaDocumento, ProrrogaDocumento datosOriginales) - start");
+        "validarProrrogaDcoumento(ProrrogaDocumento prorrogaDocumento) - start");
 
     // Se comprueba la existencia del proyecto
     Long proyectoProrrogaId = datosProrrogaDocumento.getProyectoProrrogaId();
@@ -218,7 +216,7 @@ public class ProrrogaDocumentoServiceImpl implements ProrrogaDocumentoService {
 
     }
 
-    log.debug("validarProrrogaDcoumento(ProrrogaDocumento prorrogaDocumento, ProrrogaDocumento datosOriginales) - end");
+    log.debug("validarProrrogaDcoumento(ProrrogaDocumento prorrogaDocumento) - end");
   }
 
   /**

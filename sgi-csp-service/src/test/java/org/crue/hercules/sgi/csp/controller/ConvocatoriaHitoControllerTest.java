@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ConvocatoriaHitoControllerTest
  */
 @WebMvcTest(ConvocatoriaHitoController.class)
-public class ConvocatoriaHitoControllerTest extends BaseControllerTest {
+class ConvocatoriaHitoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ConvocatoriaHitoService service;
@@ -43,7 +43,7 @@ public class ConvocatoriaHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  public void create_ReturnsConvocatoriaHito() throws Exception {
+  void create_ReturnsConvocatoriaHito() throws Exception {
     // given: new ConvocatoriaHito
 
     ConvocatoriaHitoInput convocatoriaHitoInput = generarMockConvocatoriaHitoInput();
@@ -75,7 +75,7 @@ public class ConvocatoriaHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void update_ReturnsConvocatoriaHito() throws Exception {
+  void update_ReturnsConvocatoriaHito() throws Exception {
     // given: Existing ConvocatoriaHito to be updated
     ConvocatoriaHito convocatoriaHitoExistente = generarMockConvocatoriaHito(1L);
     ConvocatoriaHitoInput convocatoriaHito = generarMockConvocatoriaHitoInput();
@@ -108,7 +108,7 @@ public class ConvocatoriaHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     ConvocatoriaHitoInput convocatoriaHito = generarMockConvocatoriaHitoInput();
@@ -128,7 +128,7 @@ public class ConvocatoriaHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.doNothing().when(service).delete(ArgumentMatchers.anyLong());
@@ -146,7 +146,7 @@ public class ConvocatoriaHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void delete_NoExistingId_Return404() throws Exception {
+  void delete_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -164,7 +164,7 @@ public class ConvocatoriaHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsConvocatoriaHito() throws Exception {
+  void findById_WithExistingId_ReturnsConvocatoriaHito() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
       return generarMockConvocatoriaHito(invocation.getArgument(0));
@@ -192,7 +192,7 @@ public class ConvocatoriaHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ConvocatoriaHitoNotFoundException(1L);

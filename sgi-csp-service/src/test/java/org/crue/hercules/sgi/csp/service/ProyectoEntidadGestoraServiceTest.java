@@ -27,7 +27,7 @@ import org.springframework.data.jpa.domain.Specification;
  * ProyectoEntidadGestoraServiceTest
  */
 
-public class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
+class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
 
   @Mock
   private ProyectoEntidadGestoraRepository repository;
@@ -38,12 +38,12 @@ public class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
   private ProyectoEntidadGestoraService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ProyectoEntidadGestoraServiceImpl(repository, proyectoRepository);
   }
 
   @Test
-  public void create_ReturnsProyectoEntidadGestora() {
+  void create_ReturnsProyectoEntidadGestora() {
     // given: Un nuevo ProyectoEntidadGestora
     ProyectoEntidadGestora proyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
     proyectoEntidadGestora.setId(null);
@@ -71,7 +71,7 @@ public class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ProyectoEntidadGestora que ya tiene id
     ProyectoEntidadGestora proyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
     // when: Creamos el ProyectoEntidadGestora
@@ -82,7 +82,7 @@ public class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutProyectoId_ThrowsIllegalArgumentException() {
+  void create_WithoutProyectoId_ThrowsIllegalArgumentException() {
     // given: a ProyectoEntidadGestora without ProyectoId
     ProyectoEntidadGestora proyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
     proyectoEntidadGestora.setId(null);
@@ -97,7 +97,7 @@ public class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutEntidadRef_ThrowsIllegalArgumentException() {
+  void create_WithoutEntidadRef_ThrowsIllegalArgumentException() {
     // given: a ProyectoEntidadGestora without EntidadRef
     ProyectoEntidadGestora proyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
     proyectoEntidadGestora.setId(null);
@@ -112,7 +112,7 @@ public class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
+  void create_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
     // given: a ProyectoEntidadGestora with non existing Proyecto
     ProyectoEntidadGestora proyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
     proyectoEntidadGestora.setId(null);
@@ -127,7 +127,7 @@ public class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedEntidadRef_ThrowsIllegalArgumentException() throws Exception {
+  void create_WithDuplicatedEntidadRef_ThrowsIllegalArgumentException() throws Exception {
     // given: ProyectoEntidadGestora with existing EntidadRef
     ProyectoEntidadGestora proyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
     proyectoEntidadGestora.setId(null);
@@ -145,7 +145,7 @@ public class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsProyectoEntidadGestora() {
+  void update_ReturnsProyectoEntidadGestora() {
     // given: Un nuevo ProyectoEntidadGestora con el tipoEntidadGestora actualizado
     ProyectoEntidadGestora proyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
     ProyectoEntidadGestora proyectoEntidadGestoraActualizado = generarMockProyectoEntidadGestora(1L, 1L);
@@ -175,7 +175,7 @@ public class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutProyectoId_ThrowsIllegalArgumentException() {
+  void update_WithoutProyectoId_ThrowsIllegalArgumentException() {
     // given: a ProyectoEntidadGestora without ProyectoId
     ProyectoEntidadGestora proyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
     proyectoEntidadGestora.setEntidadRef("entidad-modificada");
@@ -190,7 +190,7 @@ public class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutEntidadRef_ThrowsIllegalArgumentException() {
+  void update_WithoutEntidadRef_ThrowsIllegalArgumentException() {
     // given: a ProyectoEntidadGestora without EntidadRef
     ProyectoEntidadGestora proyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
     proyectoEntidadGestora.setEntidadRef(null);
@@ -204,7 +204,7 @@ public class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
+  void update_WithNoExistingProyecto_ThrowsProyectoNotFoundException() {
     // given: a ProyectoEntidadGestora with non existing Proyecto
     ProyectoEntidadGestora proyectoEntidadGestoraOriginal = generarMockProyectoEntidadGestora(1L, 1L);
     ProyectoEntidadGestora proyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
@@ -222,7 +222,7 @@ public class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDuplicatedEntidadRef_ThrowsIllegalArgumentException() {
+  void update_WithDuplicatedEntidadRef_ThrowsIllegalArgumentException() {
     // given: a ProyectoEntidadGestora with duplicated entidadRef
     ProyectoEntidadGestora proyectoEntidadGestoraOriginal = generarMockProyectoEntidadGestora(1L, 1L);
     ProyectoEntidadGestora proyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
@@ -245,7 +245,7 @@ public class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_NoReturnsAnyException() {
+  void delete_WithExistingId_NoReturnsAnyException() {
     // given: existing ProyectoEntidadGestora
     Long id = 1L;
 
@@ -260,7 +260,7 @@ public class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -274,7 +274,7 @@ public class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByProyecto_ReturnsPage() {
+  void findAllByProyecto_ReturnsPage() {
     // given: Una lista con 37 ProyectoEntidadGestora para la Proyecto
     Long proyectoId = 1L;
     List<ProyectoEntidadGestora> proyectosEntidadesConvocantes = new ArrayList<>();
@@ -302,7 +302,7 @@ public class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
     Page<ProyectoEntidadGestora> page = service.findAllByProyecto(proyectoId, null, paging);
 
     // then: Devuelve la pagina 3 con los ProyectoEntidadGestora del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.eti.controller;
 
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.crue.hercules.sgi.eti.model.Respuesta;
@@ -133,6 +135,24 @@ public class RespuestaController {
     Respuesta returnValue = service.findByMemoriaIdAndApartadoId(idMemoria, idApartado);
     log.debug("Respuesta findByMemoriaIdAndApartadoId(Long idMemoria, Long idApartado) - end");
     return returnValue;
+  }
+
+  /**
+   * Devuelve la última {@link Respuesta} de la Memoria con el id indicado.
+   * 
+   * @param id Identificador de {@link Memoria}.
+   * @return {@link Respuesta} correspondiente si existe.
+   */
+  @GetMapping("/{idMemoria}/last")
+  ResponseEntity<Respuesta> last(@PathVariable Long idMemoria) {
+    log.debug("last(Long id) - start");
+    Optional<Respuesta> returnValue = service.findLastByMemoriaId(idMemoria);
+    if (!returnValue.isPresent()) {
+      log.debug("last(String query,Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    log.debug("last(Long id) - end");
+    return new ResponseEntity<>(returnValue.get(), HttpStatus.OK);
   }
 
 }

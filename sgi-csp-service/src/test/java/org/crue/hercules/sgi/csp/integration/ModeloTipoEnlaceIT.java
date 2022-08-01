@@ -20,7 +20,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de ModeloTipoEnlace.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ModeloTipoEnlaceIT extends BaseIT {
+class ModeloTipoEnlaceIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/modelotipoenlaces";
@@ -39,7 +39,7 @@ public class ModeloTipoEnlaceIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsModeloTipoEnlace() throws Exception {
+  void create_ReturnsModeloTipoEnlace() throws Exception {
 
     // given: new ModeloTipoEnlace
     ModeloTipoEnlace modeloTipoEnlace = generarMockModeloTipoEnlace(null, 1L);
@@ -59,13 +59,13 @@ public class ModeloTipoEnlaceIT extends BaseIT {
     Assertions.assertThat(modeloTipoEnlaceResponse.getTipoEnlace()).as("getTipoEnlace()").isNotNull();
     Assertions.assertThat(modeloTipoEnlaceResponse.getTipoEnlace().getId()).as("getTipoEnlace().getId()")
         .isEqualTo(modeloTipoEnlace.getTipoEnlace().getId());
-    Assertions.assertThat(modeloTipoEnlaceResponse.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(modeloTipoEnlaceResponse.getActivo()).as("getActivo()").isTrue();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing ModeloTipoEnlace to be disabled
     Long id = 1L;
 
@@ -80,7 +80,7 @@ public class ModeloTipoEnlaceIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsModeloTipoEnlace() throws Exception {
+  void findById_ReturnsModeloTipoEnlace() throws Exception {
     Long id = 1L;
 
     final ResponseEntity<ModeloTipoEnlace> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -96,7 +96,7 @@ public class ModeloTipoEnlaceIT extends BaseIT {
         .isEqualTo(1L);
     Assertions.assertThat(modeloTipoEnlaceResponse.getTipoEnlace()).as("getTipoEnlace()").isNotNull();
     Assertions.assertThat(modeloTipoEnlaceResponse.getTipoEnlace().getId()).as("getTipoEnlace().getId()").isEqualTo(1L);
-    Assertions.assertThat(modeloTipoEnlaceResponse.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(modeloTipoEnlaceResponse.getActivo()).as("getActivo()").isTrue();
   }
 
   /**

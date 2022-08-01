@@ -1,5 +1,8 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.Objects;
+import java.util.Optional;
+
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaEntidadFinanciadoraNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
@@ -172,8 +175,8 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
           if (convocatoriaEntidadFinanciadoraActualizar.getFuenteFinanciacion() != null) {
             Assert.isTrue(
                 (convocatoriaEntidadFinanciadora.getFuenteFinanciacion() != null
-                    && convocatoriaEntidadFinanciadora.getFuenteFinanciacion()
-                        .getId() == convocatoriaEntidadFinanciadoraActualizar.getFuenteFinanciacion().getId())
+                    && Objects.equals(convocatoriaEntidadFinanciadora.getFuenteFinanciacion()
+                        .getId(), convocatoriaEntidadFinanciadoraActualizar.getFuenteFinanciacion().getId()))
                     || convocatoriaEntidadFinanciadoraActualizar.getFuenteFinanciacion().getActivo(),
                 "La FuenteFinanciacion debe estar Activo");
           }
@@ -181,8 +184,8 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
           if (convocatoriaEntidadFinanciadoraActualizar.getTipoFinanciacion() != null) {
             Assert.isTrue(
                 (convocatoriaEntidadFinanciadora.getTipoFinanciacion() != null
-                    && convocatoriaEntidadFinanciadora.getTipoFinanciacion()
-                        .getId() == convocatoriaEntidadFinanciadoraActualizar.getTipoFinanciacion().getId())
+                    && Objects.equals(convocatoriaEntidadFinanciadora.getTipoFinanciacion()
+                        .getId(), convocatoriaEntidadFinanciadoraActualizar.getTipoFinanciacion().getId()))
                     || convocatoriaEntidadFinanciadoraActualizar.getTipoFinanciacion().getActivo(),
                 "El TipoFinanciacion debe estar Activo");
           }
@@ -222,16 +225,16 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
     Assert.notNull(id,
         "ConvocatoriaEntidadFinanciadora id no puede ser null para desactivar un ConvocatoriaEntidadFinanciadora");
 
-    repository.findById(id).map(convocatoriaEntidadFinanciadora -> {
-
+    Optional<ConvocatoriaEntidadFinanciadora> entidadFinanciadora = repository.findById(id);
+    if (entidadFinanciadora.isPresent()) {
       // comprobar si convocatoria es modificable
       Assert.isTrue(
-          convocatoriaService.isRegistradaConSolicitudesOProyectos(convocatoriaEntidadFinanciadora.getConvocatoriaId(),
+          convocatoriaService.isRegistradaConSolicitudesOProyectos(entidadFinanciadora.get().getConvocatoriaId(),
               null, new String[] { "CSP-CON-E" }),
           "No se puede eliminar ConvocatoriaEntidadFinanciadora. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
-
-      return convocatoriaEntidadFinanciadora;
-    }).orElseThrow(() -> new ConvocatoriaEntidadFinanciadoraNotFoundException(id));
+    } else {
+      throw new ConvocatoriaEntidadFinanciadoraNotFoundException(id);
+    }
 
     repository.deleteById(id);
     log.debug("delete(Long id) - end");

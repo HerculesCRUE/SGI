@@ -3,10 +3,12 @@ package org.crue.hercules.sgi.csp.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.RequisitoIPCategoriaProfesionalNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessSolicitudException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
@@ -21,6 +23,7 @@ import org.crue.hercules.sgi.csp.repository.RequisitoIPCategoriaProfesionalRepos
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.specification.RequisitoIPCategoriaProfesionalSpecifications;
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudSpecifications;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
@@ -96,21 +99,42 @@ public class RequisitoIPCategoriaProfesionalService {
                 || categoriaProfesional.getRequisitoIPId().equals(requisitoIPId)),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key("org.crue.hercules.sgi.csp.exceptions.NoRelatedEntitiesException.message")
-            .parameter("entity", ApplicationContextSupport.getMessage(RequisitoIPCategoriaProfesional.class))
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(RequisitoIPCategoriaProfesional.class))
             .parameter("related", ApplicationContextSupport.getMessage(RequisitoIP.class)).build());
 
-    // Eliminamos las RequisitoIPCategoriaProfesional existentes para el
-    // requisitoIPId dado
-    repository.deleteInBulkByRequisitoIPId(requisitoIPId);
+    // Recuperamos las categorias profesionales existentes en base de datos
+    List<RequisitoIPCategoriaProfesional> categoriasProfesionalesBD = repository.findByRequisitoIPId(requisitoIPId);
 
-    List<RequisitoIPCategoriaProfesional> returnValue = new ArrayList<>();
-    if (categoriasProfesionales != null && !categoriasProfesionales.isEmpty()) {
+    List<Long> idsCategoriasProfesionalesActualizadas = categoriasProfesionales.stream()
+        .map(RequisitoIPCategoriaProfesional::getId)
+        .collect(Collectors.toList());
+
+    // Categorias profesionales a eliminar (existen en base de datos pero no están
+    // entre los que se van a modificar)
+    List<RequisitoIPCategoriaProfesional> categoriasProfesionalesEliminar = categoriasProfesionalesBD.stream()
+        .filter(categoriaProfesional -> !idsCategoriasProfesionalesActualizadas.contains(categoriaProfesional.getId()))
+        .collect(Collectors.toList());
+
+    // Eliminamos las categorias profesionales no existentes en la nueva lista
+    if (!categoriasProfesionalesEliminar.isEmpty()) {
+      repository.deleteAll(categoriasProfesionalesEliminar);
+    }
+
+    // Id's de categorias profesionales a crear (no tienen id)
+    List<RequisitoIPCategoriaProfesional> categoriasProfesionalesCrear = categoriasProfesionales.stream()
+        .filter(categoriaProfesional -> categoriaProfesional.getId() == null).collect(Collectors.toList());
+
+    if (!categoriasProfesionalesCrear.isEmpty()) {
       // Eliminamos duplicados de la nueva lista
-      List<RequisitoIPCategoriaProfesional> uniqueCategoriasProfesionales = categoriasProfesionales.stream().distinct()
+      List<RequisitoIPCategoriaProfesional> uniqueCategoriasProfesionales = categoriasProfesionalesCrear.stream()
+          .distinct()
           .collect(Collectors.toList());
       // Guardamos la nueva lista
-      returnValue = repository.saveAll(uniqueCategoriasProfesionales);
+      repository.saveAll(uniqueCategoriasProfesionales);
     }
+
+    List<RequisitoIPCategoriaProfesional> returnValue = repository.findByRequisitoIPId(requisitoIPId);
 
     log.debug(
         "updateCategoriasProfesionales(Long requisitoIPId, List<RequisitoIPCategoriaProfesional> categoriasProfesionales) - end");
@@ -178,7 +202,30 @@ public class RequisitoIPCategoriaProfesionalService {
     return returnValue;
   }
 
+  /**
+   * Hace las comprobaciones necesarias para determinar si el
+   * {@link RequisitoIPCategoriaProfesional} puede ser eliminado.
+   *
+   * @param requisitoIpId Id del {@link RequisitoIP}.
+   * @param id            Id del {@link RequisitoIPCategoriaProfesional}.
+   * @return <code>true</code> Si se permite / <code>false</code>
+   *         Si no se permite
+   */
+  public boolean eliminable(Long requisitoIpId, Long id) {
+    Specification<RequisitoIPCategoriaProfesional> specs = RequisitoIPCategoriaProfesionalSpecifications.byId(id)
+        .and(RequisitoIPCategoriaProfesionalSpecifications.byRequisitoIPId(requisitoIpId));
+
+    Optional<RequisitoIPCategoriaProfesional> requisitoIpNivelAcademico = repository.findOne(specs);
+    if (!requisitoIpNivelAcademico.isPresent()) {
+      throw new RequisitoIPCategoriaProfesionalNotFoundException(id);
+    }
+
+    specs = specs.and(RequisitoIPCategoriaProfesionalSpecifications.withRelatedEntities());
+    return repository.count(specs) == 0;
+  }
+
   private boolean hasAuthorityViewInvestigador() {
     return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
   }
+
 }

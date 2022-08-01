@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.eti.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -286,6 +287,35 @@ public class RespuestaControllerTest extends BaseControllerTest {
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Devuelve error No Content
         .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "ETI-RESPUESTA-VER" })
+  public void getLastRespuesta_FromMemoria_ReturnsRespuesta() throws Exception {
+    BDDMockito.given(respuestaService.findLastByMemoriaId(ArgumentMatchers.anyLong()))
+        .willReturn(Optional.of((generarMockRespuesta(1L))));
+
+    mockMvc
+        .perform(MockMvcRequestBuilders.get(RESPUESTA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/last", 1L)
+            .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
+        .andExpect(MockMvcResultMatchers.jsonPath("valor.valor").value("Valor1"));
+    ;
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "ETI-RESPUESTA-VER" })
+  public void getLastRespuesta_FromMemoria_ReturnsEmpty() throws Exception {
+    BDDMockito.given(respuestaService.findLastByMemoriaId(ArgumentMatchers.anyLong()))
+        .willReturn(Optional.empty());
+
+    mockMvc
+        .perform(MockMvcRequestBuilders.get(RESPUESTA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID
+            + "/last", 1L)
+            .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isNoContent())
+        .andExpect(MockMvcResultMatchers.jsonPath("$").doesNotExist());
   }
 
   /**

@@ -3,11 +3,14 @@ package org.crue.hercules.sgi.eti.service.impl;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Period;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -240,7 +243,7 @@ public class MemoriaServiceImpl implements MemoriaService {
     documentacionMemoriaRepository.saveAll(documentacionesMemoriaList);
 
     // Guardamos los ids de los apartados del formulario de retrospectiva
-    List<Long> idsApartadosRetrospectiva = new ArrayList<Long>();
+    List<Long> idsApartadosRetrospectiva = new ArrayList<>();
     Page<Bloque> bloques = bloqueRepository.findByFormularioId(Constantes.FORMULARIO_RETROSPECTIVA, null);
     bloques.getContent().stream().forEach(bloque -> {
       Page<Apartado> apartados = apartadoRepository.findByBloqueIdAndPadreIsNull(bloque.getId(), null);
@@ -393,9 +396,9 @@ public class MemoriaServiceImpl implements MemoriaService {
   @Override
   public Memoria findById(final Long id) throws MemoriaNotFoundException {
     log.debug("Petición a get Memoria : {}  - start", id);
-    final Memoria Memoria = memoriaRepository.findById(id).orElseThrow(() -> new MemoriaNotFoundException(id));
+    final Memoria memoria = memoriaRepository.findById(id).orElseThrow(() -> new MemoriaNotFoundException(id));
     log.debug("Petición a get Memoria : {}  - end", id);
-    return Memoria;
+    return memoria;
 
   }
 
@@ -436,10 +439,10 @@ public class MemoriaServiceImpl implements MemoriaService {
     return memoriaRepository.findById(memoriaActualizar.getId()).map(memoria -> {
 
       // Se comprueba si se está desactivando la memoria
-      if (memoria.getActivo() && !memoriaActualizar.getActivo()) {
+      if (Boolean.TRUE.equals(memoria.getActivo()) && Boolean.FALSE.equals(memoriaActualizar.getActivo())) {
         Assert.isTrue(
-            memoria.getEstadoActual().getId() == Constantes.TIPO_ESTADO_MEMORIA_EN_ELABORACION
-                || memoria.getEstadoActual().getId() == Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA,
+            Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_ELABORACION)
+                || Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA),
             "El estado actual de la memoria no es el correcto para desactivar la memoria");
       }
 
@@ -472,8 +475,7 @@ public class MemoriaServiceImpl implements MemoriaService {
    */
   @Override
   public List<MemoriaPeticionEvaluacion> findMemoriaByPeticionEvaluacionMaxVersion(Long idPeticionEvaluacion) {
-    List<MemoriaPeticionEvaluacion> returnValue = memoriaRepository.findMemoriasEvaluacion(idPeticionEvaluacion, null);
-    return returnValue;
+    return memoriaRepository.findMemoriasEvaluacion(idPeticionEvaluacion, null);
   }
 
   /**
@@ -483,6 +485,7 @@ public class MemoriaServiceImpl implements MemoriaService {
    * @param memoria             {@link Memoria} a actualizar estado.
    * @param idTipoEstadoMemoria identificador del estado nuevo de la memoria.
    */
+  @Transactional
   @Override
   public void updateEstadoMemoria(Memoria memoria, long idTipoEstadoMemoria) {
     log.debug("updateEstadoMemoria(Memoria memoria, Long idEstadoMemoria) - start");
@@ -564,15 +567,16 @@ public class MemoriaServiceImpl implements MemoriaService {
     Memoria memoria = null;
     if (returnMemoria.isPresent()) {
       memoria = returnMemoria.get();
-      if (memoria.getEstadoActual().getId() == Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA
-          || memoria.getEstadoActual().getId() == Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA
-          || memoria.getEstadoActual().getId() == Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO
-          || memoria.getEstadoActual().getId() == Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION) {
+      if (Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA)
+          || Objects.equals(memoria.getEstadoActual().getId(),
+              Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA)
+          || Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO)
+          || Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION)) {
 
         try {
           // Si la memoria se cambió al estado anterior estando en evaluación, se
           // eliminará la evaluación.
-          if (memoria.getEstadoActual().getId() == Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION) {
+          if (Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION)) {
             Evaluacion evaluacion = evaluacionRepository.findByMemoriaIdAndVersionAndActivoTrue(memoria.getId(),
                 memoria.getVersion());
 
@@ -589,8 +593,9 @@ public class MemoriaServiceImpl implements MemoriaService {
             evaluacionRepository.save(evaluacion);
           }
 
-          if (memoria.getEstadoActual().getId() == Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA
-              || memoria.getEstadoActual().getId() == Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA) {
+          if (Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA)
+              || Objects.equals(memoria.getEstadoActual().getId(),
+                  Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA)) {
             // se eliminan los informes en caso de que las memorias tengan alguno asociado
             informeService.deleteInformeMemoria(memoria.getId());
           }
@@ -607,10 +612,11 @@ public class MemoriaServiceImpl implements MemoriaService {
 
       } else {
         Assert.isTrue(
-            memoria.getEstadoActual().getId() == Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA
-                || memoria.getEstadoActual().getId() == Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA
-                || memoria.getEstadoActual().getId() == Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO
-                || memoria.getEstadoActual().getId() == Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION,
+            Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA)
+                || Objects.equals(memoria.getEstadoActual().getId(),
+                    Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA)
+                || Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO)
+                || Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION),
             "El estado actual de la memoria no es el correcto para recuperar el estado anterior");
         return null;
       }
@@ -649,13 +655,15 @@ public class MemoriaServiceImpl implements MemoriaService {
           .findAllByMemoriaIdOrderByFechaEstadoDesc(memoria.getId());
 
       Optional<EstadoMemoria> estadoAnteriorMemoria = estadosMemoria.stream()
-          .filter(estadoMemoria -> estadoMemoria.getTipoEstadoMemoria().getId() != memoria.getEstadoActual().getId())
+          .filter(estadoMemoria -> !Objects.equals(estadoMemoria.getTipoEstadoMemoria().getId(),
+              memoria.getEstadoActual().getId()))
           .findFirst();
 
       Assert.isTrue(estadoAnteriorMemoria.isPresent(), "No se puede recuperar el estado anterior de la memoria");
 
       Optional<EstadoMemoria> estadoMemoriaActual = estadosMemoria.stream()
-          .filter(estadoMemoria -> estadoMemoria.getTipoEstadoMemoria().getId() == memoria.getEstadoActual().getId())
+          .filter(estadoMemoria -> Objects.equals(estadoMemoria.getTipoEstadoMemoria().getId(),
+              memoria.getEstadoActual().getId()))
           .findAny();
 
       Assert.isTrue(estadoMemoriaActual.isPresent(), "No se puede recuperar el estado actual de la memoria");
@@ -670,9 +678,7 @@ public class MemoriaServiceImpl implements MemoriaService {
           .findById(memoria.getRetrospectiva().getEstadoRetrospectiva().getId() - 1);
 
       Assert.isTrue(estadoRetrospectiva.isPresent(), "No se puede recuperar el estado anterior de la retrospectiva");
-      if (estadoRetrospectiva.isPresent()) {
-        memoria.getRetrospectiva().setEstadoRetrospectiva(estadoRetrospectiva.get());
-      }
+      memoria.getRetrospectiva().setEstadoRetrospectiva(estadoRetrospectiva.get());
     }
     return memoria;
   }
@@ -908,6 +914,8 @@ public class MemoriaServiceImpl implements MemoriaService {
    * Recuperar aquellas memorias que requieren evaluación retrospectiva y cuya
    * fecha de evaluación retrospectiva se encuentre entre el día actual y el
    * número de días guardado como parámetro de configuración
+   * 
+   * @return lista de {@link Memoria}
    */
   public List<Memoria> recuperarMemoriasAvisoFechaRetrospectiva() {
     log.debug("recuperarMemoriasAvisoFechaRetrospectiva() - start");
@@ -949,13 +957,90 @@ public class MemoriaServiceImpl implements MemoriaService {
               memoria.getComite().getNombreInvestigacion(),
               memoria.getComite().getGenero().toString(), memoria.getNumReferencia(), tipoActividad,
               memoria.getPeticionEvaluacion().getTitulo(), memoria.getCodOrganoCompetente(),
-              memoria.getPersonaRef());
+              memoria.getPeticionEvaluacion().getPersonaRef());
         } catch (Exception e) {
           log.debug("enviarComunicadoInformeRetrospectivaCeeaPendiente() - Error al enviar el comunicado", e);
 
         }
       });
     }
+  }
+
+  public void sendComunicadoInformeSeguimientoFinalPendiente() {
+    List<Memoria> memorias = recuperaInformesAvisoSeguimientoFinalPendiente();
+    if (CollectionUtils.isEmpty(memorias)) {
+      log.info("No existen evaluaciones que requieran generar aviso de informe de evaluación final pendiente.");
+      return;
+    }
+    memorias.stream().forEach(memoria -> {
+      String tipoActividad;
+      if (!memoria.getPeticionEvaluacion().getTipoActividad().getNombre()
+          .equals(TIPO_ACTIVIDAD_INVESTIGACION_TUTELADA)) {
+        tipoActividad = memoria.getPeticionEvaluacion().getTipoActividad().getNombre();
+      } else {
+        tipoActividad = memoria.getPeticionEvaluacion().getTipoInvestigacionTutelada().getNombre();
+      }
+      try {
+        this.comunicadosService.enviarComunicadoInformeSeguimientoFinal(
+            memoria.getComite().getNombreInvestigacion(),
+            memoria.getNumReferencia(),
+            tipoActividad,
+            memoria.getPeticionEvaluacion().getTitulo(),
+            memoria.getPeticionEvaluacion().getPersonaRef());
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+      }
+    });
+  }
+
+  public void sendComunicadoMemoriaArchivadaAutomaticamentePorInactividad(List<Memoria> memorias) {
+    memorias.stream().forEach(memoria -> {
+      String tipoActividad;
+      if (!memoria.getPeticionEvaluacion().getTipoActividad().getNombre()
+          .equals(TIPO_ACTIVIDAD_INVESTIGACION_TUTELADA)) {
+        tipoActividad = memoria.getPeticionEvaluacion().getTipoActividad().getNombre();
+      } else {
+        tipoActividad = memoria.getPeticionEvaluacion().getTipoInvestigacionTutelada().getNombre();
+      }
+      try {
+        this.comunicadosService.enviarComunicadoMemoriaArchivadaAutomaticamentePorInactividad(
+            memoria.getComite().getNombreInvestigacion(),
+            memoria.getNumReferencia(),
+            tipoActividad,
+            memoria.getPeticionEvaluacion().getTitulo(),
+            memoria.getPeticionEvaluacion().getPersonaRef());
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+      }
+    });
+
+  }
+
+  /**
+   * Recuperar aquellas memorias con informe final pendiente
+   * 
+   * @return lista de {@link Memoria}
+   */
+  public List<Memoria> recuperaInformesAvisoSeguimientoFinalPendiente() {
+    log.debug("recuperaInformesAvisoSeguimientoFinalPendiente() - start");
+
+    Instant fechaInicio = Instant.now().atZone(this.sgiConfigProperties.getTimeZone().toZoneId())
+        .with(LocalTime.MIN).withNano(0).minusYears(1L).toInstant();
+
+    Instant fechaFin = this.getLastInstantOfDay().minusYears(1L)
+        .toInstant();
+
+    // Se buscan memorias con Peticiones de Evaluación activas y cuya fecha fin
+    // cumpla un año durante el día de hoy
+    Specification<Memoria> specsMemoriasComunicadoInfAnual = MemoriaSpecifications.peticionesActivas()
+        .and(MemoriaSpecifications.byEstado(14L))
+        .and(MemoriaSpecifications.byPeticionFechaFin(fechaInicio, fechaFin));
+
+    List<Memoria> memoriasPendientesAviso = memoriaRepository
+        .findAll(specsMemoriasComunicadoInfAnual);
+
+    log.debug("recuperaInformesAvisoSeguimientoFinalPendiente() - end");
+    return memoriasPendientesAviso;
   }
 
   private void validacionesCreateMemoria(Memoria memoria) {
@@ -1056,7 +1141,6 @@ public class MemoriaServiceImpl implements MemoriaService {
         break;
       }
     }
-    ;
 
     sbNumReferencia.append(numMemoria);
 
@@ -1079,7 +1163,7 @@ public class MemoriaServiceImpl implements MemoriaService {
     if (returnValue.hasContent()) {
       List<Respuesta> respuestas = returnValue.getContent();
       Long idFormulario = respuestas.get(0).getApartado().getBloque().getFormulario().getId();
-      respuestas.stream().map(resp -> resp.getTipoDocumento()).forEach(tipoDocumento -> {
+      respuestas.stream().map(Respuesta::getTipoDocumento).forEach(tipoDocumento -> {
         if (!documentacionMemoriaRepository.existsByMemoriaIdAndTipoDocumentoIdAndTipoDocumentoFormularioId(idMemoria,
             tipoDocumento.getId(), idFormulario)) {
           arr[0] = false;
@@ -1096,6 +1180,7 @@ public class MemoriaServiceImpl implements MemoriaService {
    * 
    * @return Los ids de memorias que pasan al estado "Archivado"
    */
+  @Transactional
   public List<Long> archivarNoPresentados() {
     log.debug("archivarNoPresentados() - start");
     Configuracion configuracion = configuracionService.findConfiguracion();
@@ -1103,25 +1188,25 @@ public class MemoriaServiceImpl implements MemoriaService {
     // pasado "mesesArchivadaPendienteCorrecciones" días desde la fecha de estado de
     // una memoria cuyo estado es "Pendiente Correcciones"
     Specification<Memoria> specsMemoriasByMesesArchivadaPendienteCorrecciones = MemoriaSpecifications.activos()
-        .and(MemoriaSpecifications.estadoActualIn(Arrays.asList(Constantes.TIPO_ESTADO_MEMORIA_PENDIENTE_CORRECCIONES)))
-        .and(MemoriaSpecifications
-            .byFechaActualMayorFechaEstadoByMesesDiff(configuracion.getMesesArchivadaPendienteCorrecciones()));
+        .and(
+            MemoriaSpecifications.estadoActualIn(Arrays.asList(Constantes.TIPO_ESTADO_MEMORIA_PENDIENTE_CORRECCIONES)));
 
-    List<Memoria> memorias = memoriaRepository.findAll(specsMemoriasByMesesArchivadaPendienteCorrecciones);
+    return memoriaRepository.findAll(specsMemoriasByMesesArchivadaPendienteCorrecciones).stream().filter(memoria -> {
+      EstadoMemoria lastEstado = this.estadoMemoriaRepository.findTopByMemoriaIdOrderByFechaEstadoDesc(memoria.getId());
 
-    List<Long> memoriasArchivadas = new ArrayList<Long>();
-    if (!CollectionUtils.isEmpty(memorias)) {
-      memorias.forEach(memoria -> {
-        try {
-          this.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO);
-          memoriasArchivadas.add(memoria.getId());
-        } catch (Exception e) {
-          log.debug("Error archivarNoPresentados() - ", e);
-        }
-      });
-    }
-    log.debug("archivarNoPresentados() - end");
-    return memoriasArchivadas;
+      return lastEstado.getFechaEstado().isBefore(Instant.now().atZone(ZoneOffset.UTC)
+          .minus(Period.ofMonths(configuracion.getMesesArchivadaPendienteCorrecciones())).toInstant());
+    }).map(memoria -> {
+      try {
+        this.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO);
+        sendComunicadoMemoriaRevisionMinimaArchivada(memoria);
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+        return null;
+      }
+      return memoria.getId();
+    }).filter(Objects::nonNull)
+        .collect(Collectors.toList());
   }
 
   /**
@@ -1132,6 +1217,7 @@ public class MemoriaServiceImpl implements MemoriaService {
    * 
    * @return Los ids de memorias que pasan al estado "Archivado"
    */
+  @Transactional
   public List<Long> archivarInactivos() {
     log.debug("archivarInactivos() - start");
     Configuracion configuracion = configuracionService.findConfiguracion();
@@ -1142,28 +1228,58 @@ public class MemoriaServiceImpl implements MemoriaService {
     Specification<Memoria> specsMemoriasByDiasArchivadaInactivo = MemoriaSpecifications.activos()
         .and(MemoriaSpecifications.estadoActualIn(Arrays.asList(
             Constantes.TIPO_ESTADO_MEMORIA_FAVORABLE_PENDIENTE_MOD_MINIMAS,
-            Constantes.TIPO_ESTADO_MEMORIA_NO_PROCEDE_EVALUAR, Constantes.TIPO_ESTADO_MEMORIA_SOLICITUD_MODIFICACION)))
-        .and(MemoriaSpecifications.byFechaActualMayorFechaEstadoByDiasDiff(configuracion.getDiasArchivadaInactivo()));
+            Constantes.TIPO_ESTADO_MEMORIA_NO_PROCEDE_EVALUAR,
+            Constantes.TIPO_ESTADO_MEMORIA_SOLICITUD_MODIFICACION)));
 
-    List<Memoria> memorias = memoriaRepository.findAll(specsMemoriasByDiasArchivadaInactivo);
+    List<Memoria> memorias = memoriaRepository.findAll(specsMemoriasByDiasArchivadaInactivo).stream()
+        .filter(memoria -> {
+          EstadoMemoria lastEstado = this.estadoMemoriaRepository
+              .findTopByMemoriaIdOrderByFechaEstadoDesc(memoria.getId());
 
-    List<Long> memoriasArchivadas = new ArrayList<Long>();
+          return lastEstado.getFechaEstado().isBefore(Instant.now().atZone(ZoneOffset.UTC)
+              .minus(Period.ofDays(configuracion.getDiasArchivadaInactivo())).toInstant());
+        }).map(memoria -> {
+          try {
+            this.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO);
+          } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return null;
+          }
+          return memoria;
+        }).filter(Objects::nonNull)
+        .collect(Collectors.toList());
+
     if (!CollectionUtils.isEmpty(memorias)) {
-      memorias.forEach(memoria -> {
-        try {
-          this.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO);
-          memoriasArchivadas.add(memoria.getId());
-        } catch (Exception e) {
-          log.debug("Error archivarInactivos() - ", e);
-        }
-      });
+      this.sendComunicadoMemoriaArchivadaAutomaticamentePorInactividad(memorias);
     }
+
     log.debug("archivarInactivos() - end");
-    return memoriasArchivadas;
+    return memorias.stream().map(Memoria::getId).collect(Collectors.toList());
+  }
+
+  public void sendComunicadoMemoriaRevisionMinimaArchivada(Memoria memoria) {
+    String tipoActividad;
+    if (!memoria.getPeticionEvaluacion().getTipoActividad().getNombre()
+        .equals(TIPO_ACTIVIDAD_INVESTIGACION_TUTELADA)) {
+      tipoActividad = memoria.getPeticionEvaluacion().getTipoActividad().getNombre();
+    } else {
+      tipoActividad = memoria.getPeticionEvaluacion().getTipoInvestigacionTutelada().getNombre();
+    }
+    try {
+      this.comunicadosService.enviarComunicadoMemoriaRevisionMinimaArchivada(
+          memoria.getComite().getNombreInvestigacion(),
+          memoria.getNumReferencia(),
+          tipoActividad,
+          memoria.getPeticionEvaluacion().getTitulo(),
+          memoria.getPeticionEvaluacion().getPersonaRef());
+    } catch (Exception e) {
+      log.debug("sendComunicadoMemoriaRevisionMinimaArchivada() - Error al enviar el comunicado", e);
+    }
   }
 
   private ZonedDateTime getLastInstantOfDay() {
     return Instant.now().atZone(this.sgiConfigProperties.getTimeZone().toZoneId())
         .with(LocalTime.MAX).withNano(0);
   }
+
 }

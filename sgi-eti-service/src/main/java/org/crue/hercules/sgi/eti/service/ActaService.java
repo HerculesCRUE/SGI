@@ -130,4 +130,12 @@ public interface ActaService {
    * @return true/false
    */
   Boolean hasAssignedActasByEvaluador(String personaRef);
+
+  /**
+   * Confirma si el hash del blockchain sellado es igual o ha sido alterado
+   * 
+   * @param id identificador del {@link Acta} a confirmar.
+   * @return true/false
+   */
+  Boolean confirmarRegistroBlockchain(Long id);
 }

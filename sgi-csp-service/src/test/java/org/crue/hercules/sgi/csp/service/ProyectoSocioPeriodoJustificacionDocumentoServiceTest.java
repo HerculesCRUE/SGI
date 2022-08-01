@@ -31,7 +31,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * ProyectoSocioPeriodoJustificacionDocumentoServiceTest
  */
-public class ProyectoSocioPeriodoJustificacionDocumentoServiceTest extends BaseServiceTest {
+class ProyectoSocioPeriodoJustificacionDocumentoServiceTest extends BaseServiceTest {
 
   @Mock
   private ProyectoSocioPeriodoJustificacionDocumentoRepository repository;
@@ -41,19 +41,17 @@ public class ProyectoSocioPeriodoJustificacionDocumentoServiceTest extends BaseS
   private ProyectoSocioPeriodoJustificacionDocumentoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ProyectoSocioPeriodoJustificacionDocumentoServiceImpl(repository, proyectoSocioRepository);
   }
 
   @Test
-  public void update_ReturnsProyectoSocioPeriodoJustificacionDocumentoList() {
+  void update_ReturnsProyectoSocioPeriodoJustificacionDocumentoList() {
     // given: una lista con uno de los ProyectoSocioPeriodoJustificacionDocumento
     // actualizado,
     // otro nuevo y sin el otros existente
     Long proyectoSocioId = 1L;
     Long proyectoSocioPeriodoJustificacionId = 1L;
-    ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacion = generarMockProyectoSocioPeriodoJustificacion(
-        proyectoSocioPeriodoJustificacionId);
 
     List<ProyectoSocioPeriodoJustificacionDocumento> peridosJustificiacionExistentes = new ArrayList<>();
     peridosJustificiacionExistentes
@@ -80,8 +78,8 @@ public class ProyectoSocioPeriodoJustificacionDocumentoServiceTest extends BaseS
     peridosJustificiacionActualizar.add(newProyectoSocioPeriodoJustificacionDocumento);
     peridosJustificiacionActualizar.add(updatedProyectoSocioPeriodoJustificacionDocumento);
 
-    BDDMockito.given(proyectoSocioRepository.findById(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(proyectoSocioPeriodoJustificacion));
+    BDDMockito.given(proyectoSocioRepository.existsById(ArgumentMatchers.anyLong()))
+        .willReturn(true);
 
     BDDMockito.given(repository.findAllByProyectoSocioPeriodoJustificacionId(ArgumentMatchers.anyLong()))
         .willReturn(peridosJustificiacionExistentes);
@@ -146,7 +144,7 @@ public class ProyectoSocioPeriodoJustificacionDocumentoServiceTest extends BaseS
   }
 
   @Test
-  public void update_WithNoExistingProyectoSocioPeriodoJustificacion_ThrowsProyectoSocioPeriodoJustificacionNotFoundException() {
+  void update_WithNoExistingProyectoSocioPeriodoJustificacion_ThrowsProyectoSocioPeriodoJustificacionNotFoundException() {
     // given: a ProyectoSocioPeriodoJustificacionEntidadGestora with non existing
     // ProyectoSocioPeriodoJustificacion
     Long proyectoSocioId = 1L;
@@ -154,7 +152,8 @@ public class ProyectoSocioPeriodoJustificacionDocumentoServiceTest extends BaseS
     ProyectoSocioPeriodoJustificacionDocumento proyectoSocioPeriodoJustificacion = generarMockProyectoSocioPeriodoJustificacionDocumento(
         1L, proyectoSocioPeriodoJustificacionId);
 
-    BDDMockito.given(proyectoSocioRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
+    BDDMockito.given(proyectoSocioRepository.existsById(ArgumentMatchers.anyLong()))
+        .willReturn(false);
 
     Assertions.assertThatThrownBy(
         // when: update ProyectoSocioPeriodoJustificacionEntidadGestora
@@ -164,19 +163,16 @@ public class ProyectoSocioPeriodoJustificacionDocumentoServiceTest extends BaseS
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsProyectoSocioPeriodoJustificacionDocumentoNotFoundException() {
+  void update_WithIdNotExist_ThrowsProyectoSocioPeriodoJustificacionDocumentoNotFoundException() {
     // given: Un ProyectoSocioPeriodoJustificacionDocumento a actualizar con un id
-    // que no
-    // existe
+    // que no existe
     Long proyectoSocioId = 1L;
     Long proyectoSocioPeriodoJustificacionId = 1L;
-    ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacion = generarMockProyectoSocioPeriodoJustificacion(
-        proyectoSocioPeriodoJustificacionId);
     ProyectoSocioPeriodoJustificacionDocumento proyectoSocioPeriodoJustificacionDocumento = generarMockProyectoSocioPeriodoJustificacionDocumento(
         1L, proyectoSocioPeriodoJustificacionId);
 
-    BDDMockito.given(proyectoSocioRepository.findById(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(proyectoSocioPeriodoJustificacion));
+    BDDMockito.given(proyectoSocioRepository.existsById(ArgumentMatchers.anyLong()))
+        .willReturn(true);
 
     BDDMockito.given(repository.findAllByProyectoSocioPeriodoJustificacionId(ArgumentMatchers.anyLong()))
         .willReturn(new ArrayList<>());
@@ -192,20 +188,18 @@ public class ProyectoSocioPeriodoJustificacionDocumentoServiceTest extends BaseS
   }
 
   @Test
-  public void update_WithProyectoSocioPeriodoJustificacionChange_ThrowsIllegalArgumentException() {
+  void update_WithProyectoSocioPeriodoJustificacionChange_ThrowsIllegalArgumentException() {
     // given: a ProyectoSocioPeriodoJustificacionDocumento with proyecto socio
     // modificado
     Long proyectoSocioId = 1L;
     Long proyectoSocioPeriodoJustificacionId = 1L;
-    ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacion = generarMockProyectoSocioPeriodoJustificacion(
-        proyectoSocioPeriodoJustificacionId);
     ProyectoSocioPeriodoJustificacionDocumento proyectoSocioPeriodoJustificacionDocumento = generarMockProyectoSocioPeriodoJustificacionDocumento(
         1L, proyectoSocioPeriodoJustificacionId);
 
     proyectoSocioPeriodoJustificacionDocumento.setProyectoSocioPeriodoJustificacionId(3L);
 
-    BDDMockito.given(proyectoSocioRepository.findById(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(proyectoSocioPeriodoJustificacion));
+    BDDMockito.given(proyectoSocioRepository.existsById(ArgumentMatchers.anyLong()))
+        .willReturn(true);
 
     BDDMockito.given(repository.findAllByProyectoSocioPeriodoJustificacionId(ArgumentMatchers.anyLong())).willReturn(
         Arrays.asList(generarMockProyectoSocioPeriodoJustificacionDocumento(1L, proyectoSocioPeriodoJustificacionId)));
@@ -219,7 +213,7 @@ public class ProyectoSocioPeriodoJustificacionDocumentoServiceTest extends BaseS
   }
 
   @Test
-  public void findAllByProyectoSocioPeriodoJustificacion_ReturnsPage() {
+  void findAllByProyectoSocioPeriodoJustificacion_ReturnsPage() {
     // given: Una lista con 37 ProyectoSocioPeriodoJustificacionEntidadGestora para
     // la ProyectoSocioPeriodoJustificacion
     Long proyectoSocioId = 1L;
@@ -258,7 +252,7 @@ public class ProyectoSocioPeriodoJustificacionDocumentoServiceTest extends BaseS
     // del 31
     // al
     // 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -271,7 +265,7 @@ public class ProyectoSocioPeriodoJustificacionDocumentoServiceTest extends BaseS
   }
 
   @Test
-  public void findById_ReturnsProyectoSocioPeriodoJustificacionDocumento() {
+  void findById_ReturnsProyectoSocioPeriodoJustificacionDocumento() {
     // given: Un ProyectoSocioPeriodoJustificacionDocumento con el id buscado
     Long idBuscado = 1L;
     Long proyectoSocioPeriodoJustificacionId = 1L;
@@ -292,7 +286,7 @@ public class ProyectoSocioPeriodoJustificacionDocumentoServiceTest extends BaseS
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsProyectoSocioPeriodoJustificacionDocumentoNotFoundException()
+  void findById_WithIdNotExist_ThrowsProyectoSocioPeriodoJustificacionDocumentoNotFoundException()
       throws Exception {
     // given: Ningun ProyectoSocioPeriodoJustificacionDocumento con el id buscado
     Long idBuscado = 1L;

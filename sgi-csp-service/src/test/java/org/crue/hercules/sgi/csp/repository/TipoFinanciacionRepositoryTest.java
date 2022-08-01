@@ -12,13 +12,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * TipoFinanciacionRepositoryTest
  */
 @DataJpaTest
-public class TipoFinanciacionRepositoryTest extends BaseRepositoryTest {
+class TipoFinanciacionRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private TipoFinanciacionRepository repository;
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsTipoFinanciacion() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsTipoFinanciacion() throws Exception {
 
     // given: 2 TipoFinanciacion de los que 1 coincide con el nombre buscado
     TipoFinanciacion tipoFinanciacion1 = new TipoFinanciacion(null, "nombre-tipoFinanciacion1",
@@ -45,7 +45,7 @@ public class TipoFinanciacionRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByNombreAndActivoIsTrue_WithNombreNoExiste_ReturnsNull() throws Exception {
+  void findByNombreAndActivoIsTrue_WithNombreNoExiste_ReturnsNull() throws Exception {
 
     // given: 2 TipoFinanciacion que no coinciden con el nombre buscado
     TipoFinanciacion tipoFinanciacion1 = new TipoFinanciacion(null, "nombre-tipoFinanciacion1",

@@ -3,6 +3,7 @@ import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
@@ -23,6 +24,7 @@ export class ProyectoDataResolver extends SgiResolverResolver<IProyectoData> {
     router: Router,
     snackBar: SnackBarService,
     private service: ProyectoService,
+    private solicitudService: SolicitudService,
     private authService: SgiAuthService) {
     super(logger, router, snackBar, MSG_NOT_FOUND);
   }
@@ -32,6 +34,8 @@ export class ProyectoDataResolver extends SgiResolverResolver<IProyectoData> {
       map((proyecto) => {
         return {
           proyecto,
+          solicitanteRefSolicitud: null,
+          solicitudFormularioSolicitud: null,
           disableCoordinadorExterno: false,
           hasAnyProyectoSocioCoordinador: false,
           isVisor: this.authService.hasAuthorityForAnyUO('CSP-PRO-V'),
@@ -47,6 +51,7 @@ export class ProyectoDataResolver extends SgiResolverResolver<IProyectoData> {
             })
           );
       }),
+      switchMap(data => this.fillDatosSolicitud(data)),
       switchMap(data => this.hasAnyProyectoSocioWithRolCoordinador(data)),
       switchMap(data => this.isReadonly(data))
     );
@@ -78,6 +83,21 @@ export class ProyectoDataResolver extends SgiResolverResolver<IProyectoData> {
         );
     } else {
       data.hasAnyProyectoSocioCoordinador = false;
+      return of(data);
+    }
+  }
+
+  private fillDatosSolicitud(data: IProyectoData): Observable<IProyectoData> {
+    if (data?.proyecto?.solicitudId) {
+      return this.solicitudService.findById(data.proyecto.solicitudId)
+        .pipe(
+          map(solicitud => {
+            data.solicitanteRefSolicitud = solicitud.solicitante.id;
+            data.solicitudFormularioSolicitud = solicitud.formularioSolicitud;
+            return data;
+          })
+        );
+    } else {
       return of(data);
     }
   }

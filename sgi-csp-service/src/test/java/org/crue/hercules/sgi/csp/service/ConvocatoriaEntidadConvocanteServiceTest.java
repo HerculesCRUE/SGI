@@ -33,7 +33,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 /**
  * ConvocatoriaEntidadConvocanteServiceTest
  */
-public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
+class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
 
   @Mock
   private ConvocatoriaEntidadConvocanteRepository repository;
@@ -51,13 +51,13 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   private ConvocatoriaEntidadConvocanteService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ConvocatoriaEntidadConvocanteServiceImpl(repository, convocatoriaRepository, programaRepository,
         convocatoriaService, configuracionSolicitudRepository, solicitudRepository);
   }
 
   @Test
-  public void create_ReturnsConvocatoriaEntidadConvocante() {
+  void create_ReturnsConvocatoriaEntidadConvocante() {
     // given: Un nuevo ConvocatoriaEntidadConvocante
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -94,7 +94,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ConvocatoriaEntidadConvocante que ya tiene id
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante = generarMockConvocatoriaEntidadConvocante(1L,
@@ -108,7 +108,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutConvocatoriaId_ThrowsIllegalArgumentException() {
+  void create_WithoutConvocatoriaId_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadConvocante without ConvocatoriaId
     ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante = generarMockConvocatoriaEntidadConvocante(null, null);
 
@@ -121,7 +121,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingConvocatoria_ThrowsConvocatoriaNotFoundException() {
+  void create_WithNoExistingConvocatoria_ThrowsConvocatoriaNotFoundException() {
     // given: a ConvocatoriaEntidadGestora with non existing Convocatoria
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante = generarMockConvocatoriaEntidadConvocante(null,
@@ -137,7 +137,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedConvocatoriaIdAndEntidadRef_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedConvocatoriaIdAndEntidadRef_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadConvocante assigned with same Convocatoria And
     // EntidadRef
     Long convocatoriaId = 1L;
@@ -164,7 +164,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingPrograma_404() {
+  void create_WithNoExistingPrograma_404() {
     // given: a ConvocatoriaEntidadGestora with non existing Programa
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -187,7 +187,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithProgramaActivoFalse_ThrowsIllegalArgumentException() {
+  void create_WithProgramaActivoFalse_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadGestora with non existing Programa
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -212,7 +212,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
+  void create_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadConvocante when modificable returns false
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -235,7 +235,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsConvocatoriaEntidadConvocante() {
+  void update_ReturnsConvocatoriaEntidadConvocante() {
     // given: Un nuevo ConvocatoriaEntidadConvocante con el nombre actualizado
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante = generarMockConvocatoriaEntidadConvocante(1L,
@@ -276,7 +276,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsConvocatoriaEntidadConvocanteNotFoundException() {
+  void update_WithIdNotExist_ThrowsConvocatoriaEntidadConvocanteNotFoundException() {
     // given: Un ConvocatoriaEntidadConvocante a actualizar con un id que no existe
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante = generarMockConvocatoriaEntidadConvocante(1L,
@@ -291,7 +291,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDuplicatedConvocatoriaIdAndEntidadRef_ThrowsIllegalArgumentException() {
+  void update_WithDuplicatedConvocatoriaIdAndEntidadRef_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadConvocante assigned with same Convocatoria And
     // EntidadRef
     Long convocatoriaId = 1L;
@@ -318,7 +318,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingPrograma_404() {
+  void update_WithNoExistingPrograma_404() {
     // given: a ConvocatoriaEntidadConvocante with non existing Programa
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante = generarMockConvocatoriaEntidadConvocante(1L,
@@ -341,7 +341,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithProgramaActivoFalse_ThrowsIllegalArgumentException() {
+  void update_WithProgramaActivoFalse_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadConvocante with non existing Programa
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante = generarMockConvocatoriaEntidadConvocante(1L,
@@ -373,7 +373,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
+  void update_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadConvocante when modificable returns false
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -397,7 +397,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_NoReturnsAnyException() {
+  void delete_WithExistingId_NoReturnsAnyException() {
     // given: existing ConvocatoriaEntidadConvocante
     Long id = 1L;
     Long convocatoriaId = 1L;
@@ -416,7 +416,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -430,7 +430,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
+  void delete_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
     // given: existing ConvocatoriaEntidadConvocante when modificable returns false
     Long id = 1L;
     Long convocatoriaId = 1L;
@@ -450,7 +450,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void findAllByConvocatoria_ReturnsPage() {
+  void findAllByConvocatoria_ReturnsPage() {
     // given: Una lista con 37 ConvocatoriaEntidadGestora para la Convocatoria
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -481,7 +481,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
     Page<ConvocatoriaEntidadConvocante> page = service.findAllByConvocatoria(convocatoriaId, null, paging);
 
     // then: Devuelve la pagina 3 con los ConvocatoriaEntidadConvocante del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -494,7 +494,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsConvocatoriaEntidadConvocante() {
+  void findById_ReturnsConvocatoriaEntidadConvocante() {
     // given: Un ConvocatoriaEntidadConvocante con el id buscado
     Long idBuscado = 1L;
     Long convocatoriaId = 1L;
@@ -510,7 +510,7 @@ public class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsConvocatoriaEntidadConvocanteNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsConvocatoriaEntidadConvocanteNotFoundException() throws Exception {
     // given: Ningun ConvocatoriaEntidadConvocante con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());

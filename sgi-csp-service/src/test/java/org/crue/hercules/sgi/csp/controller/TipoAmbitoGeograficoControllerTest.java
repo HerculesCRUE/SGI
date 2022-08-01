@@ -31,7 +31,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * TipoAmbitoGeograficoControllerTest
  */
 @WebMvcTest(TipoAmbitoGeograficoController.class)
-public class TipoAmbitoGeograficoControllerTest extends BaseControllerTest {
+class TipoAmbitoGeograficoControllerTest extends BaseControllerTest {
 
   @MockBean
   private TipoAmbitoGeograficoService service;
@@ -41,7 +41,7 @@ public class TipoAmbitoGeograficoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
-  public void findAll_ReturnsPage() throws Exception {
+  void findAll_ReturnsPage() throws Exception {
     // given: Una lista con 37 TipoAmbitoGeografico
     List<TipoAmbitoGeografico> tipoAmbitoGeograficos = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -91,7 +91,7 @@ public class TipoAmbitoGeograficoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
-  public void findAll_EmptyList_Returns204() throws Exception {
+  void findAll_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de TipoAmbitoGeografico
     List<TipoAmbitoGeografico> tipoAmbitoGeograficos = new ArrayList<>();
 
@@ -117,7 +117,7 @@ public class TipoAmbitoGeograficoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-C" })
-  public void findById_WithExistingId_ReturnsTipoAmbitoGeografico() throws Exception {
+  void findById_WithExistingId_ReturnsTipoAmbitoGeografico() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
       return generarMockTipoAmbitoGeografico(invocation.getArgument(0));
@@ -136,7 +136,7 @@ public class TipoAmbitoGeograficoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-C" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new TipoAmbitoGeograficoNotFoundException(1L);

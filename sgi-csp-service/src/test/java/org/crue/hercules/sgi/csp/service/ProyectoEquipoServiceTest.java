@@ -18,6 +18,7 @@ import org.crue.hercules.sgi.csp.model.RolProyecto;
 import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoResponsableEconomicoRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.impl.ProyectoEquipoServiceImpl;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,12 +36,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.test.context.support.WithMockUser;
 
-public class ProyectoEquipoServiceTest extends BaseServiceTest {
+class ProyectoEquipoServiceTest extends BaseServiceTest {
 
   @Mock
   private ProyectoEquipoRepository repository;
   @Mock
   private ProyectoRepository proyectoRepository;
+  @Mock
+  private SolicitudRepository solicitudRepository;
   @Mock
   private ProyectoResponsableEconomicoRepository proyectoResponsableEconomicoRepository;
   @Mock
@@ -51,13 +54,13 @@ public class ProyectoEquipoServiceTest extends BaseServiceTest {
   private ProyectoEquipoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
-    service = new ProyectoEquipoServiceImpl(repository, proyectoRepository,
+  void setUp() throws Exception {
+    service = new ProyectoEquipoServiceImpl(repository, proyectoRepository, solicitudRepository,
         proyectoHelper, sgiConfigProperties);
   }
 
   @Test
-  public void update_ReturnsProyectoEquipoList() {
+  void update_ReturnsProyectoEquipoList() {
     // given: una lista con uno de los ProyectoEquipo
     // actualizado, otro nuevo y sin el otros existente
     Long proyectoId = 1L;
@@ -133,7 +136,7 @@ public class ProyectoEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingConvocatoria_ThrowsProyectoNotFoundException() {
+  void update_WithNoExistingConvocatoria_ThrowsProyectoNotFoundException() {
     // given: a ProyectoEquipo with non existing Proyecto
     Long proyectoId = 1L;
     ProyectoEquipo proyectoEquipo = generarMockProyectoEquipo(3L, Instant.parse("2020-02-15T00:00:00Z"),
@@ -149,7 +152,7 @@ public class ProyectoEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsProyectoEquipoNotFoundException() {
+  void update_WithIdNotExist_ThrowsProyectoEquipoNotFoundException() {
     // given: Un ProyectoEquipo a actualizar con un id que
     // no existe
     Long proyectoId = 1L;
@@ -169,7 +172,7 @@ public class ProyectoEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithFechaInicioAfterFechaFin_ThrowsIllegalArgumentException() {
+  void update_WithFechaInicioAfterFechaFin_ThrowsIllegalArgumentException() {
     // given: a ProyectoEquipo with fecha inicio after fecha fin
     Long proyectoId = 1L;
     Proyecto proyecto = generarMockProyecto(proyectoId);
@@ -190,7 +193,7 @@ public class ProyectoEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithFechaFinGreaterThanDuracionProyecto_ThrowsIllegalArgumentException() {
+  void update_WithFechaFinGreaterThanDuracionProyecto_ThrowsIllegalArgumentException() {
     // given: a ProyectoEquipo with fechaFin greater than
     // duracion proyecto
     Long proyectoId = 1L;
@@ -212,7 +215,7 @@ public class ProyectoEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithFechasSolapadas_ThrowsIllegalArgumentException() {
+  void update_WithFechasSolapadas_ThrowsIllegalArgumentException() {
     // given: a ProyectoEquipo with fechas solapadas
     Long proyectoId = 1L;
     Proyecto proyecto = generarMockProyecto(proyectoId);
@@ -233,7 +236,7 @@ public class ProyectoEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithExistingId_ReturnsProyectoEquipo() throws Exception {
+  void findById_WithExistingId_ReturnsProyectoEquipo() throws Exception {
     // given: existing ProyectoEquipo
     ProyectoEquipo proyectoEquipo = generarMockProyectoEquipo(1L, Instant.parse("2020-05-15T00:00:00Z"),
         Instant.parse("2021-03-15T23:59:59Z"), 1L);
@@ -256,7 +259,7 @@ public class ProyectoEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
@@ -269,7 +272,7 @@ public class ProyectoEquipoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllByProyecto_WithPaging_ReturnsPage() {
+  void findAllByProyecto_WithPaging_ReturnsPage() {
     // given: One hundred ProyectoEquipo
     Long proyectoId = 1L;
     List<ProyectoEquipo> listaProyectoEquipo = new LinkedList<ProyectoEquipo>();
@@ -303,9 +306,9 @@ public class ProyectoEquipoServiceTest extends BaseServiceTest {
     // containing
     // obsrvaciones='observaciones-31' to
     // 'observaciones-40'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 31; i < 10; i++) {
       ProyectoEquipo item = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);

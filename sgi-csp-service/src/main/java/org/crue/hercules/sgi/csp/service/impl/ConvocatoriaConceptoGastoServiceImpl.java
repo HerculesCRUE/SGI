@@ -199,8 +199,9 @@ public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConcept
 
     Assert.notNull(id, "ConvocatoriaConceptoGasto id no puede ser null para eliminar un ConvocatoriaConceptoGasto");
 
-    repository.findById(id).map(convocatoriaConvocatoriaConceptoGasto -> convocatoriaConvocatoriaConceptoGasto)
-        .orElseThrow(() -> new ConvocatoriaConceptoGastoNotFoundException(id));
+    if (!repository.existsById(id)) {
+      throw new ConvocatoriaConceptoGastoNotFoundException(id);
+    }
 
     List<ConvocatoriaConceptoGastoCodigoEc> codigosEconomicos = convocatoriaConceptoGastoCodigoEcRepository
         .findAllByConvocatoriaConceptoGastoId(id);

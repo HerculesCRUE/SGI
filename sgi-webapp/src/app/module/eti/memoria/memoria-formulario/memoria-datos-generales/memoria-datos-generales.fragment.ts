@@ -139,6 +139,7 @@ export class MemoriaDatosGeneralesFragment extends FormFragment<IMemoria>  {
 
   saveOrUpdate(): Observable<number> {
     const datosGenerales = this.getValue();
+    const peticionEvaluacionData = datosGenerales.peticionEvaluacion;
     datosGenerales.peticionEvaluacion = {} as IPeticionEvaluacion;
     datosGenerales.peticionEvaluacion.id = this.idPeticionEvaluacion;
     const obs = this.isEdit()
@@ -149,6 +150,8 @@ export class MemoriaDatosGeneralesFragment extends FormFragment<IMemoria>  {
     return obs.pipe(
       map((value) => {
         value.responsable = datosGenerales.responsable;
+        // Se reestablecen los datos originales de la petición de evalución.
+        value.peticionEvaluacion = peticionEvaluacionData;
         this.memoria = value;
         return this.memoria.id;
       })

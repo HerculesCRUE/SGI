@@ -55,8 +55,10 @@ public class CustomObraArtisticaRepositoryImpl implements CustomObraArtisticaRep
   private EntityManager entityManager;
 
   @Override
-  public Page<ObraArtisticaResumen> findAllObrasArtisticas(String query, Pageable pageable) {
-    log.debug("findAllObrasArtisticas(String query, Pageable pageable) - start");
+  public Page<ObraArtisticaResumen> findAllObrasArtisticas(Specification<ProduccionCientifica> specIsInvestigador,
+      String query, Pageable pageable) {
+    log.debug(
+        "findAllObrasArtisticas(Specification<ProduccionCientifica> specIsInvestigador, String query, Pageable pageable) - start");
 
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<ObraArtisticaResumen> cq = cb.createQuery(ObraArtisticaResumen.class);
@@ -118,6 +120,11 @@ public class CustomObraArtisticaRepositoryImpl implements CustomObraArtisticaRep
       listPredicatesCount.add(spec.toPredicate(rootCount, countQuery, cb));
     }
 
+    if (specIsInvestigador != null) {
+      listPredicates.add(specIsInvestigador.toPredicate(root, cq, cb));
+      listPredicatesCount.add(specIsInvestigador.toPredicate(rootCount, countQuery, cb));
+    }
+
     Path<Long> pathProduccionCientificaId = root.get(ProduccionCientifica_.id);
     cq.where(listPredicates.toArray(new Predicate[] {}));
 
@@ -154,7 +161,8 @@ public class CustomObraArtisticaRepositoryImpl implements CustomObraArtisticaRep
     List<ObraArtisticaResumen> result = typedQuery.getResultList();
     Page<ObraArtisticaResumen> returnValue = new PageImpl<>(result, pageable, count);
 
-    log.debug("findAllObrasArtisticas(String query, Pageable pageable) - end");
+    log.debug(
+        "findAllObrasArtisticas(Specification<ProduccionCientifica> specIsInvestigador, String query, Pageable pageable) - end");
 
     return returnValue;
   }

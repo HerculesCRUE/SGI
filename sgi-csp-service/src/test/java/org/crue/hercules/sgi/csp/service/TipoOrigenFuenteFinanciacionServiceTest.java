@@ -24,7 +24,7 @@ import org.springframework.data.jpa.domain.Specification;
  * TipoOrigenFuenteFinanciacionServiceTest
  */
 
-public class TipoOrigenFuenteFinanciacionServiceTest extends BaseServiceTest {
+class TipoOrigenFuenteFinanciacionServiceTest extends BaseServiceTest {
 
   @Mock
   private TipoOrigenFuenteFinanciacionRepository tipoOrigenFuenteFinanciacionRepository;
@@ -32,12 +32,12 @@ public class TipoOrigenFuenteFinanciacionServiceTest extends BaseServiceTest {
   private TipoOrigenFuenteFinanciacionService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new TipoOrigenFuenteFinanciacionServiceImpl(tipoOrigenFuenteFinanciacionRepository);
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 TipoOrigenFuenteFinanciacion
     List<TipoOrigenFuenteFinanciacion> tiposOrigenFuenteFinanciacion = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -69,7 +69,7 @@ public class TipoOrigenFuenteFinanciacionServiceTest extends BaseServiceTest {
     Page<TipoOrigenFuenteFinanciacion> page = service.findAll(null, paging);
 
     // then: Devuelve la pagina 3 con los TipoOrigenFuenteFinanciacion del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -82,7 +82,7 @@ public class TipoOrigenFuenteFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_ReturnsPageEmpty() {
+  void findAll_ReturnsPageEmpty() {
     // given: Una lista con 37 TipoOrigenFuenteFinanciacion
     List<TipoOrigenFuenteFinanciacion> tiposOrigenFuenteFinanciacion = new ArrayList<>();
 
@@ -112,7 +112,7 @@ public class TipoOrigenFuenteFinanciacionServiceTest extends BaseServiceTest {
    * @param id id del TipoOrigenFuenteFinanciacion
    * @return el objeto TipoOrigenFuenteFinanciacion
    */
-  public TipoOrigenFuenteFinanciacion generarMockTipoOrigenFuenteFinanciacion(Long id) {
+  TipoOrigenFuenteFinanciacion generarMockTipoOrigenFuenteFinanciacion(Long id) {
     return generarMockTipoOrigenFuenteFinanciacion(id, "nombre-" + id);
   }
 
@@ -123,7 +123,7 @@ public class TipoOrigenFuenteFinanciacionServiceTest extends BaseServiceTest {
    * @param nombre nombre del TipoOrigenFuenteFinanciacion
    * @return el objeto TipoOrigenFuenteFinanciacion
    */
-  public TipoOrigenFuenteFinanciacion generarMockTipoOrigenFuenteFinanciacion(Long id, String nombre) {
+  TipoOrigenFuenteFinanciacion generarMockTipoOrigenFuenteFinanciacion(Long id, String nombre) {
 
     TipoOrigenFuenteFinanciacion tipoOrigenFuenteFinanciacion = new TipoOrigenFuenteFinanciacion();
     tipoOrigenFuenteFinanciacion.setId(id);

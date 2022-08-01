@@ -1,11 +1,16 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_NOTNULL;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
+
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
@@ -21,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -57,8 +63,10 @@ public class ResultadoInformePatentabilidadService {
     Assert.isNull(resultadoInformePatentabilidad.getId(),
         // Defer message resolution until is needed
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ResultadoInformePatentabilidad.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(ResultadoInformePatentabilidad.class))
+            .build());
     this.validateCommonFields(resultadoInformePatentabilidad);
 
     resultadoInformePatentabilidad.setActivo(true);
@@ -71,14 +79,18 @@ public class ResultadoInformePatentabilidadService {
   private void validateCommonFields(ResultadoInformePatentabilidad resultadoInformePatentabilidad) {
     Assert.notNull(resultadoInformePatentabilidad.getNombre(),
         // Defer message resolution until is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("nombre"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ResultadoInformePatentabilidad.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("nombre"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(ResultadoInformePatentabilidad.class))
+            .build());
     Assert.notNull(resultadoInformePatentabilidad.getDescripcion(),
         // Defer message resolution until is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("descripcion"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ResultadoInformePatentabilidad.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("descripcion"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(ResultadoInformePatentabilidad.class))
+            .build());
   }
 
   /**
@@ -96,9 +108,11 @@ public class ResultadoInformePatentabilidadService {
 
     Assert.notNull(resultadoInformePatentabilidad.getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ResultadoInformePatentabilidad.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(ResultadoInformePatentabilidad.class))
+            .build());
     this.validateCommonFields(resultadoInformePatentabilidad);
 
     return this.repository.findById(resultadoInformePatentabilidad.getId())
@@ -185,12 +199,14 @@ public class ResultadoInformePatentabilidadService {
 
     Assert.notNull(id,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ResultadoInformePatentabilidad.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(ResultadoInformePatentabilidad.class))
+            .build());
 
     return this.repository.findById(id).map(resultadoInformePatentabilidad -> {
-      if (resultadoInformePatentabilidad.getActivo()) {
+      if (resultadoInformePatentabilidad.getActivo().booleanValue()) {
         // Si esta activo no se hace nada
         return resultadoInformePatentabilidad;
       }
@@ -220,12 +236,14 @@ public class ResultadoInformePatentabilidadService {
     log.debug("disable(Long id) - start");
 
     Assert.notNull(id,
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ResultadoInformePatentabilidad.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(ResultadoInformePatentabilidad.class))
+            .build());
 
     return this.repository.findById(id).map(resultadoInformePatentabilidad -> {
-      if (!resultadoInformePatentabilidad.getActivo()) {
+      if (!resultadoInformePatentabilidad.getActivo().booleanValue()) {
         // Si no esta activo no se hace nada
         return resultadoInformePatentabilidad;
       }

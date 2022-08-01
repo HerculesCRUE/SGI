@@ -10,6 +10,7 @@ import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { Estado, ESTADO_MAP } from '@core/models/csp/estado-solicitud';
 import { IPrograma } from '@core/models/csp/programa';
 import { IProyecto } from '@core/models/csp/proyecto';
+import { ISolicitanteExterno } from '@core/models/csp/solicitante-externo';
 import { ISolicitud, TipoSolicitudGrupo } from '@core/models/csp/solicitud';
 import { ISolicitudGrupo } from '@core/models/csp/solicitud-grupo';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -26,8 +27,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, merge, Observable, of } from 'rxjs';
-import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
+import { catchError, filter, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { CONVOCATORIA_ACTION_LINK_KEY } from '../../convocatoria/convocatoria.action.service';
 import { ISolicitudCrearProyectoModalData, SolicitudCrearProyectoModalComponent } from '../modals/solicitud-crear-proyecto-modal/solicitud-crear-proyecto-modal.component';
@@ -50,6 +51,8 @@ const GRUPO_KEY = marker('csp.grupo');
 export interface ISolicitudListadoData extends ISolicitud {
   convocatoria: IConvocatoria;
   showCreateGrupo: boolean;
+  solicitanteExterno: ISolicitanteExterno;
+  nombreSolicitante: string;
 }
 
 @Component({
@@ -165,6 +168,8 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
       fechaFinDesde: new FormControl(null),
       fechaFinHasta: new FormControl(null),
       solicitante: new FormControl(undefined),
+      nombreSolicitanteExterno: new FormControl(null),
+      apellidosSolicitanteExterno: new FormControl(null),
       activo: new FormControl('true'),
       fechaPublicacionConvocatoriaDesde: new FormControl(null),
       fechaPublicacionConvocatoriaHasta: new FormControl(null),
@@ -311,7 +316,14 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
         }
 
         const solicitudes = response.items;
-        const personaIdsSolicitantes = new Set<string>(solicitudes.map((solicitud) => solicitud.solicitante.id));
+        const personaIdsSolicitantes = new Set<string>(
+          solicitudes.filter(solicitud => !!solicitud.solicitante?.id).map((solicitud) => solicitud.solicitante.id)
+        );
+
+        if (personaIdsSolicitantes.size === 0) {
+          return of(response);
+        }
+
         return this.personaService.findAllByIdIn([...personaIdsSolicitantes]).pipe(
           map((result) => {
             const personas = result.items;
@@ -324,8 +336,7 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
               }
 
 
-              solicitud.solicitante = personas.find((persona) =>
-                solicitud.solicitante.id === persona.id);
+              solicitud.solicitante = personas.find((persona) => solicitud.solicitante?.id === persona.id);
               if (this.authService.hasAnyAuthorityForAnyUO(['CSP-SOL-E', 'CSP-SOL-V'])) {
                 this.suscripciones.push(this.solicitudService.modificable(solicitud.id).subscribe((value) => {
                   this.mapModificable.set(solicitud.id, value);
@@ -338,7 +349,29 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
           catchError(() => of(response))
         );
 
-      })
+      }),
+      switchMap(response =>
+        from(response.items).pipe(
+          mergeMap(solicitud => {
+            if (!!!solicitud.solicitante?.id) {
+              return this.solicitudService.findSolicitanteExterno(solicitud.id).pipe(
+                map(solicitanteExterno => {
+                  solicitud.solicitanteExterno = solicitanteExterno;
+                  solicitud.nombreSolicitante = `${solicitud.solicitanteExterno?.nombre ?? ''} ${solicitud.solicitanteExterno?.apellidos ?? ''}`;
+                  return solicitud;
+                })
+              );
+            }
+
+            solicitud.nombreSolicitante = `${solicitud.solicitante.nombre ?? ''} ${solicitud.solicitante.apellidos ?? ''}`;
+            return of(solicitud);
+          }),
+          toArray(),
+          map(() => {
+            return response;
+          })
+        )
+      )
     );
   }
 
@@ -348,6 +381,7 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
         'codigoRegistroInterno',
         'codigoExterno',
         'solicitante',
+        'externo',
         'titulo',
         'referencia',
         'estado.estado',
@@ -360,6 +394,7 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
         'codigoRegistroInterno',
         'codigoExterno',
         'solicitante',
+        'externo',
         'titulo',
         'referencia',
         'estado.estado',
@@ -393,6 +428,8 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
       }
       rsqlFilter
         .and('solicitanteRef', SgiRestFilterOperator.EQUALS, controls.solicitante.value?.id)
+        .and('solicitanteExterno.nombre', SgiRestFilterOperator.LIKE_ICASE, controls.nombreSolicitanteExterno.value)
+        .and('solicitanteExterno.apellidos', SgiRestFilterOperator.LIKE_ICASE, controls.apellidosSolicitanteExterno.value)
         .and('activo', SgiRestFilterOperator.EQUALS, controls.activo.value)
         .and('convocatoria.fechaPublicacion', SgiRestFilterOperator.GREATHER_OR_EQUAL,
           LuxonUtils.toBackend(controls.fechaPublicacionConvocatoriaDesde.value))
@@ -529,11 +566,16 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
     return typeof programa === 'string' ? programa : programa?.nombre;
   }
 
-  crearProyectoModal(solicitud: ISolicitud): void {
-    this.suscripciones.push(this.solicitudService.findSolicitudProyecto(solicitud.id).pipe(
+  crearProyectoModal(solicitudData: ISolicitudListadoData): void {
+    this.suscripciones.push(this.solicitudService.findSolicitudProyecto(solicitudData.id).pipe(
       map(solicitudProyectoDatos => {
         const config = {
-          data: { solicitud, solicitudProyecto: solicitudProyectoDatos } as ISolicitudCrearProyectoModalData
+          data: {
+            solicitud: solicitudData as ISolicitud,
+            solicitudProyecto: solicitudProyectoDatos,
+            convocatoria: solicitudData.convocatoria,
+            nombreSolicitante: solicitudData.nombreSolicitante
+          } as ISolicitudCrearProyectoModalData
         };
         const dialogRef = this.matDialog.open(SolicitudCrearProyectoModalComponent, config);
         dialogRef.afterClosed().subscribe(

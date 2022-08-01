@@ -123,7 +123,8 @@
     <createSequence incrementBy="1" sequenceName="baremo_seq" startValue="200" />
   </changeSet>
 
-  <changeSet context="!test" author="master" id="0000000000002-modulador">
+  <!-- TODO: Mover al fichero adecuado ya que se trata de datos de prueba -->
+  <changeSet context="dev" author="master" id="0000000000002-modulador">
     <delete tableName="modulador"></delete>
 
     <dropSequence sequenceName="modulador_seq" />
@@ -241,7 +242,8 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!test" author="master" id="0000000000002-rango">
+  <!-- TODO: Mover al fichero adecuado ya que se trata de datos de prueba -->
+  <changeSet context="dev" author="master" id="0000000000002-rango">
     <delete tableName="rango"></delete>
 
     <dropSequence sequenceName="rango_seq" />

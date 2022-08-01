@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -64,12 +65,11 @@ public class TipoEnlaceServiceImpl implements TipoEnlaceService {
     log.debug("update(TipoEnlace tipoEnlace) - start");
 
     Assert.notNull(tipoEnlace.getId(), "Id no puede ser null para actualizar TipoEnlace");
-    repository.findByNombreAndActivoIsTrue(tipoEnlace.getNombre()).ifPresent((tipoEnlaceExistente) -> {
-      Assert.isTrue(tipoEnlace.getId() == tipoEnlaceExistente.getId(),
-          "Ya existe un TipoEnlace activo con el nombre '" + tipoEnlaceExistente.getNombre() + "'");
-    });
+    repository.findByNombreAndActivoIsTrue(tipoEnlace.getNombre())
+        .ifPresent(tipoEnlaceExistente -> Assert.isTrue(Objects.equals(tipoEnlace.getId(), tipoEnlaceExistente.getId()),
+            "Ya existe un TipoEnlace activo con el nombre '" + tipoEnlaceExistente.getNombre() + "'"));
 
-    return repository.findById(tipoEnlace.getId()).map((data) -> {
+    return repository.findById(tipoEnlace.getId()).map(data -> {
       data.setNombre(tipoEnlace.getNombre());
       data.setDescripcion(tipoEnlace.getDescripcion());
 
@@ -93,7 +93,7 @@ public class TipoEnlaceServiceImpl implements TipoEnlaceService {
     Assert.notNull(id, "TipoEnlace id no puede ser null para reactivar un TipoEnlace");
 
     return repository.findById(id).map(tipoEnlace -> {
-      if (tipoEnlace.getActivo()) {
+      if (Boolean.TRUE.equals(tipoEnlace.getActivo())) {
         return tipoEnlace;
       }
 
@@ -121,7 +121,7 @@ public class TipoEnlaceServiceImpl implements TipoEnlaceService {
     Assert.notNull(id, "TipoEnlace id no puede ser null para desactivar un TipoEnlace");
 
     return repository.findById(id).map(tipoEnlace -> {
-      if (!tipoEnlace.getActivo()) {
+      if (Boolean.FALSE.equals(tipoEnlace.getActivo())) {
         return tipoEnlace;
       }
 

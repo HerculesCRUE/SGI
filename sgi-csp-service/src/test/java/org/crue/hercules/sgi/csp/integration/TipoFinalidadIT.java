@@ -22,7 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de TipoFinalidad.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TipoFinalidadIT extends BaseIT {
+class TipoFinalidadIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
@@ -42,7 +42,7 @@ public class TipoFinalidadIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsTipoFinalidad() throws Exception {
+  void create_ReturnsTipoFinalidad() throws Exception {
 
     // given: new TipoFinalidad
     TipoFinalidad data = TipoFinalidad.builder().nombre("nombre-1").descripcion("descripcion-1").activo(Boolean.TRUE)
@@ -64,7 +64,7 @@ public class TipoFinalidadIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsTipoFinalidad() throws Exception {
+  void update_ReturnsTipoFinalidad() throws Exception {
 
     // given: existing TipoFinalidad to be updated
     TipoFinalidad data = TipoFinalidad.builder().id(1L).nombre("nombre-updated").descripcion("descripcion-updated")
@@ -86,7 +86,7 @@ public class TipoFinalidadIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void reactivar_ReturnTipoFinalidad() throws Exception {
+  void reactivar_ReturnTipoFinalidad() throws Exception {
     Long idTipoFinalidad = 1L;
 
     final ResponseEntity<TipoFinalidad> response = restTemplate.exchange(
@@ -104,7 +104,7 @@ public class TipoFinalidadIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void desactivar_ReturnTipoFinalidad() throws Exception {
+  void desactivar_ReturnTipoFinalidad() throws Exception {
     Long idTipoFinalidad = 1L;
 
     final ResponseEntity<TipoFinalidad> response = restTemplate.exchange(
@@ -122,7 +122,7 @@ public class TipoFinalidadIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsTipoFinalidad() throws Exception {
+  void findById_ReturnsTipoFinalidad() throws Exception {
     Long id = 1L;
 
     final ResponseEntity<TipoFinalidad> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -139,7 +139,7 @@ public class TipoFinalidadIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsTipoFinalidadSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsTipoFinalidadSubList() throws Exception {
 
     // given: data for TipoFinalidad
 
@@ -160,7 +160,7 @@ public class TipoFinalidadIT extends BaseIT {
     // given: TipoFinalidad data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoFinalidad> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
@@ -177,7 +177,7 @@ public class TipoFinalidadIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllTodos_WithPagingSortingAndFiltering_ReturnsTipoFinalidadSubList() throws Exception {
+  void findAllTodos_WithPagingSortingAndFiltering_ReturnsTipoFinalidadSubList() throws Exception {
 
     // given: data for TipoFinalidad
 
@@ -198,7 +198,7 @@ public class TipoFinalidadIT extends BaseIT {
     // given: TipoFinalidad data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoFinalidad> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");

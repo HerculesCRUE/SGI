@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.RequisitoIPNotFoundException;
-import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.RequisitoIP;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.RequisitoIPRepository;
@@ -19,30 +18,27 @@ import org.mockito.invocation.InvocationOnMock;
 /**
  * RequisitoIPServiceTest
  */
-public class RequisitoIPServiceTest extends BaseServiceTest {
+class RequisitoIPServiceTest extends BaseServiceTest {
 
   @Mock
   private RequisitoIPRepository repository;
   @Mock
   private ConvocatoriaRepository convocatoriaRepository;
-  @Mock
-  private ConvocatoriaService convocatoriaService;
 
   private RequisitoIPService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
-    service = new RequisitoIPService(repository, convocatoriaRepository, convocatoriaService);
+  void setUp() throws Exception {
+    service = new RequisitoIPService(repository, convocatoriaRepository);
   }
 
   @Test
-  public void create_ReturnsRequisitoIP() {
+  void create_ReturnsRequisitoIP() {
     // given: Un nuevo RequisitoIP
     Long convocatoriaId = 1L;
-    Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
     RequisitoIP requisitoIP = generarMockRequisitoIP(convocatoriaId);
 
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
+    BDDMockito.given(convocatoriaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(true);
 
     BDDMockito.given(repository.save(requisitoIP)).will((InvocationOnMock invocation) -> {
       RequisitoIP requisitoIPCreado = invocation.getArgument(0);
@@ -60,7 +56,7 @@ public class RequisitoIPServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutId_ThrowsIllegalArgumentException() {
+  void create_WithoutId_ThrowsIllegalArgumentException() {
     // given: Un nuevo RequisitoIP sin convocatoria
     RequisitoIP requisitoIP = generarMockRequisitoIP(null);
 
@@ -71,7 +67,7 @@ public class RequisitoIPServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedConvocatoria_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedConvocatoria_ThrowsIllegalArgumentException() {
     // given: Un nuevo RequisitoIP con convocatoria ya asignada
     Long convocatoriaId = 1L;
     RequisitoIP requisitoIPExistente = generarMockRequisitoIP(convocatoriaId);
@@ -86,7 +82,7 @@ public class RequisitoIPServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsRequisitoIP() {
+  void update_ReturnsRequisitoIP() {
     // given: Un nuevo RequisitoIP con el sexo actualizado
     Long convocatoriaId = 1L;
     RequisitoIP requisitoIP = generarMockRequisitoIP(convocatoriaId);
@@ -107,7 +103,7 @@ public class RequisitoIPServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsRequisitoIPNotFoundException() {
+  void update_WithIdNotExist_ThrowsRequisitoIPNotFoundException() {
     // given: Un RequisitoIP actualizado con un id que no existe
     Long convocatoriaId = 1L;
     RequisitoIP requisitoIP = generarMockRequisitoIP(convocatoriaId);
@@ -121,7 +117,7 @@ public class RequisitoIPServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findByConvocatoriaId_ReturnsRequisitoIP() {
+  void findByConvocatoriaId_ReturnsRequisitoIP() {
     // given: Un RequisitoIP con el id buscado
     Long idBuscado = 1L;
 
@@ -140,7 +136,7 @@ public class RequisitoIPServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findByConvocatoriaId_WithIdNotExist_ThrowsConvocatoriaNotFoundExceptionException() throws Exception {
+  void findByConvocatoriaId_WithIdNotExist_ThrowsConvocatoriaNotFoundExceptionException() throws Exception {
     // given: Ninguna Convocatoria con el id buscado
     Long idBuscado = 1L;
 
@@ -150,10 +146,6 @@ public class RequisitoIPServiceTest extends BaseServiceTest {
     // then: lanza un ConvocatoriaNotFoundException
     Assertions.assertThatThrownBy(() -> service.findByConvocatoria(idBuscado))
         .isInstanceOf(ConvocatoriaNotFoundException.class);
-  }
-
-  private Convocatoria generarMockConvocatoria(Long convocatoriaId) {
-    return Convocatoria.builder().id(convocatoriaId).activo(Boolean.TRUE).codigo("codigo" + convocatoriaId).build();
   }
 
   /**

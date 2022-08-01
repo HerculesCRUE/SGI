@@ -39,7 +39,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ProyectoProrrogaControllerTest
  */
 @WebMvcTest(ProyectoProrrogaController.class)
-public class ProyectoProrrogaControllerTest extends BaseControllerTest {
+class ProyectoProrrogaControllerTest extends BaseControllerTest {
 
   @MockBean
   private ProyectoProrrogaService service;
@@ -52,7 +52,7 @@ public class ProyectoProrrogaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void create_ReturnsProyectoProrroga() throws Exception {
+  void create_ReturnsProyectoProrroga() throws Exception {
     // given: new ProyectoProrroga
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
     proyectoProrroga.setId(null);
@@ -86,7 +86,7 @@ public class ProyectoProrrogaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ProyectoProrroga with id filled
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
 
@@ -105,7 +105,7 @@ public class ProyectoProrrogaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_ReturnsProyectoProrroga() throws Exception {
+  void update_ReturnsProyectoProrroga() throws Exception {
     // given: Existing ProyectoProrroga to be updated
     ProyectoProrroga proyectoProrrogaExistente = generarMockProyectoProrroga(1L, 1L);
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
@@ -135,7 +135,7 @@ public class ProyectoProrrogaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
@@ -155,7 +155,7 @@ public class ProyectoProrrogaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.doNothing().when(service).delete(ArgumentMatchers.anyLong());
@@ -173,7 +173,7 @@ public class ProyectoProrrogaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void delete_NoExistingId_Return404() throws Exception {
+  void delete_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -191,7 +191,7 @@ public class ProyectoProrrogaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void existsById_WithExistingId_Returns200() throws Exception {
+  void existsById_WithExistingId_Returns200() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(service.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
@@ -207,7 +207,7 @@ public class ProyectoProrrogaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void existsById_WithNoExistingId_Returns204() throws Exception {
+  void existsById_WithNoExistingId_Returns204() throws Exception {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(service.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.FALSE);
@@ -223,7 +223,7 @@ public class ProyectoProrrogaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findById_WithExistingId_ReturnsProyectoProrroga() throws Exception {
+  void findById_WithExistingId_ReturnsProyectoProrroga() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
@@ -251,7 +251,7 @@ public class ProyectoProrrogaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ProyectoProrrogaNotFoundException(1L);
@@ -274,7 +274,7 @@ public class ProyectoProrrogaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProrrogaDocumento_ReturnsPage() throws Exception {
+  void findAllProrrogaDocumento_ReturnsPage() throws Exception {
     // given: Una lista con 37 ProrrogaDocumento para la Prorroga
     Long proyectoProrrogaId = 1L;
 
@@ -332,7 +332,7 @@ public class ProyectoProrrogaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findAllProrrogaDocumento_EmptyList_Returns204() throws Exception {
+  void findAllProrrogaDocumento_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de ProrrogaDocumento para la Prorroga
     Long proyectoProrrogaId = 1L;
     List<ProrrogaDocumento> prorrogaDocumentos = new ArrayList<>();

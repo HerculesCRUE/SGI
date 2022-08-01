@@ -18,13 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ConvocatoriaAreaTematicaRepositoryTest extends BaseRepositoryTest {
+class ConvocatoriaAreaTematicaRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ConvocatoriaAreaTematicaRepository repository;
 
   @Test
-  public void findByConvocatoriaIdAndAreaTematicaId_ReturnsConvocatoriaAreaTematica() throws Exception {
+  void findByConvocatoriaIdAndAreaTematicaId_ReturnsConvocatoriaAreaTematica() throws Exception {
 
     // given: data ConvocatoriaAreaTematica to find by Convocatoria and
     // AreaTematicaId
@@ -47,7 +47,7 @@ public class ConvocatoriaAreaTematicaRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByConvocatoriaIdAndAreaTematicaId_ReturnsNull() throws Exception {
+  void findByConvocatoriaIdAndAreaTematicaId_ReturnsNull() throws Exception {
     // given: data ConvocatoriaAreaTematica to find by Convocatoria and
     // AreaTematicaId
 
@@ -66,7 +66,7 @@ public class ConvocatoriaAreaTematicaRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByConvocatoriaId_ReturnsConvocatoriaAreaTematica() throws Exception {
+  void findByConvocatoriaId_ReturnsConvocatoriaAreaTematica() throws Exception {
 
     // given: data ConvocatoriaAreaTematica to find by Convocatoria and
     // AreaTematicaId
@@ -87,7 +87,7 @@ public class ConvocatoriaAreaTematicaRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByConvocatoriaId_ReturnsNull() throws Exception {
+  void findByConvocatoriaId_ReturnsNull() throws Exception {
     // given: data ConvocatoriaAreaTematica to find by Convocatoria and
     // AreaTematicaId
 

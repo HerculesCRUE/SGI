@@ -14,11 +14,13 @@ import javax.validation.Validator;
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.dto.ProyectoDto;
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
+import org.crue.hercules.sgi.csp.dto.ProyectoSeguimientoEjecucionEconomica;
 import org.crue.hercules.sgi.csp.dto.ProyectosCompetitivosPersonas;
 import org.crue.hercules.sgi.csp.dto.RelacionEjecucionEconomica;
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.MissingInvestigadorPrincipalInProyectoEquipoException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoIVAException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
@@ -32,6 +34,7 @@ import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPartida;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
+import org.crue.hercules.sgi.csp.model.EstadoProyecto.Estado;
 import org.crue.hercules.sgi.csp.model.EstadoProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
 import org.crue.hercules.sgi.csp.model.ModeloUnidad;
@@ -116,6 +119,7 @@ import org.crue.hercules.sgi.csp.service.ProyectoSocioEquipoService;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioPeriodoJustificacionService;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioPeriodoPagoService;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.PeriodDateUtil;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -308,7 +312,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     proyecto.setActivo(Boolean.TRUE);
 
-    this.validarDatos(proyecto);
+    this.validarDatos(proyecto, EstadoProyecto.Estado.BORRADOR);
 
     // Crea el proyecto
     repository.save(proyecto);
@@ -349,8 +353,6 @@ public class ProyectoServiceImpl implements ProyectoService {
   @Transactional
   public Proyecto update(Proyecto proyectoActualizar) {
     log.debug("update(Proyecto proyecto) - start");
-
-    this.validarDatos(proyectoActualizar);
 
     return repository.findById(proyectoActualizar.getId()).map(data -> {
       proyectoHelper.checkCanRead(data);
@@ -409,6 +411,8 @@ public class ProyectoServiceImpl implements ProyectoService {
       data.setImporteConcedidoSocios(proyectoActualizar.getImporteConcedidoSocios());
       data.setTotalImporteConcedido(proyectoActualizar.getTotalImporteConcedido());
       data.setTotalImportePresupuesto(proyectoActualizar.getTotalImportePresupuesto());
+
+      this.validarDatos(data, data.getEstado().getEstado());
 
       List<ProyectoEquipo> equipos = null;
       if (data.getFechaFinDefinitiva() == null && proyectoActualizar.getFechaFinDefinitiva() != null) {
@@ -764,9 +768,10 @@ public class ProyectoServiceImpl implements ProyectoService {
    * Se comprueba que los datos a guardar cumplan las validaciones oportunas
    * 
    * @param proyecto datos del proyecto
+   * @param estado   estado del proyecto
    * 
    */
-  private void validarDatos(Proyecto proyecto) {
+  private void validarDatos(Proyecto proyecto, Estado estado) {
     if (proyecto.getConvocatoriaId() != null) {
       Assert.isTrue(convocatoriaRepository.existsById(proyecto.getConvocatoriaId()),
           "La convocatoria con id '" + proyecto.getConvocatoriaId() + "' no existe");
@@ -797,25 +802,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     // Validación de campos obligatorios según estados. Solo aplicaría en el
     // actualizar ya que en el crear el estado siempre será "Borrador"
-    if (proyecto.getEstado() != null && proyecto.getEstado().getEstado() == EstadoProyecto.Estado.CONCEDIDO) {
-      // En la validación del crear no pasará por aquí, aún no tendrá estado.
-      Assert.isTrue(proyecto.getFinalidad() != null,
-          "El campo finalidad debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
-
-      Assert.isTrue(proyecto.getAmbitoGeografico() != null,
-          "El campo ambitoGeografico debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
-
-      Assert.isTrue(proyecto.getConfidencial() != null,
-          "El campo confidencial debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
-
-      if (proyecto.getCoordinado() != null && proyecto.getCoordinado().booleanValue()) {
-        Assert.isTrue(proyecto.getCoordinadorExterno() != null,
-            "El campo coordinadorExterno debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
-      }
-
-      Assert.isTrue(proyecto.getPermitePaquetesTrabajo() != null,
-          "El campo permitePaquetesTrabajo debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
-    }
+    this.checkCamposObligatoriosPorEstado(proyecto, estado);
 
     // Validación de datos IVA
     if (proyecto.getIva() != null && proyecto.getIva().getIva() != null && proyecto.getCausaExencion() != null) {
@@ -982,20 +969,39 @@ public class ProyectoServiceImpl implements ProyectoService {
   }
 
   /**
-   * Copia los datos generales de la {@link Solicitud} al {@link Proyecto}
+   * Copia los datos generales del {@link SolicitudProyecto} al {@link Proyecto}
    *
-   * @param proyecto la entidad {@link Proyecto}
+   * @param proyecto          la entidad {@link Proyecto}
+   * @param solicitudProyecto la entidad {@link SolicitudProyecto}
    * @return la entidad {@link Proyecto} con los nuevos datos
    */
-  private Proyecto copyDatosGeneralesSolicitudToProyecto(Proyecto proyecto, Solicitud solicitud,
+  private Proyecto copyDatosGeneralesSolicitudProyectoToProyecto(Proyecto proyecto,
       SolicitudProyecto solicitudProyecto) {
     log.debug(
-        "copyDatosGenerales(Proyecto proyecto, Solicitud solicitud, SolicitudProyecto solicitudProyecto) - start");
+        "copyDatosGeneralesSolicitudProyectoToProyecto(Proyecto proyecto, SolicitudProyecto solicitudProyecto) - start");
+    proyecto.setAcronimo(solicitudProyecto.getAcronimo());
+    proyecto.setCodigoExterno(solicitudProyecto.getCodExterno());
+    proyecto.setColaborativo(solicitudProyecto.getColaborativo());
+    proyecto.setCoordinado(solicitudProyecto.getCoordinado());
+    proyecto.setCoordinadorExterno(solicitudProyecto.getCoordinadorExterno());
+    log.debug(
+        "copyDatosGeneralesSolicitudProyectoToProyecto(Proyecto proyecto, SolicitudProyecto solicitudProyecto) - end");
+    return proyecto;
+  }
+
+  /**
+   * Copia los datos generales de la {@link Solicitud} al {@link Proyecto}
+   *
+   * @param proyecto  la entidad {@link Proyecto}
+   * @param solicitud la entidad {@link Solicitud}
+   * @return la entidad {@link Proyecto} con los nuevos datos
+   */
+  private Proyecto copyDatosGeneralesSolicitudToProyecto(Proyecto proyecto, Solicitud solicitud) {
+    log.debug(
+        "copyDatosGeneralesSolicitudToProyecto(Proyecto proyecto, Solicitud solicitud) - start");
     proyecto.setSolicitudId(solicitud.getId());
     proyecto.setConvocatoriaId(solicitud.getConvocatoriaId());
-    proyecto.setAcronimo(solicitudProyecto.getAcronimo());
     proyecto.setUnidadGestionRef(solicitud.getUnidadGestionRef());
-    proyecto.setCodigoExterno(solicitudProyecto.getCodExterno());
     if (solicitud.getConvocatoriaId() != null) {
       Convocatoria convocatoria = convocatoriaRepository.findById(solicitud.getConvocatoriaId())
           .orElseThrow(() -> new ConvocatoriaNotFoundException(solicitud.getConvocatoriaId()));
@@ -1006,10 +1012,8 @@ public class ProyectoServiceImpl implements ProyectoService {
     } else {
       proyecto.setConvocatoriaExterna(solicitud.getConvocatoriaExterna());
     }
-    proyecto.setColaborativo(solicitudProyecto.getColaborativo());
-    proyecto.setCoordinado(solicitudProyecto.getCoordinado());
-    proyecto.setCoordinadorExterno(solicitudProyecto.getCoordinadorExterno());
-    log.debug("copyDatosGenerales(Proyecto proyecto, Solicitud solicitud, SolicitudProyecto solicitudProyecto) - end");
+    log.debug(
+        "copyDatosGeneralesSolicitudToProyecto(Proyecto proyecto, Solicitud solicitud) - end");
     return proyecto;
   }
 
@@ -1019,23 +1023,19 @@ public class ProyectoServiceImpl implements ProyectoService {
    * @param proyecto          la entidad {@link Proyecto}
    * @param solicitudProyecto la entidad {@link SolicitudProyecto}
    */
-  private void copyDatosSolicitudToProyecto(Proyecto proyecto, Solicitud solicitud,
-      SolicitudProyecto solicitudProyecto) {
+  private void copyDatosSolicitudToProyecto(Proyecto proyecto, SolicitudProyecto solicitudProyecto) {
     log.debug(
-        "copyDatosSolicitudToProyecto(Proyecto proyecto, Solicitud solicitud, SolicitudProyecto solicitudProyecto) - start");
-    this.copyContexto(proyecto, solicitud, solicitudProyecto);
+        "copyDatosSolicitudToProyecto(Proyecto proyecto, SolicitudProyecto solicitudProyecto) - start");
+    this.copyContexto(proyecto, solicitudProyecto);
     this.copyAreasConocimiento(proyecto, solicitudProyecto.getId());
     this.copyClasificaciones(proyecto, solicitudProyecto.getId());
-    this.copyCodigosUNESCO(proyecto);
-    this.copyCodigosNABS(proyecto);
-    this.copyCodigosCNAE(proyecto);
     this.copyEntidadesConvocantesDeSolicitud(proyecto);
     this.copyEntidadesFinanciadorasDeSolicitud(proyecto, solicitudProyecto.getId());
     this.copyMiembrosEquipo(proyecto, solicitudProyecto.getId());
     this.copySocios(proyecto, solicitudProyecto.getId());
     this.copyResponsablesEconomicos(proyecto, solicitudProyecto.getId());
     log.debug(
-        "copyDatosSolicitudToProyecto(Proyecto proyecto, Solicitud solicitud, SolicitudProyecto solicitudProyecto) - end");
+        "copyDatosSolicitudToProyecto(Proyecto proyecto, SolicitudProyecto solicitudProyecto) - end");
   }
 
   /**
@@ -1046,8 +1046,8 @@ public class ProyectoServiceImpl implements ProyectoService {
    * @param solicitudProyecto la entidad {@link SolicitudProyecto}
    * @return la entidad {@link Proyecto} con los nuevos datos
    */
-  private void copyContexto(Proyecto proyecto, Solicitud solicitud, SolicitudProyecto solicitudProyecto) {
-    log.debug("copyContexto(Proyecto proyecto, Solicitud solicitud, SolicitudProyecto solicitudProyecto) - start");
+  private void copyContexto(Proyecto proyecto, SolicitudProyecto solicitudProyecto) {
+    log.debug("copyContexto(Proyecto proyecto, SolicitudProyecto solicitudProyecto) - start");
     ContextoProyecto contextoProyectoNew = new ContextoProyecto();
     contextoProyectoNew.setProyectoId(proyecto.getId());
     contextoProyectoNew.setObjetivos(solicitudProyecto.getObjetivos());
@@ -1056,7 +1056,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     contextoProyectoNew.setAreaTematica(solicitudProyecto.getAreaTematica());
 
     contextoProyectoService.create(contextoProyectoNew);
-    log.debug("copyContexto(Proyecto proyecto, Solicitud solicitud, SolicitudProyecto solicitudProyecto) - end");
+    log.debug("copyContexto(Proyecto proyecto, SolicitudProyecto solicitudProyecto) - end");
   }
 
   /**
@@ -1100,30 +1100,6 @@ public class ProyectoServiceImpl implements ProyectoService {
       this.proyectoClasificacionRepository.save(clasificacionProyecto);
     });
     log.debug("copyClasificaciones(Proyecto proyecto, Long solicitudProyectoId) - end");
-  }
-
-  private void copyCodigosUNESCO(Proyecto proyecto) {
-    log.debug("copyCodigosUNESCO(Proyecto proyecto) - start");
-    // TODO Se copian de los códigos UNESCO definidos en la solicitud, por cada
-    // registro en la tabla "SolicitudProyectoUnesco" se creará un registro en
-    // la tabla "ProyectoUnesco" con él código indicado en la solicitud.
-    log.debug("copyCodigosUNESCO(Proyecto proyecto) - end");
-  }
-
-  private void copyCodigosNABS(Proyecto proyecto) {
-    log.debug("copyCodigosNABS(Proyecto proyecto) - start");
-    // TODO Se copian de los códigos NABS definidos en la solicitud, por cada
-    // registro en la tabla "SolicitudProyectoNabs" se creará un registro en la
-    // tabla "ProyectoNabs" con él código indicado en la solicitud.
-    log.debug("copyCodigosNABS(Proyecto proyecto) - end");
-  }
-
-  private void copyCodigosCNAE(Proyecto proyecto) {
-    log.debug("copyCodigosCNAE(Proyecto proyecto) - start");
-    // TODO Se copian de los códigos CNAE definidos en la solicitud, por cada
-    // registro en la tabla "SolicitudProyectoCnae" se creará un registro en la
-    // tabla "ProyectoCnae" con él código indicado en la solicitud.
-    log.debug("copyCodigosCNAE(Proyecto proyecto) - end");
   }
 
   /**
@@ -1529,8 +1505,10 @@ public class ProyectoServiceImpl implements ProyectoService {
           "La solicitud no se encuentra en un estado correcto para la creación del proyecto.");
     }
 
-    Assert.isTrue(solicitud.getFormularioSolicitud() == FormularioSolicitud.PROYECTO,
-        "El formulario de la solicitud debe ser de tipo " + FormularioSolicitud.PROYECTO);
+    Assert.isTrue(solicitud.getFormularioSolicitud().equals(FormularioSolicitud.PROYECTO)
+        || solicitud.getFormularioSolicitud().equals(FormularioSolicitud.RRHH),
+        "El formulario de la solicitud debe ser de tipo " + FormularioSolicitud.PROYECTO + " o "
+            + FormularioSolicitud.RRHH);
   }
 
   /**
@@ -1546,24 +1524,41 @@ public class ProyectoServiceImpl implements ProyectoService {
   @Transactional
   public Proyecto createProyectoBySolicitud(Long solicitudId, Proyecto proyecto) {
     log.debug("createProyectoBySolicitud(Long solicitudId, Proyecto proyecto) - start");
-    Assert.isNull(proyecto.getId(), "Proyecto id tiene que ser null para crear un Proyecto");
+    AssertHelper.idIsNull(proyecto.getId(), Proyecto.class);
+    proyectoHelper.checkCanCreateProyecto(proyecto);
 
     Solicitud solicitud = solicitudRepository.findById(solicitudId)
         .orElseThrow(() -> new SolicitudNotFoundException(solicitudId));
 
     this.validarDatosSolicitud(solicitud);
 
-    SolicitudProyecto solicitudProyecto = solicitudProyectoRepository.findById(solicitudId)
-        .orElseThrow(() -> new SolicitudNotFoundException(solicitudId));
-
-    this.copyDatosGeneralesSolicitudToProyecto(proyecto, solicitud, solicitudProyecto);
-
-    Assert.isTrue(SgiSecurityContextHolder.hasAuthorityForUO("CSP-PRO-C", proyecto.getUnidadGestionRef()),
-        "La Unidad de Gestión no es gestionable por el usuario");
-
     proyecto.setActivo(Boolean.TRUE);
 
-    this.validarDatos(proyecto);
+    if (solicitud.getFormularioSolicitud().equals(FormularioSolicitud.PROYECTO)) {
+      return createProyectoBySolicitudProyecto(solicitud, proyecto);
+    } else if (solicitud.getFormularioSolicitud().equals(FormularioSolicitud.RRHH)) {
+      return createProyectoBySolicitudRrhh(solicitud, proyecto);
+    }
+
+    return null;
+  }
+
+  /**
+   * Crea un proyecto desde una solicitud de proyecto
+   * 
+   * @param solicitud datos de la {@link Solicitud} desde la que se crea
+   * @param proyecto  datos necesarios para crear el {@link Proyecto}
+   * @return proyecto la entidad {@link Proyecto} persistida.
+   */
+  private Proyecto createProyectoBySolicitudProyecto(Solicitud solicitud, Proyecto proyecto) {
+    log.debug("createProyectoBySolicitudProyecto(Long solicitudId, Proyecto proyecto) - start");
+    SolicitudProyecto solicitudProyecto = solicitudProyectoRepository.findById(solicitud.getId())
+        .orElseThrow(() -> new SolicitudNotFoundException(solicitud.getId()));
+
+    this.copyDatosGeneralesSolicitudToProyecto(proyecto, solicitud);
+    this.copyDatosGeneralesSolicitudProyectoToProyecto(proyecto, solicitudProyecto);
+
+    this.validarDatos(proyecto, EstadoProyecto.Estado.BORRADOR);
 
     // Crea el proyecto
     repository.save(proyecto);
@@ -1575,7 +1570,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     // Actualiza el estado actual del proyecto con el nuevo estado
     Proyecto returnValue = repository.save(proyecto);
 
-    this.copyDatosSolicitudToProyecto(returnValue, solicitud, solicitudProyecto);
+    this.copyDatosSolicitudToProyecto(returnValue, solicitudProyecto);
 
     // Si hay asignada una convocatoria se deben de rellenar las entidades
     // correspondientes con los datos de la convocatoria
@@ -1583,8 +1578,58 @@ public class ProyectoServiceImpl implements ProyectoService {
       this.copyDatosConvocatoriaToProyecto(returnValue);
     }
 
-    log.debug("createProyectoBySolicitud(Long solicitudId, Proyecto proyecto) - end");
+    log.debug("createProyectoBySolicitudProyecto(Long solicitudId, Proyecto proyecto) - end");
     return returnValue;
+  }
+
+  /**
+   * Crea un proyecto desde una solicitud de RRHH
+   * 
+   * @param solicitud datos de la {@link Solicitud} desde la que se crea
+   * @param proyecto  datos necesarios para crear el {@link Proyecto}
+   * @return proyecto la entidad {@link Proyecto} persistida.
+   */
+  private Proyecto createProyectoBySolicitudRrhh(Solicitud solicitud, Proyecto proyecto) {
+    log.debug("createProyectoBySolicitudRrhh(Long solicitudId, Proyecto proyecto) - start");
+    this.copyDatosGeneralesSolicitudToProyecto(proyecto, solicitud);
+
+    this.validarDatos(proyecto, EstadoProyecto.Estado.BORRADOR);
+
+    // Crea el proyecto
+    repository.save(proyecto);
+
+    // Crea el estado inicial del proyecto
+    EstadoProyecto estadoProyecto = addEstadoProyecto(proyecto, EstadoProyecto.Estado.BORRADOR, null);
+
+    proyecto.setEstado(estadoProyecto);
+    // Actualiza el estado actual del proyecto con el nuevo estado
+    Proyecto returnValue = repository.save(proyecto);
+
+    createEmptyContexto(proyecto.getId());
+
+    // Si hay asignada una convocatoria se deben de rellenar las entidades
+    // correspondientes con los datos de la convocatoria
+    if (proyecto.getConvocatoriaId() != null) {
+      this.copyDatosConvocatoriaToProyecto(returnValue);
+    }
+
+    log.debug("createProyectoBySolicitudRrhh(Long solicitudId, Proyecto proyecto) - end");
+    return returnValue;
+  }
+
+  /**
+   * Copia el los datos {@link ContextoProyecto} de la entidad
+   * {@link SolicitudProyecto} al {@link Proyecto}
+   *
+   * @param proyecto la entidad {@link Proyecto}
+   * @return la entidad {@link Proyecto} con los nuevos datos
+   */
+  private void createEmptyContexto(Long proyectoId) {
+    log.debug("createEmptyContexto(Long proyectoId) - start");
+    ContextoProyecto contextoProyectoNew = new ContextoProyecto();
+    contextoProyectoNew.setProyectoId(proyectoId);
+    contextoProyectoService.create(contextoProyectoNew);
+    log.debug("createEmptyContexto(Long proyectoId) - end");
   }
 
   /**
@@ -1605,8 +1650,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     // VALIDACIONES
     // Permisos
-    Assert.isTrue(SgiSecurityContextHolder.hasAuthorityForUO("CSP-PRO-E", proyecto.getUnidadGestionRef()),
-        "La Unidad de Gestión no es gestionable por el usuario");
+    proyectoHelper.checkCanModifyProyecto(proyecto);
 
     // El nuevo estado es diferente al estado actual de del proyecto
     if (estadoProyecto.getEstado().equals(proyecto.getEstado().getEstado())) {
@@ -1614,7 +1658,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     }
 
     // Validaciones según el cambio de estado
-    this.checkCamposObligatoriosPorEstado(proyecto, estadoProyecto);
+    this.checkCamposObligatoriosPorEstado(proyecto, estadoProyecto.getEstado());
 
     // Cambio de fecha fin definitiva si el estado se va a modificar a RENUNCIADO o
     // RESCINDIDO
@@ -1661,10 +1705,10 @@ public class ProyectoServiceImpl implements ProyectoService {
     return returnValue;
   }
 
-  private void checkCamposObligatoriosPorEstado(Proyecto proyecto, EstadoProyecto estadoProyecto) {
+  private void checkCamposObligatoriosPorEstado(Proyecto proyecto, Estado estado) {
     // Validación de campos obligatorios según estados. Solo aplicaría en el
     // actualizar ya que en el crear el estado siempre será "Borrador"
-    if (estadoProyecto.getEstado() != null && estadoProyecto.getEstado() == EstadoProyecto.Estado.CONCEDIDO) {
+    if (estado != null && estado == EstadoProyecto.Estado.CONCEDIDO) {
       // En la validación del crear no pasará por aquí, aún no tendrá estado.
       Assert.isTrue(proyecto.getFinalidad() != null,
           "El campo finalidad debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
@@ -1678,7 +1722,7 @@ public class ProyectoServiceImpl implements ProyectoService {
       Assert.isTrue(proyecto.getCoordinado() != null,
           "El campo Proyecto coordinado debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
 
-      if (proyecto.getCoordinado() != null && proyecto.getCoordinado()) {
+      if (proyecto.getCoordinado() != null && proyecto.getCoordinado().booleanValue()) {
         Assert.isTrue(proyecto.getCoordinadorExterno() != null,
             "El campo coordinadorExterno debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
       }
@@ -1686,10 +1730,21 @@ public class ProyectoServiceImpl implements ProyectoService {
       Assert.isTrue(proyecto.getPermitePaquetesTrabajo() != null,
           "El campo permitePaquetesTrabajo debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
 
-      List<ProyectoEquipo> equipos = proyectoEquipoService.findAllByProyectoId(proyecto.getId());
+      if (proyecto.getSolicitudId() != null) {
+        Solicitud solicitud = solicitudRepository.findById(proyecto.getSolicitudId())
+            .orElseThrow(() -> new SolicitudNotFoundException(proyecto.getSolicitudId()));
 
-      Assert.isTrue(!CollectionUtils.isEmpty(equipos),
-          "El equipo debe tener al menos un miembro para el proyecto en estado 'CONCEDIDO'");
+        if (solicitud.getFormularioSolicitud().equals(FormularioSolicitud.PROYECTO)) {
+          List<ProyectoEquipo> equipos = proyectoEquipoService.findAllByProyectoId(proyecto.getId());
+
+          if (equipos.stream().map(ProyectoEquipo::getPersonaRef)
+              .noneMatch(personaRef -> personaRef.equals(solicitud.getSolicitanteRef()))) {
+            throw new MissingInvestigadorPrincipalInProyectoEquipoException();
+          }
+
+        }
+      }
+
     }
   }
 
@@ -1890,6 +1945,31 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     log.debug("getProyectosCompetitivosPersonas(List<String> personasRef, Boolean onlyAsRolPrincipal, Long exludedProyectoId) - end");
     return proyectosCompetitivosPersona;
+  }
+
+  @Override
+  public Page<ProyectoSeguimientoEjecucionEconomica> findProyectosSeguimientoEjecucionEconomica(String proyectoSgeRef, String query, Pageable pageable) {
+    log.debug("findProyectosSeguimientoEjecucionEconomica(String query, Pageable pageable) - start");
+
+    Specification<ProyectoProyectoSge> specs = ProyectoProyectoSgeSpecifications.activos()
+    .and(ProyectoProyectoSgeSpecifications.byProyectoSgeRef(proyectoSgeRef));
+    if (query != null) {
+      specs = specs.and(SgiRSQLJPASupport.toSpecification(query, ProyectoProyectoSgePredicateResolver.getInstance(sgiConfigProperties)));
+    }
+
+    // No tiene acceso a todos los UO
+    List<String> unidadesGestion = SgiSecurityContextHolder
+        .getUOsForAnyAuthority(new String[] { "CSP-SJUS-V", "CSP-SJUS-E" });
+
+    if (!CollectionUtils.isEmpty(unidadesGestion)) {
+      Specification<ProyectoProyectoSge> specByUnidadGestionRefIn = ProyectoProyectoSgeSpecifications
+          .unidadGestionRefIn(unidadesGestion);
+      specs = specs.and(specByUnidadGestionRefIn);
+    }
+
+    Page<ProyectoSeguimientoEjecucionEconomica> returnValue = proyectoProyectoSGERepository.findProyectosSeguimientoEjecucionEconomica(specs, pageable);
+    log.debug("findProyectosSeguimientoEjecucionEconomica(String query, Pageable pageable) - end");
+    return returnValue;
   }
 
 }

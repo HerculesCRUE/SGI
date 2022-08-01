@@ -28,7 +28,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * ModeloUnidadServiceTest
  */
-public class ModeloUnidadServiceTest extends BaseServiceTest {
+class ModeloUnidadServiceTest extends BaseServiceTest {
 
   @Mock
   private ModeloEjecucionRepository modeloEjecucionRepository;
@@ -39,12 +39,12 @@ public class ModeloUnidadServiceTest extends BaseServiceTest {
   private ModeloUnidadService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ModeloUnidadServiceImpl(modeloEjecucionRepository, modeloUnidadRepository);
   }
 
   @Test
-  public void create_ReturnsModeloUnidad() {
+  void create_ReturnsModeloUnidad() {
     // given: Un nuevo ModeloUnidad
     ModeloUnidad modeloUnidad = generarMockModeloUnidad(null, "unidad-1");
 
@@ -71,11 +71,11 @@ public class ModeloUnidadServiceTest extends BaseServiceTest {
         .isEqualTo(modeloUnidad.getModeloEjecucion().getId());
     Assertions.assertThat(modeloUnidadCreado.getUnidadGestionRef()).as("getUnidadGestionRef()")
         .isEqualTo(modeloUnidad.getUnidadGestionRef());
-    Assertions.assertThat(modeloUnidadCreado.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(modeloUnidadCreado.getActivo()).as("getActivo()").isTrue();
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ModeloUnidad que ya tiene id
     ModeloUnidad modeloUnidad = generarMockModeloUnidad(1L);
 
@@ -85,7 +85,7 @@ public class ModeloUnidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutModeloEjecucionId_ThrowsIllegalArgumentException() {
+  void create_WithoutModeloEjecucionId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ModeloUnidad con un ModeloEjecucion sin id
     ModeloUnidad modeloUnidad = generarMockModeloUnidad(null, "unidad-1");
     modeloUnidad.getModeloEjecucion().setId(null);
@@ -96,7 +96,7 @@ public class ModeloUnidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingModeloEjecucion_ThrowsModeloUnidadNotFoundException() {
+  void create_WithNoExistingModeloEjecucion_ThrowsModeloUnidadNotFoundException() {
     // given: Un nuevo ModeloUnidad con un ModeleoEjecucion que no existe
     ModeloUnidad modeloUnidad = generarMockModeloUnidad(null, "unidad-1");
 
@@ -109,7 +109,7 @@ public class ModeloUnidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedModeloEjecucionIdAndUnidadGestionRefAndActivo_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedModeloEjecucionIdAndUnidadGestionRefAndActivo_ThrowsIllegalArgumentException() {
     // given: Un nuevo ModeloUnidad con una combinacion de ModeloEjecucionId y
     // unidadGestionRef que ya existe y esta activo
     ModeloUnidad modeloUnidad = generarMockModeloUnidad(null, "unidad-1");
@@ -126,7 +126,7 @@ public class ModeloUnidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedModeloEjecucionIdAndUnidadGestionRefAndActivoFalse_ReturnEnableModeloUnidad() {
+  void create_WithDuplicatedModeloEjecucionIdAndUnidadGestionRefAndActivoFalse_ReturnEnableModeloUnidad() {
     // given: Un nuevo ModeloUnidad con una combinacion de ModeloEjecucionId y
     // unidadGestionRef que ya existe y no esta activo
     ModeloUnidad modeloUnidad = generarMockModeloUnidad(null, "unidad-1");
@@ -153,11 +153,11 @@ public class ModeloUnidadServiceTest extends BaseServiceTest {
         .isEqualTo(modeloUnidadExiste.getModeloEjecucion().getId());
     Assertions.assertThat(modeloUnidadCreado.getUnidadGestionRef()).as("getUnidadGestionRef()")
         .isEqualTo(modeloUnidadExiste.getUnidadGestionRef());
-    Assertions.assertThat(modeloUnidadCreado.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(modeloUnidadCreado.getActivo()).as("getActivo()").isTrue();
   }
 
   @Test
-  public void disable_ReturnsModeloUnidad() {
+  void disable_ReturnsModeloUnidad() {
     // given: Un nuevo ModeloUnidad activo
     ModeloUnidad modeloUnidad = generarMockModeloUnidad(1L);
 
@@ -177,11 +177,11 @@ public class ModeloUnidadServiceTest extends BaseServiceTest {
         .isEqualTo(modeloUnidad.getModeloEjecucion().getId());
     Assertions.assertThat(modeloUnidadActualizado.getUnidadGestionRef()).as("getUnidadGestionRef()")
         .isEqualTo(modeloUnidad.getUnidadGestionRef());
-    Assertions.assertThat(modeloUnidadActualizado.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(modeloUnidadActualizado.getActivo()).as("getActivo()").isFalse();
   }
 
   @Test
-  public void disable_WithIdNotExist_ThrowsModeloUnidadNotFoundException() {
+  void disable_WithIdNotExist_ThrowsModeloUnidadNotFoundException() {
     // given: Un id de un ModeloUnidad que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(modeloUnidadRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -191,7 +191,7 @@ public class ModeloUnidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsModeloUnidad() {
+  void findById_ReturnsModeloUnidad() {
     // given: Un ModeloUnidad con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(modeloUnidadRepository.findById(idBuscado))
@@ -206,12 +206,12 @@ public class ModeloUnidadServiceTest extends BaseServiceTest {
     Assertions.assertThat(modeloUnidad.getModeloEjecucion()).as("getModeloEjecucion()").isNotNull();
     Assertions.assertThat(modeloUnidad.getModeloEjecucion().getId()).as("getModeloEjecucion().getId()").isEqualTo(1L);
     Assertions.assertThat(modeloUnidad.getUnidadGestionRef()).as("getUnidadGestionRef()").isEqualTo("unidad-1");
-    Assertions.assertThat(modeloUnidad.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(modeloUnidad.getActivo()).as("getActivo()").isTrue();
 
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsModeloUnidadNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsModeloUnidadNotFoundException() throws Exception {
     // given: Ningun ModeloUnidad con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(modeloUnidadRepository.findById(idBuscado)).willReturn(Optional.empty());
@@ -222,7 +222,7 @@ public class ModeloUnidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 ModeloUnidad
     List<ModeloUnidad> modelosUnidadModeloEjecucion = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -250,7 +250,7 @@ public class ModeloUnidadServiceTest extends BaseServiceTest {
     Page<ModeloUnidad> page = service.findAll(null, paging);
 
     // then: Devuelve la pagina 3 con los ModeloUnidad del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -261,7 +261,7 @@ public class ModeloUnidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByModeloEjecucion_ReturnsPage() {
+  void findAllByModeloEjecucion_ReturnsPage() {
     // given: Una lista con 37 ModeloUnidad para el ModeloEjecucion
     Long idModeloEjecucion = 1L;
     List<ModeloUnidad> modelosUnidadModeloEjecucion = new ArrayList<>();
@@ -290,7 +290,7 @@ public class ModeloUnidadServiceTest extends BaseServiceTest {
     Page<ModeloUnidad> page = service.findAllByModeloEjecucion(idModeloEjecucion, null, paging);
 
     // then: Devuelve la pagina 3 con los ModeloUnidad del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

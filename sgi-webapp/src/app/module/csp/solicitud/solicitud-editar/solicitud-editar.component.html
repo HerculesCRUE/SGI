@@ -55,6 +55,25 @@
           [fragment]="actionService.getFragment(actionService.FRAGMENT.AUTOEVALUACION)">
         </sgi-action-fragment-menu-item>
       </sgi-action-fragment-menu-group>
+      <sgi-action-fragment-menu-group *ngIf="actionService.formularioSolicitud === FormularioSolicitud.RRHH"
+        [title]="'menu.csp.solicitud.solicitud-rrhh' | translate">
+        <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.SOLICITANTE]"
+          [title]="'menu.csp.solicitud.solicitud-rrhh.solicitante' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.SOLICITANTE)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.TUTOR]"
+          [title]="'menu.csp.solicitud.solicitud-rrhh.tutor' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.TUTOR)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.REQUISITOS_CONVOCATORIA]"
+          [title]="'menu.csp.solicitud.solicitud-rrhh.requisitos-convocatoria' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.REQUISITOS_CONVOCATORIA)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.MEMORIA]"
+          [title]="'menu.csp.solicitud.solicitud-rrhh.memoria' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.MEMORIA)">
+        </sgi-action-fragment-menu-item>
+      </sgi-action-fragment-menu-group>
     </ng-container>
     <sgi-action-fragment-menu-item
       *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-V' ,'CSP-SOL-INV-C', 'CSP-SOL-INV-ER']"

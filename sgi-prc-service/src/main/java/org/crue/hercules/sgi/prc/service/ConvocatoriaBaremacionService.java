@@ -279,15 +279,18 @@ public class ConvocatoriaBaremacionService {
     Specification<ConvocatoriaBaremacion> specs = ConvocatoriaBaremacionSpecifications
         .isResettable(fechaLimiteBaremacion);
 
-    convocatoriaBaremacionRepository.findAll(specs).stream().forEach(this::resetDatesConvocatoria);
+    convocatoriaBaremacionRepository.findAll(specs).stream().forEach(this::resetConvocatoria);
 
     log.debug("reset() - end");
   }
 
   @Transactional
-  public void resetDatesConvocatoria(ConvocatoriaBaremacion convocatoriaBaremacion) {
+  public void resetConvocatoria(ConvocatoriaBaremacion convocatoriaBaremacion) {
     convocatoriaBaremacion.setFechaInicioEjecucion(null);
     convocatoriaBaremacion.setFechaFinEjecucion(null);
+    convocatoriaBaremacion.setPuntoCostesIndirectos(null);
+    convocatoriaBaremacion.setPuntoProduccion(null);
+    convocatoriaBaremacion.setPuntoSexenio(null);
     convocatoriaBaremacionRepository.save(convocatoriaBaremacion);
 
     this.deleteItemsConvocatoriaBaremacion(convocatoriaBaremacion);

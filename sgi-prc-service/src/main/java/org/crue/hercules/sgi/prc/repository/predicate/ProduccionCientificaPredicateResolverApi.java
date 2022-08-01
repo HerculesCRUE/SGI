@@ -81,7 +81,7 @@ public class ProduccionCientificaPredicateResolverApi extends ProduccionCientifi
         cb.equal(rootConfiguracionBaremo.get(ConfiguracionBaremo_.epigrafeCVN),
             root.get(ProduccionCientifica_.epigrafeCVN)),
         cb.isTrue(rootConfiguracionBaremo.get(Activable_.activo)),
-        cb.equal(cb.substring(root.get(ProduccionCientifica_.produccionCientificaRef), 0, 4), "CVN_"),
+        cb.like(root.get(ProduccionCientifica_.produccionCientificaRef), "CVN_%"),
         cb.or(cb.equal(rootConfiguracionBaremo.get(ConfiguracionBaremo_.tipoFuente), TipoFuente.CVN),
             cb.equal(rootConfiguracionBaremo.get(ConfiguracionBaremo_.tipoFuente), TipoFuente.CVN_OTRO_SISTEMA)),
         cb.or(

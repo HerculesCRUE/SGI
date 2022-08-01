@@ -16,4 +16,9 @@ public class SgiConfigProperties {
    * TimeZone.
    */
   private TimeZone timeZone;
+  
+  /**
+   * Web Url.
+   */
+  private String webUrl;
 }

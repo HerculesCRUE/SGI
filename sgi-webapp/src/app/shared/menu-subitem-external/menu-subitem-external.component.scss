@@ -1,0 +1,19 @@
+@import "colors.scss";
+
+:host {
+  a {
+    color: map-get($sgi-custom-colors, black);
+    background: map-get($sgi-custom-colors, white);
+    border-radius: 18px;
+    padding: 5px 12px;
+    margin-top: 5px;
+    line-height: 1.27em;
+    display: block;
+    font-size: 0.9em;
+
+    &:hover {
+      font-weight: bold;
+      background: map-get($sgi-custom-colors, white);
+    }
+  }
+}

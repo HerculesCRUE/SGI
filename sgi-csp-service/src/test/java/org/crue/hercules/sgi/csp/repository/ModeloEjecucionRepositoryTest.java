@@ -12,13 +12,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * ModeloEjecucionRepositoryTest
  */
 @DataJpaTest
-public class ModeloEjecucionRepositoryTest extends BaseRepositoryTest {
+class ModeloEjecucionRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ModeloEjecucionRepository repository;
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsModeloEjecucion() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsModeloEjecucion() throws Exception {
 
     // given: 2 ModeloEjecucion de los que 1 coincide con el nombre buscado
     ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true, false, false);
@@ -45,7 +45,7 @@ public class ModeloEjecucionRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByNombreAndActivoIsTrueNoExiste_ReturnsNull() throws Exception {
+  void findByNombreAndActivoIsTrueNoExiste_ReturnsNull() throws Exception {
 
     // given: 2 ModeloEjecucion que no coinciden con el nombre buscado
     ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true, false, false);

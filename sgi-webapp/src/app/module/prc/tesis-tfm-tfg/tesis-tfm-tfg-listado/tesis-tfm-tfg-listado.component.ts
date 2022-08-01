@@ -8,6 +8,7 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { DireccionTesisService } from '@core/services/prc/direccion-tesis/direccion-tesis.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
+import { IAuthStatus, SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
@@ -37,8 +38,13 @@ export class TesisTfmTfgListadoComponent extends AbstractTablePaginationComponen
     return TIPO_PROYECTO_MAP;
   }
 
+  get authStatus$(): Observable<IAuthStatus> {
+    return this.authService.authStatus$.asObservable();
+  }
+
   constructor(
     protected readonly snackBarService: SnackBarService,
+    private readonly authService: SgiAuthService,
     private readonly direccionTesisService: DireccionTesisService
   ) {
     super(snackBarService, MSG_ERROR);

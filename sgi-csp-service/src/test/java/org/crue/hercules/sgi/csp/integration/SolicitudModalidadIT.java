@@ -19,7 +19,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de SolicitudModalidad.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SolicitudModalidadIT extends BaseIT {
+class SolicitudModalidadIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/solicitudmodalidades";
@@ -39,7 +39,7 @@ public class SolicitudModalidadIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsSolicitudModalidad() throws Exception {
+  void create_ReturnsSolicitudModalidad() throws Exception {
     SolicitudModalidad solicitudModalidad = generarMockSolicitudModalidad(null);
 
     final ResponseEntity<SolicitudModalidad> response = restTemplate.exchange(CONTROLLER_BASE_PATH, HttpMethod.POST,
@@ -60,7 +60,7 @@ public class SolicitudModalidadIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsSolicitudModalidad() throws Exception {
+  void update_ReturnsSolicitudModalidad() throws Exception {
     Long idSolicitudModalidad = 1L;
     SolicitudModalidad solicitudModalidad = generarMockSolicitudModalidad(1L);
     solicitudModalidad.getPrograma().setId(3L);
@@ -80,7 +80,7 @@ public class SolicitudModalidadIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing SolicitudModalidad to be deleted
     Long id = 1L;
 
@@ -96,7 +96,7 @@ public class SolicitudModalidadIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsSolicitudModalidad() throws Exception {
+  void findById_ReturnsSolicitudModalidad() throws Exception {
     Long idSolicitudModalidad = 1L;
 
     final ResponseEntity<SolicitudModalidad> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,

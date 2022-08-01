@@ -38,12 +38,12 @@ class SgdocServiceTest extends BaseServiceTest {
   private SgdocService sgdocService;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     this.sgdocService = new SgdocService(this.restApiProperties, this.restTemplate);
-    
+
     MockHttpServletRequest request = new MockHttpServletRequest();
     RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-    
+
   }
 
   @Test
@@ -51,31 +51,37 @@ class SgdocServiceTest extends BaseServiceTest {
     String filename = "application.yml";
     final Resource docFile = new ClassPathResource("application.yml");
 
-    final ResponseEntity<DocumentoOutput>expectedDocumento = ResponseEntity.ok(DocumentoOutput.builder()
-    .archivo(IOUtils.toByteArray(docFile.getInputStream()))
-    .documentoRef("application.yml")
-    .autorRef("user")
-    .fechaCreacion(LocalDateTime.now())
-    .nombre("application.yml")
-    .build());
+    final ResponseEntity<DocumentoOutput> expectedDocumento = ResponseEntity.ok(DocumentoOutput.builder()
+        .archivo(IOUtils.toByteArray(docFile.getInputStream()))
+        .documentoRef("application.yml")
+        .autorRef("user")
+        .fechaCreacion(LocalDateTime.now())
+        .nombre("application.yml")
+        .build());
 
-    BDDMockito.given(this.restTemplate.exchange(anyString(), ArgumentMatchers.<HttpMethod>any(), ArgumentMatchers.<HttpEntity<Object>>any(), ArgumentMatchers.<Class<DocumentoOutput>>any())).willReturn(expectedDocumento);
+    BDDMockito
+        .given(this.restTemplate.exchange(anyString(), ArgumentMatchers.<HttpMethod>any(),
+            ArgumentMatchers.<HttpEntity<Object>>any(), ArgumentMatchers.<Class<DocumentoOutput>>any()))
+        .willReturn(expectedDocumento);
 
     DocumentoOutput documento = sgdocService.uploadInforme(filename, docFile);
 
     Assertions.assertThat(documento).isNotNull().isEqualTo(expectedDocumento.getBody());
   }
-  
+
   @Test
   void uploadInforme_ThrowsNullPointerException() {
     String filename = "application.yml";
     final Resource docFile = new ClassPathResource("application.yml");
 
-    final ResponseEntity<DocumentoOutput>expectedDocumento = ResponseEntity.ok(null);
+    final ResponseEntity<DocumentoOutput> expectedDocumento = ResponseEntity.ok(null);
 
-    BDDMockito.given(this.restTemplate.exchange(anyString(), ArgumentMatchers.<HttpMethod>any(), ArgumentMatchers.<HttpEntity<Object>>any(), ArgumentMatchers.<Class<DocumentoOutput>>any())).willReturn(expectedDocumento);
+    BDDMockito
+        .given(this.restTemplate.exchange(anyString(), ArgumentMatchers.<HttpMethod>any(),
+            ArgumentMatchers.<HttpEntity<Object>>any(), ArgumentMatchers.<Class<DocumentoOutput>>any()))
+        .willReturn(expectedDocumento);
 
     Assertions.assertThatThrownBy(() -> sgdocService.uploadInforme(filename, docFile))
-    .isInstanceOf(NullPointerException.class);
+        .isInstanceOf(NullPointerException.class);
   }
 }

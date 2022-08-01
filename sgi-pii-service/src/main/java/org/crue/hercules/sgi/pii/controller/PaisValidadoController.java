@@ -49,7 +49,7 @@ public class PaisValidadoController {
    */
   @PostMapping
   @PreAuthorize("hasAuthority('PII-INV-E')")
-  ResponseEntity<PaisValidadoOutput> create(@Valid @RequestBody PaisValidadoInput paisValidado) {
+  public ResponseEntity<PaisValidadoOutput> create(@Valid @RequestBody PaisValidadoInput paisValidado) {
     log.debug("create(@Valid @RequestBody PaisValidadoInput invencionGasto) - start");
     PaisValidado returnValue = this.service.create(convert(paisValidado));
     log.debug("create(@Valid @RequestBody PaisValidadoInput invencionGasto) - end");
@@ -65,7 +65,7 @@ public class PaisValidadoController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('PII-INV-E')")
-  PaisValidadoOutput update(@Valid @RequestBody PaisValidadoInput paisValidado, @PathVariable Long id) {
+  public PaisValidadoOutput update(@Valid @RequestBody PaisValidadoInput paisValidado, @PathVariable Long id) {
     log.debug("update(@Valid @RequestBody PaisValidadoInput paisValidado, @PathVariable Long id) - start");
     PaisValidado returnValue = this.service.update(convert(id, paisValidado));
     log.debug("update(@Valid @RequestBody PaisValidadoInput paisValidado, @PathVariable Long id) - end");
@@ -80,7 +80,7 @@ public class PaisValidadoController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthority('PII-INV-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     log.debug("delete(Long id) - start");
     this.service.deleteById(id);
     log.debug("delete(Long id) - end");

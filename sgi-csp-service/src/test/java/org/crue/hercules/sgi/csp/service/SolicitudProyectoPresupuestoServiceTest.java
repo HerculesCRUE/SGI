@@ -31,7 +31,7 @@ import org.springframework.data.jpa.domain.Specification;
  * SolicitudProyectoPresupuestoServiceTest
  */
 @ExtendWith(MockitoExtension.class)
-public class SolicitudProyectoPresupuestoServiceTest {
+class SolicitudProyectoPresupuestoServiceTest {
 
   @Mock
   private SolicitudProyectoPresupuestoRepository repository;
@@ -45,12 +45,12 @@ public class SolicitudProyectoPresupuestoServiceTest {
   private SolicitudProyectoPresupuestoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new SolicitudProyectoPresupuestoServiceImpl(repository, solicitudService, solicitudProyectoRepository);
   }
 
   @Test
-  public void create_ReturnsSolicitudProyectoPresupuesto() {
+  void create_ReturnsSolicitudProyectoPresupuesto() {
     // given: Un nuevo SolicitudProyectoPresupuesto
     SolicitudProyectoPresupuesto solicitudProyectoPresupuesto = generarSolicitudProyectoPresupuesto(null, 1L, 1L);
 
@@ -85,7 +85,7 @@ public class SolicitudProyectoPresupuestoServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudProyectoPresupuesto que ya tiene id
     SolicitudProyectoPresupuesto solicitudProyectoPresupuesto = generarSolicitudProyectoPresupuesto(1L, 1L, 1L);
 
@@ -97,7 +97,7 @@ public class SolicitudProyectoPresupuestoServiceTest {
   }
 
   @Test
-  public void update_ReturnsSolicitudProyectoPresupuesto() {
+  void update_ReturnsSolicitudProyectoPresupuesto() {
     // given: Un nuevo SolicitudProyectoPresupuesto con el titulo actualizado
     Long solicitudId = 1L;
     Long solicitudProyectoId = 1L;
@@ -140,7 +140,7 @@ public class SolicitudProyectoPresupuestoServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsSolicitudProyectoPresupuestoNotFoundException() {
+  void update_WithIdNotExist_ThrowsSolicitudProyectoPresupuestoNotFoundException() {
     // given: Un SolicitudProyectoPresupuesto actualizado con un id que no existe
     Long solicitudId = 1L;
     Long solicitudProyectoId = 1L;
@@ -159,7 +159,7 @@ public class SolicitudProyectoPresupuestoServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_NoReturnsAnyException() {
+  void delete_WithExistingId_NoReturnsAnyException() {
     // given: existing SolicitudProyectoPresupuesto
     Long id = 1L;
 
@@ -174,7 +174,7 @@ public class SolicitudProyectoPresupuestoServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -188,7 +188,7 @@ public class SolicitudProyectoPresupuestoServiceTest {
   }
 
   @Test
-  public void findById_ReturnsSolicitudProyectoPresupuesto() {
+  void findById_ReturnsSolicitudProyectoPresupuesto() {
     // given: Un SolicitudProyectoPresupuesto con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -203,7 +203,7 @@ public class SolicitudProyectoPresupuestoServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsSolicitudProyectoPresupuestoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsSolicitudProyectoPresupuestoNotFoundException() throws Exception {
     // given: Ningun SolicitudProyectoPresupuesto con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -215,7 +215,7 @@ public class SolicitudProyectoPresupuestoServiceTest {
   }
 
   @Test
-  public void findAllBySolicitud_ReturnsPage() {
+  void findAllBySolicitud_ReturnsPage() {
     // given: Una lista con 37 SolicitudProyectoPresupuesto
     Long solicitudId = 1L;
     List<SolicitudProyectoPresupuesto> solicitudProyectoPresupuesto = new ArrayList<>();
@@ -242,7 +242,7 @@ public class SolicitudProyectoPresupuestoServiceTest {
     Page<SolicitudProyectoPresupuesto> page = service.findAllBySolicitud(solicitudId, null, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

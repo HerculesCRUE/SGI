@@ -11,6 +11,7 @@ public class ComunicadosService {
   public static final String CONFIG_PII_COM_AVISO_FIN_PLAZO_FASE_NAC_REG_SOLICITUD_PROTECCION_DESTINATARIOS = "fin-plaz-fases-nac-reg-sol-prot-destinatarios";
 
   private final SolicitudProteccionComService solicitudProteccionComService;
+  private final ProcedimientoComService procedimientoComService;
 
   public void enviarComunicadoMesesHastaFinPrioridadSolicitudProteccion() {
     this.solicitudProteccionComService.enviarComunicadoMesesHastaFinPrioridadSolicitudProteccion();
@@ -19,6 +20,10 @@ public class ComunicadosService {
   public void enviarComunicadoAvisoFinPlazoPresentacionFasesNacionalesRegionalesSolicitudProteccion() {
     this.solicitudProteccionComService
         .enviarComunicadoAvisoFinPlazoPresentacionFasesNacionalesRegionalesSolicitudProteccion();
+  }
+
+  public void enviarComunicadoFechaLimiteProcedimiento() {
+    this.procedimientoComService.enviarComunicadoFechaLimiteProcedimiento();
   }
 
 }

@@ -15,12 +15,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * SolicitudProyectoRepositoryTest
  */
 @DataJpaTest
-public class SolicitudProyectoRepositoryTest extends BaseRepositoryTest {
+class SolicitudProyectoRepositoryTest extends BaseRepositoryTest {
   @Autowired
   private SolicitudProyectoRepository repository;
 
   @Test
-  public void findBySolicitudId_ReturnsSolicitudProyecto() throws Exception {
+  void findBySolicitudId_ReturnsSolicitudProyecto() throws Exception {
 
     // given: 2 SolicitudProyecto de los que 1 coincide con el idSolicitud
     // buscado
@@ -64,7 +64,7 @@ public class SolicitudProyectoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findBySolicitudNoExiste_ReturnsNull() throws Exception {
+  void findBySolicitudNoExiste_ReturnsNull() throws Exception {
 
     // given: 2 SolicitudProyecto de los que ninguno coincide con el
     // idSolicitud

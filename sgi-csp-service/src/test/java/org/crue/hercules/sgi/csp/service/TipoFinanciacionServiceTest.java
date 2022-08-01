@@ -26,7 +26,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * TipoFinanciacionServiceTest
  */
-public class TipoFinanciacionServiceTest extends BaseServiceTest {
+class TipoFinanciacionServiceTest extends BaseServiceTest {
 
   @Mock
   private TipoFinanciacionRepository repository;
@@ -34,12 +34,12 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
   private TipoFinanciacionService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new TipoFinanciacionServiceImpl(repository);
   }
 
   @Test
-  public void findById_WithId_ReturnsTipoFinanciacion() {
+  void findById_WithId_ReturnsTipoFinanciacion() {
     BDDMockito.given(repository.findById(1L))
         .willReturn(Optional.of(generarMockTipoFinanciacion(1L, "TipoFinanciacion1")));
 
@@ -51,14 +51,14 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() throws Exception {
     BDDMockito.given(repository.findById(1L)).willReturn(Optional.empty());
 
     Assertions.assertThatThrownBy(() -> service.findById(1L)).isInstanceOf(TipoFinanciacionNotFoundException.class);
   }
 
   @Test
-  public void create_ReturnsTipoFinanciacion() {
+  void create_ReturnsTipoFinanciacion() {
     // given: Un nuevo TipoFinanciacion
     TipoFinanciacion tipoFinanciacion = generarMockTipoFinanciacion(null);
 
@@ -82,7 +82,7 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsTipoFinanciacion() {
+  void update_ReturnsTipoFinanciacion() {
     // given: Un nuevo tipo Financiacion con el servicio actualizado
     TipoFinanciacion tipoFinanciacionServicioActualizado = generarMockTipoFinanciacion(1L,
         "TipoFinanciacion1 actualizada");
@@ -102,7 +102,7 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ThrowsTipoFinanciacionNotFoundException() {
+  void update_ThrowsTipoFinanciacionNotFoundException() {
     // given: Un nuevo tipo Financiacion a actualizar
     TipoFinanciacion tipoFinanciacion = generarMockTipoFinanciacion(1L, "TipoFinanciacion");
 
@@ -113,7 +113,7 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_ReturnsTipoFinanciacion() {
+  void enable_ReturnsTipoFinanciacion() {
     // given: Un nuevo TipoFinanciacio inactivo
     TipoFinanciacion tipoFinanciacion = generarMockTipoFinanciacion(1L);
     tipoFinanciacion.setActivo(false);
@@ -133,11 +133,11 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
         .isEqualTo(tipoFinanciacion.getNombre());
     Assertions.assertThat(tipoFinanciacionActualizado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(tipoFinanciacion.getDescripcion());
-    Assertions.assertThat(tipoFinanciacionActualizado.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(tipoFinanciacionActualizado.getActivo()).as("getActivo()").isTrue();
   }
 
   @Test
-  public void enable_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void enable_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un TipoFinanciacion inactivo con un nombre que ya existe activo
     TipoFinanciacion tipoFinanciacion = generarMockTipoFinanciacion(1L, "nombreRepetido");
     tipoFinanciacion.setActivo(false);
@@ -153,7 +153,7 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
+  void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
     // given: Un id de un TipoFinanciacion que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -164,7 +164,7 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_ReturnsTipoFinanciacion() {
+  void disable_ReturnsTipoFinanciacion() {
     // given: Un nuevo TipoFinanciacion activo
     TipoFinanciacion tipoFinanciacion = generarMockTipoFinanciacion(1L);
 
@@ -180,12 +180,12 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(tipoFinanciacionActualizado.getId()).as("getId()").isEqualTo(1L);
     Assertions.assertThat(tipoFinanciacionActualizado.getNombre()).as("getNombre()")
         .isEqualTo(tipoFinanciacion.getNombre());
-    Assertions.assertThat(tipoFinanciacionActualizado.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(tipoFinanciacionActualizado.getActivo()).as("getActivo()").isFalse();
 
   }
 
   @Test
-  public void disable_WithoutId_ThrowsIllegalArgumentException() {
+  void disable_WithoutId_ThrowsIllegalArgumentException() {
     // given: Sin id
     Assertions.assertThatThrownBy(
         // when: disable sin id
@@ -195,7 +195,7 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_WithPaging_ReturnsPage() {
+  void findAll_WithPaging_ReturnsPage() {
     // given: One hundred TipoFinanciacions
     List<TipoFinanciacion> tipoFinanciacionList = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -225,9 +225,9 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
 
     // then: A Page with ten TipoFinanciaciones are returned containing
     // descripcion='TipoFinanciacion031' to 'TipoFinanciacion040'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoFinanciacion tipoFinanciacion = page.getContent().get(i);
@@ -236,7 +236,7 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllTodos_WithPaging_ReturnsPage() {
+  void findAllTodos_WithPaging_ReturnsPage() {
     // given: One hundred TipoFinanciacions
     List<TipoFinanciacion> tipoFinanciacionList = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -266,9 +266,9 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
 
     // then: A Page with ten TipoFinanciaciones are returned containing
     // descripcion='TipoFinanciacion031' to 'TipoFinanciacion040'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoFinanciacion tipoFinanciacion = page.getContent().get(i);
@@ -277,7 +277,7 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: a TipoFinanciacion with duplicated nombre
 
     TipoFinanciacion givenData = generarMockTipoFinanciacion(1L);
@@ -296,7 +296,7 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void update_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un nuevo TipoFinanciacion con un nombre que ya existe
     TipoFinanciacion tipoFinanciacionUpdated = generarMockTipoFinanciacion(1L, "nombreRepetido");
     TipoFinanciacion tipoFinanciacion = generarMockTipoFinanciacion(2L, "nombreRepetido");
@@ -317,7 +317,7 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
    * @param id id del TipoFinanciacion
    * @return el objeto TipoFinanciacion
    */
-  public TipoFinanciacion generarMockTipoFinanciacion(Long id) {
+  TipoFinanciacion generarMockTipoFinanciacion(Long id) {
     return generarMockTipoFinanciacion(id, "nombre-" + id);
   }
 
@@ -328,7 +328,7 @@ public class TipoFinanciacionServiceTest extends BaseServiceTest {
    * @param nombre nombre del TipoFinanciacion
    * @return el objeto TipoFinanciacion
    */
-  public TipoFinanciacion generarMockTipoFinanciacion(Long id, String nombre) {
+  TipoFinanciacion generarMockTipoFinanciacion(Long id, String nombre) {
 
     TipoFinanciacion tipoFinanciacion = new TipoFinanciacion();
     tipoFinanciacion.setId(id);

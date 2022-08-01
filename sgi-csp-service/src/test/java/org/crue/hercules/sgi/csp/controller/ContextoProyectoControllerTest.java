@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ContextoProyectoControllerTest
  */
 @WebMvcTest(ContextoProyectoController.class)
-public class ContextoProyectoControllerTest extends BaseControllerTest {
+class ContextoProyectoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ContextoProyectoService service;
@@ -31,7 +31,7 @@ public class ContextoProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void create_ReturnsContextoProyecto() throws Exception {
+  void create_ReturnsContextoProyecto() throws Exception {
     // given: new ContextoProyecto
     ContextoProyecto contextoProyecto = generarMockContextoProyecto(1L);
 
@@ -57,7 +57,7 @@ public class ContextoProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ContextoProyecto with id filled
     ContextoProyecto contextoProyecto = generarMockContextoProyecto(1L);
 
@@ -76,7 +76,7 @@ public class ContextoProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_ReturnsContextoProyecto() throws Exception {
+  void update_ReturnsContextoProyecto() throws Exception {
     // given: Existing ContextoProyecto to be updated
     ContextoProyecto contextoProyectoExistente = generarMockContextoProyecto(1L);
     ContextoProyecto contextoProyecto = generarMockContextoProyecto(1L);
@@ -101,7 +101,7 @@ public class ContextoProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     ContextoProyecto contextoProyecto = generarMockContextoProyecto(1L);
@@ -121,7 +121,7 @@ public class ContextoProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-V" })
-  public void findByProyectoContextoProyecto_WithExistingId_ReturnsContextoProyecto() throws Exception {
+  void findByProyectoContextoProyecto_WithExistingId_ReturnsContextoProyecto() throws Exception {
     // given: existing id
     ContextoProyecto contextoProyecto = generarMockContextoProyecto(1L);
     BDDMockito.given(service.findByProyecto(ArgumentMatchers.<Long>any())).willReturn(contextoProyecto);
@@ -139,7 +139,7 @@ public class ContextoProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-V" })
-  public void findByProyectoContextoProyecto_WithNoExistingId_Returns404() throws Exception {
+  void findByProyectoContextoProyecto_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findByProyecto(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ContextoProyectoNotFoundException(1L);
@@ -156,7 +156,7 @@ public class ContextoProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-V" })
-  public void findByProyectoContextoProyecto_WithNoExistingContextoProyecto_Returns204() throws Exception {
+  void findByProyectoContextoProyecto_WithNoExistingContextoProyecto_Returns204() throws Exception {
     // given: Existing proyectoId and no existing ContextoProyecto
     BDDMockito.given(service.findByProyecto(ArgumentMatchers.<Long>any())).willReturn(null);
 

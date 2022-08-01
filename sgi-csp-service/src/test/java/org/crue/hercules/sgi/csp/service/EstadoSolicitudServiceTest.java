@@ -12,6 +12,7 @@ import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.repository.EstadoSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.impl.EstadoSolicitudServiceImpl;
+import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -28,22 +29,25 @@ import org.springframework.security.test.context.support.WithMockUser;
 /**
  * EstadoSolicitudServiceTest
  */
-public class EstadoSolicitudServiceTest extends BaseServiceTest {
+class EstadoSolicitudServiceTest extends BaseServiceTest {
 
   @Mock
   private EstadoSolicitudRepository repository;
   @Mock
   private SolicitudRepository solicitudRepository;
 
+  private SolicitudAuthorityHelper authorityHelper;
+
   private EstadoSolicitudService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
-    service = new EstadoSolicitudServiceImpl(repository, solicitudRepository);
+  void setUp() throws Exception {
+    authorityHelper = new SolicitudAuthorityHelper(solicitudRepository);
+    service = new EstadoSolicitudServiceImpl(repository, authorityHelper);
   }
 
   @Test
-  public void create_WithConvocatoria_ReturnsEstadoSolicitud() {
+  void create_WithConvocatoria_ReturnsEstadoSolicitud() {
     // given: Un nuevo EstadoSolicitud
     EstadoSolicitud estadoSolicitud = generarMockEstadoSolicitud(null);
 
@@ -65,7 +69,7 @@ public class EstadoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo EstadoSolicitud que ya tiene id
     EstadoSolicitud solicitudModalidad = generarMockEstadoSolicitud(1L);
 
@@ -76,7 +80,7 @@ public class EstadoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutSolicitudId_ThrowsIllegalArgumentException() {
+  void create_WithoutSolicitudId_ThrowsIllegalArgumentException() {
     // given: Un nuevo EstadoSolicitud que no tiene solicitud
     EstadoSolicitud estadoSolicitud = generarMockEstadoSolicitud(null);
     estadoSolicitud.setSolicitudId(null);
@@ -89,7 +93,7 @@ public class EstadoSolicitudServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void findAllBySolicitud_ReturnsPage() {
+  void findAllBySolicitud_ReturnsPage() {
     // given: Una lista con 37 EstadoSolicitud
     Long solicitudId = 1L;
     Solicitud solicitud = generarMockSolicitud(solicitudId, 1L, null);
@@ -119,7 +123,7 @@ public class EstadoSolicitudServiceTest extends BaseServiceTest {
     Page<EstadoSolicitud> page = service.findAllBySolicitud(solicitudId, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

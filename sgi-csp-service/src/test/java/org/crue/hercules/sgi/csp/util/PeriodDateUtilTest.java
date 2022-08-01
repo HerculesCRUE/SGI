@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-public class PeriodDateUtilTest {
+class PeriodDateUtilTest {
 
   private static final int JULY = 7;
   private static final String UTC = "UTC";

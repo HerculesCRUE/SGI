@@ -1,6 +1,5 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { IAreaTematica } from '@core/models/csp/area-tematica';
-import { Estado } from '@core/models/csp/estado-proyecto';
 import { ISolicitudPalabraClave } from '@core/models/csp/solicitud-palabra-clave';
 import { ISolicitudProyecto, TipoPresupuesto } from '@core/models/csp/solicitud-proyecto';
 import { FormFragment } from '@core/services/action-service';
@@ -241,7 +240,8 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
       }),
       switchMap(solicitudProyecto => {
         if (this.convocatoriaId && !solicitudProyecto?.id) {
-          const convocatoriaSolicitud$ = this.isInvestigador ? this.solicitudService.findConvocatoria(this.solicitudId) : this.convocatoriaService.findById(this.convocatoriaId);
+          const convocatoriaSolicitud$ = this.isInvestigador ? this.solicitudService.findConvocatoria(this.solicitudId)
+            : this.convocatoriaService.findById(this.convocatoriaId);
           return convocatoriaSolicitud$.pipe(
             map(convocatoria => {
               solicitudProyecto = {} as ISolicitudProyecto;

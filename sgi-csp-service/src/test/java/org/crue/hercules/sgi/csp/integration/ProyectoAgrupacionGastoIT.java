@@ -220,7 +220,7 @@ class ProyectoAgrupacionGastoIT extends BaseIT {
 
     final List<ProyectoAgrupacionGastoOutput> responseData = response.getBody();
 
-    Assertions.assertThat(responseData.size()).isEqualTo(2);
+    Assertions.assertThat(responseData).hasSize(2);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("2");
@@ -279,7 +279,7 @@ class ProyectoAgrupacionGastoIT extends BaseIT {
 
     List<AgrupacionGastoConceptoOutput> responseData = response.getBody();
     Assertions.assertThat(responseData).isNotNull();
-    Assertions.assertThat(responseData.size()).isEqualTo(2);
+    Assertions.assertThat(responseData).hasSize(2);
 
     Assertions.assertThat(responseData.get(0)).isNotNull();
     Assertions.assertThat(responseData.get(1)).isNotNull();

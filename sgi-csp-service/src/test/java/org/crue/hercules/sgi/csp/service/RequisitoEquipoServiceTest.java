@@ -20,30 +20,27 @@ import org.mockito.invocation.InvocationOnMock;
  * RequisitoEquipoServiceTest
  */
 
-public class RequisitoEquipoServiceTest extends BaseServiceTest {
+class RequisitoEquipoServiceTest extends BaseServiceTest {
 
   @Mock
   private RequisitoEquipoRepository repository;
   @Mock
   private ConvocatoriaRepository convocatoriaRepository;
-  @Mock
-  private ConvocatoriaService convocatoriaService;
 
   private RequisitoEquipoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
-    service = new RequisitoEquipoService(repository, convocatoriaRepository, convocatoriaService);
+  void setUp() throws Exception {
+    service = new RequisitoEquipoService(repository, convocatoriaRepository);
   }
 
   @Test
-  public void create_ReturnsRequisitoEquipo() {
+  void create_ReturnsRequisitoEquipo() {
     // given: Un nuevo RequisitoEquipo
     Long convocatoriaId = 1L;
-    Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
     RequisitoEquipo requisitoEquipo = generarMockRequisitoEquipo(convocatoriaId);
 
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
+    BDDMockito.given(convocatoriaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(true);
 
     BDDMockito.given(repository.save(requisitoEquipo)).will((InvocationOnMock invocation) -> {
       RequisitoEquipo requisitoEquipoCreado = invocation.getArgument(0);
@@ -64,7 +61,7 @@ public class RequisitoEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutConvocatoria_ThrowsIllegalArgumentException() {
+  void create_WithoutConvocatoria_ThrowsIllegalArgumentException() {
     // given: Un nuevo RequisitoEquipo sin convocatoria
     RequisitoEquipo requisitoEquipo = generarMockRequisitoEquipo(null);
 
@@ -75,7 +72,7 @@ public class RequisitoEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedConvocatoria_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedConvocatoria_ThrowsIllegalArgumentException() {
     // given: Un nuevo RequisitoEquipo con convocatoria ya asignada
     Long convocatoriaId = 1L;
     RequisitoEquipo requisitoEquipoExistente = generarMockRequisitoEquipo(convocatoriaId);
@@ -90,16 +87,14 @@ public class RequisitoEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsRequisitoEquipo() {
+  void update_ReturnsRequisitoEquipo() {
     // given: Un nuevo RequisitoEquipo con el sexo actualizado
     Long convocatoriaId = 1L;
-    Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
     RequisitoEquipo requisitoEquipo = generarMockRequisitoEquipo(convocatoriaId);
     RequisitoEquipo requisitoEquipoActualizado = generarMockRequisitoEquipo(convocatoriaId);
     requisitoEquipoActualizado.setEdadMaxima(45);
 
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.<Long>any()))
-        .willReturn(Optional.of(convocatoria));
+    BDDMockito.given(convocatoriaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(true);
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(requisitoEquipo));
     BDDMockito.given(repository.save(ArgumentMatchers.<RequisitoEquipo>any()))
         .will((InvocationOnMock invocation) -> invocation.getArgument(0));
@@ -117,7 +112,7 @@ public class RequisitoEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutConvocatoria_ThrowsIllegalArgumentException() {
+  void update_WithoutConvocatoria_ThrowsIllegalArgumentException() {
     // given: Un RequisitoEquipo actualizado con una convocatoria que no existe
     RequisitoEquipo requisitoEquipo = generarMockRequisitoEquipo(null);
 
@@ -128,12 +123,12 @@ public class RequisitoEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithConvocatoriaNotExist_ThrowsNotFoundException() {
+  void update_WithConvocatoriaNotExist_ThrowsNotFoundException() {
     // given: Un RequisitoEquipo actualizado con una convocatoria que no existe
     Long convocatoriaId = 1L;
     RequisitoEquipo requisitoEquipo = generarMockRequisitoEquipo(convocatoriaId);
 
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
+    BDDMockito.given(convocatoriaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(false);
 
     // when: Actualizamos el RequisitoEquipo
     // then: Lanza una excepcion porque la Convocatoria no existe
@@ -142,14 +137,12 @@ public class RequisitoEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_NotExist_ThrowsNotFoundException() {
+  void update_NotExist_ThrowsNotFoundException() {
     // given: Un RequisitoEquipo actualizado con una convocatoria que no existe
     Long convocatoriaId = 1L;
-    Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
     RequisitoEquipo requisitoEquipo = generarMockRequisitoEquipo(convocatoriaId);
 
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.<Long>any()))
-        .willReturn(Optional.of(convocatoria));
+    BDDMockito.given(convocatoriaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(true);
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
 
     // when: Actualizamos el RequisitoEquipo
@@ -159,7 +152,7 @@ public class RequisitoEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findByConvocatoriaId_ReturnsRequisitoEquipo() {
+  void findByConvocatoriaId_ReturnsRequisitoEquipo() {
     // given: Un RequisitoEquipo con el id convocatoria buscado
     Long idBuscado = 1L;
 
@@ -178,7 +171,7 @@ public class RequisitoEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findByConvocatoriaId_WithIdNotExist_ThrowsConvocatoriaNotFoundException() throws Exception {
+  void findByConvocatoriaId_WithIdNotExist_ThrowsConvocatoriaNotFoundException() throws Exception {
     // given: Ninguna convocatoria con el id Convocatoria buscado
     Long idBuscado = 1L;
 

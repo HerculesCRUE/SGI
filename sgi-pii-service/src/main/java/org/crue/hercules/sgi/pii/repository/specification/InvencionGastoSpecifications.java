@@ -5,6 +5,10 @@ import org.crue.hercules.sgi.pii.model.InvencionGasto;
 import org.crue.hercules.sgi.pii.model.InvencionGasto_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class InvencionGastoSpecifications {
 
   /**
@@ -15,8 +19,6 @@ public class InvencionGastoSpecifications {
    *         {@link Invencion} con el id indicado.
    */
   public static Specification<InvencionGasto> byInvencionId(Long id) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(InvencionGasto_.invencionId), id);
-    };
+    return (root, query, cb) -> cb.equal(root.get(InvencionGasto_.invencionId), id);
   }
 }

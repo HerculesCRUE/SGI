@@ -1,7 +1,7 @@
 import { IConfiguracionSolicitudBackend } from '@core/models/csp/backend/configuracion-solicitud-backend';
 import { IConfiguracionSolicitud } from '@core/models/csp/configuracion-solicitud';
+import { CONVOCATORIA_FASE_RESPONSE_CONVERTER } from '@core/services/csp/convocatoria-fase/convocatoria-fase-response.converter';
 import { SgiBaseConverter } from '@sgi/framework/core';
-import { CONVOCATORIA_FASE_CONVERTER } from './convocatoria-fase.converter';
 
 class ConfiguracionSolicitudConverter extends SgiBaseConverter<IConfiguracionSolicitudBackend, IConfiguracionSolicitud> {
 
@@ -13,7 +13,7 @@ class ConfiguracionSolicitudConverter extends SgiBaseConverter<IConfiguracionSol
       id: value.id,
       convocatoriaId: value.convocatoriaId,
       tramitacionSGI: value.tramitacionSGI,
-      fasePresentacionSolicitudes: CONVOCATORIA_FASE_CONVERTER.toTarget(value.fasePresentacionSolicitudes),
+      fasePresentacionSolicitudes: CONVOCATORIA_FASE_RESPONSE_CONVERTER.toTarget(value.fasePresentacionSolicitudes),
       importeMaximoSolicitud: value.importeMaximoSolicitud
     };
   }
@@ -26,7 +26,7 @@ class ConfiguracionSolicitudConverter extends SgiBaseConverter<IConfiguracionSol
       id: value.id,
       convocatoriaId: value.convocatoriaId,
       tramitacionSGI: value.tramitacionSGI,
-      fasePresentacionSolicitudes: CONVOCATORIA_FASE_CONVERTER.fromTarget(value.fasePresentacionSolicitudes),
+      fasePresentacionSolicitudes: CONVOCATORIA_FASE_RESPONSE_CONVERTER.fromTarget(value.fasePresentacionSolicitudes),
       importeMaximoSolicitud: value.importeMaximoSolicitud,
     };
   }

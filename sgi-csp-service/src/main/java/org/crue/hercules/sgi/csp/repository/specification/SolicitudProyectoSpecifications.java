@@ -6,6 +6,10 @@ import org.crue.hercules.sgi.csp.model.SolicitudProyecto_;
 import org.crue.hercules.sgi.csp.model.Solicitud_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SolicitudProyectoSpecifications {
 
   /**
@@ -16,9 +20,7 @@ public class SolicitudProyectoSpecifications {
    *         {@link Solicitud} con el id indicado.
    */
   public static Specification<SolicitudProyecto> bySolicitudId(Long id) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(SolicitudProyecto_.solicitud).get(Solicitud_.id), id);
-    };
+    return (root, query, cb) -> cb.equal(root.get(SolicitudProyecto_.solicitud).get(Solicitud_.id), id);
   }
 
 }

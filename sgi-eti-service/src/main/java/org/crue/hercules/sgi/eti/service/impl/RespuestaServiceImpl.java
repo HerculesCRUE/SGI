@@ -325,4 +325,9 @@ public class RespuestaServiceImpl implements RespuestaService {
     return respuestaRepository.findByMemoriaIdAndTipoDocumentoIsNotNull(idMemoria, page);
   }
 
+  @Override
+  public Optional<Respuesta> findLastByMemoriaId(Long idMemoria) {
+    return respuestaRepository.findTopByMemoriaIdOrderByApartadoBloqueOrdenDescApartadoOrdenDesc(idMemoria);
+  }
+
 }

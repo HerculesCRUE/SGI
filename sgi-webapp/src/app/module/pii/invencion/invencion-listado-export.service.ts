@@ -13,7 +13,7 @@ import { ReportService } from '@core/services/rep/report.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of, zip } from 'rxjs';
+import { concat, Observable, of, zip } from 'rxjs';
 import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
 import { InvencionEquipoInventorListadoExportService } from './invencion-equipo-inventor-listado-export.service';
 import { InvencionGeneralListadoExportService } from './invencion-general-listado-export.service';
@@ -118,7 +118,7 @@ export class InvencionListadoExportService extends AbstractTableExportService<II
 
   private getDataReportInner(invencionData: IInvencionReportData, reportOptions: IInvencionReportOptions):
     Observable<IInvencionReportData> {
-    return merge(
+    return concat(
       this.getDataReportListadoGeneral(invencionData),
       this.getDataReportEquipoInventor(invencionData, reportOptions),
       this.getDataReportSolicitudesDeProteccion(invencionData, reportOptions),

@@ -20,7 +20,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de ModeloTipoHito.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ModeloTipoHitoIT extends BaseIT {
+class ModeloTipoHitoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/modelotipohitos";
@@ -39,7 +39,7 @@ public class ModeloTipoHitoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsModeloTipoHito() throws Exception {
+  void create_ReturnsModeloTipoHito() throws Exception {
 
     // given: new ModeloTipoHito
     ModeloTipoHito data = generarModeloTipoHito(null, 1L, 1L);
@@ -65,7 +65,7 @@ public class ModeloTipoHitoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsModeloTipoHito() throws Exception {
+  void update_ReturnsModeloTipoHito() throws Exception {
 
     // given: Existing ModeloTipoHito to be updated
     ModeloTipoHito modeloTipoHitoExistente = generarModeloTipoHito(1L, 1L, 1L);
@@ -96,7 +96,7 @@ public class ModeloTipoHitoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing ModeloTipoHito to be disabled
     Long id = 1L;
 
@@ -112,7 +112,7 @@ public class ModeloTipoHitoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsModeloTipoHito() throws Exception {
+  void findById_ReturnsModeloTipoHito() throws Exception {
     Long id = 1L;
 
     final ResponseEntity<ModeloTipoHito> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,

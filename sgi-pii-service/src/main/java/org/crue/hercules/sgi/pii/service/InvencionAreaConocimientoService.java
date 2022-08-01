@@ -78,7 +78,7 @@ public class InvencionAreaConocimientoService {
     repository.deleteInBulkByInvencionId(invencionId);
 
     List<InvencionAreaConocimiento> returnValue = new ArrayList<>();
-    if (areasConocimiento != null && !areasConocimiento.isEmpty()) {
+    if (!areasConocimiento.isEmpty()) {
       // Eliminamos duplicados de la nueva lista
       List<InvencionAreaConocimiento> uniqueSectoresAplicacion = areasConocimiento.stream().distinct()
           .collect(Collectors.toList());

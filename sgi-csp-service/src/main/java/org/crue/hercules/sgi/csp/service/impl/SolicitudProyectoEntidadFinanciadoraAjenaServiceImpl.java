@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -160,9 +161,8 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceImpl
 
     solicitudProyectoEntidadRepository
         .findAll(SolicitudProyectoEntidadSpecifications.bySolicitudProyectoEntidadFinanciadoraAjenaId(id)).stream()
-        .forEach(solicitudProyectoEntidad -> {
-          solicitudProyectoEntidadRepository.deleteById(solicitudProyectoEntidad.getId());
-        });
+        .forEach(solicitudProyectoEntidad -> solicitudProyectoEntidadRepository
+            .deleteById(solicitudProyectoEntidad.getId()));
 
     repository.deleteById(id);
     log.debug("delete(Long id) - end");
@@ -229,7 +229,8 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceImpl
 
         if (updateData.getFuenteFinanciacion() != null) {
           Assert.isTrue((currentData != null && currentData.getFuenteFinanciacion() != null
-              && currentData.getFuenteFinanciacion().getId() == updateData.getFuenteFinanciacion().getId())
+              && Objects.equals(currentData.getFuenteFinanciacion().getId(),
+                  updateData.getFuenteFinanciacion().getId()))
               || updateData.getFuenteFinanciacion().getActivo(), "La FuenteFinanciacion debe estar Activo");
         }
       }
@@ -244,7 +245,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceImpl
 
         if (updateData.getTipoFinanciacion() != null) {
           Assert.isTrue((currentData != null && currentData.getTipoFinanciacion() != null
-              && currentData.getTipoFinanciacion().getId() == updateData.getTipoFinanciacion().getId())
+              && Objects.equals(currentData.getTipoFinanciacion().getId(), updateData.getTipoFinanciacion().getId()))
               || updateData.getTipoFinanciacion().getActivo(), "El TipoFinanciacion debe estar Activo");
         }
       }

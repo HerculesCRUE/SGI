@@ -14,13 +14,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * FuenteFinanciacionRepositoryTest
  */
 @DataJpaTest
-public class FuenteFinanciacionRepositoryTest extends BaseRepositoryTest {
+class FuenteFinanciacionRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private FuenteFinanciacionRepository repository;
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsFuenteFinanciacion() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsFuenteFinanciacion() throws Exception {
     // given: 2 FuenteFinanciacion de los que 1 coincide con el nombre buscado
     TipoAmbitoGeografico tipoAmbitoGeografico = TipoAmbitoGeografico.builder().nombre("nombre-1").activo(true).build();
     entityManager.persistAndFlush(tipoAmbitoGeografico);
@@ -62,7 +62,7 @@ public class FuenteFinanciacionRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByNombreAndActivoIsTrue_WithNombreNoExiste_ReturnsNull() throws Exception {
+  void findByNombreAndActivoIsTrue_WithNombreNoExiste_ReturnsNull() throws Exception {
     // given: 2 FuenteFinanciacion que no coinciden con el nombre buscado
     TipoAmbitoGeografico tipoAmbitoGeografico = TipoAmbitoGeografico.builder().nombre("nombre-1").activo(true).build();
     entityManager.persistAndFlush(tipoAmbitoGeografico);

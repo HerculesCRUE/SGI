@@ -28,6 +28,10 @@ import lombok.experimental.SuperBuilder;
 @ActivableIsActivo(entityClass = TipoProcedimiento.class, groups = { OnActualizar.class })
 @UniqueNombreTipoProcedimiento(groups = { OnActualizar.class, OnActivar.class, OnCrear.class })
 public class TipoProcedimiento extends BaseActivableEntity {
+  /*
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
   protected static final String TABLE_NAME = "tipo_procedimiento";
   private static final String SEQUENCE_NAME = TABLE_NAME + "_seq";

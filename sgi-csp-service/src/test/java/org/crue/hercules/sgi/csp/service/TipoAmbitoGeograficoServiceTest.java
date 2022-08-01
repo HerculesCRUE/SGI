@@ -25,7 +25,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * TipoAmbitoGeograficoServiceTest
  */
-public class TipoAmbitoGeograficoServiceTest extends BaseServiceTest {
+class TipoAmbitoGeograficoServiceTest extends BaseServiceTest {
 
   @Mock
   private TipoAmbitoGeograficoRepository repository;
@@ -33,12 +33,12 @@ public class TipoAmbitoGeograficoServiceTest extends BaseServiceTest {
   private TipoAmbitoGeograficoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new TipoAmbitoGeograficoServiceImpl(repository);
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 TipoAmbitoGeografico
     List<TipoAmbitoGeografico> tipoAmbitoGeograficos = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -66,7 +66,7 @@ public class TipoAmbitoGeograficoServiceTest extends BaseServiceTest {
     Page<TipoAmbitoGeografico> page = service.findAll(null, paging);
 
     // then: Devuelve la pagina 3 con los TipoAmbitoGeografico del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -78,7 +78,7 @@ public class TipoAmbitoGeograficoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsTipoAmbitoGeografico() {
+  void findById_ReturnsTipoAmbitoGeografico() {
     // given: Un TipoAmbitoGeografico con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -91,11 +91,11 @@ public class TipoAmbitoGeograficoServiceTest extends BaseServiceTest {
     Assertions.assertThat(tipoAmbitoGeografico).as("isNotNull()").isNotNull();
     Assertions.assertThat(tipoAmbitoGeografico.getId()).as("getId()").isEqualTo(idBuscado);
     Assertions.assertThat(tipoAmbitoGeografico.getNombre()).as("getNombre()").isEqualTo("nombre-1");
-    Assertions.assertThat(tipoAmbitoGeografico.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(tipoAmbitoGeografico.getActivo()).as("getActivo()").isTrue();
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsTipoAmbitoGeograficoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsTipoAmbitoGeograficoNotFoundException() throws Exception {
     // given: Ningun TipoAmbitoGeografico con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());

@@ -8,14 +8,6 @@
       [title]="'eti.peticion-evaluacion.equipo-investigador' | translate"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.EQUIPO_INVESTIGADOR)">
     </sgi-action-fragment-menu-item>
-    <sgi-action-fragment-menu-item [route]="[PETICION_EVALUACION_ROUTE_NAMES.TAREAS]"
-      [title]="'eti.peticion-evaluacion.tarea.asignacion' | translate"
-      [fragment]="actionService.getFragment(actionService.FRAGMENT.TAREAS)">
-    </sgi-action-fragment-menu-item>
-    <sgi-action-fragment-menu-item [route]="[PETICION_EVALUACION_ROUTE_NAMES.MEMORIAS]"
-      [title]="'eti.memoria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
-      [fragment]="actionService.getFragment(actionService.FRAGMENT.MEMORIAS)">
-    </sgi-action-fragment-menu-item>
   </ng-container>
   <ng-container footer>
     <sgi-action-footer [texto]="textoCrear" [actionService]="actionService">

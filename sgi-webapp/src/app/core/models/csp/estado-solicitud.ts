@@ -42,6 +42,8 @@ export enum Estado {
   RESERVA_PROVISIONAL = 'RESERVA_PROVISIONAL',
   SOLICITADA = 'SOLICITADA',
   SUBSANACION = 'SUBSANACION',
+  RECHAZADA = 'RECHAZADA',
+  VALIDADA = 'VALIDADA'
 }
 
 export const ESTADO_MAP: Map<Estado, string> = new Map([
@@ -71,4 +73,6 @@ export const ESTADO_MAP: Map<Estado, string> = new Map([
   [Estado.RESERVA_PROVISIONAL, marker(`csp.estado-solicitud.RESERVA_PROVISIONAL`)],
   [Estado.SOLICITADA, marker(`csp.estado-solicitud.SOLICITADA`)],
   [Estado.SUBSANACION, marker(`csp.estado-solicitud.SUBSANACION`)],
+  [Estado.RECHAZADA, marker(`csp.estado-solicitud.RECHAZADA`)],
+  [Estado.VALIDADA, marker(`csp.estado-solicitud.VALIDADA`)],
 ]);

@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ModeloTipoFaseControllerTest
  */
 @WebMvcTest(ModeloTipoFaseController.class)
-public class ModeloTipoFaseControllerTest extends BaseControllerTest {
+class ModeloTipoFaseControllerTest extends BaseControllerTest {
 
   @MockBean
   private ModeloTipoFaseService modeloTipoFaseService;
@@ -32,7 +32,7 @@ public class ModeloTipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void create_ReturnsModeloTipoFase() throws Exception {
+  void create_ReturnsModeloTipoFase() throws Exception {
     // given: Un ModeloTipoFase nuevo
     ModeloTipoFase modeloTipoFase = generarModeloTipoFase(null);
 
@@ -57,7 +57,7 @@ public class ModeloTipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
 
     // given: Un ModeloTipoFase que produce un error al crearse porque ya tiene id
     ModeloTipoFase modeloTipoFase = generarModeloTipoFase(1L);
@@ -77,7 +77,7 @@ public class ModeloTipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
-  public void update_ReturnsModeloTipoFase() throws Exception {
+  void update_ReturnsModeloTipoFase() throws Exception {
     // given: Un ModeloTipoFase a modificar
     ModeloTipoFase modeloTipoFase = generarModeloTipoFaseConTipoFaseId(1L);
     String tipoFaseJson = mapper.writeValueAsString(modeloTipoFase);
@@ -96,7 +96,7 @@ public class ModeloTipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
-  public void update_WithIdNotExist_ReturnsNotFound() throws Exception {
+  void update_WithIdNotExist_ReturnsNotFound() throws Exception {
     // given: Un ModeloTipoFase a modificar
     ModeloTipoFase modeloTipoFase = generarModeloTipoFaseConTipoFaseId(1L);
     String replaceModeloTipoFaseJson = mapper.writeValueAsString(modeloTipoFase);
@@ -116,7 +116,7 @@ public class ModeloTipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
-  public void update_WithIdActivoFalse_ReturnsIllegalArgumentException() throws Exception {
+  void update_WithIdActivoFalse_ReturnsIllegalArgumentException() throws Exception {
     // given: Un ModeloTipoFase a modificar
     ModeloTipoFase modeloTipoFase = generarModeloTipoFaseConTipoFaseId(1L);
     modeloTipoFase.setActivo(false);
@@ -133,7 +133,7 @@ public class ModeloTipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsModeloTipoFase() throws Exception {
+  void findById_WithExistingId_ReturnsModeloTipoFase() throws Exception {
 
     // given: Entidad con un determinado Id
     ModeloTipoFase modeloTipoFase = generarModeloTipoFaseConTipoFaseId(1L);
@@ -154,7 +154,7 @@ public class ModeloTipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
 
     BDDMockito.given(modeloTipoFaseService.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ModeloTipoFaseNotFoundException(invocation.getArgument(0));
@@ -171,7 +171,7 @@ public class ModeloTipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
-  public void disableById_Returns204() throws Exception {
+  void disableById_Returns204() throws Exception {
     // given: ModeloTipoFase con el id buscado
     Long idBuscado = 1L;
     ModeloTipoFase modeloTipoFase = generarModeloTipoFaseConTipoFaseId(1L);

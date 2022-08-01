@@ -25,7 +25,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * ConceptoGastoServiceTest
  */
-public class ConceptoGastoServiceTest extends BaseServiceTest {
+class ConceptoGastoServiceTest extends BaseServiceTest {
 
   @Mock
   private ConceptoGastoRepository repository;
@@ -33,12 +33,12 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
   private ConceptoGastoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ConceptoGastoServiceImpl(repository);
   }
 
   @Test
-  public void create_ReturnsConceptoGasto() {
+  void create_ReturnsConceptoGasto() {
     // given: Un nuevo ConceptoGasto
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(null);
 
@@ -61,7 +61,7 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ConceptoGasto que ya tiene id
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(1L);
 
@@ -72,7 +72,7 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un nuevo ConceptoGasto con un nombre que ya existe
     ConceptoGasto conceptoGastoNew = generarMockConceptoGasto(null, "nombreRepetido");
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(1L, "nombreRepetido");
@@ -87,7 +87,7 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsConceptoGasto() {
+  void update_ReturnsConceptoGasto() {
     // given: Un nuevo ConceptoGasto con el nombre actualizado
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(1L);
     ConceptoGasto conceptoGastoNombreActualizado = generarMockConceptoGasto(1L, "NombreActualizado");
@@ -111,7 +111,7 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsConceptoGastoNotFoundException() {
+  void update_WithIdNotExist_ThrowsConceptoGastoNotFoundException() {
     // given: Un ConceptoGasto actualizado con un id que no existe
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(1L, "ConceptoGasto");
 
@@ -124,7 +124,7 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void update_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un ConceptoGasto actualizado con un nombre que ya existe
     ConceptoGasto conceptoGastoActualizado = generarMockConceptoGasto(1L, "nombreRepetido");
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(2L, "nombreRepetido");
@@ -140,7 +140,7 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_ReturnsConceptoGasto() {
+  void enable_ReturnsConceptoGasto() {
     // given: Un ConceptoGasto inactivo
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(1L);
     conceptoGasto.setActivo(false);
@@ -157,11 +157,11 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
     Assertions.assertThat(conceptoGastoActualizado).as("isNotNull()").isNotNull();
     Assertions.assertThat(conceptoGastoActualizado.getId()).as("getId()").isEqualTo(1L);
     Assertions.assertThat(conceptoGastoActualizado.getNombre()).as("getNombre()").isEqualTo(conceptoGasto.getNombre());
-    Assertions.assertThat(conceptoGastoActualizado.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(conceptoGastoActualizado.getActivo()).as("getActivo()").isTrue();
   }
 
   @Test
-  public void enable_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void enable_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un ConceptoGasto inactivo con un nombre que ya existe activo
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(1L, "nombreRepetido");
     conceptoGasto.setActivo(false);
@@ -177,7 +177,7 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithIdNotExist_ThrowsConceptoGastoNotFoundException() {
+  void enable_WithIdNotExist_ThrowsConceptoGastoNotFoundException() {
     // given: Un id de un ConceptoGasto que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -187,7 +187,7 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_ReturnsConceptoGasto() {
+  void disable_ReturnsConceptoGasto() {
     // given: Un nuevo ConceptoGasto activo
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(1L);
 
@@ -202,12 +202,12 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
     Assertions.assertThat(conceptoGastoActualizado).as("isNotNull()").isNotNull();
     Assertions.assertThat(conceptoGastoActualizado.getId()).as("getId()").isEqualTo(1L);
     Assertions.assertThat(conceptoGastoActualizado.getNombre()).as("getNombre()").isEqualTo(conceptoGasto.getNombre());
-    Assertions.assertThat(conceptoGastoActualizado.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(conceptoGastoActualizado.getActivo()).as("getActivo()").isFalse();
 
   }
 
   @Test
-  public void disable_WithIdNotExist_ThrowsConceptoGastoNotFoundException() {
+  void disable_WithIdNotExist_ThrowsConceptoGastoNotFoundException() {
     // given: Un id de un ConceptoGasto que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -217,7 +217,7 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNombreRepetido_ThrowsIllegalArgumentException() {
+  void update_WithNombreRepetido_ThrowsIllegalArgumentException() {
     // given: Un nuevo ConceptoGasto con un nombre que ya existe
     ConceptoGasto conceptoGastoUpdated = generarMockConceptoGasto(1L, "nombreRepetido");
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(2L, "nombreRepetido");
@@ -233,7 +233,7 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 ConceptoGasto
     List<ConceptoGasto> conceptoGastoes = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -263,7 +263,7 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
     Page<ConceptoGasto> page = service.findAll(null, paging);
 
     // then: Devuelve la pagina 3 con los ConceptoGasto del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -274,7 +274,7 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllTodos_ReturnsPage() {
+  void findAllTodos_ReturnsPage() {
     // given: Una lista con 37 ConceptoGasto
     List<ConceptoGasto> conceptoGastoes = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -304,7 +304,7 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
     Page<ConceptoGasto> page = service.findAllTodos(null, paging);
 
     // then: Devuelve la pagina 3 con los ConceptoGasto del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -315,7 +315,7 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsConceptoGasto() {
+  void findById_ReturnsConceptoGasto() {
     // given: Un ConceptoGasto con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.of(generarMockConceptoGasto(idBuscado)));
@@ -327,11 +327,11 @@ public class ConceptoGastoServiceTest extends BaseServiceTest {
     Assertions.assertThat(conceptoGasto).as("isNotNull()").isNotNull();
     Assertions.assertThat(conceptoGasto.getId()).as("getId()").isEqualTo(idBuscado);
     Assertions.assertThat(conceptoGasto.getNombre()).as("getNombre()").isEqualTo("nombre-1");
-    Assertions.assertThat(conceptoGasto.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(conceptoGasto.getActivo()).as("getActivo()").isTrue();
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsConceptoGastoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsConceptoGastoNotFoundException() throws Exception {
     // given: Ningun ConceptoGasto con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());

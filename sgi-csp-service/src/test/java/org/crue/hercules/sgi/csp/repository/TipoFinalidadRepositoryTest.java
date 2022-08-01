@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class TipoFinalidadRepositoryTest extends BaseRepositoryTest {
+class TipoFinalidadRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private TipoFinalidadRepository repository;
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsTipoFinalidad() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsTipoFinalidad() throws Exception {
     // given: data TipoFinalidad with nombre to find
     TipoFinalidad data = generarMockTipoFinalidad(1L, Boolean.TRUE);
     entityManager.persistAndFlush(data);
@@ -34,7 +34,7 @@ public class TipoFinalidadRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsNull() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsNull() throws Exception {
     // given: data TipoFinalidad with nombre to find
     TipoFinalidad data = generarMockTipoFinalidad(1L, Boolean.TRUE);
     entityManager.persistAndFlush(generarMockTipoFinalidad(2L, Boolean.TRUE));

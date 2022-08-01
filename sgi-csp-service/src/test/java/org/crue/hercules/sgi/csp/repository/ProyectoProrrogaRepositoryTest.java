@@ -19,13 +19,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * ProyectoProrrogaRepositoryTest
  */
 @DataJpaTest
-public class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
+class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ProyectoProrrogaRepository repository;
 
   @Test
-  public void findFirstByProyectoIdOrderByFechaConcesionDesc_ReturnsProyectoProrroga() throws Exception {
+  void findFirstByProyectoIdOrderByFechaConcesionDesc_ReturnsProyectoProrroga() throws Exception {
 
     // given: dos registros ProyectoProrroga.
     Proyecto proyecto = generarMockProyecto("-001");
@@ -46,7 +46,7 @@ public class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findFirstByProyectoIdOrderByFechaConcesionDesc_ReturnsEmpty() throws Exception {
+  void findFirstByProyectoIdOrderByFechaConcesionDesc_ReturnsEmpty() throws Exception {
 
     // given: dos registros ProyectoProrroga.
     Proyecto proyecto = generarMockProyecto("-001");
@@ -64,7 +64,7 @@ public class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findFirstByIdNotAndProyectoIdOrderByFechaConcesionDesc_ReturnsProyectoProrroga() throws Exception {
+  void findFirstByIdNotAndProyectoIdOrderByFechaConcesionDesc_ReturnsProyectoProrroga() throws Exception {
 
     // given: dos registros ProyectoProrroga.
     Proyecto proyecto = generarMockProyecto("-001");
@@ -88,7 +88,7 @@ public class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findFirstByIdNotAndProyectoIdOrderByFechaConcesionDesc_ReturnsEmpty() throws Exception {
+  void findFirstByIdNotAndProyectoIdOrderByFechaConcesionDesc_ReturnsEmpty() throws Exception {
 
     // given: dos registros ProyectoProrroga.
     Proyecto proyecto = generarMockProyecto("-001");

@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * SolicitudProyectoEquipoTest
  */
 @WebMvcTest(SolicitudProyectoEquipoController.class)
-public class SolicitudProyectoEquipoControllerTest extends BaseControllerTest {
+class SolicitudProyectoEquipoControllerTest extends BaseControllerTest {
 
   @MockBean
   private SolicitudProyectoEquipoService service;
@@ -32,7 +32,7 @@ public class SolicitudProyectoEquipoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsSolicitudProyectoEquipo() throws Exception {
+  void findById_WithExistingId_ReturnsSolicitudProyectoEquipo() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer(new Answer<SolicitudProyectoEquipo>() {
@@ -56,7 +56,7 @@ public class SolicitudProyectoEquipoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {

@@ -11,13 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ConfiguracionSolicitudRepositoryTest extends BaseRepositoryTest {
+class ConfiguracionSolicitudRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ConfiguracionSolicitudRepository repository;
 
   @Test
-  public void findByConvocatoriaId_ReturnsConfiguracionSolicitud() throws Exception {
+  void findByConvocatoriaId_ReturnsConfiguracionSolicitud() throws Exception {
     // given: data ConfiguracionSolicitud to find by Convocatoria
     // @formatter:off
     Convocatoria convocatoria1 = entityManager.persistAndFlush(Convocatoria.builder()
@@ -56,7 +56,7 @@ public class ConfiguracionSolicitudRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByModeloEjecucionId_ReturnsNull() throws Exception {
+  void findByModeloEjecucionId_ReturnsNull() throws Exception {
     // given: data ConfiguracionSolicitud to find by Convocatoria
     // @formatter:off
     Convocatoria convocatoria1 = entityManager.persistAndFlush(Convocatoria.builder()

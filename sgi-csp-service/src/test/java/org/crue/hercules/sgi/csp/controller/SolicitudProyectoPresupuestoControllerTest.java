@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * SolicitudProyectoPresupuestoControllerTest
  */
 @WebMvcTest(SolicitudProyectoPresupuestoController.class)
-public class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTest {
+class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTest {
 
   @MockBean
   private SolicitudProyectoPresupuestoService service;
@@ -36,7 +36,7 @@ public class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTe
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void create_ReturnsSolicitudProyectoPresupuesto() throws Exception {
+  void create_ReturnsSolicitudProyectoPresupuesto() throws Exception {
     // given: new SolicitudProyectoPresupuesto
     SolicitudProyectoPresupuesto solicitudProyectoPresupuesto = generarSolicitudProyectoPresupuesto(null, 1L, 1L);
 
@@ -72,7 +72,7 @@ public class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTe
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a SolicitudProyectoPresupuesto with id filled
     SolicitudProyectoPresupuesto solicitudProyectoPresupuesto = generarSolicitudProyectoPresupuesto(1L, 1L, 1L);
 
@@ -91,7 +91,7 @@ public class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTe
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void update_WithExistingId_ReturnsSolicitudProyectoPresupuesto() throws Exception {
+  void update_WithExistingId_ReturnsSolicitudProyectoPresupuesto() throws Exception {
     // given: existing SolicitudProyectoPresupuesto
     SolicitudProyectoPresupuesto updatedSolicitudProyectoPresupuesto = generarSolicitudProyectoPresupuesto(1L, 1L, 1L);
     // updatedSolicitudProyectoPresupuesto.setMesFin(12);
@@ -128,7 +128,7 @@ public class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTe
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: a SolicitudProyectoPresupuesto with non existing id
     SolicitudProyectoPresupuesto updatedSolicitudProyectoPresupuesto = generarSolicitudProyectoPresupuesto(1L, 1L, 1L);
 
@@ -150,7 +150,7 @@ public class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTe
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.doNothing().when(service).delete(ArgumentMatchers.anyLong());
@@ -165,7 +165,7 @@ public class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTe
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void delete_WithoutId_Return404() throws Exception {
+  void delete_WithoutId_Return404() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -184,7 +184,7 @@ public class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTe
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsSolicitudProyectoPresupuesto() throws Exception {
+  void findById_WithExistingId_ReturnsSolicitudProyectoPresupuesto() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong()))
@@ -209,7 +209,7 @@ public class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTe
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {

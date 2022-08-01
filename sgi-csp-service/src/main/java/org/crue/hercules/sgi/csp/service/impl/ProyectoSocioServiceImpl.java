@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
@@ -99,12 +100,14 @@ public class ProyectoSocioServiceImpl implements ProyectoSocioService {
       // Validaciones
       Assert.isTrue(!isRangoFechasSolapado(proyectoSocio), "El rango de fechas del socio se solapa");
 
-      if (!proyectoSocio.getRolSocio().getCoordinador() && proyectoSocioExistente.getRolSocio().getCoordinador()) {
+      if (!proyectoSocio.getRolSocio().getCoordinador().booleanValue()
+          && proyectoSocioExistente.getRolSocio().getCoordinador().booleanValue()) {
 
         Proyecto proyecto = proyectoRepository.findById(proyectoSocioExistente.getProyectoId())
             .orElseThrow(() -> new ProyectoNotFoundException(proyectoSocioExistente.getProyectoId()));
-        if (proyecto.getEstado().getEstado().equals(EstadoProyecto.Estado.CONCEDIDO) && proyecto.getColaborativo()
-            && proyecto.getCoordinadorExterno()) {
+        if (proyecto.getEstado().getEstado().equals(EstadoProyecto.Estado.CONCEDIDO)
+            && proyecto.getColaborativo().booleanValue()
+            && proyecto.getCoordinadorExterno().booleanValue()) {
 
           Assert.isTrue(existsProyectoSocioCoordinador(proyectoSocioExistente.getProyectoId()),
               "Debe existir al menos un socio con TipoRolSocio que tenga el campo coordinador a true");
@@ -138,24 +141,26 @@ public class ProyectoSocioServiceImpl implements ProyectoSocioService {
 
     Assert.notNull(id, "ProyectoSocio id no puede ser null para desactivar un ProyectoSocio");
 
-    repository.findById(id).map(proyectoSocio -> {
-
+    Optional<ProyectoSocio> socio = repository.findById(id);
+    if (socio.isPresent()) {
       // Validaciones
-      if (proyectoSocio.getRolSocio().getCoordinador()) {
+      if (socio.get().getRolSocio().getCoordinador().booleanValue()) {
 
-        Proyecto proyecto = proyectoRepository.findById(proyectoSocio.getProyectoId())
-            .orElseThrow(() -> new ProyectoNotFoundException(proyectoSocio.getProyectoId()));
-        if (proyecto.getEstado().getEstado().equals(EstadoProyecto.Estado.CONCEDIDO) && proyecto.getColaborativo()
-            && proyecto.getCoordinadorExterno()) {
+        Proyecto proyecto = proyectoRepository.findById(socio.get().getProyectoId())
+            .orElseThrow(() -> new ProyectoNotFoundException(socio.get().getProyectoId()));
+        if (proyecto.getEstado().getEstado().equals(EstadoProyecto.Estado.CONCEDIDO)
+            && proyecto.getColaborativo().booleanValue()
+            && proyecto.getCoordinadorExterno().booleanValue()) {
 
-          Assert.isTrue(existsProyectoSocioCoordinador(proyectoSocio.getProyectoId()),
+          Assert.isTrue(existsProyectoSocioCoordinador(socio.get().getProyectoId()),
               "Debe existir al menos un socio con TipoRolSocio que tenga el campo coordinador a true");
         }
 
       }
+    } else {
+      throw new ProyectoSocioNotFoundException(id);
+    }
 
-      return proyectoSocio;
-    }).orElseThrow(() -> new ProyectoSocioNotFoundException(id));
     equipoRepository.deleteByProyectoSocioId(id);
     periodoPagoRepository.deleteByProyectoSocioId(id);
     documentoRepository.deleteByProyectoSocioPeriodoJustificacionProyectoSocioId(id);
@@ -229,7 +234,7 @@ public class ProyectoSocioServiceImpl implements ProyectoSocioService {
     Specification<ProyectoSocio> specCoordinadores = ProyectoSocioSpecifications.sociosCoordinadores();
 
     Specification<ProyectoSocio> specs = Specification.where(specByProyecto).and(specCoordinadores);
-    boolean returnValue = repository.count(specs) > 0 ? true : false;
+    boolean returnValue = repository.count(specs) > 0;
     log.debug("existsProyectoSocioCoordinador(Long proyectoId) - end");
     return returnValue;
   }
@@ -254,7 +259,7 @@ public class ProyectoSocioServiceImpl implements ProyectoSocioService {
 
     Specification<ProyectoSocio> specs = Specification.where(specByProyecto).and(specByEmpresaRef)
         .and(specByRangoFechaSolapados).and(specByIdNotEqual);
-    boolean returnValue = repository.count(specs) > 0 ? true : false;
+    boolean returnValue = repository.count(specs) > 0;
     log.debug("isRangoFechasSolapado(ProyectoSocio proyectoSocio) - end");
     return returnValue;
   }

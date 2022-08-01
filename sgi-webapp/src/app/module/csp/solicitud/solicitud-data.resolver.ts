@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { Estado } from '@core/models/csp/estado-solicitud';
+import { ISolicitudRrhhTutor } from '@core/models/csp/solicitud-rrhh-tutor';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { SolicitudProyectoService } from '@core/services/csp/solicitud-proyecto.service';
+import { SolicitudRrhhService } from '@core/services/csp/solicitud-rrhh/solicitud-rrhh.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiAuthService } from '@sgi/framework/auth';
@@ -32,7 +35,9 @@ export class SolicitudDataResolver extends SgiResolverResolver<ISolicitudData> {
     snackBar: SnackBarService,
     private service: SolicitudService,
     private authService: SgiAuthService,
-    private solicitudProyectoService: SolicitudProyectoService) {
+    private solicitudProyectoService: SolicitudProyectoService,
+    private solicitudRrhhService: SolicitudRrhhService
+  ) {
     super(logger, router, snackBar, MSG_NOT_FOUND);
   }
 
@@ -67,9 +72,19 @@ export class SolicitudDataResolver extends SgiResolverResolver<ISolicitudData> {
           return of(data);
         }
 
-        return this.service.modificableEstadoAndDocumentosByInvestigador(data.solicitud.id).pipe(
-          map(value => {
-            data.estadoAndDocumentosReadonly = !value;
+        return forkJoin(
+          {
+            modificableEstadoAndDocumentos: this.service.modificableEstadoAndDocumentosByInvestigador(data.solicitud.id),
+            modificableEstadoAsTutor: data.solicitud.formularioSolicitud === FormularioSolicitud.RRHH
+              ? this.service.modificableEstadoAsTutor(data.solicitud.id) : of(false),
+            tutorRrhh: data.solicitud.formularioSolicitud === FormularioSolicitud.RRHH
+              ? this.solicitudRrhhService.findTutor(data.solicitud.id) : of({} as ISolicitudRrhhTutor)
+          }
+        ).pipe(
+          map(({ modificableEstadoAndDocumentos, modificableEstadoAsTutor, tutorRrhh }) => {
+            data.estadoAndDocumentosReadonly = !modificableEstadoAndDocumentos;
+            data.modificableEstadoAsTutor = modificableEstadoAsTutor;
+            data.isTutor = tutorRrhh?.tutor?.id === this.authService.authStatus$?.getValue()?.userRefId;
             return data;
           })
         );

@@ -93,8 +93,9 @@ public class SolicitudHitoService {
         solicitudHitoInput.getFecha(), solicitudHitoInput.getTipoHitoId()).isPresent(),
         "Ya existe un Hito con el mismo tipo en esa fecha");
 
-    solicitudRepository.findById(solicitudHitoInput.getSolicitudId())
-        .orElseThrow(() -> new SolicitudNotFoundException(solicitudHitoInput.getSolicitudId()));
+    if (!solicitudRepository.existsById(solicitudHitoInput.getSolicitudId())) {
+      throw new SolicitudNotFoundException(solicitudHitoInput.getSolicitudId());
+    }
 
     TipoHito tipoHito = tipoHitoRepository.findById(solicitudHitoInput.getTipoHitoId())
         .orElseThrow(() -> new TipoHitoNotFoundException(solicitudHitoInput.getTipoHitoId()));
@@ -147,8 +148,9 @@ public class SolicitudHitoService {
               "Ya existe un Hito con el mismo tipo en esa fecha");
         });
 
-    solicitudRepository.findById(solicitudHitoInput.getSolicitudId())
-        .orElseThrow(() -> new SolicitudNotFoundException(solicitudHitoInput.getSolicitudId()));
+    if (!solicitudRepository.existsById(solicitudHitoInput.getSolicitudId())) {
+      throw new SolicitudNotFoundException(solicitudHitoInput.getSolicitudId());
+    }
 
     TipoHito tipoHito = tipoHitoRepository.findById(solicitudHitoInput.getTipoHitoId())
         .orElseThrow(() -> new TipoHitoNotFoundException(solicitudHitoInput.getTipoHitoId()));

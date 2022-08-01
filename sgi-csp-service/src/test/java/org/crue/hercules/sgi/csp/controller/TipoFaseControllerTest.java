@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * TipoFaseControllerTest
  */
 @WebMvcTest(TipoFaseController.class)
-public class TipoFaseControllerTest extends BaseControllerTest {
+class TipoFaseControllerTest extends BaseControllerTest {
 
   @MockBean
   private TipoFaseService tipoFaseService;
@@ -44,7 +44,7 @@ public class TipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFASE-C" })
-  public void create_ReturnsTipoFase() throws Exception {
+  void create_ReturnsTipoFase() throws Exception {
     // given: Un TipoFase nuevo
     String tipoFaseJson = "{ \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\",  \"activo\": \"true\"  }";
     BDDMockito.given(tipoFaseService.create(ArgumentMatchers.<TipoFase>any())).will((InvocationOnMock invocation) -> {
@@ -68,7 +68,7 @@ public class TipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFASE-C" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: Un TipoFase que produce un error al crearse porque ya tiene id
     String tipoFaseJson = "{ \"id\": \"1\", \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\" }";
     BDDMockito.given(tipoFaseService.create(ArgumentMatchers.<TipoFase>any()))
@@ -85,7 +85,7 @@ public class TipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFASE-E" })
-  public void update_ReturnsTipoFase() throws Exception {
+  void update_ReturnsTipoFase() throws Exception {
     // given: Un TipoFase a modificar
     String tipoFaseJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true }";
 
@@ -106,7 +106,7 @@ public class TipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFASE-E" })
-  public void update_WithIdNotExist_ReturnsNotFound() throws Exception {
+  void update_WithIdNotExist_ReturnsNotFound() throws Exception {
     // given: Un TipoFase a modificar
     String replaceTipoFaseJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true }";
     BDDMockito.given(tipoFaseService.update(ArgumentMatchers.<TipoFase>any())).will((InvocationOnMock invocation) -> {
@@ -123,7 +123,7 @@ public class TipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFASE-E" })
-  public void update_WithNombreRepetido_Returns400() throws Exception {
+  void update_WithNombreRepetido_Returns400() throws Exception {
     // given: Un TipoFase que produce un error porque ya existe otro con el
     // mismo nombre
     String tipoFaseJson = "{ \"id\": \"2\", \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\" }";
@@ -141,7 +141,7 @@ public class TipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void findAll_ReturnsPage() throws Exception {
+  void findAll_ReturnsPage() throws Exception {
     // given: Una lista con 37 TipoFase
     List<TipoFase> tiposFase = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -189,7 +189,7 @@ public class TipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void findAll_EmptyList_Returns204() throws Exception {
+  void findAll_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de TipoFase
     List<TipoFase> tiposFase = new ArrayList<>();
     Integer page = 0;
@@ -216,7 +216,7 @@ public class TipoFaseControllerTest extends BaseControllerTest {
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFASE-V", "CSP-TFASE-C", "CSP-TFASE-E", "CSP-TFASE-B",
       "CSP-TFASE-R" })
-  public void findAllTodos_ReturnsPage() throws Exception {
+  void findAllTodos_ReturnsPage() throws Exception {
     // given: Una lista con 37 TipoFase
     List<TipoFase> tiposFase = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -265,7 +265,7 @@ public class TipoFaseControllerTest extends BaseControllerTest {
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFASE-V", "CSP-TFASE-C", "CSP-TFASE-E", "CSP-TFASE-B",
       "CSP-TFASE-R" })
-  public void findAllTodos_EmptyList_Returns204() throws Exception {
+  void findAllTodos_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de TipoFase
     List<TipoFase> tiposFase = new ArrayList<>();
     Integer page = 0;
@@ -291,7 +291,7 @@ public class TipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_ReturnsTipoFase() throws Exception {
+  void findById_ReturnsTipoFase() throws Exception {
     // given: Un TipoFase con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(tipoFaseService.findById(ArgumentMatchers.anyLong())).willReturn((generarMockTipoFase(idBuscado)));
@@ -309,7 +309,7 @@ public class TipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFASE-R" })
-  public void reactivar_WithExistingId_ReturnTipoFase() throws Exception {
+  void reactivar_WithExistingId_ReturnTipoFase() throws Exception {
     // given: existing id
     TipoFase tipoFase = generarMockTipoFase(1L);
     tipoFase.setActivo(Boolean.FALSE);
@@ -336,7 +336,7 @@ public class TipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFASE-R" })
-  public void reactivar_NoExistingId_Return404() throws Exception {
+  void reactivar_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -355,7 +355,7 @@ public class TipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFASE-B" })
-  public void desactivar_WithExistingId_ReturnTipoFase() throws Exception {
+  void desactivar_WithExistingId_ReturnTipoFase() throws Exception {
     // given: existing id
     Long idBuscado = 1L;
     TipoFase tipoFase = generarMockTipoFase(idBuscado);
@@ -384,7 +384,7 @@ public class TipoFaseControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFASE-B" })
-  public void desactivar_NoExistingId_Return404() throws Exception {
+  void desactivar_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
     BDDMockito.willThrow(new TipoFaseNotFoundException(id)).given(tipoFaseService)
@@ -407,7 +407,7 @@ public class TipoFaseControllerTest extends BaseControllerTest {
    * @param id id del TipoFase
    * @return el objeto TipoFase
    */
-  public TipoFase generarMockTipoFase(Long id) {
+  TipoFase generarMockTipoFase(Long id) {
     return generarMockTipoFase(id, "nombre-" + id);
   }
 
@@ -417,7 +417,7 @@ public class TipoFaseControllerTest extends BaseControllerTest {
    * @param id id del TipoFase
    * @return el objeto TipoFase
    */
-  public TipoFase generarMockTipoFase(Long id, String nombre) {
+  TipoFase generarMockTipoFase(Long id, String nombre) {
     TipoFase tipoFase = new TipoFase();
     tipoFase.setId(id);
     tipoFase.setNombre(nombre);

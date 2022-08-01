@@ -19,6 +19,8 @@ export class ConvocatoriaRequisitosEquipoFragment extends FormFragment<IConvocat
 
   nivelesAcademicos$ = new BehaviorSubject<StatusWrapper<IRequisitoEquipoNivelAcademico>[]>([]);
   categoriasProfesionales$ = new BehaviorSubject<StatusWrapper<IRequisitoEquipoCategoriaProfesional>[]>([]);
+  nivelesAcademicosEliminados: IRequisitoEquipoNivelAcademico[] = [];
+  categoriasProfesionalesEliminadas: IRequisitoEquipoCategoriaProfesional[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -184,9 +186,11 @@ export class ConvocatoriaRequisitosEquipoFragment extends FormFragment<IConvocat
   saveOrUpdate(): Observable<number> {
     const datosrequisitoEquipo = this.getValue();
     datosrequisitoEquipo.convocatoriaId = this.getKey() as number;
-    const obs = datosrequisitoEquipo.id ? this.update(datosrequisitoEquipo) :
-      this.create(datosrequisitoEquipo);
+    const obs = datosrequisitoEquipo.id ? this.update(datosrequisitoEquipo) : this.create(datosrequisitoEquipo);
     return obs.pipe(
+      tap(result => this.requisitoEquipo = result),
+      switchMap((result) => this.saveOrUpdateNivelesAcademicos(result)),
+      switchMap((result) => this.saveOrUpdateCategoriasProfesionales(result)),
       map((value) => {
         this.requisitoEquipo = value;
         return this.requisitoEquipo.id;
@@ -200,6 +204,9 @@ export class ConvocatoriaRequisitosEquipoFragment extends FormFragment<IConvocat
       (value) => value === wrapper
     );
     if (index >= 0) {
+      if (!wrapper.created) {
+        this.nivelesAcademicosEliminados.push(wrapper.value);
+      }
       current.splice(index, 1);
       this.nivelesAcademicos$.next(current);
       this.setChanges(true);
@@ -212,6 +219,9 @@ export class ConvocatoriaRequisitosEquipoFragment extends FormFragment<IConvocat
       (value) => value === wrapper
     );
     if (index >= 0) {
+      if (!wrapper.created) {
+        this.categoriasProfesionalesEliminadas.push(wrapper.value);
+      }
       current.splice(index, 1);
       this.categoriasProfesionales$.next(current);
       this.setChanges(true);
@@ -252,24 +262,23 @@ export class ConvocatoriaRequisitosEquipoFragment extends FormFragment<IConvocat
     if (!requisitoEquipo.id) {
       requisitoEquipo.id = this.getKey() as number;
     }
-    return this.convocatoriaRequisitoEquipoService.create(requisitoEquipo).pipe(
-      tap(result => this.requisitoEquipo = result),
-      switchMap((result) => this.saveOrUpdateNivelesAcademicos(result)),
-      switchMap((result) => this.saveOrUpdateCategoriasProfesionales(result))
-    );
+    return this.convocatoriaRequisitoEquipoService.create(requisitoEquipo);
   }
 
   private update(requisitoEquipo: IConvocatoriaRequisitoEquipo): Observable<IConvocatoriaRequisitoEquipo> {
-    return this.convocatoriaRequisitoEquipoService.update(Number(this.getKey()), requisitoEquipo).pipe(
-      tap(result => this.requisitoEquipo = result),
-      switchMap((result) => this.saveOrUpdateNivelesAcademicos(result)),
-      switchMap((result) => this.saveOrUpdateCategoriasProfesionales(result))
-    );
+    return this.convocatoriaRequisitoEquipoService.update(Number(this.getKey()), requisitoEquipo);
   }
 
-  saveOrUpdateNivelesAcademicos(requisitoIp: IConvocatoriaRequisitoEquipo): Observable<IConvocatoriaRequisitoEquipo> {
+  saveOrUpdateNivelesAcademicos(requisitoEquipo: IConvocatoriaRequisitoEquipo): Observable<IConvocatoriaRequisitoEquipo> {
+    const hasChanges = this.nivelesAcademicosEliminados.length > 0
+      || this.nivelesAcademicos$.value.some(nivelAcademico => nivelAcademico.created);
+
+    if (!hasChanges) {
+      return of(requisitoEquipo);
+    }
+
     const values = this.nivelesAcademicos$.value.map(wrapper => {
-      wrapper.value.requisitoEquipo = requisitoIp;
+      wrapper.value.requisitoEquipo = requisitoEquipo;
       return wrapper.value;
     }
     );
@@ -278,6 +287,7 @@ export class ConvocatoriaRequisitosEquipoFragment extends FormFragment<IConvocat
       .pipe(
         takeLast(1),
         map((results) => {
+          this.nivelesAcademicosEliminados = [];
           this.nivelesAcademicos$.next(
             results.map(
               (value) => {
@@ -288,13 +298,20 @@ export class ConvocatoriaRequisitosEquipoFragment extends FormFragment<IConvocat
               })
           );
         }),
-        switchMap(() => of(requisitoIp))
+        switchMap(() => of(requisitoEquipo))
       );
   }
 
-  saveOrUpdateCategoriasProfesionales(requisitoIp: IConvocatoriaRequisitoEquipo): Observable<IConvocatoriaRequisitoEquipo> {
+  saveOrUpdateCategoriasProfesionales(requisitoEquipo: IConvocatoriaRequisitoEquipo): Observable<IConvocatoriaRequisitoEquipo> {
+    const hasChanges = this.categoriasProfesionalesEliminadas.length > 0
+      || this.categoriasProfesionales$.value.some(nivelAcademico => nivelAcademico.created);
+
+    if (!hasChanges) {
+      return of(requisitoEquipo);
+    }
+
     const values = this.categoriasProfesionales$.value.map(wrapper => {
-      wrapper.value.requisitoEquipo = requisitoIp;
+      wrapper.value.requisitoEquipo = requisitoEquipo;
       return wrapper.value;
     }
     );
@@ -303,6 +320,7 @@ export class ConvocatoriaRequisitosEquipoFragment extends FormFragment<IConvocat
       .pipe(
         takeLast(1),
         map((results) => {
+          this.categoriasProfesionalesEliminadas = [];
           this.categoriasProfesionales$.next(
             results.map(
               (value) => {
@@ -313,7 +331,7 @@ export class ConvocatoriaRequisitosEquipoFragment extends FormFragment<IConvocat
               })
           );
         }),
-        switchMap(() => of(requisitoIp))
+        switchMap(() => of(requisitoEquipo))
       );
   }
 

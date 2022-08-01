@@ -28,7 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.test.context.support.WithMockUser;
 
-public class ConvocatoriaEntidadGestoraServiceTest extends BaseServiceTest {
+class ConvocatoriaEntidadGestoraServiceTest extends BaseServiceTest {
 
   @Mock
   private ConvocatoriaEntidadGestoraRepository convocatoriaEntidadGestoraRepository;
@@ -40,20 +40,19 @@ public class ConvocatoriaEntidadGestoraServiceTest extends BaseServiceTest {
   private ConvocatoriaEntidadGestoraService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ConvocatoriaEntidadGestoraServiceImpl(convocatoriaEntidadGestoraRepository, convocatoriaRepository,
         configuracionSolicitudRepository);
   }
 
   @Test
-  public void create_ReturnsConvocatoriaEntidadGestora() {
+  void create_ReturnsConvocatoriaEntidadGestora() {
     // given: new ConvocatoriaEntidadGestora
     Long convocatoriaId = 1L;
-    Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
     ConvocatoriaEntidadGestora newConvocatoriaEntidadGestora = generarConvocatoriaEntidadGestora(null, convocatoriaId,
         "entidad-001");
 
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
+    BDDMockito.given(convocatoriaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(true);
     BDDMockito.given(convocatoriaEntidadGestoraRepository.findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(),
         ArgumentMatchers.anyString())).willReturn(Optional.empty());
 
@@ -82,7 +81,7 @@ public class ConvocatoriaEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadGestora with id filled
     ConvocatoriaEntidadGestora newConvocatoriaEntidadGestora = generarConvocatoriaEntidadGestora(1L, 1L, "entidad-001");
 
@@ -94,7 +93,7 @@ public class ConvocatoriaEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutConvocatoriaId_ThrowsIllegalArgumentException() {
+  void create_WithoutConvocatoriaId_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadGestora without ConvocatoriaId
     ConvocatoriaEntidadGestora newConvocatoriaEntidadGestora = generarConvocatoriaEntidadGestora(null, null,
         "entidad-001");
@@ -107,7 +106,7 @@ public class ConvocatoriaEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutEntidadRef_ThrowsIllegalArgumentException() {
+  void create_WithoutEntidadRef_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadGestora without EntidadRef
     ConvocatoriaEntidadGestora newConvocatoriaEntidadGestora = generarConvocatoriaEntidadGestora(null, 1L, null);
 
@@ -119,12 +118,12 @@ public class ConvocatoriaEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingConvocatoria_404() {
+  void create_WithNoExistingConvocatoria_404() {
     // given: a ConvocatoriaEntidadGestora with non existing Convocatoria
     ConvocatoriaEntidadGestora newConvocatoriaEntidadGestora = generarConvocatoriaEntidadGestora(null, 1L,
         "entidad-001");
 
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
+    BDDMockito.given(convocatoriaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(false);
 
     Assertions.assertThatThrownBy(
         // when: create ConvocatoriaEntidadGestora
@@ -134,17 +133,16 @@ public class ConvocatoriaEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedConvocatoriaIdAndEntidadRef_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedConvocatoriaIdAndEntidadRef_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadGestora assigned with same
     // Convocatoria And EntidadRef
     Long convocatoriaId = 1L;
-    Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
     ConvocatoriaEntidadGestora newConvocatoriaEntidadGestora = generarConvocatoriaEntidadGestora(null, convocatoriaId,
         "entidad-001");
     ConvocatoriaEntidadGestora ConvocatoriaEntidadGestoraExistente = generarConvocatoriaEntidadGestora(1L,
         convocatoriaId, "entidad-001");
 
-    BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
+    BDDMockito.given(convocatoriaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(true);
     BDDMockito.given(convocatoriaEntidadGestoraRepository.findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(),
         ArgumentMatchers.anyString())).willReturn(Optional.of(ConvocatoriaEntidadGestoraExistente));
 
@@ -157,7 +155,7 @@ public class ConvocatoriaEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_ReturnsConvocatoriaEntidadGestora() {
+  void delete_WithExistingId_ReturnsConvocatoriaEntidadGestora() {
     // given: existing ConvocatoriaEntidadGestora
     Long id = 1L;
 
@@ -173,7 +171,7 @@ public class ConvocatoriaEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
+  void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
     // given: no id
     Long id = null;
 
@@ -185,7 +183,7 @@ public class ConvocatoriaEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -201,7 +199,7 @@ public class ConvocatoriaEntidadGestoraServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void findAllByConvocatoria_ReturnsPage() {
+  void findAllByConvocatoria_ReturnsPage() {
     // given: Una lista con 37 ConvocatoriaEntidadGestora para la Convocatoria
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -235,7 +233,7 @@ public class ConvocatoriaEntidadGestoraServiceTest extends BaseServiceTest {
     Page<ConvocatoriaEntidadGestora> page = service.findAllByConvocatoria(convocatoriaId, null, paging);
 
     // then: Devuelve la pagina 3 con los ConvocatoriaEntidadGestora del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

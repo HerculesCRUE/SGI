@@ -25,7 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de ConvocatoriaPeriodoJustificacion.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ConvocatoriaPeriodoJustificacionIT extends BaseIT {
+class ConvocatoriaPeriodoJustificacionIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/convocatoriaperiodojustificaciones";
@@ -55,7 +55,7 @@ public class ConvocatoriaPeriodoJustificacionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void updateConvocatoriaPeriodoJustificacionesConvocatoria_ReturnsConvocatoriaPeriodoJustificacionList()
+  void updateConvocatoriaPeriodoJustificacionesConvocatoria_ReturnsConvocatoriaPeriodoJustificacionList()
       throws Exception {
 
     // given: una lista con uno de los ConvocatoriaPeriodoJustificacion actualizado,
@@ -143,7 +143,7 @@ public class ConvocatoriaPeriodoJustificacionIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsConvocatoriaPeriodoJustificacion() throws Exception {
+  void findById_ReturnsConvocatoriaPeriodoJustificacion() throws Exception {
     Long idConvocatoriaPeriodoJustificacion = 1L;
 
     final ResponseEntity<ConvocatoriaPeriodoJustificacion> response = restTemplate.exchange(

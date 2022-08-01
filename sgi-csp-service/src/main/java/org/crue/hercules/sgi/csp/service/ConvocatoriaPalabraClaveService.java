@@ -84,7 +84,7 @@ public class ConvocatoriaPalabraClaveService {
     repository.deleteInBulkByConvocatoriaId(convocatoriaId);
 
     List<ConvocatoriaPalabraClave> returnValue = new ArrayList<>();
-    if (palabrasClave != null && !palabrasClave.isEmpty()) {
+    if (!palabrasClave.isEmpty()) {
       // Eliminamos duplicados de la nueva lista
       List<ConvocatoriaPalabraClave> uniquePalabrasClave = palabrasClave.stream().distinct()
           .collect(Collectors.toList());

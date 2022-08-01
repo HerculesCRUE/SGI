@@ -17,13 +17,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * ProyectoEntidadGestoraRepositoryTest
  */
 @DataJpaTest
-public class ProyectoEntidadGestoraRepositoryTest extends BaseRepositoryTest {
+class ProyectoEntidadGestoraRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ProyectoEntidadGestoraRepository repository;
 
   @Test
-  public void existsProyectoEntidadGestoraByProyectoIdAndEntidadRef_ReturnsTRUE() throws Exception {
+  void existsProyectoEntidadGestoraByProyectoIdAndEntidadRef_ReturnsTRUE() throws Exception {
 
     // given: dos registros ProyectoEntidadGestora.
     ProyectoEntidadGestora proyectoEntidadGestora1 = generarMockProyectoEntidadGestora("-001");
@@ -43,7 +43,7 @@ public class ProyectoEntidadGestoraRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void existsProyectoEntidadGestoraByProyectoIdAndEntidadRef_ReturnsFALSE() throws Exception {
+  void existsProyectoEntidadGestoraByProyectoIdAndEntidadRef_ReturnsFALSE() throws Exception {
 
     // given: dos registros ProyectoEntidadGestora.
     ProyectoEntidadGestora proyectoEntidadGestora1 = generarMockProyectoEntidadGestora("-001");
@@ -62,7 +62,7 @@ public class ProyectoEntidadGestoraRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void existsProyectoEntidadGestoraByIdNotAndProyectoIdAndEntidadRef_ReturnsTRUE() throws Exception {
+  void existsProyectoEntidadGestoraByIdNotAndProyectoIdAndEntidadRef_ReturnsTRUE() throws Exception {
 
     // given: dos registros ProyectoEntidadGestora.
     ProyectoEntidadGestora proyectoEntidadGestora1 = generarMockProyectoEntidadGestora("-001");
@@ -83,7 +83,7 @@ public class ProyectoEntidadGestoraRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void existsProyectoEntidadGestoraByIdNotAndProyectoIdAndEntidadRef_ReturnsFALSE() throws Exception {
+  void existsProyectoEntidadGestoraByIdNotAndProyectoIdAndEntidadRef_ReturnsFALSE() throws Exception {
 
     // given: dos registros ProyectoEntidadGestora.
     ProyectoEntidadGestora proyectoEntidadGestora1 = generarMockProyectoEntidadGestora("-001");

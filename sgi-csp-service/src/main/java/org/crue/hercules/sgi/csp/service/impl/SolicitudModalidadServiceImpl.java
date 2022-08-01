@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.exceptions.ProgramaNotFoundException;
@@ -119,7 +120,7 @@ public class SolicitudModalidadServiceImpl implements SolicitudModalidadService 
     Assert.isTrue(solicitudService.modificable(solicitudModalidad.getSolicitudId()),
         "No se puede modificar SolicitudModalidad");
 
-    return repository.findById(solicitudModalidad.getId()).map((data) -> {
+    return repository.findById(solicitudModalidad.getId()).map(data -> {
 
       Solicitud solicitud = solicitudRepository.findById(data.getSolicitudId())
           .orElseThrow(() -> new SolicitudNotFoundException(data.getSolicitudId()));
@@ -214,10 +215,10 @@ public class SolicitudModalidadServiceImpl implements SolicitudModalidadService 
   private boolean isModalidadDescencientePrograma(Programa modalidad, Programa programa) {
     log.debug("isModalidadDescencientePrograma(Programa modalidad, Programa programa) - start");
 
-    boolean programaEncontrado = (programa.getId() == modalidad.getId());
+    boolean programaEncontrado = (Objects.equals(programa.getId(), modalidad.getId()));
     while (modalidad != null && modalidad.getPadre() != null && !programaEncontrado) {
       modalidad = programaRepository.findById(modalidad.getPadre().getId()).orElse(null);
-      programaEncontrado = (modalidad != null && programa.getId() == modalidad.getId());
+      programaEncontrado = (modalidad != null && Objects.equals(programa.getId(), modalidad.getId()));
     }
 
     log.debug("isModalidadDescencientePrograma(Programa modalidad, Programa programa) - end");

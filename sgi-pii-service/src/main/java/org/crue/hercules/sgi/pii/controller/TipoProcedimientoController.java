@@ -40,14 +40,15 @@ public class TipoProcedimientoController {
   /**
    * Devuelve todos los tiposProcedimientos activos
    * 
-   * @param query
-   * @param paging
+   * @param query  filtro
+   * @param paging paginacion info
    * @return la lista de entidades {@link TipoProcedimiento} paginada con
    *         posibilidad de filtrado
    */
   @GetMapping
   @PreAuthorize("hasAnyAuthority('PII-TPR-V', 'PII-TPR-C', 'PII-TPR-E', 'PII-TPR-B', 'PII-TPR-R', 'PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R')")
-  ResponseEntity<Page<TipoProcedimientoOutput>> findActivos(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<TipoProcedimientoOutput>> findActivos(
+      @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
 
     Page<TipoProcedimientoOutput> page = convert(tipoProcedimientoService.findActivos(query, paging));
@@ -68,7 +69,7 @@ public class TipoProcedimientoController {
    */
   @GetMapping("/todos")
   @PreAuthorize("hasAnyAuthority('PII-TPR-V', 'PII-TPR-C', 'PII-TPR-E', 'PII-TPR-B', 'PII-TPR-R')")
-  ResponseEntity<Page<TipoProcedimientoOutput>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<TipoProcedimientoOutput>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
 
     Page<TipoProcedimiento> page = this.tipoProcedimientoService.findAll(query, paging);
@@ -84,7 +85,7 @@ public class TipoProcedimientoController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthority('PII-TPR-V', 'PII-TPR-C', 'PII-TPR-E', 'PII-TPR-B', 'PII-TPR-R')")
-  TipoProcedimientoOutput findById(@PathVariable Long id) {
+  public TipoProcedimientoOutput findById(@PathVariable Long id) {
 
     return convert(this.tipoProcedimientoService.findById(id));
   }
@@ -93,11 +94,12 @@ public class TipoProcedimientoController {
    * Crea un nuevo {@link TipoProcedimiento}.
    * 
    * @param tipoProcedimientoInput {@link TipoProcedimiento} que se quiere crear.
-   * @return Nuevo {@link TipoProteccion} creado.
+   * @return Nuevo {@link TipoProcedimientoOutput} creado.
    */
   @PostMapping
   @PreAuthorize("hasAuthority('PII-TPR-C')")
-  ResponseEntity<TipoProcedimientoOutput> create(@Valid @RequestBody TipoProcedimientoInput tipoProcedimientoInput) {
+  public ResponseEntity<TipoProcedimientoOutput> create(
+      @Valid @RequestBody TipoProcedimientoInput tipoProcedimientoInput) {
 
     return new ResponseEntity<>(convert(this.tipoProcedimientoService.create(convert(null, tipoProcedimientoInput))),
         HttpStatus.CREATED);
@@ -111,7 +113,7 @@ public class TipoProcedimientoController {
    */
   @PatchMapping("/{id}/activar")
   @PreAuthorize("hasAuthority('PII-TPR-R')")
-  TipoProcedimientoOutput activar(@PathVariable Long id) {
+  public TipoProcedimientoOutput activar(@PathVariable Long id) {
 
     return convert(this.tipoProcedimientoService.activar(id));
   }
@@ -120,10 +122,11 @@ public class TipoProcedimientoController {
    * Desactiva el {@link TipoProcedimiento} con el id indicado.
    * 
    * @param id Identificador del {@link TipoProcedimiento}.
+   * @return objeto de tipo {@link TipoProcedimientoOutput}
    */
   @PatchMapping("/{id}/desactivar")
   @PreAuthorize("hasAuthority('PII-TPR-B')")
-  TipoProcedimientoOutput desactivar(@PathVariable Long id) {
+  public TipoProcedimientoOutput desactivar(@PathVariable Long id) {
 
     return convert(this.tipoProcedimientoService.desactivar(id));
   }
@@ -137,7 +140,8 @@ public class TipoProcedimientoController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('PII-TPR-E')")
-  TipoProcedimientoOutput update(@Valid @RequestBody TipoProcedimientoInput tipoProcedimiento, @PathVariable Long id) {
+  public TipoProcedimientoOutput update(@Valid @RequestBody TipoProcedimientoInput tipoProcedimiento,
+      @PathVariable Long id) {
 
     return convert(this.tipoProcedimientoService.update(convert(id, tipoProcedimiento)));
   }
@@ -146,19 +150,19 @@ public class TipoProcedimientoController {
   /* CONVERTERS */
   /****************/
 
-  private TipoProcedimientoOutput convert(TipoProcedimiento TipoProcedimiento) {
-    return modelMapper.map(TipoProcedimiento, TipoProcedimientoOutput.class);
+  private TipoProcedimientoOutput convert(TipoProcedimiento tipoProcedimiento) {
+    return modelMapper.map(tipoProcedimiento, TipoProcedimientoOutput.class);
   }
 
-  private TipoProcedimiento convert(Long id, TipoProcedimientoInput TipoProcedimientoInput) {
-    TipoProcedimiento TipoProcedimiento = modelMapper.map(TipoProcedimientoInput, TipoProcedimiento.class);
-    TipoProcedimiento.setId(id);
-    return TipoProcedimiento;
+  private TipoProcedimiento convert(Long id, TipoProcedimientoInput tipoProcedimientoInput) {
+    TipoProcedimiento tipoProcedimiento = modelMapper.map(tipoProcedimientoInput, TipoProcedimiento.class);
+    tipoProcedimiento.setId(id);
+    return tipoProcedimiento;
   }
 
   private Page<TipoProcedimientoOutput> convert(Page<TipoProcedimiento> page) {
     List<TipoProcedimientoOutput> content = page.getContent().stream()
-        .map((TipoProcedimiento) -> convert(TipoProcedimiento)).collect(Collectors.toList());
+        .map(this::convert).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }

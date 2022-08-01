@@ -20,14 +20,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * ProyectoHitoRepositoryTest
  */
 @DataJpaTest
-
-public class ProyectoHitoRepositoryTest extends BaseRepositoryTest {
+class ProyectoHitoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ProyectoHitoRepository repository;
 
   @Test
-  public void findByProyectoIdAndFechaAndTipoHitoId_ReturnsProyectoHito() throws Exception {
+  void findByProyectoIdAndFechaAndTipoHitoId_ReturnsProyectoHito() throws Exception {
 
     // given: Proyecto, tipoHito y fecha no encuentra coincidencias
     ProyectoHito proyectoHito1 = generarMockProyectoHito("-001");
@@ -38,7 +37,8 @@ public class ProyectoHitoRepositoryTest extends BaseRepositoryTest {
     Long idTipoHitoBusqueda = proyectoHito1.getTipoHito().getId();
 
     // when: se busca el ProyectoHito
-    Optional<ProyectoHito> proyectoHitoEncontrado = repository.findByProyectoIdAndFechaAndTipoHitoId(idProyectoBusqueda,
+    Optional<ProyectoHito> proyectoHitoEncontrado = repository.findByProyectoIdAndFechaAndTipoHitoId(
+        idProyectoBusqueda,
         fechaBusqueda, idTipoHitoBusqueda);
 
     // then: Recupera el ProyectoHito buscado
@@ -53,7 +53,7 @@ public class ProyectoHitoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByProyectoIdAndFechaAndTipoHitoId_ReturnsEmpty() throws Exception {
+  void findByProyectoIdAndFechaAndTipoHitoId_ReturnsEmpty() throws Exception {
 
     // given: Proyecto, tipoHito y fecha no encuentra coincidencias
     ProyectoHito proyectoHito1 = generarMockProyectoHito("-001");
@@ -64,7 +64,8 @@ public class ProyectoHitoRepositoryTest extends BaseRepositoryTest {
     Long idTipoHitoBusqueda = proyectoHito2.getTipoHito().getId();
 
     // when: se busca el ProyectoHito
-    Optional<ProyectoHito> proyectoHitoEncontrado = repository.findByProyectoIdAndFechaAndTipoHitoId(idProyectoBusqueda,
+    Optional<ProyectoHito> proyectoHitoEncontrado = repository.findByProyectoIdAndFechaAndTipoHitoId(
+        idProyectoBusqueda,
         fechaBusqueda, idTipoHitoBusqueda);
 
     // then: No se recupera el ProyectoHito buscado
@@ -142,7 +143,6 @@ public class ProyectoHitoRepositoryTest extends BaseRepositoryTest {
         .proyectoId(proyecto.getId())
         .fecha(Instant.parse("2020-10-01T00:00:00Z"))
         .comentario("comentarioProyectoHito-" + suffix)
-        .generaAviso(Boolean.TRUE)
         .build();
     // @formatter:on
     return entityManager.persistAndFlush(proyectoHito);

@@ -79,9 +79,19 @@ export class ActaDatosGeneralesComponent extends FormFragmentComponent<IActa> im
 
     this.readonly = this.actionService.readonly;
 
-    this.convocatorias$ = this.convocatoriaReunionService.findConvocatoriasSinActa().pipe(
-      map(response => response.items)
-    );
+    if (this.readonly || this.formPart.isEdit()) {
+      this.formPart.getFormGroup().controls.convocatoriaReunion.disable();
+    }
+
+    if (this.formPart.isEdit()) {
+      this.convocatorias$ = this.formPart.getFormGroup().controls.convocatoriaReunion.valueChanges.pipe(
+        map(value => [value])
+      );
+    } else {
+      this.convocatorias$ = this.convocatoriaReunionService.findConvocatoriasSinActa().pipe(
+        map(response => response.items)
+      );
+    }
 
     this.formPart.getFormGroup().controls.convocatoriaReunion.valueChanges.subscribe(convocatoria => {
       this.selectConvocatoriaReunion(convocatoria);

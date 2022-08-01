@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_NOTNULL;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -8,8 +12,8 @@ import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContext
 import org.crue.hercules.sgi.pii.exceptions.InvencionGastoNotFoundException;
 import org.crue.hercules.sgi.pii.model.Invencion;
 import org.crue.hercules.sgi.pii.model.InvencionGasto;
-import org.crue.hercules.sgi.pii.model.RepartoGasto;
 import org.crue.hercules.sgi.pii.model.InvencionGasto.Estado;
+import org.crue.hercules.sgi.pii.model.RepartoGasto;
 import org.crue.hercules.sgi.pii.repository.InvencionGastoRepository;
 import org.crue.hercules.sgi.pii.repository.specification.InvencionGastoSpecifications;
 import org.springframework.data.jpa.domain.Specification;
@@ -78,13 +82,15 @@ public class InvencionGastoService {
     Assert.isNull(invencionGasto.getId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(InvencionGasto.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(InvencionGasto.class))
+            .build());
     Assert.notNull(invencionGasto.getInvencionId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Invencion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Invencion.class))
+            .build());
 
     InvencionGasto returnValue = repository.save(invencionGasto);
 
@@ -104,14 +110,16 @@ public class InvencionGastoService {
 
     Assert.notNull(invencionGasto.getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(InvencionGasto.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(InvencionGasto.class))
+            .build());
     Assert.notNull(invencionGasto.getInvencionId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Invencion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Invencion.class))
+            .build());
 
     return repository.findById(invencionGasto.getId()).map(invencionGastoExistente -> {
 
@@ -175,12 +183,12 @@ public class InvencionGastoService {
 
   private Estado calculateGastoEstado(InvencionGasto invencionGasto) {
     switch (invencionGasto.getImportePendienteDeducir().compareTo(new BigDecimal("0.00"))) {
-    case 0:
-      return Estado.DEDUCIDO;
-    case 1:
-      return Estado.DEDUCIDO_PARCIALMENTE;
-    default:
-      return Estado.NO_DEDUCIDO;
+      case 0:
+        return Estado.DEDUCIDO;
+      case 1:
+        return Estado.DEDUCIDO_PARCIALMENTE;
+      default:
+        return Estado.NO_DEDUCIDO;
     }
   }
 }

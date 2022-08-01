@@ -1,63 +1,30 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { Module } from '@core/module';
-
-const MSG_MODULO_CSP = marker('title.modulo.csp');
-const MSG_MODULO_ETI = marker('title.modulo.eti');
-const MSG_MODULO_INV = marker('title.modulo.inv');
-const MSG_MODULO_PII = marker('title.modulo.pii');
-const MSG_MODULO_PRC = marker('title.modulo.prc');
-
-interface SelectorModulo {
-  module: Module;
-  nombre: string;
-}
 
 @Component({
   templateUrl: './selector-modulo.component.html',
   styleUrls: ['./selector-modulo.component.scss']
 })
-export class SelectorModuloComponent {
-  modulos: SelectorModulo[];
+export class SelectorModuloComponent extends DialogCommonComponent {
 
-  constructor(
-    public dialogRef: MatDialogRef<SelectorModuloComponent>,
-    private router: Router
-  ) {
-    this.modulos = [
-      {
-        module: Module.CSP,
-        nombre: MSG_MODULO_CSP
-      },
-      {
-        module: Module.ETI,
-        nombre: MSG_MODULO_ETI
-      },
-      {
-        module: Module.INV,
-        nombre: MSG_MODULO_INV
-      },
-      {
-        module: Module.PII,
-        nombre: MSG_MODULO_PII
-      },
-      {
-        module: Module.PRC,
-        nombre: MSG_MODULO_PRC
-      }
-    ];
+  get modulos() {
+    return Module.values;
   }
 
-  closeModal(): void {
-    this.dialogRef.close();
+  constructor(
+    dialogRef: MatDialogRef<SelectorModuloComponent>,
+    private router: Router
+  ) {
+    super(dialogRef);
   }
 
   openModulo(modulo: string) {
     this.router.navigateByUrl(modulo).then(
       () => {
-        this.closeModal();
+        this.close();
       }
     );
   }

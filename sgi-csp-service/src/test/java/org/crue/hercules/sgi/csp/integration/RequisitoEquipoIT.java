@@ -27,7 +27,7 @@ import org.springframework.test.context.jdbc.Sql;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 
-public class RequisitoEquipoIT extends BaseIT {
+class RequisitoEquipoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
 
@@ -53,7 +53,7 @@ public class RequisitoEquipoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsRequisitoEquipo() throws Exception {
+  void create_ReturnsRequisitoEquipo() throws Exception {
 
     // given: new RequisitoEquipo
     RequisitoEquipo newRequisitoEquipo = generarMockRequisitoEquipo(null);
@@ -84,7 +84,7 @@ public class RequisitoEquipoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsRequisitoEquipo() throws Exception {
+  void update_ReturnsRequisitoEquipo() throws Exception {
     Long idConvocatoriaRequisitoEquipo = 1L;
     RequisitoEquipo requisitoEquipo = generarMockRequisitoEquipo(1L);
 
@@ -114,7 +114,7 @@ public class RequisitoEquipoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findRequisitoEquipoConvocatoria_ReturnsRequisitoEquipo() throws Exception {
+  void findRequisitoEquipoConvocatoria_ReturnsRequisitoEquipo() throws Exception {
     Long idConvocatoria = 1L;
 
     final ResponseEntity<RequisitoEquipo> response = restTemplate.exchange(
@@ -143,7 +143,7 @@ public class RequisitoEquipoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void testFindNivelesAcademicos() throws Exception {
+  void testFindNivelesAcademicos() throws Exception {
     Long id = 1L;
 
     final ResponseEntity<List<RequisitoEquipoNivelAcademicoOutput>> response = restTemplate.exchange(
@@ -155,7 +155,7 @@ public class RequisitoEquipoIT extends BaseIT {
 
     List<RequisitoEquipoNivelAcademicoOutput> body = response.getBody();
     Assertions.assertThat(body).isNotNull();
-    Assertions.assertThat(body.size()).isEqualTo(3);
+    Assertions.assertThat(body).hasSize(3);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -171,7 +171,7 @@ public class RequisitoEquipoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void testUpdateNivelesAcademicos() throws Exception {
+  void testUpdateNivelesAcademicos() throws Exception {
     Long id = 1L;
 
     List<RequisitoEquipoNivelAcademicoInput> requestBody = new ArrayList<RequisitoEquipoNivelAcademicoInput>();
@@ -189,7 +189,7 @@ public class RequisitoEquipoIT extends BaseIT {
 
     List<RequisitoEquipoNivelAcademicoOutput> body = response.getBody();
     Assertions.assertThat(body).isNotNull();
-    Assertions.assertThat(body.size()).isEqualTo(10);
+    Assertions.assertThat(body).hasSize(10);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -205,7 +205,7 @@ public class RequisitoEquipoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void testFindCategoriasProfesionales() throws Exception {
+  void testFindCategoriasProfesionales() throws Exception {
     Long id = 1L;
 
     final ResponseEntity<List<RequisitoEquipoCategoriaProfesionalOutput>> response = restTemplate.exchange(
@@ -218,7 +218,7 @@ public class RequisitoEquipoIT extends BaseIT {
 
     List<RequisitoEquipoCategoriaProfesionalOutput> body = response.getBody();
     Assertions.assertThat(body).isNotNull();
-    Assertions.assertThat(body.size()).isEqualTo(3);
+    Assertions.assertThat(body).hasSize(3);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -234,7 +234,7 @@ public class RequisitoEquipoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void testUpdateCategoriasProfesionales() throws Exception {
+  void testUpdateCategoriasProfesionales() throws Exception {
     Long id = 1L;
 
     List<RequisitoEquipoCategoriaProfesionalInput> requestBody = new ArrayList<RequisitoEquipoCategoriaProfesionalInput>();
@@ -253,7 +253,7 @@ public class RequisitoEquipoIT extends BaseIT {
 
     List<RequisitoEquipoCategoriaProfesionalOutput> body = response.getBody();
     Assertions.assertThat(body).isNotNull();
-    Assertions.assertThat(body.size()).isEqualTo(10);
+    Assertions.assertThat(body).hasSize(10);
   }
 
   /**

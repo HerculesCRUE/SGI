@@ -17,9 +17,16 @@
       <div class="col" fxFlex="49%" fxFlex.sm="99%">
         <mat-form-field>
           <mat-label>{{'prc.tesis-tfm-tfg.grupo-investigacion' | translate}}</mat-label>
-          <sgi-select-dialog-grupo placeholder="{{'prc.tesis-tfm-tfg.grupo-investigacion' | translate}}"
-            formControlName="grupoInvestigacion">
-          </sgi-select-dialog-grupo>
+          <ng-container *ngIf="authStatus$ | async as authStatus">
+            <sgi-select-grupo *ngIf="authStatus.isInvestigador; else grupoInvestigacionGestor"
+              [personaRef]="authStatus.userRefId" formControlName="grupoInvestigacion">
+            </sgi-select-grupo>
+          </ng-container>
+          <ng-template #grupoInvestigacionGestor>
+            <sgi-select-dialog-grupo placeholder="{{'prc.tesis-tfm-tfg.grupo-investigacion' | translate}}"
+              formControlName="grupoInvestigacion">
+            </sgi-select-dialog-grupo>
+          </ng-template>
         </mat-form-field>
       </div>
 
@@ -121,7 +128,7 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let direccionTesis">
-          <ng-container *sgiHasAnyAuthority="['PRC-VAL-E', 'PRC-VAL-V']">
+          <ng-container *sgiHasAnyAuthority="['PRC-VAL-E', 'PRC-VAL-V', 'PRC-VAL-INV-ER']">
             <a mat-button matTooltip="{{'btn.view' | translate}}" [routerLink]="[direccionTesis.id]">
               <mat-icon color="primary">visibility</mat-icon>
             </a>

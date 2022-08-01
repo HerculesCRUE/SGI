@@ -19,7 +19,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de ConvocatoriaAreaTematica.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ConvocatoriaAreaTematicaIT extends BaseIT {
+class ConvocatoriaAreaTematicaIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/convocatoriaareatematicas";
@@ -39,7 +39,7 @@ public class ConvocatoriaAreaTematicaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsConvocatoriaAreaTematica() throws Exception {
+  void create_ReturnsConvocatoriaAreaTematica() throws Exception {
 
     // given: new ConvocatoriaAreaTematica
     ConvocatoriaAreaTematica newConvocatoriaAreaTematica = generarConvocatoriaAreaTematica(null, 1L, 1L);
@@ -63,7 +63,7 @@ public class ConvocatoriaAreaTematicaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsConvocatoriaAreaTematica() throws Exception {
+  void update_ReturnsConvocatoriaAreaTematica() throws Exception {
 
     // given: Existing ConvocatoriaAreaTematica to be updated
     ConvocatoriaAreaTematica convocatoriaAreaTematicaExistente = generarConvocatoriaAreaTematica(1L, 1L, 2L);
@@ -90,7 +90,7 @@ public class ConvocatoriaAreaTematicaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing ConvocatoriaAreaTematica to be deleted
     Long id = 1L;
 
@@ -107,7 +107,7 @@ public class ConvocatoriaAreaTematicaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsConvocatoriaAreaTematica() throws Exception {
+  void findById_ReturnsConvocatoriaAreaTematica() throws Exception {
     Long id = 1L;
 
     final ResponseEntity<ConvocatoriaAreaTematica> response = restTemplate.exchange(

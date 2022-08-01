@@ -12,7 +12,8 @@ import { ActionEmptyFooterComponent } from '@shared/action-empty-footer/action-e
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { ProduccionCientificaInitializerService } from '../../shared/produccion-cientifica-initializer.service';
-import { IProduccionCientificaData, PRODUCCION_CIENTIFICA_DATA_KEY } from '../../shared/produccion-cientifica.resolver';
+import { PRODUCCION_CIENTIFICA_DATA_KEY } from '../../shared/produccion-cientifica-route-params';
+import { IProduccionCientificaData } from '../../shared/produccion-cientifica.resolver';
 import { CongresoActionService } from '../congreso.action.service';
 
 import { CongresoEditarComponent } from './congreso-editar.component';

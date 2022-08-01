@@ -29,7 +29,7 @@ class SgiApiCnfServiceTest extends BaseServiceTest {
   private SgiApiCnfService configService;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     BDDMockito.given(restApiProperties.getCnfUrl()).willReturn("http://localhost");
     this.configService = new SgiApiCnfService(this.restApiProperties, this.restTemplate, this.mapper);
   }

@@ -76,7 +76,7 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
     const form = new FormGroup({
       id: new FormControl({ value: '', disabled: true }),
       titulo: new FormControl('', [Validators.maxLength(250)]),
-      fechaComunicacion: new FormControl(DateTime.now()),
+      fechaComunicacion: new FormControl(this.getTodayAtFirstTime()),
       descripcion: new FormControl('', [Validators.maxLength(2000)]),
       tipoProteccion: new FormControl(null, [Validators.required]),
       subtipoProteccion: new FormControl(null),
@@ -90,6 +90,11 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
     }
 
     return form;
+  }
+
+  private getTodayAtFirstTime(): DateTime {
+    const now = DateTime.now();
+    return DateTime.local(now.year, now.month, now.day, 0, 0, 0, 0);
   }
 
   protected buildPatch(invencion: IInvencion): { [key: string]: any; } {

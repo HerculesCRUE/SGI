@@ -219,11 +219,11 @@ export class SolicitudProyectoEquipoListadoExportService extends AbstractTableEx
     }
   }
 
-  private getEmailPrincipal({ emails }: IPersona): string {
-    if (!emails) {
+  private getEmailPrincipal(persona: IPersona): string {
+    if (!persona?.emails) {
       return '';
     }
-    const emailDataPrincipal = emails.find(emailData => emailData.principal);
+    const emailDataPrincipal = persona?.emails.find(emailData => emailData.principal);
     return emailDataPrincipal?.email ?? '';
   }
 }

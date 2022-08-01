@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.service.impl;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.ProyectoSocioEquipoNotFoundException;
@@ -61,7 +62,8 @@ public class ProyectoSocioEquipoServiceImpl implements ProyectoSocioEquipoServic
 
     // Equipos eliminados
     List<ProyectoSocioEquipo> proyectoSocioEquipoEliminar = proyectoSocioEquipoBD.stream().filter(
-        periodo -> !proyectoSocioEquipos.stream().map(ProyectoSocioEquipo::getId).anyMatch(id -> id == periodo.getId()))
+        periodo -> proyectoSocioEquipos.stream().map(ProyectoSocioEquipo::getId)
+            .noneMatch(id -> Objects.equals(id, periodo.getId())))
         .collect(Collectors.toList());
 
     if (!proyectoSocioEquipoEliminar.isEmpty()) {
@@ -96,10 +98,11 @@ public class ProyectoSocioEquipoServiceImpl implements ProyectoSocioEquipoServic
       // estan actualizando los periodos
       if (proyectoSocioEquipo.getId() != null) {
         ProyectoSocioEquipo periodoJustificacionBD = proyectoSocioEquipoBD.stream()
-            .filter(equipoSocio -> equipoSocio.getId() == proyectoSocioEquipo.getId()).findFirst()
+            .filter(equipoSocio -> Objects.equals(equipoSocio.getId(), proyectoSocioEquipo.getId())).findFirst()
             .orElseThrow(() -> new ProyectoSocioEquipoNotFoundException(proyectoSocioEquipo.getId()));
 
-        Assert.isTrue(periodoJustificacionBD.getProyectoSocioId() == proyectoSocioEquipo.getProyectoSocioId(),
+        Assert.isTrue(
+            Objects.equals(periodoJustificacionBD.getProyectoSocioId(), proyectoSocioEquipo.getProyectoSocioId()),
             "No se puede modificar el proyecto socio del ProyectoSocioEquipo");
       }
 

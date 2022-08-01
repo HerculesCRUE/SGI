@@ -7,6 +7,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { SearchModalData } from '@core/component/select-dialog/select-dialog.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { IGrupo } from '@core/models/csp/grupo';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -23,6 +24,7 @@ export interface SearchProyectoEconomicoModalData extends SearchModalData {
   selectedProyectos: IProyectoSge[];
   proyectoSgiId: number;
   selectAndNotify: boolean;
+  grupoInvestigacion: IGrupo;
 }
 
 interface ProyectoListado {
@@ -176,7 +178,8 @@ export class SearchProyectoEconomicoModalComponent extends DialogCommonComponent
     const proyectoData: IProyectoEconomicoFormlyData = {
       proyectoSgiId: this.data.proyectoSgiId,
       action: ACTION_MODAL_MODE.NEW,
-      proyectoSge: null
+      proyectoSge: null,
+      grupoInvestigacion: this.data.grupoInvestigacion
     };
 
     const config = {
@@ -198,7 +201,8 @@ export class SearchProyectoEconomicoModalComponent extends DialogCommonComponent
     const proyectoData: IProyectoEconomicoFormlyData = {
       proyectoSgiId: this.data.proyectoSgiId,
       proyectoSge: proyectoSeleccionado,
-      action: ACTION_MODAL_MODE.EDIT
+      action: ACTION_MODAL_MODE.EDIT,
+      grupoInvestigacion: this.data.grupoInvestigacion
     };
 
     const config = {

@@ -65,9 +65,8 @@
     <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
     </mat-paginator>
   </div>
-  <div class="separation-button">
-    <button color="three" *ngIf="!this.readonly" (click)="openCreateModal()" mat-raised-button
-      [disabled]="this.disabledButtonComentarios">
+  <div class="separation-button" *ngIf="!this.readonly">
+    <button color="three" (click)="openCreateModal()" mat-raised-button [disabled]="this.disabledButtonComentarios">
       <mat-icon>add_box</mat-icon> {{'btn.add.entity' | translate:msgParamComentarioEntity}}
     </button>
     <sgi-field-info matSuffix [visible]="this.disabledButtonComentarios"

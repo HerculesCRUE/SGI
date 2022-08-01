@@ -87,7 +87,7 @@ class RolProyectoIT extends BaseIT {
     // given: RolProyecto data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<RolProyecto> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
@@ -147,7 +147,7 @@ class RolProyectoIT extends BaseIT {
     List<String> colectivos = response.getBody();
 
     Assertions.assertThat(colectivos.isEmpty()).isFalse();
-    Assertions.assertThat(colectivos.size()).isEqualTo(2);
+    Assertions.assertThat(colectivos).hasSize(2);
 
   }
 

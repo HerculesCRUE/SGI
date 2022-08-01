@@ -1,19 +1,38 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.crue.hercules.sgi.csp.converter.ComConverter;
+import org.crue.hercules.sgi.csp.dto.ProyectoHitoAvisoInput;
+import org.crue.hercules.sgi.csp.dto.ProyectoHitoInput;
+import org.crue.hercules.sgi.csp.dto.com.Recipient;
+import org.crue.hercules.sgi.csp.dto.tp.SgiApiInstantTaskOutput;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoHitoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.TipoHitoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloTipoHito;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoHito;
+import org.crue.hercules.sgi.csp.model.ProyectoHitoAviso;
+import org.crue.hercules.sgi.csp.model.TipoHito;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoHitoRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoHitoAvisoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoHitoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
+import org.crue.hercules.sgi.csp.repository.TipoHitoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoHitoSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoHitoService;
+import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
+import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.csp.service.sgi.SgiApiTpService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +41,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -30,38 +50,52 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ProyectoHitoServiceImpl implements ProyectoHitoService {
 
   private final ProyectoHitoRepository repository;
   private final ProyectoRepository proyectoRepository;
   private final ModeloTipoHitoRepository modeloTipoHitoRepository;
-
-  public ProyectoHitoServiceImpl(ProyectoHitoRepository proyectoHitoRepository, ProyectoRepository proyectoRepository,
-      ModeloTipoHitoRepository modeloTipoHitoRepository) {
-    this.repository = proyectoHitoRepository;
-    this.proyectoRepository = proyectoRepository;
-    this.modeloTipoHitoRepository = modeloTipoHitoRepository;
-  }
+  private final SgiApiComService emailService;
+  private final SgiApiTpService sgiApiTaskService;
+  private final ProyectoHitoAvisoRepository proyectoHitoAvisoRepository;
+  private final SgiApiSgpService personaService;
+  private final ProyectoEquipoRepository proyectoEquipoReposiotry;
+  private final TipoHitoRepository tipoHitoRepository;
 
   /**
    * Guarda la entidad {@link ProyectoHito}.
    * 
-   * @param proyectoHito la entidad {@link ProyectoHito} a guardar.
+   * @param proyectoHitoInput la entidad {@link ProyectoHito} a guardar.
    * @return ProyectoHito la entidad {@link ProyectoHito} persistida.
    */
   @Override
   @Transactional
-  public ProyectoHito create(ProyectoHito proyectoHito) {
+  public ProyectoHito create(ProyectoHitoInput proyectoHitoInput) {
     log.debug("create(ProyectoHito ProyectoHito) - start");
 
-    Assert.isNull(proyectoHito.getId(), "ProyectoHito id tiene que ser null para crear un nuevo ProyectoHito");
-    this.validarRequeridosProyectoHito(proyectoHito);
-    this.validarProyectoHito(proyectoHito, null);
+    this.validarRequeridosProyectoHito(proyectoHitoInput);
+    this.validarProyectoHito(proyectoHitoInput, null);
 
-    ProyectoHito returnValue = repository.save(proyectoHito);
+    TipoHito tipoHito = tipoHitoRepository.findById(proyectoHitoInput.getTipoHitoId())
+        .orElseThrow(() -> new TipoHitoNotFoundException(proyectoHitoInput.getTipoHitoId()));
 
-    log.debug("create(ProyectoHito ProyectoHito) - end");
-    return returnValue;
+    ProyectoHito proyectoHito = repository.save(ProyectoHito.builder()
+        .comentario(proyectoHitoInput.getComentario())
+        .fecha(proyectoHitoInput.getFecha())
+        .proyectoId(proyectoHitoInput.getProyectoId())
+        .tipoHito(tipoHito)
+        .build());
+
+    if (proyectoHitoInput.getAviso() != null) {
+      ProyectoHitoAviso aviso = this.createAviso(proyectoHito.getId(),
+          proyectoHitoInput.getAviso());
+      proyectoHito.setProyectoHitoAviso(aviso);
+
+      proyectoHito = repository.save(proyectoHito);
+    }
+
+    return proyectoHito;
   }
 
   /**
@@ -72,25 +106,27 @@ public class ProyectoHitoServiceImpl implements ProyectoHitoService {
    */
   @Override
   @Transactional
-  public ProyectoHito update(ProyectoHito proyectoHitoActualizar) {
+  public ProyectoHito update(Long proyectoHitoId, ProyectoHitoInput proyectoHitoActualizar) {
     log.debug("update(ProyectoHito ProyectoHitoActualizar) - start");
 
-    Assert.notNull(proyectoHitoActualizar.getId(), "ProyectoHito id no puede ser null para actualizar un ProyectoHito");
+    Assert.notNull(proyectoHitoId, "ProyectoHito id no puede ser null para actualizar un ProyectoHito");
     this.validarRequeridosProyectoHito(proyectoHitoActualizar);
 
-    return repository.findById(proyectoHitoActualizar.getId()).map(proyectoHito -> {
+    TipoHito tipoHito = tipoHitoRepository.findById(proyectoHitoActualizar.getTipoHitoId())
+        .orElseThrow(() -> new TipoHitoNotFoundException(proyectoHitoActualizar.getTipoHitoId()));
+
+    return repository.findById(proyectoHitoId).map(proyectoHito -> {
 
       validarProyectoHito(proyectoHitoActualizar, proyectoHito);
 
       proyectoHito.setFecha(proyectoHitoActualizar.getFecha());
       proyectoHito.setComentario(proyectoHitoActualizar.getComentario());
-      proyectoHito.setTipoHito(proyectoHitoActualizar.getTipoHito());
-      proyectoHito.setGeneraAviso(proyectoHitoActualizar.getGeneraAviso());
+      proyectoHito.setTipoHito(tipoHito);
 
-      ProyectoHito returnValue = repository.save(proyectoHito);
-      log.debug("update(ProyectoHito ProyectoHitoActualizar) - end");
-      return returnValue;
-    }).orElseThrow(() -> new ProyectoHitoNotFoundException(proyectoHitoActualizar.getId()));
+      this.resolveProyectoHitoAviso(proyectoHitoActualizar, proyectoHito);
+
+      return repository.save(proyectoHito);
+    }).orElseThrow(() -> new ProyectoHitoNotFoundException(proyectoHitoId));
 
   }
 
@@ -156,12 +192,11 @@ public class ProyectoHitoServiceImpl implements ProyectoHitoService {
    * @param datosProyectoHito
    * @param datosOriginales
    */
-  private void validarProyectoHito(ProyectoHito datosProyectoHito, ProyectoHito datosOriginales) {
-    log.debug("validarProyectoHito(ProyectoHito datosProyectoHito, ProyectoHito datosOriginales) - start");
+  private void validarProyectoHito(ProyectoHitoInput datosProyectoHito, ProyectoHito datosOriginales) {
 
     // Se comprueba la existencia del proyecto
     Long proyectoId = datosProyectoHito.getProyectoId();
-    if (!proyectoRepository.existsById(proyectoId)) {
+    if (proyectoId == null || !proyectoRepository.existsById(proyectoId)) {
       throw new ProyectoNotFoundException(proyectoId);
     }
     // Se recupera el Id de ModeloEjecucion para las siguientes validaciones
@@ -170,11 +205,11 @@ public class ProyectoHitoServiceImpl implements ProyectoHitoService {
 
     // TipoHito
     Optional<ModeloTipoHito> modeloTipoHito = modeloTipoHitoRepository
-        .findByModeloEjecucionIdAndTipoHitoId(modeloEjecucionId, datosProyectoHito.getTipoHito().getId());
+        .findByModeloEjecucionIdAndTipoHitoId(modeloEjecucionId, datosProyectoHito.getTipoHitoId());
 
     // Está asignado al ModeloEjecucion
     Assert.isTrue(modeloTipoHito.isPresent(),
-        "TipoHito '" + datosProyectoHito.getTipoHito().getNombre() + "' no disponible para el ModeloEjecucion '"
+        "TipoHito '" + datosProyectoHito.getTipoHitoId() + "' no disponible para el ModeloEjecucion '"
             + ((modeloEjecucion.isPresent()) ? modeloEjecucion.get().getNombre() : "Proyecto sin modelo asignado")
             + "'");
 
@@ -186,21 +221,25 @@ public class ProyectoHitoServiceImpl implements ProyectoHitoService {
     Assert.isTrue(modeloTipoHito.get().getTipoHito().getActivo(),
         "TipoHito '" + modeloTipoHito.get().getTipoHito().getNombre() + "' no está activo");
 
-    datosProyectoHito.setTipoHito(modeloTipoHito.get().getTipoHito());
+    datosProyectoHito.setTipoHitoId(modeloTipoHito.get().getTipoHito().getId());
 
     // Si en el campo Fecha se ha indicado una fecha ya pasada, el campo "generar
     // aviso" tomará el valor false, y no será editable.
     if (datosProyectoHito.getFecha().isBefore(Instant.now())) {
-      datosProyectoHito.setGeneraAviso(false);
+      datosProyectoHito.setAviso(null);
     }
 
-    repository.findByProyectoIdAndFechaAndTipoHitoId(datosProyectoHito.getProyectoId(), datosProyectoHito.getFecha(),
-        datosProyectoHito.getTipoHito().getId()).ifPresent((convocatoriaHitoExistente) -> {
-          Assert.isTrue(datosProyectoHito.getId() == convocatoriaHitoExistente.getId(),
-              "Ya existe un Hito con el mismo tipo en esa fecha");
-        });
+    Optional<ProyectoHito> optProyectoHito = repository.findByProyectoIdAndFechaAndTipoHitoId(
+        datosProyectoHito.getProyectoId(), datosProyectoHito.getFecha(),
+        datosProyectoHito.getTipoHitoId());
 
-    log.debug("validarProyectoHito(ProyectoHito datosProyectoHito, ProyectoHito datosOriginales) - end");
+    if (optProyectoHito.isPresent() && datosOriginales != null
+        && datosOriginales.getId().longValue() == optProyectoHito.get().getId().longValue()) {
+      return;
+    }
+
+    Assert.isTrue(!optProyectoHito.isPresent(),
+        "Ya existe un Hito con el mismo tipo en esa fecha");
   }
 
   /**
@@ -209,19 +248,15 @@ public class ProyectoHitoServiceImpl implements ProyectoHitoService {
    * 
    * @param datosProyectoHito
    */
-  private void validarRequeridosProyectoHito(ProyectoHito datosProyectoHito) {
-    log.debug("validarRequeridosProyectoHito(ProyectoHito datosProyectoHito) - start");
+  private void validarRequeridosProyectoHito(ProyectoHitoInput datosProyectoHito) {
 
     Assert.isTrue(datosProyectoHito.getProyectoId() != null,
         "Id Proyecto no puede ser null para realizar la acción sobre ProyectoHito");
 
-    Assert.isTrue(datosProyectoHito.getTipoHito() != null && datosProyectoHito.getTipoHito().getId() != null,
+    Assert.isTrue(datosProyectoHito.getTipoHitoId() != null,
         "Id Tipo Hito no puede ser null para realizar la acción sobre ProyectoHito");
 
     Assert.notNull(datosProyectoHito.getFecha(), "Fecha no puede ser null para realizar la acción sobre ProyectoHito");
-
-    log.debug("validarRequeridosProyectoHito(ProyectoHito datosProyectoHito) - end");
-
   }
 
   /**
@@ -236,4 +271,112 @@ public class ProyectoHitoServiceImpl implements ProyectoHitoService {
     return repository.existsByProyectoId(proyectoId);
   }
 
+  private ProyectoHitoAviso createAviso(Long proyectoHitoId, ProyectoHitoAvisoInput avisoInput) {
+    Instant now = Instant.now();
+    Assert.isTrue(avisoInput.getFechaEnvio().isAfter(now),
+        "La fecha de envio debe ser anterior a " + now.toString());
+
+    Long emailId = this.emailService.createProyectoHitoEmail(
+        proyectoHitoId,
+        avisoInput.getAsunto(), avisoInput.getContenido(),
+        avisoInput.getDestinatarios().stream()
+            .map(destinatario -> new Recipient(destinatario.getNombre(), destinatario.getEmail()))
+            .collect(Collectors.toList()));
+    Long taskId = null;
+    try {
+      taskId = this.sgiApiTaskService.createSendEmailTask(
+          emailId,
+          avisoInput.getFechaEnvio());
+    } catch (Exception ex) {
+      log.warn("Error creando tarea programada. Se elimina el email");
+      this.emailService.deleteEmail(emailId);
+      throw ex;
+    }
+
+    return proyectoHitoAvisoRepository.save(ProyectoHitoAviso.builder()
+        .comunicadoRef(emailId.toString())
+        .tareaProgramadaRef(taskId.toString())
+        .incluirIpsProyecto(avisoInput.getIncluirIpsProyecto())
+        .build());
+  }
+
+  /**
+   * Obtiene el listado de destinatarios adicionales a los que enviar el email
+   * generado por un hito en base al {@link ProyectoHitoAviso} relacionadao
+   * 
+   * @param proyectoHitoId identificador de {@link ProyectoHito}
+   * @return listado de {@link Recipient}
+   */
+  @Override
+  public List<Recipient> getDeferredRecipients(Long proyectoHitoId) {
+
+    ProyectoHito hito = repository.findById(proyectoHitoId)
+        .orElseThrow(() -> new ProyectoHitoNotFoundException(proyectoHitoId));
+    List<Recipient> recipients = new ArrayList<>();
+
+    List<String> investigadores = new LinkedList<>();
+
+    if (hito.getProyectoHitoAviso() != null) {
+      if (Boolean.TRUE.equals(hito.getProyectoHitoAviso().getIncluirIpsProyecto())) {
+
+        investigadores = this.proyectoEquipoReposiotry
+            .findByProyectoIdAndRolProyectoRolPrincipalTrue(hito.getProyectoId()).stream()
+            .map(proyectoEquipo -> proyectoEquipo.getPersonaRef()).collect(Collectors.toList());
+
+      }
+      if (!CollectionUtils.isEmpty(investigadores)) {
+        recipients = ComConverter.toRecipients(personaService.findAllByIdIn(investigadores));
+      }
+    }
+
+    return recipients;
+  }
+
+  private void resolveProyectoHitoAviso(ProyectoHitoInput proyectoHitoInput, ProyectoHito proyectoHito) {
+    // Creamos un nuevo aviso
+    if (proyectoHitoInput.getAviso() != null && proyectoHito.getProyectoHitoAviso() == null) {
+      ProyectoHitoAviso aviso = this.createAviso(proyectoHito.getId(),
+          proyectoHitoInput.getAviso());
+      proyectoHito.setProyectoHitoAviso(aviso);
+    }
+    // Borramos el aviso
+    else if (proyectoHitoInput.getAviso() == null && proyectoHito.getProyectoHitoAviso() != null) {
+      // Comprobamos que se puede borrar el aviso.
+      SgiApiInstantTaskOutput task = sgiApiTaskService
+          .findInstantTaskById(Long.parseLong(proyectoHito.getProyectoHitoAviso().getTareaProgramadaRef()));
+
+      Assert.isTrue(task.getInstant().isAfter(Instant.now()), "El aviso ya se ha enviado.");
+
+      sgiApiTaskService
+          .deleteTask(Long.parseLong(proyectoHito.getProyectoHitoAviso().getTareaProgramadaRef()));
+      emailService.deleteEmail(Long.parseLong(proyectoHito.getProyectoHitoAviso().getComunicadoRef()));
+      proyectoHitoAvisoRepository.delete(proyectoHito.getProyectoHitoAviso());
+      proyectoHito.setProyectoHitoAviso(null);
+    }
+    // Actualizamos el aviso
+    else if (proyectoHitoInput.getAviso() != null && proyectoHito.getProyectoHitoAviso() != null) {
+      SgiApiInstantTaskOutput task = sgiApiTaskService
+          .findInstantTaskById(Long.parseLong(proyectoHito.getProyectoHitoAviso().getTareaProgramadaRef()));
+      // Solo actualizamos los datos el aviso si este aún no se ha enviado.
+      // TODO: Validar realmente el cambio de contenido, y si este ha cambiado,
+      // generar error si no se puede editar
+      if (task.getInstant().isAfter(Instant.now())) {
+        this.emailService.updateSolicitudHitoEmail(
+            Long.parseLong(proyectoHito.getProyectoHitoAviso().getComunicadoRef()), proyectoHito.getId(),
+            proyectoHitoInput.getAviso().getAsunto(), proyectoHitoInput.getAviso().getContenido(),
+            proyectoHitoInput.getAviso().getDestinatarios().stream()
+                .map(destinatario -> new Recipient(destinatario.getNombre(), destinatario.getEmail()))
+                .collect(Collectors.toList()));
+
+        this.sgiApiTaskService.updateSendEmailTask(
+            Long.parseLong(proyectoHito.getProyectoHitoAviso().getTareaProgramadaRef()),
+            Long.parseLong(proyectoHito.getProyectoHitoAviso().getComunicadoRef()),
+            proyectoHitoInput.getAviso().getFechaEnvio());
+
+        proyectoHito.getProyectoHitoAviso()
+            .setIncluirIpsProyecto(proyectoHitoInput.getAviso().getIncluirIpsProyecto());
+        proyectoHitoAvisoRepository.save(proyectoHito.getProyectoHitoAviso());
+      }
+    }
+  }
 }

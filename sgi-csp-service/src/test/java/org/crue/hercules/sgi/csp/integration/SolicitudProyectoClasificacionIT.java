@@ -18,7 +18,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de SolicitudProyectoClasificacion.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SolicitudProyectoClasificacionIT extends BaseIT {
+class SolicitudProyectoClasificacionIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/solicitud-proyecto-clasificaciones";
@@ -50,7 +50,7 @@ public class SolicitudProyectoClasificacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsSolicitudProyectoClasificacion() throws Exception {
+  void create_ReturnsSolicitudProyectoClasificacion() throws Exception {
 
     String[] roles = { "CSP-SOL-E", "CSP-SOL-INV-ER" };
     // given: new SolicitudProyectoClasificacion
@@ -85,7 +85,7 @@ public class SolicitudProyectoClasificacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void deleteSolicitudProyectoClasificacion_Return204() throws Exception {
+  void deleteSolicitudProyectoClasificacion_Return204() throws Exception {
 
     String[] roles = { "CSP-SOL-E", "CSP-SOL-INV-ER" };
 

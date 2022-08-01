@@ -22,7 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de Programa.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProgramaIT extends BaseIT {
+class ProgramaIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
@@ -47,7 +47,7 @@ public class ProgramaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsPrograma() throws Exception {
+  void create_ReturnsPrograma() throws Exception {
     Programa programa = generarMockPrograma(null, "nombre-002", 9999L);
 
     final ResponseEntity<Programa> response = restTemplate.exchange(CONTROLLER_BASE_PATH, HttpMethod.POST,
@@ -61,13 +61,13 @@ public class ProgramaIT extends BaseIT {
     Assertions.assertThat(programaCreado.getDescripcion()).as("getDescripcion()").isEqualTo(programa.getDescripcion());
     Assertions.assertThat(programaCreado.getPadre().getId()).as("getPadre().getId()")
         .isEqualTo(programa.getPadre().getId());
-    Assertions.assertThat(programaCreado.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(programaCreado.getActivo()).as("getActivo()").isTrue();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsPrograma() throws Exception {
+  void update_ReturnsPrograma() throws Exception {
     Long idPrograma = 2L;
     Programa programa = generarMockPrograma(idPrograma, "nombre-actualizado", 1L);
 
@@ -81,13 +81,13 @@ public class ProgramaIT extends BaseIT {
     Assertions.assertThat(programaActualizado.getNombre()).as("getNombre()").isEqualTo(programa.getNombre());
     Assertions.assertThat(programaActualizado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(programa.getDescripcion());
-    Assertions.assertThat(programaActualizado.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(programaActualizado.getActivo()).as("getActivo()").isTrue();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void desactivar_ReturnPrograma() throws Exception {
+  void desactivar_ReturnPrograma() throws Exception {
     Long idPrograma = 1L;
 
     final ResponseEntity<Programa> response = restTemplate.exchange(
@@ -100,13 +100,13 @@ public class ProgramaIT extends BaseIT {
     Assertions.assertThat(programa.getId()).as("getId()").isNotNull();
     Assertions.assertThat(programa.getNombre()).as("getNombre()").isEqualTo("nombre-001");
     Assertions.assertThat(programa.getDescripcion()).as("descripcion-001").isEqualTo(programa.getDescripcion());
-    Assertions.assertThat(programa.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(programa.getActivo()).as("getActivo()").isFalse();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void reactivar_ReturnPrograma() throws Exception {
+  void reactivar_ReturnPrograma() throws Exception {
     Long idPrograma = 1L;
 
     final ResponseEntity<Programa> response = restTemplate.exchange(
@@ -118,14 +118,14 @@ public class ProgramaIT extends BaseIT {
     Programa programa = response.getBody();
     Assertions.assertThat(programa.getId()).as("getId()").isNotNull();
     Assertions.assertThat(programa.getNombre()).as("getNombre()").isEqualTo("nombre-001");
-    Assertions.assertThat(programa.getDescripcion()).as("descripcion-001");
-    Assertions.assertThat(programa.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(programa.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-001");
+    Assertions.assertThat(programa.getActivo()).as("getActivo()").isTrue();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsPrograma() throws Exception {
+  void findById_ReturnsPrograma() throws Exception {
     Long idPrograma = 1L;
 
     final ResponseEntity<Programa> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -136,13 +136,13 @@ public class ProgramaIT extends BaseIT {
     Assertions.assertThat(programa.getId()).as("getId()").isEqualTo(idPrograma);
     Assertions.assertThat(programa.getNombre()).as("getNombre()").isEqualTo("nombre-001");
     Assertions.assertThat(programa.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-001");
-    Assertions.assertThat(programa.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(programa.getActivo()).as("getActivo()").isTrue();
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsProgramaSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsProgramaSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CON-V")));
     headers.add("X-Page", "0");
@@ -159,7 +159,7 @@ public class ProgramaIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<Programa> programas = response.getBody();
-    Assertions.assertThat(programas.size()).isEqualTo(3);
+    Assertions.assertThat(programas).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -176,7 +176,7 @@ public class ProgramaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllPlan_WithPagingSortingAndFiltering_ReturnsProgramaSubList() throws Exception {
+  void findAllPlan_WithPagingSortingAndFiltering_ReturnsProgramaSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-TDOC-V")));
     headers.add("X-Page", "0");
@@ -193,7 +193,7 @@ public class ProgramaIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<Programa> programas = response.getBody();
-    Assertions.assertThat(programas.size()).isEqualTo(3);
+    Assertions.assertThat(programas).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -210,7 +210,7 @@ public class ProgramaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllTodosPlan_WithPagingSortingAndFiltering_ReturnsProgramaSubList() throws Exception {
+  void findAllTodosPlan_WithPagingSortingAndFiltering_ReturnsProgramaSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-TDOC-V")));
     headers.add("X-Page", "0");
@@ -227,7 +227,7 @@ public class ProgramaIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<Programa> programas = response.getBody();
-    Assertions.assertThat(programas.size()).isEqualTo(3);
+    Assertions.assertThat(programas).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -244,7 +244,7 @@ public class ProgramaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllHijosPrograma_WithPagingSortingAndFiltering_ReturnsProgramaSubList() throws Exception {
+  void findAllHijosPrograma_WithPagingSortingAndFiltering_ReturnsProgramaSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-ME-V")));
     headers.add("X-Page", "0");
@@ -263,7 +263,7 @@ public class ProgramaIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<Programa> programas = response.getBody();
-    Assertions.assertThat(programas.size()).isEqualTo(3);
+    Assertions.assertThat(programas).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");

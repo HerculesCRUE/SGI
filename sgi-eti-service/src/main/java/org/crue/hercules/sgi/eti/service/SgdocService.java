@@ -11,6 +11,7 @@ import org.crue.hercules.sgi.eti.config.RestApiProperties;
 import org.crue.hercules.sgi.eti.dto.DocumentoOutput;
 import org.crue.hercules.sgi.eti.exceptions.rep.MicroserviceCallException;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
@@ -79,6 +80,42 @@ public class SgdocService {
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
+    }
+
+    if (documento == null) {
+      throw new MicroserviceCallException();
+    }
+
+    return documento;
+  }
+
+  public DocumentoOutput getDocumento(String documentRef) {
+    log.debug("getDocumento(String documentRef) - start");
+    String relativeUrl = "/documentos/{documentRef}";
+    HttpMethod httpMethod = HttpMethod.GET;
+    DocumentoOutput documento = null;
+    try {
+      HttpHeaders headers = new HttpHeaders();
+      headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+      headers
+          .setAcceptLanguage(Arrays.asList(new Locale.LanguageRange(LocaleContextHolder.getLocale().toLanguageTag())));
+
+      HttpServletRequest httpServletRequest = Optional.ofNullable(RequestContextHolder.getRequestAttributes())
+          .filter(ServletRequestAttributes.class::isInstance).map(ServletRequestAttributes.class::cast)
+          .map(ServletRequestAttributes::getRequest).orElseThrow(MicroserviceCallException::new);
+      String authorization = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
+      headers.set(HttpHeaders.AUTHORIZATION, authorization);
+
+      HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(null, headers);
+
+      String mergedURL = new StringBuilder(restApiProperties.getSgdocUrl()).append(relativeUrl).toString();
+
+      documento = restTemplate.exchange(mergedURL, httpMethod,
+          requestEntity,
+          new ParameterizedTypeReference<DocumentoOutput>() {
+          }, documentRef).getBody();
+    } catch (Exception e) {
+      log.error("getDocumento(String documentRef) - error" + e.getMessage(), e);
     }
 
     if (documento == null) {

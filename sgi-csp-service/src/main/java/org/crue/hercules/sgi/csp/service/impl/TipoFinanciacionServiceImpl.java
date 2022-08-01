@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -65,10 +66,9 @@ public class TipoFinanciacionServiceImpl implements TipoFinanciacionService {
 
     Assert.notNull(tipoFinanciacionActualizar.getId(), "TipoFinanciacion id no puede ser null para actualizar");
     tipoFinanciacionRepository.findByNombreAndActivoIsTrue(tipoFinanciacionActualizar.getNombre())
-        .ifPresent((tipoFinanciacionExistente) -> {
-          Assert.isTrue(tipoFinanciacionActualizar.getId() == tipoFinanciacionExistente.getId(),
-              "Ya existe un TipoFinanciacion con el nombre " + tipoFinanciacionExistente.getNombre());
-        });
+        .ifPresent((tipoFinanciacionExistente) -> Assert.isTrue(
+            Objects.equals(tipoFinanciacionActualizar.getId(), tipoFinanciacionExistente.getId()),
+            "Ya existe un TipoFinanciacion con el nombre " + tipoFinanciacionExistente.getNombre()));
 
     return tipoFinanciacionRepository.findById(tipoFinanciacionActualizar.getId()).map(tipoFinanciacion -> {
       tipoFinanciacion.setNombre(tipoFinanciacionActualizar.getNombre());
@@ -151,16 +151,15 @@ public class TipoFinanciacionServiceImpl implements TipoFinanciacionService {
     Assert.notNull(id, "TipoFinanciacion id no puede ser null para reactivar un TipoFinanciacion");
 
     return tipoFinanciacionRepository.findById(id).map(tipoFinanciacion -> {
-      if (tipoFinanciacion.getActivo()) {
+      if (Boolean.TRUE.equals(tipoFinanciacion.getActivo())) {
         // Si esta activo no se hace nada
         return tipoFinanciacion;
       }
 
       tipoFinanciacionRepository.findByNombreAndActivoIsTrue(tipoFinanciacion.getNombre())
-          .ifPresent((tipoFinanciacionExistente) -> {
-            Assert.isTrue(tipoFinanciacion.getId() == tipoFinanciacionExistente.getId(),
-                "Ya existe un TipoFinanciacion con el nombre " + tipoFinanciacion.getNombre());
-          });
+          .ifPresent((tipoFinanciacionExistente) -> Assert.isTrue(
+              Objects.equals(tipoFinanciacion.getId(), tipoFinanciacionExistente.getId()),
+              "Ya existe un TipoFinanciacion con el nombre " + tipoFinanciacion.getNombre()));
 
       tipoFinanciacion.setActivo(true);
 
@@ -183,7 +182,7 @@ public class TipoFinanciacionServiceImpl implements TipoFinanciacionService {
     Assert.notNull(id, "TipoFinanciacion id no puede ser null para reactivar un TipoFinanciacion");
 
     return tipoFinanciacionRepository.findById(id).map(tipoFinanciacion -> {
-      if (!tipoFinanciacion.getActivo()) {
+      if (Boolean.FALSE.equals(tipoFinanciacion.getActivo())) {
         // Si no esta activo no se hace nada
         return tipoFinanciacion;
       }

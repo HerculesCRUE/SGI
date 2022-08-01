@@ -1,13 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
-import { SelectorModuloComponent } from './selector-modulo.component';
-import { LoggerTestingModule } from 'ngx-logger/testing';
-import TestUtils from '@core/utils/test-utils';
-import { MaterialDesignModule } from '@material/material-design.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { RouterTestingModule } from '@angular/router/testing';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import TestUtils from '@core/utils/test-utils';
+import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
+import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SelectorModuloComponent } from './selector-modulo.component';
 
 describe('SelectorModuloComponent', () => {
   let component: SelectorModuloComponent;
@@ -26,7 +25,7 @@ describe('SelectorModuloComponent', () => {
         SgiAuthModule
       ],
       providers: [
-        { provide: MatDialogRef, useValue: {} },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         SgiAuthService
       ]
     })

@@ -19,13 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ConvocatoriaConceptoGastoCodigoEcRepositoryTest extends BaseRepositoryTest {
+class ConvocatoriaConceptoGastoCodigoEcRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ConvocatoriaConceptoGastoCodigoEcRepository repository;
 
   @Test
-  public void findAllByConvocatoriaConceptoGastoId_ReturnsListConvocatoriaConceptoGastoCodigoEc() throws Exception {
+  void findAllByConvocatoriaConceptoGastoId_ReturnsListConvocatoriaConceptoGastoCodigoEc() throws Exception {
     // given: data ConvocatoriaConceptoGastoCodigoEc to find by
     // ConvocatoriaConceptoGasto and permitido
     ConvocatoriaConceptoGastoCodigoEc convocatoriaConceptoGastoCodigoEc1 = generarConvocatoriaConceptoGastoCodigoEc(
@@ -45,7 +45,7 @@ public class ConvocatoriaConceptoGastoCodigoEcRepositoryTest extends BaseReposit
   }
 
   @Test
-  public void findAllByConvocatoriaConceptoGastoId_ReturnsEmptyListConvocatoriaConceptoGastoCodigoEc()
+  void findAllByConvocatoriaConceptoGastoId_ReturnsEmptyListConvocatoriaConceptoGastoCodigoEc()
       throws Exception {
     // given: data ConvocatoriaConceptoGastoCodigoEc to find by
     // ConvocatoriaConceptoGasto and permitido
@@ -58,7 +58,7 @@ public class ConvocatoriaConceptoGastoCodigoEcRepositoryTest extends BaseReposit
         lastConvocatoriaConceptoGastoCodigoEc.getConvocatoriaConceptoGastoId() + 1);
 
     // then: ConvocatoriaConceptoGastoCodigoEc is not found
-    Assertions.assertThat(dataFound).size().isEqualTo(0);
+    Assertions.assertThat(dataFound).size().isZero();
   }
 
   /**

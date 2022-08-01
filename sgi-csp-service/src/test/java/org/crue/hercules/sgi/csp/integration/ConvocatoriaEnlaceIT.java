@@ -19,7 +19,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de ConvocatoriaEnlace.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ConvocatoriaEnlaceIT extends BaseIT {
+class ConvocatoriaEnlaceIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/convocatoriaenlaces";
@@ -38,7 +38,7 @@ public class ConvocatoriaEnlaceIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsConvocatoriaEnlace() throws Exception {
+  void create_ReturnsConvocatoriaEnlace() throws Exception {
     // given: new ConvocatoriaEnlace
     ConvocatoriaEnlace newConvocatoriaEnlace = generarMockConvocatoriaEnlace(null);
     // when: create ConvocatoriaEnlace
@@ -59,7 +59,7 @@ public class ConvocatoriaEnlaceIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsConvocatoriaEnlace() throws Exception {
+  void update_ReturnsConvocatoriaEnlace() throws Exception {
     Long idConvocatoriaEnlace = 1L;
     ConvocatoriaEnlace convocatoriaEnlace = generarMockConvocatoriaEnlace(idConvocatoriaEnlace);
 
@@ -83,7 +83,7 @@ public class ConvocatoriaEnlaceIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return404() throws Exception {
+  void delete_Return404() throws Exception {
     Long idConvocatoriaEnlace = 1L;
 
     final ResponseEntity<ConvocatoriaEnlace> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -95,7 +95,7 @@ public class ConvocatoriaEnlaceIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsConvocatoriaEnlace() throws Exception {
+  void findById_ReturnsConvocatoriaEnlace() throws Exception {
     Long idConvocatoriaEnlace = 1L;
 
     final ResponseEntity<ConvocatoriaEnlace> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,

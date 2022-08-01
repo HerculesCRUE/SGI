@@ -109,6 +109,8 @@ export class GrupoLineaInvestigacionActionService extends ActionService {
     this.addFragment(this.FRAGMENT.LINEA_INVESTIGADOR, this.lineasInvestigadores);
     this.addFragment(this.FRAGMENT.CLASIFICACIONES, this.clasificaciones);
     this.addFragment(this.FRAGMENT.EQUIPO_INSTRUMENTAL, this.lineasEquiposInstrumentales);
+
+    this.datosGenerales.initialize();
   }
 
 }

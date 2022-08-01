@@ -72,7 +72,7 @@ export class ConvocatoriaHitosModalComponent extends DialogFormComponent<Convoca
     private readonly translate: TranslateService,
     private configService: ConfigService,
     private emailTplService: EmailTplService,
-    private emailSErvice: EmailService,
+    private emailService: EmailService,
     private sgiApiTaskService: SgiApiTaskService
   ) {
     super(matDialogRef, !!data.hito?.id);
@@ -117,7 +117,7 @@ export class ConvocatoriaHitosModalComponent extends DialogFormComponent<Convoca
     );
 
     if (this.data.hito?.aviso && this.isLoadEmailRequired(this.data.hito.aviso?.email)) {
-      this.emailSErvice.findGenericEmailtTextById(this.data.hito.aviso?.email?.id).subscribe(
+      this.emailService.findGenericEmailtTextById(this.data.hito.aviso?.email?.id).subscribe(
         (comunicado) => {
           this.data.hito.aviso.email = comunicado;
           this.formGroup.get('aviso.destinatarios').setValue(comunicado.recipients);

@@ -11,7 +11,7 @@ class RequisitoEquipoCategoriaProfesionalRequestConverter extends
       return value as unknown as IRequisitoEquipoCategoriaProfesional;
     }
     return {
-      id: undefined,
+      id: value.id,
       requisitoEquipo: {
         id: value.requisitoEquipoId
       } as IConvocatoriaRequisitoEquipo,
@@ -25,6 +25,7 @@ class RequisitoEquipoCategoriaProfesionalRequestConverter extends
       return value as unknown as IRequisitoEquipoCategoriaProfesionalRequest;
     }
     return {
+      id: value.id,
       requisitoEquipoId: value.requisitoEquipo?.id,
       categoriaProfesionalRef: value.categoriaProfesional?.id,
     };

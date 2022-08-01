@@ -14,13 +14,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * ModeloTipoEnlaceRepositoryTest
  */
 @DataJpaTest
-public class ModeloTipoEnlaceRepositoryTest extends BaseRepositoryTest {
+class ModeloTipoEnlaceRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ModeloTipoEnlaceRepository repository;
 
   @Test
-  public void findByModeloEjecucionIdAndTipoEnlaceId_ReturnsModeloTipoEnlace() throws Exception {
+  void findByModeloEjecucionIdAndTipoEnlaceId_ReturnsModeloTipoEnlace() throws Exception {
 
     // given: 2 ModeloTipoEnlace de los que 1 coincide con los ids de
     // ModeloEjecucion y TipoEnlace
@@ -60,7 +60,7 @@ public class ModeloTipoEnlaceRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByModeloEjecucionIdAndTipoEnlaceId_NoExiste_ReturnsNull() throws Exception {
+  void findByModeloEjecucionIdAndTipoEnlaceId_NoExiste_ReturnsNull() throws Exception {
 
     // given: 2 ModeloEjecucion que no coinciden con los ids de
     // ModeloEjecucion y TipoEnlace

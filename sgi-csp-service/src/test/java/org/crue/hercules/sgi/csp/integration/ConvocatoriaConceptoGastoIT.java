@@ -23,7 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de ConvocatoriaConceptoGasto.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ConvocatoriaConceptoGastoIT extends BaseIT {
+class ConvocatoriaConceptoGastoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/convocatoriaconceptogastos";
@@ -45,7 +45,7 @@ public class ConvocatoriaConceptoGastoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsConvocatoriaConceptoGasto() throws Exception {
+  void create_ReturnsConvocatoriaConceptoGasto() throws Exception {
     // given: new ConvocatoriaConceptoGasto
     ConvocatoriaConceptoGasto newConvocatoriaConceptoGasto = generarMockConvocatoriaConceptoGasto(null, true);
     // when: create ConvocatoriaConceptoGasto
@@ -66,7 +66,7 @@ public class ConvocatoriaConceptoGastoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsConvocatoriaConceptoGasto() throws Exception {
+  void update_ReturnsConvocatoriaConceptoGasto() throws Exception {
     Long idConvocatoriaConceptoGasto = 1L;
     ConvocatoriaConceptoGasto convocatoriaConceptoGasto = generarMockConvocatoriaConceptoGasto(
         idConvocatoriaConceptoGasto, true);
@@ -90,7 +90,7 @@ public class ConvocatoriaConceptoGastoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     Long idConvocatoriaConceptoGasto = 1L;
 
     final ResponseEntity<ConvocatoriaConceptoGasto> response = restTemplate.exchange(
@@ -103,7 +103,7 @@ public class ConvocatoriaConceptoGastoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsConvocatoriaConceptoGasto() throws Exception {
+  void findById_ReturnsConvocatoriaConceptoGasto() throws Exception {
     Long idConvocatoriaConceptoGasto = 1L;
 
     final ResponseEntity<ConvocatoriaConceptoGasto> response = restTemplate.exchange(
@@ -120,7 +120,7 @@ public class ConvocatoriaConceptoGastoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsConvocatoriaConceptoGastoSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsConvocatoriaConceptoGastoSubList() throws Exception {
 
     // given: data for Convocatoria
 
@@ -142,7 +142,7 @@ public class ConvocatoriaConceptoGastoIT extends BaseIT {
     // given: Convocatoria data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ConvocatoriaConceptoGasto> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");

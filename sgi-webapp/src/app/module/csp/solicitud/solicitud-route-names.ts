@@ -15,5 +15,9 @@ export const SOLICITUD_ROUTE_NAMES = {
   DESGLOSE_PRESUPUESTO_ENTIDADES_GESTORAS_CONVOCATORIA: 'desglose-presupuesto-entidades-gestoras-convocatoria',
   CLASIFICACIONES: 'clasificaciones',
   RESPONSABLE_ECONOMICO: 'responsable-economico',
-  AUTOEVALUACION: 'autoevaluacion'
+  AUTOEVALUACION: 'autoevaluacion',
+  SOLICITANTE: 'solicitante',
+  TUTOR: 'tutor',
+  REQUISITOS_CONVOCATORIA: 'requisitos-convocatoria',
+  MEMORIA: 'memoria'
 };

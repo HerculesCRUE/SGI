@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
@@ -14,7 +15,6 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.DocumentoRequeridoSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.specification.DocumentoRequeridoSolicitudSpecifications;
 import org.crue.hercules.sgi.csp.service.ConfiguracionSolicitudService;
-import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -38,8 +38,7 @@ public class ConfiguracionSolicitudServiceImpl implements ConfiguracionSolicitud
 
   public ConfiguracionSolicitudServiceImpl(ConfiguracionSolicitudRepository repository,
       ConvocatoriaRepository convocatoriaRepository, ConvocatoriaFaseRepository convocatoriaFaseRepository,
-      DocumentoRequeridoSolicitudRepository documentoRequeridoSolicitudRepository,
-      ConvocatoriaService convocatoriaService) {
+      DocumentoRequeridoSolicitudRepository documentoRequeridoSolicitudRepository) {
     this.repository = repository;
     this.convocatoriaRepository = convocatoriaRepository;
     this.convocatoriaFaseRepository = convocatoriaFaseRepository;
@@ -156,10 +155,10 @@ public class ConfiguracionSolicitudServiceImpl implements ConfiguracionSolicitud
 
     // Si ya hay documentos requeridos solicitud, no se puede cambiar la fase
     if (datosOriginales != null && datosOriginales.getFasePresentacionSolicitudes() != null
-        && (datosConfiguracionSolicitud.getFasePresentacionSolicitudes() == null || (datosConfiguracionSolicitud != null
-            && datosConfiguracionSolicitud.getFasePresentacionSolicitudes() != null
-            && datosOriginales.getFasePresentacionSolicitudes().getId() != datosConfiguracionSolicitud
-                .getFasePresentacionSolicitudes().getId()))) {
+        && (datosConfiguracionSolicitud.getFasePresentacionSolicitudes() == null
+            || (datosConfiguracionSolicitud.getFasePresentacionSolicitudes() != null
+                && !Objects.equals(datosOriginales.getFasePresentacionSolicitudes().getId(), datosConfiguracionSolicitud
+                    .getFasePresentacionSolicitudes().getId())))) {
 
       Specification<DocumentoRequeridoSolicitud> specByConvocatoria = DocumentoRequeridoSolicitudSpecifications
           .byConvocatoriaId(datosOriginales.getConvocatoriaId());

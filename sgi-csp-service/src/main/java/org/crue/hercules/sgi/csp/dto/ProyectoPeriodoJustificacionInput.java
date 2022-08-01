@@ -28,5 +28,4 @@ public class ProyectoPeriodoJustificacionInput implements Serializable {
   private TipoJustificacion tipoJustificacion;
   private String observaciones;
   private Long convocatoriaPeriodoJustificacionId;
-
 }

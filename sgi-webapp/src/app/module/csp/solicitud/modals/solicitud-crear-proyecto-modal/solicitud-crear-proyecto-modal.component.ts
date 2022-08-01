@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
+import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { ESTADO_MAP } from '@core/models/csp/estado-proyecto';
@@ -29,6 +30,8 @@ const SOLICITUD_PROYECTO_TITULO_KEY = marker('csp.solicitud-proyecto.titulo');
 export interface ISolicitudCrearProyectoModalData {
   solicitud: ISolicitud;
   solicitudProyecto: ISolicitudProyecto;
+  convocatoria: IConvocatoria;
+  nombreSolicitante: string;
 }
 
 interface IProyectoData extends IProyecto {
@@ -97,17 +100,35 @@ export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<
     this.translate.get(
       SOLICITUD_PROYECTO_FECHA_INICIO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamFechaInicioEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamFechaInicioEntity = {
+        entity: value,
+        ...MSG_PARAMS.GENDER.FEMALE,
+        ...MSG_PARAMS.CARDINALIRY.SINGULAR
+      }
+    );
 
     this.translate.get(
       SOLICITUD_PROYECTO_FECHA_FIN_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamFechaFinEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamFechaFinEntity = {
+        entity: value,
+        ...MSG_PARAMS.GENDER.FEMALE,
+        ...MSG_PARAMS.CARDINALIRY.SINGULAR
+      }
+    );
 
     this.translate.get(
       SOLICITUD_PROYECTO_MODELO_EJECUCION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamModeloEjecucionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamModeloEjecucionEntity = {
+        entity: value,
+        ...MSG_PARAMS.GENDER.MALE,
+        ...MSG_PARAMS.CARDINALIRY.SINGULAR
+      }
+    );
 
     this.translate.get(
       SOLICITUD_PROYECTO_TITULO_KEY,
@@ -116,9 +137,26 @@ export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<
   }
 
   protected buildFormGroup(): FormGroup {
+    let titulo: string;
+    if (this.data.solicitud.formularioSolicitud === FormularioSolicitud.PROYECTO) {
+      titulo = this.data.solicitud.titulo;
+    } else if (this.data.solicitud.formularioSolicitud === FormularioSolicitud.RRHH) {
+      const camposTitulo: string[] = [];
+      if (!!this.data?.convocatoria?.titulo) {
+        camposTitulo.push(this.data.convocatoria.titulo);
+      }
+      if (!!this.data?.convocatoria?.fechaPublicacion) {
+        camposTitulo.push(this.data.convocatoria.fechaPublicacion.year.toString());
+      }
+      if (!!this.data?.nombreSolicitante) {
+        camposTitulo.push(this.data.nombreSolicitante);
+      }
+      titulo = camposTitulo.join(' - ');
+    }
+
     const formGroup = new FormGroup(
       {
-        titulo: new FormControl(this.data.solicitud.titulo || null, [Validators.required, Validators.maxLength(250)]),
+        titulo: new FormControl(titulo || null, [Validators.required, Validators.maxLength(250)]),
         fechaInicio: new FormControl(null, [Validators.required]),
         fechaFin: new FormControl(null, [Validators.required]),
         modeloEjecucion: new FormControl(null, [Validators.required]
@@ -126,8 +164,8 @@ export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<
       },
       {
         validators: [
-          DateValidator.isAfter('fechaInicio', 'fechaFin'),
-          DateValidator.isBefore('fechaFin', 'fechaInicio')
+          DateValidator.isAfter('fechaInicio', 'fechaFin', false),
+          DateValidator.isBefore('fechaFin', 'fechaInicio', false)
         ]
       }
     );
@@ -151,15 +189,16 @@ export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<
       fechaFin: this.formGroup.controls.fechaFin.value,
       modeloEjecucion: this.formGroup.controls.modeloEjecucion.value,
       titulo: this.formGroup.controls.titulo.value,
-      solicitudId: this.data.solicitud.id
+      solicitudId: this.data.solicitud.id,
+      unidadGestion: this.data.solicitud.unidadGestion
     } as IProyecto;
   }
 
   protected getProyectos(): Observable<IProyectoData[]> {
-    const filters = new RSQLSgiRestFilter('solicitudId', SgiRestFilterOperator.EQUALS, this.data.solicitud.id.toString())
+    const filters = new RSQLSgiRestFilter('solicitudId', SgiRestFilterOperator.EQUALS, this.data.solicitud.id.toString());
     const filter: SgiRestFindOptions = {
       filter: filters
-    }
+    };
 
     return this.proyectoService.findTodos(filter).pipe(
       map((response) => {
@@ -169,23 +208,22 @@ export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<
       switchMap((response) => {
         const requestsProyecto: Observable<IProyectoData>[] = [];
         response.forEach(proyecto => {
-          const proyectoData = proyecto as IProyectoData;
           if (proyecto.id) {
             requestsProyecto.push(this.proyectoService.hasProyectoProrrogas(proyecto.id).pipe(
               map(value => {
-                proyectoData.prorrogado = value;
-                return proyectoData;
+                proyecto.prorrogado = value;
+                return proyecto;
               }),
               switchMap(() =>
                 this.proyectoService.findAllProyectosSgeProyecto(proyecto.id).pipe(
                   map(value => {
-                    proyectoData.proyectosSGE = value.items.map(element => element.proyectoSge.id).join(', ');
-                    return proyectoData;
+                    proyecto.proyectosSGE = value.items.map(element => element.proyectoSge.id).join(', ');
+                    return proyecto;
                   }))
               )
             ));
           } else {
-            requestsProyecto.push(of(proyectoData));
+            requestsProyecto.push(of(proyecto));
           }
         });
         return of(response).pipe(
@@ -198,7 +236,6 @@ export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<
   private getFechaFinProyecto(fecha: DateTime): void {
     if (fecha && this.data?.solicitudProyecto?.duracion) {
       const fechaFin = fecha.plus({ months: this.data?.solicitudProyecto?.duracion, seconds: -1 });
-      // fechaFin.day = fecha.day - 1;
       this.formGroup.controls.fechaFin.setValue(fechaFin);
     }
   }

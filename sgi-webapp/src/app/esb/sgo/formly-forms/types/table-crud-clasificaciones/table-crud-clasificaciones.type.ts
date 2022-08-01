@@ -77,7 +77,8 @@ export class TableCRUDClasificacionesTypeComponent extends BaseTableCRUDTypeComp
 
     const data: ClasificacionDataModal = {
       selectedClasificaciones: arrSelectedClasificaciones,
-      tipoClasificacion: TipoClasificacion.SECTORES_INDUSTRIALES
+      tipoClasificacion: TipoClasificacion.SECTORES_INDUSTRIALES,
+      multiSelect: true
     };
 
     const config = {

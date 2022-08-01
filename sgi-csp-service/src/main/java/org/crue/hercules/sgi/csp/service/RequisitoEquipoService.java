@@ -8,6 +8,7 @@ import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.RequisitoEquipo;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.RequisitoEquipoRepository;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.stereotype.Service;
@@ -27,8 +28,7 @@ public class RequisitoEquipoService {
   private final RequisitoEquipoRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
 
-  public RequisitoEquipoService(RequisitoEquipoRepository repository, ConvocatoriaRepository convocatoriaRepository,
-      ConvocatoriaService convocatoriaService) {
+  public RequisitoEquipoService(RequisitoEquipoRepository repository, ConvocatoriaRepository convocatoriaRepository) {
     this.repository = repository;
     this.convocatoriaRepository = convocatoriaRepository;
   }
@@ -43,20 +43,18 @@ public class RequisitoEquipoService {
   public RequisitoEquipo create(RequisitoEquipo requisitoEquipo) {
     log.debug("create(RequisitoEquipo requisitoEquipo) - start");
 
-    Assert.notNull(requisitoEquipo.getId(),
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(RequisitoEquipo.class)).build());
+    AssertHelper.idNotNull(requisitoEquipo.getId(), RequisitoEquipo.class);
 
     Assert.isTrue(!repository.existsById(requisitoEquipo.getId()),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key("org.crue.hercules.sgi.csp.exceptions.RelatedEntityAlreadyExists.message")
-            .parameter("entity", ApplicationContextSupport.getMessage(RequisitoEquipo.class))
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(RequisitoEquipo.class))
             .parameter("related", ApplicationContextSupport.getMessage(Convocatoria.class)).build());
 
-    convocatoriaRepository.findById(requisitoEquipo.getId())
-        .orElseThrow(() -> new ConvocatoriaNotFoundException(requisitoEquipo.getId()));
+    if (!convocatoriaRepository.existsById(requisitoEquipo.getId())) {
+      throw new ConvocatoriaNotFoundException(requisitoEquipo.getId());
+    }
 
     RequisitoEquipo returnValue = repository.save(requisitoEquipo);
 
@@ -77,15 +75,12 @@ public class RequisitoEquipoService {
   public RequisitoEquipo update(RequisitoEquipo requisitoEquipoActualizar, Long convocatoriaId) {
     log.debug("update(RequisitoEquipo requisitoEquipoActualizar, Long convocatoriaId) - start");
 
-    Assert.notNull(convocatoriaId,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(RequisitoEquipo.class)).build());
+    AssertHelper.idNotNull(convocatoriaId, RequisitoEquipo.class);
 
     // Comprobación de existencia de Convocatoria
-    convocatoriaRepository.findById(convocatoriaId)
-        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaId));
+    if (!convocatoriaRepository.existsById(convocatoriaId)) {
+      throw new ConvocatoriaNotFoundException(convocatoriaId);
+    }
 
     return repository.findById(convocatoriaId).map(requisitoEquipo -> {
       requisitoEquipo.setFechaMinimaNivelAcademico(requisitoEquipoActualizar.getFechaMinimaNivelAcademico());

@@ -66,6 +66,7 @@ public class BaremacionService {
   private final BaremacionOrganizacionActividadService baremacionOrganizacionActividadService;
   private final ConvocatoriaBaremacionService convocatoriaBaremacionService;
   private final ConvocatoriaBaremacionLogService convocatoriaBaremacionLogService;
+  private final ComunicadosService comunicadosService;
 
   private final SgiApiCspService sgiApiCspService;
 
@@ -75,8 +76,11 @@ public class BaremacionService {
   public synchronized void baremacion(Long convocatoriaBaremacionId) {
     log.debug("baremacion({}) - start", convocatoriaBaremacionId);
 
+    ConvocatoriaBaremacion convocatoriaBaremacion = null;
+    boolean baremacionCompletada = false;
+
     try {
-      ConvocatoriaBaremacion convocatoriaBaremacion = convocatoriaBaremacionRepository
+      convocatoriaBaremacion = convocatoriaBaremacionRepository
           .findById(convocatoriaBaremacionId)
           .orElseThrow(() -> new ConvocatoriaBaremacionNotFoundException(convocatoriaBaremacionId));
 
@@ -90,6 +94,7 @@ public class BaremacionService {
       baremacionInvencionService.copyInvenciones(anioInicio, anioFin);
       baremacionProyectoService.copyProyectos(anioInicio, anioFin);
       baremacionSexenioService.copySexenios(anioInicio, anioFin);
+      // FIXME: Commented copy tesis to improve baremation speed
       // baremacionDireccionTesisService.copyTesis(anioInicio, anioFin);
 
       IntStream.range(anioInicio, anioFin).forEach(anio -> {
@@ -150,16 +155,18 @@ public class BaremacionService {
       });
 
       evaluatePuntosConvocatoriaBaremacion(convocatoriaBaremacionId);
+      baremacionCompletada = true;
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-
-      // TODO Lanzar comunicado error algoritmo
+      comunicadosService.enviarComunicadoErrorProcesoBaremacion(convocatoriaBaremacion, e.getMessage());
       throw e;
     } finally {
       convocatoriaBaremacionLogService.save(convocatoriaBaremacionId, "Fin");
       convocatoriaBaremacionService.closeFechaBaremacion(convocatoriaBaremacionId);
 
-      // TODO Lanzar comunicado algoritmo completado
+      if (baremacionCompletada) {
+        comunicadosService.enviarComunicadoFinProcesoBaremacion(convocatoriaBaremacion);
+      }
     }
     log.debug("baremacion({}) - end", convocatoriaBaremacionId);
   }

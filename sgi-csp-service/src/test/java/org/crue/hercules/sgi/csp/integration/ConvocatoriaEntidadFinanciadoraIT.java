@@ -22,7 +22,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de ConvocatoriaEntidadFinanciadora.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ConvocatoriaEntidadFinanciadoraIT extends BaseIT {
+class ConvocatoriaEntidadFinanciadoraIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/convocatoriaentidadfinanciadoras";
@@ -42,7 +42,7 @@ public class ConvocatoriaEntidadFinanciadoraIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsConvocatoriaEntidadFinanciadora() throws Exception {
+  void create_ReturnsConvocatoriaEntidadFinanciadora() throws Exception {
 
     // given: new ConvocatoriaEntidadFinanciadora
     ConvocatoriaEntidadFinanciadora newConvocatoriaEntidadFinanciadora = generarMockConvocatoriaEntidadFinanciadora(
@@ -71,7 +71,7 @@ public class ConvocatoriaEntidadFinanciadoraIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsConvocatoriaEntidadFinanciadora() throws Exception {
+  void update_ReturnsConvocatoriaEntidadFinanciadora() throws Exception {
     Long idFuenteFinanciacion = 1L;
     ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockConvocatoriaEntidadFinanciadora(
         idFuenteFinanciacion);
@@ -100,7 +100,7 @@ public class ConvocatoriaEntidadFinanciadoraIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing ConvocatoriaEntidadFinanciadora to be deleted
     Long id = 1L;
 
@@ -117,7 +117,7 @@ public class ConvocatoriaEntidadFinanciadoraIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsConvocatoriaEntidadFinanciadora() throws Exception {
+  void findById_ReturnsConvocatoriaEntidadFinanciadora() throws Exception {
     Long idConvocatoriaEntidadFinanciadora = 1L;
 
     final ResponseEntity<ConvocatoriaEntidadFinanciadora> response = restTemplate.exchange(

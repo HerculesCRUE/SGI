@@ -26,7 +26,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * TipoFaseServiceTest
  */
-public class TipoFaseServiceTest extends BaseServiceTest {
+class TipoFaseServiceTest extends BaseServiceTest {
 
   @Mock
   private TipoFaseRepository tipoFaseRepository;
@@ -34,12 +34,12 @@ public class TipoFaseServiceTest extends BaseServiceTest {
   private TipoFaseService tipoFaseService;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     tipoFaseService = new TipoFaseServiceImpl(tipoFaseRepository);
   }
 
   @Test
-  public void findById_WithId_ReturnsTipoFase() {
+  void findById_WithId_ReturnsTipoFase() {
     BDDMockito.given(tipoFaseRepository.findById(1L)).willReturn(Optional.of(generarMockTipoFase(1L, "TipoFase1")));
 
     TipoFase tipoFase = tipoFaseService.findById(1L);
@@ -50,14 +50,14 @@ public class TipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void find_NotFound_ThrowsTipoFaseNotFoundException() throws Exception {
+  void find_NotFound_ThrowsTipoFaseNotFoundException() throws Exception {
     BDDMockito.given(tipoFaseRepository.findById(1L)).willReturn(Optional.empty());
 
     Assertions.assertThatThrownBy(() -> tipoFaseService.findById(1L)).isInstanceOf(TipoFaseNotFoundException.class);
   }
 
   @Test
-  public void create_ReturnsTipoFase() {
+  void create_ReturnsTipoFase() {
     // given: Un nuevo TipoFase
     TipoFase tipoFase = generarMockTipoFase(null);
 
@@ -81,7 +81,7 @@ public class TipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsTipoFase() {
+  void update_ReturnsTipoFase() {
     // given: Un nuevo tipo Fase con el servicio actualizado
     TipoFase tipoFaseServicioActualizado = generarMockTipoFase(1L, "TipoFase1 actualizada");
 
@@ -100,7 +100,7 @@ public class TipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ThrowsTipoFaseNotFoundException() {
+  void update_ThrowsTipoFaseNotFoundException() {
     // given: Un nuevo tipo Fase a actualizar
     TipoFase tipoFase = generarMockTipoFase(1L, "TipoFase");
 
@@ -110,7 +110,7 @@ public class TipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_ReturnsTipoFase() {
+  void enable_ReturnsTipoFase() {
     // given: Un nuevo TipoFase inactivo
     TipoFase tipoFase = generarMockTipoFase(1L);
     tipoFase.setActivo(Boolean.FALSE);
@@ -139,7 +139,7 @@ public class TipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
+  void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
     // given: Un id de un TipoFase que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(tipoFaseRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -150,7 +150,7 @@ public class TipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void enable_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un TipoFase inactivo con nombre existente
     TipoFase tipoFaseExistente = generarMockTipoFase(2L);
     TipoFase tipoFase = generarMockTipoFase(1L);
@@ -169,7 +169,7 @@ public class TipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_ReturnsTipoFase() {
+  void disable_ReturnsTipoFase() {
     // given: Un nuevo TipoFase activo
     TipoFase tipoFase = generarMockTipoFase(1L);
 
@@ -192,12 +192,12 @@ public class TipoFaseServiceTest extends BaseServiceTest {
     Assertions.assertThat(tipoFaseActualizado.getNombre()).as("getNombre()").isEqualTo(tipoFase.getNombre());
     Assertions.assertThat(tipoFaseActualizado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(tipoFase.getDescripcion());
-    Assertions.assertThat(tipoFaseActualizado.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(tipoFaseActualizado.getActivo()).as("getActivo()").isFalse();
 
   }
 
   @Test
-  public void disable_WithIdNotExist_ThrowsTipoFaseNotFoundException() {
+  void disable_WithIdNotExist_ThrowsTipoFaseNotFoundException() {
     // given: Un id de un TipoFase que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(tipoFaseRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -208,7 +208,7 @@ public class TipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_WithPaging_ReturnsPage() {
+  void findAll_WithPaging_ReturnsPage() {
     // given: One hundred TipoFases
     List<TipoFase> tipoFaseList = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -237,9 +237,9 @@ public class TipoFaseServiceTest extends BaseServiceTest {
 
     // then: A Page with ten TipoFasees are returned containing
     // descripcion='TipoFase031' to 'TipoFase040'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoFase tipoFase = page.getContent().get(i);
@@ -248,7 +248,7 @@ public class TipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllTodos_WithPaging_ReturnsPage() {
+  void findAllTodos_WithPaging_ReturnsPage() {
     // given: One hundred TipoFases
     List<TipoFase> tipoFaseList = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -277,9 +277,9 @@ public class TipoFaseServiceTest extends BaseServiceTest {
 
     // then: A Page with ten TipoFasees are returned containing
     // descripcion='TipoFase031' to 'TipoFase040'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoFase tipoFase = page.getContent().get(i);
@@ -288,7 +288,7 @@ public class TipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: a TipoFase with duplicated nombre
 
     TipoFase givenData = generarMockTipoFase(1L);
@@ -308,7 +308,7 @@ public class TipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void update_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un nuevo TipoFase con un nombre que ya existe
     TipoFase tipoFaseUpdated = generarMockTipoFase(1L, "nombreRepetido");
     TipoFase tipoFase = generarMockTipoFase(2L, "nombreRepetido");
@@ -329,7 +329,7 @@ public class TipoFaseServiceTest extends BaseServiceTest {
    * @param id id del TipoFase
    * @return el objeto TipoFase
    */
-  public TipoFase generarMockTipoFase(Long id) {
+  TipoFase generarMockTipoFase(Long id) {
     return generarMockTipoFase(id, "nombre-" + id);
   }
 
@@ -339,7 +339,7 @@ public class TipoFaseServiceTest extends BaseServiceTest {
    * @param id id del TipoFase
    * @return el objeto TipoFase
    */
-  public TipoFase generarMockTipoFase(Long id, String nombre) {
+  TipoFase generarMockTipoFase(Long id, String nombre) {
     TipoFase tipoFase = new TipoFase();
     tipoFase.setId(id);
     tipoFase.setNombre(nombre);

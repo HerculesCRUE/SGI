@@ -17,7 +17,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 
-public class GrupoLineaClasificacionIT extends BaseIT {
+class GrupoLineaClasificacionIT extends BaseIT {
 
   private static final String CONTROLLER_BASE_PATH = GrupoLineaClasificacionController.REQUEST_MAPPING;
   private static final String PATH_PARAMETER_ID = GrupoLineaClasificacionController.PATH_ID;
@@ -44,7 +44,7 @@ public class GrupoLineaClasificacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsProyectoClasificacion() throws Exception {
+  void create_ReturnsProyectoClasificacion() throws Exception {
     String roles = "CSP-GIN-E";
     GrupoLineaClasificacion grupoLineaClasificacion = generarMockGrupoLineaClasificacion(null);
 
@@ -72,7 +72,7 @@ public class GrupoLineaClasificacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_ReturnStatusCode404() throws Exception {
+  void delete_ReturnStatusCode404() throws Exception {
     // given: existing ProyectoClasificacion to be deleted
     String roles = "CSP-GIN-E";
     Long id = 100L;

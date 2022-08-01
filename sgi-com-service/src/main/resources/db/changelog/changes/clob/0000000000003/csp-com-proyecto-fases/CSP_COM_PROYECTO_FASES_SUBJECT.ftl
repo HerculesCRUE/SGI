@@ -1,0 +1,1 @@
+Fase "${CSP_PRO_TIPO_FASE}" del proyecto "${CSP_PRO_FASE_TITULO_PROYECTO}<#if CSP_CONV_FASE_TITULO_CONVOCATORIA?has_content> de la convocatoria "${CSP_CONV_FASE_TITULO_CONVOCATORIA}"</#if>

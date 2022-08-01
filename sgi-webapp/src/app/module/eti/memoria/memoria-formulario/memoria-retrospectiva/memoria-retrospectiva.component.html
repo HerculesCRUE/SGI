@@ -1,6 +1,6 @@
 <sgi-fragment title="{{'eti.memoria.retrospectiva' | translate}}" class="memoria-formulario">
 
-  <div class="formly" *ngIf=block?.loaded>
+  <div class="formly" *ngIf="(block?.loaded$ | async)">
     <form [formGroup]="block.formlyData.formGroup">
       <formly-form [model]="block.formlyData.model" [fields]="block.formlyData.fields"
         [options]="block.formlyData.options" [form]="block.formlyData.formGroup">

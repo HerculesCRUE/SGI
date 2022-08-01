@@ -83,6 +83,8 @@ export interface IAuthStatus {
   userRefId: string;
   /** The modules access of the authenticated user */
   modules: string[];
+  /** The preferred username to display */
+  preferredUsername: string;
 }
 
 /**
@@ -93,7 +95,8 @@ export const defaultAuthStatus: IAuthStatus = {
   isInvestigador: false,
   authorities: [],
   userRefId: '',
-  modules: []
+  modules: [],
+  preferredUsername: ''
 };
 
 /**

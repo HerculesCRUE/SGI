@@ -6,7 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IProyectoPlazos } from '@core/models/csp/proyecto-plazo';
+import { IProyectoFase } from '@core/models/csp/proyecto-fase';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
@@ -29,17 +29,17 @@ export class ProyectoPlazosComponent extends FragmentComponent implements OnInit
   formPart: ProyectoPlazosFragment;
   private subscriptions: Subscription[] = [];
 
-  displayedColumns = ['fechaInicio', 'fechaFin', 'tipoFase', 'aviso', 'acciones'];
+  displayedColumns = ['fechaInicio', 'fechaFin', 'tipoFase', 'observaciones', 'aviso', 'acciones'];
   elementosPagina = [5, 10, 25, 100];
 
   msgParamEntity = {};
   textoDelete: string;
 
-  dataSource: MatTableDataSource<StatusWrapper<IProyectoPlazos>>;
+  dataSource: MatTableDataSource<StatusWrapper<IProyectoFase>>;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  plazos$: BehaviorSubject<StatusWrapper<IProyectoPlazos>[]>;
+  plazos$: BehaviorSubject<StatusWrapper<IProyectoFase>[]>;
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
@@ -60,8 +60,14 @@ export class ProyectoPlazosComponent extends FragmentComponent implements OnInit
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
-    this.dataSource = new MatTableDataSource<StatusWrapper<IProyectoPlazos>>();
+    this.dataSource = new MatTableDataSource<StatusWrapper<IProyectoFase>>();
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sortingDataAccessor = (wrapper, property) => {
+      if (property === 'aviso') {
+        return !!wrapper.value.aviso1 || !!wrapper.value.aviso2 ? 's' : 'n';
+      }
+      return wrapper.value[property];
+    }
     this.dataSource.sort = this.sort;
 
     this.subscriptions.push(this.formPart.plazos$.subscribe(elements => {
@@ -92,12 +98,15 @@ export class ProyectoPlazosComponent extends FragmentComponent implements OnInit
    * Apertura de modal de plazos fase
    * @param plazo Identificador de plazos fase al guardar/editar
    */
-  openModalPlazos(plazo?: StatusWrapper<IProyectoPlazos>): void {
+  openModalPlazos(plazo?: StatusWrapper<IProyectoFase>): void {
     const datosPlazosFases: ProyectoPlazosModalComponentData = {
       plazos: this.dataSource.data.filter(existing => existing !== plazo).map(wrapper => wrapper.value),
-      plazo: plazo ? plazo.value : {} as IProyectoPlazos,
+      plazo: plazo ? plazo.value : {} as IProyectoFase,
       idModeloEjecucion: this.actionService.modeloEjecucionId,
-      readonly: this.actionService.readonly
+      readonly: this.actionService.readonly,
+      tituloProyecto: this.actionService.titulo,
+      unidadGestionId: this.actionService.unidadGestionId,
+      convocatoriaId: this.actionService.convocatoriaId
     };
 
     const config = {
@@ -124,7 +133,7 @@ export class ProyectoPlazosComponent extends FragmentComponent implements OnInit
   /**
    * Desactivar proyecto fase
    */
-  deleteFase(wrapper: StatusWrapper<IProyectoPlazos>) {
+  deleteFase(wrapper: StatusWrapper<IProyectoFase>) {
     this.subscriptions.push(
       this.dialogService.showConfirmation(this.textoDelete).subscribe(
         (aceptado) => {

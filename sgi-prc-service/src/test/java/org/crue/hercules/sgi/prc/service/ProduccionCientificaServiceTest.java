@@ -249,27 +249,30 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "PRC-VAL-V" })
   void findAllComitesEditoriales_ReturnsPage() {
     // given: Una lista con 37 ComiteEditorialResumen
-    List<ComiteEditorialResumen> comitesEditoriales = new ArrayList<>();
+    List<ComiteEditorialResumen> comites = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
-      comitesEditoriales.add(generarMockComiteEditorialResumen(i, String.format("%03d", i)));
+      comites.add(generarMockComiteEditorialResumen(i, String.format("%03d", i)));
     }
 
     BDDMockito.given(
-        repository.findAllComitesEditoriales(ArgumentMatchers.<String>any(),
+        repository.findAllComitesEditoriales(
+            ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
+            ArgumentMatchers.<String>any(),
             ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<ComiteEditorialResumen>>() {
           @Override
           public Page<ComiteEditorialResumen> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
+            Pageable pageable = invocation.getArgument(2, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;
             int toIndex = fromIndex + size;
-            toIndex = toIndex > comitesEditoriales.size() ? comitesEditoriales.size() : toIndex;
-            List<ComiteEditorialResumen> content = comitesEditoriales.subList(fromIndex, toIndex);
-            Page<ComiteEditorialResumen> page = new PageImpl<>(content, pageable, comitesEditoriales.size());
+            toIndex = toIndex > comites.size() ? comites.size() : toIndex;
+            List<ComiteEditorialResumen> content = comites.subList(fromIndex, toIndex);
+            Page<ComiteEditorialResumen> page = new PageImpl<>(content, pageable, comites.size());
             return page;
           }
         });
@@ -284,8 +287,56 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
-      ComiteEditorialResumen comiteEditorial = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(comiteEditorial.getProduccionCientificaRef())
+      ComiteEditorialResumen comite = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
+      Assertions.assertThat(comite.getProduccionCientificaRef())
+          .isEqualTo("ProduccionCientifica" + String.format("%03d", i));
+    }
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "PRC-VAL-INV-ER" })
+  void findAllComitesEditoriales_Investigador_ReturnsPage() {
+    // given: Una lista con 37 ComiteEditorialResumen
+    List<ComiteEditorialResumen> comites = new ArrayList<>();
+    for (long i = 1; i <= 37; i++) {
+      comites.add(generarMockComiteEditorialResumen(i, String.format("%03d", i)));
+    }
+
+    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
+        .willReturn(Arrays.asList(generarMockGrupoDto(1L)));
+
+    BDDMockito.given(
+        repository.findAllComitesEditoriales(
+            ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
+            ArgumentMatchers.<String>any(),
+            ArgumentMatchers.<Pageable>any()))
+        .willAnswer(new Answer<Page<ComiteEditorialResumen>>() {
+          @Override
+          public Page<ComiteEditorialResumen> answer(InvocationOnMock invocation) throws Throwable {
+            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            int size = pageable.getPageSize();
+            int index = pageable.getPageNumber();
+            int fromIndex = size * index;
+            int toIndex = fromIndex + size;
+            toIndex = toIndex > comites.size() ? comites.size() : toIndex;
+            List<ComiteEditorialResumen> content = comites.subList(fromIndex, toIndex);
+            Page<ComiteEditorialResumen> page = new PageImpl<>(content, pageable, comites.size());
+            return page;
+          }
+        });
+
+    // when: Get page=3 with pagesize=10
+    Pageable paging = PageRequest.of(3, 10);
+    Page<ComiteEditorialResumen> page = service.findAllComitesEditoriales(null, paging);
+
+    // then: Devuelve la pagina 3 con los ComiteEditorialResumen del 31 al 37
+    Assertions.assertThat(page.getContent()).as("getContent()").hasSize(7);
+    Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
+    Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
+    Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
+    for (int i = 31; i <= 37; i++) {
+      ComiteEditorialResumen comite = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
+      Assertions.assertThat(comite.getProduccionCientificaRef())
           .isEqualTo("ProduccionCientifica" + String.format("%03d", i));
     }
   }
@@ -384,6 +435,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "PRC-VAL-V" })
   void findAllObrasArtisticas_ReturnsPage() {
     // given: Una lista con 37 ObraArtisticaResumen
     List<ObraArtisticaResumen> obrasArtisticas = new ArrayList<>();
@@ -392,12 +444,14 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     }
 
     BDDMockito.given(
-        repository.findAllObrasArtisticas(ArgumentMatchers.<String>any(),
+        repository.findAllObrasArtisticas(
+            ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
+            ArgumentMatchers.<String>any(),
             ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<ObraArtisticaResumen>>() {
           @Override
           public Page<ObraArtisticaResumen> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
+            Pageable pageable = invocation.getArgument(2, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;
@@ -426,6 +480,55 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "PRC-VAL-INV-ER" })
+  void findAllObrasArtisticas_Investigador_ReturnsPage() {
+    // given: Una lista con 37 ObraArtisticaResumen
+    List<ObraArtisticaResumen> obrasArtisticas = new ArrayList<>();
+    for (long i = 1; i <= 37; i++) {
+      obrasArtisticas.add(generarMockObraArtisticaResumen(i, String.format("%03d", i)));
+    }
+
+    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
+        .willReturn(Arrays.asList(generarMockGrupoDto(1L)));
+
+    BDDMockito.given(
+        repository.findAllObrasArtisticas(
+            ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
+            ArgumentMatchers.<String>any(),
+            ArgumentMatchers.<Pageable>any()))
+        .willAnswer(new Answer<Page<ObraArtisticaResumen>>() {
+          @Override
+          public Page<ObraArtisticaResumen> answer(InvocationOnMock invocation) throws Throwable {
+            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            int size = pageable.getPageSize();
+            int index = pageable.getPageNumber();
+            int fromIndex = size * index;
+            int toIndex = fromIndex + size;
+            toIndex = toIndex > obrasArtisticas.size() ? obrasArtisticas.size() : toIndex;
+            List<ObraArtisticaResumen> content = obrasArtisticas.subList(fromIndex, toIndex);
+            Page<ObraArtisticaResumen> page = new PageImpl<>(content, pageable, obrasArtisticas.size());
+            return page;
+          }
+        });
+
+    // when: Get page=3 with pagesize=10
+    Pageable paging = PageRequest.of(3, 10);
+    Page<ObraArtisticaResumen> page = service.findAllObrasArtisticas(null, paging);
+
+    // then: Devuelve la pagina 3 con los ObraArtisticaResumen del 31 al 37
+    Assertions.assertThat(page.getContent()).as("getContent()").hasSize(7);
+    Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
+    Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
+    Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
+    for (int i = 31; i <= 37; i++) {
+      ObraArtisticaResumen obraArtistica = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
+      Assertions.assertThat(obraArtistica.getProduccionCientificaRef())
+          .isEqualTo("ProduccionCientifica" + String.format("%03d", i));
+    }
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "PRC-VAL-V" })
   void findAllActividades_ReturnsPage() {
     // given: Una lista con 37 ActividadResumen
     List<ActividadResumen> actividades = new ArrayList<>();
@@ -434,12 +537,14 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     }
 
     BDDMockito.given(
-        repository.findAllActividades(ArgumentMatchers.<String>any(),
+        repository.findAllActividades(
+            ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
+            ArgumentMatchers.<String>any(),
             ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<ActividadResumen>>() {
           @Override
           public Page<ActividadResumen> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
+            Pageable pageable = invocation.getArgument(2, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;
@@ -468,6 +573,55 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "PRC-VAL-INV-ER" })
+  void findAllActividades_Investigador_ReturnsPage() {
+    // given: Una lista con 37 ActividadResumen
+    List<ActividadResumen> actividades = new ArrayList<>();
+    for (long i = 1; i <= 37; i++) {
+      actividades.add(generarMockActividadResumen(i, String.format("%03d", i)));
+    }
+
+    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
+        .willReturn(Arrays.asList(generarMockGrupoDto(1L)));
+
+    BDDMockito.given(
+        repository.findAllActividades(
+            ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
+            ArgumentMatchers.<String>any(),
+            ArgumentMatchers.<Pageable>any()))
+        .willAnswer(new Answer<Page<ActividadResumen>>() {
+          @Override
+          public Page<ActividadResumen> answer(InvocationOnMock invocation) throws Throwable {
+            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            int size = pageable.getPageSize();
+            int index = pageable.getPageNumber();
+            int fromIndex = size * index;
+            int toIndex = fromIndex + size;
+            toIndex = toIndex > actividades.size() ? actividades.size() : toIndex;
+            List<ActividadResumen> content = actividades.subList(fromIndex, toIndex);
+            Page<ActividadResumen> page = new PageImpl<>(content, pageable, actividades.size());
+            return page;
+          }
+        });
+
+    // when: Get page=3 with pagesize=10
+    Pageable paging = PageRequest.of(3, 10);
+    Page<ActividadResumen> page = service.findAllActividades(null, paging);
+
+    // then: Devuelve la pagina 3 con los ActividadResumen del 31 al 37
+    Assertions.assertThat(page.getContent()).as("getContent()").hasSize(7);
+    Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
+    Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
+    Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
+    for (int i = 31; i <= 37; i++) {
+      ActividadResumen actividad = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
+      Assertions.assertThat(actividad.getProduccionCientificaRef())
+          .isEqualTo("ProduccionCientifica" + String.format("%03d", i));
+    }
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "PRC-VAL-V" })
   void findAllDireccionesTesis_ReturnsPage() {
     // given: Una lista con 37 DireccionTesisResumen
     List<DireccionTesisResumen> direccionesTesis = new ArrayList<>();
@@ -476,12 +630,62 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     }
 
     BDDMockito.given(
-        repository.findAllDireccionesTesis(ArgumentMatchers.<String>any(),
+        repository.findAllDireccionesTesis(
+            ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
+            ArgumentMatchers.<String>any(),
             ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<DireccionTesisResumen>>() {
           @Override
           public Page<DireccionTesisResumen> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
+            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            int size = pageable.getPageSize();
+            int index = pageable.getPageNumber();
+            int fromIndex = size * index;
+            int toIndex = fromIndex + size;
+            toIndex = toIndex > direccionesTesis.size() ? direccionesTesis.size() : toIndex;
+            List<DireccionTesisResumen> content = direccionesTesis.subList(fromIndex, toIndex);
+            Page<DireccionTesisResumen> page = new PageImpl<>(content, pageable, direccionesTesis.size());
+            return page;
+          }
+        });
+
+    // when: Get page=3 with pagesize=10
+    Pageable paging = PageRequest.of(3, 10);
+    Page<DireccionTesisResumen> page = service.findAllDireccionesTesis(null, paging);
+
+    // then: Devuelve la pagina 3 con los DireccionTesisResumen del 31 al 37
+    Assertions.assertThat(page.getContent()).as("getContent()").hasSize(7);
+    Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
+    Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
+    Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
+    for (int i = 31; i <= 37; i++) {
+      DireccionTesisResumen direccionTesis = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
+      Assertions.assertThat(direccionTesis.getProduccionCientificaRef())
+          .isEqualTo("ProduccionCientifica" + String.format("%03d", i));
+    }
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "PRC-VAL-INV-ER" })
+  void findAllDireccionesTesis_Investigador_ReturnsPage() {
+    // given: Una lista con 37 DireccionTesisResumen
+    List<DireccionTesisResumen> direccionesTesis = new ArrayList<>();
+    for (long i = 1; i <= 37; i++) {
+      direccionesTesis.add(generarMockDireccionTesisResumen(i, String.format("%03d", i)));
+    }
+
+    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
+        .willReturn(Arrays.asList(generarMockGrupoDto(1L)));
+
+    BDDMockito.given(
+        repository.findAllDireccionesTesis(
+            ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
+            ArgumentMatchers.<String>any(),
+            ArgumentMatchers.<Pageable>any()))
+        .willAnswer(new Answer<Page<DireccionTesisResumen>>() {
+          @Override
+          public Page<DireccionTesisResumen> answer(InvocationOnMock invocation) throws Throwable {
+            Pageable pageable = invocation.getArgument(2, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;

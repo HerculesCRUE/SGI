@@ -15,13 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ProyectoPeriodoSeguimientoRepositoryTest extends BaseRepositoryTest {
+class ProyectoPeriodoSeguimientoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ProyectoPeriodoSeguimientoRepository repository;
 
   @Test
-  public void findAllByProyectoIdOrderByFechaInicial_ReturnsProyectoPeriodoSeguimientoList() throws Exception {
+  void findAllByProyectoIdOrderByFechaInicial_ReturnsProyectoPeriodoSeguimientoList() throws Exception {
 
     // @formatter:off
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()
@@ -80,7 +80,7 @@ public class ProyectoPeriodoSeguimientoRepositoryTest extends BaseRepositoryTest
   }
 
   @Test
-  public void findAllByProyectoIdOrderByFechaInicio_ReturnsNull() throws Exception {
+  void findAllByProyectoIdOrderByFechaInicio_ReturnsNull() throws Exception {
     // given: 10 ProyectoPeriodoSeguimiento
     // @formatter:off
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()

@@ -31,7 +31,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * TipoOrigenFuenteFinanciacionControllerTest
  */
 @WebMvcTest(TipoOrigenFuenteFinanciacionController.class)
-public class TipoOrigenFuenteFinanciacionControllerTest extends BaseControllerTest {
+class TipoOrigenFuenteFinanciacionControllerTest extends BaseControllerTest {
 
   @MockBean
   private TipoOrigenFuenteFinanciacionService tipoOrigenFuenteFinanciacionService;
@@ -40,7 +40,7 @@ public class TipoOrigenFuenteFinanciacionControllerTest extends BaseControllerTe
 
   @Test
   @WithMockUser(username = "user")
-  public void findAll_ReturnsPage() throws Exception {
+  void findAll_ReturnsPage() throws Exception {
     // given: Una lista con 37 TipoOrigenFuenteFinaciacion
     List<TipoOrigenFuenteFinanciacion> tiposOrigenFuenteFinaciacion = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -98,7 +98,7 @@ public class TipoOrigenFuenteFinanciacionControllerTest extends BaseControllerTe
 
   @Test
   @WithMockUser(username = "user")
-  public void findAll_EmptyList_Returns204() throws Exception {
+  void findAll_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de TipoOrigenFuenteFinanciacion
     List<TipoOrigenFuenteFinanciacion> tiposOrigenFuenteFinanciacion = new ArrayList<>();
     Integer page = 0;
@@ -129,7 +129,7 @@ public class TipoOrigenFuenteFinanciacionControllerTest extends BaseControllerTe
    * @param id id del TipoOrigenFuenteFinanciacion
    * @return el objeto TipoOrigenFuenteFinanciacion
    */
-  public TipoOrigenFuenteFinanciacion generarMockTipoOrigenFuenteFinanciacion(Long id) {
+  TipoOrigenFuenteFinanciacion generarMockTipoOrigenFuenteFinanciacion(Long id) {
     return generarMockTipoOrigenFuenteFinanciacion(id, "nombre-" + id);
   }
 
@@ -140,7 +140,7 @@ public class TipoOrigenFuenteFinanciacionControllerTest extends BaseControllerTe
    * @param nombre nombre del TipoOrigenFuenteFinanciacion
    * @return el objeto TipoOrigenFuenteFinanciacion
    */
-  public TipoOrigenFuenteFinanciacion generarMockTipoOrigenFuenteFinanciacion(Long id, String nombre) {
+  TipoOrigenFuenteFinanciacion generarMockTipoOrigenFuenteFinanciacion(Long id, String nombre) {
 
     TipoOrigenFuenteFinanciacion tipoOrigenFuenteFinanciacion = new TipoOrigenFuenteFinanciacion();
     tipoOrigenFuenteFinanciacion.setId(id);

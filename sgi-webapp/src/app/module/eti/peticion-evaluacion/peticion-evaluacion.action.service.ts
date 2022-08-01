@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { ComponentFactoryResolver, Injectable, Injector } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { IChecklist } from '@core/models/eti/checklist';
@@ -6,19 +6,26 @@ import { IEquipoTrabajo } from '@core/models/eti/equipo-trabajo';
 import { IPeticionEvaluacion } from '@core/models/eti/peticion-evaluacion';
 import { ActionService, IFragment } from '@core/services/action-service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
+import { ApartadoService } from '@core/services/eti/apartado.service';
+import { BloqueService } from '@core/services/eti/bloque.service';
 import { ChecklistService } from '@core/services/eti/checklist/checklist.service';
 import { EquipoTrabajoService } from '@core/services/eti/equipo-trabajo.service';
+import { EvaluacionService } from '@core/services/eti/evaluacion.service';
+import { FormularioService } from '@core/services/eti/formulario.service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
+import { RespuestaService } from '@core/services/eti/respuesta.service';
 import { TareaService } from '@core/services/eti/tarea.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { FormlyConfig, FormlyFormBuilder } from '@ngx-formly/core';
 import { SgiAuthService } from '@sgi/framework/auth/';
 import { NGXLogger } from 'ngx-logger';
 import { from, Observable, of, throwError } from 'rxjs';
-import { concatMap, filter, switchMap, takeLast, tap } from 'rxjs/operators';
+import { concatMap, filter, map, mergeMap, switchMap, take, takeLast, tap } from 'rxjs/operators';
+import { MemoriaFormularioFragment } from '../memoria/memoria-formulario/memoria-formulario/memoria-formulario.fragment';
 import { EquipoInvestigadorListadoFragment } from './peticion-evaluacion-formulario/equipo-investigador/equipo-investigador-listado/equipo-investigador-listado.fragment';
 import { MemoriasListadoFragment } from './peticion-evaluacion-formulario/memorias-listado/memorias-listado.fragment';
 import { PeticionEvaluacionDatosGeneralesFragment } from './peticion-evaluacion-formulario/peticion-evaluacion-datos-generales/peticion-evaluacion-datos-generales.fragment';
@@ -43,13 +50,15 @@ export class PeticionEvaluacionActionService extends ActionService {
   private fragmentos: IFragment[] = [];
   private checklist: IChecklist;
 
+  private formlyFormBuilder: FormlyFormBuilder;
+
 
   constructor(
     private readonly logger: NGXLogger,
     fb: FormBuilder,
     protected readonly peticionEvaluacionService: PeticionEvaluacionService,
     private readonly route: ActivatedRoute,
-    private readonly sgiAuthService: SgiAuthService,
+    sgiAuthService: SgiAuthService,
     protected readonly personaService: PersonaService,
     protected readonly equipoTrabajoService: EquipoTrabajoService,
     protected readonly tareaService: TareaService,
@@ -57,9 +66,19 @@ export class PeticionEvaluacionActionService extends ActionService {
     protected readonly datosAcademicosService: DatosAcademicosService,
     protected readonly vinculacionService: VinculacionService,
     protected readonly checklistService: ChecklistService,
-    protected readonly solicitudService: SolicitudService
+    protected readonly solicitudService: SolicitudService,
+    protected readonly formularioService: FormularioService,
+    protected readonly bloqueService: BloqueService,
+    protected readonly apartadoService: ApartadoService,
+    protected readonly respuestaService: RespuestaService,
+    protected readonly evaluacionService: EvaluacionService,
+    formlyConfig: FormlyConfig,
+    componentFactoryResolver: ComponentFactoryResolver,
+    injector: Injector
   ) {
     super();
+
+    this.formlyFormBuilder = new FormlyFormBuilder(formlyConfig, componentFactoryResolver, injector);
 
     this.peticionEvaluacion = {} as IPeticionEvaluacion;
 
@@ -117,9 +136,12 @@ export class PeticionEvaluacionActionService extends ActionService {
 
   }
 
-  initializeMemoriasAndEquiposInvestigador(): void {
-    this.memoriasListado.initialize();
+  initializeEquiposInvestigador(): void {
     this.equipoInvestigadorListado.initialize();
+  }
+
+  initializeMemorias(): void {
+    this.memoriasListado.initialize();
   }
 
   /**
@@ -145,7 +167,8 @@ export class PeticionEvaluacionActionService extends ActionService {
           }),
           tap(() => part.refreshInitialState(true)))
         ),
-        takeLast(1)
+        takeLast(1),
+        switchMap(() => this.updateMemorias(this.datosGenerales.getKey() as number))
       );
     }
     else {
@@ -163,5 +186,51 @@ export class PeticionEvaluacionActionService extends ActionService {
     }
   }
 
+  private updateMemorias(peticionEvaluacionId: number): Observable<void> {
+    return this.peticionEvaluacionService.findMemorias(peticionEvaluacionId).pipe(
+      mergeMap(response => {
+        return from(response.items).pipe(
+          mergeMap(memoria => {
+            const fragment = new MemoriaFormularioFragment(
+              this.logger,
+              this.readonly,
+              memoria.id,
+              memoria.comite,
+              this.formularioService,
+              this.bloqueService,
+              this.apartadoService,
+              this.respuestaService,
+              this.peticionEvaluacionService,
+              this.vinculacionService,
+              this.datosAcademicosService,
+              this.personaService,
+              this.memoriaService,
+              this.evaluacionService
+            );
+            fragment.initialize();
+            return fragment.initialized$.pipe(filter((value) => value), take(1), map((v) => fragment));
+          }),
+          filter(value => value.isEditable() && !value.isReadonly()),
+          switchMap(fragment => {
+            return from(fragment.blocks$.value).pipe(
+              // Se excluyen los bloques que no hayan sido persistidos
+              filter(block => fragment.blocks$.value.indexOf(block) <= fragment.getLastFilledBlockIndex()),
+              concatMap(block => {
+                fragment.selectedIndex$.next(fragment.blocks$.value.indexOf(block));
+                return block.loaded$.pipe(filter((value) => value), take(1), map(() => block.formlyData));
+              }),
+              map(formlyData => {
+                this.formlyFormBuilder.buildForm(formlyData.formGroup, formlyData.fields, formlyData.model, formlyData.options);
+                return fragment;
+              }),
+              takeLast(1)
+            );
+          }),
+          switchMap((fragment) => fragment.saveOrUpdate()),
+        );
+      }),
+      takeLast(1)
+    );
+  }
 }
 

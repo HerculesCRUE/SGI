@@ -20,7 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de Configuracion.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ConfiguracionIT extends BaseIT {
+class ConfiguracionIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/configuraciones";
@@ -44,7 +44,7 @@ public class ConfiguracionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void find_ReturnsConfiguracion() throws Exception {
+  void find_ReturnsConfiguracion() throws Exception {
 
     String roles = "CSP-PRO-E";
 
@@ -74,7 +74,7 @@ public class ConfiguracionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsConfiguracion() throws Exception {
+  void update_ReturnsConfiguracion() throws Exception {
 
     String roles = "CSP-CNF-E";
 

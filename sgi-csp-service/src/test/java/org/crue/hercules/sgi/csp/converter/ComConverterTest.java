@@ -17,9 +17,7 @@ class ComConverterTest {
         Arrays.asList(Email.builder().email("mail").principal(true).build())));
 
     List<Recipient> recipients = ComConverter.toRecipients(personasOutput);
-
-    Assertions.assertThat(recipients).isNotNull();
-    Assertions.assertThat(recipients.size()).isEqualTo(1);
+    Assertions.assertThat(recipients).hasSize(1);
 
     PersonaOutput persona = personasOutput.get(0);
 

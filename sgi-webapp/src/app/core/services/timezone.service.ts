@@ -6,6 +6,7 @@ import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, merge, Observable, Subject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { ConfigService as CspConfigService } from './csp/config.service';
+import { ConfigService as EerConfigService } from './eer/config.service';
 import { ConfigService as EtiConfigService } from './eti/config.service';
 import { ConfigService as PiiConfigService } from './pii/config.service';
 import { ConfigService as PrcConfigService } from './prc/config.service';
@@ -42,7 +43,8 @@ export class TimeZoneService implements OnDestroy {
     usrConfigService: UsrConfigService,
     repConfigService: RepConfigService,
     relConfigService: RelConfigService,
-    prcConfigService: PrcConfigService
+    prcConfigService: PrcConfigService,
+    eerConfigService: EerConfigService
   ) {
     Settings.defaultZoneName = this._zone$.getValue();
     if (authService.isAuthenticated()) {
@@ -53,7 +55,8 @@ export class TimeZoneService implements OnDestroy {
         this.buildRequest('USR', usrConfigService),
         this.buildRequest('REP', repConfigService),
         this.buildRequest('REL', relConfigService),
-        this.buildRequest('PRC', prcConfigService)
+        this.buildRequest('PRC', prcConfigService),
+        this.buildRequest('EER', eerConfigService)
       ).subscribe();
     } else {
       logger.warn('No authenticated user');

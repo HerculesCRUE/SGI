@@ -81,7 +81,7 @@ export class AutorizacionCertificadoModalComponent extends DialogFormComponent<I
     }
   }
 
-  doAtion(): void {
+  doAction(): void {
     this.formGroup.markAllAsTouched();
     if (this.formGroup.valid) {
       if (this.formGroup.controls.generadoAutomatico.value) {

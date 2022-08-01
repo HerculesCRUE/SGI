@@ -26,7 +26,7 @@ import { ReportService } from '@core/services/rep/report.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of, zip } from 'rxjs';
+import { concat, Observable, of, zip } from 'rxjs';
 import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
 import { ConvocatoriaAreaTematicaListadoExportService, IConvocatoriaAreaTematicaListadoExport } from './convocatoria-area-tematica-listado-export.service';
 import { ConvocatoriaCalendarioJustificacionListadoExportService } from './convocatoria-calendario-justificacion-listado-export.service';
@@ -206,7 +206,7 @@ export class ConvocatoriaListadoExportService extends AbstractTableExportService
 
   private getDataReportInner(convocatoriaData: IConvocatoriaReportData, reportOptions: IConvocatoriaReportOptions)
     : Observable<IConvocatoriaReportData> {
-    return merge(
+    return concat(
       this.getDataReportListadoGeneral(convocatoriaData),
       this.getDataReportAreasTematicas(convocatoriaData, reportOptions),
       this.getDataReportEntidadesConvocantes(convocatoriaData, reportOptions),

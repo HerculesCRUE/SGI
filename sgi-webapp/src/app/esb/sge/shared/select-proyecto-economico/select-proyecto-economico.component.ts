@@ -4,6 +4,7 @@ import { NgControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormField, MatFormFieldControl, MAT_FORM_FIELD } from '@angular/material/form-field';
 import { SearchResult, SelectDialogComponent } from '@core/component/select-dialog/select-dialog.component';
+import { IGrupo } from '@core/models/csp/grupo';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
@@ -48,6 +49,9 @@ export class SelectProyectoEconomicoComponent extends SelectDialogComponent<Sear
   @Input()
   selectAndNotify: boolean;
 
+  @Input()
+  grupoInvestigacion: IGrupo;
+
   constructor(
     changeDetectorRef: ChangeDetectorRef,
     elementRef: ElementRef,
@@ -66,7 +70,8 @@ export class SelectProyectoEconomicoComponent extends SelectDialogComponent<Sear
       ...super.getDialogData(),
       selectedProyectos: this.selectedProyectos ?? [],
       proyectoSgiId: this.proyectoSgiId,
-      selectAndNotify: this.selectAndNotify
+      selectAndNotify: this.selectAndNotify,
+      grupoInvestigacion: this.grupoInvestigacion
     };
   }
 

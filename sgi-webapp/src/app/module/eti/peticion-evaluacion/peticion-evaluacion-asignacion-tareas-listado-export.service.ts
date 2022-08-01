@@ -3,7 +3,6 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ITareaWithIsEliminable } from '@core/models/eti/tarea-with-is-eliminable';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
-import { TareaService } from '@core/services/eti/tarea.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -29,8 +28,7 @@ export class PeticionEvaluacionAsignacionTareasListadoExportService extends
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
     protected readonly peticionEvaluacionService: PeticionEvaluacionService,
-    private readonly personaService: PersonaService,
-    private readonly tareaService: TareaService
+    private readonly personaService: PersonaService
   ) {
     super(translate);
   }
@@ -47,7 +45,7 @@ export class PeticionEvaluacionAsignacionTareasListadoExportService extends
         return from(tareas).pipe(
           mergeMap((tarea: ITareaWithIsEliminable) => {
             return this.addTareaToPeticionEvaluacionData(tarea, peticionData);
-          })
+          }, this.DEFAULT_CONCURRENT)
         );
       })
     );

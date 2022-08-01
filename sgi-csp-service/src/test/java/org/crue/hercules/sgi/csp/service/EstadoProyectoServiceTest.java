@@ -18,7 +18,7 @@ class EstadoProyectoServiceTest extends BaseServiceTest {
   private EstadoProyectoService service;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     this.service = new EstadoProyectoServiceImpl(repository);
   }
 

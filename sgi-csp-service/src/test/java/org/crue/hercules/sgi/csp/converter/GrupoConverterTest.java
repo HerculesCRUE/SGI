@@ -21,7 +21,7 @@ class GrupoConverterTest extends BaseServiceTest {
   private GrupoConverter grupoConverter;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     this.grupoConverter = new GrupoConverter(modelMapper);
   }
 

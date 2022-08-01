@@ -12,13 +12,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * TipoAmbitoGeograficoRepositoryTest
  */
 @DataJpaTest
-public class TipoAmbitoGeograficoRepositoryTest extends BaseRepositoryTest {
+class TipoAmbitoGeograficoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private TipoAmbitoGeograficoRepository repository;
 
   @Test
-  public void findByNombre_ReturnsTipoAmbitoGeografico() throws Exception {
+  void findByNombre_ReturnsTipoAmbitoGeografico() throws Exception {
 
     // given: 2 TipoAmbitoGeografico de los que 1 coincide con el nombre buscado
     TipoAmbitoGeografico tipoAmbitoGeografico1 = TipoAmbitoGeografico.builder().nombre("nombre-1").activo(true).build();
@@ -41,7 +41,7 @@ public class TipoAmbitoGeograficoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByNombreNoExiste_ReturnsNull() throws Exception {
+  void findByNombreNoExiste_ReturnsNull() throws Exception {
 
     // given: 2 TipoAmbitoGeografico que no coinciden con el nombre buscado
     TipoAmbitoGeografico tipoAmbitoGeografico1 = TipoAmbitoGeografico.builder().nombre("nombre-1").activo(true).build();

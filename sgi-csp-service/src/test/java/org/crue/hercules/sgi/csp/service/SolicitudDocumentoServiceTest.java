@@ -12,6 +12,7 @@ import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.repository.SolicitudDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.impl.SolicitudDocumentoServiceImpl;
+import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +31,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.test.context.support.WithMockUser;
 
 @ExtendWith(MockitoExtension.class)
-public class SolicitudDocumentoServiceTest extends BaseServiceTest {
+class SolicitudDocumentoServiceTest extends BaseServiceTest {
 
   @Mock
   private SolicitudDocumentoRepository solicitudDocumentoRepository;
@@ -41,15 +42,18 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   @Mock
   private SolicitudRepository solicitudRepository;
 
+  private SolicitudAuthorityHelper authorityHelper;
+
   private SolicitudDocumentoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
-    service = new SolicitudDocumentoServiceImpl(solicitudDocumentoRepository, solicitudService, solicitudRepository);
+  void setUp() throws Exception {
+    authorityHelper = new SolicitudAuthorityHelper(solicitudRepository);
+    service = new SolicitudDocumentoServiceImpl(solicitudDocumentoRepository, solicitudService, authorityHelper);
   }
 
   @Test
-  public void create_ReturnsSolicitudDocumento() {
+  void create_ReturnsSolicitudDocumento() {
     // given: new SolicitudDocumento
     SolicitudDocumento newSolicitudDocumento = generarSolicitudDocumento(null, 1L, 1L);
 
@@ -85,7 +89,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: a SolicitudDocumento with id filled
     SolicitudDocumento newSolicitudDocumento = generarSolicitudDocumento(1L, 1L, 1L);
 
@@ -97,7 +101,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutSolicitud_ThrowsNotFoundException() throws Exception {
+  void create_WithoutSolicitud_ThrowsNotFoundException() throws Exception {
     // given: solicitud id null
     SolicitudDocumento solicitudDocumento = generarSolicitudDocumento(1L, 1L, 1L);
     solicitudDocumento.setSolicitudId(null);
@@ -110,7 +114,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutNombreDocumento_ThrowsIllegalArgumentException() {
+  void create_WithoutNombreDocumento_ThrowsIllegalArgumentException() {
     // given: a SolicitudDocumento with nombre documento null
     SolicitudDocumento newSolicitudDocumento = generarSolicitudDocumento(null, 1L, 1L);
     newSolicitudDocumento.setNombre(null);
@@ -123,7 +127,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutDocumentoRef_ThrowsIllegalArgumentException() {
+  void create_WithoutDocumentoRef_ThrowsIllegalArgumentException() {
     // given: a SolicitudDocumento with documento ref null
     SolicitudDocumento newSolicitudDocumento = generarSolicitudDocumento(null, 1L, 1L);
     newSolicitudDocumento.setDocumentoRef(null);
@@ -136,7 +140,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithExistingId_ReturnsSolicitudDocumento() {
+  void update_WithExistingId_ReturnsSolicitudDocumento() {
     // given: existing SolicitudDocumento
     SolicitudDocumento solicitudDocumento = generarSolicitudDocumento(1L, 1L, 1L);
 
@@ -170,7 +174,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void update_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     SolicitudDocumento solicitudDocumento = generarSolicitudDocumento(1L, 1L, 1L);
 
@@ -186,7 +190,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutSolicitud_ThrowsNotFoundException() throws Exception {
+  void update_WithoutSolicitud_ThrowsNotFoundException() throws Exception {
     // given: solicitud id null
     SolicitudDocumento solicitudDocumento = generarSolicitudDocumento(1L, 1L, 1L);
     solicitudDocumento.setSolicitudId(null);
@@ -199,7 +203,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutNombreDocumento_ThrowsNotFoundException() throws Exception {
+  void update_WithoutNombreDocumento_ThrowsNotFoundException() throws Exception {
     // given: nombre documento null
     SolicitudDocumento solicitudDocumento = generarSolicitudDocumento(1L, 1L, 1L);
     solicitudDocumento.setNombre(null);
@@ -212,7 +216,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutDocumentoRef_ThrowsNotFoundException() throws Exception {
+  void update_WithoutDocumentoRef_ThrowsNotFoundException() throws Exception {
     // given: nombre documento null
     SolicitudDocumento solicitudDocumento = generarSolicitudDocumento(1L, 1L, 1L);
     solicitudDocumento.setDocumentoRef(null);
@@ -225,7 +229,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutId_ThrowsIllegalArgumentException() {
+  void update_WithoutId_ThrowsIllegalArgumentException() {
     // given: a SolicitudDocumento without id filled
     SolicitudDocumento solicitudDocumento = generarSolicitudDocumento(null, 1L, 1L);
 
@@ -237,7 +241,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_ReturnsSolicitudDocumento() {
+  void delete_WithExistingId_ReturnsSolicitudDocumento() {
     // given: existing SolicitudDocumento
     Long id = 1L;
 
@@ -252,7 +256,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
+  void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
     // given: no id
     Long id = null;
 
@@ -264,7 +268,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -278,7 +282,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithExistingId_ReturnsSolicitudDocumento() throws Exception {
+  void findById_WithExistingId_ReturnsSolicitudDocumento() throws Exception {
     // given: existing SolicitudDocumento
     SolicitudDocumento givenSolicitudDocumento = generarSolicitudDocumento(1L, 1L, 1L);
 
@@ -301,7 +305,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(solicitudDocumentoRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
@@ -315,7 +319,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 SolicitudDocumento
     Long solicitudId = 1L;
     Solicitud solicitud = new Solicitud();
@@ -349,7 +353,7 @@ public class SolicitudDocumentoServiceTest extends BaseServiceTest {
     Page<SolicitudDocumento> page = service.findAllBySolicitud(solicitudId, null, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

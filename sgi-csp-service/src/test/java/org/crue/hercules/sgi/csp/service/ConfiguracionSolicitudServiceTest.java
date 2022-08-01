@@ -41,7 +41,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
+class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
 
   @Mock
   private ConfiguracionSolicitudRepository repository;
@@ -51,19 +51,17 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   private ConvocatoriaFaseRepository convocatoriaFaseRepository;
   @Mock
   private DocumentoRequeridoSolicitudRepository documentoRequeridoSolicitudRepository;
-  @Mock
-  private ConvocatoriaService convocatoriaService;
 
   private ConfiguracionSolicitudService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ConfiguracionSolicitudServiceImpl(repository, convocatoriaRepository, convocatoriaFaseRepository,
-        documentoRequeridoSolicitudRepository, convocatoriaService);
+        documentoRequeridoSolicitudRepository);
   }
 
   @Test
-  public void create_withConvocatoriaRegistrada_ReturnsConfiguracionSolicitud() {
+  void create_withConvocatoriaRegistrada_ReturnsConfiguracionSolicitud() {
     // given: new ConfiguracionSolicitud
     Long convocatoriaId = 1L;
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(null, convocatoriaId, 1L);
@@ -104,7 +102,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithConvocatoriaBorrador_ReturnsConfiguracionSolicitud() {
+  void create_WithConvocatoriaBorrador_ReturnsConfiguracionSolicitud() {
     // given: new ConfiguracionSolicitud convocatoria estado borrador
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -139,7 +137,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: a ConfiguracionSolicitud with id filled
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, 1L, 1L);
 
@@ -152,7 +150,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutConvocatoria_ThrowsIllegalArgumentException() {
+  void create_WithoutConvocatoria_ThrowsIllegalArgumentException() {
     // given: a ConfiguracionSolicitud without convocatoria
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(null, 1L, 1L);
     configuracionSolicitud.setConvocatoriaId(null);
@@ -166,7 +164,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingConvocatoria_ThrowsNotFoundException() {
+  void create_WithNoExistingConvocatoria_ThrowsNotFoundException() {
     // given: a ConfiguracionSolicitud with no existing Convocatoria
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(null, 1L, 1L);
 
@@ -180,7 +178,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedConvocatoria_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedConvocatoria_ThrowsIllegalArgumentException() {
     // given: a ConfiguracionSolicitud with duplicated Convocatoria
     ConfiguracionSolicitud configuracionSolicitudExistente = generarMockConfiguracionSolicitud(1L, 1L, 1L);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(null, 1L, 1L);
@@ -197,7 +195,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithConvocatoriaRegistradaAndWithoutTramitacionSGI_ThrowsIllegalArgumentException() {
+  void create_WithConvocatoriaRegistradaAndWithoutTramitacionSGI_ThrowsIllegalArgumentException() {
     // given: a ConfiguracionSolicitud with convocatoria registrada and without
     // Tramitacion SGI
     Long convocatoriaId = 1L;
@@ -216,7 +214,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithTramitacionSGITrueAndWithoutFasePresentacion_ThrowsIllegalArgumentException() {
+  void create_WithTramitacionSGITrueAndWithoutFasePresentacion_ThrowsIllegalArgumentException() {
     // given: a ConfiguracionSolicitud with TramitacionSGI = true and without
     // FasePresentacion
     Long convocatoriaId = 1L;
@@ -236,7 +234,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithTramitacionSGIFalseAndWithoutFasePresentacion_DoesNotThrowAnyException() {
+  void create_WithTramitacionSGIFalseAndWithoutFasePresentacion_DoesNotThrowAnyException() {
     // given: a ConfiguracionSolicitud with TramitationSGI = false and without
     // FasePresentacion
     Long convocatoriaId = 1L;
@@ -255,7 +253,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_NoExistingFasePresentacion_ThrowsNotFoundException() {
+  void create_NoExistingFasePresentacion_ThrowsNotFoundException() {
     // given: a ConfiguracionSolicitud with no existing FasePresentacion
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -273,7 +271,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_withConvocatoriaRegistrada_ReturnsConfiguracionSolicitud() {
+  void update_withConvocatoriaRegistrada_ReturnsConfiguracionSolicitud() {
     // given: update existing ConfiguracionSolicitud
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -314,7 +312,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithConvocatoriaBorrador_ReturnsConfiguracionSolicitud() {
+  void update_WithConvocatoriaBorrador_ReturnsConfiguracionSolicitud() {
     // given: update existing ConfiguracionSolicitud with convocatoria estado
     // borrador
     Long convocatoriaId = 1L;
@@ -348,7 +346,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutConvocatoria_ThrowsIllegalArgumentException() {
+  void update_WithoutConvocatoria_ThrowsIllegalArgumentException() {
     // given: update ConfiguracionSolicitud without convocatoria
     ConfiguracionSolicitud updatedConfiguracionSolicitud = generarMockConfiguracionSolicitud(1L, 1L, 1L);
     updatedConfiguracionSolicitud.setConvocatoriaId(null);
@@ -362,7 +360,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_NotFoundByConvocatoria_ThrowsNotFoundException() {
+  void update_NotFoundByConvocatoria_ThrowsNotFoundException() {
     // given: update ConfiguracionSolicitud not found by Convocatoria
     Long convocatoriaId = 1L;
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaId, 1L);
@@ -377,7 +375,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithConvocatoriaRegistradaAndWithoutTramitacionSGI_ThrowsIllegalArgumentException() {
+  void update_WithConvocatoriaRegistradaAndWithoutTramitacionSGI_ThrowsIllegalArgumentException() {
     // given: a ConfiguracionSolicitud with convocatoria registrada and without
     // Tramitacion SGI
     Long convocatoriaId = 1L;
@@ -400,7 +398,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithTramitacionSGIFalseAndWithoutFasePresentacion_DoesNotThrowAnyException() {
+  void update_WithTramitacionSGIFalseAndWithoutFasePresentacion_DoesNotThrowAnyException() {
     // given: a ConfiguracionSolicitud with TramitacionSGI = false and without
     // FasePresentacion
     Long convocatoriaId = 1L;
@@ -430,7 +428,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_NoExistingFasePresentacion_ThrowsNotFoundException() {
+  void update_NoExistingFasePresentacion_ThrowsNotFoundException() {
     // given: a ConfiguracionSolicitud with no existing FasePresentacion
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -452,7 +450,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_FasePresentacionWithoutDocumentosRequeridos_DoesNotThrowAnyException() {
+  void update_FasePresentacionWithoutDocumentosRequeridos_DoesNotThrowAnyException() {
     // given: a ConfiguracionSolicitud with updated FasePresentacion without
     // DocumentosRequeridos assigned
     Long convocatoriaId = 1L;
@@ -486,7 +484,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_FasePresentacionWithDocumentosRequeridos_ThrowsIllegalArgumentException() {
+  void update_FasePresentacionWithDocumentosRequeridos_ThrowsIllegalArgumentException() {
     // given: a ConfiguracionSolicitud with updated FasePresentacion and
     // DocumentosRequeridos assigned
     Long convocatoriaId = 1L;
@@ -516,7 +514,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findByIdConvocatoria_WithExistingId_ReturnsConfiguracionSolicitud() throws Exception {
+  void findByIdConvocatoria_WithExistingId_ReturnsConfiguracionSolicitud() throws Exception {
     // given: existing ConfiguracionSolicitud
     Long convocatoriaId = 1L;
     ConfiguracionSolicitud configuracionSolicitudExistente = generarMockConfiguracionSolicitud(1L, convocatoriaId, 1L);
@@ -543,7 +541,7 @@ public class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findByConvocatoriaId_WithNoExistingConvocatoria_ThrowsNotFoundException() throws Exception {
+  void findByConvocatoriaId_WithNoExistingConvocatoria_ThrowsNotFoundException() throws Exception {
     // given: no existing convocatoria
     BDDMockito.given(convocatoriaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.FALSE);
 

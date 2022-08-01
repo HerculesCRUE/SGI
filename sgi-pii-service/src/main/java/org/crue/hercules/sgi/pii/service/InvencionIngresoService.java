@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_NOTNULL;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -8,8 +12,8 @@ import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContext
 import org.crue.hercules.sgi.pii.exceptions.InvencionIngresoNotFoundException;
 import org.crue.hercules.sgi.pii.model.Invencion;
 import org.crue.hercules.sgi.pii.model.InvencionIngreso;
-import org.crue.hercules.sgi.pii.model.RepartoIngreso;
 import org.crue.hercules.sgi.pii.model.InvencionIngreso.Estado;
+import org.crue.hercules.sgi.pii.model.RepartoIngreso;
 import org.crue.hercules.sgi.pii.repository.InvencionIngresoRepository;
 import org.crue.hercules.sgi.pii.repository.specification.InvencionIngresoSpecifications;
 import org.springframework.data.jpa.domain.Specification;
@@ -78,13 +82,15 @@ public class InvencionIngresoService {
     Assert.isNull(invencionIngreso.getId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(InvencionIngreso.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(InvencionIngreso.class))
+            .build());
     Assert.notNull(invencionIngreso.getInvencionId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Invencion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Invencion.class))
+            .build());
 
     InvencionIngreso returnValue = repository.save(invencionIngreso);
 
@@ -104,14 +110,16 @@ public class InvencionIngresoService {
 
     Assert.notNull(invencionIngreso.getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(InvencionIngreso.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(InvencionIngreso.class))
+            .build());
     Assert.notNull(invencionIngreso.getInvencionId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Invencion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Invencion.class))
+            .build());
 
     return repository.findById(invencionIngreso.getId()).map(invencionIngresoExistente -> {
 
@@ -175,12 +183,12 @@ public class InvencionIngresoService {
 
   private Estado calculateGastoEstado(InvencionIngreso invencionGasto) {
     switch (invencionGasto.getImportePendienteRepartir().compareTo(new BigDecimal("0.00"))) {
-    case 0:
-      return Estado.REPARTIDO;
-    case 1:
-      return Estado.REPARTIDO_PARCIALMENTE;
-    default:
-      return Estado.NO_REPARTIDO;
+      case 0:
+        return Estado.REPARTIDO;
+      case 1:
+        return Estado.REPARTIDO_PARCIALMENTE;
+      default:
+        return Estado.NO_REPARTIDO;
     }
   }
 }

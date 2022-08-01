@@ -12,13 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ConvocatoriaPeriodoSeguimientoCientificoRepositoryTest extends BaseRepositoryTest {
+class ConvocatoriaPeriodoSeguimientoCientificoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ConvocatoriaPeriodoSeguimientoCientificoRepository repository;
 
   @Test
-  public void findAllByConvocatoriaIdOrderByMesInicial_ReturnsConvocatoriaPeriodoSeguimientoCientificoList()
+  void findAllByConvocatoriaIdOrderByMesInicial_ReturnsConvocatoriaPeriodoSeguimientoCientificoList()
       throws Exception {
 
     // given: 10 ConvocatoriaPeriodoSeguimientoCientifico with same ConvocatoriId
@@ -77,7 +77,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoRepositoryTest extends Base
   }
 
   @Test
-  public void findAllByConvocatoriaIdOrderByMesInicial_ReturnsNull() throws Exception {
+  void findAllByConvocatoriaIdOrderByMesInicial_ReturnsNull() throws Exception {
     // given: 10 ConvocatoriaPeriodoSeguimientoCientifico
     // @formatter:off
     Convocatoria convocatoria1 = Convocatoria.builder()

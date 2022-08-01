@@ -35,6 +35,9 @@
         <mat-error *ngIf="formGroup.controls.accionATomar.errors?.maxlength">
           {{'error.maxlength.entity' | translate:msgParamAccionATomarEntity }}
         </mat-error>
+        <mat-error *ngIf="formGroup.controls.accionATomar.errors?.required">
+          {{'error.required.entity' | translate:msgParamAccionATomarEntity}}
+        </mat-error>
       </mat-form-field>
       <!-- Fecha Limite Accion-->
       <mat-form-field fxFlex="35">
@@ -44,6 +47,9 @@
         <input matInput formControlName="fechaLimiteAccion" [matDatepicker]="fechaLimiteAccion">
         <mat-datepicker-toggle matSuffix [for]="fechaLimiteAccion"></mat-datepicker-toggle>
         <mat-datepicker #fechaLimiteAccion></mat-datepicker>
+        <mat-error *ngIf="formGroup.controls.fechaLimiteAccion.errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaLimiteAccionEntity}}
+        </mat-error>
       </mat-form-field>
     </div>
 

@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
+import { IEmail } from '@core/models/sgp/email';
+import { IPersona } from '@core/models/sgp/persona';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
+import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -31,16 +34,30 @@ export class SolicitudGeneralListadoExportService extends AbstractTableExportFil
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
     private readonly convocatoriaService: ConvocatoriaService,
+    private readonly solicitudService: SolicitudService,
     private readonly personaService: PersonaService
   ) {
     super(translate);
   }
 
   public getData(solicitudData: ISolicitudReportData): Observable<ISolicitudReportData> {
-    return this.personaService.findById(solicitudData.solicitante.id).pipe(
-      map(persona => {
-        solicitudData.solicitante = persona;
-        return solicitudData;
+    return of(solicitudData).pipe(
+      switchMap(() => {
+        if (!!!solicitudData.solicitante?.id && !!solicitudData.id) {
+          return this.solicitudService.findSolicitanteExterno(solicitudData?.id).pipe(
+            map(solicitanteExterno => {
+              solicitudData.solicitanteExterno = solicitanteExterno;
+              return solicitudData;
+            })
+          );
+        } else {
+          return this.getSolicitante(solicitudData.solicitante).pipe(
+            map(solicitante => {
+              solicitudData.solicitante = solicitante;
+              return solicitudData;
+            })
+          );
+        }
       }),
       switchMap(() => {
         if (solicitudData.convocatoriaId) {
@@ -55,6 +72,10 @@ export class SolicitudGeneralListadoExportService extends AbstractTableExportFil
         }
       })
     );
+  }
+
+  private getSolicitante(solicitante: IPersona): Observable<IPersona> {
+    return solicitante?.id ? this.personaService.findById(solicitante.id) : of(null);
   }
 
   public fillColumns(
@@ -81,19 +102,19 @@ export class SolicitudGeneralListadoExportService extends AbstractTableExportFil
         format: '#'
       },
       {
-        title: this.translate.instant(SOLICITANTE_KEY) + ' ' + this.translate.instant(NOMBRE_KEY),
+        title: this.translate.instant(SOLICITANTE_KEY) + ': ' + this.translate.instant(NOMBRE_KEY),
         name: 'nombreSolicitante',
         type: ColumnType.STRING,
         format: '#'
       },
       {
-        title: this.translate.instant(SOLICITANTE_KEY) + ' ' + this.translate.instant(APELLIDOS_KEY),
+        title: this.translate.instant(SOLICITANTE_KEY) + ': ' + this.translate.instant(APELLIDOS_KEY),
         name: 'apellidosSolicitante',
         type: ColumnType.STRING,
         format: '#'
       },
       {
-        title: this.translate.instant(SOLICITANTE_KEY) + ' ' + this.translate.instant(EMAIL_KEY),
+        title: this.translate.instant(SOLICITANTE_KEY) + ': ' + this.translate.instant(EMAIL_KEY),
         name: 'emailSolicitante',
         type: ColumnType.STRING,
         format: '#'
@@ -128,13 +149,23 @@ export class SolicitudGeneralListadoExportService extends AbstractTableExportFil
   public fillRows(resultados: ISolicitudReportData[], index: number, reportConfig: IReportConfig<ISolicitudReportOptions>): any[] {
     const solicitud = resultados[index];
 
+    const solicitante = solicitud.solicitante ?? {
+      nombre: solicitud.solicitanteExterno?.nombre,
+      apellidos: solicitud.solicitanteExterno?.apellidos,
+      emails: [
+        {
+          email: solicitud.solicitanteExterno?.email
+        } as IEmail
+      ]
+    } as IPersona;
+
     const elementsRow: any[] = [];
     elementsRow.push(solicitud.titulo);
     elementsRow.push(solicitud.codigoRegistroInterno ?? '');
     elementsRow.push(solicitud.codigoExterno ?? '');
-    elementsRow.push(solicitud.solicitante?.nombre ?? '');
-    elementsRow.push(solicitud.solicitante?.apellidos ?? '');
-    elementsRow.push(solicitud.solicitante?.emails ? solicitud.solicitante?.emails[0].email : '');
+    elementsRow.push(solicitante?.nombre ?? '');
+    elementsRow.push(solicitante?.apellidos ?? '');
+    elementsRow.push(solicitante?.emails[0] ? solicitante?.emails[0].email : '');
     elementsRow.push(solicitud.convocatoria?.titulo ?? '');
     elementsRow.push(solicitud.convocatoriaExterna ?? '');
     elementsRow.push(solicitud.estado?.estado ?? '');

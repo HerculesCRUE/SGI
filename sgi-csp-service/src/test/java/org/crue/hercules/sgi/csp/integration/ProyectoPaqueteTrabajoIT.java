@@ -20,7 +20,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de ProyectoPaqueteTrabajo.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProyectoPaqueteTrabajoIT extends BaseIT {
+class ProyectoPaqueteTrabajoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/proyectopaquetetrabajos";
@@ -46,7 +46,7 @@ public class ProyectoPaqueteTrabajoIT extends BaseIT {
       "classpath:scripts/estado_proyecto.sql", "classpath:scripts/proyecto_paquete_trabajo.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void existsById_Returns200() throws Exception {
+  void existsById_Returns200() throws Exception {
     // given: existing id
     Long id = 1L;
     // when: exists by id
@@ -65,7 +65,7 @@ public class ProyectoPaqueteTrabajoIT extends BaseIT {
       "classpath:scripts/estado_proyecto.sql", "classpath:scripts/proyecto_paquete_trabajo.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsProyectoPaqueteTrabajo() throws Exception {
+  void findById_ReturnsProyectoPaqueteTrabajo() throws Exception {
     Long idProyectoPaqueteTrabajo = 1L;
 
     final ResponseEntity<ProyectoPaqueteTrabajo> response = restTemplate.exchange(

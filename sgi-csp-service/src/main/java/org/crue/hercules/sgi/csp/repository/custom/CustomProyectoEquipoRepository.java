@@ -3,7 +3,7 @@ package org.crue.hercules.sgi.csp.repository.custom;
 import java.time.Instant;
 import java.util.List;
 
-import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoJustificacionOutput.Proyecto;
+import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
 import org.springframework.stereotype.Component;

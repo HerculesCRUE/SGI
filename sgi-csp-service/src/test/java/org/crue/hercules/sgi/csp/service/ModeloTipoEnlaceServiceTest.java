@@ -28,7 +28,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-public class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
+class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
 
   @Mock
   private ModeloEjecucionRepository modeloEjecucionRepository;
@@ -42,13 +42,13 @@ public class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
   private ModeloTipoEnlaceService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ModeloTipoEnlaceServiceImpl(modeloEjecucionRepository, modeloTipoEnlaceRepository,
         tipoEnlaceRepository);
   }
 
   @Test
-  public void create_ReturnsModeloTipoEnlace() {
+  void create_ReturnsModeloTipoEnlace() {
     // given: Un nuevo ModeloTipoEnlace
     ModeloTipoEnlace modeloTipoEnlace = generarMockModeloTipoEnlace(null, 1L);
 
@@ -79,11 +79,11 @@ public class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
     Assertions.assertThat(modeloTipoEnlaceCreado.getTipoEnlace()).as("getTipoEnlace()").isNotNull();
     Assertions.assertThat(modeloTipoEnlaceCreado.getTipoEnlace().getId()).as("getTipoEnlace().getId()")
         .isEqualTo(modeloTipoEnlace.getTipoEnlace().getId());
-    Assertions.assertThat(modeloTipoEnlaceCreado.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(modeloTipoEnlaceCreado.getActivo()).as("getActivo()").isTrue();
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ModeloTipoEnlace que ya tiene id
     ModeloTipoEnlace modeloTipoEnlace = generarMockModeloTipoEnlace(1L);
 
@@ -93,7 +93,7 @@ public class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutModeloEjecucionId_ThrowsIllegalArgumentException() {
+  void create_WithoutModeloEjecucionId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ModeloTipoEnlace con un ModeloEjecucion sin id
     ModeloTipoEnlace modeloTipoEnlace = generarMockModeloTipoEnlace(null);
     modeloTipoEnlace.getModeloEjecucion().setId(null);
@@ -104,7 +104,7 @@ public class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutTipoEnlaceId_ThrowsIllegalArgumentException() {
+  void create_WithoutTipoEnlaceId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ModeloTipoEnlace con un TipoEnlace sin id
     ModeloTipoEnlace modeloTipoEnlace = generarMockModeloTipoEnlace(null);
     modeloTipoEnlace.getTipoEnlace().setId(null);
@@ -115,7 +115,7 @@ public class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingModeloEjecucion_ThrowsModeloEjecucionNotFoundException() {
+  void create_WithNoExistingModeloEjecucion_ThrowsModeloEjecucionNotFoundException() {
     // given: Un nuevo ModeloTipoEnlace con un ModeleoEjecucion que no existe
     ModeloTipoEnlace modeloTipoEnlace = generarMockModeloTipoEnlace(null, 1L);
 
@@ -128,7 +128,7 @@ public class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingTipoEnlace_ThrowsTipoEnlaceNotFoundException() {
+  void create_WithNoExistingTipoEnlace_ThrowsTipoEnlaceNotFoundException() {
     // given: Un nuevo ModeloTipoEnlace que ya tiene id
     ModeloTipoEnlace modeloTipoEnlace = generarMockModeloTipoEnlace(null, 1L);
     modeloTipoEnlace.getTipoEnlace().setActivo(false);
@@ -145,7 +145,7 @@ public class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDisabledTipoEnlace_ThrowsIllegalArgumentException() {
+  void create_WithDisabledTipoEnlace_ThrowsIllegalArgumentException() {
     // given: Un nuevo ModeloTipoEnlace con un TipoEnlace que no esta activo
     ModeloTipoEnlace modeloTipoEnlace = generarMockModeloTipoEnlace(null, 1L);
     modeloTipoEnlace.getTipoEnlace().setActivo(false);
@@ -162,7 +162,7 @@ public class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedModeloEjecucionIdAndTipoEnlaceIdAndActivo_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedModeloEjecucionIdAndTipoEnlaceIdAndActivo_ThrowsIllegalArgumentException() {
     // given: Un nuevo ModeloTipoEnlace con una combinacion de ModeloEjecucionId y
     // TipoEnlaceId que ya existe y esta activo
     ModeloTipoEnlace modeloTipoEnlace = generarMockModeloTipoEnlace(null, 1L);
@@ -182,7 +182,7 @@ public class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedModeloEjecucionIdAndTipoEnlaceIdAndActivoFalse_ReturnEnableModeloTipoEnlace() {
+  void create_WithDuplicatedModeloEjecucionIdAndTipoEnlaceIdAndActivoFalse_ReturnEnableModeloTipoEnlace() {
     // given: Un nuevo ModeloTipoEnlace con una combinacion de ModeloEjecucionId y
     // TipoEnlaceId que ya existe y no esta activo
     ModeloTipoEnlace modeloTipoEnlace = generarMockModeloTipoEnlace(null, 1L);
@@ -213,11 +213,11 @@ public class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
     Assertions.assertThat(modeloTipoEnlaceCreado.getTipoEnlace()).as("getTipoEnlace()").isNotNull();
     Assertions.assertThat(modeloTipoEnlaceCreado.getTipoEnlace().getId()).as("getTipoEnlace().getId()")
         .isEqualTo(modeloTipoEnlaceExiste.getTipoEnlace().getId());
-    Assertions.assertThat(modeloTipoEnlaceCreado.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(modeloTipoEnlaceCreado.getActivo()).as("getActivo()").isTrue();
   }
 
   @Test
-  public void disable_ReturnsModeloTipoEnlace() {
+  void disable_ReturnsModeloTipoEnlace() {
     // given: Un nuevo ModeloTipoEnlace activo
     ModeloTipoEnlace modeloTipoEnlace = generarMockModeloTipoEnlace(1L);
 
@@ -238,12 +238,12 @@ public class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
     Assertions.assertThat(modeloTipoEnlaceActualizado.getTipoEnlace()).as("getTipoEnlace()").isNotNull();
     Assertions.assertThat(modeloTipoEnlaceActualizado.getTipoEnlace().getId()).as("getTipoEnlace().getId()")
         .isEqualTo(modeloTipoEnlace.getTipoEnlace().getId());
-    Assertions.assertThat(modeloTipoEnlaceActualizado.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(modeloTipoEnlaceActualizado.getActivo()).as("getActivo()").isFalse();
 
   }
 
   @Test
-  public void disable_WithIdNotExist_ThrowsModeloTipoEnlaceNotFoundException() {
+  void disable_WithIdNotExist_ThrowsModeloTipoEnlaceNotFoundException() {
     // given: Un id de un ModeloTipoEnlace que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(modeloTipoEnlaceRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -254,7 +254,7 @@ public class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsModeloTipoEnlace() {
+  void findById_ReturnsModeloTipoEnlace() {
     // given: Un ModeloTipoEnlace con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(modeloTipoEnlaceRepository.findById(idBuscado))
@@ -271,12 +271,12 @@ public class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
         .isEqualTo(1L);
     Assertions.assertThat(modeloTipoEnlace.getTipoEnlace()).as("getTipoEnlace()").isNotNull();
     Assertions.assertThat(modeloTipoEnlace.getTipoEnlace().getId()).as("getTipoEnlace().getId()").isEqualTo(1L);
-    Assertions.assertThat(modeloTipoEnlace.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(modeloTipoEnlace.getActivo()).as("getActivo()").isTrue();
 
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsModeloTipoEnlaceNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsModeloTipoEnlaceNotFoundException() throws Exception {
     // given: Ningun ModeloTipoEnlace con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(modeloTipoEnlaceRepository.findById(idBuscado)).willReturn(Optional.empty());
@@ -288,7 +288,7 @@ public class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByModeloEjecucion_ReturnsPage() {
+  void findAllByModeloEjecucion_ReturnsPage() {
     // given: Una lista con 37 ModeloTipoEnlace para el ModeloEjecucion
     Long idModeloEjecucion = 1L;
     List<ModeloTipoEnlace> modeloTipoEnlaces = new ArrayList<>();
@@ -317,7 +317,7 @@ public class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
     Page<ModeloTipoEnlace> page = service.findAllByModeloEjecucion(idModeloEjecucion, null, paging);
 
     // then: Devuelve la pagina 3 con los TipoEnlace del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

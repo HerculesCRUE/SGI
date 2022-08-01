@@ -36,7 +36,7 @@ import org.springframework.data.jpa.domain.Specification;
  * SolicitudProyectoSocioEquipoServiceTest
  */
 @ExtendWith(MockitoExtension.class)
-public class SolicitudProyectoSocioEquipoServiceTest {
+class SolicitudProyectoSocioEquipoServiceTest {
 
   @Mock
   private SolicitudProyectoSocioEquipoRepository repository;
@@ -53,13 +53,13 @@ public class SolicitudProyectoSocioEquipoServiceTest {
   private SolicitudProyectoSocioEquipoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new SolicitudProyectoSocioEquipoServiceImpl(repository, solicitudService,
         solicitudProyectoSocioRepository, solicitudProyectoRepository);
   }
 
   @Test
-  public void update_ReturnsSolicitudProyectoSocioEquipo() {
+  void update_ReturnsSolicitudProyectoSocioEquipo() {
     // given: una lista con uno de los SolicitudProyectoSocioEquipo actualizado,
     // otro nuevo y sin el otros existente
     Long solicitudProyectoId = 1L;
@@ -141,7 +141,7 @@ public class SolicitudProyectoSocioEquipoServiceTest {
   }
 
   @Test
-  public void update_WithoutSolicitudProyectoSocio_ThrowsSolicitudProyectoSocioNotFoundException() {
+  void update_WithoutSolicitudProyectoSocio_ThrowsSolicitudProyectoSocioNotFoundException() {
     // given: Un nuevo SolicitudProyectoSocioEquipo que no tiene
     // SolicitudProyectoSocio
 
@@ -164,7 +164,7 @@ public class SolicitudProyectoSocioEquipoServiceTest {
   }
 
   @Test
-  public void update_WithoSolicitudProyectoSocioChange_ThrowsIllegalArgumentException() {
+  void update_WithoSolicitudProyectoSocioChange_ThrowsIllegalArgumentException() {
     // given: Se actualiza la solicitud proyecto socio
     Long solicitudProyectoId = 1L;
     Long solicitudProyectoSocioId = 1L;
@@ -200,7 +200,7 @@ public class SolicitudProyectoSocioEquipoServiceTest {
   }
 
   @Test
-  public void update_WithoutRolProyectoId_ThrowsIllegalArgumentException() {
+  void update_WithoutRolProyectoId_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudProyectoSocioEquipo que no tiene rol proyecto
     Long solicitudProyectoId = 1L;
     Long solicitudProyectoSocioId = 1L;
@@ -229,7 +229,7 @@ public class SolicitudProyectoSocioEquipoServiceTest {
   }
 
   @Test
-  public void update_WithoutPersonaRef_ThrowsIllegalArgumentException() {
+  void update_WithoutPersonaRef_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudProyectoSocioEquipo que no tiene persona ref
     Long solicitudProyectoId = 1L;
     Long solicitudProyectoSocioId = 1L;
@@ -258,7 +258,7 @@ public class SolicitudProyectoSocioEquipoServiceTest {
   }
 
   @Test
-  public void update_WithRangosMesesSolapados_ThrowsIllegalArgumentException() {
+  void update_WithRangosMesesSolapados_ThrowsIllegalArgumentException() {
     // given: una lista con uno de los SolicitudProyectoSocioEquipo actualizado,
     // otro nuevo y sin el otros existente
     Long solicitudProyectoId = 1L;
@@ -297,7 +297,7 @@ public class SolicitudProyectoSocioEquipoServiceTest {
   }
 
   @Test
-  public void findById_ReturnsSolicitudProyectoSocioEquipo() {
+  void findById_ReturnsSolicitudProyectoSocioEquipo() {
     // given: Un SolicitudProyectoSocioEquipo con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -312,7 +312,7 @@ public class SolicitudProyectoSocioEquipoServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsSolicitudProyectoSocioEquipoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsSolicitudProyectoSocioEquipoNotFoundException() throws Exception {
     // given: Ningun SolicitudProyectoSocioEquipo con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -324,7 +324,7 @@ public class SolicitudProyectoSocioEquipoServiceTest {
   }
 
   @Test
-  public void findBySolicitudProyectoSocioId_ReturnsSolicitudProyectoSocioEquipo() {
+  void findBySolicitudProyectoSocioId_ReturnsSolicitudProyectoSocioEquipo() {
     // given: Una lista con 37 SolicitudProyectoSocio
     Long solicitudId = 1L;
     List<SolicitudProyectoSocioEquipo> solicitudProyectoSocioEquipo = new ArrayList<>();
@@ -354,7 +354,7 @@ public class SolicitudProyectoSocioEquipoServiceTest {
     Page<SolicitudProyectoSocioEquipo> page = service.findAllBySolicitudProyectoSocio(solicitudId, null, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

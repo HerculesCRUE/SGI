@@ -35,7 +35,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ModeloUnidadControllerTest
  */
 @WebMvcTest(ModeloUnidadController.class)
-public class ModeloUnidadControllerTest extends BaseControllerTest {
+class ModeloUnidadControllerTest extends BaseControllerTest {
 
   @MockBean
   private ModeloUnidadService service;
@@ -45,7 +45,7 @@ public class ModeloUnidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void create_ReturnsModeloUnidad() throws Exception {
+  void create_ReturnsModeloUnidad() throws Exception {
     // given: new ModeloUnidad
     ModeloUnidad modeloUnidad = generarMockModeloUnidad(null);
 
@@ -77,7 +77,7 @@ public class ModeloUnidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ModeloUnidad with id filled
     ModeloUnidad modeloUnidad = generarMockModeloUnidad(1L);
 
@@ -95,7 +95,7 @@ public class ModeloUnidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void create_WithNonExistingModeloEjecucionId_Returns404() throws Exception {
+  void create_WithNonExistingModeloEjecucionId_Returns404() throws Exception {
     // given: a ModeloUnidad with non existing ModeloEjecucionId
     ModeloUnidad modeloUnidad = generarMockModeloUnidad(1L);
 
@@ -114,7 +114,7 @@ public class ModeloUnidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     ModeloUnidad modeloUnidad = generarMockModeloUnidad(1L);
     BDDMockito.given(service.disable(ArgumentMatchers.<Long>any())).willReturn(modeloUnidad);
@@ -130,7 +130,7 @@ public class ModeloUnidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
-  public void delete_NonExistingId_Return404() throws Exception {
+  void delete_NonExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -148,7 +148,7 @@ public class ModeloUnidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsModeloUnidad() throws Exception {
+  void findById_WithExistingId_ReturnsModeloUnidad() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer(new Answer<ModeloUnidad>() {
       @Override
@@ -171,7 +171,7 @@ public class ModeloUnidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ModeloUnidadNotFoundException(1L);
@@ -188,7 +188,7 @@ public class ModeloUnidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
-  public void findAll_ReturnsPage() throws Exception {
+  void findAll_ReturnsPage() throws Exception {
     // given: Una lista con 37 ModeloUnidad
     List<ModeloUnidad> modeloUnidades = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -240,7 +240,7 @@ public class ModeloUnidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void findAll_EmptyList_Returns204() throws Exception {
+  void findAll_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de ModeloUnidad
     List<ModeloUnidad> modeloUnidades = new ArrayList<>();
 

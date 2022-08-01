@@ -122,7 +122,7 @@ class ProyectoResponsableEconomicoIT extends BaseIT {
 
     List<ProyectoResponsableEconomicoOutput> responseData = response.getBody();
     Assertions.assertThat(responseData).isNotNull();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
 
     List<ProyectoResponsableEconomicoOutput> responseDataSorted = responseData.stream()
         .sorted(new Comparator<ProyectoResponsableEconomicoOutput>() {

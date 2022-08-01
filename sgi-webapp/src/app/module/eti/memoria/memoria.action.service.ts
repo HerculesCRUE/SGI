@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { ComponentFactoryResolver, Injectable, Injector } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
-import { IComite } from '@core/models/eti/comite';
+import { COMITE, IComite } from '@core/models/eti/comite';
 import { IMemoria } from '@core/models/eti/memoria';
 import { IRetrospectiva } from '@core/models/eti/retrospectiva';
 import { TipoEstadoMemoria } from '@core/models/eti/tipo-estado-memoria';
@@ -19,8 +19,10 @@ import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion.service';
+import { FormlyConfig, FormlyFormBuilder } from '@ngx-formly/core';
 import { NGXLogger } from 'ngx-logger';
-import { map } from 'rxjs/operators';
+import { from, Observable } from 'rxjs';
+import { concatMap, filter, map, switchMap, take, takeLast } from 'rxjs/operators';
 import { PETICION_EVALUACION_ROUTE } from '../peticion-evaluacion/peticion-evaluacion-route-names';
 import { MemoriaDatosGeneralesFragment } from './memoria-formulario/memoria-datos-generales/memoria-datos-generales.fragment';
 import { MemoriaDocumentacionFragment } from './memoria-formulario/memoria-documentacion/memoria-documentacion.fragment';
@@ -59,6 +61,8 @@ export class MemoriaActionService extends ActionService {
   private evaluaciones: MemoriaEvaluacionesFragment;
   private versiones: MemoriaInformesFragment;
 
+  private formlyFormBuilder: FormlyFormBuilder;
+
   constructor(
     logger: NGXLogger,
     fb: FormBuilder,
@@ -73,9 +77,13 @@ export class MemoriaActionService extends ActionService {
     vinculacionService: VinculacionService,
     datosAcademicosService: DatosAcademicosService,
     respuestaService: RespuestaService,
-    evaluacionService: EvaluacionService
+    evaluacionService: EvaluacionService,
+    formlyConfig: FormlyConfig,
+    componentFactoryResolver: ComponentFactoryResolver,
+    injector: Injector
   ) {
     super();
+    this.formlyFormBuilder = new FormlyFormBuilder(formlyConfig, componentFactoryResolver, injector);
     this.memoria = {} as IMemoria;
     if (route.snapshot.data.memoria) {
       this.memoria = route.snapshot.data.memoria;
@@ -165,6 +173,37 @@ export class MemoriaActionService extends ActionService {
       this.addFragment(this.FRAGMENT.RETROSPECTIVA, this.retrospectiva);
       this.addFragment(this.FRAGMENT.EVALUACIONES, this.evaluaciones);
       this.addFragment(this.FRAGMENT.VERSIONES, this.versiones);
+
+      this.datosGenerales.initialized$.pipe(
+        filter(value => value),
+        take(1)
+      ).subscribe(
+        (value) => {
+          if (value && this.getComite()?.id === COMITE.CEEA) {
+            this.subscriptions.push(this.datosGenerales.getFormGroup().controls.titulo.valueChanges.pipe(
+            ).subscribe(
+              () => {
+                if (!this.formularios.isInitialized()) {
+                  this.formularios.initialize();
+                  this.formularios.initialized$.pipe(
+                    filter((initialized) => initialized),
+                    take(1)
+                  ).subscribe(
+                    (initialized) => {
+                      if (initialized && this.formularios.isEditable()) {
+                        this.formularios.refreshMemoria(this.datosGenerales.getValue());
+                      }
+                    }
+                  );
+                }
+                else if (this.formularios.isEditable()) {
+                  this.formularios.refreshMemoria(this.datosGenerales.getValue());
+                }
+              }
+            ));
+          }
+        }
+      );
     }
 
   }
@@ -201,4 +240,45 @@ export class MemoriaActionService extends ActionService {
     return this.memoria.retrospectiva;
   }
 
+
+  saveOrUpdate(action?: any): Observable<void> {
+    const neeeMemoryUpdate = this.getComite()?.id === COMITE.CEEA
+      && this.isEdit()
+      && this.datosGenerales.hasChanges()
+      && !this.formularios.hasChanges()
+      && this.formularios.isEditable()
+      && !this.readonly;
+
+    let operation$ = super.saveOrUpdate(action);
+
+    if (neeeMemoryUpdate) {
+      operation$ = operation$.pipe(
+        switchMap(() => {
+          // Llegados a este punto, siempre debería estar inicializado, por si acaso lo inicializamos.
+          this.formularios.initialize();
+          return this.formularios.initialized$.pipe(filter((value) => value), take(1), map((v) => this.formularios));
+        }),
+        switchMap((fragment) => {
+          return from(fragment.blocks$.value).pipe(
+            // Se excluyen los bloques que no hayan sido persistidos
+            filter(block => fragment.blocks$.value.indexOf(block) <= fragment.getLastFilledBlockIndex()),
+            concatMap(block => {
+              fragment.selectedIndex$.next(fragment.blocks$.value.indexOf(block));
+              return block.loaded$.pipe(filter((value) => value), take(1), map(() => block.formlyData));
+            }),
+            map(formlyData => {
+              // Si el formgroup no ha sido inicializado, lo inicializamos
+              if (!Object.keys(formlyData.formGroup.controls).length) {
+                this.formlyFormBuilder.buildForm(formlyData.formGroup, formlyData.fields, formlyData.model, formlyData.options);
+              }
+              return fragment;
+            }),
+            takeLast(1)
+          );
+        }),
+        switchMap((fragment) => fragment.saveOrUpdate()),
+      );
+    }
+    return operation$;
+  }
 }

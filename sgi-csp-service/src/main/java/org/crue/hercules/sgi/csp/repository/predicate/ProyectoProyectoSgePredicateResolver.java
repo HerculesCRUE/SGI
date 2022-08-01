@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.repository.predicate;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -12,6 +13,8 @@ import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.SingularAttribute;
 
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
+import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.Convocatoria_;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo_;
@@ -38,7 +41,15 @@ public class ProyectoProyectoSgePredicateResolver implements SgiRSQLPredicateRes
     /* Nombre proyecto */
     NOMBRE_PROYECTO("nombre"),
     /* Responsable proyecto */
-    RESPONSABLE_PROYECTO("responsable");
+    RESPONSABLE_PROYECTO("responsable"),
+    /* Codigo externo del proyecto */
+    CODIGO_EXTERNO("codigoExterno"),
+    /* Titulo convocatoria */
+    TITULO_CONVOCATORIA("tituloConvocatoria"),
+    /* Importe concedido costes directos */
+    IMPORTE_CONCEDIDO("importeConcedido"),
+    /* Importe concedido costes indirectos */
+    IMPORTE_CONCEDIDO_COSTES_INDIRECTOS("importeConcedidoCostesIndirectos");
 
     private String code;
 
@@ -93,6 +104,14 @@ public class ProyectoProyectoSgePredicateResolver implements SgiRSQLPredicateRes
         return buildByNombreProyecto(node, root, criteriaBuilder);
       case RESPONSABLE_PROYECTO:
         return buildByResponsableProyecto(node, root, criteriaBuilder);
+      case CODIGO_EXTERNO:
+        return buildByCodigoExterno(node, root, criteriaBuilder);
+      case TITULO_CONVOCATORIA:
+        return buildByTituloConvocatoria(node, root, criteriaBuilder);
+      case IMPORTE_CONCEDIDO:
+        return buildByImporteConcedido(node, root, criteriaBuilder);
+      case IMPORTE_CONCEDIDO_COSTES_INDIRECTOS:
+        return buildByImporteConcedidoCostesIndirectos(node, root, criteriaBuilder);
       default:
         return null;
     }
@@ -171,4 +190,55 @@ public class ProyectoProyectoSgePredicateResolver implements SgiRSQLPredicateRes
         cb.or(fechaGreaterThanFechaFinGrupo, lowerThanFechaFin));
   }
 
+  private Predicate buildByCodigoExterno(ComparisonNode node, Root<ProyectoProyectoSge> root,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    String codigoExterno = node.getArguments().get(0);
+
+    Join<ProyectoProyectoSge, Proyecto> joinProyecto = root.join(ProyectoProyectoSge_.proyecto, JoinType.INNER);
+
+    return cb.equal(joinProyecto.get(Proyecto_.codigoExterno), codigoExterno);
+  }
+
+  private Predicate buildByTituloConvocatoria(ComparisonNode node, Root<ProyectoProyectoSge> root,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.IGNORE_CASE_LIKE);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    String tituloConvocatoria = node.getArguments().get(0);
+
+    Join<ProyectoProyectoSge, Proyecto> joinProyecto = root.join(ProyectoProyectoSge_.proyecto, JoinType.INNER);
+    Join<Proyecto, Convocatoria> joinConvocatoria = joinProyecto.join(Proyecto_.convocatoria, JoinType.LEFT);
+
+    return cb.like(cb.lower(joinConvocatoria.get(Convocatoria_.titulo)),
+        LIKE_WILDCARD_PERCENT + tituloConvocatoria.toLowerCase() + LIKE_WILDCARD_PERCENT);
+  }
+
+  private Predicate buildByImporteConcedido(ComparisonNode node, Root<ProyectoProyectoSge> root,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    String importeConcedidoArgument = node.getArguments().get(0);
+    BigDecimal importeConcedido = new BigDecimal(importeConcedidoArgument);
+
+    Join<ProyectoProyectoSge, Proyecto> joinProyecto = root.join(ProyectoProyectoSge_.proyecto, JoinType.INNER);
+
+    return cb.equal(joinProyecto.get(Proyecto_.importeConcedido), importeConcedido);
+  }
+
+  private Predicate buildByImporteConcedidoCostesIndirectos(ComparisonNode node, Root<ProyectoProyectoSge> root,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    String importeConcedidoCostesIndirectosArgument = node.getArguments().get(0);
+    BigDecimal importeConcedidoCostesIndirectos = new BigDecimal(importeConcedidoCostesIndirectosArgument);
+
+    Join<ProyectoProyectoSge, Proyecto> joinProyecto = root.join(ProyectoProyectoSge_.proyecto, JoinType.INNER);
+
+    return cb.equal(joinProyecto.get(Proyecto_.importeConcedidoCostesIndirectos), importeConcedidoCostesIndirectos);
+  }
 }

@@ -14,7 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.jpa.domain.Specification;
 
 @DataJpaTest
-public class RequisitoEquipoNivelAcademicoRepositoryTest extends BaseRepositoryTest {
+class RequisitoEquipoNivelAcademicoRepositoryTest extends BaseRepositoryTest {
   @Autowired
   private RequisitoEquipoNivelAcademicoRepository repository;
 
@@ -135,7 +135,7 @@ public class RequisitoEquipoNivelAcademicoRepositoryTest extends BaseRepositoryT
 
     // then: se recuperan 4 registros
     Assertions.assertThat(returnValue).isNotNull();
-    Assertions.assertThat(returnValue.size()).isEqualTo(4);
+    Assertions.assertThat(returnValue).hasSize(4);
   }
 
 }

@@ -266,7 +266,8 @@
     </insert>
   </changeSet>
 
-  <changeSet context="dev" author="master" id="0000000000005-rol_proyecto">
+  <!-- TODO: Mover al fichero adecuado ya que no se trata de datos de prueba -->
+  <changeSet context="!test" author="master" id="0000000000005-rol_proyecto">
     <update tableName="rol_proyecto">
       <column name="baremable_prc" valueBoolean="true" />
       <where>id=1</where>

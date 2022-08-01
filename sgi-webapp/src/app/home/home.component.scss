@@ -1,14 +1,24 @@
-.module {
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  margin: 2em;
-  max-width: 200px;
-  min-height: 200px;
-}
+@import "colors.scss";
 
-.module .module-content {
-  width: 100%;
-  text-align: center;
-  white-space: pre-wrap;
+:host {
+  .module {
+    margin: 1.5em;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      background-color: $dark-dividers;
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+
+    .module-content {
+      width: 100%;
+      text-align: center;
+      white-space: pre-wrap;
+      margin: auto;
+    }
+  }
 }

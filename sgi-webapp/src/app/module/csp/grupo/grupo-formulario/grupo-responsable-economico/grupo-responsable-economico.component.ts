@@ -115,9 +115,10 @@ export class GrupoResponsableEconomicoComponent extends FragmentComponent implem
   }
 
   /**
-   * Apertura de modal de equipos (edición/creación)
+   * Apertura de modal de responsable económico (edición/creación)
    *
-   * @param idEquipo Identificador de equipo a editar.
+   * @param wrapper StatusWrapper<IGrupoResponsableEconomico>
+   * @param rowIndex índice de la fila del listado
    */
   openModal(wrapper?: StatusWrapper<IGrupoResponsableEconomico>, rowIndex?: number): void {
     // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación

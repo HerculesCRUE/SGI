@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -125,7 +126,6 @@ public class ProyectoPeriodoSeguimientoServiceImpl implements ProyectoPeriodoSeg
    * 
    * @param proyectoId identificador del {@link Proyecto}
    */
-  @Transactional
   private void recalcularNumPeriodos(Long proyectoId) {
     List<ProyectoPeriodoSeguimiento> listadoProyectoPeriodoSeguimientoBD = repository
         .findByProyectoIdOrderByFechaInicio(proyectoId);
@@ -258,7 +258,7 @@ public class ProyectoPeriodoSeguimientoServiceImpl implements ProyectoPeriodoSeg
 
         if (listaPeriodosSeguimiento.stream().anyMatch(
             proyectoPeriodoSeguimiento -> proyectoPeriodoSeguimiento.getTipoSeguimiento().equals(TipoSeguimiento.FINAL)
-                && proyectoPeriodoSeguimiento.getId() != datosProyectoPeriodoSeguimiento.getId())) {
+                && !Objects.equals(proyectoPeriodoSeguimiento.getId(), datosProyectoPeriodoSeguimiento.getId()))) {
           throw new IllegalArgumentException("Solo puede haber un periodo 'final'");
         }
         if (listaPeriodosSeguimiento.get(listaPeriodosSeguimiento.size() - 1).getFechaInicio()
@@ -312,10 +312,10 @@ public class ProyectoPeriodoSeguimientoServiceImpl implements ProyectoPeriodoSeg
 
     Page<ProyectoPeriodoSeguimiento> results = repository.findAll(specs, Pageable.unpaged());
     List<ProyectoPeriodoSeguimiento> listaPeriodosSeguimiento = (results == null)
-        ? new ArrayList<ProyectoPeriodoSeguimiento>()
+        ? new ArrayList<>()
         : results.getContent();
 
-    Boolean returnValue = Boolean.TRUE;
+    boolean returnValue = Boolean.TRUE;
     // Si fechaIni y fechaFin están vacíos siempre habrá solapamiento.
     if (fechaInicio == null && fechaFin == null) {
       returnValue = Boolean.FALSE;

@@ -84,7 +84,7 @@ public class SolicitudPalabraClaveService {
     repository.deleteInBulkBySolicitudId(solicitudId);
 
     List<SolicitudPalabraClave> returnValue = new ArrayList<>();
-    if (palabrasClave != null && !palabrasClave.isEmpty()) {
+    if (!palabrasClave.isEmpty()) {
       // Eliminamos duplicados de la nueva lista
       List<SolicitudPalabraClave> uniquePalabrasClave = palabrasClave.stream().distinct()
           .collect(Collectors.toList());

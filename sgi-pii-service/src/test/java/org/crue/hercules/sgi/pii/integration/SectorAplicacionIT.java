@@ -23,7 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de SectorAplicacion.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SectorAplicacionIT extends BaseIT {
+class SectorAplicacionIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/sectoresaplicacion";
@@ -50,7 +50,7 @@ public class SectorAplicacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findActivos_WithPagingSortingAndFiltering_ReturnSectorAplicacionOutputSubList() throws Exception {
+  void findActivos_WithPagingSortingAndFiltering_ReturnSectorAplicacionOutputSubList() throws Exception {
 
     String[] roles = { "PII-SEA-V", "PII-SEA-C", "PII-SEA-E", "PII-SEA-B", "PII-SEA-R", "PII-INV-V", "PII-INV-C",
         "PII-INV-E", "PII-INV-B", "PII-INV-R" };
@@ -72,7 +72,7 @@ public class SectorAplicacionIT extends BaseIT {
     // then: Respuesta OK, retorna la información de la página correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<SectorAplicacionOutput> sectorAplicacionOutput = response.getBody();
-    Assertions.assertThat(sectorAplicacionOutput.size()).isEqualTo(2);
+    Assertions.assertThat(sectorAplicacionOutput).hasSize(2);
     Assertions.assertThat(response.getHeaders().getFirst("X-Page")).isEqualTo("0");
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("2");
@@ -89,7 +89,7 @@ public class SectorAplicacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnSectorAplicacionOutputSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnSectorAplicacionOutputSubList() throws Exception {
 
     String[] roles = { "PII-SEA-V", "PII-SEA-C", "PII-SEA-E", "PII-SEA-B", "PII-SEA-R" };
 
@@ -110,7 +110,7 @@ public class SectorAplicacionIT extends BaseIT {
     // then: Respuesta OK, retorna la información de la página correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<SectorAplicacionOutput> sectorAplicacionOutput = response.getBody();
-    Assertions.assertThat(sectorAplicacionOutput.size()).isEqualTo(3);
+    Assertions.assertThat(sectorAplicacionOutput).hasSize(3);
     Assertions.assertThat(response.getHeaders().getFirst("X-Page")).isEqualTo("0");
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("3");
@@ -128,7 +128,7 @@ public class SectorAplicacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnSectorAplicacionOutput() throws Exception {
+  void findById_ReturnSectorAplicacionOutput() throws Exception {
 
     String[] roles = { "PII-SEA-V", "PII-SEA-C", "PII-SEA-E", "PII-SEA-B", "PII-SEA-R" };
     Long sectorAplicacionId = 1L;
@@ -153,7 +153,7 @@ public class SectorAplicacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnSectorAplicacionOutput() throws Exception {
+  void create_ReturnSectorAplicacionOutput() throws Exception {
 
     String[] roles = { "PII-SEA-C" };
     SectorAplicacionInput sectorAplicacionInput = generaMockSectorAplicacionInput();
@@ -177,7 +177,7 @@ public class SectorAplicacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnSectorAplicacionOutput() throws Exception {
+  void update_ReturnSectorAplicacionOutput() throws Exception {
 
     String[] roles = { "PII-SEA-E" };
     Long sectorAplicacionId = 1L;
@@ -205,7 +205,7 @@ public class SectorAplicacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void activar_ReturnSectorAplicacionOutput() throws Exception {
+  void activar_ReturnSectorAplicacionOutput() throws Exception {
 
     String[] roles = { "PII-SEA-R" };
     Long sectorAplicacionId = 3L;
@@ -232,7 +232,7 @@ public class SectorAplicacionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void desactivar_ReturnSectorAplicacionOutput() throws Exception {
+  void desactivar_ReturnSectorAplicacionOutput() throws Exception {
 
     String[] roles = { "PII-SEA-B" };
     Long sectorAplicacionId = 1L;

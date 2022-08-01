@@ -29,7 +29,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * ModeloTipoFaseServiceTest
  */
-public class ModeloTipoFaseServiceTest extends BaseServiceTest {
+class ModeloTipoFaseServiceTest extends BaseServiceTest {
 
   @Mock
   private ModeloTipoFaseRepository modeloTipoFaseRepository;
@@ -43,12 +43,12 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
   private ModeloTipoFaseService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ModeloTipoFaseServiceImpl(modeloTipoFaseRepository, tipoFaseRepository, modeloEjecucionRepository);
   }
 
   @Test
-  public void create_ReturnsModeloTipoFase() {
+  void create_ReturnsModeloTipoFase() {
     // given: Un nuevo ModeloTipoFase
     ModeloTipoFase modeloTipoFase = generarModeloTipoFaseConTipoFaseId(null);
 
@@ -70,13 +70,13 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
     // then: El ModeloTipoFase se crea correctamente
     Assertions.assertThat(tipoFaseCreado).as("isNotNull()").isNotNull();
     Assertions.assertThat(tipoFaseCreado.getId()).as("getId()").isEqualTo(1L);
-    Assertions.assertThat(tipoFaseCreado.getConvocatoria()).as("getConvocatoria").isEqualTo(true);
-    Assertions.assertThat(tipoFaseCreado.getProyecto()).as("getProyecto").isEqualTo(true);
+    Assertions.assertThat(tipoFaseCreado.getConvocatoria()).as("getConvocatoria").isTrue();
+    Assertions.assertThat(tipoFaseCreado.getProyecto()).as("getProyecto").isTrue();
 
   }
 
   @Test
-  public void create_WithoutActivos_ThrowsIllegalArgumentException() {
+  void create_WithoutActivos_ThrowsIllegalArgumentException() {
     // given: Un nuevo ModeloTipoFase
     ModeloTipoFase modeloTipoFase = generarModeloTipoFaseConTipoFaseId(null);
     modeloTipoFase.setConvocatoria(false);
@@ -96,7 +96,7 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutModeloEjecucionId_ThrowsIllegalArgumentException() {
+  void create_WithoutModeloEjecucionId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ModeloTipoEnlace que ya tiene id
     ModeloTipoFase modeloTipoFase = generarModeloTipoFase(null);
     modeloTipoFase.getModeloEjecucion().setId(null);
@@ -108,7 +108,7 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutTipoFaseId_ThrowsIllegalArgumentException() {
+  void create_WithoutTipoFaseId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ModeloTipoEnlace que ya tiene id
     ModeloTipoFase modeloTipoFase = generarModeloTipoFase(null);
     modeloTipoFase.getTipoFase().setId(null);
@@ -120,7 +120,7 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsModeloTipoFase() {
+  void update_ReturnsModeloTipoFase() {
     // given: Un nuevo ModeloTipoFase actualizado
 
     ModeloTipoFase modeloTipoFaseActualizado = generarModeloTipoFase(1L);
@@ -136,11 +136,11 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
 
     // then: El ModeloTipoFase se actualiza correctamente.
     Assertions.assertThat(modeloTipoFaseActualizadoCom.getId()).isEqualTo(1L);
-    Assertions.assertThat(modeloTipoFaseActualizadoCom.getConvocatoria()).as("getActivoConvocatoria").isEqualTo(false);
+    Assertions.assertThat(modeloTipoFaseActualizadoCom.getConvocatoria()).as("getActivoConvocatoria").isFalse();
   }
 
   @Test
-  public void update_ThrowsModeloTipoFaseNotFoundException() {
+  void update_ThrowsModeloTipoFaseNotFoundException() {
     // given: Un nuevo modelo tipo Fase a actualizar
     ModeloTipoFase modeloTipoFase = generarModeloTipoFase(1L);
 
@@ -151,7 +151,7 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_withActivoFalse_ThrowsIllegalArgumentException() {
+  void update_withActivoFalse_ThrowsIllegalArgumentException() {
     // given: Un nuevo modelo tipo Fase a actualizar
     ModeloTipoFase modeloTipoFase = generarModeloTipoFase(1L);
     modeloTipoFase.setActivo(false);
@@ -167,7 +167,7 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutActivos_ThrowsIllegalArgumentException() {
+  void update_WithoutActivos_ThrowsIllegalArgumentException() {
     // given: Un nuevo ModeloTipoFase actualizado
 
     ModeloTipoFase modeloTipoFase = generarModeloTipoFase(1L);
@@ -186,7 +186,7 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void find_WithExistingId_ReturnsModeloTipoFase() {
+  void find_WithExistingId_ReturnsModeloTipoFase() {
 
     // given: Entidad con un determinado Id
     ModeloTipoFase modeloTipoFase = generarModeloTipoFase(1L);
@@ -200,7 +200,7 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void find_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void find_WithNoExistingId_ThrowsNotFoundException() throws Exception {
 
     // given: No existe entidad con el id indicado
     Long id = 1L;
@@ -212,7 +212,7 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_WithoutId_ThrowsIllegalArgumentException() {
+  void disable_WithoutId_ThrowsIllegalArgumentException() {
     // given: Sin id
     Assertions.assertThatThrownBy(
         // when: Delete sin id
@@ -222,7 +222,7 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByModeloEjecucion_ReturnsPage() {
+  void findAllByModeloEjecucion_ReturnsPage() {
     // given: Una lista con 37 ModeloTipoFase para el ModeloEjecucion
     Long idModeloEjecucion = 1L;
     List<ModeloTipoFase> modeloTipoFases = new ArrayList<>();
@@ -251,7 +251,7 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
     Page<ModeloTipoFase> page = service.findAllByModeloEjecucion(idModeloEjecucion, null, paging);
 
     // then: Devuelve la pagina 3 con los ModeloTipoFase del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -262,7 +262,7 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByModeloEjecucionActivosConvocatoria_ReturnsPage() {
+  void findAllByModeloEjecucionActivosConvocatoria_ReturnsPage() {
     // given: Una lista con 37 ModeloTipoFase activos para convocatorias para el
     // ModeloEjecucion
     Long idModeloEjecucion = 1L;
@@ -292,7 +292,7 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
     Page<ModeloTipoFase> page = service.findAllByModeloEjecucionActivosConvocatoria(idModeloEjecucion, null, paging);
 
     // then: Devuelve la pagina 3 con los ModeloTipoFase del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -303,7 +303,7 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByModeloEjecucionActivosProyecto_ReturnsPage() {
+  void findAllByModeloEjecucionActivosProyecto_ReturnsPage() {
     // given: Una lista con 37 ModeloTipoFase activos para convocatorias para el
     // ModeloEjecucion
     Long idModeloEjecucion = 1L;
@@ -333,7 +333,7 @@ public class ModeloTipoFaseServiceTest extends BaseServiceTest {
     Page<ModeloTipoFase> page = service.findAllByModeloEjecucionActivosProyecto(idModeloEjecucion, null, paging);
 
     // then: Devuelve la pagina 3 con los ModeloTipoFase del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

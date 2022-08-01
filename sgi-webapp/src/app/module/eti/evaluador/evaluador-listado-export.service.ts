@@ -7,10 +7,9 @@ import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
 import { AbstractTableExportService, IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
 import { ReportService } from '@core/services/rep/report.service';
-import { SgiAuthService } from '@sgi/framework/auth';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of, zip } from 'rxjs';
+import { concat, Observable, of, zip } from 'rxjs';
 import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
 import { EvaluadorConflictosInteresListadoExportService } from './evaluador-conflictos-interes-listado-export.service';
 import { EvaluadorGeneralListadoExportService } from './evaluador-general-listado-export.service';
@@ -29,7 +28,6 @@ export class EvaluadorListadoExportService extends
 
   constructor(
     protected readonly logger: NGXLogger,
-    private authService: SgiAuthService,
     private readonly evaluadorService: EvaluadorService,
     private readonly evaluadorGeneralListadoExportService: EvaluadorGeneralListadoExportService,
     private readonly evaluadorConflictosInteresListadoExportService: EvaluadorConflictosInteresListadoExportService,
@@ -101,7 +99,7 @@ export class EvaluadorListadoExportService extends
 
   private getDataReportInner(evaluadorData: IEvaluadorReportData, reportOptions: IEvaluadorReportOptions):
     Observable<IEvaluadorReportData> {
-    return merge(
+    return concat(
       this.getDataReportListadoGeneral(evaluadorData),
       this.getDataReportConflictos(evaluadorData, reportOptions),
     ).pipe(

@@ -1,0 +1,113 @@
+<sgi-fragment title="{{'eer.empresa-documento' | translate: MSG_PARAMS.CARDINALIRY.PLURAL }}">
+
+  <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="10px">
+    <div class="arbol" fxFlex>
+      <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
+        <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
+          <button mat-icon-button *ngIf="(viewMode === VIEW_MODE.NEW)">
+            {{node.title}}
+          </button>
+          <button mat-icon-button *ngIf="(viewMode !== VIEW_MODE.NEW && node !== viewingNode)"
+            (click)="showNodeDetails(node)">
+            {{node.title}}
+            <mat-icon color="primary" class="mat-icon-rtl-mirror">
+              {{ 'visibility'}}
+            </mat-icon>
+          </button>
+          <button mat-icon-button *ngIf="(viewMode !== VIEW_MODE.NEW && node === viewingNode)"
+            (click)="hideNodeDetails()">
+            {{node.title}}
+            <mat-icon color="primary" class="mat-icon-rtl-mirror">
+              {{ 'visibility_off'}}
+            </mat-icon>
+          </button>
+        </mat-tree-node>
+        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+          <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.documento?.value?.nombre">
+            <mat-icon color="primary" class="mat-icon-rtl-mirror">
+              {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+            </mat-icon>
+            {{node.title | translate}}
+          </button>
+        </mat-tree-node>
+      </mat-tree>
+    </div>
+
+    <!-- Visualizacion crear/editar/detalle -->
+    <form [formGroup]="formGroup" class="visualizacion" fxFlex="50" *ngIf="viewMode !== VIEW_MODE.NONE">
+      <h3 *ngIf="viewMode === VIEW_MODE.NEW">{{'btn.add.entity' | translate:msgParamEntity }}</h3>
+      <h3 *ngIf="viewMode === VIEW_MODE.EDIT">{{'btn.edit.entity' | translate:msgParamEntity}}</h3>
+      <h3 *ngIf="viewMode === VIEW_MODE.VIEW">{{'btn.view.entity' | translate:msgParamEntity}}</h3>
+      <div fxLayout="column" fxLayout.xs="column" fxLayoutGap="10px">
+        <mat-form-field class="input-form">
+          <mat-label>{{'eer.empresa-documento.nombre' | translate}}</mat-label>
+          <input matInput type="text" placeholder="{{'eer.empresa-documento.nombre' | translate}}"
+            formControlName="nombre" required>
+          <mat-error *ngIf="formGroup.get('nombre').errors?.required">
+            {{'error.required.entity' | translate:msgParamNombreEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.get('nombre').errors?.maxlength">
+            {{ 'error.maxlength.entity' | translate:msgParamNombreEntity }}
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="input-form">
+          <mat-label>{{'eer.empresa-documento.tipo' | translate}}</mat-label>
+          <sgi-eer-select-tipo-documento #tipo formControlName="tipoDocumento">
+          </sgi-eer-select-tipo-documento>
+        </mat-form-field>
+        <mat-form-field class="input-form">
+          <mat-label>{{'eer.empresa-documento.subtipo' | translate}}</mat-label>
+          <sgi-eer-select-subtipo-documento formControlName="subtipoDocumento"
+            [tipoDocumentoId]="formGroup.controls.tipoDocumento.value?.id" [resetOnChange]="tipo.selectionChange">
+          </sgi-eer-select-subtipo-documento>
+        </mat-form-field>
+        <mat-form-field class="input-form">
+          <mat-label>{{'eer.empresa-documento.documento' | translate}}</mat-label>
+          <sgi-file-upload #uploader placeholder="{{'eer.empresa-documento.documento' | translate}}"
+            formControlName="documento" required autoUpload="false" (uploadEventChange)="onUploadProgress($event)">
+          </sgi-file-upload>
+          <mat-error *ngIf="formGroup.get('documento').errors?.required">
+            {{'error.required.entity' | translate:msgParamDocumentoEntity}}
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="input-form">
+          <mat-label>{{'eer.empresa-documento.comentarios' | translate}}</mat-label>
+          <textarea matInput type="text" placeholder="{{'eer.empresa-documento.comentarios' | translate}}"
+            formControlName="comentarios"></textarea>
+        </mat-form-field>
+      </div>
+      <div class="separation-button" *ngIf="group.status$ | async as status">
+        <button *ngIf="viewMode === VIEW_MODE.VIEW" mat-button mat-raised-button color="primary" class="rounded"
+          [disabled]="!viewingNode.documento.value.documento" (click)="downloadFile(viewingNode)">
+          <mat-icon>arrow_downward</mat-icon>
+          {{'btn.download.file' | translate}}
+        </button>
+        <button *ngIf="formPart.canEdit && viewMode === VIEW_MODE.NEW || viewMode === VIEW_MODE.EDIT" color="accent"
+          mat-button mat-raised-button (click)="acceptDetail()"
+          [disabled]="!status.complete || (status.complete && uploading)">{{'btn.ok' | translate}}</button>
+        <button *ngIf="formPart.canEdit && viewMode === VIEW_MODE.NEW || viewMode === VIEW_MODE.EDIT"
+          class="link-cancelar" mat-button><span class="underline" (click)="cancelDetail()">{{'btn.cancel' |
+            translate}}</span></button>
+        <button *ngIf="formPart.canEdit && viewMode === VIEW_MODE.VIEW" color="accent" class="rounded" mat-button
+          mat-raised-button (click)="switchToEdit()">
+          <mat-icon>edit</mat-icon>
+          {{'btn.edit.entity'| translate:msgParamEntity}}
+        </button>
+        <button *ngIf="formPart.canEdit && viewMode === VIEW_MODE.VIEW" color="warn" class="rounded" mat-button
+          mat-raised-button (click)="deleteDetail()">
+          <mat-icon>close</mat-icon>
+          {{'btn.delete.entity' | translate:msgParamEntity}}
+        </button>
+      </div>
+    </form>
+    <!-- FIN Visualizacion crear/editar/detalle -->
+  </div>
+
+  <div class="separation-button" *ngIf="formPart.canEdit">
+    <button color="three" aria-label="Center Align" mat-button mat-raised-button (click)="switchToNew()">
+      <mat-icon color="accent">add_circle</mat-icon>
+      {{ 'btn.add.entity' | translate:msgParamEntity }}
+    </button>
+  </div>
+
+</sgi-fragment>

@@ -1,4 +1,3 @@
-import { DataSource } from '@angular/cdk/collections';
 import { DecimalPipe } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -19,14 +18,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { NGXLogger } from 'ngx-logger';
 import { from, Observable, of } from 'rxjs';
-import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { concatMap, map, mergeMap, switchMap } from 'rxjs/operators';
 import { IConvocatoriaReportData, IConvocatoriaReportOptions } from './convocatoria-listado-export.service';
 
 const COLUMN_VALUE_PREFIX = ': ';
 
 const REQUISITO_EQUIPO_KEY = marker('csp.convocatoria-requisito-equipo');
-const REQ_EQ_KEY = marker('csp.convocatoria-req-equipo');
-const NOMBRE_KEY = marker('sgp.nombre');
 const REQUISITO_EQUIPO_SEXO_RATIO_KEY = marker('csp.convocatoria-requisito-equipo.sexo-ratio');
 const REQUISITO_EQUIPO_EDAD_MAXIMA_KEY = marker('csp.convocatoria-requisito-equipo.nivel-academico.edad-maxima');
 const REQUISITO_EQUIPO_SEXO_KEY = marker('csp.convocatoria-requisito-equipo.sexo');
@@ -83,7 +80,7 @@ export class ConvocatoriaRequisitoEquipoListadoExportService extends AbstractTab
           return of(data);
         }
         return this.convocatoriaRequisitoEquipoService.findNivelesAcademicos(data.requisitoEquipo.id).pipe(
-          mergeMap((requisitoEquipoNivelesAcademicos) => this.getNivelesAcademicos(data, requisitoEquipoNivelesAcademicos))
+          concatMap((requisitoEquipoNivelesAcademicos) => this.getNivelesAcademicos(data, requisitoEquipoNivelesAcademicos))
         );
       }),
       switchMap((data) => {
@@ -91,7 +88,7 @@ export class ConvocatoriaRequisitoEquipoListadoExportService extends AbstractTab
           return of(data);
         }
         return this.convocatoriaRequisitoEquipoService.findCategoriaProfesional(convocatoriaData.requisitoEquipo.id).pipe(
-          mergeMap((requisitoEquipoCategorias) => this.getCategoriasProfesionales(data, requisitoEquipoCategorias))
+          concatMap((requisitoEquipoCategorias) => this.getCategoriasProfesionales(data, requisitoEquipoCategorias))
         );
       })
     );
@@ -119,7 +116,7 @@ export class ConvocatoriaRequisitoEquipoListadoExportService extends AbstractTab
             return data;
           })
         );
-      }));
+      }, this.DEFAULT_CONCURRENT));
   }
 
   private getNivelesAcademicos(data: IConvocatoriaReportData, requisitoEquipoNivelesAcademicos: IRequisitoEquipoNivelAcademico[]):
@@ -142,7 +139,7 @@ export class ConvocatoriaRequisitoEquipoListadoExportService extends AbstractTab
             return data;
           })
         );
-      }));
+      }, this.DEFAULT_CONCURRENT));
   }
 
   public fillColumns(

@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.service.impl;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -71,15 +72,16 @@ public class ProyectoSocioPeriodoPagoServiceImpl implements ProyectoSocioPeriodo
       return new ArrayList<>();
     }
 
-    proyectoSocioRepository.findById(proyectoSocioId)
-        .orElseThrow(() -> new ProyectoSocioNotFoundException(proyectoSocioId));
+    if (!proyectoSocioRepository.existsById(proyectoSocioId)) {
+      throw new ProyectoSocioNotFoundException(proyectoSocioId);
+    }
 
     List<ProyectoSocioPeriodoPago> proyectoSocioPeriodoPagosBD = repository.findAllByProyectoSocioId(proyectoSocioId);
 
     // Periodos pago eliminados
     List<ProyectoSocioPeriodoPago> proyectoSocioPeriodoPagoEliminar = proyectoSocioPeriodoPagosBD.stream()
-        .filter(periodo -> !proyectoSocioPeriodoPagos.stream().map(ProyectoSocioPeriodoPago::getId)
-            .anyMatch(id -> id == periodo.getId()))
+        .filter(periodo -> proyectoSocioPeriodoPagos.stream().map(ProyectoSocioPeriodoPago::getId)
+            .noneMatch(id -> Objects.equals(id, periodo.getId())))
         .collect(Collectors.toList());
 
     if (!proyectoSocioPeriodoPagoEliminar.isEmpty()) {
@@ -96,15 +98,15 @@ public class ProyectoSocioPeriodoPagoServiceImpl implements ProyectoSocioPeriodo
       proyectoSocioPeriodoPago.setNumPeriodo(numPeriodo.incrementAndGet());
 
       // Si tiene id se valida que exista y que tenga la proyectoSocioPeriodoPago de
-      // la
-      // que se
-      // estan actualizando los periodos
+      // la que se estan actualizando los periodos
       if (proyectoSocioPeriodoPago.getId() != null) {
         ProyectoSocioPeriodoPago proyectoSocioPeriodoPagoBD = proyectoSocioPeriodoPagosBD.stream()
-            .filter(periodo -> periodo.getId() == proyectoSocioPeriodoPago.getId()).findFirst()
+            .filter(periodo -> Objects.equals(periodo.getId(), proyectoSocioPeriodoPago.getId())).findFirst()
             .orElseThrow(() -> new ProyectoSocioPeriodoPagoNotFoundException(proyectoSocioPeriodoPago.getId()));
 
-        Assert.isTrue(proyectoSocioPeriodoPagoBD.getProyectoSocioId() == proyectoSocioPeriodoPago.getProyectoSocioId(),
+        Assert.isTrue(
+            Objects.equals(proyectoSocioPeriodoPagoBD.getProyectoSocioId(),
+                proyectoSocioPeriodoPago.getProyectoSocioId()),
             "No se puede modificar el proyecto socio del ProyectoSocioPeriodoPago");
       }
     }

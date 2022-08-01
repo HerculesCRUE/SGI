@@ -99,9 +99,10 @@ export class GrupoLineaEquipoInstrumentalComponent extends FragmentComponent imp
   }
 
   /**
-   * Apertura de modal de equipos (edición/creación)
+   * Apertura de modal del equipo instrumental (edición/creación)
    *
-   * @param idEquipo Identificador de equipo a editar.
+   * @param wrapper StatusWrapper<IGrupoLineaEquipoInstrumental>
+   * @param rowIndex índice de la fila del listado
    */
   openModal(wrapper?: StatusWrapper<IGrupoLineaEquipoInstrumental>, rowIndex?: number): void {
     // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación

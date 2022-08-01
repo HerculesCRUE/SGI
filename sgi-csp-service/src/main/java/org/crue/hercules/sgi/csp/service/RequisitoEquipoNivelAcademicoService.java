@@ -104,7 +104,7 @@ public class RequisitoEquipoNivelAcademicoService {
     repository.deleteInBulkByRequisitoEquipoId(requisitoEquipoId);
 
     List<RequisitoEquipoNivelAcademico> returnValue = new ArrayList<>();
-    if (nivelesAcademicos != null && !nivelesAcademicos.isEmpty()) {
+    if (!nivelesAcademicos.isEmpty()) {
       // Eliminamos duplicados de la nueva lista
       List<RequisitoEquipoNivelAcademico> uniqueNivelesAcademicos = nivelesAcademicos.stream().distinct()
           .collect(Collectors.toList());

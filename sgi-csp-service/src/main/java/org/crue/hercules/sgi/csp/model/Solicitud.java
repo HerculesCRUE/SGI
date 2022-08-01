@@ -88,9 +88,8 @@ public class Solicitud extends BaseEntity {
   private String creadorRef;
 
   /** SolicitanteRef */
-  @Column(name = "solicitante_ref", length = 50, nullable = false)
+  @Column(name = "solicitante_ref", length = 50, nullable = true)
   @Size(max = 50)
-  @NotNull
   private String solicitanteRef;
 
   /** Observaciones */
@@ -169,4 +168,15 @@ public class Solicitud extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final SolicitudGrupo solicitudGrupo = null;
+
+  @OneToOne(mappedBy = "solicitud")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final SolicitanteExterno solicitanteExterno = null;
+
+  @OneToOne(mappedBy = "solicitud")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final SolicitudRrhh solicitudRrhh = null;
+
 }

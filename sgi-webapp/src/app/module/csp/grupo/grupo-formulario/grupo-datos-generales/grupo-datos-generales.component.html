@@ -42,7 +42,7 @@
         <!-- Codigo identificacion SGE -->
         <mat-form-field>
           <mat-label>{{'csp.grupo.codigo-sge' | translate}}</mat-label>
-          <sgi-select-proyecto-economico formControlName="proyectoSge">
+          <sgi-select-proyecto-economico formControlName="proyectoSge" [grupoInvestigacion]="this.grupo">
           </sgi-select-proyecto-economico>
         </mat-form-field>
 

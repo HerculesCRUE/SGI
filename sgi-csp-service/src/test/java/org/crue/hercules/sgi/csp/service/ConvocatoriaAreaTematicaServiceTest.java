@@ -26,7 +26,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
+class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
 
   @Mock
   private ConvocatoriaAreaTematicaRepository convocatoriaAreaTematicaRepository;
@@ -39,13 +39,13 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   private ConvocatoriaAreaTematicaService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ConvocatoriaAreaTematicaServiceImpl(convocatoriaAreaTematicaRepository, areaTematicaRepository,
         convocatoriaService);
   }
 
   @Test
-  public void create_ReturnsConvocatoriaAreaTematica() {
+  void create_ReturnsConvocatoriaAreaTematica() {
     // given: new ConvocatoriaAreaTematica
     Long convocatoriaId = 1L;
     ConvocatoriaAreaTematica newConvocatoriaAreaTematica = generarConvocatoriaAreaTematica(null, convocatoriaId, 1L);
@@ -85,7 +85,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaAreaTematica with id filled
     ConvocatoriaAreaTematica newConvocatoriaAreaTematica = generarConvocatoriaAreaTematica(1L, 1L, 1L);
 
@@ -98,7 +98,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutConvocatoriaId_ThrowsIllegalArgumentException() {
+  void create_WithoutConvocatoriaId_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaAreaTematica without ConvocatoriaId
     ConvocatoriaAreaTematica newConvocatoriaAreaTematica = generarConvocatoriaAreaTematica(null, null, 1L);
 
@@ -111,7 +111,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutAreaTematica_ThrowsIllegalArgumentException() {
+  void create_WithoutAreaTematica_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaAreaTematica without AreaTematica
     ConvocatoriaAreaTematica newConvocatoriaAreaTematica = generarConvocatoriaAreaTematica(null, 1L, null);
 
@@ -124,7 +124,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingAreaTematica_404() {
+  void create_WithNoExistingAreaTematica_404() {
     // given: a ConvocatoriaAreaTematica with non existing AreaTematica
     Long convocatoriaId = 1L;
     ConvocatoriaAreaTematica newConvocatoriaAreaTematica = generarConvocatoriaAreaTematica(null, convocatoriaId, 1L);
@@ -141,7 +141,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedConvocatoriaIdAndAreaTematicaId_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedConvocatoriaIdAndAreaTematicaId_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaAreaTematica assigned with same
     // Convocatoria And EntidadRef
     Long convocatoriaId = 1L;
@@ -167,7 +167,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
+  void create_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaAreaTematica when modificable returns False
     Long convocatoriaId = 1L;
     ConvocatoriaAreaTematica newConvocatoriaAreaTematica = generarConvocatoriaAreaTematica(null, convocatoriaId, 1L);
@@ -184,7 +184,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithExistingId_ReturnsConvocatoriaAreaTematica() {
+  void update_WithExistingId_ReturnsConvocatoriaAreaTematica() {
     // given: existing ConvocatoriaAreaTematica
     ConvocatoriaAreaTematica convocatoriaAreaTematica = generarConvocatoriaAreaTematica(1L, 1L, 1L);
 
@@ -214,7 +214,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void update_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     ConvocatoriaAreaTematica convocatoriaAreaTematica = generarConvocatoriaAreaTematica(1L, 1L, 1L);
 
@@ -229,7 +229,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutId_ThrowsIllegalArgumentException() {
+  void update_WithoutId_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaAreaTematica without id filled
     ConvocatoriaAreaTematica convocatoriaAreaTematica = generarConvocatoriaAreaTematica(null, 1L, 1L);
 
@@ -242,7 +242,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_ReturnsConvocatoriaAreaTematica() {
+  void delete_WithExistingId_ReturnsConvocatoriaAreaTematica() {
     // given: existing ConvocatoriaAreaTematica
     Long id = 1L;
 
@@ -260,7 +260,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
+  void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
     // given: no id
     Long id = null;
 
@@ -273,7 +273,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -288,7 +288,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
+  void delete_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
     // given: existing ConvocatoriaAreaTematica when modificable returns false
     Long id = 1L;
 
@@ -306,7 +306,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithExistingId_ReturnsConvocatoriaAreaTematica() throws Exception {
+  void findById_WithExistingId_ReturnsConvocatoriaAreaTematica() throws Exception {
     // given: existing ConvocatoriaAreaTematica
     ConvocatoriaAreaTematica givenConvocatoriaAreaTematica = generarConvocatoriaAreaTematica(1L, 1L, 1L);
 
@@ -329,7 +329,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(convocatoriaAreaTematicaRepository.findById(ArgumentMatchers.anyLong()))
@@ -343,7 +343,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByConvocatoria_ReturnsPage() {
+  void findAllByConvocatoria_ReturnsPage() {
     // given: Una lista con 37 ConvocatoriaAreaTematica para la Convocatoria
     Long convocatoriaId = 1L;
     List<ConvocatoriaAreaTematica> convocatoriasAreasTematicas = new ArrayList<>();
@@ -374,7 +374,7 @@ public class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
     Page<ConvocatoriaAreaTematica> page = service.findAllByConvocatoria(convocatoriaId, null, paging);
 
     // then: Devuelve la pagina 3 con los ConvocatoriaAreaTematica del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

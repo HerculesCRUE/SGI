@@ -7,8 +7,13 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.CertificadoAutorizacionController;
 import org.crue.hercules.sgi.csp.dto.CertificadoAutorizacionInput;
 import org.crue.hercules.sgi.csp.dto.CertificadoAutorizacionOutput;
+import org.crue.hercules.sgi.csp.model.CertificadoAutorizacion;
+import org.crue.hercules.sgi.csp.service.CertificadoAutorizacionComService;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.BDDMockito;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -23,6 +28,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 class CertificadoAutorizacionIT extends BaseIT {
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = CertificadoAutorizacionController.REQUEST_MAPPING;
+
+  @MockBean
+  private CertificadoAutorizacionComService certificadoAutorizacionComService;
+
 
   private HttpEntity<CertificadoAutorizacionInput> buildRequest(HttpHeaders headers,
       CertificadoAutorizacionInput entity, String... roles) throws Exception {
@@ -52,6 +61,8 @@ class CertificadoAutorizacionIT extends BaseIT {
   void create_ReturnsCertificadoAutorizacionOutput() throws Exception {
     String roles = "CSP-AUT-INV-ER";
     CertificadoAutorizacionInput toCreate = buildMockCertificadoAutorizacionInput(1L, "DOC-0001", "cert-aut-new");
+
+    BDDMockito.willDoNothing().given(this.certificadoAutorizacionComService).enviarComunicadoAddModificarCertificadoAutorizacionParticipacionProyectoExterno(ArgumentMatchers.<CertificadoAutorizacion>any());
 
     final ResponseEntity<CertificadoAutorizacionOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH,
         HttpMethod.POST, buildRequest(null, toCreate, roles), CertificadoAutorizacionOutput.class);
@@ -84,7 +95,9 @@ class CertificadoAutorizacionIT extends BaseIT {
     String roles = "CSP-AUT-E";
     CertificadoAutorizacionInput toUpdate = buildMockCertificadoAutorizacionInput(1L, "DOC-0001", "cert-aut-new");
     Long certificadoAutorizacionId = 2L;
-
+    
+    BDDMockito.willDoNothing().given(this.certificadoAutorizacionComService).enviarComunicadoAddModificarCertificadoAutorizacionParticipacionProyectoExterno(ArgumentMatchers.<CertificadoAutorizacion>any());
+    
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID).buildAndExpand(
         certificadoAutorizacionId).toUri();
 

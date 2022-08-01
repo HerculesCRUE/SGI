@@ -14,13 +14,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * RequisitoIPRepositoryTest
  */
 @DataJpaTest
-public class RequisitoIPRepositoryTest extends BaseRepositoryTest {
+class RequisitoIPRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private RequisitoIPRepository repository;
 
   @Test
-  public void findByConvocatoriaId_ReturnsRequisitoIP() throws Exception {
+  void findByConvocatoriaId_ReturnsRequisitoIP() throws Exception {
 
     // given: 2 RequisitoIP de los que 1 coincide con el idConvocatoria buscado
     Convocatoria convocatoria = entityManager.persistAndFlush(generarMockConvocatoria(1L));
@@ -41,7 +41,7 @@ public class RequisitoIPRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByConvocatoriaNoExiste_ReturnsNull() throws Exception {
+  void findByConvocatoriaNoExiste_ReturnsNull() throws Exception {
 
     // given: 2 RequisitoIP que no coinciden con el idConvocatoria buscado
     Convocatoria convocatoria = entityManager.persistAndFlush(generarMockConvocatoria(1L));

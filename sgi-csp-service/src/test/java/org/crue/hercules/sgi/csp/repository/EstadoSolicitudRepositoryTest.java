@@ -12,13 +12,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 
 @DataJpaTest
-public class EstadoSolicitudRepositoryTest extends BaseRepositoryTest {
+class EstadoSolicitudRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private EstadoSolicitudRepository repository;
 
   @Test
-  public void findAllBySolicitud_ReturnsPageEstadoSolicitud() throws Exception {
+  void findAllBySolicitud_ReturnsPageEstadoSolicitud() throws Exception {
     // given: data EstadoSolicitud with nombre to find
     Solicitud sol1 = entityManager.persistAndFlush(generarMockSolicitud());
     Solicitud sol2 = entityManager.persistAndFlush(generarMockSolicitud());
@@ -30,7 +30,7 @@ public class EstadoSolicitudRepositoryTest extends BaseRepositoryTest {
     Page<EstadoSolicitud> page = repository.findAllBySolicitudId(sol1.getId(), null);
 
     // then: EstadoSolicitud with given name is found
-    Assertions.assertThat(page.hasContent()).isNotNull();
+    Assertions.assertThat(page.hasContent()).isTrue();
   }
 
   private Solicitud generarMockSolicitud() {

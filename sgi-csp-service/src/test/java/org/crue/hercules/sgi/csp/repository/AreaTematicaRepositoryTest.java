@@ -10,13 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class AreaTematicaRepositoryTest extends BaseRepositoryTest {
+class AreaTematicaRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private AreaTematicaRepository repository;
 
   @Test
-  public void findByPadreIdInAndActivoIsTrue_ReturnsAreaTematica() throws Exception {
+  void findByPadreIdInAndActivoIsTrue_ReturnsAreaTematica() throws Exception {
     // given: 2 AreaTematica de los que 1 coincide con el id padre buscado
     AreaTematica areaTematica1 = new AreaTematica(null, "nombre-1", "descripcion-1", null, true);
     entityManager.persistAndFlush(areaTematica1);
@@ -40,7 +40,7 @@ public class AreaTematicaRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByPadreIdInAndActivoIsTrue_IdNoExiste_ReturnsEmptyList() throws Exception {
+  void findByPadreIdInAndActivoIsTrue_IdNoExiste_ReturnsEmptyList() throws Exception {
     // given: 2 AreaTematica que no coinciden con el id padre buscado
     AreaTematica areaTematica1 = new AreaTematica(null, "nombre-1", "descripcion-1", null, true);
     entityManager.persistAndFlush(areaTematica1);
@@ -54,7 +54,7 @@ public class AreaTematicaRepositoryTest extends BaseRepositoryTest {
     List<AreaTematica> areaTematicaEncontrados = repository.findByPadreIdInAndActivoIsTrue(idsPadreBuscados);
 
     // then: No hay ningun AreaTematica con el id padre buscado
-    Assertions.assertThat(areaTematicaEncontrados.size()).as("size()").isEqualTo(0);
+    Assertions.assertThat(areaTematicaEncontrados.size()).as("size()").isZero();
 
   }
 }

@@ -170,7 +170,7 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
     this.listadoAreaTematicas.sort = this.sort;
   }
 
-  deleteAreaTematicaListado(data?: AreaTematicaListado) {
+  deleteAreaTematicaListado() {
     this.formPart.deleteAreaTematica();
   }
 

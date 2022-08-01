@@ -18,13 +18,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 
 @DataJpaTest
-public class ConvocatoriaConceptoGastoRepositoryTest extends BaseRepositoryTest {
+class ConvocatoriaConceptoGastoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ConvocatoriaConceptoGastoRepository repository;
 
   @Test
-  public void findAllByConvocatoriaIdAndConceptoGastoActivoTrueAndPermitidoTrue_ReturnsPageConvocatoriaConceptoGasto()
+  void findAllByConvocatoriaIdAndConceptoGastoActivoTrueAndPermitidoTrue_ReturnsPageConvocatoriaConceptoGasto()
       throws Exception {
     // given: data ConvocatoriaConceptoGasto to find by Convocatoria and
     // ConceptoGasto and permitido
@@ -52,7 +52,7 @@ public class ConvocatoriaConceptoGastoRepositoryTest extends BaseRepositoryTest 
   }
 
   @Test
-  public void findAllByConvocatoriaIdAndConceptoGastoActivoTrueAndPermitidoTrue_ReturnsEmptyList() throws Exception {
+  void findAllByConvocatoriaIdAndConceptoGastoActivoTrueAndPermitidoTrue_ReturnsEmptyList() throws Exception {
     // given: data ConvocatoriaConceptoGasto to find by Convocatoria and
     // ConceptoGasto and permitido
     ConvocatoriaConceptoGasto convocatoriaConceptoGasto1 = generarConvocatoriaConceptoGasto("-001", false);
@@ -68,7 +68,7 @@ public class ConvocatoriaConceptoGastoRepositoryTest extends BaseRepositoryTest 
         .findAllByConvocatoriaIdAndConceptoGastoActivoTrueAndPermitidoTrue(convocatoriaIdBuscado, null);
 
     // then: ConvocatoriaConceptoGasto is not found
-    Assertions.assertThat(dataFound).size().isEqualTo(0);
+    Assertions.assertThat(dataFound).size().isZero();
   }
 
   /**

@@ -136,10 +136,7 @@ export class ConvocatoriaReunionAsignacionMemoriasListadoFragment extends Fragme
         return this.service.create(evaluacion.value).pipe(
           // TODO: Eliminar casteo ya que el back no retorna el atributo eliminable
           map((savedEvaluacion: IEvaluacionWithIsEliminable) => {
-            const index = this.evaluaciones$.value.findIndex((wrapped) => wrapped === evaluacion);
-            evaluacion.value.id = savedEvaluacion.id;
-            this.evaluaciones$.value[index] = new StatusWrapper<IEvaluacionWithIsEliminable>(evaluacion.value);
-            this.evaluaciones$.next(this.evaluaciones$.value);
+            this.loadEvaluaciones(this.getKey() as number);
           })
         );
       }),

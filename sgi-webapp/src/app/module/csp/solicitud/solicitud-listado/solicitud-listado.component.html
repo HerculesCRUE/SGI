@@ -60,6 +60,20 @@
             [tipoColectivo]="tipoColectivoSolicitante">
           </sgi-select-persona>
         </mat-form-field>
+
+        <!-- Nombre solicitante externo -->
+        <mat-form-field fxFlex="33%">
+          <mat-label>{{'csp.solicitud.nombre-solicitante-externo' | translate}}</mat-label>
+          <input matInput formControlName="nombreSolicitanteExterno" type="text"
+            placeholder="{{'csp.solicitud.nombre-solicitante-externo' | translate}}">
+        </mat-form-field>
+
+        <!-- Apellidos solicitante externo -->
+        <mat-form-field fxFlex="33%">
+          <mat-label>{{'csp.solicitud.apellidos-solicitante-externo' | translate}}</mat-label>
+          <input matInput formControlName="apellidosSolicitanteExterno" type="text"
+            placeholder="{{'csp.solicitud.apellidos-solicitante-externo' | translate}}">
+        </mat-form-field>
       </div>
 
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
@@ -252,7 +266,18 @@
           {{'csp.solicitud.solicitante' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.solicitante?.nombre }} {{ element.solicitante?.apellidos }}
+          {{ element.nombreSolicitante}}
+        </td>
+      </ng-container>
+
+      <!-- Externo Column -->
+      <ng-container matColumnDef="externo">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'csp.solicitud.externo' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.solicitanteExterno ? ('label.si' | translate) :
+          !!element.solicitante?.id ? ('label.no' | translate) : '' }}
         </td>
       </ng-container>
 

@@ -55,8 +55,10 @@ public class CustomComiteEditorialRepositoryImpl implements CustomComiteEditoria
   private EntityManager entityManager;
 
   @Override
-  public Page<ComiteEditorialResumen> findAllComitesEditoriales(String query, Pageable pageable) {
-    log.debug("findAllComitesEditoriales(String query, Pageable pageable) - start");
+  public Page<ComiteEditorialResumen> findAllComitesEditoriales(
+      Specification<ProduccionCientifica> specIsInvestigador, String query, Pageable pageable) {
+    log.debug(
+        "findAllComitesEditoriales(Specification<ProduccionCientifica> specIsInvestigador, String query, Pageable pageable) - start");
 
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<ComiteEditorialResumen> cq = cb.createQuery(ComiteEditorialResumen.class);
@@ -118,6 +120,11 @@ public class CustomComiteEditorialRepositoryImpl implements CustomComiteEditoria
       listPredicatesCount.add(spec.toPredicate(rootCount, countQuery, cb));
     }
 
+    if (specIsInvestigador != null) {
+      listPredicates.add(specIsInvestigador.toPredicate(root, cq, cb));
+      listPredicatesCount.add(specIsInvestigador.toPredicate(rootCount, countQuery, cb));
+    }
+
     Path<Long> pathProduccionCientificaId = root.get(ProduccionCientifica_.id);
     cq.where(listPredicates.toArray(new Predicate[] {}));
 
@@ -154,7 +161,8 @@ public class CustomComiteEditorialRepositoryImpl implements CustomComiteEditoria
     List<ComiteEditorialResumen> result = typedQuery.getResultList();
     Page<ComiteEditorialResumen> returnValue = new PageImpl<>(result, pageable, count);
 
-    log.debug("findAllComitesEditoriales(String query, Pageable pageable) - end");
+    log.debug(
+        "findAllComitesEditoriales(Specification<ProduccionCientifica> specIsInvestigador, String query, Pageable pageable) - end");
 
     return returnValue;
   }

@@ -62,18 +62,22 @@ public class AutorizacionService {
   /** SGI properties */
   SgiConfigProperties sgiConfigProperties;
 
+  private final AutorizacionComService autorizacionComService;
+
   private static final String TITULO_INFORME_AUTORIZACION = "SGI_certificadoAutorizacionProyectoExterno_";
 
   public AutorizacionService(
       AutorizacionRepository repository,
       EstadoAutorizacionRepository estadoAutorizacionRepository,
       SgiApiRepService reportService,
-      SgdocService sgdocService, SgiConfigProperties sgiConfigProperties) {
+      SgdocService sgdocService, SgiConfigProperties sgiConfigProperties,
+      AutorizacionComService autorizacionComService) {
     this.repository = repository;
     this.estadoAutorizacionRepository = estadoAutorizacionRepository;
     this.reportService = reportService;
     this.sgdocService = sgdocService;
     this.sgiConfigProperties = sgiConfigProperties;
+    this.autorizacionComService = autorizacionComService;
   }
 
   /**
@@ -284,6 +288,11 @@ public class AutorizacionService {
     autorizacion.setEstado(estadoAutorizacion);
 
     Autorizacion returnValue = repository.save(autorizacion);
+    try{
+      this.autorizacionComService.enviarComunicadoCambioEstadoParticipacionAutorizacionProyectoExterno(autorizacion);
+    }catch(Exception ex) {
+      log.error(ex.getMessage(), ex);
+    }
 
     log.debug("cambiarEstado(Long id, EstadoProyecto estadoProyecto) - end");
     return returnValue;
@@ -319,7 +328,10 @@ public class AutorizacionService {
 
     Autorizacion returnValue = repository.save(autorizacion);
 
+    autorizacionComService.enviarComunicadoModificadaAutorizacionParticipacionProyectoExterno(returnValue);
+
     log.debug("presentar(Long id) - end");
+
     return returnValue;
   }
 

@@ -510,20 +510,21 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
 
   /**
    * Devuelve la {@link Convocatoria} asociada a la {@link Solicitud} con el id
-   * indicado si el usuario que realiza la peticion es el solicitante de la
-   * {@link Solicitud}.
+   * indicado si el usuario que realiza la peticion es el solicitante o el tutor
+   * de la {@link Solicitud}.
    * 
    * @param solicitudId Identificador de {@link Solicitud}.
    * @return {@link Convocatoria} correspondiente a la {@link Solicitud}.
    */
   @Override
-  public Convocatoria findBySolicitudIdAndUserIsSolicitante(Long solicitudId) {
+  public Convocatoria findBySolicitudIdAndUserIsSolicitanteOrTutor(Long solicitudId) {
     log.debug("findBySolicitudIdAndUserIsSolicitante(Long solicitudId) - start");
 
     String personaRef = SecurityContextHolder.getContext().getAuthentication().getName();
 
     if (solicitudRepository
-        .count(SolicitudSpecifications.bySolicitante(personaRef).and(SolicitudSpecifications.byId(solicitudId))) < 1) {
+        .count(SolicitudSpecifications.bySolicitanteOrTutor(personaRef)
+            .and(SolicitudSpecifications.byId(solicitudId))) < 1) {
       throw new UserNotAuthorizedToAccessConvocatoriaException();
     }
 

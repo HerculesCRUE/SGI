@@ -1,6 +1,6 @@
 import { IProyectoHito } from '@core/models/csp/proyecto-hito';
 import { Fragment } from '@core/services/action-service';
-import { ProyectoHitoService } from '@core/services/csp/proyecto-hito.service';
+import { ProyectoHitoService } from '@core/services/csp/proyecto-hito/proyecto-hito.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';

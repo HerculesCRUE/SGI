@@ -41,7 +41,7 @@ import org.springframework.data.jpa.domain.Specification;
  * SolicitudProyectoSocioPeriodoJustificacionServiceTest
  */
 @Import({ SolicitudProyectoSocioPeriodoJustificacionServiceImpl.class })
-public class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTest {
+class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTest {
 
   @MockBean
   private SolicitudProyectoSocioPeriodoJustificacionRepository repository;
@@ -57,7 +57,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseS
   private SolicitudProyectoSocioPeriodoJustificacionService service;
 
   @Test
-  public void update_ReturnsSolicitudProyectoSocioPeriodoJustificacion() {
+  void update_ReturnsSolicitudProyectoSocioPeriodoJustificacion() {
     // given: una lista con uno de los SolicitudProyectoSocioPeriodoJustificacion
     // actualizado,
     // otro nuevo y sin el otros existente
@@ -88,8 +88,6 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseS
 
     BDDMockito.given(solicitudProyectoSocioRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(solicitudProyectoSocio));
-
-    // TODO is editable solicitud
 
     BDDMockito.given(solicitudProyectoRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(solicitudProyecto));
@@ -160,7 +158,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseS
   }
 
   @Test
-  public void update_WithSolicitudProyectoSocioNotExist_ThrowsSolicitudProyectoSocioNotFoundException() {
+  void update_WithSolicitudProyectoSocioNotExist_ThrowsSolicitudProyectoSocioNotFoundException() {
     // given: a SolicitudProyectoSocioPeriodoJustificacion with non existing
     // SolicitudProyectoSocio
     Long solicitudProyectoSocioId = 1L;
@@ -178,7 +176,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseS
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsSolicitudProyectoSocioPeriodoJustificacionNotFoundException() {
+  void update_WithIdNotExist_ThrowsSolicitudProyectoSocioPeriodoJustificacionNotFoundException() {
     // given: Un SolicitudProyectoSocioPeriodoJustificacion actualizado con un id
     // que no
     // existe
@@ -213,7 +211,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseS
   }
 
   @Test
-  public void update_WithSolicitudProyectoSocioChange_ThrowsNoRelatedEntitiesException() {
+  void update_WithSolicitudProyectoSocioChange_ThrowsNoRelatedEntitiesException() {
     // given:Se actualiza SolicitudProyectoSocio
     Long solicitudId = 1L;
     Long solicitudProyectoId = 1L;
@@ -249,7 +247,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseS
   }
 
   @Test
-  public void update_WithMesSolapamiento_ThrowsPeriodoWrongOrderException() {
+  void update_WithMesSolapamiento_ThrowsPeriodoWrongOrderException() {
     // given: Se actualiza SolicitudProyectoSocioPeriodoJustificacion cuyo mes es
     // superior a la duración de solicitud de proyecto
     Long solicitudId = 1L;
@@ -286,7 +284,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseS
   }
 
   @Test
-  public void update_WithMesInicialPosteriorMesFinal_ThrowsConstraintViolationException() {
+  void update_WithMesInicialPosteriorMesFinal_ThrowsConstraintViolationException() {
     // given: Se actualiza SolicitudProyectoSocioPeriodoJustificacion cuyo mes
     // inicial es
     // posterior al mes final
@@ -328,7 +326,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseS
   }
 
   @Test
-  public void update_WithFechaInicioPosteriorFechaFin_ThrowsConstraintViolationException() {
+  void update_WithFechaInicioPosteriorFechaFin_ThrowsConstraintViolationException() {
     // given: Se actualiza SolicitudProyectoSocioPeriodoJustificacion con fecha
     // inicio
     // superior a fecha fin
@@ -364,7 +362,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseS
   }
 
   @Test
-  public void update_WithMesFinalSuperiorDuracion_ThrowsPeriodoLongerThanSolicitudProyectoException() {
+  void update_WithMesFinalSuperiorDuracion_ThrowsPeriodoLongerThanSolicitudProyectoException() {
     // given: Se actualiza SolicitudProyectoSocioPeriodoJustificacion con mes final
     // superior a la duración
     Long solicitudId = 1L;
@@ -400,7 +398,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseS
   }
 
   @Test
-  public void update_WithSolapamientoPeriodo_ThrowsPeriodoWrongOrderException() {
+  void update_WithSolapamientoPeriodo_ThrowsPeriodoWrongOrderException() {
     // given: Se actualiza SolicitudProyectoSocioPeriodoJustificacion con fecha
     // inicio
     // superior a fecha fin
@@ -437,7 +435,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseS
   }
 
   @Test
-  public void findById_ReturnsSolicitudProyectoSocioPeriodoJustificacion() {
+  void findById_ReturnsSolicitudProyectoSocioPeriodoJustificacion() {
     // given: Un SolicitudProyectoSocioPeriodoJustificacion con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -452,7 +450,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseS
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsSolicitudProyectoSocioPeriodoJustificacionNotFoundException()
+  void findById_WithIdNotExist_ThrowsSolicitudProyectoSocioPeriodoJustificacionNotFoundException()
       throws Exception {
     // given: Ningun SolicitudProyectoSocioPeriodoJustificacion con el id buscado
     Long idBuscado = 1L;
@@ -465,7 +463,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseS
   }
 
   @Test
-  public void findAllBySolicitud_ReturnsPage() {
+  void findAllBySolicitud_ReturnsPage() {
     // given: Una lista con 37 SolicitudProyectoSocioPeriodoJustificacion
     Long solicitudProyectoSocioId = 1L;
     List<SolicitudProyectoSocioPeriodoJustificacion> solicitudProyectoSocioPeriodoJustificacion = new ArrayList<>();
@@ -501,7 +499,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceTest extends BaseS
         .findAllBySolicitudProyectoSocio(solicitudProyectoSocioId, null, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

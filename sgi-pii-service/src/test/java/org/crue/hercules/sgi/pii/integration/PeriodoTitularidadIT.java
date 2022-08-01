@@ -26,7 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 
-public class PeriodoTitularidadIT extends BaseIT {
+class PeriodoTitularidadIT extends BaseIT {
 
   private static final String CONTROLLER_BASE_PATH = PeriodoTitularidadController.MAPPING;
   private static final String PATH_PERIODOTITULARIDAD_ID = "/{periodoTitularidadId}";
@@ -51,7 +51,7 @@ public class PeriodoTitularidadIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnPeriodoTitularidadOutputSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnPeriodoTitularidadOutputSubList() throws Exception {
 
     String[] roles = { "PII-INV-C", "PII-INV-E", "PII-INV-V" };
 
@@ -72,7 +72,7 @@ public class PeriodoTitularidadIT extends BaseIT {
     // then: Respuesta OK, retorna la información de la página correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<PeriodoTitularidadOutput> periodoTitularidadOutput = response.getBody();
-    Assertions.assertThat(periodoTitularidadOutput.size()).isEqualTo(3);
+    Assertions.assertThat(periodoTitularidadOutput).hasSize(3);
     Assertions.assertThat(response.getHeaders().getFirst("X-Page")).isEqualTo("0");
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("3");
@@ -92,7 +92,7 @@ public class PeriodoTitularidadIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnPeriodoTitularidadOutput() throws Exception {
+  void create_ReturnPeriodoTitularidadOutput() throws Exception {
 
     String[] roles = { "PII-INV-C" };
     PeriodoTitularidadInput periodoTitularidadInput = generaMockPeriodoTitularidadInput();
@@ -119,7 +119,7 @@ public class PeriodoTitularidadIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void deletePeriodoTitularidad_Success() throws Exception {
+  void deletePeriodoTitularidad_Success() throws Exception {
 
     String[] roles = { "PII-INV-E", "PII-INV-B" };
     Long periodoTitularidadId = 3L;
@@ -142,7 +142,7 @@ public class PeriodoTitularidadIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnPeriodoTitularidadOutput() throws Exception {
+  void update_ReturnPeriodoTitularidadOutput() throws Exception {
 
     String[] roles = { "PII-INV-C", "PII-INV-E" };
     Long periodoTitularidadId = 3L;

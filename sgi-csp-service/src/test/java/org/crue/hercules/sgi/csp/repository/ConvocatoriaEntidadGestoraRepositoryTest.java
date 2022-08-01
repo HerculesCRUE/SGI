@@ -17,13 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ConvocatoriaEntidadGestoraRepositoryTest extends BaseRepositoryTest {
+class ConvocatoriaEntidadGestoraRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ConvocatoriaEntidadGestoraRepository repository;
 
   @Test
-  public void findByConvocatoriaIdIdAndEntidadRef_ReturnsConvocatoriaEntidadGestora() throws Exception {
+  void findByConvocatoriaIdIdAndEntidadRef_ReturnsConvocatoriaEntidadGestora() throws Exception {
     // given: data ConvocatoriaEntidadGestora to find by Convocatoria and
     // EntidadRef
     ConvocatoriaEntidadGestora convocatoriaEntidadGestora1 = generarConvocatoriaEntidadGestora("-001");
@@ -44,7 +44,7 @@ public class ConvocatoriaEntidadGestoraRepositoryTest extends BaseRepositoryTest
   }
 
   @Test
-  public void findByModeloEjecucionIdAndTipoFinalidadId_ReturnsNull() throws Exception {
+  void findByModeloEjecucionIdAndTipoFinalidadId_ReturnsNull() throws Exception {
     // given: data ConvocatoriaEntidadGestora to find by Convocatoria and EntidadRef
     ConvocatoriaEntidadGestora convocatoriaEntidadGestora1 = generarConvocatoriaEntidadGestora("-001");
     ConvocatoriaEntidadGestora convocatoriaEntidadGestora2 = generarConvocatoriaEntidadGestora("-002");

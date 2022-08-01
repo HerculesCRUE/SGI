@@ -6,6 +6,7 @@ import { FormlyFormsModule } from '@formly-forms/formly-forms.module';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { ActionDialogComponent } from './action-dialog/action-dialog.component';
+import { ActionEmptyFooterComponent } from './action-empty-footer/action-empty-footer.component';
 import { ActionFooterButtonComponent } from './action-footer-button/action-footer-button.component';
 import { ActionFooterMessageComponent } from './action-footer-message/action-footer-message.component';
 import { ActionFooterComponent } from './action-footer/action-footer.component';
@@ -13,9 +14,7 @@ import { ActionFragmentLinkItemComponent } from './action-fragment-link-item/act
 import { ActionFragmentMenuGroupComponent } from './action-fragment-menu-group/action-fragment-menu-group.component';
 import { ActionFragmentMenuItemComponent } from './action-fragment-menu-item/action-fragment-menu-item.component';
 import { ActionComponent } from './action/action.component';
-import { ActionEmptyFooterComponent } from './action-empty-footer/action-empty-footer.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
-import { SelectEmailRecipientsComponent } from './select-email-recipients/select-email-recipients.component';
 import { DialogContentComponent } from './dialog-content/dialog-content.component';
 import { DialogFooterComponent } from './dialog-footer/dialog-footer.component';
 import { DialogHeaderComponent } from './dialog-header/dialog-header.component';
@@ -33,12 +32,15 @@ import { IconProblemsComponent } from './icon-problems/icon-problems.component';
 import { LuxonDatePipe } from './luxon-date-pipe';
 import { MenuContentComponent, MenuContentFooter } from './menu-content/menu-content.component';
 import { MenuGroupComponent } from './menu-group/menu-group.component';
+import { MenuItemExternalComponent } from './menu-item-external/menu-item-external.component';
 import { MenuItemComponent } from './menu-item/menu-item.component';
+import { MenuSubItemExternalComponent } from './menu-subitem-external/menu-subitem-external.component';
 import { MenuSubItemComponent } from './menu-subitem/menu-subitem.component';
 import { PalabraClaveComponent } from './palabra-clave/palabra-clave.component';
 import { ProblemPanelComponent } from './problem-panel/problem-panel.component';
 import { RootComponent } from './root/root.component';
 import { SelectBooleanComponent } from './select-boolean/select-boolean.component';
+import { SelectEmailRecipientsComponent } from './select-email-recipients/select-email-recipients.component';
 import { SelectEntityComponent } from './select-entity/select-entity.component';
 import { SelectEnumComponent } from './select-enum/select-enum.component';
 import { SelectComponent } from './select/select.component';
@@ -72,8 +74,10 @@ import { SelectComponent } from './select/select.component';
     MenuContentComponent,
     MenuContentFooter,
     MenuItemComponent,
+    MenuItemExternalComponent,
     MenuGroupComponent,
     MenuSubItemComponent,
+    MenuSubItemExternalComponent,
     DialogContentComponent,
     DialogHeaderComponent,
     DialogFooterComponent,
@@ -118,8 +122,10 @@ import { SelectComponent } from './select/select.component';
     MenuContentComponent,
     MenuContentFooter,
     MenuItemComponent,
+    MenuItemExternalComponent,
     MenuGroupComponent,
     MenuSubItemComponent,
+    MenuSubItemExternalComponent,
     ActionDialogComponent,
     ExportDialogComponent,
     PalabraClaveComponent,

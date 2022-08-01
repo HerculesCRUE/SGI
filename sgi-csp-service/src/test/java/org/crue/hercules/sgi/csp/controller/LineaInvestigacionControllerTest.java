@@ -35,7 +35,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  */
 
 @WebMvcTest(LineaInvestigacionController.class)
-public class LineaInvestigacionControllerTest extends BaseControllerTest {
+class LineaInvestigacionControllerTest extends BaseControllerTest {
 
   @MockBean
   private LineaInvestigacionService service;
@@ -47,7 +47,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-LIN-C" })
-  public void create_ReturnsLineaInvestigacion() throws Exception {
+  void create_ReturnsLineaInvestigacion() throws Exception {
     // given: new LineaInvestigacion
     LineaInvestigacion data = generarMockLineaInvestigacion(null, Boolean.TRUE);
 
@@ -77,7 +77,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-LIN-C" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a LineaInvestigacion with id filled
     LineaInvestigacion data = generarMockLineaInvestigacion(1L, Boolean.TRUE);
 
@@ -96,7 +96,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-LIN-E" })
-  public void update_WithExistingId_ReturnsLineaInvestigacion() throws Exception {
+  void update_WithExistingId_ReturnsLineaInvestigacion() throws Exception {
     // given: existing LineaInvestigacion
     LineaInvestigacion data = generarMockLineaInvestigacion(1L, Boolean.TRUE);
 
@@ -130,7 +130,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-LIN-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: a LineaInvestigacion with non existing id
     LineaInvestigacion data = generarMockLineaInvestigacion(1L, Boolean.TRUE);
 
@@ -151,7 +151,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-LIN-E" })
-  public void update_WithDuplicatedNombre_Returns400() throws Exception {
+  void update_WithDuplicatedNombre_Returns400() throws Exception {
     // given: a LineaInvestigacion with duplicated Nombre
     LineaInvestigacion data = generarMockLineaInvestigacion(1L, Boolean.TRUE);
 
@@ -177,7 +177,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-LIN-R" })
-  public void reactivar_WithExistingId_ReturnLineaInvestigacion() throws Exception {
+  void reactivar_WithExistingId_ReturnLineaInvestigacion() throws Exception {
     // given: existing id
     LineaInvestigacion tipoEnlace = generarMockLineaInvestigacion(1L, Boolean.FALSE);
 
@@ -202,7 +202,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-LIN-R" })
-  public void reactivar_NoExistingId_Return404() throws Exception {
+  void reactivar_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -221,7 +221,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-LIN-B" })
-  public void desactivar_WithExistingId_ReturnLineaInvestigacion() throws Exception {
+  void desactivar_WithExistingId_ReturnLineaInvestigacion() throws Exception {
     // given: existing id
     Long idBuscado = 1L;
     LineaInvestigacion tipoEnlace = generarMockLineaInvestigacion(idBuscado, Boolean.TRUE);
@@ -247,7 +247,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-LIN-B" })
-  public void desactivar_NoExistingId_Return404() throws Exception {
+  void desactivar_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
     BDDMockito.willThrow(new LineaInvestigacionNotFoundException(id)).given(service)
@@ -265,7 +265,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-LIN-E" })
-  public void findById_WithExistingId_ReturnsLineaInvestigacion() throws Exception {
+  void findById_WithExistingId_ReturnsLineaInvestigacion() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer(new Answer<LineaInvestigacion>() {
       @Override
@@ -288,7 +288,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-LIN-E" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new LineaInvestigacionNotFoundException(1L);
@@ -305,7 +305,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-LIN-E" })
-  public void findAll_WithPaging_ReturnsLineaInvestigacionSubList() throws Exception {
+  void findAll_WithPaging_ReturnsLineaInvestigacionSubList() throws Exception {
     // given: One hundred LineaInvestigacion
     List<LineaInvestigacion> data = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -356,7 +356,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-LIN-E" })
-  public void findAll_EmptyList_Returns204() throws Exception {
+  void findAll_EmptyList_Returns204() throws Exception {
     // given: no data LineaInvestigacion
     BDDMockito.given(service.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<LineaInvestigacion>>() {
@@ -379,7 +379,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-LIN-V", "CSP-LIN-E", "CSP-LIN-B",
       "CSP-LIN-R" })
-  public void findAllTodos_WithPaging_ReturnsLineaInvestigacionSubList() throws Exception {
+  void findAllTodos_WithPaging_ReturnsLineaInvestigacionSubList() throws Exception {
     // given: One hundred LineaInvestigacion
     List<LineaInvestigacion> data = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -432,7 +432,7 @@ public class LineaInvestigacionControllerTest extends BaseControllerTest {
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-LIN-V", "CSP-LIN-C", "CSP-LIN-E", "CSP-LIN-B",
       "CSP-LIN-R" })
-  public void findAllTodos_EmptyList_Returns204() throws Exception {
+  void findAllTodos_EmptyList_Returns204() throws Exception {
     // given: no data LineaInvestigacion
     BDDMockito.given(service.findAllTodos(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<LineaInvestigacion>>() {

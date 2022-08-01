@@ -7,11 +7,17 @@ import { SharedModule } from '@shared/shared.module';
 import { SgoFormlyFormsModule } from '../formly-forms/sgo-formly-forms.module';
 import { AreaConocimientoModalComponent } from './area-conocimiento-modal/area-conocimiento-modal.component';
 import { ClasificacionModalComponent } from './clasificacion-modal/clasificacion-modal.component';
+import { SelectComunidadAutonomaComponent } from './select-comunidad-autonoma/select-comunidad-autonoma.component';
+import { SelectPaisComponent } from './select-pais/select-pais.component';
+import { SelecProvinciaComponent } from './select-provincia/select-provincia.component';
 
 @NgModule({
   declarations: [
     AreaConocimientoModalComponent,
-    ClasificacionModalComponent
+    ClasificacionModalComponent,
+    SelectComunidadAutonomaComponent,
+    SelecProvinciaComponent,
+    SelectPaisComponent
   ],
   imports: [
     SharedModule,
@@ -24,7 +30,10 @@ import { ClasificacionModalComponent } from './clasificacion-modal/clasificacion
   ],
   exports: [
     AreaConocimientoModalComponent,
-    ClasificacionModalComponent
+    ClasificacionModalComponent,
+    SelectComunidadAutonomaComponent,
+    SelecProvinciaComponent,
+    SelectPaisComponent
   ]
 })
 export class SgoSharedModule { }

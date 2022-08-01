@@ -98,7 +98,7 @@ public class InvencionPalabraClaveService {
     repository.deleteInBulkByInvencionId(invencionId);
 
     List<InvencionPalabraClave> returnValue = new ArrayList<>();
-    if (palabrasClave != null && !palabrasClave.isEmpty()) {
+    if (!palabrasClave.isEmpty()) {
       // Eliminamos duplicados de la nueva lista
       List<InvencionPalabraClave> uniquePalabrasClave = palabrasClave.stream().distinct()
           .collect(Collectors.toList());

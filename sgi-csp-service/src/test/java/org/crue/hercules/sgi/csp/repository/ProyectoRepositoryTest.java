@@ -17,13 +17,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * ProyectoRepositoryTest
  */
 @DataJpaTest
-public class ProyectoRepositoryTest extends BaseRepositoryTest {
+class ProyectoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ProyectoRepository repository;
 
   @Test
-  public void existsProyectoByIdAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqual_ReturnsTRUE() throws Exception {
+  void existsProyectoByIdAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqual_ReturnsTRUE() throws Exception {
     // given: un proyecto comprencido entre las fechas 2020-01-01 y 2020-12/31
     Proyecto proyecto1 = generarMockProyecto("-001");
 
@@ -41,7 +41,7 @@ public class ProyectoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void existsProyectoByIdAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqual_ReturnsFALSE() throws Exception {
+  void existsProyectoByIdAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqual_ReturnsFALSE() throws Exception {
     // given: un proyecto comprencido entre las fechas 2020-01-01 y 2020-12/31
     Proyecto proyecto1 = generarMockProyecto("-001");
 

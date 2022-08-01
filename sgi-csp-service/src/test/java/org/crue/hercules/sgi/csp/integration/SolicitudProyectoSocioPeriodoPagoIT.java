@@ -24,7 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de SolicitudProyectoSocioPeriodoPago.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SolicitudProyectoSocioPeriodoPagoIT extends BaseIT {
+class SolicitudProyectoSocioPeriodoPagoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/solicitudproyectosocioperiodopago";
@@ -55,7 +55,7 @@ public class SolicitudProyectoSocioPeriodoPagoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsSolicitudProyectoSocioPeriodoPago() throws Exception {
+  void update_ReturnsSolicitudProyectoSocioPeriodoPago() throws Exception {
     // given: una lista con uno de los SolicitudProyectoSocioPeriodoPago
     // actualizado,
     // otro nuevo y sin los otros 3 periodos existentes
@@ -113,7 +113,7 @@ public class SolicitudProyectoSocioPeriodoPagoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsSolicitudProyectoSocioPeriodoPago() throws Exception {
+  void findById_ReturnsSolicitudProyectoSocioPeriodoPago() throws Exception {
     Long idSolicitudProyectoSocioPeriodoPago = 1L;
 
     final ResponseEntity<SolicitudProyectoSocioPeriodoPago> response = restTemplate.exchange(

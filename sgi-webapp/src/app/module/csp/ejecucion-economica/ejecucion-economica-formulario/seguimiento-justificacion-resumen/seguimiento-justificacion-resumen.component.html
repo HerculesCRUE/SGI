@@ -1,0 +1,270 @@
+<sgi-fragment title="{{'csp.ejecucion-economica.seguimiento-justificacion.resumen' | translate}}">
+
+  <section class="table-section proyectos-sgi">
+    <h1>{{ 'title.csp.ejecucion-economica.seguimiento-justificacion.resumen.proyectos-sgi' | translate }}</h1>
+    <div class="mat-elevation-z4">
+      <table mat-table [dataSource]="proyectosSGIDataSource" matSort matSortActive="proyectoId" matSortDirection="asc"
+        matSortDisableClear #proyectosSGISort="matSort">
+
+        <!-- Codigo SGE Column -->
+        <ng-container matColumnDef="proyectoSgeRef">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.codigo-sge' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.proyectoSgeRef}}
+          </td>
+        </ng-container>
+
+        <!-- ID interno SGI Column -->
+        <ng-container matColumnDef="proyectoId">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.id-interno-sgi' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.proyectoId}}
+          </td>
+        </ng-container>
+
+        <!-- Referencia en entidad convocante Column -->
+        <ng-container matColumnDef="codigoExterno">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.ref-entidad-convocante' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.codigoExterno}}
+          </td>
+        </ng-container>
+
+        <!-- Título proyecto Column -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.titulo-proyecto' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.nombre}}
+          </td>
+        </ng-container>
+
+        <!-- Responsable Column -->
+        <ng-container matColumnDef="responsables">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.responsable' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element" matTooltip="{{element.responsables | personaNombreCompleto}}">
+            {{element.responsables | personaNombreCompleto}}
+          </td>
+        </ng-container>
+
+        <!-- Fecha inicio Column -->
+        <ng-container matColumnDef="fechaInicio">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.fecha-inicio' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.fechaInicio | luxon:'shortDate'}}
+          </td>
+        </ng-container>
+
+        <!-- Fecha fin Column -->
+        <ng-container matColumnDef="fechaFin">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.fecha-fin' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.fechaFin | luxon:'shortDate'}}
+          </td>
+        </ng-container>
+
+        <!-- Convocatoria Column -->
+        <ng-container matColumnDef="tituloConvocatoria">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.convocatoria' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.tituloConvocatoria}}
+          </td>
+        </ng-container>
+
+        <!-- Entidades financiadoras Column -->
+        <ng-container matColumnDef="entidadesFinanciadoras">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.entidad-financiadora' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element"
+            matTooltip="{{element.entidadesFinanciadoras | entidadFinanciadoraEmpresaNombre}}">
+            {{element.entidadesFinanciadoras | entidadFinanciadoraEmpresaNombre}}
+          </td>
+        </ng-container>
+
+        <!-- Importe concedido - costes directos Column -->
+        <ng-container matColumnDef="importeConcedido">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.importe-concedido-directos' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.importeConcedido | number: '1.2-2'}}
+          </td>
+        </ng-container>
+
+        <!-- Importe concedido - costes indirectos Column -->
+        <ng-container matColumnDef="importeConcedidoCostesIndirectos">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.importe-concedido-indirectos' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.importeConcedidoCostesIndirectos | number: '1.2-2'}}
+          </td>
+        </ng-container>
+
+        <!-- Acciones Column -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+          <td mat-cell *matCellDef="let element">
+            <ng-container>
+              <a *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']" mat-icon-button color="primary"
+                matTooltip="{{'btn.view' | translate}}"
+                [routerLink]="['../../..', CSP_ROUTE_NAMES.PROYECTO, element.proyectoId]">
+                <mat-icon>visibility</mat-icon>
+              </a>
+            </ng-container>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="proyectosSGIDisplayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: proyectosSGIDisplayedColumns;"></tr>
+
+      </table>
+      <mat-paginator #proyectosSGIPaginator [pageSizeOptions]="proyectosSGIElementosPagina" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </section>
+
+  <section class="table-section calendario-justificacion">
+    <h1>{{ 'title.csp.ejecucion-economica.seguimiento-justificacion.resumen.calendario-justificacion' | translate }}
+    </h1>
+    <div class="mat-elevation-z4">
+      <table mat-table [dataSource]="calendarioJustificacionDataSource" matSort matSortActive="proyecto.id"
+        matSortDirection="asc" matSortDisableClear #calendarioJustificacionSort="matSort">
+
+        <!-- ID interno SGI Column -->
+        <ng-container matColumnDef="proyecto.id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.id-interno-sgi' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.value.proyecto.id}}
+          </td>
+        </ng-container>
+
+        <!-- Título proyecto Column -->
+        <ng-container matColumnDef="tituloProyecto">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.titulo-proyecto' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.value.tituloProyecto}}
+          </td>
+        </ng-container>
+
+        <!-- Núm. periodo Column -->
+        <ng-container matColumnDef="numPeriodo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.num-periodo' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.value.numPeriodo}}
+          </td>
+        </ng-container>
+
+        <!-- Fecha inicio periodo Column -->
+        <ng-container matColumnDef="fechaInicio">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.fecha-inicio-periodo' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.value.fechaInicio | luxon: 'shortDate'}}
+          </td>
+        </ng-container>
+
+        <!-- Fecha fin periodo Column -->
+        <ng-container matColumnDef="fechaFin">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.fecha-fin-periodo' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.value.fechaFin | luxon: 'shortDate'}}
+          </td>
+        </ng-container>
+
+        <!-- Fecha inicio presentación Column -->
+        <ng-container matColumnDef="fechaInicioPresentacion">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.fecha-inicio-presentacion' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.value.fechaInicioPresentacion | luxon:'short'}}
+          </td>
+        </ng-container>
+
+        <!-- Fecha fin presentación Column -->
+        <ng-container matColumnDef="fechaFinPresentacion">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.fecha-fin-presentacion' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.value.fechaFinPresentacion | luxon:'short'}}
+          </td>
+        </ng-container>
+
+        <!-- Tipo Column -->
+        <ng-container matColumnDef="tipoJustificacion">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.tipo' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{TIPO_JUSTIFICACION_MAP.get(element.value.tipoJustificacion) | translate}}
+          </td>
+        </ng-container>
+
+        <!-- ID Justificación Column -->
+        <ng-container matColumnDef="identificadorJustificacion">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.id-justificacion' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.value.identificadorJustificacion}}
+          </td>
+        </ng-container>
+
+        <!-- Fecha justificación Column -->
+        <ng-container matColumnDef="fechaPresentacionJustificacion">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.fecha-justificacion' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.value.fechaPresentacionJustificacion | luxon: 'short'}}
+          </td>
+        </ng-container>
+
+        <!-- Acciones Column -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+          <td mat-cell *matCellDef="let element">
+            <ng-container>
+              <button *sgiHasAuthorityForAnyUO="'CSP-SJUS-E'" mat-icon-button color="primary"
+                matTooltip="{{'btn.edit' | translate}}" (click)="openModal(element)">
+                <mat-icon>border_color</mat-icon>
+              </button>
+            </ng-container>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="calendarioJustificacionDisplayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: calendarioJustificacionDisplayedColumns;"></tr>
+
+      </table>
+      <mat-paginator #calendarioJustificacionPaginator [pageSizeOptions]="calendarioJustificacionElementosPagina"
+        showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </section>
+</sgi-fragment>

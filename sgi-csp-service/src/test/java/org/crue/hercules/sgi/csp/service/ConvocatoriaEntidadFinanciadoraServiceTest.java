@@ -37,7 +37,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 /**
  * ConvocatoriaEntidadFinanciadoraServiceTest
  */
-public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest {
+class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest {
 
   @Mock
   private ConvocatoriaEntidadFinanciadoraRepository repository;
@@ -55,14 +55,14 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   private ConvocatoriaEntidadFinanciadoraService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ConvocatoriaEntidadFinanciadoraServiceImpl(repository, convocatoriaRepository,
         fuenteFinanciacionRepository, tipoFinanciacionRepository, convocatoriaService,
         configuracionSolicitudRepository);
   }
 
   @Test
-  public void create_ReturnsConvocatoriaEntidadFinanciadora() {
+  void create_ReturnsConvocatoriaEntidadFinanciadora() {
     // given: Un nuevo ConvocatoriaEntidadFinanciadora
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -104,7 +104,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ConvocatoriaEntidadFinanciadora que ya tiene id
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockConvocatoriaEntidadFinanciadora(1L,
@@ -119,7 +119,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void create_WithNegativePorcentajeFinanciacion_ThrowsIllegalArgumentException() {
+  void create_WithNegativePorcentajeFinanciacion_ThrowsIllegalArgumentException() {
     // given: Un nuevo ConvocatoriaEntidadFinanciadora con porcentaje negativo
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockConvocatoriaEntidadFinanciadora(null,
@@ -133,7 +133,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void create_WithoutConvocatoriaId_ThrowsIllegalArgumentException() {
+  void create_WithoutConvocatoriaId_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadFinanciadora without ConvocatoriaId
     ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockConvocatoriaEntidadFinanciadora(null,
         null);
@@ -147,7 +147,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void create_WithNoExistingConvocatoria_ThrowsConvocatoriaNotFoundException() {
+  void create_WithNoExistingConvocatoria_ThrowsConvocatoriaNotFoundException() {
     // given: a ConvocatoriaEntidadFinanciadora with non existing Convocatoria
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockConvocatoriaEntidadFinanciadora(null,
@@ -163,7 +163,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void create_WithNoExistingFuenteFinanciacion_ThrowsFuenteFinanciacionNotFoundException() {
+  void create_WithNoExistingFuenteFinanciacion_ThrowsFuenteFinanciacionNotFoundException() {
     // given: a ConvocatoriaEntidadFinanciadora with non existing FuenteFinanciacion
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -183,7 +183,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void create_WithFuenteFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
+  void create_WithFuenteFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadFinanciadora with FuenteFinanciacion activo=false
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -205,7 +205,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void create_WithNoExistingTipoFinanciacion_ThrowsFuenteFinanciacionNotFoundException() {
+  void create_WithNoExistingTipoFinanciacion_ThrowsFuenteFinanciacionNotFoundException() {
     // given: a ConvocatoriaEntidadFinanciadora with non existing TipoFinanciacion
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -227,7 +227,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void create_WithTipoFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
+  void create_WithTipoFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadFinanciadora with TipoFinanciacion activo=false
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -251,7 +251,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void create_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
+  void create_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadFinanciadora when modificable returns False
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -273,7 +273,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void update_ReturnsConvocatoriaEntidadFinanciadora() {
+  void update_ReturnsConvocatoriaEntidadFinanciadora() {
     // given: Un nuevo ConvocatoriaEntidadFinanciadora con el nombre actualizado
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockConvocatoriaEntidadFinanciadora(1L,
@@ -318,7 +318,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void update_WithNegativePorcentajeFinanciacion_ThrowsIllegalArgumentException() {
+  void update_WithNegativePorcentajeFinanciacion_ThrowsIllegalArgumentException() {
     // given: Un ConvocatoriaEntidadFinanciadora con porcentaje negativo
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockConvocatoriaEntidadFinanciadora(1L,
@@ -332,7 +332,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsConvocatoriaEntidadFinanciadoraNotFoundException() {
+  void update_WithIdNotExist_ThrowsConvocatoriaEntidadFinanciadoraNotFoundException() {
     // given: Un ConvocatoriaEntidadFinanciadora a actualizar con un id que no
     // existe
     Long convocatoriaId = 1L;
@@ -353,7 +353,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void update_WithNoExistingFuenteFinanciacion_ThrowsFuenteFinanciacionNotFoundException() {
+  void update_WithNoExistingFuenteFinanciacion_ThrowsFuenteFinanciacionNotFoundException() {
     // given: a ConvocatoriaEntidadFinanciadora with non existing FuenteFinanciacion
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockConvocatoriaEntidadFinanciadora(1L,
@@ -369,7 +369,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void update_WithNoExistingTipoFinanciacion_ThrowsTipoFinanciacionNotFoundException() {
+  void update_WithNoExistingTipoFinanciacion_ThrowsTipoFinanciacionNotFoundException() {
     // given: a ConvocatoriaEntidadFinanciadora with non existing TipoFinanciacion
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockConvocatoriaEntidadFinanciadora(1L,
@@ -387,7 +387,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void update_WithFuenteFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
+  void update_WithFuenteFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadFinanciadora with FuenteFinanciacion activo=false
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockConvocatoriaEntidadFinanciadora(1L,
@@ -413,7 +413,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void update_WithTipoFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
+  void update_WithTipoFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadFinanciadora with TipoFinanciacion activo=false
     Long convocatoriaId = 1L;
     ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadora = generarMockConvocatoriaEntidadFinanciadora(1L,
@@ -439,7 +439,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void update_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
+  void update_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaEntidadFinanciadora when modificable return false
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -466,7 +466,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void delete_WithExistingId_ReturnsConvocatoriaEntidadFinanciadora() {
+  void delete_WithExistingId_ReturnsConvocatoriaEntidadFinanciadora() {
     // given: existing ConvocatoriaEntidadFinanciadora
     Long id = 1L;
     Long convocatoriaId = 1L;
@@ -485,7 +485,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -499,7 +499,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void delete_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
+  void delete_WhenModificableReturnsFalse_ThrowsIllegalArgumentException() {
     // given: existing ConvocatoriaEntidadFinanciadora when modificable returns
     // false
     Long id = 1L;
@@ -520,7 +520,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void findAllByConvocatoria_ReturnsPage() {
+  void findAllByConvocatoria_ReturnsPage() {
     // given: Una lista con 37 ConvocatoriaEntidadFinanciadora para la Convocatoria
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -554,7 +554,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
 
     // then: Devuelve la pagina 3 con los ConvocatoriaEntidadFinanciadora del 31 al
     // 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -567,7 +567,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void findById_ReturnsConvocatoriaEntidadFinanciadora() {
+  void findById_ReturnsConvocatoriaEntidadFinanciadora() {
     // given: Un ConvocatoriaEntidadFinanciadora con el id buscado
     Long idBuscado = 1L;
     Long convocatoriaId = 1L;
@@ -583,7 +583,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest 
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsConvocatoriaEntidadFinanciadoraNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsConvocatoriaEntidadFinanciadoraNotFoundException() throws Exception {
     // given: Ningun ConvocatoriaEntidadFinanciadora con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());

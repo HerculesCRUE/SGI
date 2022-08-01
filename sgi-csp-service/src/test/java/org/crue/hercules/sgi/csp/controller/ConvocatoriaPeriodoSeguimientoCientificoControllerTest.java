@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ConvocatoriaPeriodoSeguimientoCientificoControllerTest
  */
 @WebMvcTest(ConvocatoriaPeriodoSeguimientoCientificoController.class)
-public class ConvocatoriaPeriodoSeguimientoCientificoControllerTest extends BaseControllerTest {
+class ConvocatoriaPeriodoSeguimientoCientificoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ConvocatoriaPeriodoSeguimientoCientificoService service;
@@ -37,7 +37,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoControllerTest extends Base
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_ReturnsConvocatoriaPeriodoSeguimientoCientificoList()
+  void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_ReturnsConvocatoriaPeriodoSeguimientoCientificoList()
       throws Exception {
     // given: una lista con uno de los ConvocatoriaPeriodoSeguimientoCientifico
     // actualizado,
@@ -107,7 +107,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoControllerTest extends Base
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithNoExistingId_Returns404()
+  void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithNoExistingId_Returns404()
       throws Exception {
     // given: No existing Id
     Long id = 1L;
@@ -131,7 +131,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoControllerTest extends Base
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findById_WithExistingId_ReturnsConvocatoriaPeriodoSeguimientoCientifico() throws Exception {
+  void findById_WithExistingId_ReturnsConvocatoriaPeriodoSeguimientoCientifico() throws Exception {
     // given: existing id
     Long convocatoriaPeriodoSeguimientoCientificoId = 1L;
 
@@ -159,7 +159,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoControllerTest extends Base
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     Long convocatoriaPeriodoSeguimientoCientificoId = 1L;
 

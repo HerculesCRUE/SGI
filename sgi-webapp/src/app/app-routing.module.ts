@@ -1,12 +1,12 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-
+import { AllowModuleGuard } from '@core/guards/allow-module.guard';
+import { SgiRoutes } from '@core/route';
 import { SgiAuthGuard } from '@sgi/framework/auth';
 import { RootComponent } from '@shared/root/root.component';
 import { APP_ROUTE_NAMES } from './app-route-names';
-import { SgiRoutes } from '@core/route';
-import { AllowModuleGuard } from '@core/guards/allow-module.guard';
 import { HomeComponent } from './home/home.component';
+
 
 /**
  * Definimos las urls de la aplicación
@@ -58,6 +58,15 @@ const routes: SgiRoutes = [
       ),
     canActivate: [SgiAuthGuard, AllowModuleGuard]
   },
+  {
+    path: APP_ROUTE_NAMES.EER,
+    loadChildren: () =>
+      import('./module/eer/eer.module').then(
+        (m) => m.EerModule
+      ),
+    canActivate: [SgiAuthGuard, AllowModuleGuard]
+  },
+
   {
     path: '**',
     component: RootComponent

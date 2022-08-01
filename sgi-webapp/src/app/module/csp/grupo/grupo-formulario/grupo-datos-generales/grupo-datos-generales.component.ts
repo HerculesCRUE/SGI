@@ -50,6 +50,10 @@ export class GrupoDatosGeneralesComponent extends FormFragmentComponent<IGrupo> 
     return TIPO_MAP;
   }
 
+  get grupo(): IGrupo {
+    return this.formPart.getValue();
+  }
+
   constructor(
     protected actionService: GrupoActionService,
     public authService: SgiAuthService,

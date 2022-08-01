@@ -33,11 +33,12 @@ public class InvencionDocumentoController {
    * Crea un nuevo {@link InvencionDocumento}.
    * 
    * @param invencionDocumento {@link InvencionDocumento} que se quiere crear.
-   * @return Nuevo {@link Invencion} creado.
+   * @return Nuevo {@link InvencionDocumentoOutput} creado.
    */
   @PostMapping
   @PreAuthorize("hasAnyAuthority('PII-INV-C', 'PII-INV-E')")
-  ResponseEntity<InvencionDocumentoOutput> create(@Valid @RequestBody InvencionDocumentoInput invencionDocumento) {
+  public ResponseEntity<InvencionDocumentoOutput> create(
+      @Valid @RequestBody InvencionDocumentoInput invencionDocumento) {
 
     return new ResponseEntity<>(convert(this.invencionDocumentoService.create(convert(invencionDocumento))),
         HttpStatus.CREATED);
@@ -46,13 +47,15 @@ public class InvencionDocumentoController {
   /**
    * Actualiza la {@link InvencionDocumento} con el id indicado.
    * 
-   * @param invencionDocumento
-   * @param id
+   * @param invencionDocumento objeto de tipo {@link InvencionDocumentoInput} con
+   *                           los
+   *                           datos para actualizar
+   * @param id                 identificador del objeto {@link InvencionDocumento}
    * @return {@link InvencionDocumento}
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('PII-INV-E')")
-  ResponseEntity<InvencionDocumentoOutput> update(@Valid @RequestBody InvencionDocumentoInput invencionDocumento,
+  public ResponseEntity<InvencionDocumentoOutput> update(@Valid @RequestBody InvencionDocumentoInput invencionDocumento,
       @PathVariable Long id) {
 
     return ResponseEntity.ok(convert(this.invencionDocumentoService.update(convert(id, invencionDocumento))));
@@ -67,7 +70,7 @@ public class InvencionDocumentoController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAnyAuthority('PII-INV-E', 'PII-INV-C')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  void deleteById(@PathVariable Long id) {
+  public void deleteById(@PathVariable Long id) {
     this.invencionDocumentoService.delete(id);
   }
 

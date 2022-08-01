@@ -21,6 +21,9 @@ function mediate(mc) {
     if (vinculacion.entidadPropiaRef) {
       vinculacionResponse.entidadPropiaRef = vinculacion.entidadPropiaRef;
     }
+    if (vinculacion.centro) {
+      vinculacionResponse.centro = vinculacion.centro;
+    }
 
     var sgiVinculacionCategoriaProfesional = getSGIVinculacionCategoriaProfesional(vinculacion.vinculacionesCategoriasProfesionales);
 

@@ -2,11 +2,14 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { MSG_PARAMS } from '@core/i18n';
+import { IGrupo } from '@core/models/csp/grupo';
 import { CausaExencion, CAUSA_EXENCION_MAP, IProyecto } from '@core/models/csp/proyecto';
 import { Orden } from '@core/models/csp/rol-proyecto';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { IPersona } from '@core/models/sgp/persona';
+import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { SolicitudProyectoService } from '@core/services/csp/solicitud-proyecto.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
@@ -38,6 +41,7 @@ export interface IProyectoEconomicoFormlyData {
   proyectoSgiId: number;
   proyectoSge: IProyectoSge;
   action: ACTION_MODAL_MODE;
+  grupoInvestigacion: IGrupo;
 }
 
 interface IFormlyData {
@@ -101,10 +105,11 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
     private readonly proyectoSgeService: ProyectoSgeService,
     private readonly solicitudProyectoService: SolicitudProyectoService,
     private readonly solicitudService: SolicitudService,
+    private readonly grupoService: GrupoService
 
   ) {
     this.subscriptions.push(
-      this.loadFormlyData(proyectoData?.action, proyectoData?.proyectoSgiId, proyectoData?.proyectoSge?.id).subscribe(
+      this.loadFormlyData(proyectoData?.action, proyectoData?.proyectoSgiId, proyectoData?.proyectoSge?.id, proyectoData?.grupoInvestigacion).subscribe(
         (formlyData) => {
           this.options.formState.mainModel = formlyData.data;
           this.formlyData.model = {};
@@ -128,13 +133,23 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
   }
 
 
-  private loadFormlyData(action: ACTION_MODAL_MODE, proyectoSgiId: number, proyectoSgeId: any): Observable<IFormlyData> {
+  private loadFormlyData(action: ACTION_MODAL_MODE, proyectoSgiId: number, proyectoSgeId: any, grupo: IGrupo): Observable<IFormlyData> {
     let load$: Observable<FormlyFieldConfig[]>;
     if (action === ACTION_MODAL_MODE.NEW) {
       load$ = this.proyectoSgeService.getFormlyCreate();
     } else {
       load$ = this.proyectoSgeService.getFormlyUpdate();
     }
+    if (grupo == null) {
+      return this.fillProyectoData(load$, action, proyectoSgiId, proyectoSgeId);
+    } else {
+      return this.fillGrupoData(load$, grupo);
+    }
+
+  }
+
+  private fillProyectoData(
+    load$: Observable<FormlyFieldConfig[]>, action: ACTION_MODAL_MODE, proyectoSgiId: number, proyectoSgeId: any): Observable<IFormlyData> {
     return load$.pipe(
       map(fields => {
         return {
@@ -194,13 +209,58 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
     );
   }
 
+  private fillGrupoData(
+    load$: Observable<FormlyFieldConfig[]>, grupo: IGrupo): Observable<IFormlyData> {
+    return load$.pipe(
+      map(fields => {
+        return {
+          fields,
+          data: {
+            fechaInicio: grupo?.fechaInicio,
+            fechaFin: grupo?.fechaFin,
+            proyecto: {
+              id: grupo?.id,
+              titulo: grupo?.nombre,
+              finalidad: {
+                id: 17,
+                nombre: 'Grupo de investigación o proyecto de fondos propios'
+              },
+              fechaInicio: grupo?.fechaInicio,
+              fechaFin: grupo?.fechaFin,
+              modeloEjecucion: {
+                id: 3,
+                nombre: 'Recursos propios'
+              }
+            },
+            tipoFinalidad: {
+              id: 17,
+              nombre: 'Grupo de investigación o proyecto de fondos propios'
+            }
+          },
+          model: {}
+        } as IFormlyData;
+      }),
+      switchMap((formlyData) => {
+        return this.findNumeroDocumentoResponsableEconomicoOrMiembroEquipo(grupo, formlyData);
+      }),
+    );
+  }
+
   private findImportePresupuestoBySolicitudProyecto(proyectoEconomico: any, formlyData: IFormlyData): Observable<IFormlyData> {
-    return this.solicitudProyectoService.findById(proyectoEconomico.solicitudId).pipe(
-      switchMap((solicitudProyecto) => {
-        if (solicitudProyecto.importePresupuestado) {
-          formlyData.data.importeTotalGastos = solicitudProyecto.importePresupuestado;
+    return this.solicitudService.findById(proyectoEconomico.solicitudId).pipe(
+      switchMap(solicitud => {
+        if (!!!solicitud || solicitud.formularioSolicitud !== FormularioSolicitud.PROYECTO) {
+          return of(formlyData);
         }
-        return of(formlyData);
+
+        return this.solicitudProyectoService.findById(proyectoEconomico.solicitudId).pipe(
+          switchMap((solicitudProyecto) => {
+            if (solicitudProyecto.importePresupuestado) {
+              formlyData.data.importeTotalGastos = solicitudProyecto.importePresupuestado;
+            }
+            return of(formlyData);
+          })
+        );
       })
     );
   }
@@ -233,6 +293,33 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
       switchMap((result: IResponsable) => {
         if (!result?.persona) {
           return this.getCurrentMiembroEquipoWithRolOrdenPrimario(id);
+        }
+        return of(result);
+      }),
+      switchMap((result) => {
+        if (result) {
+          formlyData.data.numeroDocumentoResponsable = result.persona.id;
+        }
+        return of(formlyData);
+      })
+    );
+  }
+
+  private findNumeroDocumentoResponsableEconomicoOrMiembroEquipo(grupo: IGrupo, formlyData: IFormlyData): Observable<IFormlyData> {
+    return this.grupoService.findResponsablesEconomicos(grupo?.id).pipe(
+      map(response => response.items.map(responsable => {
+        return {
+          fechaInicio: responsable.fechaInicio,
+          fechaFin: responsable.fechaFin,
+          persona: responsable.persona
+        } as IResponsable;
+      })),
+      map((responsablesEconomicos: IResponsable[]) => {
+        return this.getCurrentResponsable(responsablesEconomicos);
+      }),
+      switchMap((result: IResponsable) => {
+        if (!result?.persona) {
+          return this.getCurrentMiembroEquipoWithRolOrdenPrimarioGrupo(grupo?.id);
         }
         return of(result);
       }),
@@ -389,6 +476,25 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
         .and('rolProyecto.orden', SgiRestFilterOperator.EQUALS, Orden.PRIMARIO)
     };
     return this.proyectoService.findAllProyectoEquipo(id, options).pipe(
+      map(responseIP => responseIP.items.map(investigadorPrincipal => {
+        return {
+          fechaInicio: investigadorPrincipal.fechaInicio,
+          fechaFin: investigadorPrincipal.fechaFin,
+          persona: investigadorPrincipal.persona
+        } as IResponsable;
+      })),
+      map(responsablesEconomicos => {
+        return this.getCurrentResponsable(responsablesEconomicos);
+      })
+    );
+  }
+
+  private getCurrentMiembroEquipoWithRolOrdenPrimarioGrupo(idGrupo: number): Observable<IResponsable> {
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('rol.rolPrincipal', SgiRestFilterOperator.EQUALS, 'true')
+        .and('rol.orden', SgiRestFilterOperator.EQUALS, Orden.PRIMARIO)
+    };
+    return this.grupoService.findMiembrosEquipo(idGrupo, options).pipe(
       map(responseIP => responseIP.items.map(investigadorPrincipal => {
         return {
           fechaInicio: investigadorPrincipal.fechaInicio,

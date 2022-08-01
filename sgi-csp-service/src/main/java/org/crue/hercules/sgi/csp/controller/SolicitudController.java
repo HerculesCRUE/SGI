@@ -6,19 +6,23 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.crue.hercules.sgi.csp.converter.GrupoConverter;
+import org.crue.hercules.sgi.csp.converter.SolicitanteExternoConverter;
 import org.crue.hercules.sgi.csp.converter.SolicitudGrupoConverter;
+import org.crue.hercules.sgi.csp.converter.SolicitudRrhhConverter;
 import org.crue.hercules.sgi.csp.dto.GrupoInput;
 import org.crue.hercules.sgi.csp.dto.GrupoOutput;
 import org.crue.hercules.sgi.csp.dto.RequisitoEquipoNivelAcademicoOutput;
 import org.crue.hercules.sgi.csp.dto.RequisitoIPCategoriaProfesionalOutput;
 import org.crue.hercules.sgi.csp.dto.RequisitoIPNivelAcademicoOutput;
-import org.crue.hercules.sgi.csp.dto.SolicitudHitoOutput;
+import org.crue.hercules.sgi.csp.dto.SolicitanteExternoOutput;
 import org.crue.hercules.sgi.csp.dto.SolicitudGrupoOutput;
+import org.crue.hercules.sgi.csp.dto.SolicitudHitoOutput;
 import org.crue.hercules.sgi.csp.dto.SolicitudPalabraClaveInput;
 import org.crue.hercules.sgi.csp.dto.SolicitudPalabraClaveOutput;
 import org.crue.hercules.sgi.csp.dto.SolicitudProyectoPresupuestoTotalConceptoGasto;
 import org.crue.hercules.sgi.csp.dto.SolicitudProyectoPresupuestoTotales;
 import org.crue.hercules.sgi.csp.dto.SolicitudProyectoResponsableEconomicoOutput;
+import org.crue.hercules.sgi.csp.dto.SolicitudRrhhOutput;
 import org.crue.hercules.sgi.csp.exceptions.NoRelatedEntitiesException;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
@@ -30,6 +34,7 @@ import org.crue.hercules.sgi.csp.model.RequisitoEquipoNivelAcademico;
 import org.crue.hercules.sgi.csp.model.RequisitoIP;
 import org.crue.hercules.sgi.csp.model.RequisitoIPCategoriaProfesional;
 import org.crue.hercules.sgi.csp.model.RequisitoIPNivelAcademico;
+import org.crue.hercules.sgi.csp.model.SolicitanteExterno;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudDocumento;
 import org.crue.hercules.sgi.csp.model.SolicitudGrupo;
@@ -45,6 +50,7 @@ import org.crue.hercules.sgi.csp.model.SolicitudProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuesto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoResponsableEconomico;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocio;
+import org.crue.hercules.sgi.csp.model.SolicitudRrhh;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaEntidadConvocanteService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
 import org.crue.hercules.sgi.csp.service.EstadoSolicitudService;
@@ -53,6 +59,7 @@ import org.crue.hercules.sgi.csp.service.ProyectoService;
 import org.crue.hercules.sgi.csp.service.RequisitoEquipoNivelAcademicoService;
 import org.crue.hercules.sgi.csp.service.RequisitoIPCategoriaProfesionalService;
 import org.crue.hercules.sgi.csp.service.RequisitoIPNivelAcademicoService;
+import org.crue.hercules.sgi.csp.service.SolicitanteExternoService;
 import org.crue.hercules.sgi.csp.service.SolicitudDocumentoService;
 import org.crue.hercules.sgi.csp.service.SolicitudGrupoService;
 import org.crue.hercules.sgi.csp.service.SolicitudHitoService;
@@ -67,6 +74,7 @@ import org.crue.hercules.sgi.csp.service.SolicitudProyectoPresupuestoService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoResponsableEconomicoService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoSocioService;
+import org.crue.hercules.sgi.csp.service.SolicitudRrhhService;
 import org.crue.hercules.sgi.csp.service.SolicitudService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
 import org.modelmapper.ModelMapper;
@@ -95,9 +103,24 @@ import lombok.extern.slf4j.Slf4j;
  * SolicitudController
  */
 @RestController
-@RequestMapping("/solicitudes")
+@RequestMapping(SolicitudController.REQUEST_MAPPING)
 @Slf4j
 public class SolicitudController {
+
+  public static final String PATH_DELIMITER = "/";
+  public static final String REQUEST_MAPPING = PATH_DELIMITER + "solicitudes";
+
+  public static final String PATH_INVESTIGADOR = PATH_DELIMITER + "investigador";
+  public static final String PATH_TUTOR = PATH_DELIMITER + "tutor";
+
+  public static final String PATH_ID = PATH_DELIMITER + "{id}";
+  public static final String PATH_DOCUMENTOS = PATH_ID + PATH_DELIMITER + "solicituddocumentos";
+  public static final String PATH_HISTORICO_ESTADOS = PATH_ID + PATH_DELIMITER + "estadosolicitudes";
+  public static final String PATH_MODIFICABLE = PATH_ID + PATH_DELIMITER + "modificable";
+  public static final String PATH_MODIFICABLE_ESTADO_DOCUMENTOS_BY_INV = PATH_ID + PATH_DELIMITER
+      + "modificableestadoanddocumentosbyinvestigador";
+  public static final String PATH_MODIFICABLE_ESTADO_AS_TUTOR = PATH_ID + PATH_DELIMITER + "modificableestadoastutor";
+  public static final String PATH_CREAR_PROYECTO = PATH_ID + PATH_DELIMITER + "crearproyecto";
 
   private ModelMapper modelMapper;
 
@@ -176,6 +199,18 @@ public class SolicitudController {
   /** GrupoConverter */
   private final GrupoConverter grupoConverter;
 
+  /** SolicitudRrhh Service */
+  private final SolicitudRrhhService solicitudRrhhService;
+
+  /** SolicitudRrhh Converter */
+  private final SolicitudRrhhConverter solicitudRrhhConverter;
+
+  /** SolicitanteExterno Service */
+  private final SolicitanteExternoService solicitanteExternoService;
+
+  /** SolicitanteExterno Converter */
+  private final SolicitanteExternoConverter solicitanteExternoConverter;
+
   /**
    * Instancia un nuevo SolicitudController.
    * 
@@ -205,6 +240,10 @@ public class SolicitudController {
    * @param grupoConverter                                   {@link GrupoConverter}.
    * @param grupoService                                     {@link GrupoService}.
    * @param solicitudGrupoConverter                          {@link SolicitudGrupoConverter}.
+   * @param solicitudRrhhService                             {@link SolicitudRrhhService}.
+   * @param solicitudRrhhConverter                           {@link SolicitudRrhhConverter}.
+   * @param solicitanteExternoService                        {@link SolicitanteExternoService}.
+   * @param solicitanteExternoConverter                      {@link SolicitanteExternoConverter}.
    */
   public SolicitudController(ModelMapper modelMapper, SolicitudService solicitudService,
       SolicitudModalidadService solicitudModalidadService, EstadoSolicitudService estadoSolicitudService,
@@ -226,7 +265,11 @@ public class SolicitudController {
       SolicitudGrupoService solicitudGrupoService,
       SolicitudGrupoConverter solicitudGrupoConverter,
       GrupoService grupoService,
-      GrupoConverter grupoConverter) {
+      GrupoConverter grupoConverter,
+      SolicitudRrhhService solicitudRrhhService,
+      SolicitudRrhhConverter solicitudRrhhConverter,
+      SolicitanteExternoService solicitanteExternoService,
+      SolicitanteExternoConverter solicitanteExternoConverter) {
     this.modelMapper = modelMapper;
     this.service = solicitudService;
     this.solicitudModalidadService = solicitudModalidadService;
@@ -253,6 +296,10 @@ public class SolicitudController {
     this.solicitudGrupoConverter = solicitudGrupoConverter;
     this.grupoService = grupoService;
     this.grupoConverter = grupoConverter;
+    this.solicitudRrhhService = solicitudRrhhService;
+    this.solicitudRrhhConverter = solicitudRrhhConverter;
+    this.solicitanteExternoService = solicitanteExternoService;
+    this.solicitanteExternoConverter = solicitanteExternoConverter;
   }
 
   /**
@@ -424,7 +471,7 @@ public class SolicitudController {
    * @return el listado de entidades {@link EstadoSolicitud} paginados y
    *         filtrados.
    */
-  @GetMapping("/{id}/estadosolicitudes")
+  @GetMapping(PATH_HISTORICO_ESTADOS)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public ResponseEntity<Page<EstadoSolicitud>> findAllEstadoSolicitud(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable paging) {
@@ -477,7 +524,7 @@ public class SolicitudController {
    * @return el listado de entidades {@link SolicitudDocumento} paginados y
    *         filtrados.
    */
-  @GetMapping("/{id}/solicituddocumentos")
+  @GetMapping(PATH_DOCUMENTOS)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V','CSP-SOL-INV-ER')")
   public ResponseEntity<Page<SolicitudDocumento>> findAllSolicitudDocumentos(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
@@ -744,7 +791,7 @@ public class SolicitudController {
    * @return HTTP-200 Si se permite la creación / HTTP-204 Si no se permite
    *         creación
    */
-  @RequestMapping(path = "/{id}/crearproyecto", method = RequestMethod.HEAD)
+  @RequestMapping(path = PATH_CREAR_PROYECTO, method = RequestMethod.HEAD)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-C')")
   public ResponseEntity<Solicitud> isPosibleCrearProyecto(@PathVariable Long id) {
     log.debug("isPosibleCrearProyecto(Long id) - start");
@@ -762,7 +809,7 @@ public class SolicitudController {
    * @return HTTP-200 Si se permite modificación / HTTP-204 Si no se permite
    *         modificación
    */
-  @RequestMapping(path = "/{id}/modificable", method = RequestMethod.HEAD)
+  @RequestMapping(path = PATH_MODIFICABLE, method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER' , 'CSP-SOL-INV-BR')")
   public ResponseEntity<Solicitud> modificable(@PathVariable Long id) {
     log.debug("modificable(Long id) - start");
@@ -799,7 +846,7 @@ public class SolicitudController {
    * @return el listado de entidades {@link Solicitud} que puede visualizar un
    *         investigador paginadas y filtradas.
    */
-  @GetMapping("/investigador")
+  @GetMapping(PATH_INVESTIGADOR)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-INV-ER' , 'CSP-SOL-INV-BR')")
   public ResponseEntity<Page<Solicitud>> findAllInvestigador(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
@@ -811,6 +858,30 @@ public class SolicitudController {
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     log.debug("findAllInvestigador(String query, Pageable paging) - end");
+    return new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista paginada y filtrada {@link Solicitud} que puede visualizar
+   * un tutor paginadas y filtradas.
+   * 
+   * @param query  filtro de búsqueda.
+   * @param paging {@link Pageable}.
+   * @return el listado de entidades {@link Solicitud} que puede visualizar un
+   *         tutor paginadas y filtradas.
+   */
+  @GetMapping(PATH_TUTOR)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-INV-ER')")
+  public ResponseEntity<Page<Solicitud>> findAllTutor(@RequestParam(name = "q", required = false) String query,
+      @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAllTutor(String query, Pageable paging) - start");
+    Page<Solicitud> page = service.findAllTutor(query, paging);
+
+    if (page.isEmpty()) {
+      log.debug("findAllTutor(String query, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    log.debug("findAllTutor(String query, Pageable paging) - end");
     return new ResponseEntity<>(page, HttpStatus.OK);
   }
 
@@ -1095,8 +1166,8 @@ public class SolicitudController {
 
   /**
    * Devuelve la {@link Convocatoria} asociada a la {@link Solicitud} con el id
-   * indicado si el usuario que realiza la peticion es el solicitante de la
-   * {@link Solicitud}.
+   * indicado si el usuario que realiza la peticion es el solicitante o el tutor
+   * de la {@link Solicitud}.
    * 
    * @param id Identificador de {@link Solicitud}.
    * @return {@link Convocatoria} correspondiente a la {@link Solicitud}.
@@ -1106,7 +1177,7 @@ public class SolicitudController {
   public ResponseEntity<Convocatoria> findConvocatoriaBySolicitudId(@PathVariable Long id) {
     log.debug("findConvocatoriaBySolicitudId(Long id) - start");
 
-    Convocatoria returnValue = convocatoriaService.findBySolicitudIdAndUserIsSolicitante(id);
+    Convocatoria returnValue = convocatoriaService.findBySolicitudIdAndUserIsSolicitanteOrTutor(id);
 
     if (returnValue == null) {
       log.debug("findConvocatoriaBySolicitudId(Long id) - end");
@@ -1120,7 +1191,7 @@ public class SolicitudController {
   /**
    * Obtiene las {@link ConvocatoriaEntidadConvocante} de la {@link Convocatoria}
    * para una {@link Solicitud} si el usuario que realiza la peticion es el
-   * solicitante de la {@link Solicitud}.
+   * solicitante o el tutor de la {@link Solicitud}.
    *
    * @param id     el id de la {@link Solicitud}.
    * @param paging la información de la paginación.
@@ -1133,7 +1204,7 @@ public class SolicitudController {
       @PathVariable Long id, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaEntidadConvocantes(Long id, Pageable paging) - start");
     Page<ConvocatoriaEntidadConvocante> page = convocatoriaEntidadConvocanteService
-        .findAllBySolicitudAndUserIsSolicitante(id, paging);
+        .findAllBySolicitudAndUserIsSolicitanteOrTutor(id, paging);
 
     if (page.isEmpty()) {
       log.debug("findAllConvocatoriaEntidadConvocantes(Long id, Pageable paging) - end");
@@ -1210,14 +1281,30 @@ public class SolicitudController {
    * @return HTTP-200 Si se permite modificación / HTTP-204 Si no se permite
    *         modificación
    */
-  @RequestMapping(path = "/{id}/modificableestadoanddocumentosbyinvestigador", method = RequestMethod.HEAD)
+  @RequestMapping(path = PATH_MODIFICABLE_ESTADO_DOCUMENTOS_BY_INV, method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-INV-ER' , 'CSP-SOL-INV-BR')")
   public ResponseEntity<Void> modificableEstadoAndDocumentosByInvestigador(@PathVariable Long id) {
     log.debug("modificableEstadoAndDocumentosByInvestigador(Long id) - start");
-    Boolean returnValue = service.modificableEstadoAndDocumentosByInvestigador(id);
+    boolean returnValue = service.modificableEstadoAndDocumentosByInvestigador(id);
     log.debug("modificableEstadoAndDocumentosByInvestigador(Long id) - end");
-    return returnValue.booleanValue() ? new ResponseEntity<>(HttpStatus.OK)
-        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si el estado puede ser
+   * modificado por usuario actual como el tutor de la {@link Solicitud}.
+   * 
+   * @param id Id del {@link Solicitud}.
+   * @return HTTP-200 Si se permite modificación / HTTP-204 Si no se permite
+   *         modificación
+   */
+  @RequestMapping(path = PATH_MODIFICABLE_ESTADO_AS_TUTOR, method = RequestMethod.HEAD)
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-INV-ER')")
+  public ResponseEntity<Void> modificableEstadoAsTutor(@PathVariable Long id) {
+    log.debug("modificableEstadoAsTutor(Long id) - start");
+    boolean returnValue = service.modificableEstadoAsTutor(id);
+    log.debug("modificableEstadoAsTutor(Long id) - end");
+    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   /**
@@ -1261,6 +1348,55 @@ public class SolicitudController {
         .convert(grupoService.createGrupoBySolicitud(id, grupoConverter.convert(grupo)));
     log.debug("createGrupoBySolicitud(@PathVariable Long id) - end");
     return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
+  }
+
+  /**
+   * Recupera un {@link SolicitudRrhh} de una solicitud
+   * 
+   * @param id Identificador de {@link Solicitud}.
+   * @return {@link SolicitudRrhh}
+   */
+  @GetMapping(path = "/{id}/solicitudrrhh")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
+  public ResponseEntity<SolicitudRrhhOutput> findSolicitudRrhh(@PathVariable Long id) {
+    log.debug("findSolicitudRrhh(Long id) - start");
+    SolicitudRrhh returnValue = solicitudRrhhService.findBySolicitud(id);
+    log.debug("findSolicitudRrhh(Long id) - end");
+    return returnValue == null ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(solicitudRrhhConverter.convert(returnValue), HttpStatus.OK);
+  }
+
+  /**
+   * Recupera un {@link SolicitanteExterno} de una solicitud
+   * 
+   * @param id Identificador de {@link Solicitud}.
+   * @return {@link SolicitanteExterno}
+   */
+  @GetMapping(path = "/{id}/solicitanteexterno")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
+  public ResponseEntity<SolicitanteExternoOutput> findSolicitanteExterno(@PathVariable Long id) {
+    log.debug("findSolicitanteExterno(Long id) - start");
+    SolicitanteExterno returnValue = solicitanteExternoService.findBySolicitud(id);
+    log.debug("findSolicitanteExterno(Long id) - end");
+    return returnValue == null ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(solicitanteExternoConverter.convert(returnValue), HttpStatus.OK);
+  }
+
+  /**
+   * Actualiza el solicitante de la {@link Solicitud} con id indicado.
+   * 
+   * @param id             Identificador de {@link Solicitud}.
+   * @param solicitanteRef Identificador del solicitante
+   * @return {@link Solicitud} actualizado.
+   */
+  @PatchMapping("/{id}/solicitante")
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  public Solicitud updateSolicitante(@PathVariable Long id, @RequestBody(required = false) String solicitanteRef) {
+    log.debug("updateSolicitante(Long id, String solicitanteRef) - start");
+
+    Solicitud returnValue = service.updateSolicitante(id, solicitanteRef);
+    log.debug("updateSolicitante(Long id, String solicitanteRef) - end");
+    return returnValue;
   }
 
   private Page<SolicitudPalabraClaveOutput> convertSolicitudPalabraClave(Page<SolicitudPalabraClave> page) {

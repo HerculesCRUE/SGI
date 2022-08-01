@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  */
 
 @WebMvcTest(ConvocatoriaAreaTematicaController.class)
-public class ConvocatoriaAreaTematicaControllerTest extends BaseControllerTest {
+class ConvocatoriaAreaTematicaControllerTest extends BaseControllerTest {
 
   @MockBean
   private ConvocatoriaAreaTematicaService service;
@@ -34,7 +34,7 @@ public class ConvocatoriaAreaTematicaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  public void create_ReturnsConvocatoriaAreaTematica() throws Exception {
+  void create_ReturnsConvocatoriaAreaTematica() throws Exception {
     // given: new ConvocatoriaAreaTematica
     ConvocatoriaAreaTematica convocatoriaAreaTematica = generarConvocatoriaAreaTematica(null, 1L, 1L);
 
@@ -67,7 +67,7 @@ public class ConvocatoriaAreaTematicaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ConvocatoriaAreaTematica with id filled
     ConvocatoriaAreaTematica convocatoriaAreaTematica = generarConvocatoriaAreaTematica(1L, 1L, 1L);
 
@@ -86,7 +86,7 @@ public class ConvocatoriaAreaTematicaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void update_WithExistingId_ReturnsConvocatoriaAreaTematica() throws Exception {
+  void update_WithExistingId_ReturnsConvocatoriaAreaTematica() throws Exception {
     // given: existing ConvocatoriaAreaTematica
     ConvocatoriaAreaTematica updatedConvocatoriaAreaTematica = generarConvocatoriaAreaTematica(1L, 1L, 1L);
     updatedConvocatoriaAreaTematica.setObservaciones("observaciones-modificadas");
@@ -120,7 +120,7 @@ public class ConvocatoriaAreaTematicaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: a ConvocatoriaAreaTematica with non existing id
     ConvocatoriaAreaTematica updatedConvocatoriaAreaTematica = generarConvocatoriaAreaTematica(1L, 1L, 1L);
 
@@ -142,7 +142,7 @@ public class ConvocatoriaAreaTematicaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.doNothing().when(service).delete(ArgumentMatchers.anyLong());
@@ -157,7 +157,7 @@ public class ConvocatoriaAreaTematicaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void delete_WithoutId_Return404() throws Exception {
+  void delete_WithoutId_Return404() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -176,7 +176,7 @@ public class ConvocatoriaAreaTematicaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsConvocatoriaAreaTematica() throws Exception {
+  void findById_WithExistingId_ReturnsConvocatoriaAreaTematica() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer(new Answer<ConvocatoriaAreaTematica>() {
@@ -200,7 +200,7 @@ public class ConvocatoriaAreaTematicaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {

@@ -19,7 +19,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de DocumentoRequeridoSolicitud.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class DocumentoRequeridoSolicitudIT extends BaseIT {
+class DocumentoRequeridoSolicitudIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/documentorequiridosolicitudes";
@@ -39,7 +39,7 @@ public class DocumentoRequeridoSolicitudIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsDocumentoRequeridoSolicitud() throws Exception {
+  void create_ReturnsDocumentoRequeridoSolicitud() throws Exception {
 
     // given: new DocumentoRequeridoSolicitud
     DocumentoRequeridoSolicitud documentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(null, 1L, 1L);
@@ -63,7 +63,7 @@ public class DocumentoRequeridoSolicitudIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsDocumentoRequeridoSolicitud() throws Exception {
+  void update_ReturnsDocumentoRequeridoSolicitud() throws Exception {
 
     // given: existing DocumentoRequeridoSolicitud to be updated
     DocumentoRequeridoSolicitud documentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L, 1L);
@@ -93,7 +93,7 @@ public class DocumentoRequeridoSolicitudIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing DocumentoRequeridoSolicitud to be deleted
     Long documentoRequeridoSolicitudId = 1L;
 
@@ -110,7 +110,7 @@ public class DocumentoRequeridoSolicitudIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsDocumentoRequeridoSolicitud() throws Exception {
+  void findById_ReturnsDocumentoRequeridoSolicitud() throws Exception {
     Long documentoRequeridoSolicitudId = 2L;
 
     final ResponseEntity<DocumentoRequeridoSolicitud> response = restTemplate.exchange(

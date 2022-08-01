@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,6 +15,7 @@ import org.crue.hercules.sgi.eti.converter.EvaluacionConverter;
 import org.crue.hercules.sgi.eti.dto.DocumentoOutput;
 import org.crue.hercules.sgi.eti.dto.EvaluacionWithIsEliminable;
 import org.crue.hercules.sgi.eti.dto.EvaluacionWithNumComentario;
+import org.crue.hercules.sgi.eti.exceptions.ConvocatoriaReunionEvaluacionException;
 import org.crue.hercules.sgi.eti.exceptions.ConvocatoriaReunionNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.EvaluacionNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.MemoriaNotFoundException;
@@ -122,6 +124,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
    * @param sgdocService                  servicio gestor documental
    *                                      {@link SgdocService}
    * @param comunicadosService            {@link ComunicadosService}
+   * @param sgiConfigProperties           {@link SgiConfigProperties}
    */
   @Autowired
   public EvaluacionServiceImpl(EvaluacionRepository evaluacionRepository,
@@ -170,6 +173,14 @@ public class EvaluacionServiceImpl implements EvaluacionService {
 
     if (!memoriaRepository.existsById(evaluacion.getMemoria().getId())) {
       throw new MemoriaNotFoundException(evaluacion.getMemoria().getId());
+    }
+
+    List<Memoria> memoriasAsignables = memoriaRepository
+        .findAllMemoriasAsignablesConvocatoria(evaluacion.getConvocatoriaReunion().getId());
+    boolean asignable = memoriasAsignables.stream()
+        .anyMatch(mem -> mem.getId().equals(evaluacion.getMemoria().getId()));
+    if (!asignable) {
+      throw new ConvocatoriaReunionEvaluacionException();
     }
 
     // Si la evaluación es creada mediante la asignación de memorias en
@@ -577,7 +588,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
     if (favorable.booleanValue()) {
       // Se obtiene el informe favorable en formato pdf creado mediante el
       // servicio de reporting
-      if (evaluacion.getTipoEvaluacion().getId() == Constantes.TIPO_EVALUACION_RETROSPECTIVA) {
+      if (Objects.equals(evaluacion.getTipoEvaluacion().getId(), Constantes.TIPO_EVALUACION_RETROSPECTIVA)) {
         informePdf = reportService.getInformeEvaluacionRetrospectiva(evaluacion.getId(), Instant.now());
         tituloInforme = TITULO_INFORME_EVALUACION_RETROSPECTIVA;
       } else {
@@ -800,7 +811,8 @@ public class EvaluacionServiceImpl implements EvaluacionService {
           evaluacion.getMemoria().getComite().getNombreInvestigacion(),
           evaluacion.getMemoria().getComite().getGenero().toString(), evaluacion.getMemoria().getNumReferencia(),
           tipoActividad,
-          evaluacion.getMemoria().getPeticionEvaluacion().getTitulo(), evaluacion.getMemoria().getPersonaRef());
+          evaluacion.getMemoria().getPeticionEvaluacion().getTitulo(),
+          evaluacion.getMemoria().getPeticionEvaluacion().getPersonaRef());
       log.debug("sendComunicadoDictamenEvaluacionRevMin(Evaluacion evaluacion) - End");
     } catch (Exception e) {
       log.debug("sendComunicadoDictamenEvaluacionRevMin(Evaluacion evaluacion) - Error al enviar el comunicado", e);
@@ -817,11 +829,12 @@ public class EvaluacionServiceImpl implements EvaluacionService {
       } else {
         tipoActividad = evaluacion.getMemoria().getPeticionEvaluacion().getTipoInvestigacionTutelada().getNombre();
       }
-      this.comunicadosService.enviarComunicadoDictamenEvaluacionRevMinima(
+      this.comunicadosService.enviarComunicadoDictamenEvaluacionSeguimientoRevMinima(
           evaluacion.getMemoria().getComite().getNombreInvestigacion(),
           evaluacion.getMemoria().getComite().getGenero().toString(), evaluacion.getMemoria().getNumReferencia(),
           tipoActividad,
-          evaluacion.getMemoria().getPeticionEvaluacion().getTitulo(), evaluacion.getMemoria().getPersonaRef());
+          evaluacion.getMemoria().getPeticionEvaluacion().getTitulo(),
+          evaluacion.getMemoria().getPeticionEvaluacion().getPersonaRef());
       log.debug("sendComunicadoDictamenEvaluacionSeguimientoRevMin(Evaluacion evaluacion) - End");
     } catch (Exception e) {
       log.debug(
@@ -854,7 +867,6 @@ public class EvaluacionServiceImpl implements EvaluacionService {
   }
 
   public void sendComunicadoInformeSeguimientoAnualPendiente() {
-
     List<Evaluacion> evaluaciones = recuperaInformesAvisoSeguimientoAnualPendiente();
     if (CollectionUtils.isEmpty(evaluaciones)) {
       log.info("No existen evaluaciones que requieran generar aviso de informe de evaluación anual pendiente.");
@@ -873,7 +885,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
               evaluacion.getMemoria().getNumReferencia(),
               tipoActividad,
               evaluacion.getMemoria().getPeticionEvaluacion().getTitulo(),
-              evaluacion.getMemoria().getPersonaRef());
+              evaluacion.getMemoria().getPeticionEvaluacion().getPersonaRef());
         } catch (Exception e) {
           log.debug("sendComunicadoInformeSeguimientoAnualPendiente() - Error al enviar el comunicado", e);
 
@@ -886,6 +898,8 @@ public class EvaluacionServiceImpl implements EvaluacionService {
   /**
    * Recuperar aquellas evaluaciones que tienen informe de seguimiento anual
    * pendiente
+   * 
+   * @return lista de {@link Evaluacion}
    */
   public List<Evaluacion> recuperaInformesAvisoSeguimientoAnualPendiente() {
     log.debug("recuperaInformesAvisoSeguimientoAnualPendiente() - start");

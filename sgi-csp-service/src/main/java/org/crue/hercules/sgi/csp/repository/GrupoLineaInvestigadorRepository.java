@@ -31,4 +31,13 @@ public interface GrupoLineaInvestigadorRepository
    */
   List<GrupoLineaInvestigador> findAllByGrupoLineaInvestigacionId(Long grupoLineaInvestigacionId);
 
+  /**
+   * Se eliminan todos los {@link GrupoLineaInvestigador} a partir de un
+   * {@link GrupoLineaInvestigacion}
+   * 
+   * @param grupoLineaInvestigacionId Identificador de
+   *                                  {@link GrupoLineaInvestigacion}
+   */
+  void deleteAllByGrupoLineaInvestigacionId(Long grupoLineaInvestigacionId);
+
 }

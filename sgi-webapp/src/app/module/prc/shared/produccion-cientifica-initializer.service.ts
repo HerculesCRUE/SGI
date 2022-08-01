@@ -5,6 +5,7 @@ import { ICampoProduccionCientificaWithConfiguracion } from '@core/models/prc/ca
 import { IIndiceImpacto } from '@core/models/prc/indice-impacto';
 import { IProduccionCientifica } from '@core/models/prc/produccion-cientifica';
 import { IProyectoPrc } from '@core/models/prc/proyecto-prc';
+import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { ProyectoResumenService } from '@core/services/csp/proyecto-resumen/proyecto-resumen.service';
 import { AutorService } from '@core/services/prc/autor/autor.service';
 import { ConfiguracionCampoService } from '@core/services/prc/configuracion-campo/configuracion-campo.service';
@@ -12,7 +13,7 @@ import { ProduccionCientificaService } from '@core/services/prc/produccion-cient
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { from, Observable, of } from 'rxjs';
-import { catchError, concatMap, map, mergeMap, toArray } from 'rxjs/operators';
+import { catchError, concatMap, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,7 @@ export class ProduccionCientificaInitializerService {
     private autorService: AutorService,
     private proyectoResumenService: ProyectoResumenService,
     private documentoService: DocumentoService,
+    private grupoService: GrupoService
   ) { }
 
   initializeCamposProduccionCientifica$(produccionCientifica: IProduccionCientifica):
@@ -97,6 +99,24 @@ export class ProduccionCientificaInitializerService {
               }
             }),
             mergeMap(autor => this.autorService.findGrupos(autor.id)
+              .pipe(
+                switchMap(response =>
+                  from(response.items).pipe(
+                    mergeMap(autorGrupo =>
+                      this.grupoService.findById(autorGrupo.grupo.id).pipe(
+                        map(grupo => {
+                          autorGrupo.grupo = grupo;
+                          return autorGrupo;
+                        })
+                      )
+                    ),
+                    toArray(),
+                    map(() => {
+                      return response;
+                    })
+                  )
+                ),
+              )
               .pipe(
                 map(({ items }) => ({
                   autor,

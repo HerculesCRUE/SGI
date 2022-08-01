@@ -1,4 +1,6 @@
 import { DateTime } from 'luxon';
+import { IGenericEmailText } from '../com/generic-email-text';
+import { ISendEmailTask } from '../tp/send-email-task';
 import { ITipoHito } from './tipos-configuracion';
 
 export interface IProyectoHito {
@@ -12,6 +14,10 @@ export interface IProyectoHito {
   fecha: DateTime;
   /** Comentario */
   comentario: string;
-  /** Aviso */
-  generaAviso: boolean;
+
+  aviso: {
+    email: IGenericEmailText;
+    task: ISendEmailTask;
+    incluirIpsProyecto: boolean;
+  };
 }

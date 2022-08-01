@@ -18,13 +18,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * ProyectoSocioPeriodoPagoRepositoryTest
  */
 @DataJpaTest
-public class ProyectoSocioPeriodoPagoRepositoryTest extends BaseRepositoryTest {
+class ProyectoSocioPeriodoPagoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ProyectoSocioPeriodoPagoRepository repository;
 
   @Test
-  public void findAllByProyectoSocioId_ReturnsProyectoSocioPeriodoPago() throws Exception {
+  void findAllByProyectoSocioId_ReturnsProyectoSocioPeriodoPago() throws Exception {
 
     // given: 2 ProyectoSocioPeriodoPago de los que 1 coincide con el
     // idProyectoSocio

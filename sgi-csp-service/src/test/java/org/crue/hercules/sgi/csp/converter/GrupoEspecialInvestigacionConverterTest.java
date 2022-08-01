@@ -23,7 +23,7 @@ class GrupoEspecialInvestigacionConverterTest extends BaseServiceTest {
   private GrupoEspecialInvestigacionConverter grupoEspecialInvestigacionConverter;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     this.grupoEspecialInvestigacionConverter = new GrupoEspecialInvestigacionConverter(modelMapper);
   }
 

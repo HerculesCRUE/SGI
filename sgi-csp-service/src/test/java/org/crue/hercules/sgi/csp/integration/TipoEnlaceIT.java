@@ -22,7 +22,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de TipoEnlace.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TipoEnlaceIT extends BaseIT {
+class TipoEnlaceIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_DESACTIVAR = "/desactivar";
@@ -42,7 +42,7 @@ public class TipoEnlaceIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsTipoEnlace() throws Exception {
+  void create_ReturnsTipoEnlace() throws Exception {
 
     // given: new TipoEnlace
     TipoEnlace data = TipoEnlace.builder().nombre("nombre-1").descripcion("descripcion-1").activo(Boolean.TRUE).build();
@@ -63,7 +63,7 @@ public class TipoEnlaceIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsTipoEnlace() throws Exception {
+  void update_ReturnsTipoEnlace() throws Exception {
 
     // given: existing TipoEnlace to be updated
     TipoEnlace data = TipoEnlace.builder().id(1L).nombre("nombre-updated").descripcion("descripcion-updated")
@@ -85,7 +85,7 @@ public class TipoEnlaceIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void reactivar_ReturnTipoEnlace() throws Exception {
+  void reactivar_ReturnTipoEnlace() throws Exception {
     Long idTipoEnlace = 1L;
 
     final ResponseEntity<TipoEnlace> response = restTemplate.exchange(
@@ -103,7 +103,7 @@ public class TipoEnlaceIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void desactivar_ReturnTipoEnlace() throws Exception {
+  void desactivar_ReturnTipoEnlace() throws Exception {
     Long idTipoEnlace = 1L;
 
     final ResponseEntity<TipoEnlace> response = restTemplate.exchange(
@@ -121,7 +121,7 @@ public class TipoEnlaceIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsTipoEnlace() throws Exception {
+  void findById_ReturnsTipoEnlace() throws Exception {
     Long id = 1L;
 
     final ResponseEntity<TipoEnlace> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -138,7 +138,7 @@ public class TipoEnlaceIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsTipoEnlaceSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsTipoEnlaceSubList() throws Exception {
 
     // given: data for TipoEnlace
 
@@ -160,7 +160,7 @@ public class TipoEnlaceIT extends BaseIT {
     // given: TipoEnlace data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoEnlace> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
@@ -177,7 +177,7 @@ public class TipoEnlaceIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAllTodos_WithPagingSortingAndFiltering_ReturnsTipoEnlaceSubList() throws Exception {
+  void findAllTodos_WithPagingSortingAndFiltering_ReturnsTipoEnlaceSubList() throws Exception {
 
     // given: data for TipoEnlace
 
@@ -199,7 +199,7 @@ public class TipoEnlaceIT extends BaseIT {
     // given: TipoEnlace data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoEnlace> responseData = response.getBody();
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");

@@ -48,7 +48,12 @@ public class SolicitudProteccionOutput implements Serializable {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class Invencion {
+  public static class Invencion implements Serializable {
+    /**
+    *
+    */
+    private static final long serialVersionUID = 1L;
+
     private Long id;
     private Invencion.TipoProteccion tipoProteccion;
     private String titulo;
@@ -58,7 +63,12 @@ public class SolicitudProteccionOutput implements Serializable {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class TipoProteccion {
+    public static class TipoProteccion implements Serializable {
+      /**
+      *
+      */
+      private static final long serialVersionUID = 1L;
+
       private Long id;
       private TipoPropiedad tipoPropiedad;
       private String nombre;
@@ -70,7 +80,12 @@ public class SolicitudProteccionOutput implements Serializable {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class ViaProteccion {
+  public static class ViaProteccion implements Serializable {
+    /**
+    *
+    */
+    private static final long serialVersionUID = 1L;
+
     private Long id;
     private String nombre;
     private String descripcion;
@@ -86,7 +101,12 @@ public class SolicitudProteccionOutput implements Serializable {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class TipoCaducidad {
+  public static class TipoCaducidad implements Serializable {
+    /**
+    *
+    */
+    private static final long serialVersionUID = 1L;
+
     private Long id;
     private String descripcion;
   }

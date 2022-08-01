@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ProyectoSocioPeriodoJustificacionDocumentoControllerTest
  */
 @WebMvcTest(ProyectoSocioPeriodoJustificacionDocumentoController.class)
-public class ProyectoSocioPeriodoJustificacionDocumentoControllerTest extends BaseControllerTest {
+class ProyectoSocioPeriodoJustificacionDocumentoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ProyectoSocioPeriodoJustificacionDocumentoService service;
@@ -36,7 +36,7 @@ public class ProyectoSocioPeriodoJustificacionDocumentoControllerTest extends Ba
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_ReturnsProyectoSocioPeriodoJustificacionDocumentoList() throws Exception {
+  void update_ReturnsProyectoSocioPeriodoJustificacionDocumentoList() throws Exception {
     // given: una lista con uno de los ProyectoSocioPeriodoJustificacionDocumento
     // actualizado,
     // otro nuevo y sin los otros 3 periodos existentes
@@ -103,7 +103,7 @@ public class ProyectoSocioPeriodoJustificacionDocumentoControllerTest extends Ba
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void updateProyectoSocioPeriodoJustificacionDocumentoesProyectoSocio_WithNoExistingId_Returns404()
+  void updateProyectoSocioPeriodoJustificacionDocumentoesProyectoSocio_WithNoExistingId_Returns404()
       throws Exception {
     // given: No existing Id
     Long id = 1L;
@@ -126,7 +126,7 @@ public class ProyectoSocioPeriodoJustificacionDocumentoControllerTest extends Ba
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsProyectoSocioPeriodoJustificacionDocumento() throws Exception {
+  void findById_WithExistingId_ReturnsProyectoSocioPeriodoJustificacionDocumento() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
       return generarMockProyectoSocioPeriodoJustificacionDocumento(invocation.getArgument(0));
@@ -150,7 +150,7 @@ public class ProyectoSocioPeriodoJustificacionDocumentoControllerTest extends Ba
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ProyectoSocioPeriodoJustificacionDocumentoNotFoundException(1L);

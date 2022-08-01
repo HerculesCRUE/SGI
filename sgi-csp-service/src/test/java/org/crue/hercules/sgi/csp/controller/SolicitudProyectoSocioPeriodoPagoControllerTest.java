@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * SolicitudProyectoSocioPeriodoPagoControllerTest
  */
 @WebMvcTest(SolicitudProyectoSocioPeriodoPagoController.class)
-public class SolicitudProyectoSocioPeriodoPagoControllerTest extends BaseControllerTest {
+class SolicitudProyectoSocioPeriodoPagoControllerTest extends BaseControllerTest {
 
   @MockBean
   private SolicitudProyectoSocioPeriodoPagoService service;
@@ -37,7 +37,7 @@ public class SolicitudProyectoSocioPeriodoPagoControllerTest extends BaseControl
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void update_WithExistingId_ReturnsSolicitudProyectoSocioPeriodoPago() throws Exception {
+  void update_WithExistingId_ReturnsSolicitudProyectoSocioPeriodoPago() throws Exception {
     // given: una lista con uno de los SolicitudProyectoSocioPeriodoPago
     // actualizado,
     // otro nuevo y sin los otros 3 periodos existentes
@@ -94,7 +94,7 @@ public class SolicitudProyectoSocioPeriodoPagoControllerTest extends BaseControl
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     SolicitudProyectoSocioPeriodoPago solicitudProyectoSocioPeriodoPago = generarSolicitudProyectoSocioPeriodoPago(1L,
@@ -117,7 +117,7 @@ public class SolicitudProyectoSocioPeriodoPagoControllerTest extends BaseControl
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void findById_WithExistingId_ReturnsSolicitudProyectoSocioPeriodoPago() throws Exception {
+  void findById_WithExistingId_ReturnsSolicitudProyectoSocioPeriodoPago() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong()))
@@ -143,7 +143,7 @@ public class SolicitudProyectoSocioPeriodoPagoControllerTest extends BaseControl
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {

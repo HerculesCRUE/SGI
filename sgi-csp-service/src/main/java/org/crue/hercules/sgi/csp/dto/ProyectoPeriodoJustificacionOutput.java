@@ -19,7 +19,8 @@ import lombok.NoArgsConstructor;
 public class ProyectoPeriodoJustificacionOutput implements Serializable {
   private Long id;
 
-  private Proyecto proyecto;
+  private Long proyectoId;
+  private Integer numPeriodo;
   private Instant fechaInicio;
   private Instant fechaFin;
   private Instant fechaInicioPresentacion;
@@ -27,13 +28,6 @@ public class ProyectoPeriodoJustificacionOutput implements Serializable {
   private TipoJustificacion tipoJustificacion;
   private String observaciones;
   private Long convocatoriaPeriodoJustificacionId;
-
-  @Data
-  @EqualsAndHashCode(callSuper = false)
-  @NoArgsConstructor
-  @AllArgsConstructor
-  @Builder
-  public static class Proyecto implements Serializable {
-    private Long id;
-  }
+  private Instant fechaPresentacionJustificacion;
+  private String identificadorJustificacion;
 }

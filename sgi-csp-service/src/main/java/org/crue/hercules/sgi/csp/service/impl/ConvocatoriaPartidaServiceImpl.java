@@ -65,9 +65,6 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
         "Id Convocatoria no puede ser null para crear ConvocatoriaPartida");
     this.validate(convocatoriaPartida);
 
-    // TODO Incluir restricción de convocatorias asociadas a proyectos con
-    // presupuesto
-
     ConvocatoriaPartida returnValue = repository.save(convocatoriaPartida);
 
     log.debug("create(ConvocatoriaPartida convocatoriaPartida) - end");
@@ -112,10 +109,9 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
 
     Assert.notNull(id, "ConvocatoriaPartida id no puede ser null para eliminar un ConvocatoriaPartida");
 
-    repository.findById(id).map(convocatoriaPartida ->
-    // TODO Incluir restricción de convocatorias asociadas a proyectos con
-    // presupuesto
-    convocatoriaPartida).orElseThrow(() -> new ConvocatoriaPartidaNotFoundException(id));
+    if (!repository.existsById(id)) {
+      throw new ConvocatoriaPartidaNotFoundException(id);
+    }
 
     repository.deleteById(id);
     log.debug("delete(Long id) - end");

@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  */
 
 @WebMvcTest(ModeloTipoHitoController.class)
-public class ModeloTipoHitoControllerTest extends BaseControllerTest {
+class ModeloTipoHitoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ModeloTipoHitoService service;
@@ -35,7 +35,7 @@ public class ModeloTipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void create_ReturnsModeloTipoHito() throws Exception {
+  void create_ReturnsModeloTipoHito() throws Exception {
     // given: new ModeloTipoHito
     ModeloTipoHito data = generarModeloTipoHito(null, 1L, 1L);
 
@@ -69,7 +69,7 @@ public class ModeloTipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-C", "CSP-ME-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ModeloTipoHito with id filled
     ModeloTipoHito data = generarModeloTipoHito(1L, 1L, 1L);
 
@@ -87,7 +87,7 @@ public class ModeloTipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
-  public void update_ReturnsModeloTipoHito() throws Exception {
+  void update_ReturnsModeloTipoHito() throws Exception {
     // given: Existing ModeloTipoHito to be updated
     ModeloTipoHito modeloTipoHitoExistente = generarModeloTipoHito(1L, 1L, 1L);
     ModeloTipoHito modeloTipoHito = generarModeloTipoHito(1L, 1L, 1L);
@@ -125,7 +125,7 @@ public class ModeloTipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     ModeloTipoHito modeloTipoHito = generarModeloTipoHito(null, 1L, 1L);
@@ -146,7 +146,7 @@ public class ModeloTipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     ModeloTipoHito data = generarModeloTipoHito(1L, 1L, 1L);
     BDDMockito.given(service.disable(ArgumentMatchers.<Long>any())).willReturn(data);
@@ -162,7 +162,7 @@ public class ModeloTipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
-  public void delete_NoExistingId_Return404() throws Exception {
+  void delete_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -181,7 +181,7 @@ public class ModeloTipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsModeloTipoHito() throws Exception {
+  void findById_WithExistingId_ReturnsModeloTipoHito() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer(new Answer<ModeloTipoHito>() {
       @Override
@@ -204,7 +204,7 @@ public class ModeloTipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ModeloTipoHitoNotFoundException(1L);

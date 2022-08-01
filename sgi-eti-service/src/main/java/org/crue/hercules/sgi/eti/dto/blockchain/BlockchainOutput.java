@@ -1,0 +1,26 @@
+package org.crue.hercules.sgi.eti.dto.blockchain;
+
+import java.io.Serializable;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+/**
+ * This DTO represent a configuration value returned by HTTP response.
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
+@AllArgsConstructor
+public class BlockchainOutput implements Serializable {
+  /** Serial version */
+  private static final long serialVersionUID = 1L;
+
+  /** Name */
+  private String status;
+  /** Description */
+  private String tx;
+
+}

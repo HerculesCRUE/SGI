@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.pii.validation;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.validation.ConstraintValidator;
@@ -35,21 +36,22 @@ public class ValidPeriodoTitularidadValidator
     Optional<PeriodoTitularidad> titularidadActivaOptional = this.repository
         .findByInvencionIdAndFechaFinIsNull(value.getInvencionId());
 
-    if (titularidadActivaOptional.isPresent() && titularidadActivaOptional.get().getId() != value.getId()) {
+    if (titularidadActivaOptional.isPresent()
+        && !Objects.equals(titularidadActivaOptional.get().getId(), value.getId())) {
       return returnValue(context, false);
     }
 
     Optional<PeriodoTitularidad> titularidadPosterior = this.repository
         .findByInvencionIdAndFechaFinGreaterThanEqual(value.getInvencionId(), value.getFechaInicio());
-    if (titularidadPosterior.isPresent() && titularidadPosterior.get().getId() != value.getId()) {
-      return returnValue(context, false);
-    }
 
-    return returnValue(context, true);
+    boolean condition = !(titularidadPosterior.isPresent()
+        && !Objects.equals(titularidadPosterior.get().getId(), value.getId()));
+
+    return returnValue(context, condition);
   }
 
   private Boolean returnValue(ConstraintValidatorContext context, Boolean result) {
-    if (!result) {
+    if (!result.booleanValue()) {
       addEntityMessageParameter(context);
     }
 

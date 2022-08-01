@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import { IConvocatoriaEntidadConvocante } from '@core/models/csp/convocatoria-entidad-convocante';
 import { IConvocatoriaEntidadFinanciadora } from '@core/models/csp/convocatoria-entidad-financiadora';
 import { IProyectoContexto } from '@core/models/csp/proyecto-contexto';
+import { IRequisitoEquipoCategoriaProfesional } from '@core/models/csp/requisito-equipo-categoria-profesional';
+import { IRequisitoEquipoNivelAcademico } from '@core/models/csp/requisito-equipo-nivel-academico';
+import { IRequisitoIPCategoriaProfesional } from '@core/models/csp/requisito-ip-categoria-profesional';
+import { IRequisitoIPNivelAcademico } from '@core/models/csp/requisito-ip-nivel-academico';
 import { ISolicitudModalidad } from '@core/models/csp/solicitud-modalidad';
 import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
 import { ISolicitudProyectoAreaConocimiento } from '@core/models/csp/solicitud-proyecto-area-conocimiento';
@@ -9,6 +13,11 @@ import { ISolicitudProyectoEntidadFinanciadoraAjena } from '@core/models/csp/sol
 import { ISolicitudProyectoEquipo } from '@core/models/csp/solicitud-proyecto-equipo';
 import { ISolicitudProyectoResponsableEconomico } from '@core/models/csp/solicitud-proyecto-responsable-economico';
 import { ISolicitudProyectoSocio } from '@core/models/csp/solicitud-proyecto-socio';
+import { ISolicitudRrhh } from '@core/models/csp/solicitud-rrhh';
+import { ISolicitudRrhhMemoria } from '@core/models/csp/solicitud-rrhh-memoria';
+import { ISolicitudRrhhRequisitoCategoria } from '@core/models/csp/solicitud-rrhh-requisito-categoria';
+import { ISolicitudRrhhRequisitoNivelAcademico } from '@core/models/csp/solicitud-rrhh-requisito-nivel-academico';
+import { ISolicitudRrhhTutor } from '@core/models/csp/solicitud-rrhh-tutor';
 import { ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiGroupReport } from '@core/models/rep/sgi-group.report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
@@ -18,7 +27,7 @@ import { ReportService } from '@core/services/rep/report.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of, zip } from 'rxjs';
+import { concat, Observable, of, zip } from 'rxjs';
 import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
 import { SolicitudEntidadConvocanteListadoExportService } from './solicitud-entidad-convocante-listado-export.service';
 import { SolicitudDatosGenerales } from './solicitud-formulario/solicitud-datos-generales/solicitud-datos-generales.fragment';
@@ -32,6 +41,7 @@ import { SolicitudProyectoEquipoListadoExportService } from './solicitud-proyect
 import { SolicitudProyectoFichaGeneralListadoExportService } from './solicitud-proyecto-ficha-general-listado-export.service';
 import { SolicitudProyectoResponsableEconomicoListadoExportService } from './solicitud-proyecto-responsable-economico-listado-export.service';
 import { SolicitudProyectoSocioListadoExportService } from './solicitud-proyecto-socio-listado-export.service';
+import { SolicitudRrhhListadoExportService } from './solicitud-rrhh-listado-export.service';
 
 
 export interface ISolicitudReportData extends ISolicitudListadoData {
@@ -47,6 +57,15 @@ export interface ISolicitudReportData extends ISolicitudListadoData {
   entidadesFinanciadoras?: ISolicitudProyectoEntidadFinanciadoraAjena[];
   entidadesFinanciadorasConvocatoria?: IConvocatoriaEntidadFinanciadora[];
   modalidades?: ISolicitudModalidad[];
+  solicitudRrhh?: ISolicitudRrhh;
+  solicitudRrhhTutor: ISolicitudRrhhTutor;
+  solicitudRrhhMemoria: ISolicitudRrhhMemoria;
+  requisitosSolicitanteNivelAcademico: IRequisitoIPNivelAcademico[];
+  requisitosSolicitanteCategoriaProfesional: IRequisitoIPCategoriaProfesional[];
+  requisitosTutorNivelAcademico: IRequisitoEquipoNivelAcademico[];
+  requisitosTutorCategoriaProfesional: IRequisitoEquipoCategoriaProfesional[];
+  requisitosAcreditadosNivelAcademico: ISolicitudRrhhRequisitoNivelAcademico[];
+  requisitosAcreditadosCategoriaProfesional: ISolicitudRrhhRequisitoCategoria[];
 }
 
 export interface ISolicitudReportOptions extends IReportOptions {
@@ -58,6 +77,7 @@ export interface ISolicitudReportOptions extends IReportOptions {
   showSolicitudProyectoResponsableEconomico: boolean;
   showSolicitudProyectoSocios: boolean;
   showSolicitudProyectoEntidadesFinanciadoras: boolean;
+  showSolicitudRrhh: boolean;
 }
 
 @Injectable()
@@ -77,7 +97,8 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
     private readonly solicitudProyectoEquipoListadoExportService: SolicitudProyectoEquipoListadoExportService,
     private readonly solicitudProyectoResponsableEconomicoListadoExportService: SolicitudProyectoResponsableEconomicoListadoExportService,
     private readonly solicitudProyectoSocioListadoExportService: SolicitudProyectoSocioListadoExportService,
-    private readonly solicitudProyectoEntidadFinanciadoraListadoExportService: SolicitudProyectoEntidadFinanciadoraListadoExportService
+    private readonly solicitudProyectoEntidadFinanciadoraListadoExportService: SolicitudProyectoEntidadFinanciadoraListadoExportService,
+    private readonly solicitudRrhhListadoExportService: SolicitudRrhhListadoExportService
   ) {
     super(reportService);
   }
@@ -127,6 +148,9 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
         if (reportConfig.reportOptions?.showSolicitudProyectoEntidadesFinanciadoras) {
           row.elements.push(...this.solicitudProyectoEntidadFinanciadoraListadoExportService.fillRows(solicitudes, index, reportConfig));
         }
+        if (reportConfig.reportOptions?.showSolicitudRrhh) {
+          row.elements.push(...this.solicitudRrhhListadoExportService.fillRows(solicitudes, index, reportConfig));
+        }
         return row;
       })
     );
@@ -160,7 +184,7 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
   }
 
   private getDataReportInner(solicitudData: ISolicitudReportData, reportOptions: ISolicitudReportOptions): Observable<ISolicitudReportData> {
-    return merge(
+    return concat(
       this.getDataReportListadoGeneral(solicitudData),
       this.getDataReportEntidadesConvocantes(solicitudData, reportOptions),
       this.getDataReportSolicitudProyectoFichaGeneral(solicitudData, reportOptions),
@@ -170,7 +194,8 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
       this.getDataReportSolicitudProyectoResponsableEconomico(solicitudData, reportOptions),
       this.getDataReportSolicitudProyectoSocio(solicitudData, reportOptions),
       this.getDataReportSolicitudProyectoEntidadFinanciadora(solicitudData, reportOptions),
-      this.getDataReportSolicitudProyectoEntidadFinanciadoraConv(solicitudData, reportOptions)
+      this.getDataReportSolicitudProyectoEntidadFinanciadoraConv(solicitudData, reportOptions),
+      this.getDataReportSolicitudRrhh(solicitudData, reportOptions)
     ).pipe(
       takeLast(1),
       catchError((err) => {
@@ -294,6 +319,18 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
     }
   }
 
+  private getDataReportSolicitudRrhh(
+    solicitudData: ISolicitudReportData,
+    reportOptions: ISolicitudReportOptions
+  ): Observable<ISolicitudReportData> {
+    if (reportOptions?.showSolicitudRrhh) {
+      return this.solicitudRrhhListadoExportService.getData(solicitudData)
+        .pipe(tap({ error: (err) => this.logger.error(err) }));
+    } else {
+      return of(solicitudData);
+    }
+  }
+
   protected getColumns(resultados: ISolicitudReportData[], reportConfig: IReportConfig<ISolicitudReportOptions>):
     Observable<ISgiColumnReport[]> {
     const columns: ISgiColumnReport[] = [];
@@ -323,6 +360,9 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
     }
     if (reportConfig.reportOptions?.showSolicitudProyectoEntidadesFinanciadoras) {
       columns.push(... this.solicitudProyectoEntidadFinanciadoraListadoExportService.fillColumns(resultados, reportConfig));
+    }
+    if (reportConfig.reportOptions?.showSolicitudRrhh) {
+      columns.push(... this.solicitudRrhhListadoExportService.fillColumns(resultados, reportConfig));
     }
     return of(columns);
   }

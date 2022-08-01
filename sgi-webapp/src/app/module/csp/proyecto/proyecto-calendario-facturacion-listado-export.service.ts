@@ -68,7 +68,7 @@ export class ProyectoCalendarioFacturacionListadoExportService
         return from(responseCalendarioFacturacion).pipe(
           mergeMap((proyectoCalendarioFacturacion) => {
             return this.getNumeroFacturaEmitida(proyectoCalendarioFacturacion);
-          }),
+          }, this.DEFAULT_CONCURRENT),
           map(() => responseCalendarioFacturacion)
         );
       }),

@@ -42,8 +42,7 @@ public class GrupoConverter {
   }
 
   public GrupoOutput convert(Grupo entity) {
-    GrupoOutput grupoOutput = modelMapper.map(entity, GrupoOutput.class);
-    return grupoOutput;
+    return modelMapper.map(entity, GrupoOutput.class);
   }
 
   public Page<GrupoOutput> convert(Page<Grupo> page) {

@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.pii.dto;
 
-import java.time.LocalDate;
+import java.time.Instant;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class InvencionDocumentoOutput {
 
   private Long id;
-  private LocalDate fechaAnadido;
+  private Instant fechaAnadido;
   private String nombre;
   private String documentoRef;
   private Long invencionId;

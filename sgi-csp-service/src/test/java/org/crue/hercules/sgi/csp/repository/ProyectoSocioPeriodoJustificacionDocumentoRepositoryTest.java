@@ -16,13 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ProyectoSocioPeriodoJustificacionDocumentoRepositoryTest extends BaseRepositoryTest {
+class ProyectoSocioPeriodoJustificacionDocumentoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ProyectoSocioPeriodoJustificacionDocumentoRepository repository;
 
   @Test
-  public void findAllByProyectoSocioPeriodoJustificacionId_ReturnsSocioPeriodoJustificacionDocuemnto()
+  void findAllByProyectoSocioPeriodoJustificacionId_ReturnsSocioPeriodoJustificacionDocuemnto()
       throws Exception {
 
     // given: 1 ProyectoSocioPeriodoJustificacionDocumento para el
@@ -88,7 +88,7 @@ public class ProyectoSocioPeriodoJustificacionDocumentoRepositoryTest extends Ba
     // then: Se recuperan los ProyectoSocioPeriodoJustificacion con el
     // ProyectoSocioId
     // buscado
-    Assertions.assertThat(dataFound.size()).isEqualTo(1);
+    Assertions.assertThat(dataFound).hasSize(1);
     Assertions.assertThat(dataFound.get(0).getId()).isEqualTo(proyectoSocioPeriodoJustificacionDocumento1.getId());
     Assertions.assertThat(dataFound.get(0).getProyectoSocioPeriodoJustificacionId())
         .isEqualTo(proyectoSocioPeriodoJustificacionDocumento1.getProyectoSocioPeriodoJustificacionId());

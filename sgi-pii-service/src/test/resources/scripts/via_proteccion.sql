@@ -3,6 +3,7 @@ INSERT INTO test.via_proteccion (id, activo, nombre, descripcion, tipo_propiedad
 VALUES 
 (1, TRUE, 'nombre-via-proteccion-001','descripion-via-proteccion-001', 'INDUSTRIAL', 1, FALSE, FALSE, FALSE),
 (2, TRUE, 'nombre-via-proteccion-002','descricion-via-proteccion-002', 'INDUSTRIAL', 1, FALSE, FALSE, FALSE),
-(3, FALSE, 'nombre-via-proteccion-003','descricion-via-proteccion-003', 'INDUSTRIAL', 1, FALSE, FALSE, FALSE);
+(3, FALSE, 'nombre-via-proteccion-003','descricion-via-proteccion-003', 'INDUSTRIAL', 1, FALSE, FALSE, FALSE),
+(4, TRUE, 'nombre-via-proteccion-004','descricion-via-proteccion-004', 'INDUSTRIAL', 1, FALSE, FALSE, FALSE);
 
-ALTER SEQUENCE test.via_proteccion_seq RESTART WITH 4;
+ALTER SEQUENCE test.via_proteccion_seq RESTART WITH 5;

@@ -22,13 +22,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
 @DataJpaTest
-public class ConvocatoriaFaseRepositoryTest extends BaseRepositoryTest {
+class ConvocatoriaFaseRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ConvocatoriaFaseRepository repository;
 
   @Test
-  public void existsConvocatoriaFaseConFechasSolapadas_WithLasDosFechasSolapadas_ReturnsConvocatoriaFase()
+  void existsConvocatoriaFaseConFechasSolapadas_WithLasDosFechasSolapadas_ReturnsConvocatoriaFase()
       throws Exception {
 
     // given: 2 ConvocatoriaFase de los que coinciden en el
@@ -61,7 +61,7 @@ public class ConvocatoriaFaseRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void existsConvocatoriaFaseConFechasSolapadas_WithNingunaFechaSolapada_NoReturnsConvocatoriaFase()
+  void existsConvocatoriaFaseConFechasSolapadas_WithNingunaFechaSolapada_NoReturnsConvocatoriaFase()
       throws Exception {
 
     // given: 2 ConvocatoriaFase de los que coinciden en el
@@ -94,7 +94,7 @@ public class ConvocatoriaFaseRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void existsConvocatoriaFaseConFechasSolapadas_WithFechaInicioSolapada_ReturnsConvocatoriaFase()
+  void existsConvocatoriaFaseConFechasSolapadas_WithFechaInicioSolapada_ReturnsConvocatoriaFase()
       throws Exception {
 
     // given: 2 ConvocatoriaFase de los que coinciden en el
@@ -127,7 +127,7 @@ public class ConvocatoriaFaseRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void existsConvocatoriaFaseConFechasSolapadas_WithFechaFinSolapada_ReturnsConvocatoriaFase() throws Exception {
+  void existsConvocatoriaFaseConFechasSolapadas_WithFechaFinSolapada_ReturnsConvocatoriaFase() throws Exception {
 
     // given: 2 ConvocatoriaFase de los que coinciden en el
     // tiempo con la misma ConvocatoriaId
@@ -161,7 +161,7 @@ public class ConvocatoriaFaseRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void existsConvocatoriaFaseConFechasSolapadas_WithFechasInicioYFinSolapada_ReturnsConvocatoriaFase()
+  void existsConvocatoriaFaseConFechasSolapadas_WithFechasInicioYFinSolapada_ReturnsConvocatoriaFase()
       throws Exception {
 
     // given: 2 ConvocatoriaFase de los que coinciden en el

@@ -8,14 +8,15 @@ import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.dto.ActaWithNumEvaluaciones;
+import org.crue.hercules.sgi.eti.dto.DocumentoOutput;
 import org.crue.hercules.sgi.eti.exceptions.ActaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Acta;
 import org.crue.hercules.sgi.eti.model.Comite;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.EstadoActa;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoActa;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.ActaRepository;
 import org.crue.hercules.sgi.eti.repository.EstadoActaRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
@@ -24,6 +25,8 @@ import org.crue.hercules.sgi.eti.repository.RetrospectivaRepository;
 import org.crue.hercules.sgi.eti.repository.TipoEstadoActaRepository;
 import org.crue.hercules.sgi.eti.repository.custom.CustomActaRepository;
 import org.crue.hercules.sgi.eti.service.impl.ActaServiceImpl;
+import org.crue.hercules.sgi.eti.service.sgi.SgiApiBlockchainService;
+import org.crue.hercules.sgi.eti.service.sgi.SgiApiCnfService;
 import org.crue.hercules.sgi.eti.service.sgi.SgiApiRepService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +36,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -67,6 +71,10 @@ public class ActaServiceTest extends BaseServiceTest {
   private SgdocService sgdocService;
   @Mock
   private ComunicadosService comunicadosService;
+  @Mock
+  private SgiApiCnfService configService;
+  @Mock
+  private SgiApiBlockchainService blockchainService;
 
   private ActaService actaService;
   private MemoriaService memoriaService;
@@ -75,7 +83,7 @@ public class ActaServiceTest extends BaseServiceTest {
   public void setUp() throws Exception {
     actaService = new ActaServiceImpl(actaRepository, estadoActaRepository, tipoEstadoActaRepository,
         evaluacionRepository, retrospectivaRepository, memoriaService, retrospectivaService, reportService,
-        sgdocService, comunicadosService);
+        sgdocService, comunicadosService, configService, blockchainService);
   }
 
   @Test
@@ -304,6 +312,13 @@ public class ActaServiceTest extends BaseServiceTest {
     Acta acta = generarMockActa(1L, 123);
 
     BDDMockito.given(actaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(acta));
+
+    BDDMockito.given(reportService.getInformeActa(ArgumentMatchers.anyLong()))
+        .willReturn(new FileSystemResource("path"));
+
+    BDDMockito.given(sgdocService
+        .uploadInforme(ArgumentMatchers.anyString(), ArgumentMatchers.<FileSystemResource>any()))
+        .willReturn(new DocumentoOutput());
 
     BDDMockito
         .given(evaluacionRepository.findByActivoTrueAndTipoEvaluacionIdAndEsRevMinimaAndConvocatoriaReunionId(

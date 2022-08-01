@@ -101,7 +101,7 @@ class GrupoEquipoIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @ParameterizedTest
   @CsvSource({ "2, 2021" })
-  public void findByGrupoIdAndAnio_ok(Long grupoRef, Integer anio)
+  void findByGrupoIdAndAnio_ok(Long grupoRef, Integer anio)
       throws Exception {
     String roles = "CSP-PRO-PRC-V";
 
@@ -153,7 +153,7 @@ class GrupoEquipoIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @ParameterizedTest
   @CsvSource({ "2, 2023" })
-  public void findByGrupoIdAndAnio_ko(Long grupoRef, Integer anio)
+  void findByGrupoIdAndAnio_ko(Long grupoRef, Integer anio)
       throws Exception {
     String roles = "CSP-PRO-PRC-V";
 

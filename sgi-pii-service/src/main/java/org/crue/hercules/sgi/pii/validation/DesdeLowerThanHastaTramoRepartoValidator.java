@@ -26,7 +26,7 @@ public class DesdeLowerThanHastaTramoRepartoValidator
     if (value.getTipo() == Tipo.FINAL) {
       return true;
     }
-    if (value == null || value.getDesde() == null || value.getHasta() == null) {
+    if (value.getDesde() == null || value.getHasta() == null) {
       return false;
     }
 

@@ -9,5 +9,7 @@ public enum FormularioSolicitud {
   /** Proyecto */
   PROYECTO,
   /** Grupo */
-  GRUPO
+  GRUPO,
+  /** RRHH */
+  RRHH
 }

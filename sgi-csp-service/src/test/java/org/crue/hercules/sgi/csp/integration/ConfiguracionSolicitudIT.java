@@ -128,7 +128,7 @@ class ConfiguracionSolicitudIT extends BaseIT {
         .isEqualTo(new BigDecimal("54321.00"));
 
   }
-  
+
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
@@ -171,7 +171,7 @@ class ConfiguracionSolicitudIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     final List<DocumentoRequeridoSolicitud> documentos = response.getBody();
-    Assertions.assertThat(documentos.size()).isEqualTo(3);
+    Assertions.assertThat(documentos).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
@@ -184,7 +184,7 @@ class ConfiguracionSolicitudIT extends BaseIT {
         .isEqualTo("observaciones-" + String.format("%03d", 6));
 
   }
-  
+
   @Test
   void findAllDocumentoRequeridoSolicitud_WithPagingSortingAndFiltering_ReturnsStatusCode204()
       throws Exception {
@@ -211,7 +211,8 @@ class ConfiguracionSolicitudIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  void findAllTipoDocumentosFasePresentacion_WithPagingSortingAndFiltering_ReturnsNoContentStatusCode() throws Exception {
+  void findAllTipoDocumentosFasePresentacion_WithPagingSortingAndFiltering_ReturnsNoContentStatusCode()
+      throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-SOL-V")));
     headers.add("X-Page", "0");
@@ -221,7 +222,8 @@ class ConfiguracionSolicitudIT extends BaseIT {
 
     Long convocatoriaId = 1L;
 
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_TIPO_DOCUMENTO_FASE_PRESENTACIONES)
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_TIPO_DOCUMENTO_FASE_PRESENTACIONES)
         .queryParam("s", sort).queryParam("q", filter).buildAndExpand(convocatoriaId).toUri();
 
     final ResponseEntity<List<TipoDocumento>> response = restTemplate.exchange(uri, HttpMethod.GET,

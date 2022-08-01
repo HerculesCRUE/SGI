@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.service.impl;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaEntidadConvocanteNotFoundException;
@@ -143,10 +144,8 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
       repository
           .findByConvocatoriaIdAndEntidadRef(convocatoriaEntidadConvocanteActualizar.getConvocatoriaId(),
               convocatoriaEntidadConvocanteActualizar.getEntidadRef())
-          .ifPresent(convocatoriaR -> {
-            Assert.isTrue(convocatoriaEntidadConvocante.getId().equals(convocatoriaR.getId()),
-                "Ya existe una asociación activa para esa Convocatoria y Entidad");
-          });
+          .ifPresent(convocatoriaR -> Assert.isTrue(convocatoriaEntidadConvocante.getId().equals(convocatoriaR.getId()),
+              "Ya existe una asociación activa para esa Convocatoria y Entidad"));
 
       if (convocatoriaEntidadConvocanteActualizar.getPrograma() != null) {
         if (convocatoriaEntidadConvocanteActualizar.getPrograma().getId() == null) {
@@ -182,16 +181,16 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
     Assert.notNull(id,
         "ConvocatoriaEntidadConvocante id no puede ser null para desactivar un ConvocatoriaEntidadConvocante");
 
-    repository.findById(id).map(convocatoriaEntidadConvocante -> {
-
+    Optional<ConvocatoriaEntidadConvocante> entidadConvocante = repository.findById(id);
+    if (entidadConvocante.isPresent()) {
       // comprobar si convocatoria es modificable
       Assert.isTrue(
-          convocatoriaService.isRegistradaConSolicitudesOProyectos(convocatoriaEntidadConvocante.getConvocatoriaId(),
+          convocatoriaService.isRegistradaConSolicitudesOProyectos(entidadConvocante.get().getConvocatoriaId(),
               null, new String[] { "CSP-CON-E" }),
           "No se puede eliminar ConvocatoriaEntidadConvocante. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
-
-      return convocatoriaEntidadConvocante;
-    }).orElseThrow(() -> new ConvocatoriaEntidadConvocanteNotFoundException(id));
+    } else {
+      throw new ConvocatoriaEntidadConvocanteNotFoundException(id);
+    }
 
     repository.deleteById(id);
     log.debug("delete(Long id) - end");
@@ -250,7 +249,7 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
   /**
    * Obtiene las {@link ConvocatoriaEntidadConvocante} de la {@link Convocatoria}
    * para una {@link Solicitud} si el usuario que realiza la peticion es el
-   * solicitante de la {@link Solicitud}.
+   * solicitante o el tutor de la {@link Solicitud}.
    *
    * @param solicitudId el id de la {@link Convocatoria}.
    * @param pageable    la información de la paginación.
@@ -258,14 +257,15 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
    *         {@link Convocatoria} paginadas.
    */
   @Override
-  public Page<ConvocatoriaEntidadConvocante> findAllBySolicitudAndUserIsSolicitante(Long solicitudId,
+  public Page<ConvocatoriaEntidadConvocante> findAllBySolicitudAndUserIsSolicitanteOrTutor(Long solicitudId,
       Pageable pageable) {
-    log.debug("findAllBySolicitudAndUserIsSolicitante(Long solicitudId, Pageable pageable) - start");
+    log.debug("findAllBySolicitudAndUserIsSolicitanteOrTutor(Long solicitudId, Pageable pageable) - start");
 
     String personaRef = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    Solicitud solicitud = solicitudRepository.findOne(SolicitudSpecifications.bySolicitante(personaRef).and(
-        SolicitudSpecifications.byId(solicitudId)))
+    Solicitud solicitud = solicitudRepository
+        .findOne(
+            SolicitudSpecifications.bySolicitanteOrTutor(personaRef).and(SolicitudSpecifications.byId(solicitudId)))
         .orElseThrow(UserNotAuthorizedToAccessSolicitudException::new);
 
     if (Objects.isNull(solicitud.getConvocatoriaId())) {
@@ -276,7 +276,7 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
         .byConvocatoriaId(solicitud.getConvocatoriaId());
 
     Page<ConvocatoriaEntidadConvocante> returnValue = repository.findAll(specs, pageable);
-    log.debug("findAllBySolicitudAndUserIsSolicitante(Long solicitudId, Pageable pageable) - end");
+    log.debug("findAllBySolicitudAndUserIsSolicitanteOrTutor(Long solicitudId, Pageable pageable) - end");
     return returnValue;
   }
 

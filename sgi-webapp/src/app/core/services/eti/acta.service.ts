@@ -73,4 +73,15 @@ export class ActaService extends SgiMutableRestService<number, IActaBackend, IAc
     );
   }
 
+  /**
+   * Comprueba si el registro blockchain ha sido confirmado correctamente o ha sido alterado
+   * @param id Id del Acta
+   */
+  isRegistroBlockchainConfirmado(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/confirmar-registro-blockchain`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(x => x.status === 200)
+    );
+  }
+
 }

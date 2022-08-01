@@ -14,6 +14,7 @@ import javax.validation.Validator;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
+import org.crue.hercules.sgi.csp.dto.ProyectoSeguimientoEjecucionEconomica;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
@@ -22,6 +23,7 @@ import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.Proyecto.CausaExencion;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoIVA;
+import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoCodigoEcRepository;
@@ -77,7 +79,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 /**
  * ProyectoServiceTest
  */
-public class ProyectoServiceTest extends BaseServiceTest {
+class ProyectoServiceTest extends BaseServiceTest {
 
   @Mock
   private ProyectoRepository repository;
@@ -187,7 +189,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
   private ProyectoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     proyectoHelper = new ProyectoHelper(proyectoEquipoRepository, proyectoResponsableEconomicoRepository);
     service = new ProyectoServiceImpl(sgiConfigProperties, repository, estadoProyectoRepository, modeloUnidadRepository,
         convocatoriaRepository, convocatoriaEntidadFinanciadoraRepository, proyectoEntidadFinanciadoraService,
@@ -540,9 +542,6 @@ public class ProyectoServiceTest extends BaseServiceTest {
     modeloUnidad.setUnidadGestionRef(proyecto.getUnidadGestionRef());
     modeloUnidad.setActivo(true);
 
-    BDDMockito.given(modeloUnidadRepository.findByModeloEjecucionIdAndUnidadGestionRef(ArgumentMatchers.anyLong(),
-        ArgumentMatchers.anyString())).willReturn(Optional.of(modeloUnidad));
-
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(proyecto));
 
     Assertions.assertThatThrownBy(() -> service.update(proyectoObservacionesActualizadas))
@@ -637,12 +636,13 @@ public class ProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  @WithMockUser(authorities = { "CSP-PRO-C_2" })
-  public void update_WithConvocatoriaNotExists_ThrowsIllegalArgumentException() {
+  @WithMockUser(authorities = { "CSP-PRO-E_2" })
+  void update_WithConvocatoriaNotExists_ThrowsIllegalArgumentException() {
     // given: Actualizar proyecto
     Proyecto proyecto = generarMockProyecto(1L);
     proyecto.setConvocatoriaId(1L);
 
+    BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(proyecto));
     BDDMockito.given(convocatoriaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.FALSE);
 
     // when: Actualizamos el Proyecto
@@ -652,14 +652,12 @@ public class ProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  @WithMockUser(authorities = { "CSP-PRO-C_UGI" })
-  public void update_WithoutUnidadGestion_ThrowsIllegalArgumentException() {
+  @WithMockUser(authorities = { "CSP-PRO-E_3" })
+  void update_WithoutUnidadGestion_ThrowsIllegalArgumentException() {
     // given: Actualizar Proyecto
     Proyecto proyecto = generarMockProyecto(1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(proyecto));
-    BDDMockito.given(modeloUnidadRepository.findByModeloEjecucionIdAndUnidadGestionRef(ArgumentMatchers.anyLong(),
-        ArgumentMatchers.anyString())).willReturn(Optional.of(new ModeloUnidad()));
 
     // when: Actualizamos el Proyecto
     // then: Lanza una excepcion
@@ -668,11 +666,12 @@ public class ProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  @WithMockUser(authorities = { "CSP-PRO-C_2" })
-  public void update_WithoutModeloUnidad_ThrowsIllegalArgumentException() {
+  @WithMockUser(authorities = { "CSP-PRO-E_2" })
+  void update_WithoutModeloUnidad_ThrowsIllegalArgumentException() {
     // given: Actualizar Proyecto
     Proyecto proyecto = generarMockProyecto(1L);
 
+    BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(proyecto));
     BDDMockito.given(modeloUnidadRepository.findByModeloEjecucionIdAndUnidadGestionRef(ArgumentMatchers.anyLong(),
         ArgumentMatchers.anyString())).willReturn(Optional.empty());
 
@@ -685,7 +684,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-E_2" })
-  public void update_WithDistinctConvocatoria_ThrowsIllegalArgumentException() {
+  void update_WithDistinctConvocatoria_ThrowsIllegalArgumentException() {
     // given: Actualizar Proyecto
     Proyecto proyecto = generarMockProyecto(1L);
     proyecto.setConvocatoriaId(1L);
@@ -698,8 +697,6 @@ public class ProyectoServiceTest extends BaseServiceTest {
     modeloUnidad.setUnidadGestionRef(proyecto.getUnidadGestionRef());
     modeloUnidad.setActivo(true);
 
-    BDDMockito.given(modeloUnidadRepository.findByModeloEjecucionIdAndUnidadGestionRef(ArgumentMatchers.anyLong(),
-        ArgumentMatchers.anyString())).willReturn(Optional.of(modeloUnidad));
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(proyecto));
 
     // then: Lanza una excepcion porque no se puede modificar la convocatoria del
@@ -711,7 +708,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-R_2" })
-  public void enable_ReturnsProyecto() {
+  void enable_ReturnsProyecto() {
     // given: Un nuevo Proyecto inactivo
     Proyecto proyecto = generarMockProyecto(1L);
     proyecto.setActivo(false);
@@ -732,7 +729,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_2" })
-  public void enable_WithIdNotExist_ThrowsProyectoNotFoundException() {
+  void enable_WithIdNotExist_ThrowsProyectoNotFoundException() {
     // given: Un id de un Proyecto que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -743,7 +740,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-B_2" })
-  public void disable_ReturnsProyecto() {
+  void disable_ReturnsProyecto() {
     // given: Un Proyecto activo
     Proyecto proyecto = generarMockProyecto(1L);
 
@@ -763,7 +760,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_2" })
-  public void disable_WithIdNotExist_ThrowsProyectoNotFoundException() {
+  void disable_WithIdNotExist_ThrowsProyectoNotFoundException() {
     // given: Un id de un Proyecto que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -774,7 +771,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-E_2" })
-  public void findById_ReturnsProyecto() {
+  void findById_ReturnsProyecto() {
     // given: Un Proyecto con el id buscado
     Long idBuscado = 1L;
     Proyecto proyectoBuscada = generarMockProyecto(idBuscado);
@@ -794,7 +791,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_2" })
-  public void findById_WithIdNotExist_ThrowsProyectoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsProyectoNotFoundException() throws Exception {
     // given: Ningun Proyecto con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -806,7 +803,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_2" })
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 Proyecto
     List<Proyecto> proyectos = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -835,7 +832,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
     Page<Proyecto> page = service.findAllRestringidos(null, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -876,7 +873,7 @@ public class ProyectoServiceTest extends BaseServiceTest {
     Page<Proyecto> page = service.findAllTodosRestringidos(null, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -903,6 +900,52 @@ public class ProyectoServiceTest extends BaseServiceTest {
 
     Assertions.assertThat(pageResult).isNotNull();
     Assertions.assertThat(pageResult.getContent()).isEqualTo(proyectos);
+  }
+
+  @Test
+  @WithMockUser(authorities = { "CSP-SJUS-V" })
+  void findProyectosSeguimientoEjecucionEconomica_ReturnsPage() {
+    // given: Una lista de ProyectoSeguimientoEjecucionEconomica
+    String proyectoSgeRef = "1";
+    List<ProyectoSeguimientoEjecucionEconomica> proyectos = new ArrayList<>();
+    for (long i = 1; i <= 37; i++) {
+      proyectos.add(generarMockProyectoSeguimientoEjecucionEconomica(i, "Proyecto-" + String.format("%03d", i)));
+    }
+
+    BDDMockito
+        .given(proyectoProyectoSgeRepository.findProyectosSeguimientoEjecucionEconomica(
+            ArgumentMatchers.<Specification<ProyectoProyectoSge>>any(), ArgumentMatchers.<Pageable>any()))
+        .willAnswer(new Answer<Page<ProyectoSeguimientoEjecucionEconomica>>() {
+          @Override
+          public Page<ProyectoSeguimientoEjecucionEconomica> answer(InvocationOnMock invocation) throws Throwable {
+            Pageable pageable = invocation.getArgument(1, Pageable.class);
+            int size = pageable.getPageSize();
+            int index = pageable.getPageNumber();
+            int fromIndex = size * index;
+            int toIndex = fromIndex + size;
+            toIndex = toIndex > proyectos.size() ? proyectos.size() : toIndex;
+            List<ProyectoSeguimientoEjecucionEconomica> content = proyectos.subList(fromIndex, toIndex);
+            Page<ProyectoSeguimientoEjecucionEconomica> page = new PageImpl<>(content, pageable, proyectos.size());
+            return page;
+          }
+        });
+
+    // when: Get page=3 with pagesize=10
+    Pageable paging = PageRequest.of(3, 10);
+    Page<ProyectoSeguimientoEjecucionEconomica> page = service
+        .findProyectosSeguimientoEjecucionEconomica(proyectoSgeRef, null, paging);
+
+    // then: Devuelve la pagina 3 con los ProyectoSeguimientoEjecucionEconomica del
+    // 31 al 37
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
+    Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
+    Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
+    Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
+    for (int i = 31; i <= 37; i++) {
+      ProyectoSeguimientoEjecucionEconomica proyecto = page.getContent()
+          .get(i - (page.getSize() * page.getNumber()) - 1);
+      Assertions.assertThat(proyecto.getNombre()).isEqualTo("Proyecto-" + String.format("%03d", i));
+    }
   }
 
   /**
@@ -977,4 +1020,11 @@ public class ProyectoServiceTest extends BaseServiceTest {
         .build();
   }
 
+  private ProyectoSeguimientoEjecucionEconomica generarMockProyectoSeguimientoEjecucionEconomica(Long id,
+      String nombre) {
+    return ProyectoSeguimientoEjecucionEconomica.builder()
+        .id(id)
+        .nombre(nombre)
+        .build();
+  }
 }

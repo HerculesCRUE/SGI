@@ -42,7 +42,7 @@ class ContextoProyectoIT extends BaseIT {
       "classpath:scripts/estado_proyecto.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsContextoProyecto() throws Exception {
+  void create_ReturnsContextoProyecto() throws Exception {
 
     // given: new ContextoProyecto
     ContextoProyecto newContextoProyecto = generarMockContextoProyecto(null);
@@ -97,7 +97,7 @@ class ContextoProyectoIT extends BaseIT {
       "classpath:scripts/estado_proyecto.sql", "classpath:scripts/contexto_proyecto.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findContextoProyectoProyecto_ReturnsContextoProyecto() throws Exception {
+  void findContextoProyectoProyecto_ReturnsContextoProyecto() throws Exception {
     Long idProyecto = 1L;
 
     final ResponseEntity<ContextoProyecto> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,

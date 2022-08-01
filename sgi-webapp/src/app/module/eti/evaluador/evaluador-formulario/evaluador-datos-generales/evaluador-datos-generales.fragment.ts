@@ -20,10 +20,10 @@ export class EvaluadorDatosGeneralesFragment extends FormFragment<IEvaluador> {
 
   protected buildFormGroup(): FormGroup {
     return this.fb.group({
-      comite: [{ value: null, disabled: this.isEdit() }, new NullIdValidador().isValid()],
+      comite: [{ value: null, disabled: this.isEdit() }, Validators.required],
       fechaAlta: [null, Validators.required],
       fechaBaja: [null],
-      cargoComite: [{ value: null }, new NullIdValidador().isValid()],
+      cargoComite: [null, Validators.required],
       resumen: [''],
       persona: [{ value: null, disabled: this.isEdit() }, Validators.required]
     }, {

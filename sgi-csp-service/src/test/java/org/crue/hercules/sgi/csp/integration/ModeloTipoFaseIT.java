@@ -20,7 +20,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de ModeloTipoFase.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ModeloTipoFaseIT extends BaseIT {
+class ModeloTipoFaseIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/modelotipofases";
@@ -39,7 +39,7 @@ public class ModeloTipoFaseIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsModeloTipoFase() throws Exception {
+  void create_ReturnsModeloTipoFase() throws Exception {
 
     // given: new ModeloTipoFase
     ModeloTipoFase modeloTipoFase = generarModeloTipoFaseConTipoFaseId(null);
@@ -65,7 +65,7 @@ public class ModeloTipoFaseIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing ModeloTipoFase to be disabled
     Long id = 1L;
 
@@ -80,7 +80,7 @@ public class ModeloTipoFaseIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsModeloTipoFase() throws Exception {
+  void findById_ReturnsModeloTipoFase() throws Exception {
     Long id = 1L;
 
     final ResponseEntity<ModeloTipoFase> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -101,7 +101,7 @@ public class ModeloTipoFaseIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_WithExistingId_ReturnsModeloTipoFase() throws Exception {
+  void update_WithExistingId_ReturnsModeloTipoFase() throws Exception {
 
     // given: Entidad existente que se va a actualizar
     ModeloTipoFase modeloTipoFase = generarModeloTipoFase(1L);
@@ -114,7 +114,7 @@ public class ModeloTipoFaseIT extends BaseIT {
     ModeloTipoFase updatedModeloTipoFase = response.getBody();
     // then: Los datos se actualizan correctamente
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    Assertions.assertThat(updatedModeloTipoFase.getConvocatoria()).as("getConvocatoria()").isEqualTo(false);
+    Assertions.assertThat(updatedModeloTipoFase.getConvocatoria()).as("getConvocatoria()").isFalse();
   }
 
   /*

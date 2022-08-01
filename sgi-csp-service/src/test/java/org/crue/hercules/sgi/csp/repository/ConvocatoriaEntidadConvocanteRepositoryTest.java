@@ -11,13 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ConvocatoriaEntidadConvocanteRepositoryTest extends BaseRepositoryTest {
+class ConvocatoriaEntidadConvocanteRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ConvocatoriaEntidadConvocanteRepository repository;
 
   @Test
-  public void findByConvocatoriaIdIdAndEntidadRef_ReturnsConvocatoriaEntidadConvocante() throws Exception {
+  void findByConvocatoriaIdIdAndEntidadRef_ReturnsConvocatoriaEntidadConvocante() throws Exception {
 
     // given: 2 ConvocatoriaEntidadConvocante de los que 1 coincide con el
     // ConvocatoriaId y EntidadRef buscado
@@ -66,7 +66,7 @@ public class ConvocatoriaEntidadConvocanteRepositoryTest extends BaseRepositoryT
   }
 
   @Test
-  public void findByConvocatoriaIdIdAndEntidadRef_ReturnsNull() throws Exception {
+  void findByConvocatoriaIdIdAndEntidadRef_ReturnsNull() throws Exception {
     // given: 2 ConvocatoriaEntidadConvocante que no coincide con el ConvocatoriaId
     // y EntidadRef buscado
     // @formatter:off

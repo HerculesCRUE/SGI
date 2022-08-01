@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_NOTNULL;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -162,30 +166,29 @@ public class InvencionInventorService {
     }
 
     final List<Long> invecionInventoresId = invencionInventores.stream().filter(el -> el.getId() != null)
-        .map(el -> el.getId()).collect(Collectors.toList());
-    final Boolean allInvencionInventorIncluded = invecionInventoresId.isEmpty() ? true
+        .map(InvencionInventor::getId).collect(Collectors.toList());
+    final Boolean allInvencionInventorIncluded = invecionInventoresId.isEmpty() ? Boolean.TRUE
         : this.repository.inventoresBelongsToInvencion(invencionId, invecionInventoresId);
-    final Double totalParticipacion = invencionInventores.stream().filter(el -> el.getActivo())
+    final Double totalParticipacion = invencionInventores.stream().filter(InvencionInventor::getActivo)
         .mapToDouble(el -> el.getParticipacion().doubleValue()).sum();
 
     Assert.isTrue(allInvencionInventorIncluded,
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key("org.crue.hercules.sgi.pii.exceptions.NoRelatedEntitiesException.message")
-            .parameter("entity", ApplicationContextSupport.getMessage(Invencion.class))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Invencion.class))
             .parameter("related", ApplicationContextSupport.getMessage(InvencionInventor.class)).build());
     Assert.isTrue(totalParticipacion == 100,
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key("org.crue.hercules.sgi.pii.model.InvencionInventor.participacion.completa")
-            .parameter("entity", ApplicationContextSupport.getMessage(InvencionInventor.class)).build());
-    invencionInventores.forEach(elem -> {
-      commonEntityValidations(elem, true);
-    });
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(InvencionInventor.class))
+            .build());
+    invencionInventores.forEach(elem -> commonEntityValidations(elem, true));
 
     repository
-        .deleteInBatch(invencionInventores.stream().filter((elem) -> !elem.getActivo()).collect(Collectors.toList()));
+        .deleteInBatch(invencionInventores.stream().filter(elem -> !elem.getActivo()).collect(Collectors.toList()));
 
     List<InvencionInventor> returnValue = repository
-        .saveAll(invencionInventores.stream().filter((elem) -> elem.getActivo()).collect(Collectors.toList()));
+        .saveAll(invencionInventores.stream().filter(InvencionInventor::getActivo).collect(Collectors.toList()));
 
     log.debug("saveUpdateOrDeleteBatchMode(Long invencionId, List<InvencionInventor> invencionInventores) - end");
     return returnValue;
@@ -241,12 +244,13 @@ public class InvencionInventorService {
 
     Assert.notNull(id,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(InvencionInventor.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(InvencionInventor.class))
+            .build());
 
     return repository.findById(id).map(invencionInventor -> {
-      if (!invencionInventor.getActivo()) {
+      if (!invencionInventor.getActivo().booleanValue()) {
         // Si no esta activo no se hace nada
         return invencionInventor;
       }
@@ -264,23 +268,27 @@ public class InvencionInventorService {
       Assert.isNull(invencionInventor.getId(),
           // Defer message resolution untill is needed
           () -> ProblemMessage.builder().key(Assert.class, "isNull")
-              .parameter("field",
+              .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD,
                   ApplicationContextSupport.getMessage("org.crue.hercules.sgi.pii.model.InvencionInventor.id"))
-              .parameter("entity", ApplicationContextSupport.getMessage(InvencionInventor.class)).build());
+              .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                  ApplicationContextSupport.getMessage(InvencionInventor.class))
+              .build());
     }
     Assert.notNull(invencionInventor.getInventorRef(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field",
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD,
                 ApplicationContextSupport.getMessage("org.crue.hercules.sgi.pii.model.InvencionInventor.inventorRef"))
-            .parameter("entity", ApplicationContextSupport.getMessage(InvencionInventor.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(InvencionInventor.class))
+            .build());
 
     Assert.notNull(invencionInventor.getParticipacion(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field",
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD,
                 ApplicationContextSupport.getMessage("org.crue.hercules.sgi.pii.model.InvencionInventor.participacion"))
-            .parameter("entity", ApplicationContextSupport.getMessage(InvencionInventor.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(InvencionInventor.class))
+            .build());
   }
 
   public List<InvencionInventor> findByInvencionId(Long invencionId) {

@@ -55,7 +55,7 @@ public class TipoCaducidadController {
    */
   @GetMapping
   @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R')")
-  ResponseEntity<Page<TipoCaducidadOutput>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<TipoCaducidadOutput>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<TipoCaducidad> page = service.findAll(query, paging);
@@ -74,7 +74,7 @@ public class TipoCaducidadController {
   }
 
   private Page<TipoCaducidadOutput> convert(Page<TipoCaducidad> page) {
-    List<TipoCaducidadOutput> content = page.getContent().stream().map((sectorAplicacion) -> convert(sectorAplicacion))
+    List<TipoCaducidadOutput> content = page.getContent().stream().map(this::convert)
         .collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());

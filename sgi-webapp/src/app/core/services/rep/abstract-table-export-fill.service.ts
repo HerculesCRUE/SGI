@@ -15,6 +15,8 @@ const MSG_FALSE = marker('label.no');
 // tslint:disable-next-line: directive-class-suffix
 export abstract class AbstractTableExportFillService<T, R extends IReportOptions>  {
 
+  protected DEFAULT_CONCURRENT = 5;
+
   constructor(
     protected translate: TranslateService
   ) { }

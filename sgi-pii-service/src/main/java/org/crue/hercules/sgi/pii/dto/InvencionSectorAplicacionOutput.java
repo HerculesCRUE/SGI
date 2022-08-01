@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.pii.dto;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,9 +13,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class InvencionSectorAplicacionOutput {
+public class InvencionSectorAplicacionOutput implements Serializable {
+  /**
+  *
+  */
+  private static final long serialVersionUID = 1L;
+
   /** Id */
-  public Long id;
+  private Long id;
 
   /** Invencion Id */
   private Long invencionId;

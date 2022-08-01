@@ -39,6 +39,7 @@ public class NotificacionProyectoExternoCVNService {
 
   private final NotificacionProyectoExternoCVNRepository repository;
   private final NotificacionCVNEntidadFinanciadoraRepository notificacionCVNEntidadFinanciadoraRepository;
+  private final NotificacionProyectoExternoCVNComService notificacionProyectoExternoCVNComService;
 
   /**
    * Obtiene una entidad {@link NotificacionProyectoExternoCVN} por id.
@@ -106,6 +107,13 @@ public class NotificacionProyectoExternoCVNService {
 
     // Crea las NotificacionEntidadFinanciadora
     this.createEntidadesFianciadoras(returnValue.getId(), notificacionesEntidadFinanciadoras);
+
+    try {
+      this.notificacionProyectoExternoCVNComService
+          .enviarComunicadoRecepcionNotificacionCVNProyectoExterno(returnValue);
+    } catch (Exception ex) {
+      log.error(ex.getMessage(), ex);
+    }
 
     log.debug("create(NotificacionProyectoExternoCVN notificacionProyectoExternoCVN) - end");
     return returnValue;

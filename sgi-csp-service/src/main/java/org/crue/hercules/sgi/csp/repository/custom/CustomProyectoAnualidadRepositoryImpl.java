@@ -253,7 +253,14 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     result.stream().forEach(anualidadGastoNotificacionSge -> anualidadIngresos.stream()
         .filter(anualidadIngresoNotificacionSge -> anualidadIngresoNotificacionSge.getProyectoSgeRef()
             .equals(anualidadGastoNotificacionSge.getProyectoSgeRef())
-            && anualidadIngresoNotificacionSge.getAnio().equals(anualidadGastoNotificacionSge.getAnio())
+            && ((anualidadIngresoNotificacionSge.getAnio() != null
+                && anualidadIngresoNotificacionSge.getAnio().equals(anualidadGastoNotificacionSge.getAnio()))
+                || (anualidadIngresoNotificacionSge
+                    .getAnio() == null
+                    && anualidadIngresoNotificacionSge.getProyectoFechaInicio().equals(anualidadGastoNotificacionSge
+                        .getProyectoFechaInicio())
+                    && anualidadIngresoNotificacionSge.getProyectoFechaFin().equals(anualidadGastoNotificacionSge
+                        .getProyectoFechaFin())))
             && anualidadIngresoNotificacionSge.getProyectoId().equals(anualidadGastoNotificacionSge.getProyectoId()))
         .findFirst().ifPresent(anualidadIngresoNotificacionSge -> anualidadGastoNotificacionSge
             .setTotalIngresos(anualidadIngresoNotificacionSge.getTotalIngresos())));
@@ -261,7 +268,14 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     for (ProyectoAnualidadNotificacionSge anualidadIngresoNotificacionSge : anualidadIngresos) {
       if (result.stream().noneMatch(anualidadGastoNotificacionSge -> anualidadIngresoNotificacionSge.getProyectoSgeRef()
           .equals(anualidadGastoNotificacionSge.getProyectoSgeRef())
-          && anualidadIngresoNotificacionSge.getAnio().equals(anualidadGastoNotificacionSge.getAnio())
+          && ((anualidadIngresoNotificacionSge.getAnio() != null
+              && anualidadIngresoNotificacionSge.getAnio().equals(anualidadGastoNotificacionSge.getAnio()))
+              || (anualidadIngresoNotificacionSge
+                  .getAnio() == null
+                  && anualidadIngresoNotificacionSge.getProyectoFechaInicio().equals(anualidadGastoNotificacionSge
+                      .getProyectoFechaInicio())
+                  && anualidadIngresoNotificacionSge.getProyectoFechaFin().equals(anualidadGastoNotificacionSge
+                      .getProyectoFechaFin())))
           && anualidadIngresoNotificacionSge.getProyectoId().equals(anualidadGastoNotificacionSge.getProyectoId()))) {
         result.add(anualidadIngresoNotificacionSge);
       }

@@ -235,7 +235,7 @@ public class RepartoController {
   }
 
   private Page<RepartoGastoOutput> convertGastos(Page<RepartoGasto> page) {
-    List<RepartoGastoOutput> content = page.getContent().stream().map(repartoGasto -> convertGasto(repartoGasto))
+    List<RepartoGastoOutput> content = page.getContent().stream().map(this::convertGasto)
         .collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
@@ -247,7 +247,7 @@ public class RepartoController {
 
   private Page<RepartoIngresoOutput> convertIngresos(Page<RepartoIngreso> page) {
     List<RepartoIngresoOutput> content = page.getContent().stream()
-        .map(repartoIngreso -> convertIngreso(repartoIngreso)).collect(Collectors.toList());
+        .map(this::convertIngreso).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
@@ -258,7 +258,7 @@ public class RepartoController {
 
   private Page<RepartoEquipoInventorOutput> convertEquiposInventor(Page<RepartoEquipoInventor> page) {
     List<RepartoEquipoInventorOutput> content = page.getContent().stream()
-        .map(repartoEquipoInventor -> convertEquipoInventor(repartoEquipoInventor)).collect(Collectors.toList());
+        .map(this::convertEquipoInventor).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }

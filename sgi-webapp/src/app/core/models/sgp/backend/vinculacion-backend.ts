@@ -7,5 +7,9 @@ export interface IVinculacionBackend {
   departamento: {
     id: string;
     nombre: string;
+  },
+  centro: {
+    id: string;
+    nombre: string;
   }
 }

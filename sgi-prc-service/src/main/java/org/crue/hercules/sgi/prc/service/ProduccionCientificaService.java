@@ -92,8 +92,12 @@ public class ProduccionCientificaService {
    */
   public Page<ComiteEditorialResumen> findAllComitesEditoriales(String query, Pageable pageable) {
     log.debug("findAllComitesEditoriales(String query, Pageable pageable) - start");
-
-    Page<ComiteEditorialResumen> returnValue = repository.findAllComitesEditoriales(query, pageable);
+    if (isInvestigador()) {
+      log.debug("findAllComitesEditoriales(String query, Pageable pageable) - end");
+      return repository.findAllComitesEditoriales(createInvestigadorFilter(), query,
+          pageable);
+    }
+    Page<ComiteEditorialResumen> returnValue = repository.findAllComitesEditoriales(null, query, pageable);
     log.debug("findAllComitesEditoriales(String query, Pageable pageable) - end");
     return returnValue;
   }
@@ -130,8 +134,12 @@ public class ProduccionCientificaService {
    */
   public Page<ObraArtisticaResumen> findAllObrasArtisticas(String query, Pageable pageable) {
     log.debug("findAllObrasArtisticas(String query, Pageable pageable) - start");
-
-    Page<ObraArtisticaResumen> returnValue = repository.findAllObrasArtisticas(query, pageable);
+    if (isInvestigador()) {
+      log.debug("findAllObrasArtisticas(String query, Pageable pageable) - end");
+      return repository.findAllObrasArtisticas(createInvestigadorFilter(), query,
+          pageable);
+    }
+    Page<ObraArtisticaResumen> returnValue = repository.findAllObrasArtisticas(null, query, pageable);
     log.debug("findAllObrasArtisticas(String query, Pageable pageable) - end");
     return returnValue;
   }
@@ -147,8 +155,12 @@ public class ProduccionCientificaService {
    */
   public Page<ActividadResumen> findAllActividades(String query, Pageable pageable) {
     log.debug("findAllActividades(String query, Pageable pageable) - start");
-
-    Page<ActividadResumen> returnValue = repository.findAllActividades(query, pageable);
+    if (isInvestigador()) {
+      log.debug("findAllActividades(String query, Pageable pageable) - end");
+      return repository.findAllActividades(createInvestigadorFilter(), query,
+          pageable);
+    }
+    Page<ActividadResumen> returnValue = repository.findAllActividades(null, query, pageable);
     log.debug("findAllActividades(String query, Pageable pageable) - end");
     return returnValue;
   }
@@ -164,8 +176,12 @@ public class ProduccionCientificaService {
    */
   public Page<DireccionTesisResumen> findAllDireccionesTesis(String query, Pageable pageable) {
     log.debug("findAllDireccionesTesis(String query, Pageable pageable) - start");
-
-    Page<DireccionTesisResumen> returnValue = repository.findAllDireccionesTesis(query, pageable);
+    if (isInvestigador()) {
+      log.debug("findAllDireccionesTesis(String query, Pageable pageable) - end");
+      return repository.findAllDireccionesTesis(createInvestigadorFilter(), query,
+          pageable);
+    }
+    Page<DireccionTesisResumen> returnValue = repository.findAllDireccionesTesis(null, query, pageable);
     log.debug("findAllDireccionesTesis(String query, Pageable pageable) - end");
     return returnValue;
   }

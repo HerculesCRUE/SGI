@@ -24,7 +24,8 @@ export const environment = {
     prc: '/api/prc',
     cnf: '/api/cnf',
     com: '/api/com',
-    tp: '/api/tp'
+    tp: '/api/tp',
+    eer: '/api/eer'
   },
   loggerConfig: {
     enableSourceMaps: true, // <-- THIS IS REQUIRED, to make "line-numbers" work in SourceMap Object defition (without evalSourceMap)
@@ -57,7 +58,8 @@ export const environment = {
       /\/api\/prc.*/i,
       /\/api\/cnf.*/i,
       /\/api\/com.*/i,
-      /\/api\/tp.*/i
+      /\/api\/tp.*/i,
+      /\/api\/eer.*/i
     ]
   } as SgiAuthConfig,
   version,

@@ -32,7 +32,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * SolicitudProyectoEntidadFinanciadoraAjenaServiceTest
  */
-public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseServiceTest {
+class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseServiceTest {
 
   @Mock
   private SolicitudProyectoEntidadFinanciadoraAjenaRepository repository;
@@ -55,13 +55,13 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
   private SolicitudProyectoEntidadFinanciadoraAjenaService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new SolicitudProyectoEntidadFinanciadoraAjenaServiceImpl(repository, fuenteFinanciacionRepository,
         tipoFinanciacionRepository, solicitudService, solicitudProyectoRepository, solicitudProyectoEntidadRepository);
   }
 
   @Test
-  public void create_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() {
+  void create_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() {
     // given: Un nuevo SolicitudProyectoEntidadFinanciadoraAjena
     SolicitudProyectoEntidadFinanciadoraAjena solicitudProyectoEntidadFinanciadoraAjena = generarMockSolicitudProyectoEntidadFinanciadoraAjena(
         null);
@@ -101,7 +101,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudProyectoEntidadFinanciadoraAjena que ya tiene id
     SolicitudProyectoEntidadFinanciadoraAjena solicitudProyectoEntidadFinanciadoraAjena = generarMockSolicitudProyectoEntidadFinanciadoraAjena(
         1L);
@@ -115,7 +115,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
   }
 
   @Test
-  public void create_WithoutSolicitudProyectoId_ThrowsIllegalArgumentException() {
+  void create_WithoutSolicitudProyectoId_ThrowsIllegalArgumentException() {
     // given: a SolicitudProyectoEntidadFinanciadoraAjena without
     // SolicitudProyectoId
     SolicitudProyectoEntidadFinanciadoraAjena solicitudProyectoEntidadFinanciadoraAjena = generarMockSolicitudProyectoEntidadFinanciadoraAjena(
@@ -131,7 +131,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
   }
 
   @Test
-  public void create_WithFuenteFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
+  void create_WithFuenteFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
     // given: a SolicitudProyectoEntidadFinanciadoraAjena with FuenteFinanciacion
     // activo=false
     SolicitudProyectoEntidadFinanciadoraAjena solicitudProyectoEntidadFinanciadoraAjena = generarMockSolicitudProyectoEntidadFinanciadoraAjena(
@@ -149,7 +149,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
   }
 
   @Test
-  public void create_WithTipoFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
+  void create_WithTipoFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
     // given: a SolicitudProyectoEntidadFinanciadoraAjena with TipoFinanciacion
     // activo=false
     SolicitudProyectoEntidadFinanciadoraAjena solicitudProyectoEntidadFinanciadoraAjena = generarMockSolicitudProyectoEntidadFinanciadoraAjena(
@@ -169,7 +169,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
   }
 
   @Test
-  public void update_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() {
+  void update_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() {
     // given: Un nuevo SolicitudProyectoEntidadFinanciadoraAjena con el nombre
     // actualizado
     Long solicitudProyectoId = 1L;
@@ -217,7 +217,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsSolicitudProyectoEntidadFinanciadoraAjenaNotFoundException() {
+  void update_WithIdNotExist_ThrowsSolicitudProyectoEntidadFinanciadoraAjenaNotFoundException() {
     // given: Un SolicitudProyectoEntidadFinanciadoraAjena a actualizar con un id
     // que no existe
     Long solicitudProyectoId = 1L;
@@ -238,7 +238,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
   }
 
   @Test
-  public void update_WithFuenteFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
+  void update_WithFuenteFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
     // given: a SolicitudProyectoEntidadFinanciadoraAjena with FuenteFinanciacion
     // activo=false
     Long solicitudProyectoId = 1L;
@@ -266,7 +266,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
   }
 
   @Test
-  public void update_WithTipoFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
+  void update_WithTipoFinanciacionActivoFalse_ThrowsIllegalArgumentException() {
     // given: a SolicitudProyectoEntidadFinanciadoraAjena with TipoFinanciacion
     // activo=false
     Long solicitudProyectoId = 1L;
@@ -296,7 +296,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
   }
 
   @Test
-  public void delete_WithExistingId_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() {
+  void delete_WithExistingId_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() {
     // given: existing SolicitudProyectoEntidadFinanciadoraAjena
     Long id = 1L;
 
@@ -311,7 +311,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -325,7 +325,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
   }
 
   @Test
-  public void findAllBySolicitud_ReturnsPage() {
+  void findAllBySolicitud_ReturnsPage() {
     // given: Una lista con 37 SolicitudProyectoEntidadFinanciadoraAjena para la
     // Solicitud
     Long solicitudId = 1L;
@@ -361,7 +361,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
     // then: Devuelve la pagina 3 con los SolicitudProyectoEntidadFinanciadoraAjena
     // del 31 al
     // 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -375,7 +375,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
   }
 
   @Test
-  public void findById_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() {
+  void findById_ReturnsSolicitudProyectoEntidadFinanciadoraAjena() {
     // given: Un SolicitudProyectoEntidadFinanciadoraAjena con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -390,7 +390,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaServiceTest extends BaseSe
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsSolicitudProyectoEntidadFinanciadoraAjenaNotFoundException()
+  void findById_WithIdNotExist_ThrowsSolicitudProyectoEntidadFinanciadoraAjenaNotFoundException()
       throws Exception {
     // given: Ningun SolicitudProyectoEntidadFinanciadoraAjena con el id buscado
     Long idBuscado = 1L;

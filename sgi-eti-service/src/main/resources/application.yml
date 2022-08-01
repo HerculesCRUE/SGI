@@ -6,6 +6,9 @@ server:
       enabled: false
 sgi:
   web-url: "http://sgi.crue.com"
+  blockchain: 
+    url: "http://sgi.crue.com"
+    password: "password"
   time-zone: "Europe/Madrid"
   rest:
     api:
@@ -13,6 +16,7 @@ sgi:
       sgdoc-url: "http://sgi-esb:8080/api/sgdoc"
       sgp-url: "http://sgi-esb:8080/api/sgp"
       com-url: "http://sgi-com-service:4286"
+      cnf-url: "http://sgi-cnf-service:4288"
 spring:
   profiles:
     # Set spring-profile using maven
@@ -208,12 +212,16 @@ logging:
             StatementCreatorUtils: TRACE
 ---
 sgi:
+  blockchain: 
+    url: "http://sgi.crue.com"
+    password: "password"
   rest:
     api:
       rep-url: "http://sgi-rep-service:8080"
       sgdoc-url: "http://sgi-esb:8080/sgdoc"
       sgp-url: "http://sgi-esb:8080/sgp"
       com-url: "http://sgi-com-service:8080"
+      cnf-url: "http://sgi-cnf-service:8080"
 spring:
   profiles: prod
   datasource:

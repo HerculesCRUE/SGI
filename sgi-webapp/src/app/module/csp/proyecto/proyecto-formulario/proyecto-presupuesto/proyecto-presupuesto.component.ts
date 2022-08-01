@@ -264,7 +264,7 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
                 map(anualidadesGasto => {
                   const proyectoAnualidadPartidasGasto = anualidadesGasto.items.map(anualidadGasto => {
                     const proyectoAnualidadPartida: IProyectoAnualidadPartida = {
-                      anualidad: data.value.anio,
+                      anualidad: data.value.anio ?? data.value.fechaInicio.year,
                       importe: anualidadGasto.importeConcedido,
                       tipoDatoEconomico: TipoPartida.GASTO,
                       partidaPresupuestaria: anualidadGasto.proyectoPartida.codigo,
@@ -283,7 +283,7 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
                       tap(anualidadesIngreso => {
                         const proyectoAnualidadPartidasIngreso = anualidadesIngreso.items.map(anualidadGasto => {
                           const proyectoAnualidadPartida: IProyectoAnualidadPartida = {
-                            anualidad: data.value.anio,
+                            anualidad: data.value.anio ?? data.value.fechaInicio.year,
                             importe: anualidadGasto.importeConcedido,
                             tipoDatoEconomico: TipoPartida.INGRESO,
                             partidaPresupuestaria: anualidadGasto.proyectoPartida.codigo,

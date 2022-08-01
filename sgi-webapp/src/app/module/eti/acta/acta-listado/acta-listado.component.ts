@@ -13,6 +13,7 @@ import { IDocumento } from '@core/models/sgdoc/documento';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { ActaService } from '@core/services/eti/acta.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -29,6 +30,8 @@ const MSG_ERROR = marker('error.load');
 const MSG_FINALIZAR_ERROR = marker('error.eti.acta.finalizar');
 const MSG_FINALIZAR_SUCCESS = marker('msg.eti.acta.finalizar.success');
 const ACTA_KEY = marker('eti.acta');
+const MSG_REGISTRO_BLOCKCHAIN_OK = marker('msg.eti.acta.registro-blockchain.ok');
+const MSG_REGISTRO_BLOCKCHAIN_ALTERADO = marker('msg.eti.acta.registro-blockchain.alterado');
 
 @Component({
   selector: 'sgi-acta-listado',
@@ -53,6 +56,8 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
 
   textoCrear: string;
 
+  blockchainEnable: boolean;
+
   get ESTADO_ACTA_MAP() {
     return ESTADO_ACTA_MAP;
   }
@@ -64,6 +69,7 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
     private readonly translate: TranslateService,
     private readonly documentoService: DocumentoService,
     private readonly matDialog: MatDialog,
+    private readonly cnfService: ConfigService
   ) {
 
     super(snackBarService, MSG_ERROR);
@@ -109,6 +115,9 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IActaWithNumEvaluaciones>> {
     const observable$ = this.actasService.findActivasWithEvaluaciones(this.getFindOptions(reset));
+    this.cnfService.isBlockchainEnable().subscribe(value => {
+      this.blockchainEnable = value;
+    });
     return observable$;
   }
 
@@ -200,16 +209,27 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
    * Visualiza el informe seleccionado.
    * @param documentoRef Referencia del informe..
    */
-  visualizarInforme(idActa: number): void {
+  visualizarInforme(acta: IActaWithNumEvaluaciones): void {
     const documento: IDocumento = {} as IDocumento;
-    this.actasService.getDocumentoActa(idActa).pipe(
-      switchMap((documentoInfo: IDocumento) => {
-        documento.nombre = documentoInfo.nombre;
-        return this.documentoService.downloadFichero(documentoInfo.documentoRef);
-      })
-    ).subscribe(response => {
-      triggerDownloadToUser(response, documento.nombre);
-    });
+    if (this.isFinalizada(acta)) {
+      this.documentoService.getInfoFichero(acta.documentoRef).pipe(
+        switchMap((documentoInfo: IDocumento) => {
+          documento.nombre = documentoInfo.nombre;
+          return this.documentoService.downloadFichero(acta.documentoRef);
+        })
+      ).subscribe(response => {
+        triggerDownloadToUser(response, documento.nombre);
+      });
+    } else {
+      this.actasService.getDocumentoActa(acta.id).pipe(
+        switchMap((documentoInfo: IDocumento) => {
+          documento.nombre = documentoInfo.nombre;
+          return this.documentoService.downloadFichero(documentoInfo.documentoRef);
+        })
+      ).subscribe(response => {
+        triggerDownloadToUser(response, documento.nombre);
+      });
+    }
   }
 
   openExportModal(): void {
@@ -221,6 +241,20 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
       data
     };
     this.matDialog.open(ActaListadoExportModalComponent, config);
+  }
+
+  /**
+   * Confirma el registro blockchain
+   * @param actaId id del acta a confirmar.
+   */
+  confirmarRegistroBlockchain(actaId: number) {
+    this.suscripciones.push(this.actasService.isRegistroBlockchainConfirmado(actaId).subscribe((value) => {
+      if (value) {
+        this.snackBarService.showSuccess(MSG_REGISTRO_BLOCKCHAIN_OK);
+      } else {
+        this.snackBarService.showSuccess(MSG_REGISTRO_BLOCKCHAIN_ALTERADO);
+      }
+    }));
   }
 
 }

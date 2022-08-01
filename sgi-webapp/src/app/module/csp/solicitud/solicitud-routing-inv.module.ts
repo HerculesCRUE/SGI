@@ -19,6 +19,10 @@ import { SolicitudHistoricoEstadosComponent } from './solicitud-formulario/solic
 import { SolicitudProyectoAreaConocimientoComponent } from './solicitud-formulario/solicitud-proyecto-area-conocimiento/solicitud-proyecto-area-conocimiento.component';
 import { SolicitudProyectoClasificacionesComponent } from './solicitud-formulario/solicitud-proyecto-clasificaciones/solicitud-proyecto-clasificaciones.component';
 import { SolicitudProyectoFichaGeneralComponent } from './solicitud-formulario/solicitud-proyecto-ficha-general/solicitud-proyecto-ficha-general.component';
+import { SolicitudRrhhMemoriaComponent } from './solicitud-formulario/solicitud-rrhh-memoria/solicitud-rrhh-memoria.component';
+import { SolicitudRrhhRequisitosConvocatoriaComponent } from './solicitud-formulario/solicitud-rrhh-requisitos-convocatoria/solicitud-rrhh-requisitos-convocatoria.component';
+import { SolicitudRrhhSolitanteComponent } from './solicitud-formulario/solicitud-rrhh-solicitante/solicitud-rrhh-solicitante.component';
+import { SolicitudRrhhTutorComponent } from './solicitud-formulario/solicitud-rrhh-tutor/solicitud-rrhh-tutor.component';
 import { SolicitudListadoInvComponent } from './solicitud-listado-inv/solicitud-listado-inv.component';
 import { SOLICITUD_ROUTE_NAMES } from './solicitud-route-names';
 import { SOLICITUD_ROUTE_PARAMS } from './solicitud-route-params';
@@ -120,6 +124,26 @@ const routes: SgiRoutes = [
         component: SolicitudHistoricoEstadosComponent,
         canDeactivate: [FragmentGuard]
       },
+      {
+        path: SOLICITUD_ROUTE_NAMES.SOLICITANTE,
+        component: SolicitudRrhhSolitanteComponent,
+        canDeactivate: [FragmentGuard]
+      },
+      {
+        path: SOLICITUD_ROUTE_NAMES.TUTOR,
+        component: SolicitudRrhhTutorComponent,
+        canDeactivate: [FragmentGuard]
+      },
+      {
+        path: SOLICITUD_ROUTE_NAMES.REQUISITOS_CONVOCATORIA,
+        component: SolicitudRrhhRequisitosConvocatoriaComponent,
+        canDeactivate: [FragmentGuard]
+      },
+      {
+        path: SOLICITUD_ROUTE_NAMES.MEMORIA,
+        component: SolicitudRrhhMemoriaComponent,
+        canDeactivate: [FragmentGuard]
+      }
     ]
   }
 ];

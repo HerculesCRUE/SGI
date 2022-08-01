@@ -1,0 +1,53 @@
+@import "colors.scss";
+
+:host {
+  sgi-dialog-content {
+    min-width: 20vw;
+
+    .mat-list {
+      .seleccion {
+        border-radius: 6px;
+        border-style: solid;
+        border-color: $dark-dividers;
+        border-width: 2px;
+        min-height: 40px;
+        cursor: pointer;
+
+        &:hover,
+        &:focus {
+          border-color: map-get($palette-primary, 400);
+
+          .module-link {
+            background-color: map-get($palette-primary, 400);
+
+            .mat-icon {
+              color: white;
+            }
+          }
+        }
+
+        &:focus-visible {
+          outline: none;
+        }
+
+        .module-icon {
+          background-color: map-get($sgi-custom-colors, bg);
+          border-radius: 4px 0 0 4px;
+          min-width: 40px;
+        }
+
+        .module-name {
+          font-weight: bold;
+        }
+
+        .module-link {
+          min-width: 40px;
+          border-left-color: $dark-dividers;
+          border-left-style: solid;
+          border-left-width: 2px;
+          border-radius: 0 4px 4px 0;
+        }
+      }
+    }
+  }
+}

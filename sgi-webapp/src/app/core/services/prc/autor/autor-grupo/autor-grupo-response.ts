@@ -3,6 +3,6 @@ import { TipoEstadoProduccion } from '@core/models/prc/estado-produccion-cientif
 export interface IAutorGrupoResponse {
   id: number;
   estado: TipoEstadoProduccion;
-  grupoRef: string;
+  grupoRef: number;
   autorId: number;
 }

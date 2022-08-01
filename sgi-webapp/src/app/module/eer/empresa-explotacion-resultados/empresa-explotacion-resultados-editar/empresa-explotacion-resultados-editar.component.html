@@ -1,0 +1,35 @@
+<sgi-action [actionService]="actionService">
+  <ng-container menu>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['EER-EER-V', 'EER-EER-E']"
+      [route]="[EMPRESA_EXPLOTACION_RESULTADOS_ROUTE_NAMES.DATOS_GENERALES]"
+      [title]="'label.datos-generales' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['EER-EER-V', 'EER-EER-E']"
+      [route]="[EMPRESA_EXPLOTACION_RESULTADOS_ROUTE_NAMES.DOCUMENTOS]" [title]="'label.documentos' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DOCUMENTOS)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['EER-EER-V', 'EER-EER-E']"
+      [title]="'eer.empresa-equipo-empresarial' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR">
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['EER-EER-V', 'EER-EER-E']"
+        [route]="[EMPRESA_EXPLOTACION_RESULTADOS_ROUTE_NAMES.EQUIPO_EMPRENDEDOR]"
+        [title]="'eer.empresa-equipo-emprendedor' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.EQUIPO_EMPRENDEDOR)">
+      </sgi-action-fragment-menu-item>
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['EER-EER-V', 'EER-EER-E']"
+        [route]="[EMPRESA_EXPLOTACION_RESULTADOS_ROUTE_NAMES.COMPOSICION_SOCIEDAD]"
+        [title]="'eer.empresa-composicion-sociedad' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.COMPOSICION_SOCIEDAD)">
+      </sgi-action-fragment-menu-item>
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['EER-EER-V', 'EER-EER-E']"
+        [route]="[EMPRESA_EXPLOTACION_RESULTADOS_ROUTE_NAMES.ADMINISTRACION_SOCIEDAD]"
+        [title]="'eer.empresa-administracion-sociedad' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.ADMINISTRACION_SOCIEDAD)">
+      </sgi-action-fragment-menu-item>
+    </sgi-action-fragment-menu-group>
+  </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="textoEditar" [actionService]="actionService">
+    </sgi-action-footer>
+  </ng-container>
+</sgi-action>

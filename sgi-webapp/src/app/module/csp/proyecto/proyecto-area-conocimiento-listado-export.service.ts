@@ -40,7 +40,7 @@ export class ProyectoAreaConocimientoListadoExportService
         return from(responseAreaConocimiento.items).pipe(
           mergeMap(proyectoAreaConocimiento => {
             return this.getAreaConocimiento(proyectoAreaConocimiento);
-          }),
+          }, this.DEFAULT_CONCURRENT),
           map(() => responseAreaConocimiento)
         );
       }),

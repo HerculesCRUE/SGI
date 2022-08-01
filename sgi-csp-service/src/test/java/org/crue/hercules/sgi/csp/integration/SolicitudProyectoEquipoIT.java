@@ -25,7 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de SolicitudProyectoEquipoIT.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SolicitudProyectoEquipoIT extends BaseIT {
+class SolicitudProyectoEquipoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/solicitudproyectoequipo";
@@ -47,7 +47,7 @@ public class SolicitudProyectoEquipoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsSolicitudProyectoEquipo() throws Exception {
+  void findById_ReturnsSolicitudProyectoEquipo() throws Exception {
     Long idSolicitudProyectoEquipo = 1L;
 
     final ResponseEntity<SolicitudProyectoEquipo> response = restTemplate.exchange(
@@ -97,7 +97,7 @@ public class SolicitudProyectoEquipoIT extends BaseIT {
 
     List<SolicitudProyectoEquipo> responseData = response.getBody();
 
-    Assertions.assertThat(responseData.size()).isEqualTo(3);
+    Assertions.assertThat(responseData).hasSize(3);
 
     Assertions.assertThat(responseData.get(0)).isNotNull();
     Assertions.assertThat(responseData.get(1)).isNotNull();

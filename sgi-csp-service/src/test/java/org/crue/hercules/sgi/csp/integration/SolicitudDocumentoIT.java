@@ -19,7 +19,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de SolicitudDocumento.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SolicitudDocumentoIT extends BaseIT {
+class SolicitudDocumentoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/solicituddocumentos";
@@ -38,7 +38,7 @@ public class SolicitudDocumentoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsSolicitudDocumento() throws Exception {
+  void create_ReturnsSolicitudDocumento() throws Exception {
 
     // given: new SolicitudDocumento
     SolicitudDocumento newSolicitudDocumento = generarSolicitudDocumento(null, 1L, 1L);
@@ -65,7 +65,7 @@ public class SolicitudDocumentoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsSolicitudDocumento() throws Exception {
+  void update_ReturnsSolicitudDocumento() throws Exception {
 
     // given: Existing SolicitudDocumento to be updated
     SolicitudDocumento solicitudDocumentoExistente = generarSolicitudDocumento(1L, 1L, 1L);
@@ -95,7 +95,7 @@ public class SolicitudDocumentoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing SolicitudDocumento to be deleted
     Long id = 1L;
 
@@ -111,7 +111,7 @@ public class SolicitudDocumentoIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsSolicitudDocumento() throws Exception {
+  void findById_ReturnsSolicitudDocumento() throws Exception {
     Long id = 1L;
 
     final ResponseEntity<SolicitudDocumento> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,

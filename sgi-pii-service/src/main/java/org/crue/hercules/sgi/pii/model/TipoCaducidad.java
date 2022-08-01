@@ -9,10 +9,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = TipoCaducidad.TABLE_NAME)
@@ -20,8 +20,12 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
-public class TipoCaducidad {
+@Builder
+public class TipoCaducidad extends BaseEntity {
+  /*
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
   protected static final String TABLE_NAME = "tipo_caducidad";
   private static final String SEQUENCE_NAME = TABLE_NAME + "_seq";

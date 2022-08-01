@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { VALIDACION_REQUISITOS_EQUIPO_IP_MAP } from '@core/enums/validaciones-requisitos-equipo-ip';
 import { MSG_PARAMS } from '@core/i18n';
 import { Estado } from '@core/models/csp/estado-proyecto';
@@ -24,14 +25,14 @@ import { ProyectoEntidadFinanciadoraService } from '@core/services/csp/proyecto-
 import { ProyectoEntidadGestoraService } from '@core/services/csp/proyecto-entidad-gestora.service';
 import { ProyectoEquipoService } from '@core/services/csp/proyecto-equipo.service';
 import { ProyectoFacturacionService } from '@core/services/csp/proyecto-facturacion/proyecto-facturacion.service';
-import { ProyectoHitoService } from '@core/services/csp/proyecto-hito.service';
+import { ProyectoHitoService } from '@core/services/csp/proyecto-hito/proyecto-hito.service';
 import { ProyectoIVAService } from '@core/services/csp/proyecto-iva.service';
 import { ProyectoPaqueteTrabajoService } from '@core/services/csp/proyecto-paquete-trabajo.service';
 import { ProyectoPartidaService } from '@core/services/csp/proyecto-partida.service';
 import { ProyectoPeriodoAmortizacionService } from '@core/services/csp/proyecto-periodo-amortizacion/proyecto-periodo-amortizacion.service';
 import { ProyectoPeriodoJustificacionService } from '@core/services/csp/proyecto-periodo-justificacion/proyecto-periodo-justificacion.service';
 import { ProyectoPeriodoSeguimientoService } from '@core/services/csp/proyecto-periodo-seguimiento.service';
-import { ProyectoPlazoService } from '@core/services/csp/proyecto-plazo.service';
+import { ProyectoFaseService } from '@core/services/csp/proyecto-fase.service';
 import { ProyectoProrrogaService } from '@core/services/csp/proyecto-prorroga.service';
 import { ProyectoProyectoSgeService } from '@core/services/csp/proyecto-proyecto-sge.service';
 import { ProyectoResponsableEconomicoService } from '@core/services/csp/proyecto-responsable-economico/proyecto-responsable-economico.service';
@@ -99,6 +100,8 @@ const MSG_CONVOCATORIAS = marker('csp.convocatoria');
 
 export interface IProyectoData {
   proyecto: IProyecto;
+  solicitanteRefSolicitud: string;
+  solicitudFormularioSolicitud: FormularioSolicitud;
   readonly: boolean;
   disableCoordinadorExterno: boolean;
   hasAnyProyectoSocioCoordinador: boolean;
@@ -192,7 +195,7 @@ export class ProyectoActionService extends ActionService {
   }
 
   get estado(): Estado {
-    return this.fichaGeneral.getValue().estado?.estado;
+    return this.data?.proyecto?.estado?.estado;
   }
 
   get readonly(): boolean {
@@ -211,8 +214,24 @@ export class ProyectoActionService extends ActionService {
     return this.fichaGeneral.hasPopulatedSocios$;
   }
 
-  get hasMiembrosEquipo() {
-    return !!this.relaciones.miembrosEquipoProyecto && this.relaciones.miembrosEquipoProyecto.length > 0;
+  get miembrosEquipoPersonaRefs(): string[] {
+    return this.proyectoEquipo.equipos$.value.map(personaListado => personaListado.value.proyectoEquipo.persona.id);
+  }
+
+  get solicitanteRefSolicitud(): string {
+    return this.data.solicitanteRefSolicitud ?? null;
+  }
+
+  get solicitudFormularioSolicitud(): FormularioSolicitud {
+    return this.data.solicitudFormularioSolicitud ?? null;
+  }
+
+  get unidadGestionId(): number {
+    return this.fichaGeneral.getValue().unidadGestion?.id;
+  }
+
+  get titulo(): string {
+    return this.fichaGeneral.getValue().titulo;
   }
 
   constructor(
@@ -230,7 +249,7 @@ export class ProyectoActionService extends ActionService {
     proyectoEntidadFinanciadoraService: ProyectoEntidadFinanciadoraService,
     proyectoHitoService: ProyectoHitoService,
     proyectoPaqueteTrabajoService: ProyectoPaqueteTrabajoService,
-    proyectoPlazoService: ProyectoPlazoService,
+    proyectoPlazoService: ProyectoFaseService,
     contextoProyectoService: ContextoProyectoService,
     proyectoPeriodoSeguimientoService: ProyectoPeriodoSeguimientoService,
     documentoService: DocumentoService,
@@ -331,10 +350,23 @@ export class ProyectoActionService extends ActionService {
           this.data?.proyecto?.convocatoriaId, this.readonly, this.data?.isVisor);
         this.seguimientoCientifico = new ProyectoPeriodoSeguimientosFragment(
           id, this.data.proyecto, proyectoService, proyectoPeriodoSeguimientoService, convocatoriaService, documentoService);
-        this.proyectoEquipo = new ProyectoEquipoFragment(logger, id, this.data?.proyecto?.convocatoriaId, proyectoService,
-          proyectoEquipoService, personaService,
-          convocatoriaService, datosAcademicosService, convocatoriaRequisitoIPService, viculacionService,
-          convocatoriaRequisitoEquipoService, datosPersonalesService);
+        this.proyectoEquipo = new ProyectoEquipoFragment(
+          logger,
+          id,
+          this.data?.proyecto?.convocatoriaId,
+          this.data?.solicitanteRefSolicitud,
+          this.data?.proyecto?.estado?.estado,
+          this.data.solicitudFormularioSolicitud,
+          proyectoService,
+          proyectoEquipoService,
+          personaService,
+          convocatoriaService,
+          datosAcademicosService,
+          convocatoriaRequisitoIPService,
+          viculacionService,
+          convocatoriaRequisitoEquipoService,
+          datosPersonalesService
+        );
         this.entidadGestora = new ProyectoEntidadGestoraFragment(
           fb, id, proyectoService, proyectoEntidadGestora, empresaService, this.readonly, this.data?.isVisor);
         this.areaConocimiento = new ProyectoAreaConocimientoFragment(this.data?.proyecto?.id,
@@ -396,6 +428,8 @@ export class ProyectoActionService extends ActionService {
         this.addFragment(this.FRAGMENT.AMORTIZACION_FONDOS, this.amortizacionFondos);
         this.addFragment(this.FRAGMENT.RELACIONES, this.relaciones);
         this.addFragment(this.FRAGMENT.CALENDARIO_FACTURACION, this.proyectoCalendarioFacturacion);
+
+        this.proyectoEquipo.initialize();
 
         this.subscriptions.push(this.fichaGeneral.initialized$.subscribe(value => {
           if (value) {

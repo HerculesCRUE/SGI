@@ -36,6 +36,10 @@ import lombok.experimental.SuperBuilder;
 @UniqueNombreTipoProteccion(groups = { OnActualizar.class, OnActivar.class, OnCrear.class })
 @ActivableIsActivo(entityClass = TipoProteccion.class, groups = { OnActualizar.class })
 public class TipoProteccion extends BaseActivableEntity {
+  /*
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
   public static final int NOMBRE_LENGTH = 50;
   public static final int DESCRIPCION_LENGTH = 250;

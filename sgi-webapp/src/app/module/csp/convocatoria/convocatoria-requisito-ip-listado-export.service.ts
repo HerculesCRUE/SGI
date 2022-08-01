@@ -17,12 +17,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { NGXLogger } from 'ngx-logger';
 import { from, Observable, of } from 'rxjs';
-import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { concatMap, map, mergeMap, switchMap } from 'rxjs/operators';
 import { IConvocatoriaReportData, IConvocatoriaReportOptions } from './convocatoria-listado-export.service';
 
 const REQUISITO_IP_KEY = marker('csp.convocatoria-requisito-ip');
-const REQ_IP_KEY = marker('csp.convocatoria-req-ip');
-const NOMBRE_KEY = marker('sgp.nombre');
 const REQUISITO_IP_NUMERO_MAXIMO_KEY = marker('csp.convocatoria-requisito-ip.numero-maximo');
 const REQUISITO_IP_EDAD_MAXIMA_KEY = marker('csp.convocatoria-requisito-ip.edad-maxima');
 const REQUISITO_IP_SEXO_KEY = marker('csp.convocatoria-requisito-ip.sexo');
@@ -80,14 +78,14 @@ export class ConvocatoriaRequisitoIPListadoExportService extends
           return of(data);
         }
         return this.convocatoriaRequisitoIPService.findNivelesAcademicos(data.requisitoIP.id).pipe(
-          mergeMap((requisitoIpNivelesAcademicos) => this.getNivelesAcademicos(data, requisitoIpNivelesAcademicos)));
+          concatMap((requisitoIpNivelesAcademicos) => this.getNivelesAcademicos(data, requisitoIpNivelesAcademicos)));
       }),
       switchMap((data) => {
         if (!data.requisitoIP) {
           return of(data);
         }
         return this.convocatoriaRequisitoIPService.findCategoriaProfesional(data.requisitoIP.id).pipe(
-          mergeMap((requisitoIpCategorias) => this.getCategoriasProfesionales(data, requisitoIpCategorias))
+          concatMap((requisitoIpCategorias) => this.getCategoriasProfesionales(data, requisitoIpCategorias))
         );
       })
     );
@@ -114,7 +112,7 @@ export class ConvocatoriaRequisitoIPListadoExportService extends
             return data;
           })
         );
-      })
+      }, this.DEFAULT_CONCURRENT)
     );
   }
 
@@ -139,7 +137,7 @@ export class ConvocatoriaRequisitoIPListadoExportService extends
             return data;
           })
         );
-      }));
+      }, this.DEFAULT_CONCURRENT));
   }
 
   public fillColumns(

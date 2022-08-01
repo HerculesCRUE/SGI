@@ -11,7 +11,7 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestSort, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of, zip } from 'rxjs';
+import { concat, Observable, of, zip } from 'rxjs';
 import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
 import { MemoriaListado } from './acta-formulario/acta-memorias/acta-memorias.fragment';
 import { ActaGeneralListadoExportService } from './acta-general-listado-export.service';
@@ -96,7 +96,7 @@ export class ActaListadoExportService extends AbstractTableExportService<IActaRe
 
   private getDataReportInner(actaData: IActaReportData, reportOptions: IActaReportOptions)
     : Observable<IActaReportData> {
-    return merge(
+    return concat(
       this.getDataReportListadoGeneral(actaData),
       this.getDataReportMemorias(actaData, reportOptions)
     ).pipe(

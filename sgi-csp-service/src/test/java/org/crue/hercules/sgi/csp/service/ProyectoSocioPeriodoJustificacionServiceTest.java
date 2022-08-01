@@ -33,7 +33,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * ProyectoSocioPeriodoJustificacionServiceTest
  */
-public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTest {
+class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTest {
 
   @Mock
   private ProyectoSocioPeriodoJustificacionRepository repository;
@@ -48,13 +48,13 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   private ProyectoSocioPeriodoJustificacionService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ProyectoSocioPeriodoJustificacionServiceImpl(repository, proyectoSocioRepository,
         proyectoSocioPeriodoJustificacionDocumentoRepository, proyectoRepository);
   }
 
   @Test
-  public void update_ReturnsProyectoSocioPeriodoJustificacion() {
+  void update_ReturnsProyectoSocioPeriodoJustificacion() {
     // given: un ProyectoSocioPeriodoJustificacion actualizado,
     Long proyectoId = 1L;
     Proyecto proyecto = generarMockProyecto(proyectoId);
@@ -99,7 +99,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void update_WithNoExistingProyectoSocio_ThrowsProyectoSocioNotFoundException() {
+  void update_WithNoExistingProyectoSocio_ThrowsProyectoSocioNotFoundException() {
     // given: a ProyectoSocioEntidadGestora with non existing ProyectoSocio
     Long proyectoSocioPeriodoJustificacionId = 1L;
     ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacion = generarMockProyectoSocioPeriodoJustificacion(
@@ -116,7 +116,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsProyectoSocioPeriodoJustificacionNotFoundException() {
+  void update_WithIdNotExist_ThrowsProyectoSocioPeriodoJustificacionNotFoundException() {
     // given: Un ProyectoSocioPeriodoJustificacion a actualizar con un id que no
     // existe
     Long proyectoSocioPeriodoJustificacionId = 1L;
@@ -135,7 +135,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void update_WithProyectoSocioChange_ThrowsIllegalArgumentException() {
+  void update_WithProyectoSocioChange_ThrowsIllegalArgumentException() {
     // given: a ProyectoSocioPeriodoJustificacion with proyecto socio modificado
     Long proyectoSocioPeriodoJustificacionId = 1L;
     ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacion = generarMockProyectoSocioPeriodoJustificacion(
@@ -155,7 +155,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void update_WithFechaFinBeforeThanFechaInicio_ThrowsIllegalArgumentException() {
+  void update_WithFechaFinBeforeThanFechaInicio_ThrowsIllegalArgumentException() {
     // given: a ProyectoSocioPeriodoJustificacion with fecha fin before
     // fecha inicio
     Long proyectoId = 1L;
@@ -183,7 +183,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void update_WithOutFechasPresentacionAndEstadoProyectoAbierto_ThrowsIllegalArgumentException() {
+  void update_WithOutFechasPresentacionAndEstadoProyectoAbierto_ThrowsIllegalArgumentException() {
     // given: a ProyectoSocioPeriodoJustificacion without fechas presentacion and
     // estado proyecto abierto
     Long proyectoId = 1L;
@@ -213,7 +213,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void update_WithFechaFinPresentacionBeforeFechaInicioPresentacion_ThrowsIllegalArgumentException() {
+  void update_WithFechaFinPresentacionBeforeFechaInicioPresentacion_ThrowsIllegalArgumentException() {
     // given: a ProyectoSocioPeriodoJustificacion with FechaFinPresentacion before
     // FechaInicioPresentacion
     Long proyectoId = 1L;
@@ -242,7 +242,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void update_WithFechaFinAfterProyectoFechaFin_ThrowsIllegalArgumentException() {
+  void update_WithFechaFinAfterProyectoFechaFin_ThrowsIllegalArgumentException() {
     // given: a ProyectoSocioPeriodoJustificacion with Fecha fin after fecha fin
     // proyecto
     Long proyectoId = 1L;
@@ -270,7 +270,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void create_ReturnsProyectoSocioPeriodoJustificacion() {
+  void create_ReturnsProyectoSocioPeriodoJustificacion() {
     // given: un nuevo ProyectoSocioPeriodoJustificacion ,
     Long proyectoId = 1L;
     Proyecto proyecto = generarMockProyecto(proyectoId);
@@ -314,7 +314,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void create_WithNoExistingProyectoSocio_ThrowsProyectoSocioNotFoundException() {
+  void create_WithNoExistingProyectoSocio_ThrowsProyectoSocioNotFoundException() {
     // given: a ProyectoSocioEntidadGestora with non existing ProyectoSocio
     ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacion = generarMockProyectoSocioPeriodoJustificacion(
         null);
@@ -327,7 +327,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un ProyectoSocioPeriodoJustificacion a actualizar con un id que no
     // existe
     ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacion = generarMockProyectoSocioPeriodoJustificacion(
@@ -345,7 +345,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void create_WithFechaFinBeforeThanFechaInicio_ThrowsIllegalArgumentException() {
+  void create_WithFechaFinBeforeThanFechaInicio_ThrowsIllegalArgumentException() {
     // given: a ProyectoSocioPeriodoJustificacion with fecha fin before
     // fecha inicio
     Long proyectoId = 1L;
@@ -369,7 +369,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void create_WithOutFechasPresentacionAndEstadoProyectoAbierto_ThrowsIllegalArgumentException() {
+  void create_WithOutFechasPresentacionAndEstadoProyectoAbierto_ThrowsIllegalArgumentException() {
     // given: a ProyectoSocioPeriodoJustificacion without fechas presentacion and
     // estado proyecto abierto
     Long proyectoId = 1L;
@@ -395,7 +395,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void create_WithFechaFinPresentacionBeforeFechaInicioPresentacion_ThrowsIllegalArgumentException() {
+  void create_WithFechaFinPresentacionBeforeFechaInicioPresentacion_ThrowsIllegalArgumentException() {
     // given: a ProyectoSocioPeriodoJustificacion with FechaFinPresentacion before
     // FechaInicioPresentacion
     Long proyectoId = 1L;
@@ -420,7 +420,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void create_WithFechaFinAfterProyectoFechaFin_ThrowsIllegalArgumentException() {
+  void create_WithFechaFinAfterProyectoFechaFin_ThrowsIllegalArgumentException() {
     // given: a ProyectoSocioPeriodoJustificacion with Fecha fin after fecha fin
     // proyecto
     Long proyectoId = 1L;
@@ -444,20 +444,16 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void delete_WithExistingId_NoReturnsAnyException() {
+  void delete_WithExistingId_NoReturnsAnyException() {
     // given: existing SolicitudProyectoSocio
     Long id = 1L;
-    Long proyectoId = 1L;
-    Long proyectoSocioId = 1L;
-    ProyectoSocio proyectoSocio = generarMockProyectoSocio(proyectoSocioId, proyectoId);
 
     ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacion = generarMockProyectoSocioPeriodoJustificacion(
         4L);
     List<ProyectoSocioPeriodoJustificacion> proyectoSocioPeriodoJustificacionEliminar = new ArrayList<>();
     proyectoSocioPeriodoJustificacionEliminar.add(proyectoSocioPeriodoJustificacion);
 
-    BDDMockito.given(proyectoSocioRepository.findById(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(proyectoSocio));
+    BDDMockito.given(proyectoSocioRepository.existsById(ArgumentMatchers.anyLong())).willReturn(true);
 
     Assertions.assertThatCode(
         // when: delete by existing id
@@ -467,7 +463,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void delete_WithNoExistingProyectoSocio_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingProyectoSocio_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -476,7 +472,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
     List<ProyectoSocioPeriodoJustificacion> proyectoSocioPeriodoJustificacionEliminar = new ArrayList<>();
     proyectoSocioPeriodoJustificacionEliminar.add(proyectoSocioPeriodoJustificacion);
 
-    BDDMockito.given(proyectoSocioRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
+    BDDMockito.given(proyectoSocioRepository.existsById(ArgumentMatchers.anyLong())).willReturn(false);
 
     Assertions.assertThatThrownBy(
         // when: delete
@@ -486,7 +482,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void findAllByProyectoSocio_ReturnsPage() {
+  void findAllByProyectoSocio_ReturnsPage() {
     // given: Una lista con 37 ProyectoSocioEntidadGestora para la ProyectoSocio
     Long proyectoSocioId = 1L;
     List<ProyectoSocioPeriodoJustificacion> proyectoSociosEntidadesConvocantes = new ArrayList<>();
@@ -518,7 +514,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
     // then: Devuelve la pagina 3 con los ProyectoSocioPeriodoJustificacion del 31
     // al
     // 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -531,7 +527,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void findById_ReturnsProyectoSocioPeriodoJustificacion() {
+  void findById_ReturnsProyectoSocioPeriodoJustificacion() {
     // given: Un ProyectoSocioPeriodoJustificacion con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -557,7 +553,7 @@ public class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTes
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsProyectoSocioPeriodoJustificacionNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsProyectoSocioPeriodoJustificacionNotFoundException() throws Exception {
     // given: Ningun ProyectoSocioPeriodoJustificacion con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());

@@ -5,6 +5,10 @@ import org.crue.hercules.sgi.pii.model.InvencionInventor;
 import org.crue.hercules.sgi.pii.model.InvencionInventor_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class InvencionInventorSpecifications {
 
   /**
@@ -16,8 +20,6 @@ public class InvencionInventorSpecifications {
    *         a la {@link Invencion} pasada por parámetro.
    */
   public static Specification<InvencionInventor> invencionById(Long invencionId) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(InvencionInventor_.invencionId), invencionId);
-    };
+    return (root, query, cb) -> cb.equal(root.get(InvencionInventor_.invencionId), invencionId);
   }
 }

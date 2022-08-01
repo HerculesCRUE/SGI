@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.pii.service;
 
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_NOTNULL;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -7,18 +11,18 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
 
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.pii.exceptions.ViaProteccionNotFoundException;
-import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.pii.model.ViaProteccion;
 import org.crue.hercules.sgi.pii.model.ViaProteccion.OnActivar;
 import org.crue.hercules.sgi.pii.repository.ViaProteccionRepository;
-import org.springframework.util.Assert;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 
 import lombok.RequiredArgsConstructor;
 
@@ -52,12 +56,13 @@ public class ViaProteccionService {
   public ViaProteccion activar(Long id) {
 
     Assert.notNull(id,
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ViaProteccion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(ViaProteccion.class))
+            .build());
 
     return this.viaProteccionRepository.findById(id).map(viaProteccion -> {
-      if (viaProteccion.getActivo()) {
+      if (viaProteccion.getActivo().booleanValue()) {
         return viaProteccion;
       }
       // Invocar validaciones asociadas a OnActivar
@@ -82,13 +87,14 @@ public class ViaProteccionService {
   public ViaProteccion desactivar(Long id) {
 
     Assert.notNull(id,
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ViaProteccion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(ViaProteccion.class))
+            .build());
 
     return this.viaProteccionRepository.findById(id).map(viaProteccion -> {
 
-      if (!viaProteccion.getActivo()) {
+      if (!viaProteccion.getActivo().booleanValue()) {
         return viaProteccion;
       }
       viaProteccion.setActivo(false);
@@ -108,8 +114,9 @@ public class ViaProteccionService {
 
     Assert.isNull(viaProteccion.getId(),
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ViaProteccion.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(ViaProteccion.class))
+            .build());
 
     viaProteccion.setActivo(true);
 
@@ -121,9 +128,10 @@ public class ViaProteccionService {
 
     Assert.notNull(toUpdate.getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ViaProteccion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(ViaProteccion.class))
+            .build());
 
     return this.viaProteccionRepository.findById(toUpdate.getId()).map(foundedVia -> {
 

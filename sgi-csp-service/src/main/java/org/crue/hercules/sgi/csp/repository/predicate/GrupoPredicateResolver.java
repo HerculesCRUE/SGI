@@ -1,6 +1,8 @@
 package org.crue.hercules.sgi.csp.repository.predicate;
 
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -24,13 +26,17 @@ import io.github.perplexhub.rsql.RSQLOperators;
 
 public class GrupoPredicateResolver implements SgiRSQLPredicateResolver<Grupo> {
 
+  public static final String SPLIT_DELIMITER = ",";
+
   public enum Property {
     /* Persona autorizada */
     PERSONA_AUTORIZADA("personaAutorizada"),
     /* Responsable */
     RESPONSABLE("responsable"),
     /* Fecha modificación */
-    FECHA_MODIFICACION("fechaModificacion");
+    FECHA_MODIFICACION("fechaModificacion"),
+    /* Miembro equipo */
+    MIEMBRO_EQUIPO("miembroEquipo");
 
     private String code;
 
@@ -83,6 +89,8 @@ public class GrupoPredicateResolver implements SgiRSQLPredicateResolver<Grupo> {
         return buildByResponsable(node, root, query, criteriaBuilder);
       case FECHA_MODIFICACION:
         return buildByFechaModificacion(node, root, criteriaBuilder);
+      case MIEMBRO_EQUIPO:
+        return buildByMiembroEquipo(node, root, query, criteriaBuilder);
       default:
         return null;
     }
@@ -122,6 +130,15 @@ public class GrupoPredicateResolver implements SgiRSQLPredicateResolver<Grupo> {
     return cb.or(cb.greaterThanOrEqualTo(root.get(Auditable_.lastModifiedDate), fechaModificacion),
         cb.greaterThanOrEqualTo(joinEquipos.get(Auditable_.lastModifiedDate), fechaModificacion),
         cb.greaterThanOrEqualTo(joinPalabrasClave.get(Auditable_.lastModifiedDate), fechaModificacion));
+  }
+
+  private Predicate buildByMiembroEquipo(ComparisonNode node, Root<Grupo> root, CriteriaQuery<?> query,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL, RSQLOperators.IN);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    List<String> personaRefs = Arrays.asList(node.getArguments().get(0).split(SPLIT_DELIMITER));
+    return GrupoSpecifications.byAnyPersonaInGrupoEquipo(personaRefs).toPredicate(root, query, cb);
   }
 
 }

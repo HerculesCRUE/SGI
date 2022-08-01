@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -66,10 +67,9 @@ public class TipoDocumentoServiceImpl implements TipoDocumentoService {
     Assert.notNull(tipoDocumentoActualizar.getId(),
         "TipoDocumento id no puede ser null para actualizar un TipoDocumento");
     tipoDocumentoRepository.findByNombreAndActivoIsTrue(tipoDocumentoActualizar.getNombre())
-        .ifPresent((tipoDocumentoExistente) -> {
-          Assert.isTrue(tipoDocumentoActualizar.getId() == tipoDocumentoExistente.getId(),
-              "Ya existe un TipoDocumento activo con el nombre '" + tipoDocumentoExistente.getNombre() + "'");
-        });
+        .ifPresent(tipoDocumentoExistente -> Assert.isTrue(
+            Objects.equals(tipoDocumentoActualizar.getId(), tipoDocumentoExistente.getId()),
+            "Ya existe un TipoDocumento activo con el nombre '" + tipoDocumentoExistente.getNombre() + "'"));
 
     return tipoDocumentoRepository.findById(tipoDocumentoActualizar.getId()).map(tipoDocumento -> {
       tipoDocumento.setNombre(tipoDocumentoActualizar.getNombre());
@@ -95,7 +95,7 @@ public class TipoDocumentoServiceImpl implements TipoDocumentoService {
     Assert.notNull(id, "TipoDocumento id no puede ser null para reactivar un TipoDocumento");
 
     return tipoDocumentoRepository.findById(id).map(tipoDocumento -> {
-      if (tipoDocumento.getActivo()) {
+      if (Boolean.TRUE.equals(tipoDocumento.getActivo())) {
         return tipoDocumento;
       }
 
@@ -123,7 +123,7 @@ public class TipoDocumentoServiceImpl implements TipoDocumentoService {
     Assert.notNull(id, "TipoDocumento id no puede ser null para desactivar un TipoDocumento");
 
     return tipoDocumentoRepository.findById(id).map(tipoDocumento -> {
-      if (!tipoDocumento.getActivo()) {
+      if (Boolean.FALSE.equals(tipoDocumento.getActivo())) {
         return tipoDocumento;
       }
 

@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.service.impl;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.ProyectoConceptoGastoCodigoEcNotFoundException;
@@ -223,8 +224,8 @@ public class ProyectoConceptoGastoCodigoEcServiceImpl implements ProyectoConcept
 
     // Códigos econcómicos eliminados
     List<ProyectoConceptoGastoCodigoEc> proyectoConceptoGastoCodigoEcsEliminar = proyectoConceptoGastoCodigoEcsBD
-        .stream().filter(periodo -> !proyectoConceptoGastoCodigoEcs.stream().map(ProyectoConceptoGastoCodigoEc::getId)
-            .anyMatch(id -> id == periodo.getId()))
+        .stream().filter(periodo -> proyectoConceptoGastoCodigoEcs.stream().map(ProyectoConceptoGastoCodigoEc::getId)
+            .noneMatch(id -> Objects.equals(id, periodo.getId())))
         .collect(Collectors.toList());
 
     if (!proyectoConceptoGastoCodigoEcsEliminar.isEmpty()) {
@@ -236,18 +237,19 @@ public class ProyectoConceptoGastoCodigoEcServiceImpl implements ProyectoConcept
         Comparator.nullsLast(Comparator.naturalOrder())));
 
     // Validaciones
-    List<ProyectoConceptoGastoCodigoEc> returnValue = new ArrayList<ProyectoConceptoGastoCodigoEc>();
+    List<ProyectoConceptoGastoCodigoEc> returnValue = new ArrayList<>();
     for (ProyectoConceptoGastoCodigoEc proyectoConceptoGastoCodigoEc : proyectoConceptoGastoCodigoEcs) {
 
       // actualizando
       if (proyectoConceptoGastoCodigoEc.getId() != null) {
         ProyectoConceptoGastoCodigoEc proyectoConceptoGastoCodigoEcBD = proyectoConceptoGastoCodigoEcsBD.stream()
-            .filter(periodo -> periodo.getId() == proyectoConceptoGastoCodigoEc.getId()).findFirst().orElseThrow(
+            .filter(periodo -> Objects.equals(periodo.getId(), proyectoConceptoGastoCodigoEc.getId())).findFirst()
+            .orElseThrow(
                 () -> new ProyectoConceptoGastoCodigoEcNotFoundException(proyectoConceptoGastoCodigoEc.getId()));
 
         Assert.isTrue(
-            proyectoConceptoGastoCodigoEcBD.getProyectoConceptoGastoId() == proyectoConceptoGastoCodigoEc
-                .getProyectoConceptoGastoId(),
+            Objects.equals(proyectoConceptoGastoCodigoEcBD.getProyectoConceptoGastoId(), proyectoConceptoGastoCodigoEc
+                .getProyectoConceptoGastoId()),
             "No se puede modificar el proyectoConceptoGasto del ProyectoConceptoGastoCodigoEc");
       }
 

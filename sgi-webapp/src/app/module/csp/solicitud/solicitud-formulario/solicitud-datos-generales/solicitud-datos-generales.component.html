@@ -23,19 +23,6 @@
       </mat-form-field>
     </div>
 
-    <!-- Solicitante -->
-    <div fxFlex fxLayout="row" fxLayoutGap="10px" *ngIf="!this.formPart.isInvestigador">
-      <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 2 + 10px)">
-        <mat-label>{{'csp.solicitud.solicitante' | translate}}</mat-label>
-        <sgi-select-persona placeholder="{{'csp.solicitud.solicitante' | translate}}" formControlName="solicitante"
-          [tipoColectivo]="tipoColectivoSolicitante" required>
-        </sgi-select-persona>
-        <mat-error *ngIf="formGroup.controls.solicitante.errors?.required">
-          {{'error.required.entity' | translate:msgParamSolicitanteEntity}}
-        </mat-error>
-      </mat-form-field>
-    </div>
-
     <!-- Convocatoria -->
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 2 + 10px)">
@@ -119,6 +106,20 @@
       </mat-form-field>
     </div>
 
+    <!-- Solicitante -->
+    <div fxFlex fxLayout="row" fxLayoutGap="10px"
+      *ngIf="!this.formPart.isInvestigador && !formGroup.controls.solicitante.disabled">
+      <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 2 + 10px)">
+        <mat-label>{{'csp.solicitud.solicitante' | translate}}</mat-label>
+        <sgi-select-persona placeholder="{{'csp.solicitud.solicitante' | translate}}" formControlName="solicitante"
+          [tipoColectivo]="tipoColectivoSolicitante" required>
+        </sgi-select-persona>
+        <mat-error *ngIf="formGroup.controls.solicitante.errors?.required">
+          {{'error.required.entity' | translate:msgParamSolicitanteEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Codigo de registro -->
       <mat-form-field *ngIf="fragment.isEdit()" fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
@@ -139,7 +140,8 @@
     </div>
 
     <!-- Título -->
-    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px"
+      *ngIf="!(this.formPart.isInvestigador && this.formPart.tipoFormularioSolicitud === FormularioSolicitud.RRHH)">
       <mat-form-field fxFlex="100%">
         <mat-label>{{'csp.solicitud.titulo' | translate}}</mat-label>
         <input matInput formControlName="titulo" type="text" id="titulo"

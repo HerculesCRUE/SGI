@@ -45,10 +45,8 @@ public class SolicitudProteccionComService {
           .findByfechaFinPriorPresFasNacRecBetweenAndViaProteccionExtensionInternacionalFalse(fechaFinPrioridadFrom,
               fechaFinPrioridadTo);
 
-      solicitudes.forEach(solicitud -> {
-        this.emailService
-            .sendEmail(this.buildComunicadoMesesHastaFinPrioridadSolicitudProteccion(solicitud, meses).getId());
-      });
+      solicitudes.forEach(solicitud -> this.emailService
+          .sendEmail(this.buildComunicadoMesesHastaFinPrioridadSolicitudProteccion(solicitud, meses).getId()));
     });
 
   }
@@ -59,19 +57,17 @@ public class SolicitudProteccionComService {
       Instant fechaFinPresentacionFrom = Instant.now().atZone(this.sgiConfigProperties.getTimeZone().toZoneId())
           .with(LocalTime.MIN).plusMonths(meses).toInstant();
 
-      Instant fechaFinPresentaciónTo = Instant.now().atZone(this.sgiConfigProperties.getTimeZone().toZoneId())
+      Instant fechaFinPresentacionTo = Instant.now().atZone(this.sgiConfigProperties.getTimeZone().toZoneId())
           .with(LocalTime.MAX).withNano(0).plusMonths(meses).toInstant();
 
       List<SolicitudProteccion> solicitudes = this.solicitudProteccionRepository
           .findByfechaFinPriorPresFasNacRecBetweenAndViaProteccionExtensionInternacionalTrue(fechaFinPresentacionFrom,
-              fechaFinPresentaciónTo);
+              fechaFinPresentacionTo);
 
-      solicitudes.forEach(solicitud -> {
-        this.emailService
-            .sendEmail(this
-                .buildComunicadoAvisoFinPlazoPresentacionFasesNacionalesRegionalesSolicitudProteccion(solicitud, meses)
-                .getId());
-      });
+      solicitudes.forEach(solicitud -> this.emailService
+          .sendEmail(this
+              .buildComunicadoAvisoFinPlazoPresentacionFasesNacionalesRegionalesSolicitudProteccion(solicitud, meses)
+              .getId()));
     });
 
   }

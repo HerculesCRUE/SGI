@@ -19,7 +19,10 @@ import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.csp.enums.TipoJustificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion.OnActualizar;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion.OnActualizarIdentificadorJustificacion;
+import org.crue.hercules.sgi.csp.validation.FormatoIdentificadorJustificacionProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.validation.OrderFechasProyectoPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.validation.UniqueIdentificadorJustificacionProyectoPeriodoJustificacion;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -38,6 +41,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @OrderFechasProyectoPeriodoJustificacion(groups = { OnActualizar.class })
+@UniqueIdentificadorJustificacionProyectoPeriodoJustificacion(groups = { OnActualizarIdentificadorJustificacion.class })
+@FormatoIdentificadorJustificacionProyectoPeriodoJustificacion(groups = {
+    OnActualizarIdentificadorJustificacion.class })
 public class ProyectoPeriodoJustificacion extends BaseEntity {
 
   /**
@@ -96,6 +102,14 @@ public class ProyectoPeriodoJustificacion extends BaseEntity {
   @Column(name = "convocatoria_periodo_justificacion_id")
   private Long convocatoriaPeriodoJustificacionId;
 
+  /** Fecha presentacion justificacion */
+  @Column(name = "fecha_presentacion_justificacion", nullable = true)
+  private Instant fechaPresentacionJustificacion;
+
+  /** Identificador justificacion */
+  @Column(name = "identificador_justificacion", length = EXTERNAL_REF_LENGTH, nullable = true)
+  private String identificadorJustificacion;
+
   // Relation mappings for JPA metamodel generation only
   @ManyToOne
   @JoinColumn(name = "proyecto_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_PROYECTOPERIODOJUSTIFICACION_PROYECTO"))
@@ -107,5 +121,12 @@ public class ProyectoPeriodoJustificacion extends BaseEntity {
    * Interfaz para marcar validaciones en la actualizacion de la entidad.
    */
   public interface OnActualizar {
+  }
+
+  /**
+   * Interfaz para marcar validaciones en la actualizacion del identificador de
+   * justificación.
+   */
+  public interface OnActualizarIdentificadorJustificacion {
   }
 }

@@ -200,7 +200,7 @@ class ProyectoEntidadFinanciadoraIT extends BaseIT {
         .isEqualTo(1L);
     Assertions.assertThat(proyectoEntidadFinanciadora.getPorcentajeFinanciacion().floatValue())
         .as("getPorcentajeFinanciacion()").isEqualTo(20F);
-    Assertions.assertThat(proyectoEntidadFinanciadora.getAjena()).as("getAjena()").isEqualTo(false);
+    Assertions.assertThat(proyectoEntidadFinanciadora.getAjena()).as("getAjena()").isFalse();
   }
 
   /**

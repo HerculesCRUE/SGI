@@ -14,7 +14,10 @@ import org.crue.hercules.sgi.csp.exceptions.GrupoNotFoundException;
 import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.Grupo;
 import org.crue.hercules.sgi.csp.model.GrupoLineaInvestigacion;
+import org.crue.hercules.sgi.csp.repository.GrupoLineaClasificacionRepository;
+import org.crue.hercules.sgi.csp.repository.GrupoLineaEquipoInstrumentalRepository;
 import org.crue.hercules.sgi.csp.repository.GrupoLineaInvestigacionRepository;
+import org.crue.hercules.sgi.csp.repository.GrupoLineaInvestigadorRepository;
 import org.crue.hercules.sgi.csp.repository.GrupoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.GrupoLineaInvestigacionSpecifications;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
@@ -47,6 +50,9 @@ public class GrupoLineaInvestigacionService {
   private final GrupoRepository grupoRepository;
   private final Validator validator;
   private final GrupoLineaInvestigacionAuthorityHelper authorityHelper;
+  private final GrupoLineaInvestigadorRepository grupoLineaInvestigadorRepository;
+  private final GrupoLineaClasificacionRepository grupoLineaClasificacionRepository;
+  private final GrupoLineaEquipoInstrumentalRepository grupoLineaEquipoInstrumentalRepository;
 
   /**
    * Guarda la entidad {@link GrupoLineaInvestigacion}.
@@ -131,6 +137,11 @@ public class GrupoLineaInvestigacionService {
     if (!repository.existsById(id)) {
       throw new GrupoLineaInvestigacionNotFoundException(id);
     }
+
+    // Se eliminan los registros en las entidades relacionadas
+    grupoLineaInvestigadorRepository.deleteAllByGrupoLineaInvestigacionId(id);
+    grupoLineaClasificacionRepository.deleteAllByGrupoLineaInvestigacionId(id);
+    grupoLineaEquipoInstrumentalRepository.deleteAllByGrupoLineaInvestigacionId(id);
 
     repository.deleteById(id);
     log.debug("delete(Long id) - end");

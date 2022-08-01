@@ -44,7 +44,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.test.context.support.WithMockUser;
 
 @Import({ ConvocatoriaPeriodoSeguimientoCientificoServiceImpl.class })
-public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseServiceTest {
+class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseServiceTest {
 
   @MockBean
   private ConvocatoriaPeriodoSeguimientoCientificoRepository repository;
@@ -58,7 +58,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseSer
   private ConvocatoriaPeriodoSeguimientoCientificoService service;
 
   @Test
-  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_ReturnsConvocatoriaPeriodoSeguimientoCientificoList() {
+  void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_ReturnsConvocatoriaPeriodoSeguimientoCientificoList() {
     // given: una lista con uno de los ConvocatoriaPeriodoSeguimientoCientifico
     // actualizado, otro nuevo y sin el otros existente
     Long convocatoriaId = 1L;
@@ -151,7 +151,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseSer
   }
 
   @Test
-  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithNoExistingConvocatoria_ThrowsConvocatoriaNotFoundException() {
+  void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithNoExistingConvocatoria_ThrowsConvocatoriaNotFoundException() {
     // given: a ConvocatoriaEntidadGestora with non existing Convocatoria
     Long convocatoriaId = 1L;
     ConvocatoriaPeriodoSeguimientoCientifico convocatoriaPeriodoSeguimientoCientifico = generarMockConvocatoriaPeriodoSeguimientoCientifico(
@@ -168,7 +168,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseSer
   }
 
   @Test
-  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithIdNotExist_ThrowsConvocatoriaPeriodoSeguimientoCientificoNotFoundException() {
+  void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithIdNotExist_ThrowsConvocatoriaPeriodoSeguimientoCientificoNotFoundException() {
     // given: Un ConvocatoriaPeriodoSeguimientoCientifico a actualizar con un id que
     // no existe
     Long convocatoriaId = 1L;
@@ -191,7 +191,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseSer
   }
 
   @Test
-  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithMesFinalLowerThanMesInicial_ThrowsConstraintViolationException() {
+  void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithMesFinalLowerThanMesInicial_ThrowsConstraintViolationException() {
     // given: a ConvocatoriaPeriodoSeguimientoCientifico with mesFinal lower than
     // mesInicial
     Long convocatoriaId = 1L;
@@ -215,7 +215,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseSer
   }
 
   @Test
-  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithFechaFinBeforeFechaInicio_ThrowsConstraintViolationException() {
+  void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithFechaFinBeforeFechaInicio_ThrowsConstraintViolationException() {
     // given: a ConvocatoriaPeriodoSeguimientoCientifico with FechaFinPresentacion
     // before FechaInicioPresentacion
     Long convocatoriaId = 1L;
@@ -240,7 +240,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseSer
   }
 
   @Test
-  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithMesFinalGreaterThanDuracionConvocatoria_ThrowsPeriodoLongerThanConvocatoriaException() {
+  void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithMesFinalGreaterThanDuracionConvocatoria_ThrowsPeriodoLongerThanConvocatoriaException() {
     // given: a ConvocatoriaPeriodoSeguimientoCientifico with mesFinal greater than
     // duracion convocatoria
     Long convocatoriaId = 1L;
@@ -265,7 +265,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseSer
   }
 
   @Test
-  public void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithMesSolapado_ThrowsPeriodoWrongOrderException() {
+  void updateConvocatoriaPeriodoSeguimientoCientificosConvocatoria_WithMesSolapado_ThrowsPeriodoWrongOrderException() {
     // given: a ConvocatoriaPeriodoSeguimientoCientifico with mesFinal greater than
     // duracion convocatoria
     Long convocatoriaId = 1L;
@@ -290,7 +290,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseSer
   }
 
   @Test
-  public void findById_WithExistingId_ReturnsConvocatoriaPeriodoSeguimientoCientifico() throws Exception {
+  void findById_WithExistingId_ReturnsConvocatoriaPeriodoSeguimientoCientifico() throws Exception {
     // given: existing ConvocatoriaPeriodoSeguimientoCientifico
     // @formatter:off
     ConvocatoriaPeriodoSeguimientoCientifico convocatoriaPeriodoSeguimientoCientifico = ConvocatoriaPeriodoSeguimientoCientifico
@@ -329,7 +329,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseSer
   }
 
   @Test
-  public void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
@@ -342,7 +342,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseSer
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void findAllByConvocatoria_WithPaging_ReturnsPage() {
+  void findAllByConvocatoria_WithPaging_ReturnsPage() {
     // given: One hundred ConvocatoriaPeriodoSeguimientoCientifico
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -392,9 +392,9 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseSer
     // containing
     // obsrvaciones='observaciones-31' to
     // 'observaciones-40'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 31; i < 10; i++) {
       ConvocatoriaPeriodoSeguimientoCientifico item = page.getContent()

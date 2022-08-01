@@ -14,12 +14,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * RequisitoEquipoRepositoryTest
  */
 @DataJpaTest
-public class RequisitoEquipoRepositoryTest extends BaseRepositoryTest {
+class RequisitoEquipoRepositoryTest extends BaseRepositoryTest {
   @Autowired
   private RequisitoEquipoRepository repository;
 
   @Test
-  public void findByConvocatoriaId_ReturnsRequisitoEquipo() throws Exception {
+  void findByConvocatoriaId_ReturnsRequisitoEquipo() throws Exception {
 
     // given: 2 RequisitoEquipo de los que 1 coincide con el idConvocatoria buscado
     // @formatter:off
@@ -91,7 +91,7 @@ public class RequisitoEquipoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByConvocatoriaNoExiste_ReturnsNull() throws Exception {
+  void findByConvocatoriaNoExiste_ReturnsNull() throws Exception {
 
     // given: 2 RequisitoEquipo que no coinciden con el idConvocatoria buscado
     // @formatter:off

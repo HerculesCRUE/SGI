@@ -34,7 +34,7 @@ class ProyectoIVAServiceImplTest extends BaseServiceTest {
   private ProyectoIVAService service;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     this.proyectoHelper = new ProyectoHelper(proyectoEquipoRepository, proyectoResponsableEconomicoRepository);
     this.service = new ProyectoIVAServiceImpl(repository, this.proyectoHelper);
   }

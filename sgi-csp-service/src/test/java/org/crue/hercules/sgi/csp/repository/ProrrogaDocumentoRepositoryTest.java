@@ -21,13 +21,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * ProrrogaDocumentoRepositoryTest
  */
 @DataJpaTest
-public class ProrrogaDocumentoRepositoryTest extends BaseRepositoryTest {
+class ProrrogaDocumentoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ProrrogaDocumentoRepository repository;
 
   @Test
-  public void deleteByProyectoProrrogaId_ReturnsListProrrogaDocumento() throws Exception {
+  void deleteByProyectoProrrogaId_ReturnsListProrrogaDocumento() throws Exception {
 
     // given: registros ProyectoProrroga con documentos asociados
     Proyecto proyecto = generarMockProyecto("-001");
@@ -48,7 +48,7 @@ public class ProrrogaDocumentoRepositoryTest extends BaseRepositoryTest {
     List<ProrrogaDocumento> result = repository.deleteByProyectoProrrogaId(idProyectoProrroga);
 
     // then: retorna la lista de documentos eliminados
-    Assertions.assertThat(result.size()).isEqualTo(2);
+    Assertions.assertThat(result).hasSize(2);
     Assertions.assertThat(result.contains(prorrogaDocumento1)).isFalse();
     Assertions.assertThat(result.contains(prorrogaDocumento2)).isFalse();
     Assertions.assertThat(result.contains(prorrogaDocumento3)).isTrue();
@@ -57,7 +57,7 @@ public class ProrrogaDocumentoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void deleteByProyectoProrrogaId_ReturnsEmptyList() throws Exception {
+  void deleteByProyectoProrrogaId_ReturnsEmptyList() throws Exception {
 
     Proyecto proyecto = generarMockProyecto("-001");
     TipoDocumento tipoDocumento1 = generarMockTipoDocumento("-001");

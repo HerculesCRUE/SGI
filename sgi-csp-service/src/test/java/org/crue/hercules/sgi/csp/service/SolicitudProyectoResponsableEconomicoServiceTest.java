@@ -37,7 +37,7 @@ class SolicitudProyectoResponsableEconomicoServiceTest extends BaseServiceTest {
   private SolicitudProyectoResponsableEconomicoService service;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     this.service = new SolicitudProyectoResponsableEconomicoService(this.validator, this.repository,
         this.solicitudProyectoRepository);
   }

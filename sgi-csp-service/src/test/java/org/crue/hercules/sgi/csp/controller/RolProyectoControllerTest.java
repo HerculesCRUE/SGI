@@ -35,7 +35,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * RolProyectoControllerTest
  */
 @WebMvcTest(RolProyectoController.class)
-public class RolProyectoControllerTest extends BaseControllerTest {
+class RolProyectoControllerTest extends BaseControllerTest {
 
   @MockBean
   private RolProyectoService service;
@@ -47,7 +47,7 @@ public class RolProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsRolProyecto() throws Exception {
+  void findById_WithExistingId_ReturnsRolProyecto() throws Exception {
     // given: existing id
     RolProyecto rolProyectoExistente = generarMockRolProyecto(1L);
     BDDMockito.given(service.findById(ArgumentMatchers.<Long>any())).willReturn(rolProyectoExistente);
@@ -65,7 +65,7 @@ public class RolProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new RolProyectoNotFoundException(1L);
@@ -82,7 +82,7 @@ public class RolProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E", "CSP-SOL-V" })
-  public void findAll_WithPaging_ReturnsRolProyectoSubList() throws Exception {
+  void findAll_WithPaging_ReturnsRolProyectoSubList() throws Exception {
     // given: One hundred RolProyecto
     List<RolProyecto> rolProyectos = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -136,7 +136,7 @@ public class RolProyectoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E", "CSP-SOL-V" })
-  public void findAll_EmptyList_Returns204() throws Exception {
+  void findAll_EmptyList_Returns204() throws Exception {
     // given: no data RolProyecto
     BDDMockito.given(service.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<RolProyecto>>() {

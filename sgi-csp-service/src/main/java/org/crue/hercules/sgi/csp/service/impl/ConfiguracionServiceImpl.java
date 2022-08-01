@@ -60,6 +60,8 @@ public class ConfiguracionServiceImpl implements ConfiguracionService {
 
     return configuracionRepository.findById(configuracionActualizar.getId()).map(configuracion -> {
       configuracion.setFormatoPartidaPresupuestaria(configuracionActualizar.getFormatoPartidaPresupuestaria());
+      configuracion
+          .setFormatoIdentificadorJustificacion(configuracionActualizar.getFormatoIdentificadorJustificacion());
 
       Configuracion returnValue = configuracionRepository.save(configuracion);
       log.debug("update(Configuracion configuracionActualizar) - end");

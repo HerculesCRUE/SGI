@@ -51,7 +51,7 @@ public class TramoRepartoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsTramoRepartoOutputSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsTramoRepartoOutputSubList() throws Exception {
 
     String[] roles = { "PII-TRE-V", "PII-TRE-C", "PII-TRE-E", "PII-TRE-B", "PII-TRE-R", "PII-INV-V", "PII-INV-E" };
 
@@ -72,7 +72,7 @@ public class TramoRepartoIT extends BaseIT {
     // then: Respuesta OK, retorna la información de la página correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TramoRepartoOutput> tramoRepartoOutput = response.getBody();
-    Assertions.assertThat(tramoRepartoOutput.size()).isEqualTo(2);
+    Assertions.assertThat(tramoRepartoOutput).hasSize(2);
     Assertions.assertThat(response.getHeaders().getFirst("X-Page")).isEqualTo("0");
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("2");
@@ -89,7 +89,7 @@ public class TramoRepartoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsTramoRepartoOutput() throws Exception {
+  void findById_ReturnsTramoRepartoOutput() throws Exception {
 
     String[] roles = { "PII-TRE-V", "PII-TRE-C", "PII-TRE-E", "PII-TRE-B", "PII-TRE-R" };
     Long tramoRepartoOutputId = 1L;
@@ -113,7 +113,7 @@ public class TramoRepartoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsTramoRepartoOutput() throws Exception {
+  void create_ReturnsTramoRepartoOutput() throws Exception {
 
     String[] roles = { "PII-TRE-C" };
     TramoRepartoInput nuevoTramoRepartoInput = generaMockTramoRepartoInput();
@@ -136,7 +136,7 @@ public class TramoRepartoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsTramoRepartoOutput() throws Exception {
+  void update_ReturnsTramoRepartoOutput() throws Exception {
 
     String[] roles = { "PII-TRE-E" };
     Long tramoRepartoId = 2L;
@@ -163,7 +163,7 @@ public class TramoRepartoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void deleteTramoReparto_Success() throws Exception {
+  void deleteTramoReparto_Success() throws Exception {
 
     String[] roles = { "PII-TRE-B" };
     Long tramoRepartoId = 2L;
@@ -183,7 +183,7 @@ public class TramoRepartoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void isTramoRepartoModificable_Success() throws Exception {
+  void isTramoRepartoModificable_Success() throws Exception {
 
     String[] roles = { "PII-TRE-V", "PII-TRE-C", "PII-TRE-E" };
     Long tramoRepartoId = 2L;

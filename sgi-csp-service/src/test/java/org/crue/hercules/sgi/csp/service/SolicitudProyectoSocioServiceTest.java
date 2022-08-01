@@ -35,7 +35,7 @@ import org.springframework.data.jpa.domain.Specification;
  * SolicitudProyectoSocioServiceTest
  */
 @ExtendWith(MockitoExtension.class)
-public class SolicitudProyectoSocioServiceTest {
+class SolicitudProyectoSocioServiceTest {
 
   @Mock
   private SolicitudProyectoSocioRepository repository;
@@ -58,14 +58,14 @@ public class SolicitudProyectoSocioServiceTest {
   private SolicitudProyectoSocioService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new SolicitudProyectoSocioServiceImpl(repository, solicitudRepository,
         solicitudProyectoEquipoSocioRepository, solicitudProyectoSocioPeriodoPagoRepository,
         solicitudProyectoSocioPeriodoJustificacionRepository, solicitudService);
   }
 
   @Test
-  public void create__ReturnsSolicitudProyectoSocio() {
+  void create__ReturnsSolicitudProyectoSocio() {
     // given: Un nuevo SolicitudProyectoSocio
     SolicitudProyectoSocio solicitudProyectoSocio = generarSolicitudProyectoSocio(null, 1L, 1L);
 
@@ -102,7 +102,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudProyectoSocio que ya tiene id
     SolicitudProyectoSocio solicitudProyectoSocio = generarSolicitudProyectoSocio(1L, 1L, 1L);
 
@@ -114,7 +114,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void create_WithoutSolicitudProyectoId_ThrowsIllegalArgumentException() {
+  void create_WithoutSolicitudProyectoId_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudProyectoSocio que no tiene solicitud de proyecto
     SolicitudProyectoSocio solicitudProyectoSocio = generarSolicitudProyectoSocio(null, 1L, 1L);
 
@@ -128,7 +128,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void create_WithoutRolSocio_ThrowsIllegalArgumentException() {
+  void create_WithoutRolSocio_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudProyectoSocio que no tiene rol socio
     SolicitudProyectoSocio solicitudProyectoSocio = generarSolicitudProyectoSocio(null, 1L, 1L);
 
@@ -142,7 +142,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingSolicitud_ThrowsSolicitudNotFoundException() {
+  void create_WithNoExistingSolicitud_ThrowsSolicitudNotFoundException() {
     // given: Un nuevo SolicitudProyectoSocio que tiene una solicitud que no existe
     SolicitudProyectoSocio solicitudProyectoSocio = generarSolicitudProyectoSocio(null, 1L, 1L);
 
@@ -155,7 +155,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void create_WithOutEmpresaRef_ThrowsSolicitudNotFoundException() {
+  void create_WithOutEmpresaRef_ThrowsSolicitudNotFoundException() {
     // given: Un nuevo SolicitudProyectoSocio que no tiene empresa ref
     SolicitudProyectoSocio solicitudProyectoSocio = generarSolicitudProyectoSocio(null, 1L, 1L);
     solicitudProyectoSocio.setEmpresaRef(null);
@@ -168,7 +168,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void update_ReturnsSolicitudProyectoSocio() {
+  void update_ReturnsSolicitudProyectoSocio() {
     // given: Un nuevo SolicitudProyectoSocio con el titulo actualizado
     SolicitudProyectoSocio solicitudProyectoSocio = generarSolicitudProyectoSocio(3L, 1L, 1L);
 
@@ -198,7 +198,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void update_WithSolicitudNotExist_ThrowsSolicitudNotFoundException() {
+  void update_WithSolicitudNotExist_ThrowsSolicitudNotFoundException() {
     // given: Un SolicitudProyectoSocio actualizado con un programa que no existe
     SolicitudProyectoSocio solicitudProyectoSocio = generarSolicitudProyectoSocio(1L, 1L, 1L);
 
@@ -211,7 +211,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsSolicitudProyectoSocioNotFoundException() {
+  void update_WithIdNotExist_ThrowsSolicitudProyectoSocioNotFoundException() {
     // given: Un SolicitudProyectoSocio actualizado con un id que no existe
     SolicitudProyectoSocio solicitudProyectoSocio = generarSolicitudProyectoSocio(1L, 1L, 1L);
 
@@ -228,7 +228,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void update_WithoutSolicitudProyectoId_ThrowsIllegalArgumentException() {
+  void update_WithoutSolicitudProyectoId_ThrowsIllegalArgumentException() {
     // given: Actualizar SolicitudProyectoSocio que no tiene solicitud proyecto
     // datos
     SolicitudProyectoSocio solicitudProyectoSocio = generarSolicitudProyectoSocio(1L, 1L, 1L);
@@ -243,7 +243,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void update_WithoutRolSocio_ThrowsIllegalArgumentException() {
+  void update_WithoutRolSocio_ThrowsIllegalArgumentException() {
     // given: Actualizar SolicitudProyectoSocio que no tiene rol socio
     SolicitudProyectoSocio solicitudProyectoSocio = generarSolicitudProyectoSocio(1L, 1L, 1L);
 
@@ -258,7 +258,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingSolicitud_ThrowsSolicitudNotFoundException() {
+  void update_WithNoExistingSolicitud_ThrowsSolicitudNotFoundException() {
     // given: Actualizar SolicitudProyectoSocio que tiene una solicitud que no
     // existe
     SolicitudProyectoSocio solicitudProyectoSocio = generarSolicitudProyectoSocio(1L, 1L, 1L);
@@ -272,7 +272,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void update_WithOutEmpresaRef_ThrowsSolicitudNotFoundException() {
+  void update_WithOutEmpresaRef_ThrowsSolicitudNotFoundException() {
     // given: Actualizada SolicitudProyectoSocio que no tiene empresa ref
     SolicitudProyectoSocio solicitudProyectoSocio = generarSolicitudProyectoSocio(1L, 1L, 1L);
     solicitudProyectoSocio.setEmpresaRef(null);
@@ -285,7 +285,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_NoReturnsAnyException() {
+  void delete_WithExistingId_NoReturnsAnyException() {
     // given: existing SolicitudProyectoSocio
     Long id = 1L;
 
@@ -300,7 +300,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -314,7 +314,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void findById_ReturnsSolicitudProyectoSocio() {
+  void findById_ReturnsSolicitudProyectoSocio() {
     // given: Un SolicitudProyectoSocio con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -329,7 +329,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsSolicitudProyectoSocioNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsSolicitudProyectoSocioNotFoundException() throws Exception {
     // given: Ningun SolicitudProyectoSocio con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -341,7 +341,7 @@ public class SolicitudProyectoSocioServiceTest {
   }
 
   @Test
-  public void findAllBySolicitud_ReturnsPage() {
+  void findAllBySolicitud_ReturnsPage() {
     // given: Una lista con 37 SolicitudProyectoSocio
     Long solicitudId = 1L;
     List<SolicitudProyectoSocio> solicitudProyectoSocio = new ArrayList<>();
@@ -370,7 +370,7 @@ public class SolicitudProyectoSocioServiceTest {
     Page<SolicitudProyectoSocio> page = service.findAllBySolicitud(solicitudId, null, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

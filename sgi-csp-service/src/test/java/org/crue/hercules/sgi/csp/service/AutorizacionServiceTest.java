@@ -1,5 +1,13 @@
 package org.crue.hercules.sgi.csp.service;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.TimeZone;
+
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
@@ -19,14 +27,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.security.test.context.support.WithMockUser;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.TimeZone;
-
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-
 class AutorizacionServiceTest extends BaseServiceTest {
 
   @Mock
@@ -39,17 +39,20 @@ class AutorizacionServiceTest extends BaseServiceTest {
   private SgdocService sgdocService;
   @Mock
   private SgiConfigProperties sgiConfigProperties;
+  @Mock
+  private AutorizacionComService autorizacionComService;
 
   private AutorizacionService autorizacionService;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     this.autorizacionService = new AutorizacionService(
         autorizacionRepository,
         estadoAutorizacionRepository,
         reportService,
         sgdocService,
-        sgiConfigProperties);
+        sgiConfigProperties,
+        autorizacionComService);
   }
 
   @Test
@@ -98,7 +101,7 @@ class AutorizacionServiceTest extends BaseServiceTest {
   @Test
   void generarDocumentoAutorizacion_ReturnsDocumentoOutput() throws IOException {
     String filename = "application.yml";
-    final Resource docFile = new ClassPathResource("application.yml");
+    final Resource docFile = new ClassPathResource(filename);
 
     final DocumentoOutput expectedDocumento = DocumentoOutput.builder()
         .archivo(IOUtils.toByteArray(docFile.getInputStream()))

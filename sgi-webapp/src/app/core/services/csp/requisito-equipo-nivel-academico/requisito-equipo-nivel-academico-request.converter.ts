@@ -11,7 +11,7 @@ class RequisitoEquipoNivelAcademicoRequestConverter
       return value as unknown as IRequisitoEquipoNivelAcademico;
     }
     return {
-      id: undefined,
+      id: value.id,
       requisitoEquipo: {
         id: value.requisitoEquipoId
       } as IConvocatoriaRequisitoEquipo,
@@ -25,6 +25,7 @@ class RequisitoEquipoNivelAcademicoRequestConverter
       return value as unknown as IRequisitoEquipoNivelAcademicoRequest;
     }
     return {
+      id: value.id,
       requisitoEquipoId: value.requisitoEquipo?.id,
       nivelAcademicoRef: value.nivelAcademico?.id,
     };

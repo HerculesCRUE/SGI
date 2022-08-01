@@ -6,11 +6,11 @@ import { IEstadoProduccionCientificaRequest } from '@core/services/prc/estado-pr
 import { ProduccionCientificaService } from '@core/services/prc/produccion-cientifica/produccion-cientifica.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { concatMap, map, tap } from 'rxjs/operators';
 import { CvnValorCampoService } from '../shared/cvn/services/cvn-valor-campo.service';
 import { ProduccionCientificaInitializerService } from '../shared/produccion-cientifica-initializer.service';
-import { PRODUCCION_CIENTIFICA_ROUTE_PARAMS } from '../shared/produccion-cientifica-route-params';
-import { IProduccionCientificaData, PRODUCCION_CIENTIFICA_DATA_KEY } from '../shared/produccion-cientifica.resolver';
+import { PRODUCCION_CIENTIFICA_DATA_KEY, PRODUCCION_CIENTIFICA_ROUTE_PARAMS } from '../shared/produccion-cientifica-route-params';
+import { IProduccionCientificaData } from '../shared/produccion-cientifica.resolver';
 import { CongresoDatosGeneralesFragment } from './congreso-formulario/congreso-datos-generales/congreso-datos-generales.fragment';
 
 @Injectable()
@@ -22,9 +22,11 @@ export class CongresoActionService extends ActionService {
     DATOS_GENERALES: 'datos-generales',
   };
   private datosGenerales: CongresoDatosGeneralesFragment;
+  // tslint:disable-next-line: variable-name
+  private _canEdit: boolean;
 
   get canEdit(): boolean {
-    return this.data?.canEdit ?? true;
+    return this._canEdit;
   }
 
   constructor(
@@ -39,6 +41,7 @@ export class CongresoActionService extends ActionService {
     this.id = Number(route.snapshot.paramMap.get(PRODUCCION_CIENTIFICA_ROUTE_PARAMS.ID));
     if (this.id) {
       this.data = route.snapshot.data[PRODUCCION_CIENTIFICA_DATA_KEY];
+      this._canEdit = this.data.canEdit;
       this.enableEdit();
 
       this.datosGenerales = new CongresoDatosGeneralesFragment(
@@ -50,21 +53,44 @@ export class CongresoActionService extends ActionService {
     }
   }
 
-  isProduccionCientificaEditable$(): Observable<boolean> {
-    return this.datosGenerales.isProduccionCientificaEditable$();
+  isProduccionCientificaDisabled$(): Observable<boolean> {
+    return this.datosGenerales.isProduccionCientificaDisabled$();
   }
 
   validar(): Observable<IProduccionCientifica> {
     return this.produccionCientificaService.validar(this.data.produccionCientifica?.id)
       .pipe(
-        tap(produccionCientifica => this.datosGenerales.emitProduccionCientifica(produccionCientifica))
+        tap(produccionCientifica => this.datosGenerales.refreshDatosGenerales(produccionCientifica))
       );
   }
 
   rechazar(estadoProduccionCientifica: IEstadoProduccionCientificaRequest): Observable<IProduccionCientifica> {
     return this.produccionCientificaService.rechazar(this.data.produccionCientifica?.id, estadoProduccionCientifica)
       .pipe(
-        tap(produccionCientifica => this.datosGenerales.emitProduccionCientifica(produccionCientifica))
+        tap(produccionCientifica => this.datosGenerales.refreshDatosGenerales(produccionCientifica))
       );
+  }
+
+  validarInvestigador(): Observable<IProduccionCientifica> {
+    return this.produccionCientificaService.validar(this.data.produccionCientifica?.id)
+      .pipe(
+        tap(produccionCientifica => this.datosGenerales.refreshDatosGenerales(produccionCientifica)),
+        concatMap(produccionCientifica => this.updateCanEdit(produccionCientifica))
+      );
+  }
+
+  rechazarInvestigador(estadoProduccionCientifica: IEstadoProduccionCientificaRequest): Observable<IProduccionCientifica> {
+    return this.produccionCientificaService.rechazar(this.data.produccionCientifica?.id, estadoProduccionCientifica)
+      .pipe(
+        tap(produccionCientifica => this.datosGenerales.refreshDatosGenerales(produccionCientifica)),
+        concatMap(produccionCientifica => this.updateCanEdit(produccionCientifica))
+      );
+  }
+
+  private updateCanEdit(produccionCientifica: IProduccionCientifica): Observable<IProduccionCientifica> {
+    return this.produccionCientificaService.isEditableByInvestigador(produccionCientifica.id).pipe(
+      tap(canEdit => this._canEdit = canEdit),
+      map(() => produccionCientifica)
+    );
   }
 }

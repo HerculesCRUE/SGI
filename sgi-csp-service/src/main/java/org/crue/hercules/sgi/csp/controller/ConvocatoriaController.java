@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.crue.hercules.sgi.csp.converter.ConvocatoriaFaseConverter;
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaFaseOutput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaHitoOutput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaPalabraClaveInput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaPalabraClaveOutput;
@@ -149,6 +151,7 @@ public class ConvocatoriaController {
 
   /**  */
   private final ConvocatoriaPalabraClaveService convocatoriaPalabraClaveService;
+  private final ConvocatoriaFaseConverter convocatoriaFaseConverter;
 
   /**
    * Instancia un nuevo ConvocatoriaController.
@@ -172,6 +175,8 @@ public class ConvocatoriaController {
    * @param requisitoEquipoCategoriaProfesionalService      {@link requisitoEquipoCategoriaProfesionalService}.
    * @param requisitoEquipoNivelAcademicoService            {@link requisitoEquipoNivelAcademicoService}.
    * @param convocatoriaPalabraClaveService                 {@link ConvocatoriaPalabraClaveService}.
+   * @param convocatoriaFaseConverter                       {@link ConvocatoriaFaseConverter
+   *                                                        }.
    * @param modelMapper                                     {@link ModelMapper}
    */
   public ConvocatoriaController(ConvocatoriaService convocatoriaService,
@@ -191,7 +196,8 @@ public class ConvocatoriaController {
       RequisitoEquipoCategoriaProfesionalService requisitoEquipoCategoriaProfesionalService,
       RequisitoEquipoNivelAcademicoService requisitoEquipoNivelAcademicoService,
       ConvocatoriaPalabraClaveService convocatoriaPalabraClaveService,
-      ModelMapper modelMapper) {
+      ModelMapper modelMapper,
+      ConvocatoriaFaseConverter convocatoriaFaseConverter) {
     this.service = convocatoriaService;
     this.convocatoriaAreaTematicaService = convocatoriaAreaTematicaService;
     this.convocatoriaDocumentoService = convocatoriaDocumentoService;
@@ -212,6 +218,7 @@ public class ConvocatoriaController {
     this.requisitoEquipoNivelAcademicoService = requisitoEquipoNivelAcademicoService;
     this.convocatoriaPalabraClaveService = convocatoriaPalabraClaveService;
     this.modelMapper = modelMapper;
+    this.convocatoriaFaseConverter = convocatoriaFaseConverter;
   }
 
   /**
@@ -624,10 +631,11 @@ public class ConvocatoriaController {
    */
   @GetMapping("/{id}/convocatoriafases")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-INV-V', 'CSP-CON-E', 'CSP-SOL-C', 'CSP-PRO-C', 'CSP-CON-B', 'CSP-CON-R', 'CSP-CON-C')")
-  public ResponseEntity<Page<ConvocatoriaFase>> findAllConvocatoriaFases(@PathVariable Long id,
+  public ResponseEntity<Page<ConvocatoriaFaseOutput>> findAllConvocatoriaFases(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllConvocatoriaFase(Long id, String query, Pageable paging) - start");
-    Page<ConvocatoriaFase> page = convocatoriaFaseService.findAllByConvocatoria(id, query, paging);
+    Page<ConvocatoriaFaseOutput> page = this.convocatoriaFaseConverter
+        .convert(convocatoriaFaseService.findAllByConvocatoria(id, query, paging));
 
     if (page.isEmpty()) {
       log.debug("findAllConvocatoriaFase(Long id, String query, Pageable paging) - end");

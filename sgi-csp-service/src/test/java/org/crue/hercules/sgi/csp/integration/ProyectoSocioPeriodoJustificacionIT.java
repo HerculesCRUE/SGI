@@ -66,7 +66,7 @@ class ProyectoSocioPeriodoJustificacionIT extends BaseIT {
       "classpath:scripts/proyecto_socio.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsProyectoSocioPeriodoJustificacion() throws Exception {
+  void create_ReturnsProyectoSocioPeriodoJustificacion() throws Exception {
 
     // given: un nuevo proyecto socio periodo justificación
     Long updateProyectoSocioPeriodoJustificacionId = 1L;

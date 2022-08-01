@@ -65,7 +65,8 @@ export class SolicitudListadoExportModalComponent extends BaseExportModalCompone
       showSolicitudProyectoEquipo: new FormControl(true),
       showSolicitudProyectoResponsableEconomico: new FormControl(true),
       showSolicitudProyectoSocios: new FormControl(true),
-      showSolicitudProyectoEntidadesFinanciadoras: new FormControl(true)
+      showSolicitudProyectoEntidadesFinanciadoras: new FormControl(true),
+      showSolicitudRrhh: new FormControl(true)
     });
   }
 
@@ -84,6 +85,7 @@ export class SolicitudListadoExportModalComponent extends BaseExportModalCompone
         showSolicitudProyectoResponsableEconomico: this.formGroup.controls.showSolicitudProyectoResponsableEconomico.value,
         showSolicitudProyectoSocios: this.formGroup.controls.showSolicitudProyectoSocios.value,
         showSolicitudProyectoEntidadesFinanciadoras: this.formGroup.controls.showSolicitudProyectoEntidadesFinanciadoras.value,
+        showSolicitudRrhh: this.formGroup.controls.showSolicitudRrhh.value,
         columnMinWidth: 120
       }
     };

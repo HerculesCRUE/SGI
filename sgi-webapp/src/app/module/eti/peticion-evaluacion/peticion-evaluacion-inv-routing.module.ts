@@ -58,14 +58,6 @@ const routes: SgiRoutes = [
       {
         path: PETICION_EVALUACION_ROUTE_NAMES.EQUIPO_INVESTIGADOR,
         component: EquipoInvestigadorListadoComponent
-      },
-      {
-        path: PETICION_EVALUACION_ROUTE_NAMES.TAREAS,
-        component: PeticionEvaluacionTareasListadoComponent
-      },
-      {
-        path: PETICION_EVALUACION_ROUTE_NAMES.MEMORIAS,
-        component: MemoriasListadoComponent
       }
     ]
   },

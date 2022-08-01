@@ -13,7 +13,6 @@ import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEquipo;
 import org.crue.hercules.sgi.csp.repository.RolProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEquipoRepository;
-import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.impl.SolicitudProyectoEquipoServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +32,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 /**
  * SolicitudProyectoEquipoServiceTest
  */
-public class SolicitudProyectoEquipoServiceTest extends BaseServiceTest {
+class SolicitudProyectoEquipoServiceTest extends BaseServiceTest {
 
   @Mock
   private SolicitudProyectoEquipoRepository repository;
@@ -48,21 +47,17 @@ public class SolicitudProyectoEquipoServiceTest extends BaseServiceTest {
   private SolicitudRepository solicitudRepository;
 
   @Mock
-  SolicitudProyectoRepository solicitudProyectoRepository;
-
-  @Mock
   private Validator validator;
 
   private SolicitudProyectoEquipoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
-    service = new SolicitudProyectoEquipoServiceImpl(validator, repository, rolProyectoRepository, solicitudRepository,
-        solicitudProyectoRepository);
+  void setUp() throws Exception {
+    service = new SolicitudProyectoEquipoServiceImpl(validator, repository, rolProyectoRepository, solicitudRepository);
   }
 
   @Test
-  public void findById_ReturnsSolicitudProyectoEquipo() {
+  void findById_ReturnsSolicitudProyectoEquipo() {
     // given: Un SolicitudProyectoEquipo con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado))
@@ -77,7 +72,7 @@ public class SolicitudProyectoEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsSolicitudProyectoEquipoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsSolicitudProyectoEquipoNotFoundException() throws Exception {
     // given: Ningun SolicitudProyectoEquipo con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -90,7 +85,7 @@ public class SolicitudProyectoEquipoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 SolicitudProyectoEquipo
     Long solicitudId = 1L;
     Solicitud solicitud = new Solicitud();
@@ -123,7 +118,7 @@ public class SolicitudProyectoEquipoServiceTest extends BaseServiceTest {
     Page<SolicitudProyectoEquipo> page = service.findAllBySolicitud(solicitudId, null, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

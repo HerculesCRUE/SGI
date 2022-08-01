@@ -11,12 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ProyectoEntidadConvocanteRepositoryTest extends BaseRepositoryTest {
+class ProyectoEntidadConvocanteRepositoryTest extends BaseRepositoryTest {
   @Autowired
   private ProyectoEntidadConvocanteRepository repository;
 
   @Test
-  public void existsByProyectoIdAndEntidadRef_returnsTrue() throws Exception {
+  void existsByProyectoIdAndEntidadRef_returnsTrue() throws Exception {
     // given: 2 ProyectoEntidadConvocante (only 1 matches find criteria)
     String matchingEntidadRef = "Entidad1";
     String notMatchingEntidadRef = "Entidad2";
@@ -63,7 +63,7 @@ public class ProyectoEntidadConvocanteRepositoryTest extends BaseRepositoryTest 
   }
 
   @Test
-  public void existsProyectoIdAndEntidadRef_NotExists_returnsFalse() throws Exception {
+  void existsProyectoIdAndEntidadRef_NotExists_returnsFalse() throws Exception {
     // given: 2 ProyectoEntidadConvocante (no one matches find criteria)
     String entidadRef = "Entidad";
     String notMatchingEntidadRef1 = "Entidad1";

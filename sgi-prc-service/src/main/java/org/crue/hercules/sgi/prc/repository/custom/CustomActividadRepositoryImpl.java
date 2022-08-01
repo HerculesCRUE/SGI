@@ -55,8 +55,10 @@ public class CustomActividadRepositoryImpl implements CustomActividadRepository 
   private EntityManager entityManager;
 
   @Override
-  public Page<ActividadResumen> findAllActividades(String query, Pageable pageable) {
-    log.debug("findAllActividades(String query, Pageable pageable) - start");
+  public Page<ActividadResumen> findAllActividades(Specification<ProduccionCientifica> specIsInvestigador, String query,
+      Pageable pageable) {
+    log.debug(
+        "findAllActividades(Specification<ProduccionCientifica> specIsInvestigador,String query, Pageable pageable) - start");
 
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<ActividadResumen> cq = cb.createQuery(ActividadResumen.class);
@@ -118,6 +120,11 @@ public class CustomActividadRepositoryImpl implements CustomActividadRepository 
       listPredicatesCount.add(spec.toPredicate(rootCount, countQuery, cb));
     }
 
+    if (specIsInvestigador != null) {
+      listPredicates.add(specIsInvestigador.toPredicate(root, cq, cb));
+      listPredicatesCount.add(specIsInvestigador.toPredicate(rootCount, countQuery, cb));
+    }
+
     Path<Long> pathProduccionCientificaId = root.get(ProduccionCientifica_.id);
     cq.where(listPredicates.toArray(new Predicate[] {}));
 
@@ -154,7 +161,8 @@ public class CustomActividadRepositoryImpl implements CustomActividadRepository 
     List<ActividadResumen> result = typedQuery.getResultList();
     Page<ActividadResumen> returnValue = new PageImpl<>(result, pageable, count);
 
-    log.debug("findAllActividades(String query, Pageable pageable) - end");
+    log.debug(
+        "findAllActividades(Specification<ProduccionCientifica> specIsInvestigador, String query, Pageable pageable) - end");
 
     return returnValue;
   }

@@ -18,7 +18,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de ProyectoEntidadGestora.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ProyectoEntidadGestoraIT extends BaseIT {
+class ProyectoEntidadGestoraIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/proyectoentidadgestoras";
@@ -44,7 +44,7 @@ public class ProyectoEntidadGestoraIT extends BaseIT {
       "classpath:scripts/estado_proyecto.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsProyectoEntidadGestora() throws Exception {
+  void create_ReturnsProyectoEntidadGestora() throws Exception {
     // given: new ProyectoEntidadGestora
     ProyectoEntidadGestora newProyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
     newProyectoEntidadGestora.setId(null);
@@ -72,7 +72,7 @@ public class ProyectoEntidadGestoraIT extends BaseIT {
       "classpath:scripts/estado_proyecto.sql", "classpath:scripts/proyecto_entidad_gestora.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsProyectoEntidadGestora() throws Exception {
+  void update_ReturnsProyectoEntidadGestora() throws Exception {
     Long idProyectoEntidadGestora = 1L;
     ProyectoEntidadGestora proyectoEntidadGestora = generarMockProyectoEntidadGestora(1L, 1L);
     proyectoEntidadGestora.setEntidadRef("entidad-modificada");
@@ -100,7 +100,7 @@ public class ProyectoEntidadGestoraIT extends BaseIT {
       "classpath:scripts/estado_proyecto.sql", "classpath:scripts/proyecto_entidad_gestora.sql" })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     Long idProyectoEntidadGestora = 1L;
 
     final ResponseEntity<ProyectoEntidadGestora> response = restTemplate.exchange(

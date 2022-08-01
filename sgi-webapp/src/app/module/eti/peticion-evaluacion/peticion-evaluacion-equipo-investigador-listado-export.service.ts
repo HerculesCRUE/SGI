@@ -8,10 +8,9 @@ import { IReportConfig } from '@core/services/rep/abstract-table-export.service'
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion.service';
 import { TranslateService } from '@ngx-translate/core';
-import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { forkJoin, from, Observable, of } from 'rxjs';
-import { catchError, mergeMap, switchMap } from 'rxjs/operators';
+import { catchError, concatMap, mergeMap, switchMap } from 'rxjs/operators';
 import { IPeticionEvaluacionMiembroReportData, IPeticionEvaluacionReportData, IPeticionEvaluacionReportOptions } from './peticion-evaluacion-listado-export.service';
 
 const EQUIPO_INVESTIGADOR_EMAIL_FIELD = 'Email';
@@ -54,7 +53,7 @@ export class PeticionEvaluacionEquipoInvestigadorListadoExportService extends
         return from(investigadores).pipe(
           mergeMap((investigador: IEquipoTrabajoWithIsEliminable) => {
             return this.addInventorMiembroToInvencionData(investigador, peticionData);
-          })
+          }, this.DEFAULT_CONCURRENT)
         );
       }), catchError(err => {
         this.logger.error(err);
@@ -69,7 +68,7 @@ export class PeticionEvaluacionEquipoInvestigadorListadoExportService extends
       persona: this.personaService.findById(investigador.persona.id),
       vinculacion: this.vinculacionService.findByPersonaId(investigador.persona.id)
     }).pipe(
-      mergeMap(investigadorMiembro => {
+      concatMap(investigadorMiembro => {
         if (peticionData.equipoInvestigador === undefined || peticionData.equipoInvestigador === null) {
           peticionData.equipoInvestigador = [];
         }

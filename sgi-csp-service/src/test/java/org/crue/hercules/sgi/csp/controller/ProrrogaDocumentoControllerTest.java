@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ProrrogaDocumentoControllerTest
  */
 @WebMvcTest(ProrrogaDocumentoController.class)
-public class ProrrogaDocumentoControllerTest extends BaseControllerTest {
+class ProrrogaDocumentoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ProrrogaDocumentoService service;
@@ -33,7 +33,7 @@ public class ProrrogaDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void create_ReturnsProrrogaDocumento() throws Exception {
+  void create_ReturnsProrrogaDocumento() throws Exception {
     // given: new ProrrogaDocumento
     ProrrogaDocumento prorrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     prorrogaDocumento.setId(null);
@@ -67,7 +67,7 @@ public class ProrrogaDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ProrrogaDocumento with id filled
     ProrrogaDocumento prorrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
 
@@ -86,7 +86,7 @@ public class ProrrogaDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_ReturnsProrrogaDocumento() throws Exception {
+  void update_ReturnsProrrogaDocumento() throws Exception {
     // given: Existing ProrrogaDocumento to be updated
     ProrrogaDocumento prorrogaDocumentoExistente = generarMockProrrogaDocumento(1L, 1L, 1L);
     ProrrogaDocumento prorrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
@@ -117,7 +117,7 @@ public class ProrrogaDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     ProrrogaDocumento prorrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
@@ -137,7 +137,7 @@ public class ProrrogaDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void delete_WithExistingId_Return204() throws Exception {
+  void delete_WithExistingId_Return204() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.doNothing().when(service).delete(ArgumentMatchers.anyLong());
@@ -155,7 +155,7 @@ public class ProrrogaDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void delete_NoExistingId_Return404() throws Exception {
+  void delete_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -174,7 +174,7 @@ public class ProrrogaDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsProrrogaDocumento() throws Exception {
+  void findById_WithExistingId_ReturnsProrrogaDocumento() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
@@ -201,7 +201,7 @@ public class ProrrogaDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ProrrogaDocumentoNotFoundException(1L);

@@ -46,7 +46,7 @@ import org.springframework.security.test.context.support.WithMockUser;
  * ConvocatoriaHitoServiceTest
  */
 
-public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
+class ConvocatoriaHitoServiceTest extends BaseServiceTest {
 
   @Mock
   private ConvocatoriaHitoRepository repository;
@@ -81,14 +81,14 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   private ConvocatoriaHitoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ConvocatoriaHitoService(repository, convocatoriaRepository, modeloTipoHitoRepository,
         configuracionSolicitudRepository, convocatoriaHitoAvisoRepository, solicitudRepository,
         proyectoEquipoRepository, emailService, sgiApiTaskService, personaService);
   }
 
   @Test
-  public void create_ReturnsConvocatoriaHito() {
+  void create_ReturnsConvocatoriaHito() {
     // given: Un nuevo ConvocatoriaHito
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -126,7 +126,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithFechaYTipoHitoDuplicado_ThrowsIllegalArgumentException() {
+  void create_WithFechaYTipoHitoDuplicado_ThrowsIllegalArgumentException() {
     // given: a ConvocatoriaHito without fecha
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -152,7 +152,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoExistingConvocatoria_ThrowsConvocatoriaNotFoundException() {
+  void create_WithNoExistingConvocatoria_ThrowsConvocatoriaNotFoundException() {
     // given: a ConvocatoriaHito with non existing Convocatoria
     Long convocatoriaId = 1L;
     ConvocatoriaHitoInput convocatoriaHito = generarMockConvocatoriaHitoInput(convocatoriaId);
@@ -167,7 +167,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutModeloEjecucion_ThrowsIllegalArgumentException() {
+  void create_WithoutModeloEjecucion_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaHito con Convocatoria sin Modelo de Ejecucion
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -187,7 +187,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutModeloTipoHito_ThrowsIllegalArgumentException() {
+  void create_WithoutModeloTipoHito_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaHito con TipoHito no asignado al Modelo de Ejecucion de la
     // convocatoria
     Long convocatoriaId = 1L;
@@ -208,7 +208,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDisabledModeloTipoHito_ThrowsIllegalArgumentException() {
+  void create_WithDisabledModeloTipoHito_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaHito con la asignación de TipoHito al Modelo de Ejecucion
     // de la convocatoria inactiva
     Long convocatoriaId = 1L;
@@ -233,7 +233,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDisabledTipoHito_ThrowsIllegalArgumentException() {
+  void create_WithDisabledTipoHito_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaHito TipoHito disabled
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -257,7 +257,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsConvocatoriaHito() {
+  void update_ReturnsConvocatoriaHito() {
     // given: Un nuevo ConvocatoriaHito con el tipoHito actualizado
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -294,7 +294,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithFechaYTipoHitoDuplicado_ThrowsIllegalArgumentException() {
+  void update_WithFechaYTipoHitoDuplicado_ThrowsIllegalArgumentException() {
     // given: Un ConvocatoriaHito a actualizar sin fecha
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -319,7 +319,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsConvocatoriaHitoNotFoundException() {
+  void update_WithIdNotExist_ThrowsConvocatoriaHitoNotFoundException() {
     // given: Un ConvocatoriaHito a actualizar con un id que no existe
     Long convocatoriaId = 1L;
     ConvocatoriaHitoInput convocatoriaHito = generarMockConvocatoriaHitoInput(convocatoriaId);
@@ -333,7 +333,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutModeloEjecucion_ThrowsIllegalArgumentException() {
+  void update_WithoutModeloEjecucion_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaHito con Convocatoria sin Modelo de Ejecucion
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -357,7 +357,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutModeloTipoHito_ThrowsIllegalArgumentException() {
+  void update_WithoutModeloTipoHito_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaHito con TipoHito no asignado al Modelo de Ejecucion de la
     // convocatoria
     Long convocatoriaId = 1L;
@@ -382,7 +382,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDisabledModeloTipoHito_ThrowsIllegalArgumentException() {
+  void update_WithDisabledModeloTipoHito_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaHito con la asignación de TipoHito al Modelo de Ejecucion
     // de la convocatoria inactiva
     Long convocatoriaId = 1L;
@@ -411,7 +411,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDisabledTipoHito_ThrowsIllegalArgumentException() {
+  void update_WithDisabledTipoHito_ThrowsIllegalArgumentException() {
     // given: ConvocatoriaHito TipoHito disabled
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -437,7 +437,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_NoReturnsAnyException() {
+  void delete_WithExistingId_NoReturnsAnyException() {
     // given: existing ConvocatoriaHito
     Long id = 1L;
 
@@ -452,7 +452,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -467,7 +467,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void findAllByConvocatoria_ReturnsPage() {
+  void findAllByConvocatoria_ReturnsPage() {
     // given: Una lista con 37 ConvocatoriaHito para la Convocatoria
     Long convocatoriaId = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId);
@@ -499,7 +499,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     Page<ConvocatoriaHito> page = service.findAllByConvocatoria(convocatoriaId, null, paging);
 
     // then: Devuelve la pagina 3 con los ConvocatoriaHito del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -510,7 +510,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsConvocatoriaHito() {
+  void findById_ReturnsConvocatoriaHito() {
     // given: Un ConvocatoriaHito con el id buscado
     Long idBuscado = 1L;
     Long convocatoriaId = 1L;
@@ -526,7 +526,7 @@ public class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsConvocatoriaHitoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsConvocatoriaHitoNotFoundException() throws Exception {
     // given: Ningun ConvocatoriaHito con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());

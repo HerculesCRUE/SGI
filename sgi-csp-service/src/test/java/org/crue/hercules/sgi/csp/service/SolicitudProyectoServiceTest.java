@@ -27,7 +27,7 @@ import org.springframework.security.test.context.support.WithMockUser;
  * SolicitudProyectoServiceTest
  */
 @ExtendWith(MockitoExtension.class)
-public class SolicitudProyectoServiceTest extends BaseServiceTest {
+class SolicitudProyectoServiceTest extends BaseServiceTest {
 
   @Mock
   private SolicitudProyectoRepository repository;
@@ -46,7 +46,7 @@ public class SolicitudProyectoServiceTest extends BaseServiceTest {
   private SolicitudProyectoService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new SolicitudProyectoServiceImpl(repository, solicitudRepository, solicitudService,
         convocatoriaEntidadFinanciadoraRepository, convocatoriaEntidadGestoraRepository,
         solicitudProyectoEntidadRepository);
@@ -54,7 +54,7 @@ public class SolicitudProyectoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-SOL-C" })
-  public void create__ReturnsSolicitudProyecto() {
+  void create__ReturnsSolicitudProyecto() {
     // given: Un nuevo SolicitudProyecto
     SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(1L);
 
@@ -80,7 +80,7 @@ public class SolicitudProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithoutId_ThrowsIllegalArgumentException() {
+  void create_WithoutId_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudProyecto que ya tiene id
     SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(null);
 
@@ -92,7 +92,7 @@ public class SolicitudProyectoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-SOL-C" })
-  public void create_WithoutColaborativo_ThrowsIllegalArgumentException() {
+  void create_WithoutColaborativo_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudProyecto que no tiene colaborativo
     SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(1L);
 
@@ -106,7 +106,7 @@ public class SolicitudProyectoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-SOL-C" })
-  public void create_WithNoExistingSolicitud_ThrowsSolicitudNotFoundException() {
+  void create_WithNoExistingSolicitud_ThrowsSolicitudNotFoundException() {
     // given: Un nuevo SolicitudProyecto que tiene una solicitud que no existe
     SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(1L);
 
@@ -120,7 +120,7 @@ public class SolicitudProyectoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-SOL-E" })
-  public void update_ReturnsSolicitudProyecto() {
+  void update_ReturnsSolicitudProyecto() {
     // given: Un nuevo SolicitudProyecto con el titulo actualizado
     SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(3L);
 
@@ -145,7 +145,7 @@ public class SolicitudProyectoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-SOL-E" })
-  public void update_WithSolicitudNotExist_ThrowsSolicitudNotFoundException() {
+  void update_WithSolicitudNotExist_ThrowsSolicitudNotFoundException() {
     // given: Un SolicitudProyecto actualizado con un programa que no existe
     SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(1L);
 
@@ -159,7 +159,7 @@ public class SolicitudProyectoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-SOL-E" })
-  public void update_WithIdNotExist_ThrowsSolicitudProyectoNotFoundException() {
+  void update_WithIdNotExist_ThrowsSolicitudProyectoNotFoundException() {
     // given: Un SolicitudProyecto actualizado con un id que no existe
     SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(1L);
 
@@ -177,7 +177,7 @@ public class SolicitudProyectoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-SOL-E" })
-  public void update_WithoutColaborativo_ThrowsIllegalArgumentException() {
+  void update_WithoutColaborativo_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudProyecto que no tiene colaborativo
     SolicitudProyecto solicitudProyecto = generarSolicitudProyecto(1L);
 
@@ -190,7 +190,7 @@ public class SolicitudProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_NoReturnsAnyException() {
+  void delete_WithExistingId_NoReturnsAnyException() {
     // given: existing SolicitudProyecto
     Long id = 1L;
 
@@ -205,7 +205,7 @@ public class SolicitudProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -219,7 +219,7 @@ public class SolicitudProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsSolicitudProyecto() {
+  void findById_ReturnsSolicitudProyecto() {
     // given: Un SolicitudProyecto con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.of(generarSolicitudProyecto(idBuscado)));
@@ -233,7 +233,7 @@ public class SolicitudProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsSolicitudProyectoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsSolicitudProyectoNotFoundException() throws Exception {
     // given: Ningun SolicitudProyecto con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -245,7 +245,7 @@ public class SolicitudProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findBySolicitudId_ReturnsSolicitudProyecto() {
+  void findBySolicitudId_ReturnsSolicitudProyecto() {
     // given: Un Solicitud con el id buscado
     Long idSolicitud = 1L;
 
@@ -261,7 +261,7 @@ public class SolicitudProyectoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findBySolicitudId_WithSolicitudIdNotExist_ThrowsSolicitudProyectoNotFoundException() throws Exception {
+  void findBySolicitudId_WithSolicitudIdNotExist_ThrowsSolicitudProyectoNotFoundException() throws Exception {
     // given: Ningun SolicitudProyecto con el solicitud id buscado
     Long idSolicitud = 1L;
 

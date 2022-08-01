@@ -7,6 +7,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Objects;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -47,7 +48,7 @@ public class EstadoRetrospectiva extends BaseEntity {
 
     public static Tipo fromId(Long id) {
       for (Tipo tipo : Tipo.values()) {
-        if (tipo.id == id) {
+        if (Objects.equals(tipo.id, id)) {
           return tipo;
         }
       }

@@ -63,7 +63,8 @@ public class TipoProteccionController {
    */
   @GetMapping()
   @PreAuthorize("hasAnyAuthority('PII-TPR-V', 'PII-TPR-C', 'PII-TPR-E', 'PII-TPR-B', 'PII-TPR-R', 'PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R', 'PII-INV-MOD-V')")
-  ResponseEntity<Page<TipoProteccionOutput>> findActivos(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<TipoProteccionOutput>> findActivos(
+      @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<TipoProteccion> page = service.findActivos(query, paging);
@@ -86,7 +87,7 @@ public class TipoProteccionController {
    */
   @GetMapping("/todos")
   @PreAuthorize("hasAnyAuthority('PII-TPR-V', 'PII-TPR-C', 'PII-TPR-E', 'PII-TPR-B', 'PII-TPR-R')")
-  ResponseEntity<Page<TipoProteccionOutput>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<TipoProteccionOutput>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodos(String query, Pageable paging) - start");
     Page<TipoProteccion> page = service.findAll(query, paging);
@@ -104,13 +105,14 @@ public class TipoProteccionController {
    * Devuelve una lista paginada y filtrada de {@link TipoProteccion} activos que
    * sean Subtipos del {@link TipoProteccion} pasado por párametros.
    * 
+   * @param id     Identificador del {@link TipoProteccion}
    * @param query  Filtro de búsqueda.
    * @param paging Información de Paginado.
    * @return Lista de entidades {@link TipoProteccion} paginadas y/o filtradas.
    */
   @GetMapping("/{id}/subtipos")
   @PreAuthorize("hasAnyAuthority('PII-TPR-V', 'PII-TPR-C', 'PII-TPR-E', 'PII-TPR-B', 'PII-TPR-R', 'PII-INV-V', 'PII-INV-C', 'PII-INV-E')")
-  ResponseEntity<Page<TipoProteccionOutput>> findSubtiposProteccion(@PathVariable Long id,
+  public ResponseEntity<Page<TipoProteccionOutput>> findSubtiposProteccion(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findSubtipos(@PathVariable Long id,String query, Pageable paging) - start");
     Page<TipoProteccion> page = service.findSubtiposProteccion(id, query, paging);
@@ -129,13 +131,14 @@ public class TipoProteccionController {
    * Subtipos del {@link TipoProteccion} pasado por párametros sin importar su
    * estado.
    * 
+   * @param id     Identificador del objeto {@link TipoProteccion}
    * @param query  Filtro de búsqueda.
    * @param paging Información de Paginado.
    * @return Lista de entidades {@link TipoProteccion} paginadas y/o filtradas.
    */
   @GetMapping("/{id}/subtipos/todos")
   @PreAuthorize("hasAnyAuthority('PII-TPR-V', 'PII-TPR-C', 'PII-TPR-E', 'PII-TPR-B', 'PII-TPR-R', 'PII-INV-V', 'PII-INV-C', 'PII-INV-E')")
-  ResponseEntity<Page<TipoProteccionOutput>> findAllSubtiposProteccion(@PathVariable Long id,
+  public ResponseEntity<Page<TipoProteccionOutput>> findAllSubtiposProteccion(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllSubtiposProteccion(@PathVariable Long id,String query, Pageable paging) - start");
     Page<TipoProteccion> page = service.findAllSubtiposProteccion(id, query, paging);
@@ -157,7 +160,7 @@ public class TipoProteccionController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthority('PII-TPR-V', 'PII-TPR-C', 'PII-TPR-E', 'PII-TPR-B', 'PII-TPR-R')")
-  TipoProteccionOutput findById(@PathVariable Long id) {
+  public TipoProteccionOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     TipoProteccion returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -172,7 +175,7 @@ public class TipoProteccionController {
    */
   @PostMapping
   @PreAuthorize("hasAuthority('PII-TPR-C')")
-  ResponseEntity<TipoProteccionOutput> create(@Valid @RequestBody TipoProteccionInput tipoProteccion) {
+  public ResponseEntity<TipoProteccionOutput> create(@Valid @RequestBody TipoProteccionInput tipoProteccion) {
     log.debug("create(@Valid @RequestBody TipoProteccionInput tipoProteccion) - start");
     TipoProteccion returnValue = service.create(convert(tipoProteccion));
     log.debug("create(@Valid @RequestBody TipoProteccionInput tipoProteccion) - end");
@@ -188,7 +191,7 @@ public class TipoProteccionController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('PII-TPR-E')")
-  TipoProteccionOutput update(@Valid @RequestBody TipoProteccionInput tipoProteccion, @PathVariable Long id) {
+  public TipoProteccionOutput update(@Valid @RequestBody TipoProteccionInput tipoProteccion, @PathVariable Long id) {
     log.debug("update(@Valid @RequestBody TipoProteccionInput tipoProteccion, @PathVariable Long id) - start");
     TipoProteccion returnValue = service.update(convert(id, tipoProteccion));
     log.debug("update(@Valid @RequestBody TipoProteccionInput tipoProteccion, @PathVariable Long id) - end");
@@ -203,7 +206,7 @@ public class TipoProteccionController {
    */
   @PatchMapping("/{id}/activar")
   @PreAuthorize("hasAuthority('PII-TPR-R')")
-  TipoProteccionOutput activar(@PathVariable Long id) {
+  public TipoProteccionOutput activar(@PathVariable Long id) {
     log.debug("reactivar(Long id) - start");
     TipoProteccion returnValue = service.activar(id);
     log.debug("reactivar(Long id) - end");
@@ -214,10 +217,11 @@ public class TipoProteccionController {
    * Desactiva el {@link TipoProteccion} con id indicado.
    * 
    * @param id Identificador de {@link TipoProteccion}.
+   * @return objeto de tipo {@link TipoProteccionOutput}
    */
   @PatchMapping("/{id}/desactivar")
   @PreAuthorize("hasAuthority('PII-TPR-B')")
-  TipoProteccionOutput desactivar(@PathVariable Long id) {
+  public TipoProteccionOutput desactivar(@PathVariable Long id) {
     log.debug("desactivar(Long id) - start");
     TipoProteccion returnValue = service.desactivar(id);
     log.debug("desactivar(Long id) - end");
@@ -244,7 +248,7 @@ public class TipoProteccionController {
   }
 
   private Page<TipoProteccionOutput> convert(Page<TipoProteccion> page) {
-    List<TipoProteccionOutput> content = page.getContent().stream().map((tipoProteccion) -> convert(tipoProteccion))
+    List<TipoProteccionOutput> content = page.getContent().stream().map(this::convert)
         .collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -60,10 +61,9 @@ public class TipoFaseServiceImpl implements TipoFaseService {
     log.debug("update(TipoFase tipoFaseActualizar) - start");
 
     Assert.notNull(tipoFaseActualizar.getId(), "TipoFase id no puede ser null para actualizar");
-    tipoFaseRepository.findByNombreAndActivoIsTrue(tipoFaseActualizar.getNombre()).ifPresent((tipoFaseExistente) -> {
-      Assert.isTrue(tipoFaseActualizar.getId() == tipoFaseExistente.getId(),
-          "Ya existe un TipoFase activo con el nombre '" + tipoFaseExistente.getNombre() + "'");
-    });
+    tipoFaseRepository.findByNombreAndActivoIsTrue(tipoFaseActualizar.getNombre()).ifPresent(
+        tipoFaseExistente -> Assert.isTrue(Objects.equals(tipoFaseActualizar.getId(), tipoFaseExistente.getId()),
+            "Ya existe un TipoFase activo con el nombre '" + tipoFaseExistente.getNombre() + "'"));
 
     return tipoFaseRepository.findById(tipoFaseActualizar.getId()).map(tipoFase -> {
       tipoFase.setNombre(tipoFaseActualizar.getNombre());
@@ -141,7 +141,7 @@ public class TipoFaseServiceImpl implements TipoFaseService {
     Assert.notNull(id, "TipoFase id no puede ser null para reactivar un TipoFase");
 
     return tipoFaseRepository.findById(id).map(tipoFase -> {
-      if (tipoFase.getActivo()) {
+      if (Boolean.TRUE.equals(tipoFase.getActivo())) {
         return tipoFase;
       }
 
@@ -169,7 +169,7 @@ public class TipoFaseServiceImpl implements TipoFaseService {
     Assert.notNull(id, "TipoFase id no puede ser null para desactivar un TipoFase");
 
     return tipoFaseRepository.findById(id).map(tipoFase -> {
-      if (!tipoFase.getActivo()) {
+      if (Boolean.FALSE.equals(tipoFase.getActivo())) {
         return tipoFase;
       }
 

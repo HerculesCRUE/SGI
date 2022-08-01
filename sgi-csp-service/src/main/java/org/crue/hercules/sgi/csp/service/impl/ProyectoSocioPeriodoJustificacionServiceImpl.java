@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.service.impl;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -80,16 +81,17 @@ public class ProyectoSocioPeriodoJustificacionServiceImpl implements ProyectoSoc
     log.debug(
         "delete(Long proyectoSocioId, List<ProyectoSocioPeriodoJustificacion> proyectoSocioPeriodoJustificaciones) - start");
 
-    proyectoSocioRepository.findById(proyectoSocioId)
-        .orElseThrow(() -> new ProyectoSocioNotFoundException(proyectoSocioId));
+    if (!proyectoSocioRepository.existsById(proyectoSocioId)) {
+      throw new ProyectoSocioNotFoundException(proyectoSocioId);
+    }
 
     List<ProyectoSocioPeriodoJustificacion> proyectoSocioPeriodoJustificacionesBD = repository
         .findAllByProyectoSocioId(proyectoSocioId);
 
     // Periodos eliminados
     List<ProyectoSocioPeriodoJustificacion> periodoJustificacionesEliminar = proyectoSocioPeriodoJustificacionesBD
-        .stream().filter(periodo -> !proyectoSocioPeriodoJustificaciones.stream()
-            .map(ProyectoSocioPeriodoJustificacion::getId).anyMatch(id -> id == periodo.getId()))
+        .stream().filter(periodo -> proyectoSocioPeriodoJustificaciones.stream()
+            .map(ProyectoSocioPeriodoJustificacion::getId).noneMatch(id -> Objects.equals(id, periodo.getId())))
         .collect(Collectors.toList());
 
     if (!periodoJustificacionesEliminar.isEmpty()) {
@@ -136,8 +138,11 @@ public class ProyectoSocioPeriodoJustificacionServiceImpl implements ProyectoSoc
     proyectoSocioPeriodoJustificacion.setId(proyectoSocioPeriodoJustificacionId);
     proyectoSocioPeriodoJustificacionesBD.add(proyectoSocioPeriodoJustificacion);
 
-    Assert.isTrue(proyectoSocioPeriodoJustificacionExistente.getProyectoSocioId() == proyectoSocioPeriodoJustificacion
-        .getProyectoSocioId(), "No se puede modificar el proyecto socio del ProyectoSocioPeriodoJustificacion");
+    Assert.isTrue(
+        Objects.equals(proyectoSocioPeriodoJustificacionExistente.getProyectoSocioId(),
+            proyectoSocioPeriodoJustificacion
+                .getProyectoSocioId()),
+        "No se puede modificar el proyecto socio del ProyectoSocioPeriodoJustificacion");
 
     validateProyectoSocioPeriodoJustificacion(proyectoSocioPeriodoJustificacion);
 
@@ -189,7 +194,7 @@ public class ProyectoSocioPeriodoJustificacionServiceImpl implements ProyectoSoc
       periodoJustificacion.setNumPeriodo(numPeriodo.incrementAndGet());
     }
 
-    proyectoSocioPeriodoJustificacionesBD = repository.saveAll(proyectoSocioPeriodoJustificacionesBD);
+    repository.saveAll(proyectoSocioPeriodoJustificacionesBD);
 
     log.debug("update(ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificaciones) - end");
 
@@ -308,7 +313,7 @@ public class ProyectoSocioPeriodoJustificacionServiceImpl implements ProyectoSoc
 
     Specification<ProyectoSocioPeriodoJustificacion> specs = Specification.where(specByIdNotEqual)
         .and(specByRangoFechaSolapados).and(specProyectoSocioId);
-    boolean returnValue = repository.count(specs) > 0 ? true : false;
+    boolean returnValue = repository.count(specs) > 0;
     log.debug("isRangoFechasSolapado(ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacion) - end");
     return returnValue;
   }

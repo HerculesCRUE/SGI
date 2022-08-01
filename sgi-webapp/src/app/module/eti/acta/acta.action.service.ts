@@ -66,13 +66,17 @@ export class ActaActionService extends ActionService {
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);
     this.addFragment(this.FRAGMENT.MEMORIAS, this.memorias);
     this.addFragment(this.FRAGMENT.ASISTENTES, this.asistentes);
-    this.addFragment(this.FRAGMENT.COMENTARIOS, this.comentarios);
+    if (this.isEdit()) {
+      this.addFragment(this.FRAGMENT.COMENTARIOS, this.comentarios);
+    }
   }
 
   setIdConvocatoria(id: number) {
     this.asistentes.loadAsistentes(id);
     this.memorias.loadMemorias(id);
-    this.comentarios.loadEvaluaciones(id);
+    if (this.isEdit()) {
+      this.comentarios.loadEvaluaciones(id);
+    }
   }
 
   protected onKeyChange(key: number): void {
@@ -85,5 +89,13 @@ export class ActaActionService extends ActionService {
 
   getConvocatoriaReunion(): IConvocatoriaReunion {
     return this.acta?.convocatoriaReunion;
+  }
+
+  initializeMemorias(): void {
+    this.memorias.initialize();
+  }
+
+  getLengthMemorias(): number {
+    return this.memorias.memorias$.value.length;
   }
 }

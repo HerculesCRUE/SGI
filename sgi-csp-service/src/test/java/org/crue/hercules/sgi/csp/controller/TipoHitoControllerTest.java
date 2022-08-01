@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * TipoHitoControllerTest
  */
 @WebMvcTest(TipoHitoController.class)
-public class TipoHitoControllerTest extends BaseControllerTest {
+class TipoHitoControllerTest extends BaseControllerTest {
 
   @MockBean
   private TipoHitoService tipoHitoService;
@@ -44,7 +44,7 @@ public class TipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-THITO-C" })
-  public void create_ReturnsTipoHito() throws Exception {
+  void create_ReturnsTipoHito() throws Exception {
     // given: Un TipoHito nuevo
     String tipoHitoJson = "{ \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\", \"activo\": \"true\" }";
     BDDMockito.given(tipoHitoService.create(ArgumentMatchers.<TipoHito>any())).will((InvocationOnMock invocation) -> {
@@ -68,7 +68,7 @@ public class TipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-THITO-C" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: Un TipoHito que produce un error al crearse porque ya tiene id
     String tipoHitoJson = "{ \"id\": \"1\", \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\" }";
     BDDMockito.given(tipoHitoService.create(ArgumentMatchers.<TipoHito>any()))
@@ -85,7 +85,7 @@ public class TipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-THITO-E" })
-  public void update_ReturnsTipoHito() throws Exception {
+  void update_ReturnsTipoHito() throws Exception {
     // given: Un TipoHito a modificar
     String tipoHitoJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true }";
 
@@ -106,7 +106,7 @@ public class TipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-THITO-E" })
-  public void update_WithIdNotExist_ReturnsNotFound() throws Exception {
+  void update_WithIdNotExist_ReturnsNotFound() throws Exception {
     // given: Un TipoHito a modificar
     String replaceTipoHitoJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true }";
     BDDMockito.given(tipoHitoService.update(ArgumentMatchers.<TipoHito>any())).will((InvocationOnMock invocation) -> {
@@ -123,7 +123,7 @@ public class TipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-THITO-E" })
-  public void update_WithNombreRepetido_Returns400() throws Exception {
+  void update_WithNombreRepetido_Returns400() throws Exception {
     // given: Un TipoHito que produce un error porque ya existe otro con el
     // mismo nombre
     String tipoHitoJson = "{ \"id\": \"2\", \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\" }";
@@ -141,7 +141,7 @@ public class TipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findAll_ReturnsPage() throws Exception {
+  void findAll_ReturnsPage() throws Exception {
     // given: Una lista con 37 TipoHito
     List<TipoHito> tiposHito = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -189,7 +189,7 @@ public class TipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findAll_EmptyList_Returns204() throws Exception {
+  void findAll_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de TipoHito
     List<TipoHito> tiposHito = new ArrayList<>();
     Integer page = 0;
@@ -216,7 +216,7 @@ public class TipoHitoControllerTest extends BaseControllerTest {
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-THITO-V", "CSP-THITO-C", "CSP-THITO-E", "CSP-THITO-B",
       "CSP-THITO-R", "CSP-ME-C", "CSP-ME-E" })
-  public void findAllTodos_ReturnsPage() throws Exception {
+  void findAllTodos_ReturnsPage() throws Exception {
     // given: Una lista con 37 TipoHito
     List<TipoHito> tiposHito = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -265,7 +265,7 @@ public class TipoHitoControllerTest extends BaseControllerTest {
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-THITO-V", "CSP-THITO-C", "CSP-THITO-E", "CSP-THITO-B",
       "CSP-THITO-R", "CSP-ME-C", "CSP-ME-E" })
-  public void findAllTodos_EmptyList_Returns204() throws Exception {
+  void findAllTodos_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de TipoHito
     List<TipoHito> tiposHito = new ArrayList<>();
     Integer page = 0;
@@ -291,7 +291,7 @@ public class TipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_ReturnsTipoHito() throws Exception {
+  void findById_ReturnsTipoHito() throws Exception {
     // given: Un TipoHito con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(tipoHitoService.findById(ArgumentMatchers.anyLong())).willReturn((generarMockTipoHito(idBuscado)));
@@ -309,7 +309,7 @@ public class TipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-THITO-R" })
-  public void reactivar_WithExistingId_ReturnTipoHito() throws Exception {
+  void reactivar_WithExistingId_ReturnTipoHito() throws Exception {
     // given: existing id
     TipoHito tipoHito = generarMockTipoHito(1L);
     tipoHito.setActivo(Boolean.FALSE);
@@ -336,7 +336,7 @@ public class TipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-THITO-R" })
-  public void reactivar_NoExistingId_Return404() throws Exception {
+  void reactivar_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -355,7 +355,7 @@ public class TipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-THITO-B" })
-  public void desactivar_WithExistingId_ReturnTipoHito() throws Exception {
+  void desactivar_WithExistingId_ReturnTipoHito() throws Exception {
     // given: existing id
     Long idBuscado = 1L;
     TipoHito tipoHito = generarMockTipoHito(idBuscado);
@@ -384,7 +384,7 @@ public class TipoHitoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-THITO-B" })
-  public void desactivar_NoExistingId_Return404() throws Exception {
+  void desactivar_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
     BDDMockito.willThrow(new TipoHitoNotFoundException(id)).given(tipoHitoService)
@@ -407,7 +407,7 @@ public class TipoHitoControllerTest extends BaseControllerTest {
    * @param id id del TipoHito
    * @return el objeto TipoHito
    */
-  public TipoHito generarMockTipoHito(Long id) {
+  TipoHito generarMockTipoHito(Long id) {
     return generarMockTipoHito(id, "nombre-" + id);
   }
 
@@ -417,7 +417,7 @@ public class TipoHitoControllerTest extends BaseControllerTest {
    * @param id id del TipoHito
    * @return el objeto TipoHito
    */
-  public TipoHito generarMockTipoHito(Long id, String nombre) {
+  TipoHito generarMockTipoHito(Long id, String nombre) {
     TipoHito tipoHito = new TipoHito();
     tipoHito.setId(id);
     tipoHito.setNombre(nombre);

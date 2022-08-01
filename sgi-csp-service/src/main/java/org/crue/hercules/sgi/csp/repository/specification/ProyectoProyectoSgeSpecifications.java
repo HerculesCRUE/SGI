@@ -50,4 +50,15 @@ public class ProyectoProyectoSgeSpecifications {
     return (root, query, cb) -> cb.isTrue(root.get(ProyectoProyectoSge_.proyecto).get(Proyecto_.activo));
   }
 
+  /**
+   * {@link ProyectoProyectoSge} del ProyectoSGE con el id indicado.
+   * 
+   * @param proyectoSgeRef identificador del ProyectoSGE.
+   * @return specification para obtener los {@link ProyectoProyectoSge} del
+   *         ProyectoSGE con el id indicado.
+   */
+  public static Specification<ProyectoProyectoSge> byProyectoSgeRef(String proyectoSgeRef) {
+    return (root, query, cb) -> cb.equal(root.get(ProyectoProyectoSge_.proyectoSgeRef), proyectoSgeRef);
+
+  }
 }

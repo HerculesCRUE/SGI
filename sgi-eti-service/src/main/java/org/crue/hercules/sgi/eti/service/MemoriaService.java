@@ -243,4 +243,12 @@ public interface MemoriaService {
    * @return la entidad {@link Memoria}
    */
   Boolean isMemoriaWithPersonaRefCreadorPeticionEvaluacionOrResponsableMemoria(String personaRef, Long idMemoria);
+
+  /**
+   * 
+   * Envia comunicados de aviso para informes con seguimiento final
+   * pendiente
+   * 
+   */
+  void sendComunicadoInformeSeguimientoFinalPendiente();
 }

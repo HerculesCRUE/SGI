@@ -29,7 +29,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ProyectoSocioEquipoControllerTest
  */
 @WebMvcTest(ProyectoSocioEquipoController.class)
-public class ProyectoSocioEquipoControllerTest extends BaseControllerTest {
+class ProyectoSocioEquipoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ProyectoSocioEquipoService service;
@@ -39,7 +39,7 @@ public class ProyectoSocioEquipoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void updateProyectoSocioEquipoesConvocatoria_ReturnsProyectoSocioEquipoList() throws Exception {
+  void updateProyectoSocioEquipoesConvocatoria_ReturnsProyectoSocioEquipoList() throws Exception {
     // given: una lista con uno de los ProyectoSocioEquipo actualizado,
     // otro nuevo y sin los otros 3 periodos existentes
     Long proyectoSocioId = 1L;
@@ -91,7 +91,7 @@ public class ProyectoSocioEquipoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  public void updateProyectoSocioEquipoesConvocatoria_WithNoExistingId_Returns404() throws Exception {
+  void updateProyectoSocioEquipoesConvocatoria_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     ProyectoSocioEquipo proyectoSocioEquipo = generarMockProyectoSocioEquipo(1L);
@@ -111,7 +111,7 @@ public class ProyectoSocioEquipoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsProyectoSocioEquipo() throws Exception {
+  void findById_WithExistingId_ReturnsProyectoSocioEquipo() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
       return generarMockProyectoSocioEquipo(invocation.getArgument(0));
@@ -133,7 +133,7 @@ public class ProyectoSocioEquipoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ProyectoSocioEquipoNotFoundException(1L);

@@ -14,6 +14,8 @@ import javax.validation.Payload;
 public @interface UniqueNombreSectorAplicacionActiva {
   String message() default "{org.crue.hercules.sgi.pii.validation.UniqueNombreSectorAplicacionActiva.message}";
 
+  String field() default "org.crue.hercules.sgi.pii.model.UniqueNombreSectorAplicacionActiva.name";
+
   Class<?>[] groups() default {};
 
   Class<? extends Payload>[] payload() default {};

@@ -37,7 +37,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * FuenteFinanciacionControllerTest
  */
 @WebMvcTest(FuenteFinanciacionController.class)
-public class FuenteFinanciacionControllerTest extends BaseControllerTest {
+class FuenteFinanciacionControllerTest extends BaseControllerTest {
 
   @MockBean
   private FuenteFinanciacionService service;
@@ -49,7 +49,7 @@ public class FuenteFinanciacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-FNT-C" })
-  public void create_ReturnsFuenteFinanciacion() throws Exception {
+  void create_ReturnsFuenteFinanciacion() throws Exception {
     // given: new FuenteFinanciacion
     FuenteFinanciacionInput fuenteFinanciacion = generarMockFuenteFinanciacionInput();
 
@@ -81,7 +81,7 @@ public class FuenteFinanciacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-FNT-E" })
-  public void update_ReturnsFuenteFinanciacion() throws Exception {
+  void update_ReturnsFuenteFinanciacion() throws Exception {
     // given: Existing TipoAmbitoGeografico to be updated
     Long id = 1L;
     FuenteFinanciacionInput fuenteFinanciacion = generarMockFuenteFinanciacionInput();
@@ -109,7 +109,7 @@ public class FuenteFinanciacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-FNT-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     FuenteFinanciacionInput fuenteFinanciacion = generarMockFuenteFinanciacionInput();
@@ -129,7 +129,7 @@ public class FuenteFinanciacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-FNT-R" })
-  public void activar_WithExistingId_ReturnFuenteFinanciacion() throws Exception {
+  void activar_WithExistingId_ReturnFuenteFinanciacion() throws Exception {
     // given: existing id
     Long id = 1L;
 
@@ -150,7 +150,7 @@ public class FuenteFinanciacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-FNT-R" })
-  public void activar_NoExistingId_Return404() throws Exception {
+  void activar_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -169,7 +169,7 @@ public class FuenteFinanciacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-FNT-B" })
-  public void desactivar_WithExistingId_ReturnFuenteFinanciacion() throws Exception {
+  void desactivar_WithExistingId_ReturnFuenteFinanciacion() throws Exception {
     // given: existing id
     Long id = 1L;
 
@@ -190,7 +190,7 @@ public class FuenteFinanciacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-FNT-B" })
-  public void desactivar_NoExistingId_Return404() throws Exception {
+  void desactivar_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -209,7 +209,7 @@ public class FuenteFinanciacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-V", "CSP-CON-E", "CSP-CON-C", "CSP-CON-INV-V" })
-  public void findActivos_ReturnsPage() throws Exception {
+  void findActivos_ReturnsPage() throws Exception {
     // given: Una lista con 37 FuenteFinanciacion
     List<FuenteFinanciacion> fuenteFinanciaciones = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -258,7 +258,7 @@ public class FuenteFinanciacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-V", "CSP-CON-E", "CSP-CON-C", "CSP-CON-INV-V" })
-  public void findActivos_EmptyList_Returns204() throws Exception {
+  void findActivos_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de FuenteFinanciacion
     List<FuenteFinanciacion> fuenteFinanciaciones = new ArrayList<>();
 
@@ -283,7 +283,7 @@ public class FuenteFinanciacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-FNT-V", "CSP-FNT-C", "CSP-FNT-E", "CSP-FNT-B", "CSP-FNT-R" })
-  public void findAll_ReturnsPage() throws Exception {
+  void findAll_ReturnsPage() throws Exception {
     // given: Una lista con 37 FuenteFinanciacion
     List<FuenteFinanciacion> fuenteFinanciaciones = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -333,7 +333,7 @@ public class FuenteFinanciacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-FNT-V", "CSP-FNT-C", "CSP-FNT-E", "CSP-FNT-B", "CSP-FNT-R" })
-  public void findAll_EmptyList_Returns204() throws Exception {
+  void findAll_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de FuenteFinanciacion
     List<FuenteFinanciacion> fuenteFinanciaciones = new ArrayList<>();
 
@@ -359,7 +359,7 @@ public class FuenteFinanciacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void findById_WithExistingId_ReturnsFuenteFinanciacion() throws Exception {
+  void findById_WithExistingId_ReturnsFuenteFinanciacion() throws Exception {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
@@ -381,7 +381,7 @@ public class FuenteFinanciacionControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {

@@ -27,9 +27,14 @@ import lombok.extern.slf4j.Slf4j;
 public class CertificadoAutorizacionService {
 
   private final CertificadoAutorizacionRepository repository;
+  private final CertificadoAutorizacionComService certificadoAutorizacionComService;
 
-  public CertificadoAutorizacionService(CertificadoAutorizacionRepository repository) {
+  public CertificadoAutorizacionService(
+      final CertificadoAutorizacionRepository repository,
+      final CertificadoAutorizacionComService certificadoAutorizacionComService) {
+
     this.repository = repository;
+    this.certificadoAutorizacionComService = certificadoAutorizacionComService;
   }
 
   /**
@@ -50,6 +55,11 @@ public class CertificadoAutorizacionService {
             .parameter("entity", ApplicationContextSupport.getMessage(CertificadoAutorizacion.class)).build());
 
     CertificadoAutorizacion returnValue = repository.save(certificadoAutorizacion);
+
+    if (certificadoAutorizacion.getVisible().booleanValue()) {
+      this.certificadoAutorizacionComService
+          .enviarComunicadoAddModificarCertificadoAutorizacionParticipacionProyectoExterno(returnValue);
+    }
 
     log.debug("create(Autorizacion autorizacion) - end");
     return returnValue;
@@ -74,6 +84,10 @@ public class CertificadoAutorizacionService {
 
       CertificadoAutorizacion returnValue = repository.save(data);
 
+      if (certificadoActualizar.getVisible().booleanValue()) {
+        this.certificadoAutorizacionComService
+            .enviarComunicadoAddModificarCertificadoAutorizacionParticipacionProyectoExterno(returnValue);
+      }
       log.debug("update(Autorizacion autorizacionActualizar - end");
       return returnValue;
     }).orElseThrow(() -> new CertificadoAutorizacionNotFoundException(certificadoActualizar.getId()));

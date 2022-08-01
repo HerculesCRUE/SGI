@@ -180,7 +180,7 @@ class ProyectoConceptoGastoIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ProyectoConceptoGasto> proyectosConceptosGastos = response.getBody();
-    Assertions.assertThat(proyectosConceptosGastos.size()).isEqualTo(3);
+    Assertions.assertThat(proyectosConceptosGastos).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
@@ -343,7 +343,7 @@ class ProyectoConceptoGastoIT extends BaseIT {
 
     final List<ProyectoConceptoGastoCodigoEc> proyectosConceptosGastosCodigosEc = response.getBody();
 
-    Assertions.assertThat(proyectosConceptosGastosCodigosEc.size()).isEqualTo(3);
+    Assertions.assertThat(proyectosConceptosGastosCodigosEc).hasSize(3);
 
     HttpHeaders responseHeaders = response.getHeaders();
 

@@ -14,13 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class ProyectoSocioPeriodoJustificacionRepositoryTest extends BaseRepositoryTest {
+class ProyectoSocioPeriodoJustificacionRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ProyectoSocioPeriodoJustificacionRepository repository;
 
   @Test
-  public void findAllByProyectoSocioId_ReturnsProyectoSocioPeriodoJustificacion() throws Exception {
+  void findAllByProyectoSocioId_ReturnsProyectoSocioPeriodoJustificacion() throws Exception {
 
     // given: 1 ProyectoSocioPeriodoJustificacion para el ProyectoSocioId buscado
     ModeloEjecucion modeloEjecucion = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true, false, false);
@@ -79,7 +79,7 @@ public class ProyectoSocioPeriodoJustificacionRepositoryTest extends BaseReposit
     // then: Se recuperan los ProyectoSocioPeriodoJustificacion con el
     // ProyectoSocioId
     // buscado
-    Assertions.assertThat(dataFound.size()).isEqualTo(1);
+    Assertions.assertThat(dataFound).hasSize(1);
     Assertions.assertThat(dataFound.get(0).getId()).isEqualTo(proyectoSocioPeriodoJustificacion1.getId());
     Assertions.assertThat(dataFound.get(0).getProyectoSocioId())
         .isEqualTo(proyectoSocioPeriodoJustificacion1.getProyectoSocioId());

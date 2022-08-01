@@ -135,10 +135,13 @@ class SolicitudServiceTest extends BaseServiceTest {
   @Mock
   private GrupoAuthorityHelper grupoAuthorityHelper;
 
+  @Mock
+  private SolicitudRrhhComService solicitudRrhhComService;
+
   private SolicitudService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     solicitudAuthorityHelper = new SolicitudAuthorityHelper(repository);
     service = new SolicitudService(sgiConfigProperties,
         sgiApiEtiService, repository,
@@ -146,7 +149,7 @@ class SolicitudServiceTest extends BaseServiceTest {
         documentoRequeridoSolicitudRepository, solicitudDocumentoRepository, solicitudProyectoEquipoRepository,
         solicitudProyectoSocioRepository, solicitudProyectoPresupuestoRepository, convocatoriaRepository,
         convocatoriaEntidadFinanciadoraRepository, convocatoriaEnlaceRepository, comunicadosService, personasService,
-        programaRepository, solicitudAuthorityHelper, grupoAuthorityHelper);
+        programaRepository, solicitudAuthorityHelper, grupoAuthorityHelper, solicitudRrhhComService);
   }
 
   @Test
@@ -258,7 +261,7 @@ class SolicitudServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-C" })
-  public void create_WithoutCreadorRef_ThrowsIllegalArgumentException() {
+  void create_WithoutCreadorRef_ThrowsIllegalArgumentException() {
     // given: Un nuevo Solicitud que no tiene creadorRef
     Solicitud solicitud = generarMockSolicitud(null, 1L, null);
     solicitud.setCreadorRef(null);
@@ -284,7 +287,7 @@ class SolicitudServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SOL-C" })
-  public void create_WithNoExistingConvocatoria_ThrowsProgramaNotFoundException() {
+  void create_WithNoExistingConvocatoria_ThrowsProgramaNotFoundException() {
     // given: Un nuevo Solicitud que tiene una convocatoria que no existe
     Solicitud solicitud = generarMockSolicitud(null, 1L, null);
 
@@ -440,6 +443,7 @@ class SolicitudServiceTest extends BaseServiceTest {
   void update_SolicitanteRefNull_ThrowsIllegalArgumentException() {
     // given: Un nuevo Solicitud que no tiene creadorRef
     Solicitud solicitud = generarMockSolicitud(1L, 1L, null);
+    solicitud.setFormularioSolicitud(FormularioSolicitud.PROYECTO);
     solicitud.setSolicitanteRef(null);
 
     // when: Creamos el Solicitud
@@ -466,7 +470,7 @@ class SolicitudServiceTest extends BaseServiceTest {
     // then: El Solicitud se activa correctamente.
     Assertions.assertThat(programaActualizado).as("isNotNull()").isNotNull();
     Assertions.assertThat(programaActualizado.getId()).as("getId()").isEqualTo(solicitud.getId());
-    Assertions.assertThat(programaActualizado.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(programaActualizado.getActivo()).as("getActivo()").isTrue();
   }
 
   @Test
@@ -497,7 +501,7 @@ class SolicitudServiceTest extends BaseServiceTest {
     // then: El Solicitud se desactivan correctamente
     Assertions.assertThat(solicitudActualizada).as("isNotNull()").isNotNull();
     Assertions.assertThat(solicitudActualizada.getId()).as("getId()").isEqualTo(1L);
-    Assertions.assertThat(solicitudActualizada.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(solicitudActualizada.getActivo()).as("getActivo()").isFalse();
   }
 
   @Test
@@ -559,9 +563,9 @@ class SolicitudServiceTest extends BaseServiceTest {
     Assertions.assertThat(solicitud.getCreadorRef()).as("getCreadorRef()").isEqualTo("usr-001");
     Assertions.assertThat(solicitud.getSolicitanteRef()).as("getSolicitanteRef()").isEqualTo("usr-002");
     Assertions.assertThat(solicitud.getObservaciones()).as("getObservaciones()").isEqualTo("observaciones-001");
-    Assertions.assertThat(solicitud.getConvocatoriaExterna()).as("getConvocatoriaExterna()").isEqualTo(null);
+    Assertions.assertThat(solicitud.getConvocatoriaExterna()).as("getConvocatoriaExterna()").isNull();
     Assertions.assertThat(solicitud.getUnidadGestionRef()).as("getUnidadGestionRef()").isEqualTo("1");
-    Assertions.assertThat(solicitud.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(solicitud.getActivo()).as("getActivo()").isTrue();
   }
 
   @Test
@@ -607,7 +611,7 @@ class SolicitudServiceTest extends BaseServiceTest {
     Page<Solicitud> page = service.findAllRestringidos(null, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -648,7 +652,7 @@ class SolicitudServiceTest extends BaseServiceTest {
     Page<Solicitud> page = service.findAllTodosRestringidos(null, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -689,7 +693,7 @@ class SolicitudServiceTest extends BaseServiceTest {
     Page<Solicitud> page = service.findAllTodosRestringidos(null, paging);
 
     // then: Devuelve la pagina 3 con los Programa del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -743,6 +747,9 @@ class SolicitudServiceTest extends BaseServiceTest {
 
     BDDMockito.given(solicitudProyectoRepository.findById(solicitud.getId()))
         .willReturn(Optional.of(solicitudProyecto));
+    BDDMockito
+        .given(solicitudProyectoEquipoRepository.findAllBySolicitudProyectoIdAndPersonaRef(anyLong(), anyString()))
+        .willReturn(Arrays.asList(SolicitudProyectoEquipo.builder().build()));
     BDDMockito.given(solicitudProyectoRepository.save(ArgumentMatchers.<SolicitudProyecto>any()))
         .willReturn(solicitudProyecto);
 
@@ -777,7 +784,9 @@ class SolicitudServiceTest extends BaseServiceTest {
 
     BDDMockito.given(solicitudProyectoRepository.findById(solicitud.getId()))
         .willReturn(Optional.of(solicitudProyecto));
-
+    BDDMockito
+        .given(solicitudProyectoEquipoRepository.findAllBySolicitudProyectoIdAndPersonaRef(anyLong(), anyString()))
+        .willReturn(Arrays.asList(SolicitudProyectoEquipo.builder().build()));
     BDDMockito.given(sgiApiEtiService.getPeticionEvaluacion(anyString())).willReturn(peticionEvaluacion);
 
     BDDMockito.given(repository.save(ArgumentMatchers.<Solicitud>any())).willReturn(solicitud);
@@ -808,7 +817,9 @@ class SolicitudServiceTest extends BaseServiceTest {
 
     BDDMockito.given(solicitudProyectoRepository.findById(solicitud.getId()))
         .willReturn(Optional.of(solicitudProyecto));
-
+    BDDMockito
+        .given(solicitudProyectoEquipoRepository.findAllBySolicitudProyectoIdAndPersonaRef(anyLong(), anyString()))
+        .willReturn(Arrays.asList(SolicitudProyectoEquipo.builder().build()));
     BDDMockito.given(sgiApiEtiService.getPeticionEvaluacion(anyString())).willReturn(peticionEvaluacion);
 
     BDDMockito.given(repository.save(ArgumentMatchers.<Solicitud>any())).willReturn(solicitud);
@@ -842,7 +853,9 @@ class SolicitudServiceTest extends BaseServiceTest {
 
     BDDMockito.given(solicitudProyectoRepository.findById(solicitud.getId()))
         .willReturn(Optional.of(solicitudProyecto));
-
+    BDDMockito
+        .given(solicitudProyectoEquipoRepository.findAllBySolicitudProyectoIdAndPersonaRef(anyLong(), anyString()))
+        .willReturn(Arrays.asList(SolicitudProyectoEquipo.builder().build()));
     BDDMockito.given(sgiApiEtiService.getPeticionEvaluacion(anyString())).willReturn(peticionEvaluacion);
 
     BDDMockito.given(repository.save(ArgumentMatchers.<Solicitud>any())).willReturn(solicitud);
@@ -1007,7 +1020,7 @@ class SolicitudServiceTest extends BaseServiceTest {
         .isInstanceOf(SolicitudProyectoWithoutSocioCoordinadorException.class);
   }
 
-  @WithMockUser(username = "user", authorities = { "CSP-SOL-INV-ER", "CSP-SOL-E" })
+  @WithMockUser(username = "usr-001", authorities = { "CSP-SOL-INV-ER" })
   @Test
   void cambiarEstado_WithEstadoSubsanacion_ThrowsUserNotAuthorizedToChangeEstadoSolicitudException() {
     Long solicitudId = 1L;
@@ -1024,7 +1037,7 @@ class SolicitudServiceTest extends BaseServiceTest {
         .isInstanceOf(UserNotAuthorizedToChangeEstadoSolicitudException.class);
   }
 
-  @WithMockUser(username = "user", authorities = { "CSP-SOL-INV-ER", "CSP-SOL-E" })
+  @WithMockUser(username = "usr-001", authorities = { "CSP-SOL-INV-ER" })
   @Test
   void cambiarEstado_WithExcluidaProvisional_ThrowsUserNotAuthorizedToChangeEstadoSolicitudException() {
     Long solicitudId = 1L;
@@ -1041,7 +1054,7 @@ class SolicitudServiceTest extends BaseServiceTest {
         .isInstanceOf(UserNotAuthorizedToChangeEstadoSolicitudException.class);
   }
 
-  @WithMockUser(username = "user", authorities = { "CSP-SOL-INV-ER", "CSP-SOL-E" })
+  @WithMockUser(username = "usr-001", authorities = { "CSP-SOL-INV-ER" })
   @Test
   void cambiarEstado_WithExcluidaDefinitiva_ThrowsUserNotAuthorizedToChangeEstadoSolicitudException() {
     Long solicitudId = 1L;
@@ -1058,7 +1071,7 @@ class SolicitudServiceTest extends BaseServiceTest {
         .isInstanceOf(UserNotAuthorizedToChangeEstadoSolicitudException.class);
   }
 
-  @WithMockUser(username = "user", authorities = { "CSP-SOL-INV-ER", "CSP-SOL-E" })
+  @WithMockUser(username = "usr-001", authorities = { "CSP-SOL-INV-ER" })
   @Test
   void cambiarEstado_WithDenegadaProvisional_ThrowsUserNotAuthorizedToChangeEstadoSolicitudException() {
     Long solicitudId = 1L;
@@ -1075,7 +1088,7 @@ class SolicitudServiceTest extends BaseServiceTest {
         .isInstanceOf(UserNotAuthorizedToChangeEstadoSolicitudException.class);
   }
 
-  @WithMockUser(username = "user", authorities = { "CSP-SOL-INV-ER", "CSP-SOL-E" })
+  @WithMockUser(username = "usr-001", authorities = { "CSP-SOL-INV-ER" })
   @Test
   void cambiarEstado_WithDenegada_ThrowsUserNotAuthorizedToChangeEstadoSolicitudException() {
     Long solicitudId = 1L;
@@ -1172,6 +1185,7 @@ class SolicitudServiceTest extends BaseServiceTest {
     solicitud.setConvocatoriaExterna(convocatoriaExterna);
     solicitud.setUnidadGestionRef("1");
     solicitud.setActivo(true);
+    solicitud.setFormularioSolicitud(FormularioSolicitud.PROYECTO);
 
     if (id != null) {
       solicitud.setEstado(estadoSolicitud);
@@ -1225,7 +1239,7 @@ class SolicitudServiceTest extends BaseServiceTest {
     return SolicitudProyecto.builder()
         .id(solicitudProyectoId)
         .acronimo("acronimo-" + solicitudProyectoId)
-        .colaborativo(Boolean.TRUE)
+        .colaborativo(Boolean.FALSE)
         .tipoPresupuesto(TipoPresupuesto.GLOBAL)
         .checklistRef("checklist-001")
         .build();
@@ -1242,6 +1256,7 @@ class SolicitudServiceTest extends BaseServiceTest {
   private SolicitudProyectoEquipo buildMockSolicitudProyectoEquipo(Long id, int mesInicio, int mesFin) {
     return SolicitudProyectoEquipo.builder()
         .id(id)
+        .personaRef("usr-00" + 1)
         .mesFin(mesFin)
         .mesInicio(mesInicio)
         .build();

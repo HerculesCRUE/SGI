@@ -105,7 +105,7 @@ class SolicitudProyectoResponsableEconomicoIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     List<SolicitudProyectoResponsableEconomicoOutput> updated = response.getBody();
-    Assertions.assertThat(updated.size()).isEqualTo(3);
+    Assertions.assertThat(updated).hasSize(3);
 
     Assertions.assertThat(updated.get(0)).isNotNull();
     Assertions.assertThat(updated.get(1)).isNotNull();

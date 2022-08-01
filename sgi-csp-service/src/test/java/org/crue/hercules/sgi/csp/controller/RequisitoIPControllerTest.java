@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * RequisitoIPControllerTest
  */
 @WebMvcTest(RequisitoIPController.class)
-public class RequisitoIPControllerTest extends BaseControllerTest {
+class RequisitoIPControllerTest extends BaseControllerTest {
 
   @MockBean
   private RequisitoIPService service;
@@ -39,7 +39,7 @@ public class RequisitoIPControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void create_ReturnsModeloRequisitoIP() throws Exception {
+  void create_ReturnsModeloRequisitoIP() throws Exception {
     // given: new RequisitoIP
     RequisitoIP requisitoIP = generarMockRequisitoIP(1L);
 
@@ -64,7 +64,7 @@ public class RequisitoIPControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a RequisitoIP with id filled
     RequisitoIP requisitoIP = generarMockRequisitoIP(1L);
 
@@ -82,7 +82,7 @@ public class RequisitoIPControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void update_ReturnsRequisitoIP() throws Exception {
+  void update_ReturnsRequisitoIP() throws Exception {
     // given: Existing RequisitoIP to be updated
     RequisitoIP requisitoIPExistente = generarMockRequisitoIP(1L);
     RequisitoIP requisitoIP = generarMockRequisitoIP(1L);
@@ -106,7 +106,7 @@ public class RequisitoIPControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     RequisitoIP requisitoIP = generarMockRequisitoIP(1L);
@@ -126,7 +126,7 @@ public class RequisitoIPControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
-  public void findByConvocatoriaRequisitoIP_WithExistingId_ReturnsRequisitoIP() throws Exception {
+  void findByConvocatoriaRequisitoIP_WithExistingId_ReturnsRequisitoIP() throws Exception {
     // given: existing id
     RequisitoIP requisitoIP = generarMockRequisitoIP(1L);
     BDDMockito.given(service.findByConvocatoria(ArgumentMatchers.<Long>any())).willReturn(requisitoIP);
@@ -144,7 +144,7 @@ public class RequisitoIPControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
-  public void findByConvocatoriaRequisitoIP_WithNoExistingId_Returns404() throws Exception {
+  void findByConvocatoriaRequisitoIP_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findByConvocatoria(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new RequisitoIPNotFoundException(1L);
@@ -161,7 +161,7 @@ public class RequisitoIPControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
-  public void findByConvocatoriaRequisitoIP_WithNoExistingRequisitoIP_Returns204() throws Exception {
+  void findByConvocatoriaRequisitoIP_WithNoExistingRequisitoIP_Returns204() throws Exception {
     // given: Existing convocatoriaId and no existing RequisitoIP
     BDDMockito.given(service.findByConvocatoria(ArgumentMatchers.<Long>any())).willReturn(null);
 

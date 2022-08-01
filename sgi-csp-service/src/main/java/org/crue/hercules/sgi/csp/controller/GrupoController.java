@@ -93,6 +93,8 @@ public class GrupoController {
   public static final String PATH_BAREMABLES_ANIO = PATH_DELIMITER + "baremables/{anio}";
   public static final String PATH_GRUPOS_INVESTIGADOR = PATH_DELIMITER + "investigador";
   public static final String PATH_MODIFICADOS_IDS = PATH_DELIMITER + "modificados-ids";
+  public static final String PATH_INVESTIGADORES_PRINCIPALES_PERSONAS_AUTORIZADAS = PATH_DELIMITER
+      + "investigadoresprincipalespersonasautorizadas";
 
   public static final String PATH_ID = PATH_DELIMITER + "{id}";
   public static final String PATH_ACTIVAR = PATH_ID + "/activar";
@@ -175,7 +177,7 @@ public class GrupoController {
    * @return {@link Grupo} correspondiente al id
    */
   @GetMapping(PATH_ID)
-  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-csp')) or hasAnyAuthorityForAnyUO('CSP-GIN-E', 'CSP-GIN-V', 'CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-INV-C', 'CSP-GIN-INV-VR')")
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-csp')) or hasAnyAuthorityForAnyUO('CSP-GIN-E', 'CSP-GIN-V', 'CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-INV-C', 'CSP-GIN-INV-VR', 'CSP-GIN-PRC-V')")
   public GrupoOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     GrupoOutput returnValue = converter.convert(service.findById(id));
@@ -649,7 +651,7 @@ public class GrupoController {
    * @param query filtro de búsqueda.
    * @return lista de ids de {@link Grupo}.
    */
-  @GetMapping("/modificados-ids")
+  @GetMapping(PATH_MODIFICADOS_IDS)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-GIN-V', 'CSP-GIN-E')")
   public ResponseEntity<List<Long>> findIdsGruposModificados(
       @RequestParam(name = "q", required = false) String query) {
@@ -676,6 +678,25 @@ public class GrupoController {
         .convertResumenOutput(solicitudService.findByGrupoIdAndUserInGrupo(id));
     log.debug("findSolicitudByGrupoId(Long id) - end");
     return returnValue == null ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve la lista de investigadores principales y personas autorizadas de los
+   * {@link Grupo} a los que pertenecen las personaRef
+   *
+   * @param query filtro de búsqueda.
+   * @return lista de investigadores principales y personas autorizadas de los
+   *         {@link Grupo}
+   */
+  @GetMapping(PATH_INVESTIGADORES_PRINCIPALES_PERSONAS_AUTORIZADAS)
+  @PreAuthorize("isClient() and hasAuthority('SCOPE_sgi-csp')")
+  public ResponseEntity<List<String>> findPersonaRefInvestigadoresPrincipalesAndAutorizadas(
+      @RequestParam(name = "q", required = false) String query) {
+    log.debug("findPersonaRefInvestigadoresPrincipalesAndAutorizadas(String query) - start");
+    List<String> returnValue = service.findPersonaRefInvestigadoresPrincipalesAndAutorizadas(query);
+    log.debug("findPersonaRefInvestigadoresPrincipalesAndAutorizadas(String query) - end");
+    return returnValue.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
         : new ResponseEntity<>(returnValue, HttpStatus.OK);
   }
 

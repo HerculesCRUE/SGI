@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class TipoEnlaceRepositoryTest extends BaseRepositoryTest {
+class TipoEnlaceRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private TipoEnlaceRepository repository;
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsTipoEnlace() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsTipoEnlace() throws Exception {
     // given: data TipoEnlace with nombre to find
     TipoEnlace data = generarMockTipoEnlace(1L, Boolean.TRUE);
     entityManager.persistAndFlush(data);
@@ -34,7 +34,7 @@ public class TipoEnlaceRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsNull() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsNull() throws Exception {
     // given: data TipoEnlace with nombre to find
     TipoEnlace data = generarMockTipoEnlace(1L, Boolean.TRUE);
     entityManager.persistAndFlush(generarMockTipoEnlace(2L, Boolean.TRUE));

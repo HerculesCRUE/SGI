@@ -29,7 +29,7 @@ class ReportServiceTest extends BaseServiceTest {
   private SgiApiRepService reportService;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
     this.reportService = new SgiApiRepService(restApiProperties, restTemplate);
   }
 

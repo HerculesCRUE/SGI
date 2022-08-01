@@ -23,7 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
-public class TipoEnlaceServiceTest extends BaseServiceTest {
+class TipoEnlaceServiceTest extends BaseServiceTest {
 
   @Mock
   private TipoEnlaceRepository repository;
@@ -31,12 +31,12 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
   private TipoEnlaceService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new TipoEnlaceServiceImpl(repository);
   }
 
   @Test
-  public void create_ReturnsTipoEnlace() {
+  void create_ReturnsTipoEnlace() {
     // given: new TipoEnlace
     TipoEnlace data = generarMockTipoEnlace(null, Boolean.TRUE);
 
@@ -63,7 +63,7 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: a TipoEnlace with id filled
     TipoEnlace data = generarMockTipoEnlace(1L, Boolean.TRUE);
 
@@ -75,7 +75,7 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void create_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: a TipoEnlace with duplicated nombre
 
     TipoEnlace givenData = generarMockTipoEnlace(1L, Boolean.TRUE);
@@ -95,7 +95,7 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithExistingId_ReturnsTipoEnlace() {
+  void update_WithExistingId_ReturnsTipoEnlace() {
     // given: existing TipoEnlace
     TipoEnlace data = generarMockTipoEnlace(1L, Boolean.TRUE);
 
@@ -123,7 +123,7 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void update_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     TipoEnlace data = generarMockTipoEnlace(1L, Boolean.TRUE);
 
@@ -137,7 +137,7 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutId_ThrowsIllegalArgumentException() {
+  void update_WithoutId_ThrowsIllegalArgumentException() {
     // given: a TipoEnlace without id filled
     TipoEnlace data = generarMockTipoEnlace(null, Boolean.TRUE);
 
@@ -149,7 +149,7 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void update_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: a TipoEnlace with duplicated nombre
     TipoEnlace givenData = generarMockTipoEnlace(1L, Boolean.TRUE);
     TipoEnlace data = new TipoEnlace();
@@ -168,7 +168,7 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_ReturnsTipoEnlace() {
+  void enable_ReturnsTipoEnlace() {
     // given: Un nuevo TipoEnlace inactivo
     TipoEnlace tipoEnlace = generarMockTipoEnlace(1L, Boolean.FALSE);
 
@@ -196,7 +196,7 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
+  void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
     // given: Un id de un TipoEnlace que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -206,7 +206,7 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void enable_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un TipoEnlace inactivo con nombre existente
     TipoEnlace tipoEnlaceExistente = generarMockTipoEnlace(2L, Boolean.TRUE);
     TipoEnlace tipoEnlace = generarMockTipoEnlace(1L, Boolean.FALSE);
@@ -223,7 +223,7 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_ReturnsTipoEnlace() {
+  void disable_ReturnsTipoEnlace() {
     // given: Un nuevo TipoEnlace activo
     TipoEnlace tipoEnlace = generarMockTipoEnlace(1L, Boolean.TRUE);
 
@@ -246,12 +246,12 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
     Assertions.assertThat(tipoEnlaceActualizado.getNombre()).as("getNombre()").isEqualTo(tipoEnlace.getNombre());
     Assertions.assertThat(tipoEnlaceActualizado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(tipoEnlace.getDescripcion());
-    Assertions.assertThat(tipoEnlaceActualizado.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(tipoEnlaceActualizado.getActivo()).as("getActivo()").isFalse();
 
   }
 
   @Test
-  public void disable_WithIdNotExist_ThrowsTipoEnlaceNotFoundException() {
+  void disable_WithIdNotExist_ThrowsTipoEnlaceNotFoundException() {
     // given: Un id de un TipoEnlace que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -261,7 +261,7 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithExistingId_ReturnsTipoEnlace() throws Exception {
+  void findById_WithExistingId_ReturnsTipoEnlace() throws Exception {
     // given: existing TipoEnlace
     TipoEnlace givenData = generarMockTipoEnlace(1L, Boolean.TRUE);
 
@@ -280,7 +280,7 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: no existing id
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
@@ -292,7 +292,7 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_WithPaging_ReturnsPage() {
+  void findAll_WithPaging_ReturnsPage() {
     // given: One hundred TipoEnlace
     List<TipoEnlace> data = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -322,9 +322,9 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
     // then: A Page with ten TipoEnlace are returned containing
     // Nombre='nombre-31' to
     // 'nombre-40'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoEnlace item = page.getContent().get(i);
@@ -333,7 +333,7 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllTodos_WithPaging_ReturnsPage() {
+  void findAllTodos_WithPaging_ReturnsPage() {
     // given: One hundred TipoEnlace
     List<TipoEnlace> data = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -363,9 +363,9 @@ public class TipoEnlaceServiceTest extends BaseServiceTest {
     // then: A Page with ten TipoEnlace are returned containing
     // Nombre='nombre-31' to
     // 'nombre-40'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoEnlace item = page.getContent().get(i);

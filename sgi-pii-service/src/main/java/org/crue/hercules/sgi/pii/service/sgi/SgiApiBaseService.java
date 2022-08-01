@@ -40,7 +40,7 @@ public abstract class SgiApiBaseService {
       default:
         throw new UnknownServiceTypeException(serviceType.name());
     }
-    // TODO revisit implementation
+
     String mergedURL = new StringBuilder(serviceURL).append(relativeUrl).toString();
     log.debug("buildUrl(ServiceType serviceType, String relativeUrl) - end");
     return mergedURL;
@@ -97,7 +97,6 @@ public abstract class SgiApiBaseService {
    * 
    * @deprecated Use b2b security
    */
-  // TODO Use b2b security and delete
   @Deprecated
   protected <E, T> ResponseEntity<T> callEndpointWithCurrentUserAuthorization(String endPoint, HttpMethod httpMethod,
       E entity,

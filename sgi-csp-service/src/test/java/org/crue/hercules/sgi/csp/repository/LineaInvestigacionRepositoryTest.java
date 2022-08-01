@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class LineaInvestigacionRepositoryTest extends BaseRepositoryTest {
+class LineaInvestigacionRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private LineaInvestigacionRepository repository;
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsLineaInvestigacion() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsLineaInvestigacion() throws Exception {
     // given: data LineaInvestigacion with nombre to find
     LineaInvestigacion data = generarMockLineaInvestigacion(1L, Boolean.TRUE);
     entityManager.persistAndFlush(data);
@@ -33,7 +33,7 @@ public class LineaInvestigacionRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsNull() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsNull() throws Exception {
     // given: data LineaInvestigacion with nombre to find
     LineaInvestigacion data = generarMockLineaInvestigacion(1L, Boolean.TRUE);
     entityManager.persistAndFlush(generarMockLineaInvestigacion(2L, Boolean.TRUE));

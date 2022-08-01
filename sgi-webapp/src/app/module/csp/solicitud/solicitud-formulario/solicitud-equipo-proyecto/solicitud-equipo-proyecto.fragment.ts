@@ -745,6 +745,10 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
     solicitante: IPersona,
     convocatoriaId: number
   ): Observable<ValidacionRequisitosEquipoIp> {
+    if (!solicitante) {
+      return of(null);
+    }
+
     const solicitudProyectoEquipo = {
       persona: solicitante,
       rolProyecto: { rolPrincipal: true } as IRolProyecto,

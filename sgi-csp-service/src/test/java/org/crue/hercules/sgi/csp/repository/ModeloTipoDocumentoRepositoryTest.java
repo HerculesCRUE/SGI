@@ -17,13 +17,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * ModeloTipoDocumentoRepositoryTest
  */
 @DataJpaTest
-public class ModeloTipoDocumentoRepositoryTest extends BaseRepositoryTest {
+class ModeloTipoDocumentoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private ModeloTipoDocumentoRepository repository;
 
   @Test
-  public void findByModeloEjecucionIdAndTipoDocumentoId_ReturnsModeloTipoDocumentoList() throws Exception {
+  void findByModeloEjecucionIdAndTipoDocumentoId_ReturnsModeloTipoDocumentoList() throws Exception {
     // given: 2 ModeloTipoDocumento de los que 1 coincide con los ids de
     // ModeloEjecucion y TipoDocumento
     ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true, false, false);
@@ -65,7 +65,7 @@ public class ModeloTipoDocumentoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByModeloEjecucionIdAndTipoDocumentoId_NoExiste_ReturnsEmptyList() throws Exception {
+  void findByModeloEjecucionIdAndTipoDocumentoId_NoExiste_ReturnsEmptyList() throws Exception {
     // given: 2 ModeloTipoDocumento que no coinciden con los ids de
     // ModeloEjecucion y TipoDocumento
     ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true, false, false);
@@ -96,11 +96,11 @@ public class ModeloTipoDocumentoRepositoryTest extends BaseRepositoryTest {
         .findByModeloEjecucionIdAndTipoDocumentoId(idModeloEjecucionBuscado, idTipoDocumentoBuscado);
 
     // then: No se recupera el ModeloTipoDocumento buscado
-    Assertions.assertThat(modeloTipoEnlaceEncontrados.size()).isEqualTo(0);
+    Assertions.assertThat(modeloTipoEnlaceEncontrados).hasSize(0);
   }
 
   @Test
-  public void findByModeloEjecucionIdAndModeloTipoFaseIdAndTipoDocumentoId_ReturnsModeloTipoDocumento()
+  void findByModeloEjecucionIdAndModeloTipoFaseIdAndTipoDocumentoId_ReturnsModeloTipoDocumento()
       throws Exception {
     // given: 2 ModeloTipoDocumento de los que 1 coincide con los ids de
     // ModeloEjecucion, ModeloTipoFase y TipoDocumento
@@ -159,7 +159,7 @@ public class ModeloTipoDocumentoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByModeloEjecucionIdAndModeloTipoFaseIdAndTipoDocumentoId_NoExiste_ReturnsEmptyList()
+  void findByModeloEjecucionIdAndModeloTipoFaseIdAndTipoDocumentoId_NoExiste_ReturnsEmptyList()
       throws Exception {
     // given: 2 ModeloTipoDocumento que no coinciden con los ids de
     // ModeloEjecucion, ModeloTipoFase y TipoDocumento

@@ -74,7 +74,7 @@ class AnualidadGastoIT extends BaseIT {
 
     List<AnualidadGastoOutput> anualidadesGastosUpdated = response.getBody();
 
-    Assertions.assertThat(anualidadesGastosUpdated.size()).isEqualTo(toUpdateList.size());
+    Assertions.assertThat(anualidadesGastosUpdated).hasSize(toUpdateList.size());
 
     Assertions.assertThat(anualidadesGastosUpdated.get(0).getCodigoEconomicoRef()).as("get(0).getCodigoEconomicoRef()")
         .isEqualTo(toUpdateList.get(0).getCodigoEconomicoRef());

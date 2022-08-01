@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class RolProyectoRepositoryTest extends BaseRepositoryTest {
+class RolProyectoRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private RolProyectoRepository repository;
 
   @Test
-  public void findByAbreviaturaAndActivoIsTrue_ReturnsRolProyecto() throws Exception {
+  void findByAbreviaturaAndActivoIsTrue_ReturnsRolProyecto() throws Exception {
     // given: data RolProyecto with Abreviatura to find
     RolProyecto rolProyecto1 = generarMockRolProyecto("001", Boolean.TRUE);
     generarMockRolProyecto("002", Boolean.TRUE);
@@ -40,7 +40,7 @@ public class RolProyectoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByAbreviaturaAndActivoIsTrue_ReturnsNull() throws Exception {
+  void findByAbreviaturaAndActivoIsTrue_ReturnsNull() throws Exception {
     // given: Abreviatura to find
     String abreviaturaToFind = "001";
 
@@ -52,7 +52,7 @@ public class RolProyectoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsRolProyecto() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsRolProyecto() throws Exception {
     // given: data RolProyecto with Nombre to find
     RolProyecto rolProyecto1 = generarMockRolProyecto("001", Boolean.TRUE);
     generarMockRolProyecto("002", Boolean.TRUE);
@@ -78,7 +78,7 @@ public class RolProyectoRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsNull() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsNull() throws Exception {
     // given: Nombre to find
     String nombreToFind = "001";
 

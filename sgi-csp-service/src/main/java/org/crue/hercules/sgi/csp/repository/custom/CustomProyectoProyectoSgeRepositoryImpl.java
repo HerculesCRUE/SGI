@@ -8,10 +8,16 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.crue.hercules.sgi.csp.dto.ProyectoSeguimientoEjecucionEconomica;
 import org.crue.hercules.sgi.csp.dto.RelacionEjecucionEconomica;
+import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.Convocatoria_;
+import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge_;
 import org.crue.hercules.sgi.csp.model.Proyecto_;
@@ -112,4 +118,85 @@ public class CustomProyectoProyectoSgeRepositoryImpl implements CustomProyectoPr
     return returnValue;
   }
 
+  @Override
+  public Page<ProyectoSeguimientoEjecucionEconomica> findProyectosSeguimientoEjecucionEconomica(
+      Specification<ProyectoProyectoSge> specification, Pageable pageable) {
+    log.debug(
+        "findProyectosSeguimientoEjecucionEconomica(Specification<ProyectoProyectoSge> specification, Pageable pageable) - start");
+
+    // Find query
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<ProyectoSeguimientoEjecucionEconomica> cq = cb
+        .createQuery(ProyectoSeguimientoEjecucionEconomica.class);
+    Root<ProyectoProyectoSge> root = cq.from(ProyectoProyectoSge.class);
+    List<Predicate> listPredicates = new ArrayList<>();
+
+    // Count query
+    CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+    Root<ProyectoProyectoSge> rootCount = countQuery.from(ProyectoProyectoSge.class);
+    List<Predicate> listPredicatesCount = new ArrayList<>();
+
+    // Select
+    String[] selectionNames = new String[] {
+        ProyectoProyectoSgePredicateResolver.Property.NOMBRE_PROYECTO.getCode(),
+        ProyectoProyectoSgePredicateResolver.Property.FECHA_INICIO_PROYECTO.getCode(),
+        ProyectoProyectoSgePredicateResolver.Property.FECHA_FIN_PROYECTO.getCode(),
+        ProyectoProyectoSgePredicateResolver.Property.CODIGO_EXTERNO.getCode(),
+        ProyectoProyectoSgePredicateResolver.Property.TITULO_CONVOCATORIA.getCode(),
+        ProyectoProyectoSgePredicateResolver.Property.IMPORTE_CONCEDIDO.getCode(),
+        ProyectoProyectoSgePredicateResolver.Property.IMPORTE_CONCEDIDO_COSTES_INDIRECTOS.getCode(),
+    };
+
+    Join<ProyectoProyectoSge, Proyecto> joinProyecto = root.join(ProyectoProyectoSge_.proyecto);
+    Join<Proyecto, Convocatoria> joinConvocatoria = joinProyecto.join(Proyecto_.convocatoria, JoinType.LEFT);
+
+    cq.multiselect(
+        root.get(ProyectoProyectoSge_.id),
+        root.get(ProyectoProyectoSge_.proyectoId),
+        root.get(ProyectoProyectoSge_.proyectoSgeRef),
+        joinProyecto.get(Proyecto_.titulo).alias(
+            ProyectoProyectoSgePredicateResolver.Property.NOMBRE_PROYECTO.getCode()),
+        joinProyecto.get(Proyecto_.codigoExterno).alias(
+            ProyectoProyectoSgePredicateResolver.Property.CODIGO_EXTERNO.getCode()),
+        joinProyecto.get(Proyecto_.fechaInicio).alias(
+            ProyectoProyectoSgePredicateResolver.Property.FECHA_INICIO_PROYECTO.getCode()),
+        joinProyecto.get(Proyecto_.fechaFin).alias(
+            ProyectoProyectoSgePredicateResolver.Property.FECHA_FIN_PROYECTO.getCode()),
+        joinConvocatoria.get(Convocatoria_.titulo).alias(
+            ProyectoProyectoSgePredicateResolver.Property.TITULO_CONVOCATORIA.getCode()),
+        joinProyecto.get(Proyecto_.importeConcedido).alias(
+            ProyectoProyectoSgePredicateResolver.Property.IMPORTE_CONCEDIDO.getCode()),
+        joinProyecto.get(Proyecto_.importeConcedidoCostesIndirectos).alias(
+            ProyectoProyectoSgePredicateResolver.Property.IMPORTE_CONCEDIDO_COSTES_INDIRECTOS.getCode()));
+
+    countQuery.select(cb.count(rootCount));
+
+    // Where
+    if (specification != null) {
+      listPredicates.add(specification.toPredicate(root, cq, cb));
+      listPredicatesCount.add(specification.toPredicate(rootCount, countQuery, cb));
+    }
+
+    cq.where(listPredicates.toArray(new Predicate[] {}));
+    countQuery.where(listPredicatesCount.toArray(new Predicate[] {}));
+
+    // Order
+    cq.orderBy(CriteriaQueryUtils.toOrders(pageable.getSort(), root, cb, cq, selectionNames));
+
+    // Número de registros totales para la paginación
+    Long count = entityManager.createQuery(countQuery).getSingleResult();
+
+    TypedQuery<ProyectoSeguimientoEjecucionEconomica> typedQuery = entityManager.createQuery(cq);
+    if (pageable.isPaged()) {
+      typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+      typedQuery.setMaxResults(pageable.getPageSize());
+    }
+
+    List<ProyectoSeguimientoEjecucionEconomica> results = typedQuery.getResultList();
+    Page<ProyectoSeguimientoEjecucionEconomica> returnValue = new PageImpl<>(results, pageable, count);
+
+    log.debug(
+        "findProyectosSeguimientoEjecucionEconomica(Specification<ProyectoProyectoSge> specification, Pageable pageable) - end");
+    return returnValue;
+  }
 }

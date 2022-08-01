@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * ConvocatoriaEnlaceControllerTest
  */
 @WebMvcTest(ConvocatoriaEnlaceController.class)
-public class ConvocatoriaEnlaceControllerTest extends BaseControllerTest {
+class ConvocatoriaEnlaceControllerTest extends BaseControllerTest {
 
   @MockBean
   private ConvocatoriaEnlaceService service;
@@ -32,7 +32,7 @@ public class ConvocatoriaEnlaceControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void create_ReturnsConvocatoriaEnlace() throws Exception {
+  void create_ReturnsConvocatoriaEnlace() throws Exception {
     // given: new ConvocatoriaEnlace
     ConvocatoriaEnlace convocatoriaEnlace = generarMockConvocatoriaEnlace(1L);
 
@@ -61,7 +61,7 @@ public class ConvocatoriaEnlaceControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a ConvocatoriaEnlace with id filled
     ConvocatoriaEnlace convocatoriaEnlace = generarMockConvocatoriaEnlace(1L);
 
@@ -80,7 +80,7 @@ public class ConvocatoriaEnlaceControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void update_ReturnsConvocatoriaEnlace() throws Exception {
+  void update_ReturnsConvocatoriaEnlace() throws Exception {
     // given: Existing ConvocatoriaEnlace to be updated
     ConvocatoriaEnlace convocatoriaEnlaceExistente = generarMockConvocatoriaEnlace(1L);
     ConvocatoriaEnlace convocatoriaEnlace = generarMockConvocatoriaEnlace(1L);
@@ -107,7 +107,7 @@ public class ConvocatoriaEnlaceControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: No existing Id
     Long id = 1L;
     ConvocatoriaEnlace convocatoriaEnlace = generarMockConvocatoriaEnlace(1L);
@@ -127,7 +127,7 @@ public class ConvocatoriaEnlaceControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void delete_WithoutId_Return400() throws Exception {
+  void delete_WithoutId_Return400() throws Exception {
     // given: no existing id
     Long id = 1L;
 
@@ -147,7 +147,7 @@ public class ConvocatoriaEnlaceControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  public void delete_NoExistingId_Return404() throws Exception {
+  void delete_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
 
@@ -166,7 +166,7 @@ public class ConvocatoriaEnlaceControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithExistingId_ReturnsConvocatoriaEnlace() throws Exception {
+  void findById_WithExistingId_ReturnsConvocatoriaEnlace() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
       return generarMockConvocatoriaEnlace(invocation.getArgument(0));
@@ -185,7 +185,7 @@ public class ConvocatoriaEnlaceControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "AUTH" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
       throw new ConvocatoriaEnlaceNotFoundException(1L);

@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.pii.service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import javax.validation.Validator;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
+import org.crue.hercules.sgi.pii.config.SgiConfigProperties;
 import org.crue.hercules.sgi.pii.dto.RepartoCreateInput;
 import org.crue.hercules.sgi.pii.dto.RepartoCreateInput.InvencionGastoCreateInput;
 import org.crue.hercules.sgi.pii.dto.RepartoCreateInput.InvencionIngresoCreateInput;
@@ -22,10 +24,10 @@ import org.crue.hercules.sgi.pii.model.Invencion;
 import org.crue.hercules.sgi.pii.model.InvencionGasto;
 import org.crue.hercules.sgi.pii.model.InvencionIngreso;
 import org.crue.hercules.sgi.pii.model.Reparto;
-import org.crue.hercules.sgi.pii.model.RepartoEquipoInventor;
 import org.crue.hercules.sgi.pii.model.Reparto.Estado;
 import org.crue.hercules.sgi.pii.model.Reparto.OnActualizar;
 import org.crue.hercules.sgi.pii.model.Reparto.OnEjecutar;
+import org.crue.hercules.sgi.pii.model.RepartoEquipoInventor;
 import org.crue.hercules.sgi.pii.model.RepartoGasto;
 import org.crue.hercules.sgi.pii.model.RepartoIngreso;
 import org.crue.hercules.sgi.pii.repository.RepartoRepository;
@@ -56,11 +58,13 @@ public class RepartoService {
   private final RepartoEquipoInventorService repartoEquipoInventorService;
   private final InvencionGastoService invencionGastoService;
   private final InvencionIngresoService invencionIngresoService;
+  private final SgiConfigProperties sgiConfigProperties;
 
   public RepartoService(ModelMapper modelMapper, RepartoRepository repartoRepository,
       RepartoGastoService repartoGastoService, RepartoIngresoService repartoIngresoService,
       RepartoEquipoInventorService repartoEquipoInventorService, InvencionGastoService invencionGastoService,
-      InvencionIngresoService invencionIngresoService, Validator validator) {
+      InvencionIngresoService invencionIngresoService, Validator validator,
+      SgiConfigProperties sgiConfigProperties) {
     this.modelMapper = modelMapper;
     this.validator = validator;
     this.repository = repartoRepository;
@@ -69,6 +73,7 @@ public class RepartoService {
     this.repartoEquipoInventorService = repartoEquipoInventorService;
     this.invencionGastoService = invencionGastoService;
     this.invencionIngresoService = invencionIngresoService;
+    this.sgiConfigProperties = sgiConfigProperties;
   }
 
   /**
@@ -118,8 +123,9 @@ public class RepartoService {
   public Reparto create(RepartoCreateInput repartoInput) {
     log.debug("create(Reparto repartoInput) - start");
     Reparto reparto = new Reparto();
-
-    reparto.setFecha(Instant.now());
+    Instant fecha = Instant.now().atZone(this.sgiConfigProperties.getTimeZone().toZoneId())
+        .with(LocalTime.MAX).withNano(0).toInstant();
+    reparto.setFecha(fecha);
     reparto.setInvencionId(repartoInput.getInvencionId());
     reparto.setEstado(Estado.PENDIENTE_EJECUTAR);
     reparto

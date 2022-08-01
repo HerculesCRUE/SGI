@@ -4,9 +4,13 @@ import java.time.Instant;
 import java.util.Collections;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaFaseInput;
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaFaseOutput;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
 import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,37 +24,42 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de ConvocatoriaFase.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class ConvocatoriaFaseIT extends BaseIT {
+class ConvocatoriaFaseIT extends BaseIT {
+
+  @Autowired
+  private ModelMapper modelMapper;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/convocatoriafases";
 
-  private HttpEntity<ConvocatoriaFase> buildRequest(HttpHeaders headers, ConvocatoriaFase entity) throws Exception {
+  private HttpEntity<ConvocatoriaFaseInput> buildRequest(HttpHeaders headers, ConvocatoriaFaseInput entity)
+      throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization",
         String.format("bearer %s", tokenBuilder.buildToken("user", "AUTH", "CSP-CON-C", "CSP-CON-E")));
 
-    HttpEntity<ConvocatoriaFase> request = new HttpEntity<>(entity, headers);
+    HttpEntity<ConvocatoriaFaseInput> request = new HttpEntity<>(entity, headers);
     return request;
   }
 
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsConvocatoriaFase() throws Exception {
+  void create_ReturnsConvocatoriaFase() throws Exception {
 
     // given: new ConvocatoriaFase
     ConvocatoriaFase newConvocatoriaFase = generarMockConvocatoriaFase(null);
 
     // when: create ConvocatoriaFase
-    final ResponseEntity<ConvocatoriaFase> response = restTemplate.exchange(CONTROLLER_BASE_PATH, HttpMethod.POST,
-        buildRequest(null, newConvocatoriaFase), ConvocatoriaFase.class);
+    final ResponseEntity<ConvocatoriaFaseOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH, HttpMethod.POST,
+        buildRequest(null, modelMapper.map(newConvocatoriaFase, ConvocatoriaFaseInput.class)),
+        ConvocatoriaFaseOutput.class);
 
     // then: new ConvocatoriaFase is created
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-    ConvocatoriaFase responseData = response.getBody();
+    ConvocatoriaFaseOutput responseData = response.getBody();
     Assertions.assertThat(responseData.getId()).as("getId()").isNotNull();
     Assertions.assertThat(responseData.getConvocatoriaId()).as("getConvocatoriaId()")
         .isEqualTo(newConvocatoriaFase.getConvocatoriaId());
@@ -65,16 +74,18 @@ public class ConvocatoriaFaseIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void update_ReturnsConvocatoriaFase() throws Exception {
+  void update_ReturnsConvocatoriaFase() throws Exception {
     Long idConvocatoriaFase = 1L;
     ConvocatoriaFase convocatoriaFase = generarMockConvocatoriaFase(1L);
 
-    final ResponseEntity<ConvocatoriaFase> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
-        HttpMethod.PUT, buildRequest(null, convocatoriaFase), ConvocatoriaFase.class, idConvocatoriaFase);
+    final ResponseEntity<ConvocatoriaFaseOutput> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
+        HttpMethod.PUT, buildRequest(null, modelMapper.map(convocatoriaFase, ConvocatoriaFaseInput.class)),
+        ConvocatoriaFaseOutput.class, idConvocatoriaFase);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    ConvocatoriaFase convocatoriaFaseActualizado = response.getBody();
+    ConvocatoriaFaseOutput convocatoriaFaseActualizado = response.getBody();
     Assertions.assertThat(convocatoriaFaseActualizado.getId()).as("getId()").isNotNull();
     Assertions.assertThat(convocatoriaFaseActualizado.getConvocatoriaId()).as("getConvocatoriaId()")
         .isEqualTo(convocatoriaFase.getConvocatoriaId());
@@ -87,13 +98,14 @@ public class ConvocatoriaFaseIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void delete_Return204() throws Exception {
+  void delete_Return204() throws Exception {
     // given: existing ConvocatoriaFase to be deleted
     Long id = 1L;
 
     // when: delete ConvocatoriaFase
-    final ResponseEntity<ConvocatoriaFase> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
-        HttpMethod.DELETE, buildRequest(null, null), ConvocatoriaFase.class, id);
+    final ResponseEntity<ConvocatoriaFaseOutput> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
+        HttpMethod.DELETE, buildRequest(null, null), ConvocatoriaFaseOutput.class, id);
 
     // then: ConvocatoriaFase deleted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
@@ -103,15 +115,16 @@ public class ConvocatoriaFaseIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findById_ReturnsConvocatoriaFase() throws Exception {
+  void findById_ReturnsConvocatoriaFase() throws Exception {
     Long idConvocatoriaFase = 1L;
 
-    final ResponseEntity<ConvocatoriaFase> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
-        HttpMethod.GET, buildRequest(null, null), ConvocatoriaFase.class, idConvocatoriaFase);
+    final ResponseEntity<ConvocatoriaFaseOutput> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
+        HttpMethod.GET, buildRequest(null, null), ConvocatoriaFaseOutput.class, idConvocatoriaFase);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    ConvocatoriaFase convocatoriaFase = response.getBody();
+    ConvocatoriaFaseOutput convocatoriaFase = response.getBody();
     Assertions.assertThat(convocatoriaFase.getId()).as("getId()").isEqualTo(idConvocatoriaFase);
     Assertions.assertThat(convocatoriaFase.getConvocatoriaId()).as("getConvocatoriaId()").isEqualTo(1L);
     Assertions.assertThat(convocatoriaFase.getFechaInicio()).as("getFechaInicio()")

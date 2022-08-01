@@ -18,6 +18,8 @@ import { FacturasEmitidasComponent } from './ejecucion-economica-formulario/fact
 import { FacturasGastosComponent } from './ejecucion-economica-formulario/facturas-gastos/facturas-gastos.component';
 import { PersonalContratadoComponent } from './ejecucion-economica-formulario/personal-contratado/personal-contratado.component';
 import { ProyectosComponent } from './ejecucion-economica-formulario/proyectos/proyectos.component';
+import { SeguimientoJustificacionRequerimientosComponent } from './ejecucion-economica-formulario/seguimiento-justificacion-requerimientos/seguimiento-justificacion-requerimientos.component';
+import { SeguimientoJustificacionResumenComponent } from './ejecucion-economica-formulario/seguimiento-justificacion-resumen/seguimiento-justificacion-resumen.component';
 import { ValidacionGastosComponent } from './ejecucion-economica-formulario/validacion-gastos/validacion-gastos.component';
 import { ViajesDietasComponent } from './ejecucion-economica-formulario/viajes-dietas/viajes-dietas.component';
 import { EjecucionEconomicaListadoComponent } from './ejecucion-economica-listado/ejecucion-economica-listado.component';
@@ -113,6 +115,24 @@ const routes: SgiRoutes = [
       {
         path: EJECUCION_ECONOMICA_ROUTE_NAMES.FACTURAS_EMITIDAS,
         component: FacturasEmitidasComponent,
+        canDeactivate: [FragmentGuard]
+      },
+      {
+        path: EJECUCION_ECONOMICA_ROUTE_NAMES.SEGUIMIENTO_JUSTIFICACION_RESUMEN,
+        component: SeguimientoJustificacionResumenComponent,
+        canActivate: [SgiAuthGuard],
+        data: {
+          hasAnyAuthorityForAnyUO: ['CSP-SJUS-V', 'CSP-SJUS-E']
+        },
+        canDeactivate: [FragmentGuard]
+      },
+      {
+        path: EJECUCION_ECONOMICA_ROUTE_NAMES.SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS,
+        component: SeguimientoJustificacionRequerimientosComponent,
+        canActivate: [SgiAuthGuard],
+        data: {
+          hasAnyAuthorityForAnyUO: ['CSP-SJUS-V', 'CSP-SJUS-E']
+        },
         canDeactivate: [FragmentGuard]
       }
     ]

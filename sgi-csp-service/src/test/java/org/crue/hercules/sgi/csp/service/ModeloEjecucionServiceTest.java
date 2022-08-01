@@ -26,7 +26,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * ModeloEjecucionServiceTest
  */
-public class ModeloEjecucionServiceTest extends BaseServiceTest {
+class ModeloEjecucionServiceTest extends BaseServiceTest {
 
   @Mock
   private ModeloEjecucionRepository modeloEjecucionRepository;
@@ -36,12 +36,12 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
   private ModeloEjecucionService modeloEjecucionService;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     modeloEjecucionService = new ModeloEjecucionServiceImpl(modeloEjecucionRepository, proyectoRepository);
   }
 
   @Test
-  public void create_ReturnsModeloEjecucion() {
+  void create_ReturnsModeloEjecucion() {
     // given: Un nuevo ModeloEjecucion
     ModeloEjecucion modeloEjecucion = generarMockModeloEjecucion(null);
 
@@ -65,7 +65,7 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Un nuevo ModeloEjecucion que ya tiene id
     ModeloEjecucion modeloEjecucion = generarMockModeloEjecucion(1L);
 
@@ -77,7 +77,7 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNombreRepetido_ThrowsIllegalArgumentException() {
+  void create_WithNombreRepetido_ThrowsIllegalArgumentException() {
     // given: Un nuevo ModeloEjecucion con un nombre que ya existe
     ModeloEjecucion modeloEjecucionNew = generarMockModeloEjecucion(null, "nombreRepetido");
     ModeloEjecucion modeloEjecucion = generarMockModeloEjecucion(1L, "nombreRepetido");
@@ -93,7 +93,7 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsModeloEjecucion() {
+  void update_ReturnsModeloEjecucion() {
     // given: Un nuevo ModeloEjecucion con el nombre actualizado
     ModeloEjecucion modeloEjecucion = generarMockModeloEjecucion(1L);
     ModeloEjecucion modeloEjecucionNombreActualizado = generarMockModeloEjecucion(1L, "NombreActualizado");
@@ -119,7 +119,7 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNotExist_ThrowsModeloEjecucionNotFoundException() {
+  void update_WithIdNotExist_ThrowsModeloEjecucionNotFoundException() {
     // given: Un ModeloEjecucion a actualizar con un id que no existe
     ModeloEjecucion modeloEjecucion = generarMockModeloEjecucion(1L, "ModeloEjecucion");
 
@@ -130,7 +130,7 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_ReturnsModeloEjecucion() {
+  void enable_ReturnsModeloEjecucion() {
     // given: Un nuevo ModeloEjecucion inactivo
     ModeloEjecucion modeloEjecucion = generarMockModeloEjecucion(1L);
     modeloEjecucion.setActivo(Boolean.FALSE);
@@ -162,7 +162,7 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
+  void enable_WithIdNotExist_ThrowsTipoFinanciacionNotFoundException() {
     // given: Un id de un ModeloEjecucion que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(modeloEjecucionRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -173,7 +173,7 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void enable_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
+  void enable_WithDuplicatedNombre_ThrowsIllegalArgumentException() {
     // given: Un ModeloEjecucion inactivo con nombre existente
     ModeloEjecucion modeloEjecucionExistente = generarMockModeloEjecucion(2L);
     ModeloEjecucion modeloEjecucion = generarMockModeloEjecucion(1L);
@@ -193,7 +193,7 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_ReturnsModeloEjecucion() {
+  void disable_ReturnsModeloEjecucion() {
     // given: Un nuevo ModeloEjecucion activo
     ModeloEjecucion modeloEjecucion = generarMockModeloEjecucion(1L);
 
@@ -219,12 +219,12 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
         .isEqualTo(modeloEjecucion.getNombre());
     Assertions.assertThat(modeloEjecucionActualizado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(modeloEjecucion.getDescripcion());
-    Assertions.assertThat(modeloEjecucionActualizado.getActivo()).as("getActivo()").isEqualTo(false);
+    Assertions.assertThat(modeloEjecucionActualizado.getActivo()).as("getActivo()").isFalse();
 
   }
 
   @Test
-  public void disable_WithIdNotExist_ThrowsModeloEjecucionNotFoundException() {
+  void disable_WithIdNotExist_ThrowsModeloEjecucionNotFoundException() {
     // given: Un id de un ModeloEjecucion que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(modeloEjecucionRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -235,7 +235,7 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNombreRepetido_ThrowsIllegalArgumentException() {
+  void update_WithNombreRepetido_ThrowsIllegalArgumentException() {
     // given: Un nuevo ModeloEjecucion con un nombre que ya existe
     ModeloEjecucion modeloEjecucionUpdated = generarMockModeloEjecucion(1L, "nombreRepetido");
     ModeloEjecucion modeloEjecucion = generarMockModeloEjecucion(2L, "nombreRepetido");
@@ -252,7 +252,7 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_ReturnsPage() {
+  void findAll_ReturnsPage() {
     // given: Una lista con 37 ModeloEjecucion
     List<ModeloEjecucion> modelosEjecucion = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -280,7 +280,7 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
     Page<ModeloEjecucion> page = modeloEjecucionService.findAll(null, paging);
 
     // then: Devuelve la pagina 3 con los ModeloEjecucion del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -291,7 +291,7 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllTodos_ReturnsPage() {
+  void findAllTodos_ReturnsPage() {
     // given: Una lista con 37 ModeloEjecucion
     List<ModeloEjecucion> modelosEjecucion = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -319,7 +319,7 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
     Page<ModeloEjecucion> page = modeloEjecucionService.findAllTodos(null, paging);
 
     // then: Devuelve la pagina 3 con los ModeloEjecucion del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -330,7 +330,7 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsModeloEjecucion() {
+  void findById_ReturnsModeloEjecucion() {
     // given: Un ModeloEjecucion con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(modeloEjecucionRepository.findById(idBuscado))
@@ -344,12 +344,12 @@ public class ModeloEjecucionServiceTest extends BaseServiceTest {
     Assertions.assertThat(modeloEjecucion.getId()).as("getId()").isEqualTo(idBuscado);
     Assertions.assertThat(modeloEjecucion.getNombre()).as("getNombre()").isEqualTo("nombre-1");
     Assertions.assertThat(modeloEjecucion.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-1");
-    Assertions.assertThat(modeloEjecucion.getActivo()).as("getActivo()").isEqualTo(true);
+    Assertions.assertThat(modeloEjecucion.getActivo()).as("getActivo()").isTrue();
 
   }
 
   @Test
-  public void findById_WithIdNotExist_ThrowsModeloEjecucionNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsModeloEjecucionNotFoundException() throws Exception {
     // given: Ningun ModeloEjecucion con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(modeloEjecucionRepository.findById(idBuscado)).willReturn(Optional.empty());

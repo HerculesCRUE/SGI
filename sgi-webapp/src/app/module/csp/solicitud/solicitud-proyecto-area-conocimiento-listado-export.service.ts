@@ -41,7 +41,7 @@ export class SolicitudProyectoAreaConocimientoListadoExportService
         return from(responseAreaConocimiento.items).pipe(
           mergeMap(solicitudAreaConocimiento => {
             return this.getAreaConocimiento(solicitudAreaConocimiento);
-          }),
+          }, this.DEFAULT_CONCURRENT),
           map(() => responseAreaConocimiento)
         );
       }),

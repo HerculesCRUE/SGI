@@ -23,7 +23,7 @@
                 </mat-icon>
               </button>
 
-              <mat-checkbox class="checkbox" color="primary" [checked]="node.checked"
+              <mat-checkbox class="checkbox" color="primary" [checked]="node.checked" (click)="$event.stopPropagation()"
                 (change)="onCheckNode(node, $event)" [disabled]="node.disabled">
                 {{node.clasificacion.nombre}}
               </mat-checkbox>

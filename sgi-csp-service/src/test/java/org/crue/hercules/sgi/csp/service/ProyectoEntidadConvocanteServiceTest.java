@@ -30,7 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.test.context.support.WithMockUser;
 
-public class ProyectoEntidadConvocanteServiceTest extends BaseServiceTest {
+class ProyectoEntidadConvocanteServiceTest extends BaseServiceTest {
   @Mock
   private ProyectoEntidadConvocanteRepository repository;
   @Mock
@@ -43,14 +43,14 @@ public class ProyectoEntidadConvocanteServiceTest extends BaseServiceTest {
   private ProyectoEntidadConvocanteService service;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     service = new ProyectoEntidadConvocanteServiceImpl(repository, proyectoRepository, programaRepository,
         proyectoHelper);
   }
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-E" })
-  public void create_ReturnsProyectoEntidadConvocante() {
+  void create_ReturnsProyectoEntidadConvocante() {
     // given: new ProyectoEntidadConvocante
     Long proyectoId = 1L;
     ProyectoEntidadConvocante proyectoEntidadConvocante = ProyectoEntidadConvocante.builder().proyectoId(proyectoId)
@@ -85,7 +85,7 @@ public class ProyectoEntidadConvocanteServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-E" })
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: a ProyectoEntidadConvocante with id filled
     ProyectoEntidadConvocante proyectoEntidadConvocante = ProyectoEntidadConvocante.builder().id(1L).proyectoId(1L)
         .entidadRef("Entidad").build();
@@ -99,7 +99,7 @@ public class ProyectoEntidadConvocanteServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-E" })
-  public void setPrograma_WithExistingId_And_ProgramActive_ReturnsProyectoEntidadConvocante() {
+  void setPrograma_WithExistingId_And_ProgramActive_ReturnsProyectoEntidadConvocante() {
     // given: existing ProyectoEntidadConvocante and active Programa
     Long proyectoId = 1L;
     Long proyectoEntidadConvocanteId = 1L;
@@ -135,7 +135,7 @@ public class ProyectoEntidadConvocanteServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-E" })
-  public void setPrograma_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void setPrograma_WithNoExistingId_ThrowsNotFoundException() throws Exception {
     // given: a ProyectoEntidadConvocante with non existing id
     Long proyectoEntidadConvocanteId = 1L;
 
@@ -150,7 +150,7 @@ public class ProyectoEntidadConvocanteServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-E" })
-  public void setPrograma_WithoutId_ThrowsIllegalArgumentException() {
+  void setPrograma_WithoutId_ThrowsIllegalArgumentException() {
     // given: no ProyectoEntidadConvocante id
     Long proyectoEntidadConvocanteId = null;
 
@@ -163,7 +163,7 @@ public class ProyectoEntidadConvocanteServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-E" })
-  public void delete_WithoutId_ThrowsIllegalArgumentException() {
+  void delete_WithoutId_ThrowsIllegalArgumentException() {
     // given: no id
     Assertions.assertThatThrownBy(
         // when: delete by no id
@@ -174,7 +174,7 @@ public class ProyectoEntidadConvocanteServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-E" })
-  public void delete_NonExistingId_ThrowsNotFoundException() {
+  void delete_NonExistingId_ThrowsNotFoundException() {
     // given: a non existing id
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
@@ -187,7 +187,7 @@ public class ProyectoEntidadConvocanteServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-E" })
-  public void delete_WithExistingId_DeletesProyectoEntidadConvocante() {
+  void delete_WithExistingId_DeletesProyectoEntidadConvocante() {
     // given: existing id
     Long proyectoEntidadConvocanteId = 1L;
     Long proyectoId = 1L;
@@ -207,7 +207,7 @@ public class ProyectoEntidadConvocanteServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-E" })
-  public void findAllByProyecto_Unlimited_ReturnsFullProyectoEntidadConvocanteList() {
+  void findAllByProyecto_Unlimited_ReturnsFullProyectoEntidadConvocanteList() {
     // given: One hundred ProyectoEntidadConvocante
     Long proyectoId = 1L;
     List<ProyectoEntidadConvocante> proyectoEntidadConvocantes = new ArrayList<>();
@@ -227,15 +227,15 @@ public class ProyectoEntidadConvocanteServiceTest extends BaseServiceTest {
     Page<ProyectoEntidadConvocante> page = service.findAllByProyecto(1L, null, Pageable.unpaged());
 
     // then: Get a page with one hundred Demos
-    Assertions.assertThat(page.getContent().size()).isEqualTo(100);
-    Assertions.assertThat(page.getNumber()).isEqualTo(0);
-    Assertions.assertThat(page.getSize()).isEqualTo(100);
+    Assertions.assertThat(page.getContent()).hasSize(100);
+    Assertions.assertThat(page.getNumber()).isZero();
+    Assertions.assertThat(page).hasSize(100);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
   }
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-E" })
-  public void findAllByProyecto_WithPaging_ReturnsPage() {
+  void findAllByProyecto_WithPaging_ReturnsPage() {
     // given: One hundred ProyectoEntidadConvocante for Proyecto with id = 1
     Long proyectoId = 1L;
     List<ProyectoEntidadConvocante> proyectoEntidadConvocantes = new ArrayList<>();
@@ -269,9 +269,9 @@ public class ProyectoEntidadConvocanteServiceTest extends BaseServiceTest {
 
     // then: A Page with ten ProyectoEntidadConvocante are returned containing
     // EntidadRef='Entidad031' to 'Entidad040'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page).hasSize(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       ProyectoEntidadConvocante proyectoEntidadConvocante = page.getContent().get(i);

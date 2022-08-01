@@ -66,4 +66,25 @@ export class ConfigService extends _ConfigServiceMixinBase implements TimeZoneCo
       })
     );
   }
+
+  isBlockchainEnable(): Observable<boolean> {
+    return this.findById('eti-blockchain-enable').pipe(
+      map(value => {
+        if (value.value === 'true') {
+          return true;
+        } else {
+          return false;
+        }
+      })
+    );
+  }
+
+  getNombreSistemaGestionExterno(): Observable<string> {
+    return this.findById('nombre-sistema-gestion-externo').pipe(map(value => value?.value ?? null));
+  }
+
+  getUrlSistemaGestionExterno(): Observable<string> {
+    return this.findById('url-sistema-gestion-externo').pipe(map(value => value?.value ?? null));
+  }
+
 }

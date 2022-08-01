@@ -27,7 +27,12 @@
       <!-- Informe Column -->
       <ng-container matColumnDef="informe">
         <th mat-header-cell *matHeaderCellDef> {{'eti.memoria.informe' | translate}} </th>
-        <td mat-cell *matCellDef="let memoria"> </td>
+        <td mat-cell *matCellDef="let memoria">
+          <button *ngIf="memoria?.dictamen?.activo" mat-button matTooltip="{{'btn.show.file' | translate}}"
+            (click)="visualizarInforme(memoria.idEvaluacion)">
+            <mat-icon color="primary">picture_as_pdf</mat-icon>
+          </button>
+        </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

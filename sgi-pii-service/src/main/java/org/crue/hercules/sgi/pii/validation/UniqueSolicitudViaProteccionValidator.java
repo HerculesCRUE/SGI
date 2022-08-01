@@ -38,7 +38,7 @@ public class UniqueSolicitudViaProteccionValidator
 
     Specification<SolicitudProteccion> specs = null;
     ViaProteccion via = this.viaProteccionRepository.getOne(value.getViaProteccion().getId());
-    if (via.getPaisEspecifico()) {
+    if (via.getPaisEspecifico().booleanValue()) {
       specs = SolicitudProteccionSpecifications.solicitudesByViaProteccionPaisEspecifico(value.getId(),
           value.getInvencion().getId(), via.getId(), value.getPaisProteccionRef());
     } else {

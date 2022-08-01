@@ -12,13 +12,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
  * TipoFaseRepositoryTest
  */
 @DataJpaTest
-public class TipoFaseRepositoryTest extends BaseRepositoryTest {
+class TipoFaseRepositoryTest extends BaseRepositoryTest {
 
   @Autowired
   private TipoFaseRepository repository;
 
   @Test
-  public void findByNombreAndActivoIsTrue_ReturnsTipoFase() throws Exception {
+  void findByNombreAndActivoIsTrue_ReturnsTipoFase() throws Exception {
 
     // given: 2 TipoFase de los que 1 coincide con el nombre buscado
     TipoFase tipoFase1 = new TipoFase(null, "nombre-tipoFase1", "descripcion-tipoFase1", true);
@@ -44,7 +44,7 @@ public class TipoFaseRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  public void findByNombreAndActivoIsTrueNoExiste_ReturnsNull() throws Exception {
+  void findByNombreAndActivoIsTrueNoExiste_ReturnsNull() throws Exception {
 
     // given: 2 TipoFase que no coinciden con el nombre buscado
     TipoFase tipoFase1 = new TipoFase(null, "nombre-tipoFase1", "descripcion-tipoFase1", true);

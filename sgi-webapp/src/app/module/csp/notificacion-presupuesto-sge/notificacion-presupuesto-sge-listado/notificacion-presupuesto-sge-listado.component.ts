@@ -259,7 +259,7 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
                 map(anualidadesGasto => {
                   const proyectoAnualidadPartidasGasto = anualidadesGasto.items.map(anualidadGasto => {
                     const proyectoAnualidadPartida: IProyectoAnualidadPartida = {
-                      anualidad: proyectoAnualidad.anio,
+                      anualidad: proyectoAnualidad.anio ?? proyectoAnualidad.proyectoFechaInicio.year,
                       importe: anualidadGasto.importeConcedido,
                       tipoDatoEconomico: TipoPartida.GASTO,
                       partidaPresupuestaria: anualidadGasto.proyectoPartida.codigo,
@@ -281,7 +281,7 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
 
                   const proyectoAnualidadPartidasGasto = anualidadesIngreso.items.map(anualidadGasto => {
                     const proyectoAnualidadPartida: IProyectoAnualidadPartida = {
-                      anualidad: proyectoAnualidad.anio,
+                      anualidad: proyectoAnualidad.anio ?? proyectoAnualidad.proyectoFechaInicio.year,
                       importe: anualidadGasto.importeConcedido,
                       tipoDatoEconomico: TipoPartida.INGRESO,
                       partidaPresupuestaria: anualidadGasto.proyectoPartida.codigo,

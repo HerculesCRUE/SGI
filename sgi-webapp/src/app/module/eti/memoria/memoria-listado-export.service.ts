@@ -8,10 +8,9 @@ import { IPersona } from '@core/models/sgp/persona';
 import { MemoriaService } from '@core/services/eti/memoria.service';
 import { AbstractTableExportService, IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
 import { ReportService } from '@core/services/rep/report.service';
-import { SgiAuthService } from '@sgi/framework/auth';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, of, zip } from 'rxjs';
+import { concat, Observable, of, zip } from 'rxjs';
 import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
 import { MemoriaEvaluacionesListadoExportService } from './memoria-evaluaciones-listado-export.service';
 import { MemoriaGeneralListadoExportService } from './memoria-general-listado-export.service';
@@ -36,7 +35,6 @@ export class MemoriaListadoExportService extends
 
   constructor(
     protected readonly logger: NGXLogger,
-    private authService: SgiAuthService,
     private readonly memoriaService: MemoriaService,
     private readonly memoriaGeneralListadoExportService: MemoriaGeneralListadoExportService,
     private readonly memoriaEvaluacionesListadoExportService: MemoriaEvaluacionesListadoExportService,
@@ -111,7 +109,7 @@ export class MemoriaListadoExportService extends
 
   private getDataReportInner(peticionData: IMemoriaReportData, reportOptions: IMemoriaReportOptions):
     Observable<IMemoriaReportData> {
-    return merge(
+    return concat(
       this.getDataReportListadoGeneral(peticionData),
       this.getDataReportEvaluaciones(peticionData, reportOptions),
     ).pipe(

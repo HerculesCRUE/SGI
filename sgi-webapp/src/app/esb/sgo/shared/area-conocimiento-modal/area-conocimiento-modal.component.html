@@ -13,8 +13,8 @@
               </mat-icon>
             </button>
 
-            <mat-checkbox class="checkbox" color="primary" [checked]="node.checked" (change)="onCheckNode(node, $event)"
-              [disabled]="node.disabled">
+            <mat-checkbox class="checkbox" color="primary" [checked]="node.checked" (click)="$event.stopPropagation()"
+              (change)="onCheckNode(node, $event)" [disabled]="node.disabled">
               {{node.areaConocimiento.nombre}}
             </mat-checkbox>
           </li>

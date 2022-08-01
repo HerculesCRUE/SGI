@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.csp.repository.specification;
 
 import java.time.Instant;
+import java.util.List;
 
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
@@ -104,6 +105,22 @@ public class GrupoSpecifications {
       Join<Grupo, GrupoEquipo> joinGrupoEquipo = root.join(Grupo_.miembrosEquipo, JoinType.LEFT);
 
       return cb.equal(joinGrupoEquipo.get(GrupoEquipo_.personaRef), personaRef);
+    };
+  }
+
+  /**
+   * {@link Grupo} para los que alguna de las personas esta en su
+   * {@link GrupoEquipo}
+   * 
+   * @param personaRefs Identificadores de persona
+   * @return specification para obtener los {@link Grupo} para los que alguna de
+   *         las personas esta en su {@link GrupoEquipo}
+   */
+  public static Specification<Grupo> byAnyPersonaInGrupoEquipo(List<String> personaRefs) {
+    return (root, query, cb) -> {
+      Join<Grupo, GrupoEquipo> joinGrupoEquipo = root.join(Grupo_.miembrosEquipo, JoinType.LEFT);
+
+      return joinGrupoEquipo.get(GrupoEquipo_.personaRef).in(personaRefs);
     };
   }
 

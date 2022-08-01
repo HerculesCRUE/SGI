@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -12,6 +14,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.enums.TipoJustificacion;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoJustificacionNotFoundException;
@@ -22,6 +25,7 @@ import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.repository.ProyectoPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoPeriodoJustificacionSpecifications;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.modelmapper.internal.util.Assert;
 import org.springframework.data.domain.Page;
@@ -58,14 +62,16 @@ public class ProyectoPeriodoJustificacionService {
     log.debug(
         "update(Long proyectoPeriodoJustificacionId,List<ProyectoPeriodoJustificacion> proyectoPeriodoJustificaciones) - start");
 
-    proyectoRepository.findById(proyectoId).orElseThrow(() -> new ProyectoNotFoundException(proyectoId));
+    if (!proyectoRepository.existsById(proyectoId)) {
+      throw new ProyectoNotFoundException(proyectoId);
+    }
 
     List<ProyectoPeriodoJustificacion> proyectoPeriodoJustificacionsBD = repository.findByProyectoId(proyectoId);
 
     // eliminados
     List<ProyectoPeriodoJustificacion> proyectoPeriodoJustificacionsEliminar = proyectoPeriodoJustificacionsBD.stream()
-        .filter(periodo -> !proyectoPeriodoJustificaciones.stream().map(ProyectoPeriodoJustificacion::getId)
-            .anyMatch(id -> id == periodo.getId()))
+        .filter(periodo -> proyectoPeriodoJustificaciones.stream().map(ProyectoPeriodoJustificacion::getId)
+            .noneMatch(id -> Objects.equals(id, periodo.getId())))
         .collect(Collectors.toList());
 
     if (!proyectoPeriodoJustificacionsEliminar.isEmpty()) {
@@ -82,12 +88,24 @@ public class ProyectoPeriodoJustificacionService {
     AtomicInteger numPeriodo = new AtomicInteger(0);
 
     // Validaciones
-    List<ProyectoPeriodoJustificacion> returnValue = new ArrayList<ProyectoPeriodoJustificacion>();
+    List<ProyectoPeriodoJustificacion> returnValue = new ArrayList<>();
     int index = 0;
     for (ProyectoPeriodoJustificacion periodoJustificacion : proyectoPeriodoJustificaciones) {
 
-      // Actualiza el numero de periodo
+      Optional<ProyectoPeriodoJustificacion> periodoJustificacionBD = proyectoPeriodoJustificacionsBD.stream().filter(
+          proyectoPeriodoJustificacionBD -> proyectoPeriodoJustificacionBD.getId().equals(periodoJustificacion.getId()))
+          .findFirst();
+      // Actualiza el numero de periodo y el proyectoId con el pasado por parametro
       periodoJustificacion.setNumPeriodo(numPeriodo.incrementAndGet());
+      periodoJustificacion.setProyectoId(proyectoId);
+      // Estos datos solo se actualizan a traves del metodo
+      // updateIdentificadorJustificacion
+      if (periodoJustificacionBD.isPresent()) {
+        periodoJustificacion
+            .setIdentificadorJustificacion(periodoJustificacionBD.get().getIdentificadorJustificacion());
+        periodoJustificacion
+            .setFechaPresentacionJustificacion(periodoJustificacionBD.get().getFechaPresentacionJustificacion());
+      }
 
       // Obtiene los rangos no permitidos
       List<Instant[]> rangos = new ArrayList<>();
@@ -97,14 +115,13 @@ public class ProyectoPeriodoJustificacionService {
       });
 
       // actualizando
-      if (periodoJustificacion.getId() != null) {
-        proyectoPeriodoJustificacionsBD.stream().filter(periodo -> periodo.getId() == periodoJustificacion.getId())
-            .findFirst()
-            .orElseThrow(() -> new ProyectoPeriodoJustificacionNotFoundException(periodoJustificacion.getId()));
+      if (periodoJustificacion.getId() != null && proyectoPeriodoJustificacionsBD.stream()
+          .noneMatch(periodo -> Objects.equals(periodo.getId(), periodoJustificacion.getId()))) {
+        throw new ProyectoPeriodoJustificacionNotFoundException(periodoJustificacion.getId());
       }
 
       // Solo puede haber un tipo de justificacion 'final' y ha de ser el último"
-      if ((periodoFinal != null && (periodoFinal.getId() != periodoJustificacion.getId()))
+      if ((periodoFinal != null && (!Objects.equals(periodoFinal.getId(), periodoJustificacion.getId())))
           && periodoJustificacion.getTipoJustificacion().equals(TipoJustificacion.FINAL)
           || (index > proyectoPeriodoJustificaciones.size() - 1)) {
         throw new TipoFinalException();
@@ -118,11 +135,10 @@ public class ProyectoPeriodoJustificacionService {
       }
       // solapamiento de fechas
       rangos.stream().forEach(rango -> {
-        if ((periodoJustificacion.getFechaInicio().isBefore(rango[0])
+        if (!((periodoJustificacion.getFechaInicio().isBefore(rango[0])
             && periodoJustificacion.getFechaFin().isBefore(rango[1]))
             || (periodoJustificacion.getFechaInicio().isAfter(rango[0])
-                && periodoJustificacion.getFechaFin().isAfter(rango[1]))) {
-        } else {
+                && periodoJustificacion.getFechaFin().isAfter(rango[1])))) {
           throw new ProyectoPeriodoJustificacionOverlappedFechasException();
         }
       });
@@ -186,5 +202,63 @@ public class ProyectoPeriodoJustificacionService {
     Page<ProyectoPeriodoJustificacion> returnValue = repository.findAll(specs, paging);
     log.debug("findAllByProyectoPeriodoSeguimiento(Long solicitudId, String query, Pageable paging) - end");
     return returnValue;
+  }
+
+  /**
+   * Obtiene ltodos los {@link ProyectoPeriodoJustificacion} del ProyectoSGE
+   * filtrados y/o paginados.
+   *
+   * @param proyectoSgeRef identificador del ProyectoSGE
+   * @param query          la información del filtro.
+   * @param paging         la información de la paginación.
+   * @return la lista de entidades {@link ProyectoPeriodoJustificacion}
+   */
+
+  public Page<ProyectoPeriodoJustificacion> findAllByProyectoSgeRef(String proyectoSgeRef, String query,
+      Pageable paging) {
+    log.debug("findAllByProyectoSgeRef(String proyectoSgeRef, String query, Pageable paging) - start");
+
+    Specification<ProyectoPeriodoJustificacion> specs = ProyectoPeriodoJustificacionSpecifications
+        .byProyectoSgeRef(proyectoSgeRef).and(SgiRSQLJPASupport.toSpecification(query));
+
+    Page<ProyectoPeriodoJustificacion> returnValue = repository.findAll(specs, paging);
+    log.debug("findAllByProyectoSgeRef(String proyectoSgeRef, String query, Pageable paging) - end");
+    return returnValue;
+  }
+
+  /**
+   * Actualiza el Identificador de Justificación de la entidad
+   * {@link ProyectoPeriodoJustificacion}.
+   * 
+   * @param proyectoPeriodoJustificacion la informacion a modificar.
+   * @return la entidad {@link ProyectoPeriodoJustificacion} modificada.
+   */
+  @Transactional
+  public ProyectoPeriodoJustificacion updateIdentificadorJustificacion(
+      ProyectoPeriodoJustificacion proyectoPeriodoJustificacion) {
+    log.debug("updateIdentificadorJustificacion(ProyectoPeriodoJustificacion proyectoPeriodoJustificacion) - start");
+    AssertHelper.idNotNull(proyectoPeriodoJustificacion.getId(), ProyectoPeriodoJustificacion.class);
+
+    return repository.findById(proyectoPeriodoJustificacion.getId()).map(proyectoPeriodoJustificacionToUpdate -> {
+      if (StringUtils.compare(proyectoPeriodoJustificacion.getIdentificadorJustificacion(),
+          proyectoPeriodoJustificacionToUpdate.getIdentificadorJustificacion()) != 0) {
+        Set<ConstraintViolation<ProyectoPeriodoJustificacion>> result = validator.validate(proyectoPeriodoJustificacion,
+            ProyectoPeriodoJustificacion.OnActualizarIdentificadorJustificacion.class);
+
+        if (!result.isEmpty()) {
+          throw new ConstraintViolationException(result);
+        }
+      }
+
+      proyectoPeriodoJustificacionToUpdate
+          .setIdentificadorJustificacion(proyectoPeriodoJustificacion.getIdentificadorJustificacion());
+      proyectoPeriodoJustificacionToUpdate
+          .setFechaPresentacionJustificacion(proyectoPeriodoJustificacion.getFechaPresentacionJustificacion());
+
+      ProyectoPeriodoJustificacion returnValue = repository.save(proyectoPeriodoJustificacionToUpdate);
+
+      log.debug("updateIdentificadorJustificacion(ProyectoPeriodoJustificacion proyectoPeriodoJustificacion) - end");
+      return returnValue;
+    }).orElseThrow(() -> new ProyectoPeriodoJustificacionNotFoundException(proyectoPeriodoJustificacion.getId()));
   }
 }

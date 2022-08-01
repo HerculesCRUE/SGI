@@ -88,7 +88,7 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
   private ConvocatoriaClonerService service;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     service = new ConvocatoriaClonerService(
         convocatoriaEntidadGestoraRepository,
         convocatoriaAreaTematicaRepository,
@@ -106,7 +106,6 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
         convocatoriaConceptoGastoCodigoEcRepository,
         convocatoriaPartidaRepository);
   }
-
 
   @Test
   void cloneConvocatoriaAreasTematicas_ShouldCloneConvocatoriaAreaTematica() {
@@ -196,11 +195,13 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
     Long convocatoriaToCloneId = 1L;
     Long convocatoriaClonedId = 2L;
 
-    List<ConvocatoriaPeriodoSeguimientoCientifico>periodos = Arrays.asList(buildMockConvocatoriaPeriodoSeguimientoCientifico(convocatoriaClonedId));
-    
+    List<ConvocatoriaPeriodoSeguimientoCientifico> periodos = Arrays
+        .asList(buildMockConvocatoriaPeriodoSeguimientoCientifico(convocatoriaClonedId));
+
     BDDMockito.given(convocatoriaPeriodoSeguimientoCientificoRepository
-    .findAllByConvocatoriaIdOrderByMesInicial(convocatoriaToCloneId)).willReturn(periodos);
-    BDDMockito.given(convocatoriaPeriodoSeguimientoCientificoRepository.save(periodos.get(0))).willReturn(periodos.get(0));
+        .findAllByConvocatoriaIdOrderByMesInicial(convocatoriaToCloneId)).willReturn(periodos);
+    BDDMockito.given(convocatoriaPeriodoSeguimientoCientificoRepository.save(periodos.get(0)))
+        .willReturn(periodos.get(0));
 
     service.cloneConvocatoriaPeriodosSeguimientoCientifico(convocatoriaToCloneId, convocatoriaClonedId);
 
@@ -215,23 +216,28 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
 
     RequisitoIP requisitoIp = buildMockRequisitoIP(convocatoriaClonedId);
 
-    List<RequisitoIPNivelAcademico>niveles = Arrays.asList(buildMockRequisitoIPNivelAcademico());
-    List<RequisitoIPCategoriaProfesional>categorias = Arrays.asList(buildMockRequisitoIPCategoriaProfesional());
+    List<RequisitoIPNivelAcademico> niveles = Arrays.asList(buildMockRequisitoIPNivelAcademico());
+    List<RequisitoIPCategoriaProfesional> categorias = Arrays.asList(buildMockRequisitoIPCategoriaProfesional());
 
     BDDMockito.given(this.requisitoIPRepository.findById(convocatoriaToCloneId)).willReturn(Optional.of(requisitoIp));
     BDDMockito.given(this.requisitoIPRepository.save(ArgumentMatchers.<RequisitoIP>any())).willReturn(requisitoIp);
 
     BDDMockito.given(this.requisitoIPNivelAcademicoRepository.findByRequisitoIPId(anyLong())).willReturn(niveles);
-    BDDMockito.given(this.requisitoIPNivelAcademicoRepository.save(ArgumentMatchers.<RequisitoIPNivelAcademico>any())).willReturn(niveles.get(0));
+    BDDMockito.given(this.requisitoIPNivelAcademicoRepository.save(ArgumentMatchers.<RequisitoIPNivelAcademico>any()))
+        .willReturn(niveles.get(0));
 
-    BDDMockito.given(this.requisitoIPCategoriaProfesionalRepository.findByRequisitoIPId(anyLong())).willReturn(categorias);
-    BDDMockito.given(this.requisitoIPCategoriaProfesionalRepository.save(ArgumentMatchers.<RequisitoIPCategoriaProfesional>any())).willReturn(categorias.get(0));
+    BDDMockito.given(this.requisitoIPCategoriaProfesionalRepository.findByRequisitoIPId(anyLong()))
+        .willReturn(categorias);
+    BDDMockito.given(
+        this.requisitoIPCategoriaProfesionalRepository.save(ArgumentMatchers.<RequisitoIPCategoriaProfesional>any()))
+        .willReturn(categorias.get(0));
 
     service.cloneRequisitoIP(convocatoriaToCloneId, convocatoriaClonedId);
 
     verify(this.requisitoIPRepository, times(1)).save(ArgumentMatchers.<RequisitoIP>any());
     verify(this.requisitoIPNivelAcademicoRepository, times(1)).save(ArgumentMatchers.<RequisitoIPNivelAcademico>any());
-    verify(this.requisitoIPCategoriaProfesionalRepository, times(1)).save(ArgumentMatchers.<RequisitoIPCategoriaProfesional>any());
+    verify(this.requisitoIPCategoriaProfesionalRepository, times(1))
+        .save(ArgumentMatchers.<RequisitoIPCategoriaProfesional>any());
   }
 
   @Test
@@ -240,8 +246,10 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
     Long convocatoriaClonedId = 2L;
     RequisitoEquipo requisito = buildMockRequisitoEquipo(convocatoriaClonedId);
 
-    BDDMockito.given(this.requisitoEquipoRepository.findByConvocatoriaId(convocatoriaToCloneId)).willReturn(Optional.of(requisito));
-    BDDMockito.given(this.requisitoEquipoRepository.save(ArgumentMatchers.<RequisitoEquipo>any())).willReturn(requisito);
+    BDDMockito.given(this.requisitoEquipoRepository.findByConvocatoriaId(convocatoriaToCloneId))
+        .willReturn(Optional.of(requisito));
+    BDDMockito.given(this.requisitoEquipoRepository.save(ArgumentMatchers.<RequisitoEquipo>any()))
+        .willReturn(requisito);
 
     service.cloneRequisitosEquipo(convocatoriaToCloneId, convocatoriaClonedId);
 
@@ -252,20 +260,25 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
   void cloneConvocatoriaConceptosGastosAndConvocatoriaConceptoCodigosEc_ShouldCloneConvocatoriaConceptosGastosAndConvocatoriaConceptoCodigosEc() {
     Long convocatoriaToCloneId = 1L;
     Long convocatoriaClonedId = 2L;
-    List<ConvocatoriaConceptoGasto>gastos = Arrays.asList(buildMockConvocatoriaConceptoGasto(convocatoriaClonedId));
-    List<ConvocatoriaConceptoGastoCodigoEc>gastosCodEc = Arrays.asList(buildMockConvocatoriaConceptoGastoCodigoEc(gastos.get(0)));
-    
+    List<ConvocatoriaConceptoGasto> gastos = Arrays.asList(buildMockConvocatoriaConceptoGasto(convocatoriaClonedId));
+    List<ConvocatoriaConceptoGastoCodigoEc> gastosCodEc = Arrays
+        .asList(buildMockConvocatoriaConceptoGastoCodigoEc(gastos.get(0)));
+
     BDDMockito.given(this.convocatoriaConceptoGastoRepository.findByConvocatoriaId(anyLong())).willReturn(gastos);
-    BDDMockito.given(this.convocatoriaConceptoGastoRepository.save(ArgumentMatchers.<ConvocatoriaConceptoGasto>any())).willReturn(gastos.get(0));
+    BDDMockito.given(this.convocatoriaConceptoGastoRepository.save(ArgumentMatchers.<ConvocatoriaConceptoGasto>any()))
+        .willReturn(gastos.get(0));
 
     BDDMockito.given(this.convocatoriaConceptoGastoCodigoEcRepository
-    .findAllByConvocatoriaConceptoGastoId(anyLong())).willReturn(gastosCodEc);
-    BDDMockito.given(this.convocatoriaConceptoGastoCodigoEcRepository.save(ArgumentMatchers.<ConvocatoriaConceptoGastoCodigoEc>any())).willReturn(gastosCodEc.get(0));
+        .findAllByConvocatoriaConceptoGastoId(anyLong())).willReturn(gastosCodEc);
+    BDDMockito.given(this.convocatoriaConceptoGastoCodigoEcRepository
+        .save(ArgumentMatchers.<ConvocatoriaConceptoGastoCodigoEc>any())).willReturn(gastosCodEc.get(0));
 
-    service.cloneConvocatoriaConceptosGastosAndConvocatoriaConceptoCodigosEc(convocatoriaToCloneId, convocatoriaClonedId);
+    service.cloneConvocatoriaConceptosGastosAndConvocatoriaConceptoCodigosEc(convocatoriaToCloneId,
+        convocatoriaClonedId);
 
     verify(this.convocatoriaConceptoGastoRepository, times(1)).save(ArgumentMatchers.<ConvocatoriaConceptoGasto>any());
-    verify(this.convocatoriaConceptoGastoCodigoEcRepository, times(1)).save(ArgumentMatchers.<ConvocatoriaConceptoGastoCodigoEc>any());
+    verify(this.convocatoriaConceptoGastoCodigoEcRepository, times(1))
+        .save(ArgumentMatchers.<ConvocatoriaConceptoGastoCodigoEc>any());
   }
 
   @Test
@@ -275,7 +288,8 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
     List<ConvocatoriaPartida> partidas = Arrays.asList(buildMockConvocatoriaPartida(convocatoriaClonedId));
 
     BDDMockito.given(this.convocatoriaPartidaRepository.findByConvocatoriaId(anyLong())).willReturn(partidas);
-    BDDMockito.given(this.convocatoriaPartidaRepository.save(ArgumentMatchers.<ConvocatoriaPartida>any())).willReturn(partidas.get(0));
+    BDDMockito.given(this.convocatoriaPartidaRepository.save(ArgumentMatchers.<ConvocatoriaPartida>any()))
+        .willReturn(partidas.get(0));
 
     service.clonePartidasPresupuestarias(convocatoriaToCloneId, convocatoriaClonedId);
 
@@ -372,17 +386,17 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
   }
 
   private RequisitoIPNivelAcademico buildMockRequisitoIPNivelAcademico() {
-      return RequisitoIPNivelAcademico.builder()
-      .requisitoIPId(1L)
-      .nivelAcademicoRef("GRADO")
-      .build();
+    return RequisitoIPNivelAcademico.builder()
+        .requisitoIPId(1L)
+        .nivelAcademicoRef("GRADO")
+        .build();
   }
 
   private RequisitoIPCategoriaProfesional buildMockRequisitoIPCategoriaProfesional() {
-      return RequisitoIPCategoriaProfesional.builder()
-      .requisitoIPId(1L)
-      .categoriaProfesionalRef("GRADO")
-      .build();
+    return RequisitoIPCategoriaProfesional.builder()
+        .requisitoIPId(1L)
+        .categoriaProfesionalRef("GRADO")
+        .build();
   }
 
   private RequisitoEquipo buildMockRequisitoEquipo(Long convocatoriaClonedId) {
@@ -427,7 +441,7 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
   }
 
   private ConvocatoriaPartida buildMockConvocatoriaPartida(Long convocatoriaClonedId) {
-      return ConvocatoriaPartida.builder()
+    return ConvocatoriaPartida.builder()
         .convocatoriaId(convocatoriaClonedId)
         .codigo("COD-001")
         .descripcion("TESTING")

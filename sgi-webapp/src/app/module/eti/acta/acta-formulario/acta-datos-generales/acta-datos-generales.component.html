@@ -6,7 +6,7 @@
       <mat-form-field>
         <mat-label>{{'eti.acta.convocatoria-reunion' | translate}}</mat-label>
         <sgi-select-entity formControlName="convocatoriaReunion" [options]="convocatorias$ | async" required
-          [displayWith]="displayerConvocatoriaReunion" [disabled]="readonly || fragment.isEdit()">
+          [displayWith]="displayerConvocatoriaReunion">
         </sgi-select-entity>
         <mat-error *ngIf="formGroup.controls.convocatoriaReunion.errors?.required">
           {{'error.required.entity' | translate:msgParamConvocatoriaReunionEntity}}

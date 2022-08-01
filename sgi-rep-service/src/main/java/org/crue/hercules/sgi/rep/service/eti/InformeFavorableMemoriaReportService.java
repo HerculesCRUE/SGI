@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.rep.service.eti;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -58,7 +59,12 @@ public class InformeFavorableMemoriaReportService extends InformeEvaluacionBaseR
     elementsRow.add(formatInstantToString(evaluacion.getFechaDictamen(), pattern));
 
     columnsData.add("numeroActa");
-    elementsRow.add(evaluacion.getConvocatoriaReunion().getNumeroActa());
+    String i18nActa = ApplicationContextSupport.getMessage("acta");
+    String codigoActa = "(" + i18nActa + evaluacion.getConvocatoriaReunion().getNumeroActa() + "/"
+        + formatInstantToString(evaluacion.getConvocatoriaReunion()
+            .getFechaEvaluacion(), "YYYY")
+        + "/" + evaluacion.getConvocatoriaReunion().getComite().getComite() + ")";
+    elementsRow.add(codigoActa);
 
     fillCommonFieldsEvaluacion(evaluacion, columnsData, elementsRow);
     rowsData.add(elementsRow);
@@ -76,13 +82,16 @@ public class InformeFavorableMemoriaReportService extends InformeEvaluacionBaseR
         .findTareasEquipoTrabajo(evaluacion.getMemoria().getPeticionEvaluacion().getId());
 
     columnsData.add("nombreInvestigador");
-
+    List<String> personas = new ArrayList<>();
     tareas.forEach(tarea -> {
       Vector<Object> elementsRow = new Vector<>();
+      if (!personas.contains(tarea.getEquipoTrabajo().getPersonaRef())) {
+        personas.add(tarea.getEquipoTrabajo().getPersonaRef());
 
-      addRowDataInvestigador(tarea.getEquipoTrabajo().getPersonaRef(), elementsRow);
+        addRowDataInvestigador(tarea.getEquipoTrabajo().getPersonaRef(), elementsRow);
 
-      rowsData.add(elementsRow);
+        rowsData.add(elementsRow);
+      }
     });
 
     DefaultTableModel tableModel = new DefaultTableModel();

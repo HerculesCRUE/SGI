@@ -53,7 +53,10 @@ export class ConvocatoriaReunionMemoriasListadoExportService extends
         return of(responseEvaluacion.items);
       }), switchMap((evaluaciones: IEvaluacion[]) => {
         return from(evaluaciones).pipe(
-          mergeMap((evaluacion: IEvaluacion) => this.fillEvaluadoresAndSolicitanteData(convocatoriaData, evaluacion))
+          mergeMap(
+            (evaluacion: IEvaluacion) => this.fillEvaluadoresAndSolicitanteData(convocatoriaData, evaluacion),
+            this.DEFAULT_CONCURRENT
+          )
         );
       })
     );

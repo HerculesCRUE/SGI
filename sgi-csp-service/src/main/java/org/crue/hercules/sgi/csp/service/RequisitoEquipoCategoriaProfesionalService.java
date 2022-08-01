@@ -81,7 +81,7 @@ public class RequisitoEquipoCategoriaProfesionalService {
     repository.deleteInBulkByRequisitoEquipoId(requisitoEquipoId);
 
     List<RequisitoEquipoCategoriaProfesional> returnValue = new ArrayList<>();
-    if (categoriasProfesionales != null && !categoriasProfesionales.isEmpty()) {
+    if (!categoriasProfesionales.isEmpty()) {
       // Eliminamos duplicados de la nueva lista
       List<RequisitoEquipoCategoriaProfesional> uniqueCategoriasProfesionales = categoriasProfesionales.stream()
           .distinct().collect(Collectors.toList());

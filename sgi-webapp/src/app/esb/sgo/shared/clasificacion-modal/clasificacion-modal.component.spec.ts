@@ -19,7 +19,8 @@ describe('ClasificacionModalComponent', () => {
   beforeEach(waitForAsync(() => {
     // Mock MAT_DIALOG
     const matDialogData: ClasificacionDataModal = {
-      selectedClasificaciones: []
+      selectedClasificaciones: [],
+      multiSelect: true
     };
 
     TestBed.configureTestingModule({
