@@ -26,7 +26,7 @@ import lombok.experimental.SuperBuilder;
     BaseActivableEntity.OnActivar.class })
 @ActivableIsActivo(entityClass = LineaInvestigacion.class, groups = { BaseEntity.Update.class })
 public class LineaInvestigacion extends BaseActivableEntity {
-  public static final int NOMBRE_LENGTH = 50;
+  public static final int NOMBRE_LENGTH = 1000;
   /**
    * Serial version
    */

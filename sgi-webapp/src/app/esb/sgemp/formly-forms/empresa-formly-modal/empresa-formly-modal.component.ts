@@ -1,19 +1,19 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
+import { IEmpresa } from '@core/models/sgemp/empresa';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormlyUtils } from '@core/utils/formly-utils';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { TranslateService } from '@ngx-translate/core';
-import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
-import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { ACTION_MODAL_MODE, BaseFormlyModalComponent, IFormlyData } from 'src/app/esb/shared/formly-forms/core/base-formly-modal.component';
 
 const EMPRESA_KEY = marker('sgemp.empresa');
-const MSG_ERROR = marker('error.load');
 
 export interface IEmpresaFormlyData {
   empresaId: string;
@@ -24,34 +24,30 @@ export interface IEmpresaFormlyData {
   templateUrl: './empresa-formly-modal.component.html',
   styleUrls: ['./empresa-formly-modal.component.scss']
 })
-export class EmpresaFormlyModalComponent extends BaseFormlyModalComponent implements OnInit {
+export class EmpresaFormlyModalComponent extends BaseFormlyModalComponent<IEmpresaFormlyData, IEmpresa> implements OnInit {
 
   constructor(
-    private readonly logger: NGXLogger,
     protected readonly snackBarService: SnackBarService,
     public readonly matDialogRef: MatDialogRef<EmpresaFormlyModalComponent>,
     @Inject(MAT_DIALOG_DATA) public empresaData: IEmpresaFormlyData,
     protected readonly translate: TranslateService,
     private readonly empresaService: EmpresaService
   ) {
-    super(translate);
-    this.subscriptions.push(
-      this.loadFormlyData(empresaData?.action, empresaData?.empresaId).subscribe(
-        (formlyData) => {
-          this.options.formState.mainModel = { ...formlyData.model };
-          this.formlyData = formlyData;
-        },
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR);
-          this.matDialogRef.close();
-        }
-      )
-    );
+    super(matDialogRef, empresaData?.action === ACTION_MODAL_MODE.EDIT, translate);
   }
+
+  protected initializer = (): Observable<void> => this.loadFormlyData(this.empresaData?.action, this.empresaData?.empresaId);
 
   ngOnInit(): void {
     super.ngOnInit();
+  }
+
+  protected buildFormGroup(): FormGroup {
+    return new FormGroup({});
+  }
+
+  protected getValue(): IEmpresaFormlyData {
+    return this.empresaData;
   }
 
   protected getKey(): string {
@@ -62,7 +58,7 @@ export class EmpresaFormlyModalComponent extends BaseFormlyModalComponent implem
     return MSG_PARAMS.GENDER.FEMALE;
   }
 
-  protected loadFormlyData(action: ACTION_MODAL_MODE, id: string): Observable<IFormlyData> {
+  protected loadFormlyData(action: ACTION_MODAL_MODE, id: string): Observable<void> {
     let load$: Observable<IFormlyData> = of({ fields: [], data: {}, model: {} });
     switch (action) {
       case ACTION_MODAL_MODE.EDIT:
@@ -93,7 +89,14 @@ export class EmpresaFormlyModalComponent extends BaseFormlyModalComponent implem
         );
         break;
     }
-    return load$;
+
+    return load$.pipe(
+      tap(formlyData => {
+        this.options.formState.mainModel = formlyData.model;
+        this.formlyData = formlyData;
+      }),
+      switchMap(() => of(void 0))
+    );
   }
 
   private initFormlyData(fields: FormlyFieldConfig[]): IFormlyData {
@@ -113,47 +116,24 @@ export class EmpresaFormlyModalComponent extends BaseFormlyModalComponent implem
   /**
    * Checks the formGroup, returns the entered data and closes the modal
    */
-  saveOrUpdate(): void {
-    this.formGroup.markAllAsTouched();
+  protected saveOrUpdate(): Observable<IEmpresa> {
+    FormlyUtils.convertFormlyToJSON(this.formlyData.model, this.formlyData.fields);
 
-    if (this.formGroup.valid) {
-
-      if (this.empresaData.action === ACTION_MODAL_MODE.NEW) {
-        FormlyUtils.convertFormlyToJSON(this.formlyData.model, this.formlyData.fields);
-        this.subscriptions.push(this.empresaService.createEmpresa(this.formlyData.model).pipe(
-          mergeMap(response =>
-            //TODO se busca a la empresa según respuesta actual del servicio. Es posible que esta cambie
-            this.empresaService.findById(response).pipe(
-              map(proyecto => {
-                return proyecto;
-              })
-            )
-          )
-        ).subscribe(
-          (empresaCreada) => {
-            this.matDialogRef.close(empresaCreada);
-            this.snackBarService.showSuccess(this.textoCrearSuccess);
-          },
-          (error) => {
-            this.logger.error(error);
-            this.snackBarService.showError(this.textoCrearError);
-          }
-        ));
-      } else if (this.empresaData.action === ACTION_MODAL_MODE.EDIT) {
-        // TODO verificar que llega en este punto empresaId 
-        // y cambiar método para que se le pase empresaId como parámetro
-        FormlyUtils.convertFormlyToJSON(this.formlyData.model, this.formlyData.fields);
-        this.subscriptions.push(this.empresaService.updateEmpresa(this.empresaData.empresaId, this.formlyData.model).subscribe(
-          () => {
-            this.matDialogRef.close();
-            this.snackBarService.showSuccess(this.textoUpdateSuccess);
-          },
-          (error) => {
-            this.logger.error(error);
-            this.snackBarService.showError(this.textoUpdateError);
-          }
-        ));
-      }
-    }
+    return this.empresaData.action === ACTION_MODAL_MODE.NEW
+      ? this.createEmpresa(this.formlyData)
+      : this.updateEmpresa(this.empresaData.empresaId, this.formlyData);
   }
+
+  private createEmpresa(formlyData: IFormlyData): Observable<IEmpresa> {
+    return this.empresaService.createEmpresa(formlyData.model).pipe(
+      switchMap(response => this.empresaService.findById(response))
+    );
+  }
+
+  private updateEmpresa(empresaId: string, formlyData: IFormlyData): Observable<IEmpresa> {
+    return this.empresaService.updateEmpresa(empresaId, formlyData.model).pipe(
+      switchMap(() => this.empresaService.findById(empresaId))
+    );
+  }
+
 }

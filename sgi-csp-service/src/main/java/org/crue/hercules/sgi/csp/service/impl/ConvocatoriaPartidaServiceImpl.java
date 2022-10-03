@@ -1,19 +1,13 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
-import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
-import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaPartidaNotFoundException;
-import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
-import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
-import org.crue.hercules.sgi.csp.model.Convocatoria.Estado;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPartida;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionRepository;
-import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaPartidaRepository;
-import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaPartidaSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPartidaService;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
@@ -35,16 +29,13 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
 
   private final ConvocatoriaPartidaRepository repository;
   private final ConfiguracionRepository configuracionRepository;
-  private final ConvocatoriaRepository convocatoriaRepository;
-  private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
+  private final ConvocatoriaAuthorityHelper authorityHelper;
 
   public ConvocatoriaPartidaServiceImpl(ConvocatoriaPartidaRepository repository,
-      ConfiguracionRepository configuracionRepository, ConvocatoriaRepository convocatoriaRepository,
-      ConfiguracionSolicitudRepository configuracionSolicitudRepository) {
+      ConfiguracionRepository configuracionRepository, ConvocatoriaAuthorityHelper authorityHelper) {
     this.repository = repository;
     this.configuracionRepository = configuracionRepository;
-    this.convocatoriaRepository = convocatoriaRepository;
-    this.configuracionSolicitudRepository = configuracionSolicitudRepository;
+    this.authorityHelper = authorityHelper;
   }
 
   /**
@@ -146,18 +137,7 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
   public Page<ConvocatoriaPartida> findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) {
     log.debug("findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) - start");
 
-    Convocatoria convocatoria = convocatoriaRepository.findById(
-        convocatoriaId)
-        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaId));
-    if (hasAuthorityViewInvestigador()) {
-      ConfiguracionSolicitud configuracionSolicitud = configuracionSolicitudRepository
-          .findByConvocatoriaId(convocatoriaId)
-          .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(convocatoriaId));
-      if (!convocatoria.getEstado().equals(Estado.REGISTRADA)
-          || Boolean.FALSE.equals(configuracionSolicitud.getTramitacionSGI())) {
-        throw new UserNotAuthorizedToAccessConvocatoriaException();
-      }
-    }
+    authorityHelper.checkUserHasAuthorityViewConvocatoria(convocatoriaId);
 
     Specification<ConvocatoriaPartida> specs = ConvocatoriaPartidaSpecifications.byConvocatoriaId(
         convocatoriaId)
@@ -187,7 +167,7 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
             convocatoriaPartida.getCodigo().matches(configuracion.getFormatoPartidaPresupuestaria()),
             "Formato de codigo no valido"));
 
-    Assert.isTrue(this.modificable(convocatoriaPartida.getId(), "CSP-CON-E"),
+    Assert.isTrue(this.modificable(convocatoriaPartida.getId(), ConvocatoriaAuthorityHelper.CSP_CON_E),
         "No se puede modificar ConvocatoriaPartida. No tiene los permisos necesarios o el proyecto de la convocatoria tiene presupuestos anuales asignados.");
 
     log.debug("validate(ConvocatoriaPartida convocatoriaPartida) - end");
@@ -205,7 +185,7 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
    */
   @Override
   public boolean modificable(Long id, String authority) {
-    log.debug("modificable(Long id, String unidadConvocatoria) - start");
+    log.debug("modificable(Long id, String authority) - start");
 
     if (SgiSecurityContextHolder.hasAuthorityForAnyUO(authority)) {
       // Será modificable si no tiene solicitudes o proyectos asociados
@@ -215,12 +195,8 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
       return true;
     }
 
-    log.debug("modificable(Long id, String unidadConvocatoria) - end");
+    log.debug("modificable(Long id, String authority) - end");
     return false;
-  }
-
-  private boolean hasAuthorityViewInvestigador() {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
   }
 
 }

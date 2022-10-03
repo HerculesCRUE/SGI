@@ -49,7 +49,7 @@ class InvencionInventorControllerIT extends BaseIT {
     // @formatter:on
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  // @Test
+  @Test
   void findActiveInvencionInventores_WithPagingSortingAndFiltering_ReturnInvencionInventoresOutputSubList()
       throws Exception {
     String[] roles = { "PII-INV-V", "PII-INV-C", "PII-INV-E", "PII-INV-B", "PII-INV-R" };
@@ -73,7 +73,7 @@ class InvencionInventorControllerIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<InvencionInventorOutput> invencionInventorOutput = response.getBody();
 
-    Assertions.assertThat(invencionInventorOutput.size()).isEqualTo(3);
+    Assertions.assertThat(invencionInventorOutput).hasSize(3);
     Assertions.assertThat(invencionInventorOutput.get(0).getId()).as("id").isEqualTo(3);
     Assertions.assertThat(invencionInventorOutput.get(1).getId()).as("id").isEqualTo(2);
     Assertions.assertThat(invencionInventorOutput.get(2).getId()).as("id").isEqualTo(1);

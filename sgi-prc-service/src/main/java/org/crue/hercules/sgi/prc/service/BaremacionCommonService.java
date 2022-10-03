@@ -124,10 +124,6 @@ public abstract class BaremacionCommonService implements BaremacionItemService {
   @Getter
   private EnumMap<TipoBaremo, LongPredicate> hmTipoBaremoPredicates = new EnumMap<>(TipoBaremo.class);
 
-  protected abstract BigDecimal evaluateBaremoModulador(BaremacionInput baremacionInput);
-
-  protected abstract BigDecimal evaluateBaremoExtra(BaremacionInput baremacionInput);
-
   protected abstract void loadPredicates();
 
   protected abstract TipoPuntuacion getTipoPuntuacion();
@@ -152,6 +148,18 @@ public abstract class BaremacionCommonService implements BaremacionItemService {
     });
 
     log.debug("evaluateProduccionCientificaByTypeAndAnio(baremacionInput) - end");
+  }
+
+  protected BigDecimal evaluateBaremoExtra(BaremacionInput baremacionInput) {
+    log.debug("evaluateBaremoExtra({}) - Tipo de produccion cientifica sin baremo extra, Puntos extra: 0",
+        baremacionInput);
+    return BigDecimal.ZERO;
+  }
+
+  protected BigDecimal evaluateBaremoModulador(BaremacionInput baremacionInput) {
+    log.debug("evaluateBaremoModulador({}) - Tipo de produccion cientifica sin baremo modulador, Puntos modulador: 1",
+        baremacionInput);
+    return new BigDecimal("1.00");
   }
 
   protected void evaluateAutores(BaremacionInput baremacionInput, BigDecimal puntos, Long newProduccionCientificaId) {

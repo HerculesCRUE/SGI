@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { ActionStatus } from '@core/services/action-service';
-import { EstadoAutorizacionService } from '@core/services/csp/estado-autorizacion/estado-autorizacion.service';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -46,14 +44,20 @@ export class AutorizacionEditarComponent extends ActionComponent implements OnIn
   disableCambioEstado = false;
   status: ActionStatus;
 
+  get isInvestigador(): boolean {
+    return this.actionService.isInvestigador;
+  }
+
+  get canEdit(): boolean {
+    return this.actionService.canEdit;
+  }
+
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly snackBarService: SnackBarService,
     router: Router,
     route: ActivatedRoute,
     public actionService: AutorizacionActionService,
-    private matDialog: MatDialog,
-    private estadoAutorizacionService: EstadoAutorizacionService,
     dialogService: DialogService,
     private readonly translate: TranslateService
   ) {

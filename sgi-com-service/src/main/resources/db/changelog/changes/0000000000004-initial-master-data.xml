@@ -1,0 +1,195 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <!-- Actualiza las plantillas modificadas en la tarea HERCULES-6379 para que se apliquen los cambios porque se modificaron despues de pasar a la siguiente version -->
+  <changeSet context="!test" author="master" id="0000000000004-fix">
+    <!-- ETI Aviso de Evaluación retrospectiva pendiente-->
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/eti-com-informe/ETI_COM_INF_RETRO_PENDIENTE_CONTENT_html.ftl" />
+      <where>name='ETI_COM_INF_RETRO_PENDIENTE_CONTENT'</where>
+    </update>
+
+    <!-- ETI Informe de Seguimiento Anual Pendiente -->
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/eti-com-informe/ETI_COM_INF_SEG_ANU_CONTENT_html.ftl" />
+      <where>name='ETI_COM_INF_SEG_ANU_CONTENT'</where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000004-param">
+
+    <!-- CSP Cambio al estado Validada para solicitudes de tipo RRHH -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH_DATA" />
+      <column name="description" value="JSON con formato: {&quot;fechaEstado&quot;:&quot;2022-06-11T00:00:000z&quot;,&quot;nombreApellidosSolicitante&quot;:&quot;Francisco José Alonso&quot;,&quot;codigoInternoSolicitud&quot;:&quot;SOL-INT-CODE-01&quot;,&quot;tituloConvocatoria&quot;:&quot;Convocatoria RRHH&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- CSP Cambio al estado Rechazada para solicitudes de tipo RRHH -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH_DATA" />
+      <column name="description" value="JSON con formato: {&quot;fechaEstado&quot;:&quot;2022-06-11T00:00:000z&quot;,&quot;nombreApellidosSolicitante&quot;:&quot;Francisco José Alonso&quot;,&quot;codigoInternoSolicitud&quot;:&quot;SOL-INT-CODE-01&quot;,&quot;tituloConvocatoria&quot;:&quot;Convocatoria RRHH&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000004-subject_tpl">
+
+    <!-- CSP Cambio al estado Validada para solicitudes de tipo RRHH -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de comunicados de Cambio de estado a VALIDADA de una solicitud de RRHH" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000004/csp-com-cambio-estado-validada-sol-tipo-rrhh/CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH_SUBJECT.ftl" />
+      <where>name='CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH_SUBJECT'</where>
+    </update>
+
+    <!-- CSP Cambio al estado Rechazada para solicitudes de tipo RRHH -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de comunicados de Cambio de estado a RECHAZADA de una solicitud de RRHH" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000004/csp-com-cambio-estado-rechazada-sol-tipo-rrhh/CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH_SUBJECT.ftl" />
+      <where>name='CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH_SUBJECT'</where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000004-subjecttpl_param">
+
+    <!-- CSP Cambio al estado Validada para solicitudes de tipo RRHH -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH_DATA')" />
+    </insert>
+
+    <!-- CSP Cambio al estado Rechazada para solicitudes de tipo RRHH -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH_DATA')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000004-content_tpl">
+
+    <!-- CSP Cambio al estado Validada para solicitudes de tipo RRHH -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de comunicados de Cambio de estado a validada de una soolicitud de tipo RRHH" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000004/csp-com-cambio-estado-validada-sol-tipo-rrhh/CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH_CONTENT_text.ftl" />
+      <where>name='CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000004/csp-com-cambio-estado-validada-sol-tipo-rrhh/CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH_CONTENT'</where>
+    </update>
+
+    <!-- CSP Cambio al estado Rechazada para solicitudes de tipo RRHH -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de comunicados de Cambio de estado a rechazada de una soolicitud de tipo RRHH" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000004/csp-com-cambio-estado-rechazada-sol-tipo-rrhh/CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH_CONTENT_text.ftl" />
+      <where>name='CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000004/csp-com-cambio-estado-rechazada-sol-tipo-rrhh/CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH_CONTENT'</where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000004-contenttpl_param">
+
+    <!-- CSP Cambio al estado Validada para solicitudes de tipo RRHH -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH_DATA')" />
+    </insert>
+
+    <!-- CSP Cambio al estado Rechazada para solicitudes de tipo RRHH -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH_DATA')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000004-email_tpl">
+
+    <!-- CSP Cambio al estado Validada para solicitudes de tipo RRHH -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH" />
+      <column name="description" value="Aviso de cambio de estado a SOLICITADA de una solicitud de tipo RRHH (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- CSP Cambio al estado Rechazada para solicitudes de tipo RRHH -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH" />
+      <column name="description" value="Aviso de cambio de estado a RECHAZADA de una solicitud de tipo RRHH (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000004-emailtpl_subjecttpl">
+
+    <!-- CSP Cambio al estado Validada para solicitudes de tipo RRHH -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH_SUBJECT')" />
+    </insert>
+
+    <!-- CSP Cambio al estado Rechazada para solicitudes de tipo RRHH -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH_SUBJECT')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000004-emailtpl_contenttpl">
+
+    <!-- CSP Cambio al estado Validada para solicitudes de tipo RRHH -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CAMBIO_ESTADO_VALIDADA_SOL_TIPO_RRHH_CONTENT')" />
+    </insert>
+
+    <!-- CSP Cambio al estado Rechazada para solicitudes de tipo RRHH -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_CAMBIO_ESTADO_RECHAZADA_SOL_TIPO_RRHH_CONTENT')" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

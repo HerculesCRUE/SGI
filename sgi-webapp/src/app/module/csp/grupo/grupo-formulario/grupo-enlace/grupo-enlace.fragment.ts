@@ -11,14 +11,14 @@ import { map, mergeMap, takeLast, tap } from 'rxjs/operators';
 
 export class GrupoEnlaceFragment extends Fragment {
   enlaces$ = new BehaviorSubject<StatusWrapper<IGrupoEnlace>[]>([]);
-  private gruposEnlaceEliminados: IGrupoEnlace[] = [];
+  private gruposEnlaceEliminados: StatusWrapper<IGrupoEnlace>[] = [];
 
   constructor(
     private readonly logger: NGXLogger,
     key: number,
     private readonly grupoService: GrupoService,
     private readonly grupoEnlaceService: GrupoEnlaceService,
-    private readonly: boolean,
+    public readonly readonly: boolean,
   ) {
     super(key);
     this.setComplete(true);
@@ -62,13 +62,13 @@ export class GrupoEnlaceFragment extends Fragment {
   }
 
   deleteGrupoEnlace(wrapper: StatusWrapper<IGrupoEnlace>) {
-    if (!wrapper.created) {
-      this.gruposEnlaceEliminados.push(wrapper.value);
-    }
-
     const current = this.enlaces$.value;
     const index = current.findIndex((value) => value === wrapper);
+
     if (index >= 0) {
+      if (!wrapper.created) {
+        this.gruposEnlaceEliminados.push(current[index]);
+      }
       current.splice(index, 1);
       this.enlaces$.next(current);
       this.setChanges(true);
@@ -95,11 +95,11 @@ export class GrupoEnlaceFragment extends Fragment {
       return of(void 0);
     }
     return from(this.gruposEnlaceEliminados).pipe(
-      mergeMap((data) => {
-        return this.grupoEnlaceService.deleteById(data.id).pipe(
+      mergeMap((wrapped) => {
+        return this.grupoEnlaceService.deleteById(wrapped.value.id).pipe(
           tap(() => {
             this.gruposEnlaceEliminados = this.gruposEnlaceEliminados.filter(deleted =>
-              deleted === data);
+              deleted.value.id === wrapped.value.id);
           })
         );
       })

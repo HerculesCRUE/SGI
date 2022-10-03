@@ -85,13 +85,22 @@ export class ConvocatoriaConceptoGastoDataResolver extends SgiResolverResolver<I
         };
       }),
       switchMap(data => {
-        const convocatoriaConceptos$ = data.permitido
-          ? this.convocatoriaService.findAllConvocatoriaConceptoGastosPermitidos(convocatoriaId)
-          : this.convocatoriaService.findAllConvocatoriaConceptoGastosNoPermitidos(convocatoriaId);
-        return convocatoriaConceptos$.pipe(
-          map(conceptosGasto => {
-            data.selectedConvocatoriaConceptoGastos = conceptosGasto.items
-              .filter(concepto => concepto.id !== convocatoriaConceptoGastoId);
+        return this.convocatoriaService.findAllConvocatoriaConceptoGastosPermitidos(convocatoriaId).pipe(
+          map(conceptosGastoPermitido => {
+            conceptosGastoPermitido.items
+              .filter(concepto => concepto.id !== convocatoriaConceptoGastoId).forEach(
+                conceptoGastoPermitido => data.selectedConvocatoriaConceptoGastos.push(conceptoGastoPermitido)
+              );
+            return data;
+          })
+        );
+      }),
+      switchMap(data => {
+        return this.convocatoriaService.findAllConvocatoriaConceptoGastosNoPermitidos(convocatoriaId).pipe(
+          map(conceptosGastoNoPermitido => {
+            conceptosGastoNoPermitido.items
+              .filter(concepto => concepto.id !== convocatoriaConceptoGastoId).forEach(
+                conceptoGastoNoPermitido => data.selectedConvocatoriaConceptoGastos.push(conceptoGastoNoPermitido));
             return data;
           })
         );

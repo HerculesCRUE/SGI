@@ -1,16 +1,15 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { IAutorizacion } from '@core/models/csp/autorizacion';
-import { Estado, IEstadoAutorizacion } from '@core/models/csp/estado-autorizacion';
+import { Estado } from '@core/models/csp/estado-autorizacion';
 import { FormFragment } from '@core/services/action-service';
 import { AutorizacionService } from '@core/services/csp/autorizacion/autorizacion.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { EstadoAutorizacionService } from '@core/services/csp/estado-autorizacion/estado-autorizacion.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { SgiAuthService } from '@sgi/framework/auth';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, EMPTY, merge, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, EMPTY, merge, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 export interface IAutorizacionDatosGeneralesData extends IAutorizacion {
@@ -23,8 +22,6 @@ export class AutorizacionDatosGeneralesFragment extends FormFragment<IAutorizaci
 
   public investigadorRequired: boolean;
   public entidadRequired: boolean;
-  public isInvestigador: boolean;
-  private isVisor: boolean;
 
   readonly disableCambioEstado$ = new BehaviorSubject<boolean>(false);
 
@@ -36,13 +33,12 @@ export class AutorizacionDatosGeneralesFragment extends FormFragment<IAutorizaci
     private empresaService: EmpresaService,
     private estadoAutorizacionService: EstadoAutorizacionService,
     private convocatoriaService: ConvocatoriaService,
-    public authService: SgiAuthService
+    public readonly isInvestigador: boolean,
+    public readonly isVisor: boolean
   ) {
     super(key, true);
     this.setComplete(true);
     this.autorizacionData = {} as IAutorizacionDatosGeneralesData;
-    this.isInvestigador = this.authService.hasAnyAuthority(['CSP-AUT-INV-C', 'CSP-AUT-INV-ER', 'CSP-AUT-INV-BR']);
-    this.isVisor = this.authService.hasAnyAuthority(['CSP-AUT-V']);
   }
 
   protected buildFormGroup(): FormGroup {
@@ -140,7 +136,8 @@ export class AutorizacionDatosGeneralesFragment extends FormFragment<IAutorizaci
       switchMap(autorizacionData => {
         if (autorizacionData.convocatoria?.id) {
           const convocatoria$ = this.isInvestigador ?
-            this.autorizacionService.findConvocatoria(autorizacionData.id) : this.convocatoriaService.findById(autorizacionData.convocatoria.id);
+            this.autorizacionService.findConvocatoria(autorizacionData.id)
+            : this.convocatoriaService.findById(autorizacionData.convocatoria.id);
           return convocatoria$.pipe(
             map(convocatoria => {
               autorizacionData.convocatoria = convocatoria;
@@ -249,7 +246,7 @@ export class AutorizacionDatosGeneralesFragment extends FormFragment<IAutorizaci
 
   private update(autorizacion: IAutorizacion): Observable<IAutorizacion> {
     return this.autorizacionService.update(autorizacion.id, autorizacion).pipe(
-      tap(result => { this.autorizacionData = result as IAutorizacionDatosGeneralesData }));//si recarga nada
+      tap(result => { this.autorizacionData = result as IAutorizacionDatosGeneralesData; }));
 
   }
 

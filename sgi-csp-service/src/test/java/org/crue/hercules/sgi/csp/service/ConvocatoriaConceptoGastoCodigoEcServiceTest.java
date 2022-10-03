@@ -7,11 +7,10 @@ import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaConceptoGastoCodigoEcNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoCodigoEc;
-import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoCodigoEcRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoRepository;
-import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaConceptoGastoCodigoEcServiceImpl;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -27,16 +26,14 @@ class ConvocatoriaConceptoGastoCodigoEcServiceTest extends BaseServiceTest {
   @Mock
   private ConvocatoriaConceptoGastoRepository convocatoriaConceptoGastoRepository;
   @Mock
-  ConvocatoriaRepository convocatoriaRepository;
-  @Mock
-  ConfiguracionSolicitudRepository configuracionSolicitudRepository;
+  private ConvocatoriaAuthorityHelper authorityHelper;
 
   private ConvocatoriaConceptoGastoCodigoEcService service;
 
   @BeforeEach
   void setUp() throws Exception {
     service = new ConvocatoriaConceptoGastoCodigoEcServiceImpl(repository, convocatoriaConceptoGastoRepository,
-        convocatoriaRepository, configuracionSolicitudRepository);
+        authorityHelper);
   }
 
   @Test

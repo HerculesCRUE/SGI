@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IGrupo } from '@core/models/csp/grupo';
+import { Module } from '@core/module';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -37,10 +38,18 @@ export class GrupoDataResolver extends SgiResolverResolver<IGrupoData> {
         if (!value) {
           return throwError('NOT_FOUND');
         }
+
+        const isInvestigador = this.hasViewAuthorityInv() && route.data.module === Module.INV;
+        const isUO = this.hasViewAuthorityUO() && route.data.module === Module.CSP;
+
+        if (!isInvestigador && !isUO) {
+          return throwError('NOT_FOUND');
+        }
+
         return of(
           {
             grupo: { id: grupoId } as IGrupo,
-            isInvestigador: this.authService.hasAnyAuthority(['CSP-GIN-INV-V'])
+            isInvestigador
           } as IGrupoData
         );
       }),
@@ -49,7 +58,10 @@ export class GrupoDataResolver extends SgiResolverResolver<IGrupoData> {
   }
 
   private isReadonly(data: IGrupoData, grupoId: number): Observable<IGrupoData> {
-    if (grupoId) {
+    if (data.isInvestigador) {
+      data.readonly = true;
+      return of(data);
+    } else if (grupoId) {
       return this.service.modificable(grupoId)
         .pipe(
           map((value: boolean) => {
@@ -63,5 +75,17 @@ export class GrupoDataResolver extends SgiResolverResolver<IGrupoData> {
     }
   }
 
+  private hasViewAuthorityInv(): boolean {
+    return this.authService.hasAuthority('CSP-GIN-INV-VR');
+  }
+
+  private hasViewAuthorityUO(): boolean {
+    return this.authService.hasAnyAuthorityForAnyUO(
+      [
+        'CSP-GIN-E',
+        'CSP-GIN-V'
+      ]
+    );
+  }
 
 }

@@ -91,10 +91,12 @@ public class BaremacionPublicacionArticuloService extends BaremacionPublicacionA
     loadPredicates();
   }
 
+  @Override
   protected TipoPuntuacion getTipoPuntuacion() {
     return TipoPuntuacion.ARTICULOS;
   }
 
+  @Override
   protected void loadPredicates() {
     loadArticulosPredicates();
   }
@@ -389,6 +391,7 @@ public class BaremacionPublicacionArticuloService extends BaremacionPublicacionA
             .and(isTipoProduccionEqualsArticuloCientifico));
   }
 
+  @Override
   protected BigDecimal evaluateBaremoModulador(BaremacionInput baremacionInput) {
     log.debug("evaluateBaremoModulador(baremacionInput) - start");
 
@@ -411,6 +414,7 @@ public class BaremacionPublicacionArticuloService extends BaremacionPublicacionA
     return puntos;
   }
 
+  @Override
   protected BigDecimal evaluateBaremoExtra(BaremacionInput baremacionInput) {
     log.debug("evaluateBaremoExtra(baremacionInput) - start");
 
@@ -457,7 +461,7 @@ public class BaremacionPublicacionArticuloService extends BaremacionPublicacionA
         CodigoCVN.INDICE_NORMALIZADO, "1", produccionCientificaId);
   }
 
-  protected boolean isValorGreatherThanIntegerValue(CodigoCVN codigoCVN, String numberValue,
+  private boolean isValorGreatherThanIntegerValue(CodigoCVN codigoCVN, String numberValue,
       Long produccionCientificaId) {
     return findValoresByCampoProduccionCientificaId(codigoCVN, produccionCientificaId).stream()
         .anyMatch(valorCampo -> valorCampo.getValor()

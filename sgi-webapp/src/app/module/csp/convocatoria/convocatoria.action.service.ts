@@ -181,7 +181,7 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
       convocatoriaEntidadGestoraService, unidadGestionService, convocatoriaAreaTematicaService, configuracionSolicitudService,
       this.readonly, this.canEdit, palabraClaveService);
     this.periodoJustificacion = new ConvocatoriaPeriodosJustificacionFragment(
-      this.id, convocatoriaService, convocatoriaPeriodoJustificacionService);
+      this.id, convocatoriaService, convocatoriaPeriodoJustificacionService, this.canEdit);
     this.entidadesConvocantes = new ConvocatoriaEntidadesConvocantesFragment(
       logger, this.id, convocatoriaService, convocatoriaEntidadConvocanteService,
       empresaService, this.readonly, this.canEdit);
@@ -192,7 +192,7 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     this.documentos = new ConvocatoriaDocumentosFragment(logger, this.id, convocatoriaService,
       convocatoriaDocumentoService, this.readonly, this.canEdit);
     this.seguimientoCientifico = new ConvocatoriaSeguimientoCientificoFragment(this.id,
-      convocatoriaService, convocatoriaSeguimientoCientificoService);
+      convocatoriaService, convocatoriaSeguimientoCientificoService, this.canEdit);
     this.entidadesFinanciadoras = new ConvocatoriaEntidadesFinanciadorasFragment(
       this.id, convocatoriaService, convocatoriaEntidadFinanciadoraService, this.readonly, this.canEdit);
     this.enlaces = new ConvocatoriaEnlaceFragment(this.id, convocatoriaService,

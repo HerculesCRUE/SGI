@@ -4,6 +4,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentGuard } from '@core/guards/detail-form.guard';
 import { ActionGuard } from '@core/guards/master-form.guard';
 import { MSG_PARAMS } from '@core/i18n';
+import { Module } from '@core/module';
 import { SgiRoutes } from '@core/route';
 import { SgiAuthGuard } from '@sgi/framework/auth';
 import { MemoriaEditarComponent } from './memoria-editar/memoria-editar.component';
@@ -29,7 +30,8 @@ const routes: SgiRoutes = [
     data: {
       title: MEMORIA_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-      hasAnyAuthorityForAnyUO: ['ETI-MEM-V', 'ETI-MEM-EDOC']
+      hasAnyAuthorityForAnyUO: ['ETI-MEM-V', 'ETI-MEM-EDOC'],
+      module: Module.ETI
     }
   },
   {
@@ -44,7 +46,8 @@ const routes: SgiRoutes = [
       title: MEMORIA_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
       hasAnyAuthorityForAnyUO: ['ETI-MEM-V', 'ETI-MEM-EDOC'],
-      readonly: true
+      readonly: true,
+      module: Module.ETI
     },
     children: [
       {

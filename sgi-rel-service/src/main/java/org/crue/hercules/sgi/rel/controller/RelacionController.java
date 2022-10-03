@@ -63,7 +63,7 @@ public class RelacionController {
    */
   @GetMapping()
   @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-rel')) or hasAnyAuthority('REL-V', 'REL-E', 'REL-C', 'REL-B')")
-  ResponseEntity<Page<RelacionOutput>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<RelacionOutput>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
     Page<Relacion> page = service.findAll(query, paging);
@@ -85,7 +85,7 @@ public class RelacionController {
    */
   @GetMapping("/{id}")
   @PreAuthorize("hasAnyAuthority('REL-V', 'REL-E', 'REL-C', 'REL-B')")
-  RelacionOutput findById(@PathVariable Long id) {
+  public RelacionOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     Relacion returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
@@ -100,7 +100,7 @@ public class RelacionController {
    */
   @PostMapping
   @PreAuthorize("hasAuthority('REL-C')")
-  ResponseEntity<RelacionOutput> create(@Valid @RequestBody RelacionInput relacion) {
+  public ResponseEntity<RelacionOutput> create(@Valid @RequestBody RelacionInput relacion) {
     log.debug("create(SectorAplicacion sectorAplicacion) - start");
     Relacion returnValue = service.create(convert(relacion));
     log.debug("create(SectorAplicacion sectorAplicacion) - end");
@@ -116,7 +116,7 @@ public class RelacionController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('REL-E')")
-  RelacionOutput update(@Valid @RequestBody RelacionInput relacion, @PathVariable Long id) {
+  public RelacionOutput update(@Valid @RequestBody RelacionInput relacion, @PathVariable Long id) {
     log.debug("update(Relacion relacion, Long id) - start");
     Relacion returnValue = service.update(convert(id, relacion));
     log.debug("update(Relacion relacion, Long id) - end");
@@ -130,7 +130,7 @@ public class RelacionController {
    */
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthority('REL-B')")
-  void delete(@PathVariable Long id) {
+  public void delete(@PathVariable Long id) {
     log.debug("delete(Long id) - start");
     service.delete(id);
     log.debug("delete(Long id) - end");
@@ -151,7 +151,7 @@ public class RelacionController {
   }
 
   private Page<RelacionOutput> convert(Page<Relacion> page) {
-    List<RelacionOutput> content = page.getContent().stream().map((relacion) -> convert(relacion))
+    List<RelacionOutput> content = page.getContent().stream().map(this::convert)
         .collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());

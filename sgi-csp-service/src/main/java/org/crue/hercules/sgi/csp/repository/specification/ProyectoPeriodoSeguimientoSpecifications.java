@@ -3,14 +3,21 @@ package org.crue.hercules.sgi.csp.repository.specification;
 import java.time.Instant;
 import java.util.List;
 
+import javax.persistence.criteria.Join;
+
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento_;
+import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
+import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge_;
 import org.crue.hercules.sgi.csp.model.Proyecto_;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ProyectoPeriodoSeguimientoSpecifications {
+
+  private ProyectoPeriodoSeguimientoSpecifications() {
+  }
 
   /**
    * Se obtienen los {@link ProyectoPeriodoSeguimiento} por proyecto
@@ -22,6 +29,21 @@ public class ProyectoPeriodoSeguimientoSpecifications {
   public static Specification<ProyectoPeriodoSeguimiento> byProyecto(Long idProyecto) {
     return (root, query, cb) -> {
       return cb.equal(root.get(ProyectoPeriodoSeguimiento_.proyecto).get(Proyecto_.id), idProyecto);
+    };
+  }
+
+  /**
+   * {@link ProyectoPeriodoSeguimiento} del ProyectoSGE con el id indicado.
+   * 
+   * @param proyectoSgeRef identificador del ProyectoSGE.
+   * @return specification para obtener los {@link ProyectoPeriodoSeguimiento}
+   *         del ProyectoSGE con el id indicado.
+   */
+  public static Specification<ProyectoPeriodoSeguimiento> byProyectoSgeRef(String proyectoSgeRef) {
+    return (root, query, cb) -> {
+      Join<ProyectoPeriodoSeguimiento, Proyecto> joinProyecto = root.join(ProyectoPeriodoSeguimiento_.proyecto);
+      Join<Proyecto, ProyectoProyectoSge> joinProyectoSge = joinProyecto.join(Proyecto_.identificadoresSge);
+      return cb.equal(joinProyectoSge.get(ProyectoProyectoSge_.proyectoSgeRef), proyectoSgeRef);
     };
   }
 

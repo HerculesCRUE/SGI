@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
+import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.model.Autorizacion;
 import org.crue.hercules.sgi.csp.model.Autorizacion_;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
@@ -134,6 +135,29 @@ public class ConvocatoriaSpecifications {
           .where(cb.equal(queryProyectoRoot.get(Proyecto_.id), proyectoId));
       return root.get(Convocatoria_.id).in(queryProyecto);
     };
+  }
+
+  /**
+   * {@link Convocatoria} publicas
+   * 
+   * @return specification para obtener las {@link Convocatoria} publicas
+   */
+  public static Specification<Convocatoria> publicas() {
+    return (root, query, cb) -> cb.and(
+        activos().toPredicate(root, query, cb),
+        registradas().toPredicate(root, query, cb),
+        byFormularioSolicitud(FormularioSolicitud.RRHH).toPredicate(root, query, cb),
+        configuracionSolicitudTramitacionSGI().toPredicate(root, query, cb));
+  }
+
+  /**
+   * {@link Convocatoria} con el {@link FormularioSolicitud} indicado
+   * 
+   * @param formularioSolicitud {@link FormularioSolicitud}
+   * @return specification para obtener las {@link Convocatoria} activas
+   */
+  public static Specification<Convocatoria> byFormularioSolicitud(FormularioSolicitud formularioSolicitud) {
+    return (root, query, cb) -> cb.equal(root.get(Convocatoria_.formularioSolicitud), formularioSolicitud);
   }
 
 }

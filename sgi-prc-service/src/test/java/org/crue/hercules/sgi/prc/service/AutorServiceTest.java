@@ -16,6 +16,7 @@ import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContext
 import org.crue.hercules.sgi.prc.exceptions.AutorNotFoundException;
 import org.crue.hercules.sgi.prc.model.Autor;
 import org.crue.hercules.sgi.prc.repository.AutorRepository;
+import org.crue.hercules.sgi.prc.util.ProduccionCientificaAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -60,6 +61,9 @@ class AutorServiceTest extends BaseServiceTest {
 
   @MockBean
   private PersistenceUnitUtil persistenceUnitUtil;
+
+  @MockBean
+  private ProduccionCientificaAuthorityHelper authorityHelper;
 
   // This bean must be created by Spring so validations can be applied
   @Autowired

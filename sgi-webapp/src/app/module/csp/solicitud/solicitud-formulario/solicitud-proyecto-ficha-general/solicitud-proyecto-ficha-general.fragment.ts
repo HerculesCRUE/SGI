@@ -19,7 +19,7 @@ export interface AreaTematicaSolicitudData {
   readonly: boolean;
 }
 
-export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicitudProyecto>{
+export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicitudProyecto> {
   solicitudProyecto: ISolicitudProyecto;
   areasTematicas$ = new BehaviorSubject<AreaTematicaSolicitudData[]>([]);
   readonly hasPopulatedSocios$ = new BehaviorSubject<boolean>(false);
@@ -34,8 +34,7 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
   constructor(
     private readonly logger: NGXLogger,
     key: number,
-    private isInvestigador,
-    private estado,
+    public readonly isInvestigador,
     private solicitudService: SolicitudService,
     protected solicitudProyectoService: SolicitudProyectoService,
     private convocatoriaService: ConvocatoriaService,

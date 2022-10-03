@@ -106,7 +106,8 @@ export class RangoModalComponent extends DialogFormComponent<RangoModalData> imp
         tipo: new FormControl(this.data.entidad.tipoTemporalidad, [
           Validators.required,
           RangoValidator.noDuplicateTipoTemporalidad(TipoTemporalidad.INICIAL, this.data.hasRangoInicial),
-          RangoValidator.noDuplicateTipoTemporalidad(TipoTemporalidad.FINAL, this.data.hasRangoFinal)
+          RangoValidator.noDuplicateTipoTemporalidad(TipoTemporalidad.FINAL, this.data.hasRangoFinal),
+          RangoValidator.hasRangoInicial(TipoTemporalidad.INTERMEDIO, this.data.hasRangoInicial)
         ]),
         desde: new FormControl(this.data.entidad.desde, [Validators.min(0), Validators.pattern(/^[0-9]*$/)]),
         hasta: new FormControl(this.data.entidad.hasta, [Validators.pattern(/^[0-9]*$/)]),

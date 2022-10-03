@@ -3,8 +3,6 @@ package org.crue.hercules.sgi.eti.service.impl;
 import java.util.List;
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.crue.hercules.sgi.eti.dto.RespuestaRetrospectivaFormulario;
 import org.crue.hercules.sgi.eti.exceptions.RespuestaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Apartado;
@@ -29,6 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -73,7 +73,7 @@ public class RespuestaServiceImpl implements RespuestaService {
 
     Respuesta respuestaNew = respuestaRepository.save(respuesta);
 
-    if (this.isFormularioCompletado(respuestaNew)) {
+    if (this.isFormularioCompletado(respuestaNew).booleanValue()) {
       this.setEstadoMemoriaCompletada(respuestaNew);
     }
 
@@ -167,7 +167,7 @@ public class RespuestaServiceImpl implements RespuestaService {
 
       Respuesta returnValue = respuestaRepository.save(respuesta);
 
-      if (this.isFormularioCompletado(returnValue)) {
+      if (this.isFormularioCompletado(returnValue).booleanValue()) {
         this.setEstadoMemoriaCompletada(returnValue);
       }
 
@@ -209,11 +209,11 @@ public class RespuestaServiceImpl implements RespuestaService {
       Apartado lastApartado = CollectionUtils.isEmpty(ultimosApartados) ? null
           : ultimosApartados.get(ultimosApartados.size() - 1);
       Respuesta respuestaUltimoBloqueApartado = null;
-      if (formulario.getId().toString().equals(ID_FORMULARIO_SEG_FINAL) && lastBloque != null) {
+      if (formulario.getId().toString().equals(ID_FORMULARIO_SEG_FINAL)) {
         respuestaUltimoBloqueApartado = respuestaRepository
             .findByApartadoBloqueOrdenAndApartadoPadreIsNullAndApartadoOrdenAndApartadoBloqueFormularioIdAndMemoriaId(
                 lastBloque.getOrden(), 1, formulario.getId(), memoria.getId());
-      } else if (lastBloque != null && lastApartado != null) {
+      } else if (lastApartado != null) {
         respuestaUltimoBloqueApartado = respuestaRepository
             .findByApartadoBloqueOrdenAndApartadoPadreIsNullAndApartadoOrdenAndApartadoBloqueFormularioIdAndMemoriaId(
                 lastBloque.getOrden(), lastApartado.getOrden(), formulario.getId(), memoria.getId());
@@ -238,32 +238,34 @@ public class RespuestaServiceImpl implements RespuestaService {
     Memoria memoria = memoriaService.findById(respuesta.getMemoria().getId());
     Optional<Apartado> apartado = apartadoRepository.findById(respuesta.getApartado().getId());
 
-    if (apartado.isPresent()) {
-      switch (apartado.get().getBloque().getFormulario().getId().toString()) {
-        case ID_FORMULARIO_SEG_ANUAL:
-          if (memoria.getEstadoActual().getId() < Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_ANUAL) {
-            memoriaService.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_ANUAL);
-          }
-          break;
-        case ID_FORMULARIO_SEG_FINAL:
-          if (memoria.getEstadoActual().getId() < Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_FINAL) {
-            memoriaService.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_FINAL);
-          }
-          break;
-        case ID_FORMULARIO_RETROSPECTIVA:
-          if (memoria.getRetrospectiva() != null && memoria.getRetrospectiva().getEstadoRetrospectiva()
-              .getId() < Constantes.ESTADO_RETROSPECTIVA_COMPLETADA) {
-            retrospectivaService.updateEstadoRetrospectiva(memoria.getRetrospectiva(),
-                Constantes.ESTADO_RETROSPECTIVA_COMPLETADA);
-          }
-          break;
-        default:
-          if (memoria.getEstadoActual().getId() < Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA) {
-            memoriaService.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA);
-          }
-          break;
-      }
+    if (!apartado.isPresent()) {
+      return;
     }
+    switch (apartado.get().getBloque().getFormulario().getId().toString()) {
+      case ID_FORMULARIO_SEG_ANUAL:
+        if (memoria.getEstadoActual().getId() < Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_ANUAL) {
+          memoriaService.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_ANUAL);
+        }
+        break;
+      case ID_FORMULARIO_SEG_FINAL:
+        if (memoria.getEstadoActual().getId() < Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_FINAL) {
+          memoriaService.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_FINAL);
+        }
+        break;
+      case ID_FORMULARIO_RETROSPECTIVA:
+        if (memoria.getRetrospectiva() != null && memoria.getRetrospectiva().getEstadoRetrospectiva()
+            .getId() < Constantes.ESTADO_RETROSPECTIVA_COMPLETADA) {
+          retrospectivaService.updateEstadoRetrospectiva(memoria.getRetrospectiva(),
+              Constantes.ESTADO_RETROSPECTIVA_COMPLETADA);
+        }
+        break;
+      default:
+        if (memoria.getEstadoActual().getId() < Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA) {
+          memoriaService.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA);
+        }
+        break;
+    }
+
   }
 
   /**
@@ -275,49 +277,52 @@ public class RespuestaServiceImpl implements RespuestaService {
    * @param memoria     la {@link Memoria} de la {@link Respuesta}
    */
   private void guardarDatosRetrospectiva(Formulario formulario, Long idRespuesta, Memoria memoria) {
-    if (formulario.getNombre().equals("M20")) {
-      // Bloque 5 apartado 3 - Evaluación retrospectiva
-      if (respuestaRepository.existsByIdAndApartadoBloqueOrden(idRespuesta, 5)) {
-        Respuesta respuesta = respuestaRepository
-            .findByApartadoBloqueOrdenAndApartadoPadreIsNullAndApartadoOrdenAndApartadoBloqueFormularioIdAndMemoriaId(5,
-                3, formulario.getId(), memoria.getId());
-        if (respuesta != null) {
-          ObjectMapper mapper = new ObjectMapper();
-          try {
-            RespuestaRetrospectivaFormulario retrospectivaForm = mapper.readValue(respuesta.getValor(),
-                RespuestaRetrospectivaFormulario.class);
 
-            if (retrospectivaForm.getEvaluacionRetrospectivaRadio().toLowerCase().equals(SI)) {
-              memoria.setRequiereRetrospectiva(true);
-              Retrospectiva retrospectiva = memoria.getRetrospectiva();
-              if (retrospectiva == null) {
-                retrospectiva = new Retrospectiva();
-              }
-              EstadoRetrospectiva estadoRetrospectiva = new EstadoRetrospectiva();
-              estadoRetrospectiva.setId(Constantes.ESTADO_RETROSPECTIVA_PENDIENTE);
-              retrospectiva.setEstadoRetrospectiva(estadoRetrospectiva);
-              retrospectiva.setFechaRetrospectiva(retrospectivaForm.getFechaEvRetrospectiva().toInstant());
-              if (retrospectiva.getId() == null) {
-                memoria.setRetrospectiva(retrospectivaService.create(retrospectiva));
-              } else {
-                memoria.setRetrospectiva(retrospectivaService.update(retrospectiva));
-              }
-
-            } else {
-              if (memoria.getRetrospectiva() != null) {
-                retrospectivaService.delete(memoria.getRetrospectiva().getId());
-                memoria.setRetrospectiva(null);
-              }
-              memoria.setRequiereRetrospectiva(false);
-            }
-
-            memoriaService.update(memoria);
-          } catch (Exception e) {
-            log.error("No se ha podido transformar el json a objeto: " + respuesta.getValor());
-          }
-        }
-      }
+    // Bloque 5 apartado 3 - Evaluación retrospectiva
+    if (!formulario.getNombre().equals("M20")
+        || !respuestaRepository.existsByIdAndApartadoBloqueOrden(idRespuesta, 5)) {
+      return;
     }
+    Respuesta respuesta = respuestaRepository
+        .findByApartadoBloqueOrdenAndApartadoPadreIsNullAndApartadoOrdenAndApartadoBloqueFormularioIdAndMemoriaId(5,
+            3, formulario.getId(), memoria.getId());
+    if (respuesta == null) {
+      return;
+    }
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      RespuestaRetrospectivaFormulario retrospectivaForm = mapper.readValue(respuesta.getValor(),
+          RespuestaRetrospectivaFormulario.class);
+
+      if (retrospectivaForm.getEvaluacionRetrospectivaRadio().equalsIgnoreCase(SI)) {
+        memoria.setRequiereRetrospectiva(true);
+        Retrospectiva retrospectiva = memoria.getRetrospectiva();
+        if (retrospectiva == null) {
+          retrospectiva = new Retrospectiva();
+        }
+        EstadoRetrospectiva estadoRetrospectiva = new EstadoRetrospectiva();
+        estadoRetrospectiva.setId(Constantes.ESTADO_RETROSPECTIVA_PENDIENTE);
+        retrospectiva.setEstadoRetrospectiva(estadoRetrospectiva);
+        retrospectiva.setFechaRetrospectiva(retrospectivaForm.getFechaEvRetrospectiva().toInstant());
+        if (retrospectiva.getId() == null) {
+          memoria.setRetrospectiva(retrospectivaService.create(retrospectiva));
+        } else {
+          memoria.setRetrospectiva(retrospectivaService.update(retrospectiva));
+        }
+
+      } else {
+        if (memoria.getRetrospectiva() != null) {
+          retrospectivaService.delete(memoria.getRetrospectiva().getId());
+          memoria.setRetrospectiva(null);
+        }
+        memoria.setRequiereRetrospectiva(false);
+      }
+
+      memoriaService.update(memoria);
+    } catch (Exception e) {
+      log.error("No se ha podido transformar el json a objeto: " + respuesta.getValor());
+    }
+
   }
 
   @Override

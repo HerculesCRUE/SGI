@@ -5,6 +5,8 @@ import { AbstractTablePaginationComponent } from '@core/component/abstract-table
 import { IComiteEditorial } from '@core/models/prc/comite-editorial';
 import { TipoEstadoProduccion, TIPO_ESTADO_PRODUCCION_MAP } from '@core/models/prc/estado-produccion-cientifica';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { Module } from '@core/module';
+import { LayoutService } from '@core/services/layout.service';
 import { ComiteEditorialService } from '@core/services/prc/comite-editorial/comite-editorial.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -37,10 +39,15 @@ export class ComiteEditorialListadoComponent extends AbstractTablePaginationComp
     return this.authService.authStatus$.asObservable();
   }
 
+  get isModuleINV(): boolean {
+    return this.layoutService.activeModule$.value === Module.INV;
+  }
+
   constructor(
     protected readonly snackBarService: SnackBarService,
     private readonly authService: SgiAuthService,
-    private readonly comiteEditorialService: ComiteEditorialService
+    private readonly comiteEditorialService: ComiteEditorialService,
+    private readonly layoutService: LayoutService
   ) {
     super(snackBarService, MSG_ERROR);
     this.TIPO_ESTADO_PRODUCCION_LIST = Object.values(TipoEstadoProduccion);
@@ -65,7 +72,9 @@ export class ComiteEditorialListadoComponent extends AbstractTablePaginationComp
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IComiteEditorial>> {
-    return this.comiteEditorialService.findAll(this.getFindOptions(reset));
+    return this.isModuleINV
+      ? this.comiteEditorialService.findComitesEditorialesInvestigador(this.getFindOptions(reset))
+      : this.comiteEditorialService.findAll(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {

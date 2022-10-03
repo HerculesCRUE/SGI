@@ -5,7 +5,6 @@ import { GrupoPersonaAutorizadaService } from '@core/services/csp/grupo-persona-
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
@@ -19,8 +18,7 @@ export class GrupoPersonaAutorizadaFragment extends Fragment {
     private readonly grupoService: GrupoService,
     private readonly grupoPersonaAutorizadaService: GrupoPersonaAutorizadaService,
     private readonly personaService: PersonaService,
-    private sgiAuthService: SgiAuthService,
-    private readonly: boolean,
+    public readonly readonly: boolean,
   ) {
     super(key);
     this.setComplete(true);
@@ -37,11 +35,7 @@ export class GrupoPersonaAutorizadaFragment extends Fragment {
                 return this.personaService.findById(element.persona.id).pipe(
                   map(persona => {
                     element.persona = persona;
-                    if (persona.id === this.sgiAuthService.authStatus$?.getValue()?.userRefId) {
-                      // Es persona autorizada
-                      this.readonly = false;
-                    }
-                    return element as IGrupoPersonaAutorizada;
+                    return element;
                   })
                 );
               }),
@@ -51,7 +45,7 @@ export class GrupoPersonaAutorizadaFragment extends Fragment {
           map(miembrosPersonaAutorizada => {
             return miembrosPersonaAutorizada.items.map(miembroPersonaAutorizada => {
               miembroPersonaAutorizada.grupo = { id: this.getKey() } as IGrupo;
-              return new StatusWrapper<IGrupoPersonaAutorizada>(miembroPersonaAutorizada as IGrupoPersonaAutorizada);
+              return new StatusWrapper<IGrupoPersonaAutorizada>(miembroPersonaAutorizada);
             });
           })
         ).subscribe(
@@ -117,7 +111,7 @@ export class GrupoPersonaAutorizadaFragment extends Fragment {
         map(miembrosPersonaAutorizada => {
           return miembrosPersonaAutorizada.map(miembroPersonaAutorizada => {
             miembroPersonaAutorizada.grupo = { id: this.getKey() } as IGrupo;
-            return new StatusWrapper<IGrupoPersonaAutorizada>(miembroPersonaAutorizada as IGrupoPersonaAutorizada);
+            return new StatusWrapper<IGrupoPersonaAutorizada>(miembroPersonaAutorizada);
           });
         }),
         takeLast(1),

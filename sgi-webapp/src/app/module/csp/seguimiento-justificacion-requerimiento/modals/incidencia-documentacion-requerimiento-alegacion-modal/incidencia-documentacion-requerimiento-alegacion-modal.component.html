@@ -1,0 +1,55 @@
+<sgi-dialog-header
+  [title]="'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.incidencia-documento-respuesta' | translate">
+</sgi-dialog-header>
+<sgi-dialog-content>
+  <form [formGroup]="formGroup">
+
+    <!-- Documento de justificacion-->
+    <div fxLayout="row">
+      <mat-form-field fxFlex="66%">
+        <mat-label>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.incidencia-documento.documento'
+          | translate}}
+        </mat-label>
+        <input matInput formControlName="nombreDocumento" id="nombreDocumento"
+          placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.incidencia-documento.documento' | translate}}">
+      </mat-form-field>
+    </div>
+
+    <!-- Incidencia/Motivo rechazo -->
+    <div fxLayout="row">
+      <mat-form-field fxFlex>
+        <mat-label>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.incidencia-documento.incidencia'
+          | translate}}
+        </mat-label>
+        <textarea matInput formControlName="incidencia" id="incidencia"
+          placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.incidencia-documento.incidencia' | translate}}"></textarea>
+      </mat-form-field>
+    </div>
+
+    <!-- Alegación -->
+    <div fxLayout="row">
+      <mat-form-field fxFlex>
+        <mat-label>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.incidencia-documento.alegacion'
+          | translate}}
+        </mat-label>
+        <textarea matInput formControlName="alegacion" id="alegacion"
+          placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.incidencia-documento.alegacion' | translate}}"></textarea>
+        <mat-error *ngIf="formGroup.controls.alegacion.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamAlegacionEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+  </form>
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{'btn.ok' | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

@@ -47,20 +47,16 @@ export class TimeZoneService implements OnDestroy {
     eerConfigService: EerConfigService
   ) {
     Settings.defaultZoneName = this._zone$.getValue();
-    if (authService.isAuthenticated()) {
-      merge(
-        this.buildRequest('CSP', cspConfigService),
-        this.buildRequest('ETI', etiConfigService),
-        this.buildRequest('PII', piiConfigService),
-        this.buildRequest('USR', usrConfigService),
-        this.buildRequest('REP', repConfigService),
-        this.buildRequest('REL', relConfigService),
-        this.buildRequest('PRC', prcConfigService),
-        this.buildRequest('EER', eerConfigService)
-      ).subscribe();
-    } else {
-      logger.warn('No authenticated user');
-    }
+    merge(
+      this.buildRequest('CSP', cspConfigService),
+      this.buildRequest('ETI', etiConfigService),
+      this.buildRequest('PII', piiConfigService),
+      this.buildRequest('USR', usrConfigService),
+      this.buildRequest('REP', repConfigService),
+      this.buildRequest('REL', relConfigService),
+      this.buildRequest('PRC', prcConfigService),
+      this.buildRequest('EER', eerConfigService)
+    ).subscribe();
   }
 
   private buildRequest(name: string, service: TimeZoneConfigService): Observable<string> {

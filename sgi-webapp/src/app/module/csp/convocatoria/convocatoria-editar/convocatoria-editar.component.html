@@ -51,14 +51,13 @@
       [title]="'csp.convocatoria-partida-presupuestaria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.PARTIDAS_PRESUPUESTARIAS)">
     </sgi-action-fragment-menu-item>
-    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-CON-C', 'CSP-CON-E']"
-      [route]="[CONVOCATORIA_ROUTE_NAMES.CONFIGURACION_SOLICITUDES]"
+    <sgi-action-fragment-menu-item *ngIf="canEdit" [route]="[CONVOCATORIA_ROUTE_NAMES.CONFIGURACION_SOLICITUDES]"
       [title]="'csp.convocatoria-configuracion-solicitud' | translate"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.CONFIGURACION_SOLICITUDES)">
     </sgi-action-fragment-menu-item>
   </ng-container>
   <ng-container footer>
-    <sgi-action-footer [texto]="textoCrear" [actionService]="actionService">
+    <sgi-action-footer [texto]="textoEditar" [actionService]="actionService">
       <sgi-action-footer-button color="primary" action="registrar" [text]="textoRegistrar"
         [disabled]="disableRegistrar$ | async" icon="move_to_inbox">
       </sgi-action-footer-button>

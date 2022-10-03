@@ -122,17 +122,35 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
     this.translate.get(
       SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_COLABORATIVO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamColaborativoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamColaborativoEntity = {
+        entity: value,
+        ...MSG_PARAMS.GENDER.MALE,
+        ...MSG_PARAMS.CARDINALIRY.SINGULAR
+      }
+    );
 
     this.translate.get(
       SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_COORDINADO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamCoordinadoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamCoordinadoEntity = {
+        entity: value,
+        ...MSG_PARAMS.GENDER.MALE,
+        ...MSG_PARAMS.CARDINALIRY.SINGULAR
+      }
+    );
 
     this.translate.get(
       SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_COORDINADOR_EXTERNO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamCoordinadorExternoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamCoordinadorExternoEntity = {
+        entity: value,
+        ...MSG_PARAMS.GENDER.MALE,
+        ...MSG_PARAMS.CARDINALIRY.SINGULAR
+      }
+    );
 
     this.translate.get(
       SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_TIPO_DESGLOSE_PRESUPUESTO_KEY,
@@ -142,7 +160,13 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
     this.translate.get(
       AREA_TEMATICA_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL
-    ).subscribe((value) => this.msgParamAreaTematicaEntities = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.PLURAL });
+    ).subscribe((value) =>
+      this.msgParamAreaTematicaEntities = {
+        entity: value,
+        ...MSG_PARAMS.GENDER.MALE,
+        ...MSG_PARAMS.CARDINALIRY.PLURAL
+      }
+    );
 
   }
 
@@ -163,8 +187,7 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
         };
         this.listadoAreaTematicas.data = [listadoAreas];
       }
-    }
-    );
+    });
     this.subscriptions.push(subscription);
     this.listadoAreaTematicas.paginator = this.paginator;
     this.listadoAreaTematicas.sort = this.sort;
@@ -191,4 +214,5 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
       }
     );
   }
+
 }

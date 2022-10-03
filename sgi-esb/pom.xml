@@ -1,0 +1,50 @@
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.crue.hercules.sgi.esb</groupId>
+    <artifactId>sgi-esb-sgp</artifactId>
+    <version>0.0.10</version>
+    <packaging>pom</packaging>
+    <name>sgi-esb</name>
+    <description>sgi-esb</description>
+    
+    <modules>
+      <module>sgi-esb-common</module>
+      <module>sgi-esb-sgdoc</module>
+      <module>sgi-esb-sge</module>
+      <module>sgi-esb-sgemp</module>
+      <module>sgi-esb-sgepii</module>
+      <module>sgi-esb-sgi</module>
+      <module>sgi-esb-sgo</module>
+      <module>sgi-esb-sgp</module>
+    </modules>
+
+    <repositories>
+        <repository>
+          <id>wso2-nexus</id>
+          <name>WSO2 Distribution Repository</name>
+          <layout>default</layout>
+          <url>https://maven.wso2.org/nexus/content/groups/wso2-public/</url>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+        <repository>
+          <id>wso2-maven2-repository-1</id>
+          <name>WSO2 Distribution Repository</name>
+          <layout>default</layout>
+          <url>https://dist.wso2.org/maven2</url>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+        <repository>
+          <id>wso2-nexus-repository-1</id>
+          <name>WSO2 Distribution Repository</name>
+          <layout>default</layout>
+          <url>https://maven.wso2.org/nexus/content/groups/wso2-public/</url>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+    </repositories>
+</project>

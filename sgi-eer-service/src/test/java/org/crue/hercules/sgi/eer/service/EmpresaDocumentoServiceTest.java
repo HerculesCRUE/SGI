@@ -36,7 +36,7 @@ import org.springframework.data.jpa.domain.Specification;
  * EmpresaDocumentoServiceTest
  */
 @Import({ EmpresaDocumentoService.class, ApplicationContextSupport.class })
-public class EmpresaDocumentoServiceTest extends BaseServiceTest {
+class EmpresaDocumentoServiceTest extends BaseServiceTest {
   private static final String NOMBRE_PREFIX = "Documento ";
 
   @MockBean
@@ -61,7 +61,7 @@ public class EmpresaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_ReturnsEmpresaDocumento() {
+  void create_ReturnsEmpresaDocumento() {
     // given: Una nueva EmpresaDocumento
     EmpresaDocumento empresaDocumentoToCreate = generateEmpresaDocumentoMock(null, 1L, Boolean.TRUE);
 
@@ -84,7 +84,7 @@ public class EmpresaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithNoActivoTipoDocumento_ThrowsValidationException() {
+  void create_WithNoActivoTipoDocumento_ThrowsValidationException() {
     // given: Una nueva EmpresaDocumento con TipoDocumento no activo
     EmpresaDocumento empresaDocumentoToCreate = generateEmpresaDocumentoMock(null, 1L, Boolean.FALSE);
 
@@ -103,7 +103,7 @@ public class EmpresaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_WithId_ThrowsIllegalArgumentException() {
+  void create_WithId_ThrowsIllegalArgumentException() {
     // given: Una nueva EmpresaDocumento
     EmpresaDocumento empresaDocumentoToCreate = generateEmpresaDocumentoMock(1L);
 
@@ -115,7 +115,7 @@ public class EmpresaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsEmpresaDocumento() {
+  void update_ReturnsEmpresaDocumento() {
     // given: Una EmpresaDocumento a actualizar
     String nombreToUpdate = "Documento actualizado";
     EmpresaDocumento empresaDocumentoToUpdate = generateEmpresaDocumentoMock(1L, nombreToUpdate);
@@ -142,7 +142,7 @@ public class EmpresaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ToNoActivoTipoDocumento_ThrowsValidationException() {
+  void update_ToNoActivoTipoDocumento_ThrowsValidationException() {
     // given: Una EmpresaDocumento a actualizar a un TipoDocumento no activo
     EmpresaDocumento empresaDocumentoToUpdate = generateEmpresaDocumentoMock(1L, 2L, Boolean.FALSE);
 
@@ -160,7 +160,7 @@ public class EmpresaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithNotExistingId_ThrowsEmpresaDocumentoNotFoundException() {
+  void update_WithNotExistingId_ThrowsEmpresaDocumentoNotFoundException() {
     // given: Una EmpresaDocumento a actualizar con id no existente
     EmpresaDocumento empresaDocumentoToUpdate = generateEmpresaDocumentoMock(99L);
 
@@ -172,7 +172,7 @@ public class EmpresaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithIdNull_ThrowsIllegalArgumentException() {
+  void update_WithIdNull_ThrowsIllegalArgumentException() {
     // given: Una EmpresaDocumento sin id
     EmpresaDocumento empresaDocumentoToUpdate = generateEmpresaDocumentoMock(null);
 
@@ -184,7 +184,7 @@ public class EmpresaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_ThrowsIllegalArgumentException() {
+  void delete_ThrowsIllegalArgumentException() {
     // given: Un empresaDocumentoId null
     Long empresaDocumentoId = null;
 
@@ -196,7 +196,7 @@ public class EmpresaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithNotExistingId_ThrowsEmpresaDocumentoNotFoundException() {
+  void delete_WithNotExistingId_ThrowsEmpresaDocumentoNotFoundException() {
     // given: Un empresaDocumentoId que no existe
     Long empresaDocumentoId = 99L;
 
@@ -208,7 +208,7 @@ public class EmpresaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_ReturnsEmpresaDocumento() {
+  void findById_ReturnsEmpresaDocumento() {
     // given: Un empresaDocumentoId existente
     Long empresaDocumentoId = 1L;
 
@@ -226,7 +226,7 @@ public class EmpresaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithIdNull_ThrowsIllegalArgumentException() {
+  void findById_WithIdNull_ThrowsIllegalArgumentException() {
     // given: Un empresaDocumentoId null
     Long empresaDocumentoId = null;
 
@@ -238,7 +238,7 @@ public class EmpresaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithNotExistingId_ThrowsEmpresaDocumentoNotFoundException() {
+  void findById_WithNotExistingId_ThrowsEmpresaDocumentoNotFoundException() {
     // given: Un empresaDocumentoId no existente
     Long empresaDocumentoId = 1L;
 
@@ -250,7 +250,7 @@ public class EmpresaDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByEmpresaId_ReturnsPage() {
+  void findAllByEmpresaId_ReturnsPage() {
     // given: Una lista con 37 EmpresaDocumento que pertenecen a una Empresa
     Long empresaId = 1L;
     List<EmpresaDocumento> empresaDocumentos = new ArrayList<>();

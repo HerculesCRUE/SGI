@@ -9,6 +9,7 @@ import javax.validation.groups.Default;
 
 import org.crue.hercules.sgi.eti.dto.EvaluacionWithNumComentario;
 import org.crue.hercules.sgi.eti.dto.MemoriaPeticionEvaluacion;
+import org.crue.hercules.sgi.eti.model.BaseEntity;
 import org.crue.hercules.sgi.eti.model.BaseEntity.Update;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
@@ -56,6 +57,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/memorias")
 @Slf4j
 public class MemoriaController {
+
+  private static final String GET_INFORMES_FORMULARIO_LONG_ID_PAGEABLE_PAGEABLE_END = "getInformesFormulario(Long id, Pageable pageable) - end";
 
   /** Memoria service */
   private final MemoriaService service;
@@ -220,7 +223,7 @@ public class MemoriaController {
   @PostMapping
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-CR', 'ETI-MEM-INV-ER')")
   public ResponseEntity<Memoria> newMemoria(
-      @Validated({ Memoria.Create.class, Default.class }) @RequestBody Memoria nuevaMemoria) {
+      @Validated({ BaseEntity.Create.class, Default.class }) @RequestBody Memoria nuevaMemoria) {
     log.debug("newMemoria(Memoria nuevaMemoria) - start");
     Memoria returnValue = service.create(nuevaMemoria);
     log.debug("newMemoria(Memoria nuevaMemoria) - end");
@@ -237,7 +240,7 @@ public class MemoriaController {
   @PostMapping("/{id}/crear-memoria-modificada")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-CR', 'ETI-MEM-INV-ER')")
   public ResponseEntity<Memoria> newMemoriaModificada(
-      @Validated({ Memoria.Create.class, Default.class }) @RequestBody Memoria nuevaMemoria, @PathVariable Long id) {
+      @Validated({ BaseEntity.Create.class, Default.class }) @RequestBody Memoria nuevaMemoria, @PathVariable Long id) {
     log.debug("newMemoriaModificada(Memoria nuevaMemoria,  Long id) - start");
     Memoria returnValue = service.createModificada(nuevaMemoria, id);
     log.debug("newMemoriaModificada(Memoria nuevaMemoria,  Long id) - end");
@@ -562,11 +565,11 @@ public class MemoriaController {
     Page<Informe> page = informeService.findByMemoria(id, pageable);
 
     if (page.isEmpty()) {
-      log.debug("getInformesFormulario(Long id, Pageable pageable) - end");
+      log.debug(GET_INFORMES_FORMULARIO_LONG_ID_PAGEABLE_PAGEABLE_END);
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    log.debug("getInformesFormulario(Long id, Pageable pageable) - end");
+    log.debug(GET_INFORMES_FORMULARIO_LONG_ID_PAGEABLE_PAGEABLE_END);
     return new ResponseEntity<>(page, HttpStatus.OK);
 
   }
@@ -741,11 +744,11 @@ public class MemoriaController {
     Optional<Informe> returnValue = informeService.findFirstByMemoriaOrderByVersionDesc(id);
 
     if (!returnValue.isPresent()) {
-      log.debug("getInformesFormulario(Long id, Pageable pageable) - end");
+      log.debug(GET_INFORMES_FORMULARIO_LONG_ID_PAGEABLE_PAGEABLE_END);
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    log.debug("getInformesFormulario(Long id, Pageable pageable) - end");
+    log.debug(GET_INFORMES_FORMULARIO_LONG_ID_PAGEABLE_PAGEABLE_END);
     return new ResponseEntity<>(returnValue.get(), HttpStatus.OK);
 
   }
@@ -765,7 +768,8 @@ public class MemoriaController {
     log.debug("checkDatosAdjuntosExists(Long id) - start");
     Boolean returnValue = service.checkDatosAdjuntosExists(id, pageable);
     log.debug("checkDatosAdjuntosExists(Long id) - end");
-    return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    return returnValue.booleanValue() ? new ResponseEntity<>(HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   /**
@@ -837,10 +841,10 @@ public class MemoriaController {
    */
   @RequestMapping(path = "/{id}/responsable-creador", method = RequestMethod.HEAD)
   @PreAuthorize("hasAuthorityForAnyUO('ETI-MEM-INV-ER')")
-  public ResponseEntity<?> isResponsableOrCreador(@PathVariable Long id, Authentication authentication) {
+  public ResponseEntity<Void> isResponsableOrCreador(@PathVariable Long id, Authentication authentication) {
     log.debug("isResponsableOrCreador(Long id) - start");
     String personaRef = authentication.getName();
-    if (service.isMemoriaWithPersonaRefCreadorPeticionEvaluacionOrResponsableMemoria(personaRef, id)) {
+    if (service.isMemoriaWithPersonaRefCreadorPeticionEvaluacionOrResponsableMemoria(personaRef, id).booleanValue()) {
       log.debug("isResponsableOrCreador(Long id) - end");
       return new ResponseEntity<>(HttpStatus.OK);
     }

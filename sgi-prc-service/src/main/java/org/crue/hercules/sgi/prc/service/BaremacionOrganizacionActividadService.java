@@ -1,12 +1,10 @@
 package org.crue.hercules.sgi.prc.service;
 
-import java.math.BigDecimal;
 import java.util.function.LongPredicate;
 
 import org.crue.hercules.sgi.prc.config.SgiConfigProperties;
-import org.crue.hercules.sgi.prc.dto.BaremacionInput;
-import org.crue.hercules.sgi.prc.enums.TablaMaestraCVN;
 import org.crue.hercules.sgi.prc.enums.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.TablaMaestraCVN;
 import org.crue.hercules.sgi.prc.model.ConfiguracionBaremo.TipoBaremo;
 import org.crue.hercules.sgi.prc.model.PuntuacionItemInvestigador.TipoPuntuacion;
 import org.crue.hercules.sgi.prc.repository.AliasEnumeradoRepository;
@@ -28,13 +26,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * Servicio para la baremación de organización de actividades
  */
 @Service
-@Slf4j
 @Transactional(readOnly = true)
 @Validated
 public class BaremacionOrganizacionActividadService extends BaremacionCommonService {
@@ -77,10 +72,12 @@ public class BaremacionOrganizacionActividadService extends BaremacionCommonServ
     loadPredicates();
   }
 
+  @Override
   protected TipoPuntuacion getTipoPuntuacion() {
     return TipoPuntuacion.ORGANIZACION_ACTIVIDADES;
   }
 
+  @Override
   protected void loadPredicates() {
 
     LongPredicate isParticipacionOrganizativoComite = getPredicateIsParticipacionOrganizativoComite();
@@ -125,20 +122,6 @@ public class BaremacionOrganizacionActividadService extends BaremacionCommonServ
   private LongPredicate getPredicateIsPaisEspania() {
     return produccionCientificaId -> isValorEqualsTablaMaestraCVN(
         CodigoCVN.E060_020_030_030, TablaMaestraCVN.PAIS_724, produccionCientificaId);
-  }
-
-  protected BigDecimal evaluateBaremoModulador(BaremacionInput baremacionInput) {
-    log.debug("evaluateBaremoModulador(baremacionInput) - start");
-
-    log.debug("evaluateBaremoModulador(baremacionInput) - end");
-    return new BigDecimal("1.00");
-  }
-
-  protected BigDecimal evaluateBaremoExtra(BaremacionInput baremacionInput) {
-    log.debug("evaluateBaremoExtra(baremacionInput) - start");
-
-    log.debug("evaluateBaremoExtra(baremacionInput) - end");
-    return BigDecimal.ZERO;
   }
 
 }

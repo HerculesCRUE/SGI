@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaEntidadFinanciadoraNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.FuenteFinanciacionNotFoundException;
@@ -21,6 +22,7 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.FuenteFinanciacionRepository;
 import org.crue.hercules.sgi.csp.repository.TipoFinanciacionRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaEntidadFinanciadoraServiceImpl;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -50,15 +52,17 @@ class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest {
   @Mock
   private ConvocatoriaService convocatoriaService;
   @Mock
-  ConfiguracionSolicitudRepository configuracionSolicitudRepository;
+  private ConfiguracionSolicitudRepository configuracionSolicitudRepository;
 
+  private ConvocatoriaAuthorityHelper authorityHelper;
   private ConvocatoriaEntidadFinanciadoraService service;
 
   @BeforeEach
   void setUp() throws Exception {
+    this.authorityHelper = new ConvocatoriaAuthorityHelper(convocatoriaRepository, configuracionSolicitudRepository);
     service = new ConvocatoriaEntidadFinanciadoraServiceImpl(repository, convocatoriaRepository,
         fuenteFinanciacionRepository, tipoFinanciacionRepository, convocatoriaService,
-        configuracionSolicitudRepository);
+        authorityHelper);
   }
 
   @Test
@@ -595,7 +599,11 @@ class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest {
   }
 
   private Convocatoria generarMockConvocatoria(Long convocatoriaId) {
-    return Convocatoria.builder().id(convocatoriaId).build();
+    return Convocatoria.builder()
+        .id(convocatoriaId)
+        .activo(true)
+        .formularioSolicitud(FormularioSolicitud.PROYECTO)
+        .build();
   }
 
   /**

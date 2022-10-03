@@ -1,0 +1,27 @@
+<sgi-dialog-header title="{{'csp.presentacion-documentacion.title' | translate}}">
+</sgi-dialog-header>
+<sgi-dialog-content>
+  <form [formGroup]="formGroup" fxLayout="row" fxLayoutGap="10px">
+    <!-- Fecha presentación documentación -->
+    <div fxFlex>
+      <mat-form-field>
+        <mat-label>{{'csp.presentacion-documentacion.fecha-presentacion-documentacion' | translate}}</mat-label>
+        <input matInput formControlName="fechaPresentacionDocumentacion" [ngxMatDatetimePicker]="picker1" required>
+        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #picker1 showSeconds="true" [defaultTime]="[0,0,0]"></ngx-mat-datetime-picker>
+        <mat-error *ngIf="formGroup.controls.fechaPresentacionDocumentacion.errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaPresentacionEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>
+    {{ 'btn.ok' | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

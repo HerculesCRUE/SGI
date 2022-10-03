@@ -7,6 +7,7 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SharedFormlyFormsModule } from 'src/app/esb/shared/formly-forms/shared-formly-forms.module';
 import { IPersonaFormlyData, PersonaFormlyModalComponent } from './persona-formly-modal.component';
 
 describe('PersonaFormlyModalComponent', () => {
@@ -25,11 +26,11 @@ describe('PersonaFormlyModalComponent', () => {
         LoggerTestingModule,
         TestUtils.getIdiomas(),
         RouterTestingModule,
-
+        SharedFormlyFormsModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
-        { provide: MatDialogRef, useValue: {} as IPersonaFormlyData },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogActionMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: {} as IPersonaFormlyData },
       ]
     })

@@ -14,7 +14,7 @@ public interface SolicitudRepository extends JpaRepository<Solicitud, Long>, Jpa
    * @param convocatoriaId id de la {@link Convocatoria}
    * @return true si existe, false si no existe.
    */
-  boolean existsByConvocatoriaId(Long convocatoriaId);
+  boolean existsByConvocatoriaIdAndActivoTrue(Long convocatoriaId);
 
   /**
    * Obtiene el listado de solicitudes activas relacionadas con una

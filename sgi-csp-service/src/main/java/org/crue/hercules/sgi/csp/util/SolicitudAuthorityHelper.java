@@ -21,6 +21,11 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class SolicitudAuthorityHelper extends AuthorityHelper {
+  public static final String CSP_SOL_E = "CSP-SOL-E";
+  public static final String CSP_SOL_INV_BR = "CSP-SOL-INV-BR";
+  public static final String CSP_SOL_INV_C = "CSP-SOL-INV-C";
+  public static final String CSP_SOL_INV_ER = "CSP-SOL-INV-ER";
+  public static final String CSP_SOL_V = "CSP-SOL-V";
 
   private final SolicitudRepository repository;
 
@@ -148,11 +153,11 @@ public class SolicitudAuthorityHelper extends AuthorityHelper {
   }
 
   public boolean hasAuthorityCreateInvestigador() {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-C");
+    return SgiSecurityContextHolder.hasAuthorityForAnyUO(CSP_SOL_INV_C);
   }
 
   public boolean hasAuthorityDeleteInvestigador() {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-BR");
+    return SgiSecurityContextHolder.hasAuthorityForAnyUO(CSP_SOL_INV_BR);
   }
 
   public boolean hasAuthorityViewInvestigador() {
@@ -160,11 +165,11 @@ public class SolicitudAuthorityHelper extends AuthorityHelper {
   }
 
   public boolean hasAuthorityEditInvestigador() {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-ER");
+    return SgiSecurityContextHolder.hasAuthorityForAnyUO(CSP_SOL_INV_ER);
   }
 
   public boolean hasAuthorityEditUnidadGestion(String unidadGestion) {
-    return SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-E", unidadGestion);
+    return SgiSecurityContextHolder.hasAuthorityForUO(CSP_SOL_E, unidadGestion);
   }
 
   public boolean hasAuthorityEditInvestigador(Solicitud solicitud) {
@@ -177,8 +182,8 @@ public class SolicitudAuthorityHelper extends AuthorityHelper {
   }
 
   public boolean hasAuthorityViewUnidadGestion(Solicitud solicitud) {
-    return SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-E", solicitud.getUnidadGestionRef())
-        || SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-V", solicitud.getUnidadGestionRef());
+    return SgiSecurityContextHolder.hasAuthorityForUO(CSP_SOL_E, solicitud.getUnidadGestionRef())
+        || SgiSecurityContextHolder.hasAuthorityForUO(CSP_SOL_V, solicitud.getUnidadGestionRef());
   }
 
   public boolean hasAuthorityViewTutor(Solicitud solicitud) {

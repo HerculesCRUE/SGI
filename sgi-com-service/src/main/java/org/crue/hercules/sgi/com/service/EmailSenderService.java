@@ -43,7 +43,7 @@ public class EmailSenderService {
     try {
       from = new InternetAddress(fromEmail, fromName);
     } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
+      log.error(e.getMessage(), e);
       from = new InternetAddress(fromEmail);
     }
     this.copyToSender = copyToSender;

@@ -1,11 +1,16 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessProyectoException;
-import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
+import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPalabraClave;
 import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoPalabraClaveRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoResponsableEconomicoRepository;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,11 +20,7 @@ import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.test.context.support.WithMockUser;
-
-import java.util.Arrays;
-import java.util.List;
 
 class ProyectoPalabraClaveServiceTest extends BaseServiceTest {
 
@@ -29,24 +30,27 @@ class ProyectoPalabraClaveServiceTest extends BaseServiceTest {
   private ProyectoEquipoRepository proyectoEquipoRepository;
   @Mock
   private ProyectoResponsableEconomicoRepository proyectoResponsableEconomicoRepository;
+  @Mock
+  private ProyectoRepository proyectoRepository;
 
   private ProyectoHelper proyectoHelper;
   private ProyectoPalabraClaveService service;
 
   @BeforeEach
   void setup() {
-    this.proyectoHelper = new ProyectoHelper(proyectoEquipoRepository, proyectoResponsableEconomicoRepository);
+    this.proyectoHelper = new ProyectoHelper(proyectoRepository, proyectoEquipoRepository,
+        proyectoResponsableEconomicoRepository);
     this.service = new ProyectoPalabraClaveService(this.repository, this.proyectoHelper);
   }
 
-  @WithMockUser(username = "user", authorities = { "CSP-PRO-E", "CSP-PRO-INV-VR" })
+  @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
   @Test
   void findByProyectoId_ThrowsUserNotAuthorizedToAccessProyectoException() {
     Long proyectoId = 1L;
     Pageable paging = PageRequest.of(0, 2);
 
-    BDDMockito.given(this.proyectoEquipoRepository.count(ArgumentMatchers.<Specification<ProyectoEquipo>>any()))
-        .willReturn(0L);
+    BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(Proyecto.builder().id(proyectoId).build()));
 
     Assertions.assertThatThrownBy(() -> this.service.findByProyectoId(proyectoId, "", paging))
         .isInstanceOf(UserNotAuthorizedToAccessProyectoException.class);

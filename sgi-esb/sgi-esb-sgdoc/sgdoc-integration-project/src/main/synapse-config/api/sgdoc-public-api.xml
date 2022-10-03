@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/sgdoc/public" name="sgdoc-public-api" xmlns="http://ws.apache.org/ns/synapse">
+
+  <resource methods="POST" url-mapping="/documentos">
+    <inSequence>
+      <property name="messageType" value="multipart/form-data" scope="axis2" />
+      <property name="DECODE_MULTIPART_DATA" value="true" scope="axis2" type="BOOLEAN" />
+      <send>
+        <endpoint key="sgdoc-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/documentos/{id}">
+    <inSequence>
+      <send>
+        <endpoint key="sgdoc-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/documentos/{id}/archivo">
+    <inSequence>
+      <send>
+        <endpoint key="sgdoc-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+</api>

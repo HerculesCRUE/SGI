@@ -95,7 +95,7 @@ public class ProduccionCientificaSpecifications {
    * @return specification para obtener los {@link ProduccionCientifica} que
    *         contenga los grupoRef indicados.
    */
-  public static Specification<ProduccionCientifica> byExistsSubqueryInGrupoRef(List<Long> gruposRef) {
+  public static Specification<ProduccionCientifica> byExistsInGrupoRef(List<Long> gruposRef) {
     return (root, query, cb) -> {
       if (gruposRef == null || gruposRef.isEmpty()) {
         return cb.and(cb.isTrue(cb.literal(false))); // always false = no filtering

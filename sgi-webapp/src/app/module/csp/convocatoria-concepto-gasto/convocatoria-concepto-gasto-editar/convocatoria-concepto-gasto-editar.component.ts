@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
@@ -25,7 +25,7 @@ const CONVOCATORIA_CONCEPTO_GASTO_KEY = marker('csp.convocatoria-elegibilidad.co
     ConvocatoriaConceptoGastoActionService
   ]
 })
-export class ConvocatoriaConceptoGastoEditarComponent extends ActionComponent {
+export class ConvocatoriaConceptoGastoEditarComponent extends ActionComponent implements OnInit {
 
   CONVOCATORIA_CONCEPTO_GASTO_ROUTE_NAMES = CONVOCATORIA_CONCEPTO_GASTO_ROUTE_NAMES;
 

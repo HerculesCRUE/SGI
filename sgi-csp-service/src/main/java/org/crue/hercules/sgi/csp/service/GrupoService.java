@@ -462,7 +462,7 @@ public class GrupoService {
   public Page<RelacionEjecucionEconomica> findRelacionesEjecucionEconomicaGrupos(String query, Pageable pageable) {
     log.debug("findRelacionesEjecucionEconomicaGrupos(String query, Pageable pageable) - start");
 
-    Specification<Grupo> specs = GrupoSpecifications.activos();
+    Specification<Grupo> specs = GrupoSpecifications.activos().and(GrupoSpecifications.byProyectoSgeRefNotNull());
     if (query != null) {
       specs = specs
           .and(SgiRSQLJPASupport.toSpecification(query, GrupoPredicateResolver.getInstance(sgiConfigProperties)));

@@ -42,7 +42,7 @@ public class ConfiguracionController {
    * @return el objeto {@link Configuracion}
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNF-E', 'ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNF-E', 'ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR', 'ETI-EVC-EVALR')")
   public ResponseEntity<Configuracion> findConfiguracion() {
     log.debug("findConfiguracion() - start");
     Configuracion configuracion = service.findConfiguracion();

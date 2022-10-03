@@ -8,6 +8,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.crue.hercules.sgi.csp.converter.ProyectoFaseConverter;
+import org.crue.hercules.sgi.csp.converter.RequerimientoJustificacionConverter;
 import org.crue.hercules.sgi.csp.dto.AnualidadGastoOutput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaTituloOutput;
 import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNOutput;
@@ -23,6 +24,7 @@ import org.crue.hercules.sgi.csp.dto.ProyectoPalabraClaveOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
 import org.crue.hercules.sgi.csp.dto.ProyectoResponsableEconomicoOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectosCompetitivosPersonas;
+import org.crue.hercules.sgi.csp.dto.RequerimientoJustificacionOutput;
 import org.crue.hercules.sgi.csp.exceptions.NoRelatedEntitiesException;
 import org.crue.hercules.sgi.csp.model.AnualidadGasto;
 import org.crue.hercules.sgi.csp.model.AnualidadIngreso;
@@ -52,6 +54,7 @@ import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
 import org.crue.hercules.sgi.csp.model.ProyectoResponsableEconomico;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
+import org.crue.hercules.sgi.csp.model.RequerimientoJustificacion;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.service.AnualidadGastoService;
@@ -84,6 +87,7 @@ import org.crue.hercules.sgi.csp.service.ProyectoResponsableEconomicoService;
 import org.crue.hercules.sgi.csp.service.ProyectoService;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioPeriodoJustificacionDocumentoService;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioService;
+import org.crue.hercules.sgi.csp.service.RequerimientoJustificacionService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -120,6 +124,7 @@ public class ProyectoController {
   public static final String REQUEST_MAPPING = PATH_SEPARATOR + "proyectos";
 
   public static final String PATH_PROYECTOS_COMPETITIVOS_PERSONAS = PATH_SEPARATOR + "competitivos-personas";
+  public static final String PATH_INVESTIGADOR = PATH_SEPARATOR + "investigador";
 
   public static final String PATH_ID = PATH_SEPARATOR + "{id}";
   public static final String PATH_ANUALIDAD_GASTOS = PATH_ID + PATH_SEPARATOR + "anualidad-gastos";
@@ -127,7 +132,11 @@ public class ProyectoController {
   public static final String PATH_CAMBIAR_ESTADO = PATH_ID + PATH_SEPARATOR + "cambiar-estado";
   public static final String PATH_GASTOS_PROYECTO = PATH_ID + PATH_SEPARATOR + "gastos-proyecto";
   public static final String PATH_INVESTIGADORES_PRINCIPALES = PATH_ID + PATH_SEPARATOR + "investigadoresprincipales";
+  public static final String PATH_MODIFICABLE = PATH_ID + PATH_SEPARATOR + "modificable";
+  public static final String PATH_PRORROGAS = PATH_ID + PATH_SEPARATOR + "proyecto-prorrogas";
   public static final String PATH_SOLICITUD = PATH_ID + PATH_SEPARATOR + "solicitud";
+  public static final String PATH_REQUERIMIENTOS_JUSTIFICACION = PATH_ID + PATH_SEPARATOR
+      + "requerimientos-justificacion";
 
   private final ModelMapper modelMapper;
 
@@ -219,6 +228,12 @@ public class ProyectoController {
   private final ConvocatoriaService convocatoriaService;
 
   private final ProyectoFaseConverter proyectoFaseConverter;
+
+  /** RequerimientoJustificacion service */
+  private final RequerimientoJustificacionService requerimientoJustificacionService;
+
+  /** RequerimientoJustificacion converter */
+  private final RequerimientoJustificacionConverter requerimientoJustificacionConverter;
 
   /**
    * Crea nuevo {@link Proyecto}
@@ -658,7 +673,7 @@ public class ProyectoController {
    * @return el listado de entidades {@link ProyectoProrroga} paginadas y
    *         filtradas del {@link Proyecto}.
    */
-  @GetMapping("/{id}/proyecto-prorrogas")
+  @GetMapping(PATH_PRORROGAS)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E', 'CSP-PRO-INV-VR')")
   public ResponseEntity<Page<ProyectoProrroga>> findAllProyectoProrroga(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
@@ -681,7 +696,7 @@ public class ProyectoController {
    * @param id Id del {@link Proyecto}.
    * @return HTTP 200 si existe y HTTP 204 si no.
    */
-  @RequestMapping(path = "/{id}/proyecto-prorrogas", method = RequestMethod.HEAD)
+  @RequestMapping(path = PATH_PRORROGAS, method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E','CSP-PRO-INV-VR' )")
   public ResponseEntity<Proyecto> hasProyectoProrrogas(@PathVariable Long id) {
     log.debug("hasProyectoProrrogas(Long id) - start");
@@ -1186,11 +1201,11 @@ public class ProyectoController {
    * @return HTTP-200 Si se permite modificación / HTTP-204 Si no se permite
    *         modificación
    */
-  @RequestMapping(path = "/{id}/modificable", method = RequestMethod.HEAD)
+  @RequestMapping(path = PATH_MODIFICABLE, method = RequestMethod.HEAD)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E', 'CSP-PRO-V', 'CSP-PRO-INV-VR')")
   public ResponseEntity<Void> modificable(@PathVariable Long id) {
     log.debug("modificable(Long id) - start");
-    boolean returnValue = service.modificable(id, new String[] { "CSP-PRO-E", "CSP-PRO-V", "CSP-PRO-INV-VR" });
+    boolean returnValue = service.modificable(id);
     log.debug("modificable(Long id) - end");
     return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
@@ -1368,16 +1383,16 @@ public class ProyectoController {
   }
 
   /**
-   * Devuelve una lista paginada y filtrada {@link Proyecto} activas que se
-   * encuentren dentro de la unidad de gestión del usuario logueado con perfil
-   * investigador
+   * Obtiene todas las entidades {@link Proyecto} activas, que no estén en estado
+   * borrador, en las que el usuario logueado está dentro del equipo o es un
+   * responsable economico, paginadas y filtradas
    * 
    * @param query  filtro de búsqueda.
    * @param paging {@link Pageable}.
    * @return el listado de entidades {@link Proyecto} activas paginadas y
    *         filtradas.
    */
-  @GetMapping("/investigador")
+  @GetMapping(PATH_INVESTIGADOR)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-INV-VR')")
   public ResponseEntity<Page<Proyecto>> findAllInvestigador(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
@@ -1646,4 +1661,31 @@ public class ProyectoController {
     return proyectoEquipoDto;
   }
 
+  /**
+   * Devuelve una lista paginada y/o filtrada {@link RequerimientoJustificacion}
+   * que pertenezcan a un {@link Proyecto}.
+   * 
+   * @param id     identificador de {@link Proyecto}
+   * @param query  filtro de búsqueda.
+   * @param paging {@link Pageable}.
+   * @return el listado de entidades {@link RequerimientoJustificacion} activas
+   *         paginadas y/o filtradas.
+   */
+  @GetMapping(PATH_REQUERIMIENTOS_JUSTIFICACION)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SJUS-V', 'CSP-SJUS-E')")
+  public ResponseEntity<Page<RequerimientoJustificacionOutput>> findRequerimientosJustificacion(@PathVariable Long id,
+      @RequestParam(name = "q", required = false) String query,
+      @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findRequerimientosJustificacion(Long id, String query, Pageable paging) - start");
+
+    Page<RequerimientoJustificacionOutput> page = requerimientoJustificacionConverter
+        .convert(requerimientoJustificacionService.findAllByProyectoId(id, query, paging));
+
+    if (page.isEmpty()) {
+      log.debug("findRequerimientosJustificacion(Long id, String query, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    log.debug("findRequerimientosJustificacion(Long id, String query, Pageable paging) - end");
+    return new ResponseEntity<>(page, HttpStatus.OK);
+  }
 }

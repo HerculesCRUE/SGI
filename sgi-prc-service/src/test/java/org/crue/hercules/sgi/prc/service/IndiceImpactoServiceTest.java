@@ -17,6 +17,7 @@ import org.crue.hercules.sgi.prc.exceptions.IndiceImpactoNotFoundException;
 import org.crue.hercules.sgi.prc.model.IndiceImpacto;
 import org.crue.hercules.sgi.prc.model.IndiceImpacto.TipoRanking;
 import org.crue.hercules.sgi.prc.repository.IndiceImpactoRepository;
+import org.crue.hercules.sgi.prc.util.ProduccionCientificaAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -61,6 +62,9 @@ class IndiceImpactoServiceTest extends BaseServiceTest {
   @MockBean
   private PersistenceUnitUtil persistenceUnitUtil;
 
+  @MockBean
+  private ProduccionCientificaAuthorityHelper authorityHelper;
+
   // This bean must be created by Spring so validations can be applied
   @Autowired
   private IndiceImpactoService service;
@@ -102,7 +106,7 @@ class IndiceImpactoServiceTest extends BaseServiceTest {
     Page<IndiceImpacto> page = service.findAll(null, paging);
 
     // then: Devuelve la pagina 3 con los IndiceImpacto del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().hasSize()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -171,7 +175,7 @@ class IndiceImpactoServiceTest extends BaseServiceTest {
         });
     List<IndiceImpacto> indicesImpactoBuscados = service.findAllByProduccionCientificaId(produccionCientificaId);
     // then: Cada IndiceImpacto tiene produccionCientificaId buscado
-    Assertions.assertThat(indicesImpactoBuscados.size()).as("size()").isEqualTo(3);
+    Assertions.assertThat(indicesImpactoBuscados).as("hasSize()").hasSize(3);
     indicesImpactoBuscados.stream().forEach(indiceImpactoBuscado -> {
       Assertions.assertThat(indiceImpactoBuscado.getProduccionCientificaId()).as("getProduccionCientificaId")
           .isEqualTo(produccionCientificaId);

@@ -10,11 +10,11 @@ import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaConceptoGastoNotFoundExc
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
 import org.crue.hercules.sgi.csp.repository.ConceptoGastoRepository;
-import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoCodigoEcRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaConceptoGastoServiceImpl;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -44,12 +44,12 @@ class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
   @Mock
   private ConvocatoriaConceptoGastoCodigoEcRepository convocatoriaConceptoGastoCodigoEcRepository;
   @Mock
-  ConfiguracionSolicitudRepository configuracionSolicitudRepository;
+  private ConvocatoriaAuthorityHelper authorityHelper;
 
   @BeforeEach
   void setUp() throws Exception {
     service = new ConvocatoriaConceptoGastoServiceImpl(repository, convocatoriaRepository, conceptoGastoRepository,
-        convocatoriaConceptoGastoCodigoEcRepository, configuracionSolicitudRepository);
+        convocatoriaConceptoGastoCodigoEcRepository, authorityHelper);
   }
 
   @Test

@@ -9,6 +9,9 @@
         <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
           {{'error.required.entity' | translate:msgParamNombreEntity}}
         </mat-error>
+        <mat-error *ngIf="formGroup.controls.nombre.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamNombreEntity}}
+        </mat-error>
       </mat-form-field>
     </div>
   </form>

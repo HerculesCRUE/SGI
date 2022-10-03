@@ -116,6 +116,13 @@
         <artifactId>wso2-general-project-plugin</artifactId>
         <version>2.1.1</version>
         <extensions>true</extensions>
+        <dependencies>
+          <dependency>
+              <groupId>com.sun.activation</groupId>
+              <artifactId>javax.activation</artifactId>
+              <version>1.2.0</version>
+          </dependency>
+        </dependencies>
         <executions>
           <execution>
             <id>registry</id>

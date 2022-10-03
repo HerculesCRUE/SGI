@@ -6,23 +6,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaConceptoGastoCodigoEcNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaConceptoGastoNotFoundException;
-import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
-import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
-import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
-import org.crue.hercules.sgi.csp.model.Convocatoria.Estado;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoCodigoEc;
-import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoCodigoEcRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoRepository;
-import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaConceptoGastoCodigoEcSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaConceptoGastoCodigoEcService;
-import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -42,17 +35,14 @@ public class ConvocatoriaConceptoGastoCodigoEcServiceImpl implements Convocatori
 
   private final ConvocatoriaConceptoGastoCodigoEcRepository repository;
   private final ConvocatoriaConceptoGastoRepository convocatoriaConceptoGastoRepository;
-  private final ConvocatoriaRepository convocatoriaRepository;
-  private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
+  private final ConvocatoriaAuthorityHelper authorityHelper;
 
   public ConvocatoriaConceptoGastoCodigoEcServiceImpl(ConvocatoriaConceptoGastoCodigoEcRepository repository,
       ConvocatoriaConceptoGastoRepository convocatoriaConceptoGastoRepository,
-      ConvocatoriaRepository convocatoriaRepository,
-      ConfiguracionSolicitudRepository configuracionSolicitudRepository) {
+      ConvocatoriaAuthorityHelper authorityHelper) {
     this.repository = repository;
     this.convocatoriaConceptoGastoRepository = convocatoriaConceptoGastoRepository;
-    this.convocatoriaRepository = convocatoriaRepository;
-    this.configuracionSolicitudRepository = configuracionSolicitudRepository;
+    this.authorityHelper = authorityHelper;
   }
 
   /**
@@ -85,17 +75,7 @@ public class ConvocatoriaConceptoGastoCodigoEcServiceImpl implements Convocatori
     log.debug(
         "findAllByConvocatoriaAndPermitidoTrue(Long convocatoriaId, Boolean permitido, Pageable pageable)) - start");
 
-    Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaId)
-        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaId));
-    if (hasAuthorityViewInvestigador()) {
-      ConfiguracionSolicitud configuracionSolicitud = configuracionSolicitudRepository
-          .findByConvocatoriaId(convocatoriaId)
-          .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(convocatoriaId));
-      if (!convocatoria.getEstado().equals(Estado.REGISTRADA)
-          || Boolean.FALSE.equals(configuracionSolicitud.getTramitacionSGI())) {
-        throw new UserNotAuthorizedToAccessConvocatoriaException();
-      }
-    }
+    authorityHelper.checkUserHasAuthorityViewConvocatoria(convocatoriaId);
 
     Specification<ConvocatoriaConceptoGastoCodigoEc> specByConvocatoria = ConvocatoriaConceptoGastoCodigoEcSpecifications
         .byConvocatoria(convocatoriaId);
@@ -126,17 +106,7 @@ public class ConvocatoriaConceptoGastoCodigoEcServiceImpl implements Convocatori
     log.debug(
         "findAllByConvocatoriaAndPermitidoFalse(Long convocatoriaId, Boolean permitido, Pageable pageable)) - start");
 
-    Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaId)
-        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaId));
-    if (hasAuthorityViewInvestigador()) {
-      ConfiguracionSolicitud configuracionSolicitud = configuracionSolicitudRepository
-          .findByConvocatoriaId(convocatoriaId)
-          .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(convocatoriaId));
-      if (!convocatoria.getEstado().equals(Estado.REGISTRADA)
-          || Boolean.FALSE.equals(configuracionSolicitud.getTramitacionSGI())) {
-        throw new UserNotAuthorizedToAccessConvocatoriaException();
-      }
-    }
+    authorityHelper.checkUserHasAuthorityViewConvocatoria(convocatoriaId);
 
     Specification<ConvocatoriaConceptoGastoCodigoEc> specByConvocatoria = ConvocatoriaConceptoGastoCodigoEcSpecifications
         .byConvocatoria(convocatoriaId);
@@ -323,7 +293,4 @@ public class ConvocatoriaConceptoGastoCodigoEcServiceImpl implements Convocatori
     return existe;
   }
 
-  private boolean hasAuthorityViewInvestigador() {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
-  }
 }

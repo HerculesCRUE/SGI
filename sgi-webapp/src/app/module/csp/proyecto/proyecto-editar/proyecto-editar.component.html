@@ -1,156 +1,160 @@
 <sgi-action [actionService]="actionService">
   <ng-container menu>
-    <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-      [title]="'label.datos-generales' | translate">
+    <ng-container *ngIf="isModuleCSP">
+      <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+        [title]="'label.datos-generales' | translate">
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.FICHA_GENERAL]" [title]="'label.ficha-general' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.FICHA_GENERAL)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.CONTEXTO_PROYECTO]" [title]="'csp.proyecto-contexto' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.CONTEXTO_PROYECTO)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item [route]="[PROYECTO_ROUTE_NAMES.AREA_CONOCIMIENTO]"
+          [title]="'label.areas-conocimiento' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.AREA_CONOCIMIENTO)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item [route]="[PROYECTO_ROUTE_NAMES.CLASIFICACIONES]"
+          [title]="'csp.proyecto-clasificacion'  | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.CLASIFICACIONES)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.HISTORICO_ESTADOS]"
+          [title]="'menu.csp.proyectos.datos-generales.historicos-estados' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.HISTORICO_ESTADOS)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.RELACIONES]"
+          [title]="'menu.csp.proyectos.datos-generales.relaciones' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.RELACIONES)">
+        </sgi-action-fragment-menu-item>
+      </sgi-action-fragment-menu-group>
+      <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+        [title]="'menu.csp.proyectos.entidades' | translate">
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.ENTIDAD_GESTORA]" [title]="'menu.csp.proyectos.entidades-gestoras' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.ENTIDAD_GESTORA)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.ENTIDADES_CONVOCANTES]"
+          [title]="'menu.csp.proyectos.entidades-convocantes' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.ENTIDADES_CONVOCANTES)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.ENTIDADES_FINANCIADORAS]"
+          [title]="'menu.csp.proyectos.entidades-financiadoras' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.ENTIDADES_FINANCIADORAS)">
+        </sgi-action-fragment-menu-item>
+      </sgi-action-fragment-menu-group>
+      <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+        [title]="'menu.csp.proyectos.equipo-responsable-economico' | translate">
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.EQUIPO_PROYECTO]" [title]="'menu.csp.proyectos.equipo' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.EQUIPO_PROYECTO)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.RESPONSABLE_ECONOMICO]"
+          [title]="'csp.proyecto-responsable-economico' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.REPONSABLE_ECONOMICO)">
+        </sgi-action-fragment-menu-item>
+      </sgi-action-fragment-menu-group>
+      <ng-container *ngIf="(actionService.showSocios$ | async)">
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.SOCIOS]" [title]="'menu.csp.proyectos.socios' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.SOCIOS)">
+        </sgi-action-fragment-menu-item>
+      </ng-container>
+      <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
+        [title]="'menu.csp.proyectos.fases-hitos' | translate">
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.FASES]" [title]="'csp.proyecto-fase' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.FASES)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.HITOS]" [title]="'menu.csp.proyectos.hitos' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.HITOS)">
+        </sgi-action-fragment-menu-item>
+      </sgi-action-fragment-menu-group>
       <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.FICHA_GENERAL]" [title]="'label.ficha-general' | translate"
+        [route]="[PROYECTO_ROUTE_NAMES.SEGUIMIENTO_CIENTIFICO]"
+        [title]="'menu.csp.proyectos.seguimientos-cientificos' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.SEGUIMIENTO_CIENTIFICO)">
+      </sgi-action-fragment-menu-item>
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+        [route]="[PROYECTO_ROUTE_NAMES.PRORROGAS]" [title]="'menu.csp.proyectos.prorrogas' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.PRORROGAS)">
+      </sgi-action-fragment-menu-item>
+      <ng-container *ngIf="actionService.showPaquetesTrabajo$ | async">
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.PAQUETE_TRABAJO]" [title]="'menu.csp.proyectos.paquetes-trabajo' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.PAQUETE_TRABAJO)">
+        </sgi-action-fragment-menu-item>
+      </ng-container>
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+        [route]="[PROYECTO_ROUTE_NAMES.DOCUMENTOS]" [title]="'csp.documentos' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.DOCUMENTOS)">
+      </sgi-action-fragment-menu-item>
+      <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+        [title]="'menu.csp.proyectos.configuracion-economica' | translate">
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.IDENTIFICACION]"
+          [title]="'menu.csp.proyectos.configuracion-economica.identificacion' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.PROYECTOS_SGE)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.ELEGIBILIDAD]"
+          [title]="'menu.csp.proyectos.configuracion-economica.elegibilidad' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.ELEGIBILIDAD)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item *sgiHasAuthorityForAnyUO="'CSP-PRO-E'"
+          [route]="[PROYECTO_ROUTE_NAMES.PARTIDAS_PRESUPUESTARIAS]"
+          [title]="'csp.proyecto-partida-presupuestaria'  | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.PARTIDAS_PRESUPUESTARIAS)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item *sgiHasAuthorityForAnyUO="'CSP-PRO-E'"
+          [route]="[PROYECTO_ROUTE_NAMES.PRESUPUESTO]"
+          [title]="'menu.csp.proyectos.configuracion-economica.presupuesto'  | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.PRESUPUESTO)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.CONSULTA_PRESUPUESTO]"
+          [title]="'csp.proyectos.configuracion-economica.consulta-presupuesto' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.CONSULTA_PRESUPUESTO)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item *sgiHasAuthorityForAnyUO="'CSP-PRO-E'"
+          [route]="[PROYECTO_ROUTE_NAMES.AMORTIZACION_FONDOS]"
+          [title]="'csp.proyectos.configuracion-economica.amortizacion-fondos' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.AMORTIZACION_FONDOS)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.CALENDARIO_FACTURACION]"
+          [title]="'csp.proyectos.configuracion-economica.calendario_facturacion' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.CALENDARIO_FACTURACION)">
+        </sgi-action-fragment-menu-item>
+        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
+          [route]="[PROYECTO_ROUTE_NAMES.CALENDARIO_JUSTIFICACION]"
+          [title]="'csp.proyectos.configuracion-economica.calendario_justificacion' | translate"
+          [fragment]="actionService.getFragment(actionService.FRAGMENT.CALENDARIO_JUSTIFICACION)">
+        </sgi-action-fragment-menu-item>
+      </sgi-action-fragment-menu-group>
+    </ng-container>
+    <ng-container *ngIf="isModuleINV">
+      <sgi-action-fragment-menu-item *ngIf="isInvestigador" [route]="[PROYECTO_ROUTE_NAMES.FICHA_GENERAL]"
+        [title]="'label.ficha-general' | translate"
         [fragment]="actionService.getFragment(actionService.FRAGMENT.FICHA_GENERAL)">
       </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.CONTEXTO_PROYECTO]" [title]="'csp.proyecto-contexto' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.CONTEXTO_PROYECTO)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item [route]="[PROYECTO_ROUTE_NAMES.AREA_CONOCIMIENTO]"
-        [title]="'label.areas-conocimiento' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.AREA_CONOCIMIENTO)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item [route]="[PROYECTO_ROUTE_NAMES.CLASIFICACIONES]"
-        [title]="'csp.proyecto-clasificacion'  | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.CLASIFICACIONES)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.HISTORICO_ESTADOS]"
-        [title]="'menu.csp.proyectos.datos-generales.historicos-estados' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.HISTORICO_ESTADOS)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.RELACIONES]"
-        [title]="'menu.csp.proyectos.datos-generales.relaciones' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.RELACIONES)">
-      </sgi-action-fragment-menu-item>
-    </sgi-action-fragment-menu-group>
-    <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-      [title]="'menu.csp.proyectos.entidades' | translate">
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.ENTIDAD_GESTORA]" [title]="'menu.csp.proyectos.entidades-gestoras' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.ENTIDAD_GESTORA)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.ENTIDADES_CONVOCANTES]"
-        [title]="'menu.csp.proyectos.entidades-convocantes' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.ENTIDADES_CONVOCANTES)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.ENTIDADES_FINANCIADORAS]"
-        [title]="'menu.csp.proyectos.entidades-financiadoras' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.ENTIDADES_FINANCIADORAS)">
-      </sgi-action-fragment-menu-item>
-    </sgi-action-fragment-menu-group>
-    <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-      [title]="'menu.csp.proyectos.equipo-responsable-economico' | translate">
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.EQUIPO_PROYECTO]" [title]="'menu.csp.proyectos.equipo' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.EQUIPO_PROYECTO)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.RESPONSABLE_ECONOMICO]"
-        [title]="'csp.proyecto-responsable-economico' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.REPONSABLE_ECONOMICO)">
-      </sgi-action-fragment-menu-item>
-    </sgi-action-fragment-menu-group>
-    <ng-container *ngIf="(actionService.showSocios$ | async)">
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.SOCIOS]" [title]="'menu.csp.proyectos.socios' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.SOCIOS)">
-      </sgi-action-fragment-menu-item>
-    </ng-container>
-    <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
-      [title]="'menu.csp.proyectos.fases-hitos' | translate">
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']" [route]="[PROYECTO_ROUTE_NAMES.FASES]"
-        [title]="'csp.proyecto-fase' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.FASES)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']" [route]="[PROYECTO_ROUTE_NAMES.HITOS]"
-        [title]="'menu.csp.proyectos.hitos' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.HITOS)">
-      </sgi-action-fragment-menu-item>
-    </sgi-action-fragment-menu-group>
-    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-      [route]="[PROYECTO_ROUTE_NAMES.SEGUIMIENTO_CIENTIFICO]"
-      [title]="'menu.csp.proyectos.seguimientos-cientificos' | translate"
-      [fragment]="actionService.getFragment(actionService.FRAGMENT.SEGUIMIENTO_CIENTIFICO)">
-    </sgi-action-fragment-menu-item>
-    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-      [route]="[PROYECTO_ROUTE_NAMES.PRORROGAS]" [title]="'menu.csp.proyectos.prorrogas' | translate"
-      [fragment]="actionService.getFragment(actionService.FRAGMENT.PRORROGAS)">
-    </sgi-action-fragment-menu-item>
-    <ng-container *ngIf="actionService.showPaquetesTrabajo$ | async">
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.PAQUETE_TRABAJO]" [title]="'menu.csp.proyectos.paquetes-trabajo' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.PAQUETE_TRABAJO)">
-      </sgi-action-fragment-menu-item>
-    </ng-container>
-    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-      [route]="[PROYECTO_ROUTE_NAMES.DOCUMENTOS]" [title]="'csp.documentos' | translate"
-      [fragment]="actionService.getFragment(actionService.FRAGMENT.DOCUMENTOS)">
-    </sgi-action-fragment-menu-item>
-    <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-      [title]="'menu.csp.proyectos.configuracion-economica' | translate">
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.IDENTIFICACION]"
-        [title]="'menu.csp.proyectos.configuracion-economica.identificacion' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.PROYECTOS_SGE)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.ELEGIBILIDAD]"
-        [title]="'menu.csp.proyectos.configuracion-economica.elegibilidad' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.ELEGIBILIDAD)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAuthorityForAnyUO="'CSP-PRO-E'"
-        [route]="[PROYECTO_ROUTE_NAMES.PARTIDAS_PRESUPUESTARIAS]"
-        [title]="'csp.proyecto-partida-presupuestaria'  | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.PARTIDAS_PRESUPUESTARIAS)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAuthorityForAnyUO="'CSP-PRO-E'" [route]="[PROYECTO_ROUTE_NAMES.PRESUPUESTO]"
-        [title]="'menu.csp.proyectos.configuracion-economica.presupuesto'  | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.PRESUPUESTO)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.CONSULTA_PRESUPUESTO]"
-        [title]="'csp.proyectos.configuracion-economica.consulta-presupuesto' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.CONSULTA_PRESUPUESTO)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAuthorityForAnyUO="'CSP-PRO-E'"
-        [route]="[PROYECTO_ROUTE_NAMES.AMORTIZACION_FONDOS]"
-        [title]="'csp.proyectos.configuracion-economica.amortizacion-fondos' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.AMORTIZACION_FONDOS)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.CALENDARIO_FACTURACION]"
+      <sgi-action-fragment-menu-item *ngIf="isInvestigador" [route]="[PROYECTO_ROUTE_NAMES.CALENDARIO_FACTURACION]"
         [title]="'csp.proyectos.configuracion-economica.calendario_facturacion' | translate"
         [fragment]="actionService.getFragment(actionService.FRAGMENT.CALENDARIO_FACTURACION)">
       </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-V', 'CSP-PRO-E']"
-        [route]="[PROYECTO_ROUTE_NAMES.CALENDARIO_JUSTIFICACION]"
-        [title]="'csp.proyectos.configuracion-economica.calendario_justificacion' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.CALENDARIO_JUSTIFICACION)">
-      </sgi-action-fragment-menu-item>
-    </sgi-action-fragment-menu-group>
-    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-INV-VR']"
-      [route]="[PROYECTO_ROUTE_NAMES.FICHA_GENERAL]" [title]="'label.ficha-general' | translate"
-      [fragment]="actionService.getFragment(actionService.FRAGMENT.FICHA_GENERAL)">
-    </sgi-action-fragment-menu-item>
-    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-INV-VR']"
-      [route]="[PROYECTO_ROUTE_NAMES.CALENDARIO_FACTURACION]"
-      [title]="'csp.proyectos.configuracion-economica.calendario_facturacion' | translate"
-      [fragment]="actionService.getFragment(actionService.FRAGMENT.CALENDARIO_FACTURACION)">
-    </sgi-action-fragment-menu-item>
+    </ng-container>
   </ng-container>
   <ng-container footer>
     <sgi-action-footer [texto]="textoCrear" [actionService]="actionService">
       <!-- Cambio estado-->
       <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-        <sgi-action-footer-button color="primary" [text]="textoCambioEstado" action="cambiar-estado"
+        <sgi-action-footer-button *ngIf="isModuleCSP" color="primary" [text]="textoCambioEstado" action="cambiar-estado"
           [disabled]="disableCambioEstado">
         </sgi-action-footer-button>
       </ng-container>

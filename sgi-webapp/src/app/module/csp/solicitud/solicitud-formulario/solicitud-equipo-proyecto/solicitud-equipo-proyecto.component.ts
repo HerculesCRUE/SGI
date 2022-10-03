@@ -168,6 +168,7 @@ export class SolicitudEquipoProyectoComponent extends FragmentComponent implemen
     const dialogRef = this.matDialog.open(MiembroEquipoSolicitudModalComponent, config);
     dialogRef.afterClosed().subscribe((modalData: MiembroEquipoSolicitudModalData) => {
       if (modalData) {
+        this.checkAvisoSolicitante();
         if (!wrapper) {
           const solicitudProyectoEquipoNew = {
             solicitudProyectoEquipo: modalData.entidad as ISolicitudProyectoEquipo
@@ -187,10 +188,22 @@ export class SolicitudEquipoProyectoComponent extends FragmentComponent implemen
       this.dialogService.showConfirmation(this.textoDelete).subscribe(
         (aceptado) => {
           if (aceptado) {
+            this.checkAvisoSolicitante();
             this.formPart.deleteProyectoEquipo(wrapper);
           }
         }
       )
     );
+  }
+
+  private checkAvisoSolicitante() {
+    const solicitudProyectoEquipos = this.formPart.proyectoEquipos$.value.map(wp => wp.value.solicitudProyectoEquipo);
+    const existsSolicitante = solicitudProyectoEquipos.some(
+      solicitudProyectoEquipo => solicitudProyectoEquipo.persona?.id === this.actionService.solicitante?.id);
+    if (!existsSolicitante) {
+      this.formPart.setErrors(true);
+    } else {
+      this.formPart.setErrors(false);
+    }
   }
 }

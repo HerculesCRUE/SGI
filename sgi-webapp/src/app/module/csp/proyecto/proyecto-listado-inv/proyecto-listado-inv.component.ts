@@ -12,7 +12,6 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
-import { NGXLogger } from 'ngx-logger';
 import { merge, Observable, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 
@@ -50,7 +49,6 @@ export class ProyectoListadoInvComponent extends AbstractTablePaginationComponen
   }
 
   constructor(
-    private readonly logger: NGXLogger,
     protected readonly snackBarService: SnackBarService,
     private readonly proyectoService: ProyectoService,
     public authService: SgiAuthService
@@ -90,23 +88,22 @@ export class ProyectoListadoInvComponent extends AbstractTablePaginationComponen
       switchMap((response) => {
         const requestsProyecto: Observable<IProyectoListadoData>[] = [];
         response.items.forEach(proyecto => {
-          const proyectoData = proyecto as IProyectoListadoData;
           if (proyecto.id) {
             requestsProyecto.push(this.proyectoService.hasProyectoProrrogas(proyecto.id).pipe(
               map(value => {
-                proyectoData.prorrogado = value;
-                return proyectoData;
+                proyecto.prorrogado = value;
+                return proyecto;
               }),
               switchMap(() =>
                 this.proyectoService.findAllProyectosSgeProyecto(proyecto.id).pipe(
                   map(value => {
-                    proyectoData.proyectosSGE = value.items.map(element => element.proyectoSge.id).join(', ');
-                    return proyectoData;
+                    proyecto.proyectosSGE = value.items.map(element => element.proyectoSge.id).join(', ');
+                    return proyecto;
                   }))
               )
             ));
           } else {
-            requestsProyecto.push(of(proyectoData));
+            requestsProyecto.push(of(proyecto));
           }
 
         });
@@ -119,7 +116,20 @@ export class ProyectoListadoInvComponent extends AbstractTablePaginationComponen
   }
 
   protected initColumns(): void {
-    this.columnas = ['id', 'codigoSGE', 'titulo', 'acronimo', 'codigoExterno', 'fechaInicio', 'fechaFin', 'fechaFinDefinitiva', 'finalizado', 'prorrogado', 'estado', 'acciones'];
+    this.columnas = [
+      'id',
+      'codigoSGE',
+      'titulo',
+      'acronimo',
+      'codigoExterno',
+      'fechaInicio',
+      'fechaFin',
+      'fechaFinDefinitiva',
+      'finalizado',
+      'prorrogado',
+      'estado',
+      'acciones'
+    ];
   }
 
   protected loadTable(reset?: boolean): void {

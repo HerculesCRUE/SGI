@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IMemoria } from '@core/models/eti/memoria';
+import { Module } from '@core/module';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { MemoriaService } from '@core/services/eti/memoria.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -26,7 +27,7 @@ export class MemoriaResolver extends SgiResolverResolver<IMemoria> {
 
   protected resolveEntity(route: ActivatedRouteSnapshot): Observable<IMemoria> {
     const peticion = this.service.findById(Number(route.paramMap.get('id')));
-    if (this.authService.hasAuthorityForAnyUO('ETI-MEM-INV-ER')) {
+    if (this.hasViewAuthorityInv() && route.data.module === Module.INV) {
       return this.service.isResponsableOrCreador(Number(route.paramMap.get('id'))).pipe(
         switchMap(response => {
           if (response) {
@@ -39,4 +40,9 @@ export class MemoriaResolver extends SgiResolverResolver<IMemoria> {
       return peticion;
     }
   }
+
+  private hasViewAuthorityInv(): boolean {
+    return this.authService.hasAuthority('ETI-MEM-INV-ER');
+  }
+
 }

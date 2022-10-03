@@ -5,21 +5,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
+import org.crue.hercules.sgi.csp.dto.com.CspComCambioEstadoRechazadaSolTipoRrhhData;
 import org.crue.hercules.sgi.csp.dto.com.CspComCambioEstadoSolicitadaSolTipoRrhhData;
 import org.crue.hercules.sgi.csp.dto.com.CspComCambioEstadoSolicitadaSolTipoRrhhData.CspComCambioEstadoSolicitadaSolTipoRrhhDataBuilder;
+import org.crue.hercules.sgi.csp.dto.com.CspComCambioEstadoValidadaSolTipoRrhhData;
 import org.crue.hercules.sgi.csp.dto.com.EmailOutput;
 import org.crue.hercules.sgi.csp.dto.com.Recipient;
 import org.crue.hercules.sgi.csp.dto.sgp.PersonaOutput;
 import org.crue.hercules.sgi.csp.dto.sgp.PersonaOutput.Email;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudRrhhNotFoundException;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
-import org.crue.hercules.sgi.csp.model.SolicitanteExterno;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudRrhh;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
-import org.crue.hercules.sgi.csp.repository.SolicitanteExternoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRrhhRepository;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
@@ -41,33 +40,75 @@ public class SolicitudRrhhComService {
   private final SgiApiSgpService sgiApiSgpService;
   private final SgiApiComService emailService;
   private final SgiConfigProperties sgiConfigProperties;
-  private final SolicitanteExternoRepository solicitanteExternoRepository;
   private final SolicitudRrhhRepository solicitudRrhhRepository;
+  private final SolicitanteDataService solicitanteDataService;
 
-  public void enviarComunicadoCambioEstadoSolicitadaSolTipoRrhh(Instant fechaEstado, Solicitud solicitud) {
+  public void enviarComunicadoCambioEstadoSolicitadaSolTipoRrhh(Instant fechaEstado, Solicitud solicitud)
+      throws JsonProcessingException {
 
     CspComCambioEstadoSolicitadaSolTipoRrhhDataBuilder dataBuilder = CspComCambioEstadoSolicitadaSolTipoRrhhData
         .builder()
         .fechaEstado(fechaEstado)
-        .nombreApellidosSolicitante(getSolicitanteNombreApellidos(solicitud))
+        .nombreApellidosSolicitante(
+            this.solicitanteDataService.getSolicitanteNombreApellidos(solicitud.getId(), solicitud.getSolicitanteRef()))
         .codigoInternoSolicitud(solicitud.getCodigoRegistroInterno())
         .enlaceAplicacionMenuValidacionTutor(getEnlaceAplicacionMenuValidacionTutor());
 
     this.fillConvocatoriaData(dataBuilder, solicitud.getConvocatoriaId());
 
-    try {
-      log.debug(
-          "Construyendo comunicado aviso cambio de estado SOLICITADA a la solicitud de tipo RRHH {} para enviarlo inmediatamente al solicitante",
-          solicitud.getId());
+    log.debug(
+        "Construyendo comunicado aviso cambio de estado SOLICITADA a la solicitud de tipo RRHH {} para enviarlo inmediatamente al solicitante",
+        solicitud.getId());
 
-      EmailOutput comunicado = this.emailService
-          .createComunicadoCambioEstadoSolicitadaSolTipoRrhh(dataBuilder.build(),
-              this.getTutorRecipients(solicitud.getId()));
-      this.emailService.sendEmail(comunicado.getId());
+    EmailOutput comunicado = this.emailService
+        .createComunicadoCambioEstadoSolicitadaSolTipoRrhh(dataBuilder.build(),
+            this.getTutorRecipients(solicitud.getId()));
+    this.emailService.sendEmail(comunicado.getId());
+  }
 
-    } catch (JsonProcessingException e) {
-      log.error(e.getMessage(), e);
-    }
+  public void enviarComunicadoCambioEstadoValidadaSolTipoRrhh(Instant fechaEstado, Solicitud solicitud)
+      throws JsonProcessingException {
+
+    CspComCambioEstadoValidadaSolTipoRrhhData data = CspComCambioEstadoValidadaSolTipoRrhhData
+        .builder()
+        .fechaEstado(fechaEstado)
+        .nombreApellidosSolicitante(
+            this.solicitanteDataService.getSolicitanteNombreApellidos(solicitud.getId(), solicitud.getSolicitanteRef()))
+        .codigoInternoSolicitud(solicitud.getCodigoRegistroInterno())
+        .tituloConvocatoria(this.getTituloConvocatoria(solicitud.getConvocatoriaId()))
+        .build();
+
+    log.debug(
+        "Construyendo comunicado aviso cambio de estado VALIDADA a la solicitud de tipo RRHH {} para enviarlo inmediatamente al solicitante",
+        solicitud.getId());
+
+    EmailOutput comunicado = this.emailService
+        .createComunicadoCambioEstadoValidadaSolTipoRrhh(data,
+            this.solicitanteDataService.getSolicitanteRecipients(solicitud.getId(), solicitud.getSolicitanteRef()));
+    this.emailService.sendEmail(comunicado.getId());
+  }
+
+  public void enviarComunicadoCambioEstadoRechazadaSolTipoRrhh(Instant fechaEstado, Solicitud solicitud)
+      throws JsonProcessingException {
+
+    CspComCambioEstadoRechazadaSolTipoRrhhData data = CspComCambioEstadoRechazadaSolTipoRrhhData
+        .builder()
+        .fechaEstado(fechaEstado)
+        .nombreApellidosSolicitante(
+            this.solicitanteDataService.getSolicitanteNombreApellidos(solicitud.getId(), solicitud.getSolicitanteRef()))
+        .codigoInternoSolicitud(solicitud.getCodigoRegistroInterno())
+        .tituloConvocatoria(this.getTituloConvocatoria(solicitud.getConvocatoriaId()))
+        .build();
+
+    log.debug(
+        "Construyendo comunicado aviso cambio de estado RECHAZADA a la solicitud de tipo RRHH {} para enviarlo inmediatamente al solicitante",
+        solicitud.getId());
+
+    EmailOutput comunicado = this.emailService
+        .createComunicadoCambioEstadoRechazadaSolTipoRrhh(data,
+            this.solicitanteDataService.getSolicitanteRecipients(solicitud.getId(), solicitud.getSolicitanteRef()));
+    this.emailService.sendEmail(comunicado.getId());
+
   }
 
   private void fillConvocatoriaData(
@@ -80,6 +121,16 @@ public class SolicitudRrhhComService {
         dataBuilder.fechaProvisionalConvocatoria(convocatoria.get().getFechaProvisional());
       }
     }
+  }
+
+  private String getTituloConvocatoria(Long convocatoriaId) {
+    if (convocatoriaId != null) {
+      Optional<Convocatoria> convocatoria = this.convocatoriaRepository.findById(convocatoriaId);
+      if (convocatoria.isPresent()) {
+        return convocatoria.get().getTitulo();
+      }
+    }
+    return null;
   }
 
   private String getEnlaceAplicacionMenuValidacionTutor() {
@@ -96,31 +147,6 @@ public class SolicitudRrhhComService {
             .builder().name(email.getEmail()).address(email.getEmail())
             .build())
         .collect(Collectors.toList());
-  }
-
-  private String getSolicitanteNombreApellidos(Solicitud solicitud) {
-    return StringUtils
-        .isNotEmpty(solicitud.getSolicitanteRef())
-            ? getNombreApellidosFromPersonaWithSolicitanteRef(solicitud)
-            : getNombreApellidosFromSolicitanteExterno(solicitud);
-  }
-
-  private String getNombreApellidosFromSolicitanteExterno(Solicitud solicitud) {
-
-    Optional<SolicitanteExterno> solicitanteExterno = this.solicitanteExternoRepository
-        .findBySolicitudId(solicitud.getId());
-    if (!solicitanteExterno.isPresent()) {
-      return null;
-    }
-
-    return String.format("%s %s", solicitanteExterno.get().getNombre(),
-        solicitanteExterno.get().getApellidos());
-  }
-
-  private String getNombreApellidosFromPersonaWithSolicitanteRef(Solicitud solicitud) {
-    PersonaOutput datosPersona = this.sgiApiSgpService.findById(solicitud.getSolicitanteRef());
-
-    return String.format("%s %s", datosPersona.getNombre(), datosPersona.getApellidos());
   }
 
 }

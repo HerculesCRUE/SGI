@@ -1,0 +1,82 @@
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
+
+  <form [formGroup]="formGroup">
+    <!-- Concepto Gasto -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.convocatoria-elegibilidad.concepto-gasto.concepto-gasto' | translate}}</mat-label>
+          <input matInput formControlName="conceptoGasto"
+            placeholder="{{'csp.convocatoria-elegibilidad.concepto-gasto.concepto-gasto' | translate}}">
+        </mat-form-field>
+      </div>
+
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <!--Costes Indirectos-->
+        <mat-form-field>
+          <mat-label>{{'label.csp.concepto-gasto.costes-indirectos' | translate}}
+          </mat-label>
+          <sgi-select-boolean formControlName="costesIndirectos" required></sgi-select-boolean>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Importe máximo -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
+      *ngIf="actionService.permitido">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.convocatoria-elegibilidad.concepto-gasto.importe-maximo' | translate}}
+          </mat-label>
+          <input matInput formControlName="importeMaximo" type="number" id="importeMaximo" min="0"
+            placeholder="{{'csp.convocatoria-elegibilidad.concepto-gasto.importe-maximo' | translate}}">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Número de meses -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.convocatoria-elegibilidad.concepto-gasto.mes-inicial' | translate}}
+          </mat-label>
+          <input matInput formControlName="mesInicial" type="number" id="mesInicial" min="0"
+            placeholder="{{'csp.convocatoria-elegibilidad.concepto-gasto.mes-inicial' | translate}}">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Mes final -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.convocatoria-elegibilidad.concepto-gasto.mes-final' | translate}}
+          </mat-label>
+          <input matInput formControlName="mesFinal" type="number" id="mesFinal" min="0"
+            placeholder="{{'csp.convocatoria-elegibilidad.concepto-gasto.mes-final' | translate}}">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Observaciones -->
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'error.csp.convocatoria-elegibilidad-concepto-gasto.observaciones' | translate}}
+          </mat-label>
+          <textarea #obs matInput formControlName="observaciones" type="text" id="observaciones"
+            placeholder="{{'error.csp.convocatoria-elegibilidad-concepto-gasto.observaciones' | translate}}"
+            maxlength="250">
+                         </textarea>
+          <mat-hint>{{obs.value.length}} / 250</mat-hint>
+        </mat-form-field>
+      </div>
+    </div>
+  </form>
+</sgi-fragment>

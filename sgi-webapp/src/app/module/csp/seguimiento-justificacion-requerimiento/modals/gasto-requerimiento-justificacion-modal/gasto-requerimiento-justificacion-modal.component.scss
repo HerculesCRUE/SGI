@@ -1,0 +1,12 @@
+@import "colors.scss";
+
+:host {
+  .card {
+    padding: 10px;
+    border: 1px solid map-get($palette-grey, 300);
+  }
+
+  sgi-dialog-content {
+    min-width: 40vw;
+  }
+}

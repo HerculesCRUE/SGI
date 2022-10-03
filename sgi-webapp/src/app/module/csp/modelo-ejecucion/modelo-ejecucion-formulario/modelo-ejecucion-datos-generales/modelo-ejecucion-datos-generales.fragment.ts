@@ -24,8 +24,8 @@ export class ModeloEjecucionDatosGeneralesFragment extends FormFragment<IModeloE
     const fb = new FormGroup({
       nombre: new FormControl(''),
       descripcion: new FormControl(''),
-      externo: new FormControl(null),
-      contrato: new FormControl(null)
+      externo: new FormControl(false),
+      contrato: new FormControl(false)
     });
     return fb;
   }

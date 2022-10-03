@@ -25,7 +25,7 @@ import org.springframework.data.jpa.domain.Specification;
  * TipoDocumentoServiceTest
  */
 @Import({ TipoDocumentoService.class, ApplicationContextSupport.class })
-public class TipoDocumentoServiceTest extends BaseServiceTest {
+class TipoDocumentoServiceTest extends BaseServiceTest {
   private static final String NOMBRE_PREFIX = "Tipo Documento ";
 
   @MockBean
@@ -35,7 +35,7 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
   private TipoDocumentoService service;
 
   @Test
-  public void findTiposActivos_ReturnsPage() {
+  void findTiposActivos_ReturnsPage() {
     // given: Una lista con 37 TipoDocumento
     List<TipoDocumento> tiposDocumentos = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
@@ -79,7 +79,7 @@ public class TipoDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findSubtiposActivos_ReturnsPage() {
+  void findSubtiposActivos_ReturnsPage() {
     // given: Una lista con 37 TipoDocumento pertenecientes a un padreId
     Long padreId = 55L;
     List<TipoDocumento> tiposDocumentos = new ArrayList<>();

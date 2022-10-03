@@ -15,6 +15,7 @@ import { IProyectoProrroga } from '@core/models/csp/proyecto-prorroga';
 import { IProyectoResponsableEconomico } from '@core/models/csp/proyecto-responsable-economico';
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
 import { ISolicitud } from '@core/models/csp/solicitud';
+import { OutputReport } from '@core/models/rep/output-report.enum';
 import { ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiGroupReport } from '@core/models/rep/sgi-group.report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
@@ -36,9 +37,11 @@ import { ProyectoEntidadConvocanteListadoExportService } from './proyecto-entida
 import { ProyectoEntidadFinanciadoraListadoExportService } from './proyecto-entidad-financiadora-listado-export.service';
 import { ProyectoEntidadGestoraListadoExportService } from './proyecto-entidad-gestora-listado-export.service';
 import { ProyectoEquipoListadoExportService } from './proyecto-equipo-listado-export.service';
+import { ProyectoFooterListadoExportService } from './proyecto-footer-listado-export.service';
 import { IProyectoFacturacionData } from './proyecto-formulario/proyecto-calendario-facturacion/proyecto-calendario-facturacion.fragment';
 import { ProyectoClasificacionListado } from './proyecto-formulario/proyecto-clasificaciones/proyecto-clasificaciones.fragment';
 import { ProyectoGeneralListadoExportService } from './proyecto-general-listado-export.service';
+import { ProyectoHeaderListadoExportService } from './proyecto-header-listado-export.service';
 import { IProyectoListadoData } from './proyecto-listado/proyecto-listado.component';
 import { ProyectoPartidaPresupuestariaListadoExportService } from './proyecto-partida-presupuestaria-listado-export.service';
 import { ProyectoPeriodoSeguimientoListadoExportService } from './proyecto-periodo-seguimiento-listado-export.service';
@@ -118,8 +121,9 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
     private readonly proyectoPresupuestoListadoExportService: ProyectoPresupuestoListadoExportService,
     private readonly proyectoCalendarioJustificacionListadoExportService: ProyectoCalendarioJustificacionListadoExportService,
     private readonly proyectoCalendarioFacturacionListadoExportService: ProyectoCalendarioFacturacionListadoExportService,
-
-    protected reportService: ReportService
+    protected reportService: ReportService,
+    private readonly proyectoHeaderListadoExportService: ProyectoHeaderListadoExportService,
+    private readonly proyectoFooterListadoExportService: ProyectoFooterListadoExportService
   ) {
     super(reportService);
   }
@@ -145,6 +149,9 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
     return of(rowReport).pipe(
       map((row) => {
         row.elements.push(...this.proyectoGeneralListadoExportService.fillRows(proyectos, index, reportConfig));
+        if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
+          row.elements.push(...this.proyectoHeaderListadoExportService.fillRows(proyectos, index, reportConfig));
+        }
         if (reportConfig.reportOptions?.showAreasConocimiento) {
           row.elements.push(...this.proyectoAreaConocimientoListadoExportService.fillRows(proyectos, index, reportConfig));
         }
@@ -199,6 +206,9 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
         if (reportConfig.reportOptions?.showCalendarioFacturacion) {
           row.elements.push(...this.proyectoCalendarioFacturacionListadoExportService.fillRows(proyectos, index, reportConfig));
         }
+        if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
+          row.elements.push(...this.proyectoFooterListadoExportService.fillRows(proyectos, index, reportConfig));
+        }
         return row;
       })
     );
@@ -224,7 +234,7 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
         const requestsProyecto: Observable<IProyectoReportData>[] = [];
 
         proyectosReportData.forEach(proyecto => {
-          requestsProyecto.push(this.getDataReportInner(proyecto, reportConfig.reportOptions));
+          requestsProyecto.push(this.getDataReportInner(proyecto, reportConfig.reportOptions, reportConfig.outputType));
         });
         return zip(...requestsProyecto);
       }),
@@ -232,9 +242,10 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
     );
   }
 
-  private getDataReportInner(proyectoData: IProyectoReportData, reportOptions: IProyectoReportOptions): Observable<IProyectoReportData> {
+  private getDataReportInner(proyectoData: IProyectoReportData, reportOptions: IProyectoReportOptions, output: OutputReport): Observable<IProyectoReportData> {
     return concat(
       this.getDataReportListadoGeneral(proyectoData),
+      this.getDataReportHeader(proyectoData, output),
       this.getDataReportAreasConocimiento(proyectoData, reportOptions),
       this.getDataReportClasificaciones(proyectoData, reportOptions),
       this.getDataReportRelaciones(proyectoData, reportOptions),
@@ -252,7 +263,8 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
       this.getDataReportPartidaPresupuestaria(proyectoData, reportOptions),
       this.getDataReportPresupuesto(proyectoData, reportOptions),
       this.getDataReportCalendarioJustificacion(proyectoData, reportOptions),
-      this.getDataReportCalendarioFacturacion(proyectoData, reportOptions)
+      this.getDataReportCalendarioFacturacion(proyectoData, reportOptions),
+      this.getDataReportFooter(proyectoData, output)
     ).pipe(
       takeLast(1),
       catchError((err) => {
@@ -489,12 +501,37 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
     }
   }
 
+  private getDataReportHeader(convocatoriaData: IProyectoReportData,
+    output: OutputReport
+  ): Observable<IProyectoReportData> {
+    if (output === OutputReport.PDF || output === OutputReport.RTF) {
+      return this.proyectoHeaderListadoExportService.getData(convocatoriaData)
+        .pipe(tap({ error: (err) => this.logger.error(err) }));
+    } else {
+      return of(convocatoriaData);
+    }
+  }
+
+  private getDataReportFooter(convocatoriaData: IProyectoReportData,
+    output: OutputReport
+  ): Observable<IProyectoReportData> {
+    if (output === OutputReport.PDF || output === OutputReport.RTF) {
+      return this.proyectoFooterListadoExportService.getData(convocatoriaData)
+        .pipe(tap({ error: (err) => this.logger.error(err) }));
+    } else {
+      return of(convocatoriaData);
+    }
+  }
+
   protected getColumns(resultados: IProyectoReportData[], reportConfig: IReportConfig<IProyectoReportOptions>):
     Observable<ISgiColumnReport[]> {
     const columns: ISgiColumnReport[] = [];
 
     columns.push(... this.proyectoGeneralListadoExportService.fillColumns(resultados, reportConfig));
 
+    if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
+      columns.push(... this.proyectoHeaderListadoExportService.fillColumns(resultados, reportConfig));
+    }
     if (reportConfig.reportOptions?.showAreasConocimiento) {
       columns.push(... this.proyectoAreaConocimientoListadoExportService.fillColumns(resultados, reportConfig));
     }
@@ -549,12 +586,15 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
     if (reportConfig.reportOptions?.showCalendarioFacturacion) {
       columns.push(... this.proyectoCalendarioFacturacionListadoExportService.fillColumns(resultados, reportConfig));
     }
+    if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
+      columns.push(... this.proyectoFooterListadoExportService.fillColumns(resultados, reportConfig));
+    }
     return of(columns);
   }
 
   protected getGroupBy(): ISgiGroupReport {
     const groupBy: ISgiGroupReport = {
-      name: 'titulo',
+      name: 'header',
       visible: true
     };
     return groupBy;

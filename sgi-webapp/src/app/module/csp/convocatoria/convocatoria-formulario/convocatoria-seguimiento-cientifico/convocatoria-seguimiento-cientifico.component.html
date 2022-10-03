@@ -72,11 +72,11 @@
         <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}</th>
         <td mat-cell *matCellDef="let wrapper">
           <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="openModalSeguimientoCientifico(wrapper)"
-            *sgiHasAnyAuthorityForAnyUO="['CSP-CON-C', 'CSP-CON-E']">
+            *ngIf="formPart.canEdit">
             <mat-icon color="primary">border_color</mat-icon>
           </button>
           <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deleteSeguimientoCientifico(wrapper)"
-            *sgiHasAnyAuthorityForAnyUO="['CSP-CON-C', 'CSP-CON-E']">
+            *ngIf="formPart.canEdit">
             <mat-icon color="warn">highlight_off</mat-icon>
           </button>
         </td>
@@ -89,7 +89,7 @@
   </div>
   <div class="separation-button">
     <button color="three" mat-button mat-raised-button (click)="openModalSeguimientoCientifico()"
-      *sgiHasAnyAuthorityForAnyUO="['CSP-CON-C', 'CSP-CON-E']">
+      *ngIf="formPart.canEdit">
       <mat-icon color="accent">add_circle</mat-icon>
       {{ 'btn.add.entity' | translate:msgParamEntity }}
     </button>

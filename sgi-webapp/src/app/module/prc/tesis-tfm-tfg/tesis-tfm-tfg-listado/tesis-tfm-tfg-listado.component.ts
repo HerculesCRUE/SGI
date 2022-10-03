@@ -5,6 +5,8 @@ import { AbstractTablePaginationComponent } from '@core/component/abstract-table
 import { IDireccionTesis, TIPO_PROYECTO_MAP } from '@core/models/prc/direccion-tesis';
 import { TipoEstadoProduccion, TIPO_ESTADO_PRODUCCION_MAP } from '@core/models/prc/estado-produccion-cientifica';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { Module } from '@core/module';
+import { LayoutService } from '@core/services/layout.service';
 import { DireccionTesisService } from '@core/services/prc/direccion-tesis/direccion-tesis.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -42,10 +44,15 @@ export class TesisTfmTfgListadoComponent extends AbstractTablePaginationComponen
     return this.authService.authStatus$.asObservable();
   }
 
+  get isModuleINV(): boolean {
+    return this.layoutService.activeModule$.value === Module.INV;
+  }
+
   constructor(
     protected readonly snackBarService: SnackBarService,
     private readonly authService: SgiAuthService,
-    private readonly direccionTesisService: DireccionTesisService
+    private readonly direccionTesisService: DireccionTesisService,
+    private readonly layoutService: LayoutService
   ) {
     super(snackBarService, MSG_ERROR);
     this.TIPO_ESTADO_PRODUCCION_LIST = Object.values(TipoEstadoProduccion);
@@ -71,7 +78,9 @@ export class TesisTfmTfgListadoComponent extends AbstractTablePaginationComponen
 
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IDireccionTesis>> {
-    return this.direccionTesisService.findAll(this.getFindOptions(reset));
+    return this.isModuleINV
+      ? this.direccionTesisService.findDireccionesTesisInvestigador(this.getFindOptions(reset))
+      : this.direccionTesisService.findAll(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {

@@ -105,10 +105,12 @@ public class BaremacionPublicacionLibroService extends BaremacionPublicacionAndC
     loadPredicates();
   }
 
+  @Override
   protected TipoPuntuacion getTipoPuntuacion() {
     return TipoPuntuacion.LIBROS;
   }
 
+  @Override
   protected void loadPredicates() {
     loadLibrosPredicates();
   }
@@ -265,6 +267,7 @@ public class BaremacionPublicacionLibroService extends BaremacionPublicacionAndC
         getPredicateHasFuenteImpactoLibrosOTRAS().and(isTipoProduccionEqualsComentario));
   }
 
+  @Override
   protected BigDecimal evaluateBaremoModulador(BaremacionInput baremacionInput) {
     log.debug("evaluateBaremoModulador(baremacionInput) - start");
 
@@ -283,6 +286,7 @@ public class BaremacionPublicacionLibroService extends BaremacionPublicacionAndC
     return puntos;
   }
 
+  @Override
   protected BigDecimal evaluateBaremoExtra(BaremacionInput baremacionInput) {
     log.debug("evaluateBaremoExtra(baremacionInput) - start");
 

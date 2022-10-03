@@ -1,0 +1,13 @@
+<sgi-dialog-header
+  title="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-justificado-detalle' | translate}}">
+</sgi-dialog-header>
+<sgi-dialog-content>
+  <sgi-detalle-gasto-justificado [gasto]="gastoJustificadoDetalleWithProyectoPeriodoJusificacion$ | async"
+    (handleError)="onHandleError($event)">
+  </sgi-detalle-gasto-justificado>
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

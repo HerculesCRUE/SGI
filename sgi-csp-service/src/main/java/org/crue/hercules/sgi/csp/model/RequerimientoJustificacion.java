@@ -56,7 +56,7 @@ public class RequerimientoJustificacion extends BaseEntity {
   @ManyToOne
   @JoinColumn(name = "tipo_requerimiento_id", nullable = false, foreignKey = @ForeignKey(name = "FK_REQUERIMIENTOJUSTIFICACION_TIPOREQUERIMIENTO"))
   @Valid
-  @ActivableIsActivo(entityClass = TipoAmbitoGeografico.class, groups = {
+  @ActivableIsActivo(entityClass = TipoRequerimiento.class, groups = {
       BaseEntity.Create.class, OnActualizarTipoRequerimiento.class })
   private TipoRequerimiento tipoRequerimiento;
 

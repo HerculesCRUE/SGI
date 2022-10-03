@@ -2,7 +2,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-justificacion';
 
 @Pipe({
-  name: 'requerimientoJustificacionNombre'
+  name: 'requerimientoJustificacionNombre',
+  // El recalculo del numRequerimiento muta la entidad y no dispara el pipe en SeguimientoJustificacionRequerimientoDatosGeneralesComponent
+  pure: false
 })
 export class RequerimientoJustificacionNombrePipe implements PipeTransform {
 

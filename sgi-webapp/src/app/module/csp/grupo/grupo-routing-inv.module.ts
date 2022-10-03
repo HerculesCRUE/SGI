@@ -18,6 +18,7 @@ import { GrupoPersonaAutorizadaComponent } from './grupo-formulario/grupo-person
 import { GrupoResponsableEconomicoComponent } from './grupo-formulario/grupo-responsable-economico/grupo-responsable-economico.component';
 import { GrupoListadoInvComponent } from './grupo-listado-inv/grupo-listado-inv.component';
 import { GRUPO_ROUTE_NAMES } from './grupo-route-names';
+import { Module } from '@core/module';
 
 const GRUPO_TITLE_KEY = marker('csp.grupo');
 const GRUPO_LINEA_INVESTIGACION_KEY = marker('csp.grupo-linea-investigacion');
@@ -29,7 +30,8 @@ const routes: SgiRoutes = [
     canActivate: [SgiAuthGuard],
     data: {
       title: GRUPO_TITLE_KEY,
-      hasAuthority: 'CSP-GIN-INV-VR'
+      hasAuthority: 'CSP-GIN-INV-VR',
+      module: Module.INV
     }
   },
   {
@@ -43,7 +45,8 @@ const routes: SgiRoutes = [
     data: {
       title: GRUPO_TITLE_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
-      hasAuthority: 'CSP-GIN-INV-VR'
+      hasAuthority: 'CSP-GIN-INV-VR',
+      module: Module.INV
     },
     children: [
       {
@@ -94,7 +97,8 @@ const routes: SgiRoutes = [
     data: {
       title: GRUPO_TITLE_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
-      hasAuthority: 'CSP-GIN-INV-VR'
+      hasAuthority: 'CSP-GIN-INV-VR',
+      module: Module.INV
     },
     resolve: {
       [GRUPO_DATA_KEY]: GrupoDataResolver
@@ -109,7 +113,8 @@ const routes: SgiRoutes = [
         canActivate: [SgiAuthGuard],
         data: {
           title: GRUPO_LINEA_INVESTIGACION_KEY,
-          hasAuthority: 'CSP-GIN-INV-VR'
+          hasAuthority: 'CSP-GIN-INV-VR',
+          module: Module.INV
         }
       },
     ]

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
@@ -14,6 +15,7 @@ import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.RequisitoIPCategoriaProfesionalRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -32,17 +34,17 @@ class RequisitoIPCategoriaProfesionalServiceTest extends BaseServiceTest {
   @Mock
   private SolicitudRepository solicitudRepository;
 
+  private ConvocatoriaAuthorityHelper authorityHelper;
+
   private RequisitoIPCategoriaProfesionalService requisitoIPCategoriaProfesionalService;
 
   @BeforeEach
   void setup() {
-    //@formatter:off
+    this.authorityHelper = new ConvocatoriaAuthorityHelper(convocatoriaRepository, configuracionSolicitudRepository);
     this.requisitoIPCategoriaProfesionalService = new RequisitoIPCategoriaProfesionalService(
-                                                        requisitoIPCategoriaProfesionalRepository,
-                                                        convocatoriaRepository,
-                                                        configuracionSolicitudRepository,
-                                                        solicitudRepository);
-    //@formatter:on
+        requisitoIPCategoriaProfesionalRepository,
+        solicitudRepository,
+        authorityHelper);
   }
 
   @Test
@@ -67,7 +69,6 @@ class RequisitoIPCategoriaProfesionalServiceTest extends BaseServiceTest {
 
     BDDMockito.given(this.convocatoriaRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(convocatoria));
-    // BDDMockito.given(SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V")).willReturn(true);
     BDDMockito.given(this.configuracionSolicitudRepository.findByConvocatoriaId(convocatoriaId))
         .willReturn(Optional.of(new ConfiguracionSolicitud()));
 
@@ -87,6 +88,7 @@ class RequisitoIPCategoriaProfesionalServiceTest extends BaseServiceTest {
         .builder()
         .id(id)
         .activo(Boolean.TRUE)
+        .formularioSolicitud(FormularioSolicitud.PROYECTO)
         .estado(Estado.BORRADOR)
         .build();
   }

@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.crue.hercules.sgi</groupId>
     <artifactId>sgi-starter-parent</artifactId>
-    <version>0.0.10</version>
+    <version>0.0.11</version>
   </parent>
 
   <groupId>org.crue.hercules.sgi</groupId>
@@ -40,6 +40,18 @@
     <manifest.name>org/crue/hercules/sgi/csp</manifest.name>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>penthaho</id>
+      <name>Pentaho Distribution Repository</name>
+      <layout>default</layout>
+      <url>https://nexus.pentaho.org/content/groups/omni</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  
   <profiles>
     <profile>
       <!-- dev profile. This is the default profile -->

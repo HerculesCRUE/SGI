@@ -1,0 +1,234 @@
+<sgi-fragment
+  title="{{ 'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion' | translate }}: {{ formPart?.currentRequerimientoJustificacion?.tipoRequerimiento?.nombre }}">
+  <section class="form-section">
+    <form [formGroup]="formGroup" fxLayout="column">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+
+        <form class="subform" fxFlex fxLayout="row" fxLayoutGap="10px"
+          [formGroup]="formPart.requerimientoJustificacionFormGroup">
+          <!-- Número requerimiento -->
+          <mat-form-field>
+            <mat-label>
+              {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.num-requerimiento' | translate}}
+            </mat-label>
+            <input matInput
+              placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.num-requerimiento' | translate}}"
+              type="number" formControlName="numRequerimiento">
+          </mat-form-field>
+
+          <!-- Tipo de requerimiento -->
+          <mat-form-field>
+            <mat-label>
+              {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.tipo-requerimiento' | translate}}
+            </mat-label>
+            <input matInput
+              placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.tipo-requerimiento' | translate}}"
+              type="text" formControlName="tipoRequerimiento">
+          </mat-form-field>
+        </form>
+
+        <!-- Fecha respuesta/alegación -->
+        <mat-form-field>
+          <mat-label>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.fecha-alegacion'
+            | translate}}
+          </mat-label>
+          <input matInput [matDatepicker]="pickerFechaAlegacion" formControlName="fechaAlegacion">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaAlegacion"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaAlegacion>
+          </mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Importe total alegado -->
+        <mat-form-field>
+          <mat-label>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.importe-alegado' |
+            translate}}
+          </mat-label>
+          <input matInput
+            placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.importe-alegado' | translate}}"
+            type="number" formControlName="importeAlegado">
+        </mat-form-field>
+
+        <!-- Importe alegado: Costes directos -->
+        <mat-form-field>
+          <mat-label>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.importe-alegado-cd' |
+            translate}}
+          </mat-label>
+          <input matInput
+            placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.importe-alegado-cd' | translate}}"
+            type="number" formControlName="importeAlegadoCd">
+        </mat-form-field>
+
+        <!-- Importe alegado: Costes indirectos -->
+        <mat-form-field>
+          <mat-label>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.importe-alegado-ci' |
+            translate}}
+          </mat-label>
+          <input matInput
+            placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.importe-alegado-ci' | translate}}"
+            type="number" formControlName="importeAlegadoCi">
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Importe total reintegrado -->
+        <mat-form-field>
+          <mat-label>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.importe-reintegrado'
+            | translate}}
+          </mat-label>
+          <input matInput
+            placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.importe-reintegrado' | translate}}"
+            type="number" formControlName="importeReintegrado">
+        </mat-form-field>
+
+        <!-- Importe reintegrado: Costes directos -->
+        <mat-form-field>
+          <mat-label>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.importe-reintegrado-cd'
+            | translate}}
+          </mat-label>
+          <input matInput
+            placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.importe-reintegrado-cd' | translate}}"
+            type="number" formControlName="importeReintegradoCd">
+        </mat-form-field>
+
+        <!-- Importe reintegrado: Costes indirectos -->
+        <mat-form-field>
+          <mat-label>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.importe-reintegrado-ci'
+            | translate}}
+          </mat-label>
+          <input matInput
+            placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.importe-reintegrado-ci' | translate}}"
+            type="number" formControlName="importeReintegradoCi">
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Intereses reintegrados -->
+        <mat-form-field>
+          <mat-label>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.intereses-reintegrados'
+            | translate}}
+          </mat-label>
+          <input matInput
+            placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.respuesta-alegacion.intereses-reintegrados' | translate}}"
+            type="number" formControlName="interesesReintegrados">
+        </mat-form-field>
+
+        <!-- Fecha pago del reintegro -->
+        <mat-form-field>
+          <mat-label>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.fecha-reintegro'
+            | translate}}
+          </mat-label>
+          <input matInput [matDatepicker]="pickerFechaReintegro" formControlName="fechaReintegro">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaReintegro"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaReintegro>
+          </mat-datepicker>
+        </mat-form-field>
+
+        <!-- Justificante pago del reintegro -->
+        <mat-form-field>
+          <mat-label>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.justificante-reintegro'
+            | translate}}
+          </mat-label>
+          <input matInput
+            placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.justificante-reintegro' | translate}}"
+            type="text" formControlName="justificanteReintegro">
+          <mat-error *ngIf="formGroup.controls.justificanteReintegro.errors?.maxlength">
+            {{'error.maxlength.entity' | translate: msgParamJustificanteReintegroEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Observaciones -->
+        <mat-form-field>
+          <mat-label>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.observaciones' |
+            translate}}
+          </mat-label>
+          <textarea matInput formControlName="observaciones" type="text" id="observaciones"
+            placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.observaciones' | translate}}">
+          </textarea>
+          <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
+            {{'error.maxlength.entity' | translate: msgParamObservacionesEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </form>
+  </section>
+
+  <section class="table-section">
+    <h2>
+      {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.incidencias-documentacion'
+      | translate }}
+    </h2>
+    <div class="mat-elevation-z4">
+      <table class="table-incidencia-documentacion" mat-table [dataSource]="dataSource" matSort matSortActive="id"
+        matSortDirection="asc" matSortDisableClear>
+
+        <!-- Documento justificación Column -->
+        <ng-container matColumnDef="nombreDocumento">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.incidencia-documento.documento' |
+            translate}} </th>
+          <td mat-cell *matCellDef="let wrapper">
+            {{wrapper.value.nombreDocumento}}
+          </td>
+        </ng-container>
+
+        <!-- Incidencia/Motivo rechazo Column -->
+        <ng-container matColumnDef="incidencia">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.incidencia-documento.incidencia' |
+            translate}}
+          </th>
+          <td mat-cell *matCellDef="let wrapper">
+            {{wrapper.value.incidencia}}
+          </td>
+        </ng-container>
+
+        <!-- Alegación presentada Column -->
+        <ng-container matColumnDef="alegacion">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.respuesta-alegacion.incidencia-documento.alegacion'
+            | translate}}
+          </th>
+          <td mat-cell *matCellDef="let wrapper">
+            {{wrapper.value.alegacion}}
+          </td>
+        </ng-container>
+
+        <!-- Acciones  Column -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+          <td mat-cell *matCellDef="let wrapper; let i = index">
+            <ng-container>
+              <div fxLayout="row">
+                <button *sgiHasAuthorityForAnyUO="'CSP-SJUS-E'" mat-button matTooltip="{{'btn.edit' | translate}}"
+                  (click)="openModal(wrapper, i)">
+                  <mat-icon color="primary">border_color</mat-icon>
+                </button>
+              </div>
+            </ng-container>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      </table>
+
+      <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </section>
+</sgi-fragment>

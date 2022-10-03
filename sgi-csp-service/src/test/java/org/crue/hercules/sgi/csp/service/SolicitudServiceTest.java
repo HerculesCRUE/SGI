@@ -138,6 +138,9 @@ class SolicitudServiceTest extends BaseServiceTest {
   @Mock
   private SolicitudRrhhComService solicitudRrhhComService;
 
+  @Mock
+  private SolicitudComService solicitudComService;
+
   private SolicitudService service;
 
   @BeforeEach
@@ -145,11 +148,23 @@ class SolicitudServiceTest extends BaseServiceTest {
     solicitudAuthorityHelper = new SolicitudAuthorityHelper(repository);
     service = new SolicitudService(sgiConfigProperties,
         sgiApiEtiService, repository,
-        estadoSolicitudRepository, configuracionSolicitudRepository, proyectoRepository, solicitudProyectoRepository,
-        documentoRequeridoSolicitudRepository, solicitudDocumentoRepository, solicitudProyectoEquipoRepository,
-        solicitudProyectoSocioRepository, solicitudProyectoPresupuestoRepository, convocatoriaRepository,
-        convocatoriaEntidadFinanciadoraRepository, convocatoriaEnlaceRepository, comunicadosService, personasService,
-        programaRepository, solicitudAuthorityHelper, grupoAuthorityHelper, solicitudRrhhComService);
+        estadoSolicitudRepository,
+        configuracionSolicitudRepository,
+        proyectoRepository,
+        solicitudProyectoRepository,
+        documentoRequeridoSolicitudRepository,
+        solicitudDocumentoRepository,
+        solicitudProyectoEquipoRepository,
+        solicitudProyectoSocioRepository,
+        solicitudProyectoPresupuestoRepository,
+        convocatoriaRepository,
+        convocatoriaEntidadFinanciadoraRepository,
+        convocatoriaEnlaceRepository,
+        programaRepository,
+        solicitudAuthorityHelper,
+        grupoAuthorityHelper,
+        solicitudRrhhComService,
+        solicitudComService);
   }
 
   @Test
@@ -526,7 +541,7 @@ class SolicitudServiceTest extends BaseServiceTest {
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(solicitud));
 
     Assertions.assertThatThrownBy(() -> service.disable(solicitud.getId())).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La Convocatoria pertenece a una Unidad de Gestión no gestionable por el usuario");
+        .hasMessage("La Solicitud pertenece a una Unidad de Gestión no gestionable por el usuario");
 
   }
 

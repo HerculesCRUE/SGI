@@ -41,6 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ProyectoPeriodoJustificacionService {
+  private static final String MESSAGE_KEY_IDENTIFICADOR_JUSTIFICACION = "proyectoPeriodoJustificacion.identificadorJustificacion";
 
   private final Validator validator;
 
@@ -260,5 +261,26 @@ public class ProyectoPeriodoJustificacionService {
       log.debug("updateIdentificadorJustificacion(ProyectoPeriodoJustificacion proyectoPeriodoJustificacion) - end");
       return returnValue;
     }).orElseThrow(() -> new ProyectoPeriodoJustificacionNotFoundException(proyectoPeriodoJustificacion.getId()));
+  }
+
+  /**
+   * Obtiene una entidad {@link ProyectoPeriodoJustificacion} a partir de su
+   * identificador de justificacion.
+   * 
+   * @param identificadorJustificacion de la entidad
+   *                                   {@link ProyectoPeriodoJustificacion}
+   * @return la entidad {@link ProyectoPeriodoJustificacion}
+   */
+  public Optional<ProyectoPeriodoJustificacion> findByIdentificadorJustificacion(String identificadorJustificacion) {
+    log.debug("findByIdentificadorJustificacion(String identificadorJustificacion) - start");
+
+    AssertHelper.fieldNotNull(identificadorJustificacion, ProyectoPeriodoJustificacion.class,
+        MESSAGE_KEY_IDENTIFICADOR_JUSTIFICACION);
+
+    Optional<ProyectoPeriodoJustificacion> returnValue = repository
+        .findByIdentificadorJustificacion(identificadorJustificacion);
+
+    log.debug("findByIdentificadorJustificacion(String identificadorJustificacion) - end");
+    return returnValue;
   }
 }

@@ -51,23 +51,20 @@ public class InvencionInventorController {
   /**
    * Devuelve una lista paginada y filtrada {@link InvencionInventor} activos.
    * 
-   * @param query       filtro de búsqueda.
-   * @param invencionId el identificador de la invención cuyos inventores se
-   *                    desean recuperar
-   * @param paging      pageable.
+   * @param query  filtro de búsqueda.
+   * @param id     el identificador de la invención cuyos inventores se
+   *               desean recuperar
+   * @param paging pageable.
    * @return la lista de entidades {@link Invencion} paginadas y/o filtradas.
    */
   @GetMapping("/{id}/inventores")
   @PreAuthorize("hasAnyAuthority('PII-INV-V', 'PII-INV-C', 'PII-INV-E', 'PII-INV-B', 'PII-INV-R')")
-  public ResponseEntity<Page<InvencionInventorOutput>> findActiveInvencionInventores(@PathVariable Long invencionId,
+  public ResponseEntity<Page<InvencionInventorOutput>> findActiveInvencionInventores(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug(
         "findActiveInvencionInventores(@PathVariable Long invencionId, @RequestParam(name = 'q', required = false) String query, @RequestPageable(sort = 's') Pageable paging) - start");
 
-    if (this.invencionService.existsById(invencionId)) {
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-    Page<InvencionInventor> page = this.service.findActivosByInvencion(invencionId, query, paging);
+    Page<InvencionInventor> page = this.service.findActivosByInvencion(id, query, paging);
 
     if (page.isEmpty()) {
       log.debug(

@@ -1,0 +1,37 @@
+{
+  "name": "@angular-material-components/datetime-picker",
+  "version": "5.1.0-sgi.0",
+  "description": "Angular Material Datetime Picker",
+  "author": "HO Hong Quan",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/h2qutc/angular-material-components.git"
+  },
+  "bugs": {
+    "url": "https://github.com/h2qutc/angular-material-components/issues"
+  },
+  "homepage": "https://github.com/h2qutc/angular-material-components",
+  "keywords": [
+    "angular",
+    "angular2",
+    "angular-material",
+    "angular material datetime picker",
+    "angular material time picker",
+    "datetime-picker",
+    "datepicker",
+    "timepicker",
+    "ngx-mat",
+    "ngx-mat-datetime-picker",
+    "ngx-material-datetime-picker",
+    "ngx-mat-timepicker"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "@angular/platform-browser": "^11.1.0",
+    "@angular/common": "^11.1.0",
+    "@angular/core": "^11.1.0",
+    "@angular/forms": "^11.1.0",
+    "@angular/material": "^11.1.0",
+    "@angular/cdk": "^11.1.0"
+  }
+}

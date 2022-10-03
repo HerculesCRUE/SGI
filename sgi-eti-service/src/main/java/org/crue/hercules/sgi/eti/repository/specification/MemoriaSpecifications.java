@@ -15,30 +15,27 @@ import org.crue.hercules.sgi.eti.model.PeticionEvaluacion_;
 import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.Retrospectiva_;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria_;
+import org.crue.hercules.sgi.framework.data.jpa.domain.Auditable_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MemoriaSpecifications {
 
   public static Specification<Memoria> activos() {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Memoria_.activo), Boolean.TRUE);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Memoria_.activo), Boolean.TRUE);
   }
 
   public static Specification<Memoria> inactivos() {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Memoria_.activo), Boolean.FALSE);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Memoria_.activo), Boolean.FALSE);
   }
 
   public static Specification<Memoria> estadoActualIn(List<Long> estados) {
-    return (root, query, cb) -> {
-      if (estados != null && !estados.isEmpty()) {
-        return root.get(Memoria_.estadoActual).get(TipoEstadoMemoria_.id).in(estados);
-      } else {
-        return cb.and();
-      }
-    };
+    return (root, query, cb) -> (estados != null && !estados.isEmpty())
+        ? root.get(Memoria_.estadoActual).get(TipoEstadoMemoria_.id).in(estados)
+        : cb.and();
   }
 
   public static Specification<Memoria> estadoRetrospectivaIn(List<Long> estados) {
@@ -54,21 +51,16 @@ public class MemoriaSpecifications {
   }
 
   public static Specification<Memoria> byPersonaRef(String personaRef) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Memoria_.personaRef), personaRef);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Memoria_.personaRef), personaRef);
   }
 
   public static Specification<Memoria> byPersonaRefPeticionEvaluacion(String personaRef) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.personaRef), personaRef);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.personaRef),
+        personaRef);
   }
 
   public static Specification<Memoria> byPeticionEvaluacion(Long id) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id), id);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id), id);
   }
 
   public static Specification<Memoria> byPeticionesEvaluacion(List<Long> ids) {
@@ -82,58 +74,45 @@ public class MemoriaSpecifications {
   }
 
   public static Specification<Memoria> byPeticionEvaluacionActivo() {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.activo), Boolean.TRUE);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.activo),
+        Boolean.TRUE);
   }
 
   public static Specification<Memoria> byFechaActualMayorFechaEstadoByMesesDiff(Integer mesesDiff) {
-    return (root, query, cb) -> {
-      return cb.lessThan(root.get(Memoria_.estadoActual).get(TipoEstadoMemoria_.lastModifiedDate),
-          Instant.now().atZone(ZoneOffset.UTC).minus(Period.ofMonths(mesesDiff)).toInstant());
-    };
+    return (root, query, cb) -> cb.lessThan(root.get(Memoria_.estadoActual).get(Auditable_.lastModifiedDate),
+        Instant.now().atZone(ZoneOffset.UTC).minus(Period.ofMonths(mesesDiff)).toInstant());
   }
 
   public static Specification<Memoria> byFechaActualMayorFechaEstadoByDiasDiff(Integer diasDiff) {
-    return (root, query, cb) -> {
-      return cb.lessThan(root.get(Memoria_.estadoActual).get(TipoEstadoMemoria_.lastModifiedDate),
-          Instant.now().atZone(ZoneOffset.UTC).minus(Period.ofDays(diasDiff)).toInstant());
-    };
+    return (root, query, cb) -> cb.lessThan(root.get(Memoria_.estadoActual).get(Auditable_.lastModifiedDate),
+        Instant.now().atZone(ZoneOffset.UTC).minus(Period.ofDays(diasDiff)).toInstant());
   }
 
   public static Specification<Memoria> byId(Long idMemoria) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Memoria_.id), idMemoria);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Memoria_.id), idMemoria);
   }
 
   public static Specification<Memoria> requiereRetrospectiva() {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Memoria_.requiereRetrospectiva), Boolean.TRUE);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Memoria_.requiereRetrospectiva), Boolean.TRUE);
   }
 
   public static Specification<Memoria> byFechaRetrospectivaBetween(Instant fechaInicio, Instant fechaFin) {
-    return (root, query, cb) -> {
-      return cb.between(root.get(Memoria_.retrospectiva).get(Retrospectiva_.fechaRetrospectiva), fechaInicio, fechaFin);
-    };
+    return (root, query, cb) -> cb.between(root.get(Memoria_.retrospectiva).get(Retrospectiva_.fechaRetrospectiva),
+        fechaInicio, fechaFin);
   }
 
   public static Specification<Memoria> peticionesActivas() {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.activo), Boolean.TRUE);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.activo),
+        Boolean.TRUE);
   }
 
   public static Specification<Memoria> byPeticionFechaFin(Instant fechaInicio, Instant fechaFin) {
-    return (root, query, cb) -> {
-      return cb.between(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.fechaFin), fechaInicio, fechaFin);
-    };
+    return (root, query, cb) -> cb.between(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.fechaFin),
+        fechaInicio, fechaFin);
   }
 
   public static Specification<Memoria> byEstado(Long tipoEstadoMemoria) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(Memoria_.estadoActual), tipoEstadoMemoria);
-    };
+    return (root, query, cb) -> cb.equal(root.get(Memoria_.estadoActual), tipoEstadoMemoria);
+
   }
 }

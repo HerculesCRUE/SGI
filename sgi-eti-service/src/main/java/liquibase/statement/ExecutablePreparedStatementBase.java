@@ -52,7 +52,6 @@ public abstract class ExecutablePreparedStatementBase implements ExecutablePrepa
     this.schemaName = schemaName;
     this.tableName = tableName;
     this.columns = columns;
-    this.changeSet = changeSet;
     this.closeables = new HashSet<>();
     this.resourceAccessor = resourceAccessor;
   }

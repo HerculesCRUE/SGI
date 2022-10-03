@@ -4,6 +4,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentGuard } from '@core/guards/detail-form.guard';
 import { ActionGuard } from '@core/guards/master-form.guard';
 import { MSG_PARAMS } from '@core/i18n';
+import { Module } from '@core/module';
 import { SgiRoutes } from '@core/route';
 import { SgiAuthGuard } from '@sgi/framework/auth';
 import { SolicitudDataResolver, SOLICITUD_DATA_KEY } from './solicitud-data.resolver';
@@ -30,6 +31,7 @@ const routes: SgiRoutes = [
     data: {
       title: MSG_VALIDACION_TUTOR_TITLE,
       hasAnyAuthority: ['CSP-SOL-INV-ER'],
+      module: Module.INV
     }
   },
   {
@@ -44,6 +46,7 @@ const routes: SgiRoutes = [
       title: SOLICITUD_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
       hasAnyAuthority: ['CSP-SOL-INV-ER', 'CSP-SOL-INV-BR'],
+      module: Module.INV
     },
     children: [
       {

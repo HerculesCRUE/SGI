@@ -16,6 +16,7 @@ import { IRequisitoEquipoCategoriaProfesional } from '@core/models/csp/requisito
 import { IRequisitoEquipoNivelAcademico } from '@core/models/csp/requisito-equipo-nivel-academico';
 import { IRequisitoIPCategoriaProfesional } from '@core/models/csp/requisito-ip-categoria-profesional';
 import { IRequisitoIPNivelAcademico } from '@core/models/csp/requisito-ip-nivel-academico';
+import { OutputReport } from '@core/models/rep/output-report.enum';
 import { ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiGroupReport } from '@core/models/rep/sgi-group.report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
@@ -36,7 +37,9 @@ import { ConvocatoriaEnlaceListadoExportService } from './convocatoria-enlace-li
 import { ConvocatoriaEntidadConvocanteListadoExportService } from './convocatoria-entidad-convocante-listado-export.service';
 import { ConvocatoriaEntidadFinanciadoraListadoExportService } from './convocatoria-entidad-financiadora-listado-export.service';
 import { ConvocatoriaFaseListadoExportService } from './convocatoria-fase-listado-export.service';
+import { ConvocatoriaFooterListadoExportService } from './convocatoria-footer-listado-export.service';
 import { ConvocatoriaGeneralListadoExportService } from './convocatoria-general-listado-export.service';
+import { ConvocatoriaHeaderListadoExportService } from './convocatoria-header-listado-export.service';
 import { ConvocatoriaHitoListadoExportService } from './convocatoria-hito-listado-export.service';
 import { IConvocatoriaListado } from './convocatoria-listado/convocatoria-listado.component';
 import { ConvocatoriaPartidaPresupuestariaListadoExportService } from './convocatoria-partida-presupuestaria-listado-export.service';
@@ -104,7 +107,9 @@ export class ConvocatoriaListadoExportService extends AbstractTableExportService
     private readonly convocatoriaRequisitoEquipoListadoExportService: ConvocatoriaRequisitoEquipoListadoExportService,
     private readonly convocatoriaConceptoGastoListadoExportService: ConvocatoriaConceptoGastoListadoExportService,
     private readonly convocatoriaPartidaPresupuestariaListadoExportService: ConvocatoriaPartidaPresupuestariaListadoExportService,
-    private readonly convocatoriaConfiguracionSolicitudListadoExportService: ConvocatoriaConfiguracionSolicitudListadoExportService
+    private readonly convocatoriaConfiguracionSolicitudListadoExportService: ConvocatoriaConfiguracionSolicitudListadoExportService,
+    private readonly convocatoriaFooterListadoExportService: ConvocatoriaFooterListadoExportService,
+    private readonly convocatoriaHeaderListadoExportService: ConvocatoriaHeaderListadoExportService
   ) {
     super(reportService);
   }
@@ -130,6 +135,9 @@ export class ConvocatoriaListadoExportService extends AbstractTableExportService
     return of(rowReport).pipe(
       map((row) => {
         row.elements.push(...this.convocatoriaGeneralListadoExportService.fillRows(convocatorias, index, reportConfig));
+        if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
+          row.elements.push(...this.convocatoriaHeaderListadoExportService.fillRows(convocatorias, index, reportConfig));
+        }
         if (reportConfig.reportOptions?.showAreasTematicas) {
           row.elements.push(...this.convocatoriaAreaTematicaListadoExportService.fillRows(convocatorias, index, reportConfig));
         }
@@ -169,6 +177,10 @@ export class ConvocatoriaListadoExportService extends AbstractTableExportService
         if (reportConfig.reportOptions?.showConfiguracionSolicitudes) {
           row.elements.push(...this.convocatoriaConfiguracionSolicitudListadoExportService.fillRows(convocatorias, index, reportConfig));
         }
+        if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
+          row.elements.push(...this.convocatoriaFooterListadoExportService.fillRows(convocatorias, index, reportConfig));
+        }
+
         return row;
       })
     );
@@ -196,7 +208,7 @@ export class ConvocatoriaListadoExportService extends AbstractTableExportService
         const requestsConvocatoria: Observable<IConvocatoriaReportData>[] = [];
 
         convocatoriasReportData.forEach(convocatoria => {
-          requestsConvocatoria.push(this.getDataReportInner(convocatoria, reportConfig.reportOptions));
+          requestsConvocatoria.push(this.getDataReportInner(convocatoria, reportConfig.reportOptions, reportConfig.outputType));
         });
         return zip(...requestsConvocatoria);
       }),
@@ -204,9 +216,10 @@ export class ConvocatoriaListadoExportService extends AbstractTableExportService
     );
   }
 
-  private getDataReportInner(convocatoriaData: IConvocatoriaReportData, reportOptions: IConvocatoriaReportOptions)
+  private getDataReportInner(convocatoriaData: IConvocatoriaReportData, reportOptions: IConvocatoriaReportOptions, output: OutputReport)
     : Observable<IConvocatoriaReportData> {
     return concat(
+      this.getDataReportHeader(convocatoriaData, output),
       this.getDataReportListadoGeneral(convocatoriaData),
       this.getDataReportAreasTematicas(convocatoriaData, reportOptions),
       this.getDataReportEntidadesConvocantes(convocatoriaData, reportOptions),
@@ -221,6 +234,7 @@ export class ConvocatoriaListadoExportService extends AbstractTableExportService
       this.getDataReportElegibilidad(convocatoriaData, reportOptions),
       this.getDataReportPartidasPresupuestarias(convocatoriaData, reportOptions),
       this.getDataReportConfiguracionSolicitudes(convocatoriaData, reportOptions),
+      this.getDataReportFooter(convocatoriaData, output)
     ).pipe(
       takeLast(1),
       catchError((err) => {
@@ -392,11 +406,35 @@ export class ConvocatoriaListadoExportService extends AbstractTableExportService
     }
   }
 
+  private getDataReportHeader(convocatoriaData: IConvocatoriaReportData,
+    output: OutputReport
+  ): Observable<IConvocatoriaReportData> {
+    if (output === OutputReport.PDF || output === OutputReport.RTF) {
+      return this.convocatoriaHeaderListadoExportService.getData(convocatoriaData)
+        .pipe(tap({ error: (err) => this.logger.error(err) }));
+    } else {
+      return of(convocatoriaData);
+    }
+  }
+
+  private getDataReportFooter(convocatoriaData: IConvocatoriaReportData,
+    output: OutputReport
+  ): Observable<IConvocatoriaReportData> {
+    if (output === OutputReport.PDF || output === OutputReport.RTF) {
+      return this.convocatoriaFooterListadoExportService.getData(convocatoriaData)
+        .pipe(tap({ error: (err) => this.logger.error(err) }));
+    } else {
+      return of(convocatoriaData);
+    }
+  }
+
   protected getColumns(resultados: IConvocatoriaReportData[], reportConfig: IReportConfig<IConvocatoriaReportOptions>):
     Observable<ISgiColumnReport[]> {
     const columns: ISgiColumnReport[] = [];
-
     columns.push(... this.convocatoriaGeneralListadoExportService.fillColumns(resultados, reportConfig));
+    if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
+      columns.push(... this.convocatoriaHeaderListadoExportService.fillColumns(resultados, reportConfig));
+    }
     if (reportConfig.reportOptions?.showAreasTematicas) {
       columns.push(... this.convocatoriaAreaTematicaListadoExportService.fillColumns(resultados, reportConfig));
     }
@@ -436,12 +474,16 @@ export class ConvocatoriaListadoExportService extends AbstractTableExportService
     if (reportConfig.reportOptions?.showConfiguracionSolicitudes) {
       columns.push(... this.convocatoriaConfiguracionSolicitudListadoExportService.fillColumns(resultados, reportConfig));
     }
+    if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
+      columns.push(... this.convocatoriaFooterListadoExportService.fillColumns(resultados, reportConfig));
+    }
+
     return of(columns);
   }
 
   protected getGroupBy(): ISgiGroupReport {
     const groupBy: ISgiGroupReport = {
-      name: 'titulo',
+      name: 'header',
       visible: true
     };
     return groupBy;

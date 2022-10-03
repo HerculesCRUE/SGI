@@ -1,11 +1,12 @@
 package org.crue.hercules.sgi.prc.integration;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
-import org.crue.hercules.sgi.prc.enums.TipoFuenteImpacto;
 import org.crue.hercules.sgi.prc.enums.CodigoCVN;
+import org.crue.hercules.sgi.prc.enums.TipoFuenteImpacto;
 import org.crue.hercules.sgi.prc.model.ConvocatoriaBaremacion;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica.TipoEstadoProduccion;
 import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
@@ -839,6 +840,7 @@ class BaremacionPublicacionLibroIT extends BaremacionBaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
     List<PuntuacionBaremoItem> puntuacionBaremoItems = getPuntuacionBaremoItemRepository().findAll();
+    puntuacionBaremoItems.sort(Comparator.comparing(PuntuacionBaremoItem::getBaremoId));
 
     int numPuntuaciones = puntuacionBaremoItems.size();
     Assertions.assertThat(numPuntuaciones).as("numPuntuaciones").isEqualTo(3);

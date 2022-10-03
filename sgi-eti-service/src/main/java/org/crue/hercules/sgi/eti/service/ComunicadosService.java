@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.dto.com.EmailOutput;
 import org.crue.hercules.sgi.eti.dto.com.EtiComActaFinalizarActaData;
@@ -22,6 +20,8 @@ import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.crue.hercules.sgi.eti.service.sgi.SgiApiComService;
 import org.crue.hercules.sgi.eti.service.sgi.SgiApiSgpService;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,17 +47,15 @@ public class ComunicadosService {
     List<Evaluador> evaluadoresConvocatoriaReunion = evaluadorService
         .findAllByComite(convocatoriaReunion.getComite().getComite());
 
-    List<String> idsPersonaRef = evaluadoresConvocatoriaReunion.stream().map(evaluador -> evaluador.getPersonaRef())
+    List<String> idsPersonaRef = evaluadoresConvocatoriaReunion.stream().map(Evaluador::getPersonaRef)
         .collect(Collectors.toList());
 
     if (idsPersonaRef != null) {
       List<PersonaOutput> personas = personasService.findAllByIdIn(idsPersonaRef);
-      List<Recipient> recipients = new ArrayList<Recipient>();
-      personas.stream().forEach(persona -> {
-        recipients.addAll(persona.getEmails().stream()
-            .map(email -> Recipient.builder().name(email.getEmail()).address(email.getEmail()).build())
-            .collect(Collectors.toList()));
-      });
+      List<Recipient> recipients = new ArrayList<>();
+      personas.stream().forEach(persona -> recipients.addAll(persona.getEmails().stream()
+          .map(email -> Recipient.builder().name(email.getEmail()).address(email.getEmail()).build())
+          .collect(Collectors.toList())));
 
       EmailOutput emailOutput = emailService
           .createComunicadoConvocatoriaReunionEti(convocatoriaReunion, recipients);
@@ -181,31 +179,29 @@ public class ComunicadosService {
     List<Evaluador> evaluadoresMemoria = evaluadorService
         .findAllByComite(comite);
 
-    List<String> idsPersonaRef = evaluadoresMemoria.stream().map(evaluador -> evaluador.getPersonaRef())
+    List<String> idsPersonaRef = evaluadoresMemoria.stream().map(Evaluador::getPersonaRef)
         .collect(Collectors.toList());
 
-    if (idsPersonaRef != null) {
-      List<PersonaOutput> personas = personasService.findAllByIdIn(idsPersonaRef);
-      List<Recipient> recipients = new ArrayList<Recipient>();
-      personas.stream().forEach(persona -> {
-        recipients.addAll(persona.getEmails().stream()
+    if (idsPersonaRef == null) {
+      log.debug(
+          "enviarComunicadoCambiosEvaluacionEti(Evaluacion evaluacion) - No se puede enviar el comunicado, no existe ninguna persona asociada");
+      return;
+    }
+    List<Recipient> recipients = new ArrayList<>();
+    personasService.findAllByIdIn(idsPersonaRef).stream()
+        .forEach(persona -> recipients.addAll(persona.getEmails().stream()
             .map(email -> Recipient.builder().name(email.getEmail()).address(email.getEmail()).build())
-            .collect(Collectors.toList()));
-      });
+            .collect(Collectors.toList())));
 
-      if (recipients != null) {
-        EmailOutput emailOutput = emailService.createComunicadoCambiosEvaluacion(
-            EtiComEvaluacionModificadaData.builder()
-                .nombreInvestigacion(nombreInvestigacion)
-                .referenciaMemoria(referenciaMemoria)
-                .tituloSolicitudEvaluacion(tituloSolicitudEvaluacion)
-                .build(),
-            recipients);
-        emailService.sendEmail(emailOutput.getId());
-      } else {
-        log.debug(
-            "enviarComunicadoCambiosEvaluacionEti(Evaluacion evaluacion) - No se puede enviar el comunicado, no existe ninguna persona asociada");
-      }
+    if (!recipients.isEmpty()) {
+      EmailOutput emailOutput = emailService.createComunicadoCambiosEvaluacion(
+          EtiComEvaluacionModificadaData.builder()
+              .nombreInvestigacion(nombreInvestigacion)
+              .referenciaMemoria(referenciaMemoria)
+              .tituloSolicitudEvaluacion(tituloSolicitudEvaluacion)
+              .build(),
+          recipients);
+      emailService.sendEmail(emailOutput.getId());
     } else {
       log.debug(
           "enviarComunicadoCambiosEvaluacionEti(Evaluacion evaluacion) - No se puede enviar el comunicado, no existe ninguna persona asociada");

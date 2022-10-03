@@ -84,7 +84,6 @@ public class Apartado extends BaseEntity {
   @JsonProperty(value = "esquema")
   public void setEsquemaRaw(JsonNode jsonNode) throws IOException {
     // this leads to non-standard json:
-    // setJson(jsonNode.toString());
 
     if (jsonNode.isNull()) {
       setEsquema(null);

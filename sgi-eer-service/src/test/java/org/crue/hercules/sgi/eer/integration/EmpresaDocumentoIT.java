@@ -20,7 +20,7 @@ import org.springframework.test.context.jdbc.Sql;
  * Test de integracion de EmpresaDocumento.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class EmpresaDocumentoIT extends BaseIT {
+class EmpresaDocumentoIT extends BaseIT {
   private static final String REQUEST_MAPPING = EmpresaDocumentoController.REQUEST_MAPPING;
   private static final String PATH_ID = EmpresaDocumentoController.PATH_ID;
 
@@ -44,7 +44,7 @@ public class EmpresaDocumentoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void create_ReturnsEmpresaDocumento() throws Exception {
+  void create_ReturnsEmpresaDocumento() throws Exception {
     String roles = "EER-EER-E";
     // given: new EmpresaDocumento
     EmpresaDocumentoInput data = generateEmpresaDocumentoInputMock();

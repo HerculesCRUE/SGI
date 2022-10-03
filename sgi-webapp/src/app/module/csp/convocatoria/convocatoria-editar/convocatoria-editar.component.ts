@@ -8,7 +8,6 @@ import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
@@ -34,7 +33,7 @@ const MSG_ERROR_REGISTRAR = marker('error.csp.convocatoria.registrar');
 export class ConvocatoriaEditarComponent extends ActionComponent implements OnInit {
   CONVOCATORIA_ROUTE_NAMES = CONVOCATORIA_ROUTE_NAMES;
 
-  textoCrear: string;
+  textoEditar: string;
   textoRegistrar = MSG_BUTTON_REGISTRAR;
   textoEditarSuccess: string;
   textoEditarError: string;
@@ -54,13 +53,12 @@ export class ConvocatoriaEditarComponent extends ActionComponent implements OnIn
     route: ActivatedRoute,
     public actionService: ConvocatoriaActionService,
     dialogService: DialogService,
-    private readonly authService: SgiAuthService,
     private convocatoriaService: ConvocatoriaService,
     private readonly translate: TranslateService
   ) {
     super(router, route, actionService, dialogService);
     this.disableRegistrar$.next(true);
-    this.canEdit = this.authService.hasAuthorityForAnyUO('CSP-CON-E');
+    this.canEdit = this.actionService.canEdit;
     if (this.canEdit) {
       this.subscriptions.push(
         this.convocatoriaService.registrable(this.actionService.id).subscribe(
@@ -94,7 +92,7 @@ export class ConvocatoriaEditarComponent extends ActionComponent implements OnIn
           { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
         );
       })
-    ).subscribe((value) => this.textoCrear = value);
+    ).subscribe((value) => this.textoEditar = value);
 
     this.translate.get(
       CONVOCATORIA_KEY,

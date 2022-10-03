@@ -36,7 +36,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
  */
 
 @WebMvcTest(TipoDocumentoController.class)
-public class TipoDocumentoControllerTest extends BaseControllerTest {
+class TipoDocumentoControllerTest extends BaseControllerTest {
   private static final String REQUEST_MAPPING = TipoDocumentoController.REQUEST_MAPPING;
   private static final String PATH_SUBTIPOS = TipoDocumentoController.PATH_SUBTIPOS;
 
@@ -47,7 +47,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-E" })
-  public void findTiposActivos_WithPaging_ReturnsTipoDocumentoSubList() throws Exception {
+  void findTiposActivos_WithPaging_ReturnsTipoDocumentoSubList() throws Exception {
     // given: 40 TipoDocumento
     List<TipoDocumento> data = new ArrayList<>();
     for (int i = 1; i <= 40; i++) {
@@ -109,7 +109,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-C", "EER-EER-E" })
-  public void findTiposActivos_EmptyList_Returns204() throws Exception {
+  void findTiposActivos_EmptyList_Returns204() throws Exception {
 
     BDDMockito.given(converter.convert(
         ArgumentMatchers.<Page<TipoDocumento>>any()))
@@ -135,7 +135,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-E" })
-  public void findSubtiposActivos_WithPaging_ReturnsTipoDocumentoSubList() throws Exception {
+  void findSubtiposActivos_WithPaging_ReturnsTipoDocumentoSubList() throws Exception {
     // given: 40 TipoDocumento
     Long padreId = 55L;
     List<TipoDocumento> data = new ArrayList<>();
@@ -201,7 +201,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-C", "EER-EER-E" })
-  public void findSubtiposActivos_EmptyList_Returns204() throws Exception {
+  void findSubtiposActivos_EmptyList_Returns204() throws Exception {
     Long padreId = 55L;
 
     BDDMockito.given(converter.convert(

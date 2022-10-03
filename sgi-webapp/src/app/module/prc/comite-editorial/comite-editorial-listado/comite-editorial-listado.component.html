@@ -18,8 +18,8 @@
         <mat-form-field>
           <mat-label>{{'prc.comite-editorial.grupo-investigacion' | translate}}</mat-label>
           <ng-container *ngIf="authStatus$ | async as authStatus">
-            <sgi-select-grupo *ngIf="authStatus.isInvestigador; else grupoInvestigacionGestor"
-              [personaRef]="authStatus.userRefId" formControlName="grupoInvestigacion">
+            <sgi-select-grupo *ngIf="isModuleINV; else grupoInvestigacionGestor" [personaRef]="authStatus.userRefId"
+              formControlName="grupoInvestigacion">
             </sgi-select-grupo>
           </ng-container>
           <ng-template #grupoInvestigacionGestor>

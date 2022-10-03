@@ -42,6 +42,10 @@ export class CongresoEditarComponent extends ActionComponent implements OnInit {
     return this.actionService.canEdit;
   }
 
+  get isInvestigador(): boolean {
+    return this.actionService.isInvestigador;
+  }
+
   constructor(
     private readonly logger: NGXLogger,
     protected readonly snackBarService: SnackBarService,

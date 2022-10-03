@@ -14,6 +14,10 @@ import cz.jirutka.rsql.parser.ast.ComparisonOperator;
 import io.github.perplexhub.rsql.RSQLOperators;
 
 public class PeticionEvaluacionPredicateResolver implements SgiRSQLPredicateResolver<PeticionEvaluacion> {
+  private static final String BAD_NUMBER_OF_ARGUMENTS_FOR = "Bad number of arguments for ";
+  private static final String FOR = " for ";
+  private static final String UNSUPPORTED_OPERATOR = "Unsupported operator: ";
+
   private enum Property {
     TITULO("peticionEvaluacion.titulo"), COMITE("comite.id"), PERSONA("peticionEvaluacion.personaRef"),
     ESTADO("estadoActual.id"), CODIGO("peticionEvaluacion.codigo");
@@ -47,16 +51,15 @@ public class PeticionEvaluacionPredicateResolver implements SgiRSQLPredicateReso
     return instance;
   }
 
-  private static Predicate buildFilterTitulo(ComparisonNode node, Root<PeticionEvaluacion> root, CriteriaQuery<?> query,
-      CriteriaBuilder cb) {
+  private static Predicate buildFilterTitulo(ComparisonNode node, Root<PeticionEvaluacion> root, CriteriaBuilder cb) {
     ComparisonOperator operator = node.getOperator();
     if (!operator.equals(RSQLOperators.IGNORE_CASE_LIKE) && !operator.equals(RSQLOperators.LIKE)) {
       // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
+      throw new IllegalArgumentException(UNSUPPORTED_OPERATOR + operator + FOR + node.getSelector());
     }
     if (node.getArguments().size() != 1) {
       // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
+      throw new IllegalArgumentException(BAD_NUMBER_OF_ARGUMENTS_FOR + node.getSelector());
     }
     String tituloFilter = node.getArguments().get(0);
     Predicate titulo = cb.like(root.get(PeticionEvaluacion_.titulo), tituloFilter);
@@ -64,38 +67,38 @@ public class PeticionEvaluacionPredicateResolver implements SgiRSQLPredicateReso
   }
 
   private static Predicate buildFilterPersona(ComparisonNode node, Root<PeticionEvaluacion> root,
-      CriteriaQuery<?> query, CriteriaBuilder cb) {
+      CriteriaBuilder cb) {
     ComparisonOperator operator = node.getOperator();
     if (!operator.equals(RSQLOperators.EQUAL)) {
       // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
+      throw new IllegalArgumentException(UNSUPPORTED_OPERATOR + operator + FOR + node.getSelector());
     }
     if (node.getArguments().size() != 1) {
       // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
+      throw new IllegalArgumentException(BAD_NUMBER_OF_ARGUMENTS_FOR + node.getSelector());
     }
     String personaFilter = node.getArguments().get(0);
     Predicate persona = cb.equal(root.get(PeticionEvaluacion_.personaRef), personaFilter);
     return cb.and(persona);
   }
 
-  private static Predicate buildFilterCodigo(ComparisonNode node, Root<PeticionEvaluacion> root, CriteriaQuery<?> query,
+  private static Predicate buildFilterCodigo(ComparisonNode node, Root<PeticionEvaluacion> root,
       CriteriaBuilder cb) {
     ComparisonOperator operator = node.getOperator();
     if (!operator.equals(RSQLOperators.IGNORE_CASE_LIKE)) {
       // Unsupported Operator
-      throw new IllegalArgumentException("Unsupported operator: " + operator + " for " + node.getSelector());
+      throw new IllegalArgumentException(UNSUPPORTED_OPERATOR + operator + FOR + node.getSelector());
     }
     if (node.getArguments().size() != 1) {
       // Bad number of arguments
-      throw new IllegalArgumentException("Bad number of arguments for " + node.getSelector());
+      throw new IllegalArgumentException(BAD_NUMBER_OF_ARGUMENTS_FOR + node.getSelector());
     }
     String codigoFilter = node.getArguments().get(0);
     Predicate codigo = cb.like(root.get(PeticionEvaluacion_.codigo), codigoFilter);
     return cb.and(codigo);
   }
 
-  private static Predicate buildNonFilter(ComparisonNode node, Root<PeticionEvaluacion> root, CriteriaQuery<?> query,
+  private static Predicate buildNonFilter(Root<PeticionEvaluacion> root,
       CriteriaBuilder cb) {
     // esta comprobación se hace para que la consulta no devuelva resultado
     Predicate titulo = cb.notEqual(root.get(PeticionEvaluacion_.titulo), root.get(PeticionEvaluacion_.titulo));
@@ -111,19 +114,26 @@ public class PeticionEvaluacionPredicateResolver implements SgiRSQLPredicateReso
   @Override
   public Predicate toPredicate(ComparisonNode node, Root<PeticionEvaluacion> root, CriteriaQuery<?> query,
       CriteriaBuilder criteriaBuilder) {
-    switch (Property.fromCode(node.getSelector())) {
-    case TITULO:
-      return buildFilterTitulo(node, root, query, criteriaBuilder);
-    case PERSONA:
-      return buildFilterPersona(node, root, query, criteriaBuilder);
-    case CODIGO:
-      return buildFilterCodigo(node, root, query, criteriaBuilder);
-    case ESTADO:
-      return buildNonFilter(node, root, query, criteriaBuilder);
-    case COMITE:
-      return buildNonFilter(node, root, query, criteriaBuilder);
-    default:
+
+    Property property = Property.fromCode(node.getSelector());
+
+    if (property == null) {
       return null;
+    }
+
+    switch (property) {
+      case TITULO:
+        return buildFilterTitulo(node, root, criteriaBuilder);
+      case PERSONA:
+        return buildFilterPersona(node, root, criteriaBuilder);
+      case CODIGO:
+        return buildFilterCodigo(node, root, criteriaBuilder);
+      case ESTADO:
+        return buildNonFilter(root, criteriaBuilder);
+      case COMITE:
+        return buildNonFilter(root, criteriaBuilder);
+      default:
+        return null;
     }
   }
 }

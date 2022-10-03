@@ -107,7 +107,7 @@ public class EtiReportController {
    * @return Resource
    */
   @GetMapping("/informe-evaluacion/{idEvaluacion}")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR', 'ETI-EVC-EVALR')")
   public ResponseEntity<Resource> getInformeEvaluacion(@PathVariable Long idEvaluacion) {
 
     log.debug("getInformeEvaluacion(idEvaluacion) - start");

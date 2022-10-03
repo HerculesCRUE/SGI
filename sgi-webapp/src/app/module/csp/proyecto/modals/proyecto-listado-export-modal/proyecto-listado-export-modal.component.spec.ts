@@ -23,7 +23,9 @@ import { ProyectoEntidadConvocanteListadoExportService } from '../../proyecto-en
 import { ProyectoEntidadFinanciadoraListadoExportService } from '../../proyecto-entidad-financiadora-listado-export.service';
 import { ProyectoEntidadGestoraListadoExportService } from '../../proyecto-entidad-gestora-listado-export.service';
 import { ProyectoEquipoListadoExportService } from '../../proyecto-equipo-listado-export.service';
+import { ProyectoFooterListadoExportService } from '../../proyecto-footer-listado-export.service';
 import { ProyectoGeneralListadoExportService } from '../../proyecto-general-listado-export.service';
+import { ProyectoHeaderListadoExportService } from '../../proyecto-header-listado-export.service';
 import { ProyectoListadoExportService } from '../../proyecto-listado-export.service';
 import { ProyectoPartidaPresupuestariaListadoExportService } from '../../proyecto-partida-presupuestaria-listado-export.service';
 import { ProyectoPeriodoSeguimientoListadoExportService } from '../../proyecto-periodo-seguimiento-listado-export.service';
@@ -85,6 +87,8 @@ describe('ProyectoListadoExportModalComponent', () => {
         LuxonDatePipe,
         DecimalPipe,
         PercentPipe,
+        ProyectoHeaderListadoExportService,
+        ProyectoFooterListadoExportService
       ]
     })
       .compileComponents();

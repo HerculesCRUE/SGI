@@ -1,0 +1,82 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+  <changeSet context="!test" author="master" id="0000000000005-config">
+    <!-- Destinatarios defecto CSP Proyectos Hitos UGI -->
+    <insert tableName="config">
+      <column name="name" value="csp-pro-hitos-destinatarios-5" />
+      <column name="description" value="Destinatarios defecto CSP Solicitudes Hito - ARI" />
+      <column name="value" value="[&quot;proyecto.hitos.ari@sgi.es&quot;]" />
+    </insert>
+
+    <!-- Destinatarios defecto CSP Convocatoria fases ARI -->
+    <insert tableName="config">
+      <column name="name" value="csp-conv-fases-destinatarios-5" />
+      <column name="description" value="Destinatarios defecto CSP Convocatoria Fases - ARI" />
+      <column name="value" value="[&quot;convocatoria.fases.ari@sgi.es&quot;]" />
+    </insert>
+
+    <!-- Destinatarios defecto CSP Proyecto fases ARI -->
+    <insert tableName="config">
+      <column name="name" value="csp-pro-fases-destinatarios-5" />
+      <column name="description" value="Destinatarios defecto CSP Proyecto Fases - ARI" />
+      <column name="value" value="[&quot;proyecto.fases.ari@sgi.es&quot;]" />
+    </insert>
+
+    <!-- Destinatarios defecto CSP Convocatorias Hitos ARI -->
+    <insert tableName="config">
+      <column name="name" value="csp-conv-hitos-destinatarios-5" />
+      <column name="description" value="Destinatarios defecto CSP Convocatoria Hito - ARI" />
+      <column name="value" value="[&quot;convocatoria.hitos.ari@sgi.es&quot;]" />
+    </insert>
+
+    <!-- Destinatarios defecto CSP Inicio Presentación seguimiento científico -->
+    <insert tableName="config">
+      <column name="name" value="csp-com-inicio-pres-seg-cientifico-destinatarios-5" />
+      <column name="description" value="Destinatarios de comunicado de inicio de presentacion del seguimiento científico - ARI" />
+      <column name="value" value="[&quot;sample-ari@sample.es&quot;]" />
+    </insert>
+
+    <!-- Destinatarios defecto CSP Solicitudes Hitos ARI -->
+    <insert tableName="config">
+      <column name="name" value="csp-sol-hitos-destinatarios-5" />
+      <column name="description" value="Destinatarios defecto CSP Solicitudes Hito - ARI" />
+      <column name="value" value="[&quot;solicitud.hitos.ari@sgi.es&quot;]" />
+    </insert>
+
+    <!-- Destinatarios defecto CSP Solicitudes Cambio estado Solicitada ARI-->
+    <insert tableName="config">
+      <column name="name" value="csp-com-sol-camb-est-solicitada-destinatarios-5" />
+      <column name="description" value="Destinatarios de comunicado de cambio de estado de solicitud a solicitada - ARI" />
+      <column name="value" value="[&quot;sample.ari@sample.es&quot;]" />
+    </insert>
+
+    <!-- Destinatarios defecto CSP Solicitudes Cambio diferentes estados de Alegaciones ARI -->
+    <insert tableName="config">
+      <column name="name" value="csp-com-sol-camb-est-alegaciones-destinatarios-5" />
+      <column name="description" value="Destinatarios de comunicado de cambio de estado de solicitud a alegaciones - ARI" />
+      <column name="value" value="[&quot;sample.ari@sample.es&quot;]" />
+    </insert>
+
+    <!-- Destinatarios defecto CSP Vencimiento Periodo Pago Socio ARI -->
+    <insert tableName="config">
+      <column name="name" value="csp-vencim-periodo-pago-socio-destinatarios-5" />
+      <column name="description" value="Destinatarios defecto CSP Vencimiento Periodo Pago Socio - ARI" />
+      <column name="value" value="[&quot;venc.periodo.pago.socio.ari@sgi.es&quot;]" />
+    </insert>
+
+    <!-- Destinatarios defecto CSP inicio/fin Periodo Justificación Socio ARI -->
+    <insert tableName="config">
+      <column name="name" value="csp-inicio-fin-periodo-just-socio-destinatarios-5" />
+      <column name="description" value="Destinatarios defecto CSP Inicio/Fin Periodo Justificación Socio - ARI" />
+      <column name="value" value="[&quot;aviso.just.periodo.socio.ari@sgi.es&quot;]" />
+    </insert>
+
+    <!-- Destinatarios por defecto para CSP Calendario Facturacion Validar IP ARI-->
+    <insert tableName="config">
+      <column name="name" value="csp-com-cal-fact-validarip-destinatarios-5" />
+      <column name="description" value="Destinatario de comunicados al validar una factura - ARI" />
+      <column name="value" value="[&quot;lmsi.ari@um.es&quot;]" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

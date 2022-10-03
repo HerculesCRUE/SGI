@@ -54,7 +54,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  */
 
 @WebMvcTest(EmpresaController.class)
-public class EmpresaControllerTest extends BaseControllerTest {
+class EmpresaControllerTest extends BaseControllerTest {
 
   @MockBean
   private EmpresaService service;
@@ -84,7 +84,7 @@ public class EmpresaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-C" })
-  public void create_ReturnsEmpresa() throws Exception {
+  void create_ReturnsEmpresa() throws Exception {
     // given: new Empresa
     Empresa data = generarMockEmpresa(null, Boolean.TRUE);
     EmpresaOutput empresa = generarMockEmpresaOutput(1L, Boolean.TRUE);
@@ -121,7 +121,7 @@ public class EmpresaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-C" })
-  public void create_WithId_Returns400() throws Exception {
+  void create_WithId_Returns400() throws Exception {
     // given: a Empresa with id filled
     Empresa data = generarMockEmpresa(1L, Boolean.TRUE);
 
@@ -140,7 +140,7 @@ public class EmpresaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-E" })
-  public void update_WithExistingId_ReturnsEmpresa() throws Exception {
+  void update_WithExistingId_ReturnsEmpresa() throws Exception {
     // given: existing Empresa
     Empresa data = generarMockEmpresa(1L, Boolean.TRUE);
 
@@ -180,7 +180,7 @@ public class EmpresaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-E" })
-  public void update_WithNoExistingId_Returns404() throws Exception {
+  void update_WithNoExistingId_Returns404() throws Exception {
     // given: a Empresa with non existing id
     Empresa data = generarMockEmpresa(1L, Boolean.TRUE);
 
@@ -201,7 +201,7 @@ public class EmpresaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-E" })
-  public void update_WithDuplicatedNombre_Returns400() throws Exception {
+  void update_WithDuplicatedNombre_Returns400() throws Exception {
     // given: a Empresa with duplicated Nombre
     Empresa data = generarMockEmpresa(1L, Boolean.TRUE);
 
@@ -227,7 +227,7 @@ public class EmpresaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-B" })
-  public void desactivar_WithExistingId_ReturnEmpresa() throws Exception {
+  void desactivar_WithExistingId_ReturnEmpresa() throws Exception {
     // given: existing id
     Long idBuscado = 1L;
     Empresa empresa = generarMockEmpresa(idBuscado, Boolean.TRUE);
@@ -256,7 +256,7 @@ public class EmpresaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-B" })
-  public void desactivar_NoExistingId_Return404() throws Exception {
+  void desactivar_NoExistingId_Return404() throws Exception {
     // given: non existing id
     Long id = 1L;
     BDDMockito.willThrow(new EmpresaNotFoundException(id)).given(service)
@@ -274,7 +274,7 @@ public class EmpresaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-V" })
-  public void findById_WithExistingId_ReturnsEmpresa() throws Exception {
+  void findById_WithExistingId_ReturnsEmpresa() throws Exception {
 
     BDDMockito.given(converter.convert(
         ArgumentMatchers.<Empresa>any())).willReturn(generarMockEmpresaOutput(1L, Boolean.TRUE));
@@ -300,7 +300,7 @@ public class EmpresaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-V" })
-  public void findById_WithNoExistingId_Returns404() throws Exception {
+  void findById_WithNoExistingId_Returns404() throws Exception {
     BDDMockito.given(converter.convert(
         ArgumentMatchers.<Empresa>any())).willReturn(generarMockEmpresaOutput(1L, Boolean.TRUE));
     // given: no existing id
@@ -319,7 +319,7 @@ public class EmpresaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-C", "EER-EER-E" })
-  public void findActivos_WithPaging_ReturnsEmpresaSubList() throws Exception {
+  void findActivos_WithPaging_ReturnsEmpresaSubList() throws Exception {
     // given: One hundred Empresa
     List<Empresa> data = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -381,7 +381,7 @@ public class EmpresaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-C", "EER-EER-E" })
-  public void findActivos_EmptyList_Returns204() throws Exception {
+  void findActivos_EmptyList_Returns204() throws Exception {
 
     BDDMockito.given(converter.convert(
         ArgumentMatchers.<Page<Empresa>>any()))
@@ -435,7 +435,7 @@ public class EmpresaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-E" })
-  public void findDocumentos_WithPaging_ReturnsEmpresaDocumentoSubList() throws Exception {
+  void findDocumentos_WithPaging_ReturnsEmpresaDocumentoSubList() throws Exception {
     // given: 40 EmpresaDocumento con empresaId
     Long empresaId = 1L;
     List<EmpresaDocumento> data = new ArrayList<>();
@@ -501,7 +501,7 @@ public class EmpresaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-E" })
-  public void findDocumentos_EmptyList_Returns204() throws Exception {
+  void findDocumentos_EmptyList_Returns204() throws Exception {
     Long empresaId = 1L;
     BDDMockito.given(empresaDocumentoConverter.convert(
         ArgumentMatchers.<Page<EmpresaDocumento>>any()))

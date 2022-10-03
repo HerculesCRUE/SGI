@@ -13,7 +13,9 @@ import { SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SolicitudEntidadConvocanteListadoExportService } from '../../solicitud-entidad-convocante-listado-export.service';
+import { SolicitudFooterListadoExportService } from '../../solicitud-footer-listado-export.service';
 import { SolicitudGeneralListadoExportService } from '../../solicitud-general-listado-export.service';
+import { SolicitudHeaderListadoExportService } from '../../solicitud-header-listado-export.service';
 import { SolicitudListadoExportService } from '../../solicitud-listado-export.service';
 import { SolicitudProyectoAreaConocimientoListadoExportService } from '../../solicitud-proyecto-area-conocimiento-listado-export.service';
 import { SolicitudProyectoClasificacionListadoExportService } from '../../solicitud-proyecto-clasificacion-listado-export.service';
@@ -63,7 +65,9 @@ describe('SolicitudListadoExportModalComponent', () => {
         SolicitudProyectoResponsableEconomicoListadoExportService,
         SolicitudProyectoSocioListadoExportService,
         SolicitudProyectoEntidadFinanciadoraListadoExportService,
-        SolicitudRrhhListadoExportService
+        SolicitudRrhhListadoExportService,
+        SolicitudHeaderListadoExportService,
+        SolicitudFooterListadoExportService
       ]
     })
       .compileComponents();

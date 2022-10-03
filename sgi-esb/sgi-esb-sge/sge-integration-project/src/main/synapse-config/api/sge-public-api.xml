@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/sge/public" name="sge-public-api" publishSwagger="/_system/governance/swagger_files/sge-swagger.yaml" xmlns="http://ws.apache.org/ns/synapse">
+
+  <!-- codigos economicos gastos -->
+  <resource methods="GET" uri-template="/codigos-economicos-gastos/{id}">
+    <inSequence>
+      <sequence key="sge-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="sge-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+</api>

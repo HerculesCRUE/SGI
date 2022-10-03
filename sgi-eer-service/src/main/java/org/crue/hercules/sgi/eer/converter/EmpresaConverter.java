@@ -26,8 +26,7 @@ public class EmpresaConverter {
   }
 
   public EmpresaOutput convert(Empresa entity) {
-    EmpresaOutput empresaOutput = modelMapper.map(entity, EmpresaOutput.class);
-    return empresaOutput;
+    return modelMapper.map(entity, EmpresaOutput.class);
   }
 
   public Page<EmpresaOutput> convert(Page<Empresa> page) {

@@ -1,38 +1,38 @@
 package org.crue.hercules.sgi.prc.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
-import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
-import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.prc.dto.ActividadResumen;
 import org.crue.hercules.sgi.prc.dto.ComiteEditorialResumen;
 import org.crue.hercules.sgi.prc.dto.CongresoResumen;
 import org.crue.hercules.sgi.prc.dto.DireccionTesisResumen;
 import org.crue.hercules.sgi.prc.dto.ObraArtisticaResumen;
 import org.crue.hercules.sgi.prc.dto.PublicacionResumen;
-import org.crue.hercules.sgi.prc.dto.csp.GrupoDto;
 import org.crue.hercules.sgi.prc.exceptions.ProduccionCientificaDataErrorException;
 import org.crue.hercules.sgi.prc.exceptions.ProduccionCientificaNotFoundException;
 import org.crue.hercules.sgi.prc.exceptions.ProduccionCientificaNotUpdatableException;
-import org.crue.hercules.sgi.prc.exceptions.UserNotAuthorizedToAccessProduccionCientificaException;
 import org.crue.hercules.sgi.prc.model.AutorGrupo;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica.TipoEstadoProduccion;
 import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
 import org.crue.hercules.sgi.prc.repository.ProduccionCientificaRepository;
+import org.crue.hercules.sgi.prc.repository.predicate.ActividadPredicateResolver;
+import org.crue.hercules.sgi.prc.repository.predicate.ComiteEditorialPredicateResolver;
+import org.crue.hercules.sgi.prc.repository.predicate.CongresoPredicateResolver;
+import org.crue.hercules.sgi.prc.repository.predicate.DireccionTesisPredicateResolver;
+import org.crue.hercules.sgi.prc.repository.predicate.ObraArtisticaPredicateResolver;
+import org.crue.hercules.sgi.prc.repository.predicate.ProduccionCientificaPredicateResolver;
+import org.crue.hercules.sgi.prc.repository.predicate.PublicacionPredicateResolver;
 import org.crue.hercules.sgi.prc.repository.specification.ProduccionCientificaSpecifications;
-import org.crue.hercules.sgi.prc.service.sgi.SgiApiCspService;
+import org.crue.hercules.sgi.prc.util.AssertHelper;
+import org.crue.hercules.sgi.prc.util.ProduccionCientificaAuthorityHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.extern.slf4j.Slf4j;
@@ -48,57 +48,62 @@ public class ProduccionCientificaService {
 
   private final ProduccionCientificaRepository repository;
   private final EstadoProduccionCientificaService estadoProduccionCientificaService;
-  private final SgiApiCspService sgiApiCspService;
   private final AutorGrupoService autorGrupoService;
+  private final ProduccionCientificaAuthorityHelper authorityHelper;
 
   public ProduccionCientificaService(
       ProduccionCientificaRepository produccionCientificaRepository,
       EstadoProduccionCientificaService estadoProduccionCientificaService,
-      SgiApiCspService sgiApiCspService,
-      AutorGrupoService autorGrupoService) {
+      AutorGrupoService autorGrupoService,
+      ProduccionCientificaAuthorityHelper authorityHelper) {
     this.repository = produccionCientificaRepository;
     this.estadoProduccionCientificaService = estadoProduccionCientificaService;
-    this.sgiApiCspService = sgiApiCspService;
     this.autorGrupoService = autorGrupoService;
+    this.authorityHelper = authorityHelper;
   }
 
   /**
    * Recupera todas las {@link PublicacionResumen} con su
    * título, fecha y tipo de producción
    * 
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query                la información del filtro.
+   * @param pageable             la información de la paginación.
+   * @param filterByInvestigador <code>true</code> para filtrar por el usuario
+   *                             actual, <code>false</code> para obtener todas las
+   *                             que cumplan el filtro <b>query</b>
    * @return Listado paginado de {@link PublicacionResumen}
    */
-  public Page<PublicacionResumen> findAllPublicaciones(String query, Pageable pageable) {
-    log.debug("findAllPublicaciones(String query, Pageable pageable) - start");
-    if (isInvestigador()) {
-      log.debug("findAllPublicaciones(String query, Pageable pageable) - end");
-      return repository.findAllPublicaciones(createInvestigadorFilter(), query,
-          pageable);
-    }
-    log.debug("findAllPublicaciones(String query, Pageable pageable) - end");
-    return repository.findAllPublicaciones(null, query, pageable);
+  public Page<PublicacionResumen> findAllPublicaciones(String query, Pageable pageable, boolean filterByInvestigador) {
+    log.debug("findAllPublicaciones(String query, Pageable pageable, boolean filterByInvestigador) - start");
+
+    Specification<ProduccionCientifica> specs = buildSpecifications(query, filterByInvestigador,
+        PublicacionPredicateResolver.getInstance());
+
+    log.debug("findAllPublicaciones(String query, Pageable pageable, boolean filterByInvestigador) - end");
+    return repository.findAllPublicaciones(specs, pageable);
   }
 
   /**
    * Recupera todas las entidades {@link ComiteEditorialResumen} paginadas y/o
    * filtradas
    * 
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query                la información del filtro.
+   * @param pageable             la información de la paginación.
+   * @param filterByInvestigador <code>true</code> para filtrar por el usuario
+   *                             actual, <code>false</code> para obtener todas las
+   *                             que cumplan el filtro <b>query</b>
    * @return Listado de entidades {@link ComiteEditorialResumen} paginadas y/o
    *         filtradas.
    */
-  public Page<ComiteEditorialResumen> findAllComitesEditoriales(String query, Pageable pageable) {
-    log.debug("findAllComitesEditoriales(String query, Pageable pageable) - start");
-    if (isInvestigador()) {
-      log.debug("findAllComitesEditoriales(String query, Pageable pageable) - end");
-      return repository.findAllComitesEditoriales(createInvestigadorFilter(), query,
-          pageable);
-    }
-    Page<ComiteEditorialResumen> returnValue = repository.findAllComitesEditoriales(null, query, pageable);
-    log.debug("findAllComitesEditoriales(String query, Pageable pageable) - end");
+  public Page<ComiteEditorialResumen> findAllComitesEditoriales(String query, Pageable pageable,
+      boolean filterByInvestigador) {
+    log.debug("findAllComitesEditoriales(String query, Pageable pageable, boolean filterByInvestigador) - start");
+
+    Specification<ProduccionCientifica> specs = buildSpecifications(query, filterByInvestigador,
+        ComiteEditorialPredicateResolver.getInstance());
+
+    Page<ComiteEditorialResumen> returnValue = repository.findAllComitesEditoriales(specs, pageable);
+    log.debug("findAllComitesEditoriales(String query, Pageable pageable, boolean filterByInvestigador) - end");
     return returnValue;
   }
 
@@ -106,20 +111,22 @@ public class ProduccionCientificaService {
    * Recupera todas las entidades {@link CongresoResumen} paginadas y/o
    * filtradas
    * 
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query                la información del filtro.
+   * @param pageable             la información de la paginación.
+   * @param filterByInvestigador <code>true</code> para filtrar por el usuario
+   *                             actual, <code>false</code> para obtener todas las
+   *                             que cumplan el filtro <b>query</b>
    * @return Listado de entidades {@link CongresoResumen} paginadas y/o
    *         filtradas.
    */
-  public Page<CongresoResumen> findAllCongresos(String query, Pageable pageable) {
-    log.debug("findAllCongresos(String query, Pageable pageable) - start");
-    if (isInvestigador()) {
-      log.debug("findAllCongresos(String query, Pageable pageable) - end");
-      return repository.findAllCongresos(createInvestigadorFilter(), query,
-          pageable);
-    }
-    Page<CongresoResumen> returnValue = repository.findAllCongresos(null, query, pageable);
-    log.debug("findAllCongresos(String query, Pageable pageable) - end");
+  public Page<CongresoResumen> findAllCongresos(String query, Pageable pageable, boolean filterByInvestigador) {
+    log.debug("findAllCongresos(String query, Pageable pageable, boolean filterByInvestigador) - start");
+
+    Specification<ProduccionCientifica> specs = buildSpecifications(query, filterByInvestigador,
+        CongresoPredicateResolver.getInstance());
+
+    Page<CongresoResumen> returnValue = repository.findAllCongresos(specs, pageable);
+    log.debug("findAllCongresos(String query, Pageable pageable, boolean filterByInvestigador) - end");
     return returnValue;
   }
 
@@ -127,20 +134,23 @@ public class ProduccionCientificaService {
    * Recupera todas las entidades {@link ObraArtisticaResumen} paginadas y/o
    * filtradas
    * 
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query                la información del filtro.
+   * @param pageable             la información de la paginación.
+   * @param filterByInvestigador <code>true</code> para filtrar por el usuario
+   *                             actual, <code>false</code> para obtener todas las
+   *                             que cumplan el filtro <b>query</b>
    * @return Listado de entidades {@link ObraArtisticaResumen} paginadas y/o
    *         filtradas.
    */
-  public Page<ObraArtisticaResumen> findAllObrasArtisticas(String query, Pageable pageable) {
-    log.debug("findAllObrasArtisticas(String query, Pageable pageable) - start");
-    if (isInvestigador()) {
-      log.debug("findAllObrasArtisticas(String query, Pageable pageable) - end");
-      return repository.findAllObrasArtisticas(createInvestigadorFilter(), query,
-          pageable);
-    }
-    Page<ObraArtisticaResumen> returnValue = repository.findAllObrasArtisticas(null, query, pageable);
-    log.debug("findAllObrasArtisticas(String query, Pageable pageable) - end");
+  public Page<ObraArtisticaResumen> findAllObrasArtisticas(String query, Pageable pageable,
+      boolean filterByInvestigador) {
+    log.debug("findAllObrasArtisticas(String query, Pageable pageable, boolean filterByInvestigador) - start");
+
+    Specification<ProduccionCientifica> specs = buildSpecifications(query, filterByInvestigador,
+        ObraArtisticaPredicateResolver.getInstance());
+
+    Page<ObraArtisticaResumen> returnValue = repository.findAllObrasArtisticas(specs, pageable);
+    log.debug("findAllObrasArtisticas(String query, Pageable pageable, boolean filterByInvestigador) - end");
     return returnValue;
   }
 
@@ -148,20 +158,22 @@ public class ProduccionCientificaService {
    * Recupera todas las entidades {@link ActividadResumen} paginadas y/o
    * filtradas
    * 
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query                la información del filtro.
+   * @param pageable             la información de la paginación.
+   * @param filterByInvestigador <code>true</code> para filtrar por el usuario
+   *                             actual, <code>false</code> para obtener todas las
+   *                             que cumplan el filtro <b>query</b>
    * @return Listado de entidades {@link ActividadResumen} paginadas y/o
    *         filtradas.
    */
-  public Page<ActividadResumen> findAllActividades(String query, Pageable pageable) {
-    log.debug("findAllActividades(String query, Pageable pageable) - start");
-    if (isInvestigador()) {
-      log.debug("findAllActividades(String query, Pageable pageable) - end");
-      return repository.findAllActividades(createInvestigadorFilter(), query,
-          pageable);
-    }
-    Page<ActividadResumen> returnValue = repository.findAllActividades(null, query, pageable);
-    log.debug("findAllActividades(String query, Pageable pageable) - end");
+  public Page<ActividadResumen> findAllActividades(String query, Pageable pageable, boolean filterByInvestigador) {
+    log.debug("findAllActividades(String query, Pageable pageable, boolean filterByInvestigador) - start");
+
+    Specification<ProduccionCientifica> specs = buildSpecifications(query, filterByInvestigador,
+        ActividadPredicateResolver.getInstance());
+
+    Page<ActividadResumen> returnValue = repository.findAllActividades(specs, pageable);
+    log.debug("findAllActividades(String query, Pageable pageable, boolean filterByInvestigador) - end");
     return returnValue;
   }
 
@@ -169,43 +181,22 @@ public class ProduccionCientificaService {
    * Recupera todas las entidades {@link DireccionTesisResumen} paginadas y/o
    * filtradas
    * 
-   * @param query    la información del filtro.
-   * @param pageable la información de la paginación.
+   * @param query                la información del filtro.
+   * @param pageable             la información de la paginación.
+   * @param filterByInvestigador <code>true</code> para filtrar por el usuario
+   *                             actual, <code>false</code> para obtener todas las
+   *                             que cumplan el filtro <b>query</b>
    * @return Listado de entidades {@link DireccionTesisResumen} paginadas y/o
    *         filtradas.
    */
-  public Page<DireccionTesisResumen> findAllDireccionesTesis(String query, Pageable pageable) {
-    log.debug("findAllDireccionesTesis(String query, Pageable pageable) - start");
-    if (isInvestigador()) {
-      log.debug("findAllDireccionesTesis(String query, Pageable pageable) - end");
-      return repository.findAllDireccionesTesis(createInvestigadorFilter(), query,
-          pageable);
-    }
-    Page<DireccionTesisResumen> returnValue = repository.findAllDireccionesTesis(null, query, pageable);
-    log.debug("findAllDireccionesTesis(String query, Pageable pageable) - end");
+  public Page<DireccionTesisResumen> findAllDireccionesTesis(String query, Pageable pageable,
+      boolean filterByInvestigador) {
+    log.debug("findAllDireccionesTesis(String query, Pageable pageable, boolean filterByInvestigador) - start");
+    Specification<ProduccionCientifica> specs = buildSpecifications(query, filterByInvestigador,
+        DireccionTesisPredicateResolver.getInstance());
+    Page<DireccionTesisResumen> returnValue = repository.findAllDireccionesTesis(specs, pageable);
+    log.debug("findAllDireccionesTesis(String query, Pageable pageable, boolean filterByInvestigador) - end");
     return returnValue;
-  }
-
-  private Specification<ProduccionCientifica> createInvestigadorFilter() {
-    List<Long> gruposRef = sgiApiCspService.findAllGruposByPersonaRef(this.getUserPersonaRef()).stream()
-        .map(GrupoDto::getId).collect(Collectors.toList());
-    return createInvestigadorFilter(gruposRef);
-  }
-
-  private Specification<ProduccionCientifica> createInvestigadorFilter(List<Long> gruposRef) {
-    return ProduccionCientificaSpecifications.byExistsSubqueryInGrupoRef(gruposRef);
-  }
-
-  /**
-   * Recupera el personaRef del usuario actual
-   */
-  private String getUserPersonaRef() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    return authentication.getName();
-  }
-
-  private boolean isInvestigador() {
-    return SgiSecurityContextHolder.hasAuthority("PRC-VAL-INV-ER");
   }
 
   /**
@@ -234,9 +225,42 @@ public class ProduccionCientificaService {
    */
   public ProduccionCientifica findById(Long id) {
     log.debug("findById(Long id)  - start");
+    authorityHelper.checkUserHasAuthorityViewProduccionCientifica(id);
     final ProduccionCientifica returnValue = repository.findById(id)
         .orElseThrow(() -> new ProduccionCientificaNotFoundException(id.toString()));
     log.debug("findById(Long id)  - end");
+    return returnValue;
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si la
+   * {@link ProduccionCientifica} con el id indicado puede ser consultada por el
+   * usuario actual.
+   * 
+   * @param id Identificador de la {@link ProduccionCientifica}
+   * @return <code>true</code> si el usuario esta autorizado para ver la
+   *         {@link ProduccionCientifica}, <code>false</code> en caso contrario
+   */
+  public boolean accesibleByInvestigador(Long id) {
+    log.debug("accesible(Long id) - start");
+    boolean returnValue = authorityHelper.hasAuthorityViewProduccionCientificaInvestigador(id);
+    log.debug("accesible(Long id) - end");
+    return returnValue;
+
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si la
+   * {@link ProduccionCientifica} con el id indicado puede ser editada por un
+   * investigador.
+   * 
+   * @param id de la {@link ProduccionCientifica}
+   * @return true si es editable o false en caso contrario
+   */
+  public boolean modificableByInvestigador(Long id) {
+    log.debug("modificableByInvestigador(Long id) - start");
+    boolean returnValue = authorityHelper.hasAuthorityModifyProduccionCientificaInvestigador(id);
+    log.debug("modificableByInvestigador(Long id) - end");
     return returnValue;
   }
 
@@ -250,30 +274,11 @@ public class ProduccionCientificaService {
    * @return la entidad {@link ProduccionCientifica} actualizada.
    */
   @Transactional
-  public ProduccionCientifica cambiarEstado(Long id, TipoEstadoProduccion tipoEstadoProduccionToUpdate,
-      String comentario) {
-    log.debug("cambiarEstado(Long id, TipoEstadoProduccion tipoEstadoProduccionToUpdate, String comentario) - start");
-    Assert.notNull(id,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(ProduccionCientifica.class)).build());
-
-    ProduccionCientifica returnValue;
-    if (isInvestigador()) {
-      returnValue = cambiarEstadoInvestigador(id, tipoEstadoProduccionToUpdate, comentario);
-    } else {
-      returnValue = cambiarEstadoGestor(id, tipoEstadoProduccionToUpdate, comentario);
-    }
-
-    log.debug("cambiarEstado(Long id, TipoEstadoProduccion tipoEstadoProduccionToUpdate, String comentario) - end");
-    return returnValue;
-  }
-
-  private ProduccionCientifica cambiarEstadoGestor(Long id, TipoEstadoProduccion tipoEstadoProduccionToUpdate,
+  public ProduccionCientifica cambiarEstadoGestor(Long id, TipoEstadoProduccion tipoEstadoProduccionToUpdate,
       String comentario) {
     log.debug(
         "cambiarEstadoGestor(Long id, TipoEstadoProduccion tipoEstadoProduccionToUpdate, String comentario) - start");
+    AssertHelper.idNotNull(id, ProduccionCientifica.class);
 
     return repository.findById(id).map(produccionCientifica -> {
       checkTipoEstadoProduccionNoUpdatable(produccionCientifica.getEstado().getEstado());
@@ -292,16 +297,27 @@ public class ProduccionCientificaService {
     }).orElseThrow(() -> new ProduccionCientificaNotFoundException(id.toString()));
   }
 
-  private ProduccionCientifica cambiarEstadoInvestigador(Long id, TipoEstadoProduccion tipoEstadoProduccionToUpdate,
+  /**
+   * Cambia el estado de la entidad {@link ProduccionCientifica}.
+   *
+   * @param id                           el id de la entidad
+   *                                     {@link ProduccionCientifica}.
+   * @param tipoEstadoProduccionToUpdate estado al que se va a actualizar.
+   * @param comentario                   motivo del rechazo.
+   * @return la entidad {@link ProduccionCientifica} actualizada.
+   */
+  @Transactional
+  public ProduccionCientifica cambiarEstadoInvestigador(Long id, TipoEstadoProduccion tipoEstadoProduccionToUpdate,
       String comentario) {
     log.debug(
         "cambiarEstadoInvestigador(Long id, TipoEstadoProduccion tipoEstadoProduccionToUpdate, String comentario) - start");
+    AssertHelper.idNotNull(id, ProduccionCientifica.class);
 
     // Obtener los grupos autorizados, es decir, en los que el investigador es IP o
     // persona autorizada
-    List<Long> gruposRefAutorizados = sgiApiCspService.findAllGruposByPersonaRef(this.getUserPersonaRef()).stream()
-        .map(GrupoDto::getId).collect(Collectors.toList());
-    checkAccesibleByInvestigador(id, gruposRefAutorizados);
+    List<Long> gruposRefAutorizados = authorityHelper.getUserGrupos();
+
+    authorityHelper.checkUserHasAuthorityViewProduccionCientificaInvestigador(id);
 
     return repository.findById(id).map(produccionCientifica -> {
       // Si está en un estado final no se puede cambiar el estado
@@ -379,89 +395,24 @@ public class ProduccionCientificaService {
     }
   }
 
-  /**
-   * Hace las comprobaciones necesarias para determinar si la
-   * {@link ProduccionCientifica} con el id indicado puede ser consultada por un
-   * investigador.
-   * 
-   * @param id de la {@link ProduccionCientifica}
-   * @return true si si puede consultarla o false en caso contrario
-   */
-  public boolean accesibleByInvestigador(Long id) {
-    log.debug("editableByInvestigador(Long id) - start");
-    if (isInvestigador()) {
-      final Specification<ProduccionCientifica> spec = ProduccionCientificaSpecifications.byId(id)
-          .and(createInvestigadorFilter());
-      log.debug("editableByInvestigador(Long id) - end");
-
-      return repository.count(spec) > 0;
+  private Specification<ProduccionCientifica> buildSpecifications(String query, boolean filterByInvestigador,
+      ProduccionCientificaPredicateResolver predicateResolver) {
+    Specification<ProduccionCientifica> specs = null;
+    if (StringUtils.hasText(query)) {
+      specs = SgiRSQLJPASupport.toSpecification(query, predicateResolver);
     }
 
-    return Boolean.FALSE;
-  }
-
-  /**
-   * Hace las comprobaciones necesarias para determinar si la
-   * {@link ProduccionCientifica} con el id indicado puede ser editada por un
-   * investigador.
-   * 
-   * @param id de la {@link ProduccionCientifica}
-   * @return true si es editable o false en caso contrario
-   */
-  public boolean editableByInvestigador(Long id) {
-    log.debug("editableByInvestigador(Long id) - start");
-    if (isInvestigador()) {
-      List<Long> gruposRefAutorizados = sgiApiCspService.findAllGruposByPersonaRef(this.getUserPersonaRef()).stream()
-          .map(GrupoDto::getId).collect(Collectors.toList());
-      final Specification<ProduccionCientifica> spec = ProduccionCientificaSpecifications.byId(id)
-          .and(ProduccionCientificaSpecifications.isInEstadoEditable())
-          .and(ProduccionCientificaSpecifications
-              .byAutorGrupoEstadoAndAutorGrupoInGrupoRef(TipoEstadoProduccion.PENDIENTE, gruposRefAutorizados));
-      log.debug("editableByInvestigador(Long id) - end");
-
-      return repository.count(spec) > 0;
-    }
-
-    return Boolean.FALSE;
-  }
-
-  /**
-   * Comprueba si la {@link ProduccionCientifica} es accesible por el
-   * investigador, en caso contrario lanza una exception.
-   * 
-   * @param id de la {@link ProduccionCientifica}
-   */
-  public void checkAccesibleByInvestigador(Long id) {
-    log.debug("checkEditableByInvestigador(Long id) - start");
-    if (isInvestigador()) {
-      final Specification<ProduccionCientifica> spec = ProduccionCientificaSpecifications.byId(id)
-          .and(createInvestigadorFilter());
-      if (repository.count(spec) == 0) {
-        log.debug("checkEditableByInvestigador(Long id) - end");
-        throw new UserNotAuthorizedToAccessProduccionCientificaException();
-
+    if (filterByInvestigador) {
+      Specification<ProduccionCientifica> existsInGrupoRef = ProduccionCientificaSpecifications
+          .byExistsInGrupoRef(authorityHelper.getUserGrupos());
+      if (specs == null) {
+        specs = existsInGrupoRef;
+      } else {
+        specs = specs.and(existsInGrupoRef);
       }
     }
-    log.debug("checkEditableByInvestigador(Long id) - end");
+
+    return specs;
   }
 
-  /**
-   * Comprueba si la {@link ProduccionCientifica} es accesible por el
-   * investigador, en caso contrario lanza una exception.
-   * 
-   * @param id        de la {@link ProduccionCientifica}
-   * @param gruposRef lista de ids de los grupos en los que el investigador es
-   *                  investigador principal o persona autorizada
-   */
-  private void checkAccesibleByInvestigador(Long id, List<Long> gruposRef) {
-    log.debug("checkEditableByInvestigador(Long id, List<Long> gruposRef) - start");
-    final Specification<ProduccionCientifica> spec = ProduccionCientificaSpecifications.byId(id)
-        .and(createInvestigadorFilter(gruposRef));
-    if (repository.count(spec) == 0) {
-      log.debug("checkEditableByInvestigador(Long id, List<Long> gruposRef) - end");
-      throw new UserNotAuthorizedToAccessProduccionCientificaException();
-
-    }
-    log.debug("checkEditableByInvestigador(Long id, List<Long> gruposRef) - end");
-  }
 }

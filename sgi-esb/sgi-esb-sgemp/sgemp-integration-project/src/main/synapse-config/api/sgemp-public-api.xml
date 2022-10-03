@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/sgemp/public" name="sgemp-public-api" xmlns="http://ws.apache.org/ns/synapse">
+
+  <!-- empresas -->
+  <resource methods="GET" uri-template="/empresas/{id}">
+    <inSequence>
+      <sequence key="sgemp-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="sgemp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+</api>

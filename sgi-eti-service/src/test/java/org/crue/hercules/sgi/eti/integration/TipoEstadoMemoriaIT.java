@@ -139,7 +139,7 @@ public class TipoEstadoMemoriaIT extends BaseIT {
     // correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoEstadoMemoria> tipoEstadoMemorias = response.getBody();
-    Assertions.assertThat(tipoEstadoMemorias.size()).isEqualTo(5);
+    Assertions.assertThat(tipoEstadoMemorias).hasSize(5);
     Assertions.assertThat(response.getHeaders().getFirst("X-Page")).isEqualTo("1");
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("21");
@@ -173,7 +173,7 @@ public class TipoEstadoMemoriaIT extends BaseIT {
     // correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoEstadoMemoria> tipoEstadoMemorias = response.getBody();
-    Assertions.assertThat(tipoEstadoMemorias.size()).isEqualTo(1);
+    Assertions.assertThat(tipoEstadoMemorias).hasSize(1);
     Assertions.assertThat(tipoEstadoMemorias.get(0).getId()).isEqualTo(id);
     Assertions.assertThat(tipoEstadoMemorias.get(0).getNombre()).startsWith("En evaluación");
   }
@@ -195,8 +195,12 @@ public class TipoEstadoMemoriaIT extends BaseIT {
     // correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoEstadoMemoria> tipoEstadoMemorias = response.getBody();
-    Assertions.assertThat(tipoEstadoMemorias.size()).isEqualTo(21);
+    Assertions.assertThat(tipoEstadoMemorias).hasSize(21);
 
+    checkTiposEstadoMemoriaAreCorrect(tipoEstadoMemorias);
+  }
+
+  private void checkTiposEstadoMemoriaAreCorrect(final List<TipoEstadoMemoria> tipoEstadoMemorias) {
     Assertions.assertThat(tipoEstadoMemorias.get(0).getId()).isEqualTo(15);
     Assertions.assertThat(tipoEstadoMemorias.get(0).getNombre()).isEqualTo("Solicitud modificación");
     Assertions.assertThat(tipoEstadoMemorias.get(1).getId()).isEqualTo(7);
@@ -265,7 +269,7 @@ public class TipoEstadoMemoriaIT extends BaseIT {
     // correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoEstadoMemoria> tipoEstadoMemorias = response.getBody();
-    Assertions.assertThat(tipoEstadoMemorias.size()).isEqualTo(3);
+    Assertions.assertThat(tipoEstadoMemorias).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).isEqualTo("3");

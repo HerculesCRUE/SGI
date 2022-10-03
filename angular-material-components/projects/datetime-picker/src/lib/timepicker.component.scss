@@ -1,0 +1,49 @@
+$fontSizeIcon: 24px;
+$sizeButtonMeridian: 36px;
+
+.ngx-mat-timepicker {
+  font-size: 13px;
+  form {
+    min-width: 90px;
+    .ngx-mat-timepicker-table {
+      .ngx-mat-timepicker-tbody {
+        tr {
+          td {
+            text-align: center;
+
+            &.ngx-mat-timepicker-spacer {
+              font-weight: bold;
+            }
+            &.ngx-mat-timepicker-meridian {
+              .mat-button {
+                min-width: 64px;
+                line-height: $sizeButtonMeridian;
+                border-radius: 4px;
+                min-width: 0;
+                border-radius: 50%;
+                width: $sizeButtonMeridian;
+                height: $sizeButtonMeridian;
+                padding: 0;
+                flex-shrink: 0;
+              }
+            }
+
+            .mat-icon-button {
+              height: $fontSizeIcon;
+              width: $fontSizeIcon;
+              line-height: $fontSizeIcon;
+              .mat-icon {
+                font-size: $fontSizeIcon;
+              }
+            }
+            .mat-form-field {
+              width: 20px;
+              max-width: 20px;
+              text-align: center;
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -365,7 +365,7 @@ export class PeriodoTitularidadFragment extends Fragment {
                   titulares.forEach(titular => {
                     titular.setCreated();
                     delete titular.value.id;
-                    titular.value.periodoTitularidad = elem.value;
+                    titular.value.periodoTitularidad = elem?.value;
                   });
                   return titulares;
                 })

@@ -4,6 +4,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentGuard } from '@core/guards/detail-form.guard';
 import { ActionGuard } from '@core/guards/master-form.guard';
 import { MSG_PARAMS } from '@core/i18n';
+import { Module } from '@core/module';
 import { SgiRoutes } from '@core/route';
 import { ROUTE_NAMES } from '@core/route.names';
 import { SgiAuthGuard } from '@sgi/framework/auth';
@@ -41,6 +42,7 @@ const routes: SgiRoutes = [
       title: CONVOCATORIA_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
       hasAnyAuthorityForAnyUO: ['CSP-CON-V', 'CSP-CON-C', 'CSP-CON-E', 'CSP-CON-B', 'CSP-CON-R'],
+      module: Module.CSP
     }
   },
   {
@@ -53,7 +55,8 @@ const routes: SgiRoutes = [
       titleParams: {
         entity: CONVOCATORIA_KEY, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR,
       },
-      hasAuthorityForAnyUO: 'CSP-CON-C'
+      hasAuthorityForAnyUO: 'CSP-CON-C',
+      module: Module.CSP
     },
     children: [
       {
@@ -142,7 +145,8 @@ const routes: SgiRoutes = [
     data: {
       title: CONVOCATORIA_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
-      hasAnyAuthorityForAnyUO: ['CSP-CON-V', 'CSP-CON-E']
+      hasAnyAuthorityForAnyUO: ['CSP-CON-V', 'CSP-CON-E'],
+      module: Module.CSP
     },
     children: [
       {
@@ -232,7 +236,8 @@ const routes: SgiRoutes = [
     canActivate: [SgiAuthGuard],
     data: {
       title: CONVOCATORIA_KEY,
-      titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR
+      titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
+      module: Module.CSP
     },
     resolve: {
       [CONVOCATORIA_DATA_KEY]: ConvocatoriaDataResolver
@@ -247,7 +252,8 @@ const routes: SgiRoutes = [
         canActivate: [SgiAuthGuard],
         data: {
           title: CONVOCATORIA_ELEGIBILIDAD_KEY,
-          permitido: true
+          permitido: true,
+          module: Module.CSP
         }
       },
       {
@@ -259,7 +265,8 @@ const routes: SgiRoutes = [
         canActivate: [SgiAuthGuard],
         data: {
           title: CONVOCATORIA_ELEGIBILIDAD_KEY,
-          permitido: false
+          permitido: false,
+          module: Module.CSP
         }
       }
     ]

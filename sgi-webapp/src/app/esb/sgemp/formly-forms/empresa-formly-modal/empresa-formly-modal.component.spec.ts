@@ -8,6 +8,7 @@ import TestUtils from '@core/utils/test-utils';
 import { FormlyFormsModule } from '@formly-forms/formly-forms.module';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SharedFormlyFormsModule } from 'src/app/esb/shared/formly-forms/shared-formly-forms.module';
 import { EmpresaFormlyModalComponent, IEmpresaFormlyData } from './empresa-formly-modal.component';
 
 describe('EmpresaFormlyModalComponent', () => {
@@ -26,12 +27,12 @@ describe('EmpresaFormlyModalComponent', () => {
         LoggerTestingModule,
         TestUtils.getIdiomas(),
         RouterTestingModule,
-        FormlyFormsModule
-
+        FormlyFormsModule,
+        SharedFormlyFormsModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
-        { provide: MatDialogRef, useValue: {} as IEmpresaFormlyData },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogActionMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: {} as IEmpresaFormlyData },
 
       ]

@@ -225,7 +225,7 @@ class ProyectoPeriodoJustificacionIT extends BaseIT {
     newIdentificadorJustificacion.setIdentificadorJustificacion("11/1111");
 
     final ResponseEntity<ProyectoPeriodoJustificacionOutput> response = restTemplate.exchange(
-        CONTROLLER_BASE_PATH + PATH_IDENTIFICADOR_JUSTIFICACION, HttpMethod.PATCH,
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_IDENTIFICADOR_JUSTIFICACION, HttpMethod.PATCH,
         buildRequest(null, newIdentificadorJustificacion, roles),
         ProyectoPeriodoJustificacionOutput.class, id);
 
@@ -239,6 +239,45 @@ class ProyectoPeriodoJustificacionIT extends BaseIT {
     Assertions.assertThat(proyectoPeriodoJustificacionUpdated.getIdentificadorJustificacion())
         .as("getIdentificadorJustificacion()")
         .isEqualTo(newIdentificadorJustificacion.getIdentificadorJustificacion());
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off    
+    "classpath:scripts/configuracion.sql",
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/estado_proyecto.sql",
+    "classpath:scripts/contexto_proyecto.sql",
+    "classpath:scripts/proyecto_periodo_justificacion.sql"
+    // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findByIdentificadorJustificacion_ReturnsProyectoPeriodoJustificacion() throws Exception {
+    String roles = "CSP-SJUS-E";
+    String identificadorJustificacion = "11/1111";
+
+    // when: find Convocatoria
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_IDENTIFICADOR_JUSTIFICACION)
+        .queryParam("identificadorJustificacion", identificadorJustificacion)
+        .build().toUri();
+
+    final ResponseEntity<ProyectoPeriodoJustificacionOutput> response = restTemplate.exchange(
+        uri, HttpMethod.GET,
+        buildRequest(null, null, roles),
+        ProyectoPeriodoJustificacionOutput.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    ProyectoPeriodoJustificacionOutput proyectoPeriodoJustificacionFound = response.getBody();
+    Assertions.assertThat(proyectoPeriodoJustificacionFound.getIdentificadorJustificacion())
+        .as("getIdentificadorJustificacion()").isEqualTo(identificadorJustificacion);
   }
 
   private ProyectoPeriodoJustificacionInput buildMockProyectoPeriodoJusitificacionInput(Long id) {

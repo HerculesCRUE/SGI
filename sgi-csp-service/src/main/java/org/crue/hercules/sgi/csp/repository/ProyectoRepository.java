@@ -51,7 +51,7 @@ public interface ProyectoRepository
    * @param convocatoriaId id de la {@link Convocatoria}
    * @return true si existe, false si no existe.
    */
-  boolean existsByConvocatoriaId(Long convocatoriaId);
+  boolean existsByConvocatoriaIdAndActivoTrue(Long convocatoriaId);
 
   /**
    * Devuelve la lista de {@link Proyecto}s cuyo identificador est&aacute; en la

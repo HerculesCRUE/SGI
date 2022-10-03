@@ -39,8 +39,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SgiApiComService extends SgiApiBaseService {
 
+  private static final String PATH_SEPARATOR = "/";
   private static final String DATA = "_DATA";
-  private static final String PATH_EMAILS = "/emails";
+  private static final String PATH_EMAILS = PATH_SEPARATOR + "emails";
 
   private static final String TEMPLATE_GENERIC_EMAIL_TEXT_NAME = "GENERIC_EMAIL_TEXT";
   private static final String TEMPLATE_GENERIC_EMAIL_TEXT_PARAM_CONTENT = "GENERIC_CONTENT_TEXT";
@@ -122,7 +123,7 @@ public class SgiApiComService extends SgiApiBaseService {
     Assert.noNullElements(recipients, "The Recipients list must not contain null elements");
 
     ServiceType serviceType = ServiceType.COM;
-    String relativeUrl = "/emails";
+    String relativeUrl = PATH_EMAILS;
     HttpMethod httpMethod = HttpMethod.POST;
     String mergedURL = buildUri(serviceType, relativeUrl);
 
@@ -222,7 +223,7 @@ public class SgiApiComService extends SgiApiBaseService {
         "createComunicadoConvocatoriaReunionEti(ConvocatoriaReunion convocatoriaReunion, List<Recipient> recipients) - start");
 
     ServiceType serviceType = ServiceType.COM;
-    String relativeUrl = "/emails";
+    String relativeUrl = PATH_EMAILS;
     HttpMethod httpMethod = HttpMethod.POST;
     String mergedURL = buildUri(serviceType, relativeUrl);
 

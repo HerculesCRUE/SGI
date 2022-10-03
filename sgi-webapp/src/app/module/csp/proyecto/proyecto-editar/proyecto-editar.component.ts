@@ -6,6 +6,7 @@ import { ActionComponent } from '@core/component/action.component';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { Estado, IEstadoProyecto } from '@core/models/csp/estado-proyecto';
+import { Module } from '@core/module';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -39,6 +40,16 @@ export class ProyectoEditarComponent extends ActionComponent implements OnInit {
   textoCambioEstado = MSG_BUTTON_CAMBIO_ESTADO;
 
   disableCambioEstado = false;
+  isInvestigador = false;
+
+  get isModuleINV(): boolean {
+    return this.route.snapshot.data.module === Module.INV;
+  }
+
+  get isModuleCSP(): boolean {
+    return this.route.snapshot.data.module === Module.CSP;
+  }
+
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
@@ -48,7 +59,7 @@ export class ProyectoEditarComponent extends ActionComponent implements OnInit {
     private readonly logger: NGXLogger,
     protected snackBarService: SnackBarService,
     router: Router,
-    route: ActivatedRoute,
+    private route: ActivatedRoute,
     public actionService: ProyectoActionService,
     private matDialog: MatDialog,
     private confirmDialogService: DialogService,
@@ -60,9 +71,11 @@ export class ProyectoEditarComponent extends ActionComponent implements OnInit {
     super.ngOnInit();
     this.setupI18N();
 
+    this.isInvestigador = this.actionService.isInvestigador;
+
     this.subscriptions.push(this.actionService.status$.subscribe(
       status => {
-        this.disableCambioEstado = status.changes || status.errors;
+        this.disableCambioEstado = status.changes || status.errors || this.isInvestigador;
       }
     ));
   }

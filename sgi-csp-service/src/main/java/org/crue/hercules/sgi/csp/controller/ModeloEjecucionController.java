@@ -236,7 +236,7 @@ public class ModeloEjecucionController {
    *         paginadas y filtradas del {@link ModeloEjecucion}.
    */
   @GetMapping("/{id}/modelotipoenlaces")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-E', 'CSP-CON-V', 'CSP-ME-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-E', 'CSP-CON-V', 'CSP-ME-E', 'CSP-CON-INV-V')")
   public ResponseEntity<Page<ModeloTipoEnlace>> findAllModeloTipoEnlaces(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllModeloTipoEnlaces(Long id, String query, Pageable paging) - start");

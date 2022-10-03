@@ -11,6 +11,7 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaAreaTematicaRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaAreaTematicaSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaAreaTematicaService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,12 +33,15 @@ public class ConvocatoriaAreaTematicaServiceImpl implements ConvocatoriaAreaTema
   private final ConvocatoriaAreaTematicaRepository repository;
   private final AreaTematicaRepository areaTematicaRepository;
   private final ConvocatoriaService convocatoriaService;
+  private final ConvocatoriaAuthorityHelper authorityHelper;
 
   public ConvocatoriaAreaTematicaServiceImpl(ConvocatoriaAreaTematicaRepository repository,
-      AreaTematicaRepository areaTematicaRepository, ConvocatoriaService convocatoriaService) {
+      AreaTematicaRepository areaTematicaRepository, ConvocatoriaService convocatoriaService,
+      ConvocatoriaAuthorityHelper authorityHelper) {
     this.repository = repository;
     this.areaTematicaRepository = areaTematicaRepository;
     this.convocatoriaService = convocatoriaService;
+    this.authorityHelper = authorityHelper;
   }
 
   /**
@@ -64,7 +68,10 @@ public class ConvocatoriaAreaTematicaServiceImpl implements ConvocatoriaAreaTema
     // comprobar si convocatoria es modificable
     Assert.isTrue(
         convocatoriaService.isRegistradaConSolicitudesOProyectos(convocatoriaAreaTematica.getConvocatoriaId(), null,
-            new String[] { "CSP-CON-E", "CSP-CON-C" }),
+            new String[] {
+                ConvocatoriaAuthorityHelper.CSP_CON_C,
+                ConvocatoriaAuthorityHelper.CSP_CON_E
+            }),
         "No se puede crear ConvocatoriaAreaTematica. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
 
     convocatoriaAreaTematica
@@ -124,7 +131,7 @@ public class ConvocatoriaAreaTematicaServiceImpl implements ConvocatoriaAreaTema
       // comprobar si convocatoria es modificable
       Assert.isTrue(
           convocatoriaService.isRegistradaConSolicitudesOProyectos(areaTematica.get().getConvocatoriaId(), null,
-              new String[] { "CSP-CON-E" }),
+              new String[] { ConvocatoriaAuthorityHelper.CSP_CON_E }),
           "No se puede eliminar ConvocatoriaAreaTematica. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
     } else {
       throw new ConvocatoriaAreaTematicaNotFoundException(id);
@@ -163,6 +170,8 @@ public class ConvocatoriaAreaTematicaServiceImpl implements ConvocatoriaAreaTema
     log.debug("findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) - start");
     Specification<ConvocatoriaAreaTematica> specs = ConvocatoriaAreaTematicaSpecifications
         .byConvocatoriaId(convocatoriaId).and(SgiRSQLJPASupport.toSpecification(query));
+
+    authorityHelper.checkUserHasAuthorityViewConvocatoria(convocatoriaId);
 
     Page<ConvocatoriaAreaTematica> returnValue = repository.findAll(specs, pageable);
     log.debug("findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) - end");

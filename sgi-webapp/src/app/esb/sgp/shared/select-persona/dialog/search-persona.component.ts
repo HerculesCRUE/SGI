@@ -10,6 +10,7 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IPersona } from '@core/models/sgp/persona';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
+import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestSortDirection } from '@sgi/framework/http';
@@ -20,6 +21,8 @@ import { ACTION_MODAL_MODE } from 'src/app/esb/shared/formly-forms/core/base-for
 import { IPersonaFormlyData, PersonaFormlyModalComponent } from '../../../formly-forms/persona-formly-modal/persona-formly-modal.component';
 
 const TIPO_PERSONA_KEY = marker('sgp.persona');
+const MSG_SAVE_SUCCESS = marker('msg.save.request.entity.success');
+const MSG_UPDATE_SUCCESS = marker('msg.update.request.entity.success');
 
 export interface SearchPersonaModalData extends SearchModalData {
   tipoColectivo: string;
@@ -45,6 +48,8 @@ export class SearchPersonaModalComponent extends DialogCommonComponent implement
   personas$: Observable<IPersona[]> = of();
   isInvestigador: boolean;
   msgParamEntity: {};
+  private textoCrearSuccess: string;
+  private textoUpdateSuccess: string;
 
   get selectionDisableWith() {
     return this._selectionDisableWith;
@@ -54,6 +59,7 @@ export class SearchPersonaModalComponent extends DialogCommonComponent implement
 
   constructor(
     private readonly logger: NGXLogger,
+    private readonly snackBarService: SnackBarService,
     public dialogRef: MatDialogRef<SearchPersonaModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SearchPersonaModalData,
     private personaService: PersonaService,
@@ -82,6 +88,31 @@ export class SearchPersonaModalComponent extends DialogCommonComponent implement
       TIPO_PERSONA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamEntity = { entity: value });
+
+    this.translate.get(
+      TIPO_PERSONA_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_SAVE_SUCCESS,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.textoCrearSuccess = value);
+
+    this.translate.get(
+      TIPO_PERSONA_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_UPDATE_SUCCESS,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.textoUpdateSuccess = value);
+
   }
 
   ngAfterViewInit(): void {
@@ -202,18 +233,18 @@ export class SearchPersonaModalComponent extends DialogCommonComponent implement
   }
 
   openPersonaCreateModal(): void {
-    this.openPersonaFormlyModal(ACTION_MODAL_MODE.NEW);
+    this.openPersonaFormlyModal(ACTION_MODAL_MODE.NEW, null, this.textoCrearSuccess);
   }
 
   openPersonaEditModal(persona: IPersona): void {
-    this.openPersonaFormlyModal(ACTION_MODAL_MODE.EDIT, persona);
+    this.openPersonaFormlyModal(ACTION_MODAL_MODE.EDIT, persona, this.textoUpdateSuccess);
   }
 
   openPersonaViewModal(persona: IPersona): void {
     this.openPersonaFormlyModal(ACTION_MODAL_MODE.VIEW, persona);
   }
 
-  private openPersonaFormlyModal(modalAction: ACTION_MODAL_MODE, personaItem?: IPersona): void {
+  private openPersonaFormlyModal(modalAction: ACTION_MODAL_MODE, personaItem?: IPersona, textoActionSuccess?: string): void {
     const personaData: IPersonaFormlyData = {
       personaId: personaItem ? personaItem.id : undefined,
       action: modalAction
@@ -229,6 +260,7 @@ export class SearchPersonaModalComponent extends DialogCommonComponent implement
       (persona) => {
         if (persona) {
           this.closeModal(persona);
+          this.snackBarService.showSuccess(textoActionSuccess);
         }
       }
     );

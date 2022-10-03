@@ -5,6 +5,7 @@ import {
 } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IProduccionCientifica } from '@core/models/prc/produccion-cientifica';
+import { Module } from '@core/module';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { ProduccionCientificaService } from '@core/services/prc/produccion-cientifica/produccion-cientifica.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -18,6 +19,7 @@ const MSG_NOT_FOUND = marker('error.load');
 
 export interface IProduccionCientificaData {
   canEdit: boolean;
+  isInvestigador: boolean;
   produccionCientifica: IProduccionCientifica;
 }
 
@@ -43,9 +45,11 @@ export class ProduccionCientificaResolver extends SgiResolverResolver<IProduccio
           throwError('NOT_FOUND');
         }
         return {
-          canEdit: this.authService.hasAuthority('PII-INV-E'),
+          canEdit: this.authService.hasAuthority('PRC-VAL-E'),
+          isInvestigador: false,
           produccionCientifica
         };
       }));
   }
+
 }

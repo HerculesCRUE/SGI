@@ -143,10 +143,12 @@ public class BaremacionInvencionService extends BaremacionCommonService {
     loadPredicates();
   }
 
+  @Override
   protected TipoPuntuacion getTipoPuntuacion() {
     return TipoPuntuacion.INVENCIONES;
   }
 
+  @Override
   protected void loadPredicates() {
     // INVENCION_PATENTE_NACIONAL
     getHmTipoBaremoPredicates().put(TipoBaremo.INVENCION_PATENTE_NACIONAL,
@@ -201,13 +203,7 @@ public class BaremacionInvencionService extends BaremacionCommonService {
     return participacion;
   }
 
-  protected BigDecimal evaluateBaremoModulador(BaremacionInput baremacionInput) {
-    log.debug("evaluateBaremoModulador(baremacionInput) - start");
-
-    log.debug("evaluateBaremoModulador(baremacionInput) - end");
-    return new BigDecimal("1.00");
-  }
-
+  @Override
   protected BigDecimal evaluateBaremoExtra(BaremacionInput baremacionInput) {
     log.debug("evaluateBaremoExtra(baremacionInput) - start");
     BigDecimal puntos = BigDecimal.ZERO;
@@ -267,7 +263,7 @@ public class BaremacionInvencionService extends BaremacionCommonService {
         "true", produccionCientificaId);
   }
 
-  protected boolean hasValorInAnio(CodigoCVN codigoCVN, String stringValue, Long produccionCientificaId) {
+  private boolean hasValorInAnio(CodigoCVN codigoCVN, String stringValue, Long produccionCientificaId) {
     return findValoresByCampoProduccionCientificaId(codigoCVN, produccionCientificaId).stream()
         .anyMatch(valorCampo -> valorCampo.getValor().equals(stringValue) &&
             valorCampo.getOrden().compareTo(getAnio()) == 0);

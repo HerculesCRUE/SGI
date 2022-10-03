@@ -10,6 +10,7 @@ import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudProyecto, TipoPresupuesto } from '@core/models/csp/solicitud-proyecto';
 import { ISolicitudProyectoSocio } from '@core/models/csp/solicitud-proyecto-socio';
 import { IPersona } from '@core/models/sgp/persona';
+import { Module } from '@core/module';
 import { ActionService } from '@core/services/action-service';
 import { ConfiguracionSolicitudService } from '@core/services/csp/configuracion-solicitud.service';
 import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo.service';
@@ -95,6 +96,7 @@ export interface ISolicitudData {
   proyectosIds: number[];
   modificableEstadoAsTutor: boolean;
   isTutor: boolean;
+  isInvestigador: boolean;
 }
 
 @Injectable()
@@ -139,7 +141,6 @@ export class SolicitudActionService extends ActionService {
   private tutorRrhh: SolicitudRrhhTutorFragment;
   private requisitosConvocatoriaRrhh: SolicitudRrhhRequisitosConvocatoriaFragment;
   private memoriaRrhh: SolicitudRrhhMemoriaFragment;
-  public readonly isInvestigador: boolean;
 
   readonly showSocios$: Subject<boolean> = new BehaviorSubject(false);
   readonly showHitos$: Subject<boolean> = new BehaviorSubject<boolean>(false);
@@ -224,9 +225,13 @@ export class SolicitudActionService extends ActionService {
     return this.data?.isTutor ?? false;
   }
 
+  get isInvestigador(): boolean {
+    return this.data?.isInvestigador ?? (this.isModuleINV() && this.hasAnyAuthorityInv());
+  }
+
   constructor(
     logger: NGXLogger,
-    route: ActivatedRoute,
+    private route: ActivatedRoute,
     private solicitudService: SolicitudService,
     configuracionSolicitudService: ConfiguracionSolicitudService,
     private convocatoriaService: ConvocatoriaService,
@@ -243,7 +248,7 @@ export class SolicitudActionService extends ActionService {
     solicitudProyectoPresupuestoService: SolicitudProyectoPresupuestoService,
     solicitudProyectoClasificacionService: SolicitudProyectoClasificacionService,
     clasificacionService: ClasificacionService,
-    authService: SgiAuthService,
+    private authService: SgiAuthService,
     solicitudProyectoAreaConocimiento: SolicitudProyectoAreaConocimientoService,
     areaConocimientoService: AreaConocimientoService,
     solicitudProyectoResponsableEconomicoService: SolicitudProyectoResponsableEconomicoService,
@@ -281,7 +286,6 @@ export class SolicitudActionService extends ActionService {
 
     this.addProyectoLink();
 
-    this.isInvestigador = authService.hasAnyAuthority(['CSP-SOL-INV-BR', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER']);
     const idConvocatoria = history.state[CONVOCATORIA_ID_KEY];
 
     this.datosGenerales = new SolicitudDatosGeneralesFragment(
@@ -310,7 +314,7 @@ export class SolicitudActionService extends ActionService {
     this.hitos = new SolicitudHitosFragment(this.data?.solicitud?.id, solicitudHitoService, solicitudService, this.readonly);
     this.historicoEstado = new SolicitudHistoricoEstadosFragment(this.data?.solicitud?.id, solicitudService, this.readonly);
     this.proyectoDatos = new SolicitudProyectoFichaGeneralFragment(logger, this.data?.solicitud?.id,
-      this.isInvestigador, this.data?.solicitud.estado, solicitudService,
+      this.isInvestigador, solicitudService,
       solicitudProyectoService, convocatoriaService, this.readonly, this.data?.solicitud.convocatoriaId,
       this.hasAnySolicitudProyectoSocioWithRolCoordinador$, this.data?.hasPopulatedPeriodosSocios, palabraClaveService);
     this.equipoProyecto = new SolicitudEquipoProyectoFragment(this.data?.solicitud?.id, this.data?.solicitud?.convocatoriaId,
@@ -821,6 +825,14 @@ export class SolicitudActionService extends ActionService {
 
   private isFormularioSolicitudRrhh(): boolean {
     return this.formularioSolicitud === FormularioSolicitud.RRHH;
+  }
+
+  private isModuleINV(): boolean {
+    return this.route.snapshot.data.module === Module.INV;
+  }
+
+  private hasAnyAuthorityInv(): boolean {
+    return this.authService.hasAnyAuthority(['CSP-SOL-INV-BR', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER']);
   }
 
 }

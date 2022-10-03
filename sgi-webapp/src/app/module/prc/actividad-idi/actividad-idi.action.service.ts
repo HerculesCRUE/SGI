@@ -28,6 +28,10 @@ export class ActividadIdiActionService extends ActionService {
     return this._canEdit;
   }
 
+  get isInvestigador(): boolean {
+    return this.data.isInvestigador;
+  }
+
   constructor(
     route: ActivatedRoute,
     private produccionCientificaService: ProduccionCientificaService,
@@ -69,7 +73,7 @@ export class ActividadIdiActionService extends ActionService {
   }
 
   validarInvestigador(): Observable<IProduccionCientifica> {
-    return this.produccionCientificaService.validar(this.data.produccionCientifica?.id)
+    return this.produccionCientificaService.validarByInvestigador(this.data.produccionCientifica?.id)
       .pipe(
         tap(produccionCientifica => this.datosGenerales.refreshDatosGenerales(produccionCientifica)),
         concatMap(produccionCientifica => this.updateCanEdit(produccionCientifica))
@@ -77,7 +81,7 @@ export class ActividadIdiActionService extends ActionService {
   }
 
   rechazarInvestigador(estadoProduccionCientifica: IEstadoProduccionCientificaRequest): Observable<IProduccionCientifica> {
-    return this.produccionCientificaService.rechazar(this.data.produccionCientifica?.id, estadoProduccionCientifica)
+    return this.produccionCientificaService.rechazarByInvestigador(this.data.produccionCientifica?.id, estadoProduccionCientifica)
       .pipe(
         tap(produccionCientifica => this.datosGenerales.refreshDatosGenerales(produccionCientifica)),
         concatMap(produccionCientifica => this.updateCanEdit(produccionCientifica))
@@ -85,7 +89,7 @@ export class ActividadIdiActionService extends ActionService {
   }
 
   private updateCanEdit(produccionCientifica: IProduccionCientifica): Observable<IProduccionCientifica> {
-    return this.produccionCientificaService.isEditableByInvestigador(produccionCientifica.id).pipe(
+    return this.produccionCientificaService.modificableByInvestigador(produccionCientifica.id).pipe(
       tap(canEdit => this._canEdit = canEdit),
       map(() => produccionCientifica)
     );

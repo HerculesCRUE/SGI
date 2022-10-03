@@ -77,7 +77,7 @@ export class LineaInvestigacionModalComponent extends DialogActionComponent<ILin
 
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      nombre: new FormControl(this.lineaInvestigacion?.nombre ?? '', Validators.required),
+      nombre: new FormControl(this.lineaInvestigacion?.nombre ?? '', [Validators.maxLength(1000), Validators.required]),
     });
 
     return formGroup;

@@ -10,11 +10,10 @@ public interface CustomDireccionTesisRepository {
   /**
    * Recupera todas los {@link DireccionTesisResumen} paginadas y/o filtradas
    * 
-   * @param specIsInvestigador filtro para investigadores.
-   * @param query              la información del filtro.
-   * @param pageable           la información de la paginación.
+   * @param specs    Specification para filtrar.
+   * @param pageable la información de la paginación.
    * @return Listado paginado y/o filtrado de {@link DireccionTesisResumen}
    */
-  public Page<DireccionTesisResumen> findAllDireccionesTesis(Specification<ProduccionCientifica> specIsInvestigador,
-      String query, Pageable pageable);
+  public Page<DireccionTesisResumen> findAllDireccionesTesis(Specification<ProduccionCientifica> specs,
+      Pageable pageable);
 }

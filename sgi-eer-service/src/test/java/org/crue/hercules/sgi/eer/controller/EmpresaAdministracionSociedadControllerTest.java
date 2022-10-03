@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  */
 
 @WebMvcTest(EmpresaAdministracionSociedadController.class)
-public class EmpresaAdministracionSociedadControllerTest extends BaseControllerTest {
+class EmpresaAdministracionSociedadControllerTest extends BaseControllerTest {
 
   @MockBean
   private EmpresaAdministracionSociedadService service;
@@ -39,7 +39,7 @@ public class EmpresaAdministracionSociedadControllerTest extends BaseControllerT
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-V" })
-  public void findById_WithExistingId_ReturnsEmpresaAdministracionSociedad() throws Exception {
+  void findById_WithExistingId_ReturnsEmpresaAdministracionSociedad() throws Exception {
 
     BDDMockito.given(converter.convert(
         ArgumentMatchers.<EmpresaAdministracionSociedad>any()))

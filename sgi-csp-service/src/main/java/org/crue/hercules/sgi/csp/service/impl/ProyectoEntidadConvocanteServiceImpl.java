@@ -61,7 +61,7 @@ public class ProyectoEntidadConvocanteServiceImpl implements ProyectoEntidadConv
     AssertHelper.idNotNull(proyectoEntidadConvocante.getProyectoId(), Proyecto.class);
     Proyecto proyecto = proyectoRepository.findById(proyectoEntidadConvocante.getProyectoId())
         .orElseThrow(() -> new ProyectoNotFoundException(proyectoEntidadConvocante.getProyectoId()));
-    proyectoHelper.checkCanRead(proyecto);
+    proyectoHelper.checkCanAccessProyecto(proyecto);
 
     Assert
         .isTrue(
@@ -100,7 +100,7 @@ public class ProyectoEntidadConvocanteServiceImpl implements ProyectoEntidadConv
     return repository.findById(idProyectoEntidadConvocante).map(proyectoEntidadConvocante -> {
       Proyecto proyecto = proyectoRepository.findById(proyectoEntidadConvocante.getProyectoId())
           .orElseThrow(() -> new ProyectoNotFoundException(proyectoEntidadConvocante.getProyectoId()));
-      proyectoHelper.checkCanRead(proyecto);
+      proyectoHelper.checkCanAccessProyecto(proyecto);
       if (programa == null || programa.getId() == null) {
         proyectoEntidadConvocante.setPrograma(null);
       } else {
@@ -129,7 +129,7 @@ public class ProyectoEntidadConvocanteServiceImpl implements ProyectoEntidadConv
     if (entidadConvocante.isPresent()) {
       Proyecto proyecto = proyectoRepository.findById(entidadConvocante.get().getProyectoId())
           .orElseThrow(() -> new ProyectoNotFoundException(entidadConvocante.get().getProyectoId()));
-      proyectoHelper.checkCanRead(proyecto);
+      proyectoHelper.checkCanAccessProyecto(proyecto);
       repository.deleteById(id);
     } else {
       throw new ProyectoEntidadConvocanteNotFoundException(id);
@@ -152,7 +152,7 @@ public class ProyectoEntidadConvocanteServiceImpl implements ProyectoEntidadConv
     AssertHelper.idNotNull(idProyecto, Proyecto.class);
     Proyecto proyecto = proyectoRepository.findById(idProyecto)
         .orElseThrow(() -> new ProyectoNotFoundException(idProyecto));
-    proyectoHelper.checkCanRead(proyecto);
+    proyectoHelper.checkCanAccessProyecto(proyecto);
 
     Specification<ProyectoEntidadConvocante> specs = ProyectoEntidadConvocanteSpecifications.byProyectoId(idProyecto)
         .and(SgiRSQLJPASupport.toSpecification(query));
@@ -209,7 +209,7 @@ public class ProyectoEntidadConvocanteServiceImpl implements ProyectoEntidadConv
     Assert.notNull(proyectoEntidadConvocanteActualizar.getEntidadRef(), "EntidadRef no puede ser null");
     Proyecto proyecto = proyectoRepository.findById(proyectoEntidadConvocanteActualizar.getProyectoId())
         .orElseThrow(() -> new ProyectoNotFoundException(proyectoEntidadConvocanteActualizar.getProyectoId()));
-    proyectoHelper.checkCanRead(proyecto);
+    proyectoHelper.checkCanAccessProyecto(proyecto);
     Assert.isTrue(
         repository.existsByProyectoIdAndEntidadRef(proyectoEntidadConvocanteActualizar.getProyectoId(),
             proyectoEntidadConvocanteActualizar.getEntidadRef()),

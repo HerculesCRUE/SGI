@@ -1,20 +1,15 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
-import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaEntidadGestoraNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
-import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
-import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
-import org.crue.hercules.sgi.csp.model.Convocatoria.Estado;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadGestora;
-import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadGestoraRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaEntidadGestoraSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaEntidadGestoraService;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
-import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -34,14 +29,14 @@ public class ConvocatoriaEntidadGestoraServiceImpl implements ConvocatoriaEntida
 
   private final ConvocatoriaEntidadGestoraRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
-  private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
+  private final ConvocatoriaAuthorityHelper authorityHelper;
 
   public ConvocatoriaEntidadGestoraServiceImpl(ConvocatoriaEntidadGestoraRepository repository,
       ConvocatoriaRepository convocatoriaRepository,
-      ConfiguracionSolicitudRepository configuracionSolicitudRepository) {
+      ConvocatoriaAuthorityHelper authorityHelper) {
     this.repository = repository;
     this.convocatoriaRepository = convocatoriaRepository;
-    this.configuracionSolicitudRepository = configuracionSolicitudRepository;
+    this.authorityHelper = authorityHelper;
   }
 
   /**
@@ -139,17 +134,7 @@ public class ConvocatoriaEntidadGestoraServiceImpl implements ConvocatoriaEntida
   public Page<ConvocatoriaEntidadGestora> findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) {
     log.debug("findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) - start");
 
-    Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaId)
-        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaId));
-    if (hasAuthorityViewInvestigador()) {
-      ConfiguracionSolicitud configuracionSolicitud = configuracionSolicitudRepository
-          .findByConvocatoriaId(convocatoriaId)
-          .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(convocatoriaId));
-      if (!convocatoria.getEstado().equals(Estado.REGISTRADA)
-          || Boolean.FALSE.equals(configuracionSolicitud.getTramitacionSGI())) {
-        throw new UserNotAuthorizedToAccessConvocatoriaException();
-      }
-    }
+    authorityHelper.checkUserHasAuthorityViewConvocatoria(convocatoriaId);
 
     Specification<ConvocatoriaEntidadGestora> specs = ConvocatoriaEntidadGestoraSpecifications
         .byConvocatoriaId(convocatoriaId).and(SgiRSQLJPASupport.toSpecification(query));
@@ -157,10 +142,6 @@ public class ConvocatoriaEntidadGestoraServiceImpl implements ConvocatoriaEntida
     Page<ConvocatoriaEntidadGestora> returnValue = repository.findAll(specs, pageable);
     log.debug("findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) - end");
     return returnValue;
-  }
-
-  private boolean hasAuthorityViewInvestigador() {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
   }
 
 }

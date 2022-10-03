@@ -27,7 +27,6 @@ import org.crue.hercules.sgi.prc.dto.ProyectoOutput;
 import org.crue.hercules.sgi.prc.dto.PublicacionOutput;
 import org.crue.hercules.sgi.prc.dto.PublicacionResumen;
 import org.crue.hercules.sgi.prc.dto.ValorCampoOutput;
-import org.crue.hercules.sgi.prc.exceptions.NoRelatedEntitiesException;
 import org.crue.hercules.sgi.prc.model.Acreditacion;
 import org.crue.hercules.sgi.prc.model.Autor;
 import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica;
@@ -72,23 +71,33 @@ import lombok.extern.slf4j.Slf4j;
 public class ProduccionCientificaController {
   public static final String PATH_DELIMITER = "/";
   public static final String MAPPING = PATH_DELIMITER + "producciones-cientificas";
+  public static final String PATH_INVESTIGADOR = PATH_DELIMITER + "investigador";
   public static final String PATH_PUBLICACIONES = PATH_DELIMITER + "publicaciones";
+  public static final String PATH_PUBLICACIONES_INVESTIGADOR = PATH_PUBLICACIONES + PATH_INVESTIGADOR;
   public static final String PATH_COMITES_EDITORIALES = PATH_DELIMITER + "comites-editoriales";
+  public static final String PATH_COMITES_EDITORIALES_INVESTIGADOR = PATH_COMITES_EDITORIALES + PATH_INVESTIGADOR;
   public static final String PATH_CONGRESOS = PATH_DELIMITER + "congresos";
+  public static final String PATH_CONGRESOS_INVESTIGADOR = PATH_CONGRESOS + PATH_INVESTIGADOR;
   public static final String PATH_OBRAS_ARTISTICAS = PATH_DELIMITER + "obras-artisticas";
+  public static final String PATH_OBRAS_ARTISTICAS_INVESTIGADOR = PATH_OBRAS_ARTISTICAS + PATH_INVESTIGADOR;
   public static final String PATH_ACTIVIDADES = PATH_DELIMITER + "actividades";
+  public static final String PATH_ACTIVIDADES_INVESTIGADOR = PATH_ACTIVIDADES + PATH_INVESTIGADOR;
   public static final String PATH_DIRECCIONES_TESIS = PATH_DELIMITER + "direcciones-tesis";
+  public static final String PATH_DIRECCIONES_TESIS_INVESTIGADOR = PATH_DIRECCIONES_TESIS + PATH_INVESTIGADOR;
 
   public static final String PATH_ID = PATH_DELIMITER + "{id}";
+  public static final String PATH_ACCESIBLE_BY_INV = PATH_ID + PATH_DELIMITER + "accesible/investigador";
   public static final String PATH_INDICES_IMPACTO = PATH_DELIMITER + "{id}/indices-impacto";
   public static final String PATH_AUTORES = PATH_DELIMITER + "{id}/autores";
   public static final String PATH_PROYECTOS = PATH_DELIMITER + "{id}/proyectos";
   public static final String PATH_ACREDITACIONES = PATH_DELIMITER + "{id}/acreditaciones";
   public static final String PATH_CAMPOS = PATH_DELIMITER + "{id}/campos";
   public static final String PATH_VALORES = PATH_CAMPOS + PATH_DELIMITER + "{campoId}/valores";
-  public static final String PATH_MODIFICABLE = PATH_DELIMITER + "{id}/modificable";
-  public static final String PATH_VALIDAR = PATH_DELIMITER + "{id}/validar";
-  public static final String PATH_RECHAZAR = PATH_DELIMITER + "{id}/rechazar";
+  public static final String PATH_MODIFICABLE_BY_INV = PATH_DELIMITER + "{id}/modificable/investigador";
+  public static final String PATH_VALIDAR = PATH_ID + PATH_DELIMITER + "validar";
+  public static final String PATH_VALIDAR_INVESTIGADOR = PATH_VALIDAR + PATH_INVESTIGADOR;
+  public static final String PATH_RECHAZAR = PATH_ID + PATH_DELIMITER + "rechazar";
+  public static final String PATH_RECHAZAR_INVESTIGADOR = PATH_RECHAZAR + PATH_INVESTIGADOR;
 
   private final ProduccionCientificaService service;
   private final IndiceImpactoService indiceImpactoService;
@@ -109,19 +118,34 @@ public class ProduccionCientificaController {
    *         filtradas.
    */
   @GetMapping(PATH_PUBLICACIONES)
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E')")
   public ResponseEntity<Page<PublicacionOutput>> findAllPublicaciones(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllPublicaciones(String query, Pageable paging) - start");
-    Page<PublicacionResumen> page = service.findAllPublicaciones(query, paging);
-
-    if (page.isEmpty()) {
-      log.debug("findAllPublicaciones(String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
+    Page<PublicacionResumen> page = service.findAllPublicaciones(query, paging, false);
     log.debug("findAllPublicaciones(String query, Pageable paging) - end");
-    return new ResponseEntity<>(convertPublicacionResumen(page), HttpStatus.OK);
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(convertPublicacionResumen(page), HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista paginada y filtrada {@link PublicacionOutput} restringida
+   * a las accesibles por el usuario.
+   * 
+   * @param query  filtro de búsqueda.
+   * @param paging la información de la paginación.
+   * @return el listado de entidades {@link PublicacionOutput} paginadas y
+   *         filtradas.
+   */
+  @GetMapping(PATH_PUBLICACIONES_INVESTIGADOR)
+  @PreAuthorize("hasAuthority('PRC-VAL-INV-ER')")
+  public ResponseEntity<Page<PublicacionOutput>> findAllPublicacionesInvestigador(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAllPublicacionesInvestigador(String query, Pageable paging) - start");
+    Page<PublicacionResumen> page = service.findAllPublicaciones(query, paging, true);
+    log.debug("findAllPublicacionesInvestigador(String query, Pageable paging) - end");
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(convertPublicacionResumen(page), HttpStatus.OK);
   }
 
   /**
@@ -133,19 +157,34 @@ public class ProduccionCientificaController {
    *         filtradas.
    */
   @GetMapping(PATH_COMITES_EDITORIALES)
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E')")
   public ResponseEntity<Page<ComiteEditorialOutput>> findAllComitesEditoriales(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllComitesEditoriales(String query, Pageable paging) - start");
-    Page<ComiteEditorialResumen> page = service.findAllComitesEditoriales(query, paging);
-
-    if (page.isEmpty()) {
-      log.debug("findAllComitesEditoriales(String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
+    Page<ComiteEditorialResumen> page = service.findAllComitesEditoriales(query, paging, false);
     log.debug("findAllComitesEditoriales(String query, Pageable paging) - end");
-    return new ResponseEntity<>(convertComiteEditorialResumen(page), HttpStatus.OK);
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(convertComiteEditorialResumen(page), HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista paginada y filtrada {@link ComiteEditorialOutput}
+   * restringida a las accesibles por el usuario
+   * 
+   * @param query  filtro de búsqueda.
+   * @param paging la información de la paginación.
+   * @return el listado de entidades {@link ComiteEditorialOutput} paginadas y
+   *         filtradas.
+   */
+  @GetMapping(PATH_COMITES_EDITORIALES_INVESTIGADOR)
+  @PreAuthorize("hasAuthority('PRC-VAL-INV-ER')")
+  public ResponseEntity<Page<ComiteEditorialOutput>> findAllComitesEditorialesInvestigador(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAllComitesEditorialesInvestigador(String query, Pageable paging) - start");
+    Page<ComiteEditorialResumen> page = service.findAllComitesEditoriales(query, paging, true);
+    log.debug("findAllComitesEditorialesInvestigador(String query, Pageable paging) - end");
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(convertComiteEditorialResumen(page), HttpStatus.OK);
   }
 
   private ComiteEditorialOutput convertComiteEditorialResumen(ComiteEditorialResumen comiteEditorialResumen) {
@@ -172,19 +211,34 @@ public class ProduccionCientificaController {
    *         filtradas.
    */
   @GetMapping(PATH_CONGRESOS)
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E')")
   public ResponseEntity<Page<CongresoOutput>> findAllCongresos(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllCongresos(String query, Pageable paging) - start");
-    Page<CongresoResumen> page = service.findAllCongresos(query, paging);
-
-    if (page.isEmpty()) {
-      log.debug("findAllCongresos(String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
+    Page<CongresoResumen> page = service.findAllCongresos(query, paging, false);
     log.debug("findAllCongresos(String query, Pageable paging) - end");
-    return new ResponseEntity<>(convertCongresoResumen(page), HttpStatus.OK);
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(convertCongresoResumen(page), HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista paginada y filtrada {@link CongresoOutput} restringida a
+   * las accesibles por el usuario.
+   * 
+   * @param query  filtro de búsqueda.
+   * @param paging la información de la paginación.
+   * @return el listado de entidades {@link CongresoOutput} paginadas y
+   *         filtradas.
+   */
+  @GetMapping(PATH_CONGRESOS_INVESTIGADOR)
+  @PreAuthorize("hasAuthority('PRC-VAL-INV-ER')")
+  public ResponseEntity<Page<CongresoOutput>> findAllCongresosInvestigador(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAllCongresosInvestigador(String query, Pageable paging) - start");
+    Page<CongresoResumen> page = service.findAllCongresos(query, paging, true);
+    log.debug("findAllCongresosInvestigador(String query, Pageable paging) - end");
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(convertCongresoResumen(page), HttpStatus.OK);
   }
 
   private CongresoOutput convertCongresoResumen(CongresoResumen congresoResumen) {
@@ -211,19 +265,34 @@ public class ProduccionCientificaController {
    *         filtradas.
    */
   @GetMapping(PATH_OBRAS_ARTISTICAS)
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E')")
   public ResponseEntity<Page<ObraArtisticaOutput>> findAllObrasArtisticas(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllObrasArtisticas(String query, Pageable paging) - start");
-    Page<ObraArtisticaResumen> page = service.findAllObrasArtisticas(query, paging);
-
-    if (page.isEmpty()) {
-      log.debug("findAllObrasArtisticas(String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
+    Page<ObraArtisticaResumen> page = service.findAllObrasArtisticas(query, paging, false);
     log.debug("findAllObrasArtisticas(String query, Pageable paging) - end");
-    return new ResponseEntity<>(convertObraArtisticaResumen(page), HttpStatus.OK);
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(convertObraArtisticaResumen(page), HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista paginada y filtrada {@link ObraArtisticaOutput}
+   * restringida a las accesibles por el usuario.
+   * 
+   * @param query  filtro de búsqueda.
+   * @param paging la información de la paginación.
+   * @return el listado de entidades {@link ObraArtisticaOutput} paginadas y
+   *         filtradas.
+   */
+  @GetMapping(PATH_OBRAS_ARTISTICAS_INVESTIGADOR)
+  @PreAuthorize("hasAuthority('PRC-VAL-INV-ER')")
+  public ResponseEntity<Page<ObraArtisticaOutput>> findAllObrasArtisticasInvestigador(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAllObrasArtisticasInvestigador(String query, Pageable paging) - start");
+    Page<ObraArtisticaResumen> page = service.findAllObrasArtisticas(query, paging, true);
+    log.debug("findAllObrasArtisticasInvestigador(String query, Pageable paging) - end");
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(convertObraArtisticaResumen(page), HttpStatus.OK);
   }
 
   private ObraArtisticaOutput convertObraArtisticaResumen(ObraArtisticaResumen obraArtisticaResumen) {
@@ -251,19 +320,34 @@ public class ProduccionCientificaController {
    *         filtradas.
    */
   @GetMapping(PATH_ACTIVIDADES)
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E')")
   public ResponseEntity<Page<ActividadOutput>> findAllActividades(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllActividades(String query, Pageable paging) - start");
-    Page<ActividadResumen> page = service.findAllActividades(query, paging);
-
-    if (page.isEmpty()) {
-      log.debug("findAllActividades(String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
+    Page<ActividadResumen> page = service.findAllActividades(query, paging, false);
     log.debug("findAllActividades(String query, Pageable paging) - end");
-    return new ResponseEntity<>(convertActividadResumen(page), HttpStatus.OK);
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(convertActividadResumen(page), HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista paginada y filtrada {@link ActividadOutput} restringida a
+   * las accesibles por el usuario.
+   * 
+   * @param query  filtro de búsqueda.
+   * @param paging la información de la paginación.
+   * @return el listado de entidades {@link ActividadOutput} paginadas y
+   *         filtradas.
+   */
+  @GetMapping(PATH_ACTIVIDADES_INVESTIGADOR)
+  @PreAuthorize("hasAuthority('PRC-VAL-INV-ER')")
+  public ResponseEntity<Page<ActividadOutput>> findAllActividadesInvestigador(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAllActividadesInvestigador(String query, Pageable paging) - start");
+    Page<ActividadResumen> page = service.findAllActividades(query, paging, true);
+    log.debug("findAllActividadesInvestigador(String query, Pageable paging) - end");
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(convertActividadResumen(page), HttpStatus.OK);
   }
 
   private ActividadOutput convertActividadResumen(ActividadResumen actividadResumen) {
@@ -290,19 +374,34 @@ public class ProduccionCientificaController {
    *         filtradas.
    */
   @GetMapping(PATH_DIRECCIONES_TESIS)
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
+  @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E')")
   public ResponseEntity<Page<DireccionTesisOutput>> findAllDireccionesTesis(
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllDireccionesTesis(String query, Pageable paging) - start");
-    Page<DireccionTesisResumen> page = service.findAllDireccionesTesis(query, paging);
-
-    if (page.isEmpty()) {
-      log.debug("findAllDireccionesTesis(String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
+    Page<DireccionTesisResumen> page = service.findAllDireccionesTesis(query, paging, false);
     log.debug("findAllDireccionesTesis(String query, Pageable paging) - end");
-    return new ResponseEntity<>(convertDireccionTesisResumen(page), HttpStatus.OK);
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(convertDireccionTesisResumen(page), HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista paginada y filtrada {@link DireccionTesisOutput}
+   * restringida a las accesibles por el usuario.
+   * 
+   * @param query  filtro de búsqueda.
+   * @param paging la información de la paginación.
+   * @return el listado de entidades {@link DireccionTesisOutput} paginadas y
+   *         filtradas.
+   */
+  @GetMapping(PATH_DIRECCIONES_TESIS_INVESTIGADOR)
+  @PreAuthorize("hasAuthority('PRC-VAL-INV-ER')")
+  public ResponseEntity<Page<DireccionTesisOutput>> findAllDireccionesTesisInvestigador(
+      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAllDireccionesTesisInvestigador(String query, Pageable paging) - start");
+    Page<DireccionTesisResumen> page = service.findAllDireccionesTesis(query, paging, true);
+    log.debug("findAllDireccionesTesisInvestigador(String query, Pageable paging) - end");
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(convertDireccionTesisResumen(page), HttpStatus.OK);
   }
 
   private DireccionTesisOutput convertDireccionTesisResumen(DireccionTesisResumen actividadResumen) {
@@ -330,8 +429,6 @@ public class ProduccionCientificaController {
   @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
   public ProduccionCientificaOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
-    service.checkAccesibleByInvestigador(id);
-
     ProduccionCientifica returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
     return convert(returnValue);
@@ -344,13 +441,26 @@ public class ProduccionCientificaController {
    * @return {@link ProduccionCientifica} actualizada.
    */
   @PatchMapping(PATH_VALIDAR)
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-E', 'PRC-VAL-INV-ER')")
+  @PreAuthorize("hasAuthority('PRC-VAL-E')")
   public ProduccionCientificaOutput validar(@PathVariable Long id) {
     log.debug("validar(Long id) - start");
-    service.checkAccesibleByInvestigador(id);
-
-    ProduccionCientifica returnValue = service.cambiarEstado(id, TipoEstadoProduccion.VALIDADO, null);
+    ProduccionCientifica returnValue = service.cambiarEstadoGestor(id, TipoEstadoProduccion.VALIDADO, null);
     log.debug("validar(Long id) - end");
+    return convert(returnValue);
+  }
+
+  /**
+   * Marcar la {@link ProduccionCientifica} con id indicado como validada.
+   * 
+   * @param id Identificador de {@link ProduccionCientifica}.
+   * @return {@link ProduccionCientifica} actualizada.
+   */
+  @PatchMapping(PATH_VALIDAR_INVESTIGADOR)
+  @PreAuthorize("hasAuthority('PRC-VAL-INV-ER')")
+  public ProduccionCientificaOutput validarByInvestigador(@PathVariable Long id) {
+    log.debug("validarByInvestigador(Long id) - start");
+    ProduccionCientifica returnValue = service.cambiarEstadoInvestigador(id, TipoEstadoProduccion.VALIDADO, null);
+    log.debug("validarByInvestigador(Long id) - end");
     return convert(returnValue);
   }
 
@@ -364,49 +474,67 @@ public class ProduccionCientificaController {
    * @return {@link ProduccionCientifica} actualizada.
    */
   @PatchMapping(PATH_RECHAZAR)
-  @PreAuthorize("hasAnyAuthority('PRC-VAL-E', 'PRC-VAL-INV-ER')")
+  @PreAuthorize("hasAuthority('PRC-VAL-E')")
   public ProduccionCientificaOutput rechazar(@PathVariable Long id,
       @Valid @RequestBody EstadoProduccionCientificaInput estadoProduccionCientifica) {
     log.debug("rechazar(Long id, EstadoProduccionCientificaInput estadoProduccionCientifica) - start");
-    service.checkAccesibleByInvestigador(id);
-
-    ProduccionCientifica returnValue = service.cambiarEstado(id, TipoEstadoProduccion.RECHAZADO,
+    ProduccionCientifica returnValue = service.cambiarEstadoGestor(id, TipoEstadoProduccion.RECHAZADO,
         estadoProduccionCientifica.getComentario());
     log.debug("rechazar(Long id, EstadoProduccionCientificaInput estadoProduccionCientifica) - end");
     return convert(returnValue);
   }
 
   /**
+   * Marcar la {@link ProduccionCientifica} con id indicado como rechazada.
+   * 
+   * @param id                         Identificador de
+   *                                   {@link ProduccionCientifica}.
+   * @param estadoProduccionCientifica Objeto con el comentario del motivo del
+   *                                   rechazo
+   * @return {@link ProduccionCientifica} actualizada.
+   */
+  @PatchMapping(PATH_RECHAZAR_INVESTIGADOR)
+  @PreAuthorize("hasAuthority('PRC-VAL-INV-ER')")
+  public ProduccionCientificaOutput rechazarByInvestigador(@PathVariable Long id,
+      @Valid @RequestBody EstadoProduccionCientificaInput estadoProduccionCientifica) {
+    log.debug("rechazarByInvestigador(Long id, EstadoProduccionCientificaInput estadoProduccionCientifica) - start");
+    ProduccionCientifica returnValue = service.cambiarEstadoInvestigador(id, TipoEstadoProduccion.RECHAZADO,
+        estadoProduccionCientifica.getComentario());
+    log.debug("rechazarByInvestigador(Long id, EstadoProduccionCientificaInput estadoProduccionCientifica) - end");
+    return convert(returnValue);
+  }
+
+  /**
    * Hace las comprobaciones necesarias para determinar si la
-   * {@link ProduccionCientifica} puede ser consultada por un investigador.
+   * {@link ProduccionCientifica} puede ser consultada por el usuario actual.
    *
    * @param id Id de la {@link ProduccionCientifica}.
    * @return HTTP-200 si puede ser modificada / HTTP-204 si no puede ser
    *         consultada
    */
-  @RequestMapping(path = PATH_ID, method = RequestMethod.HEAD)
+  @RequestMapping(path = PATH_ACCESIBLE_BY_INV, method = RequestMethod.HEAD)
   @PreAuthorize("hasAuthority('PRC-VAL-INV-ER')")
   public ResponseEntity<Void> accesibleByInvestigador(@PathVariable Long id) {
-    log.debug("registrable(Long id) - start");
+    log.debug("accesibleByInvestigador(Long id) - start");
     boolean returnValue = service.accesibleByInvestigador(id);
-    log.debug("registrable(Long id) - end");
+    log.debug("accesibleByInvestigador(Long id) - end");
     return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   /**
    * Hace las comprobaciones necesarias para determinar si la
-   * {@link ProduccionCientifica} puede ser editada por un investigador.
+   * {@link ProduccionCientifica} puede ser editada por el usuario actual.
    *
    * @param id Id de la {@link ProduccionCientifica}.
    * @return HTTP-200 si puede ser modificada / HTTP-204 si no puede ser
    *         modificada
    */
-  @RequestMapping(path = PATH_MODIFICABLE, method = RequestMethod.HEAD)
+  @RequestMapping(path = PATH_MODIFICABLE_BY_INV, method = RequestMethod.HEAD)
   @PreAuthorize("hasAuthority('PRC-VAL-INV-ER')")
-  public ResponseEntity<Void> editableByInvestigador(@PathVariable Long id) {
-    log.debug("registrable(Long id) - start");
-    boolean returnValue = service.editableByInvestigador(id);
-    log.debug("registrable(Long id) - end");
+  public ResponseEntity<Void> modificable(@PathVariable Long id) {
+    log.debug("modificableByInvestigador(Long id) - start");
+    boolean returnValue = service.modificableByInvestigador(id);
+    log.debug("modificableByInvestigador(Long id) - end");
     return returnValue ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
@@ -442,8 +570,6 @@ public class ProduccionCientificaController {
   public ResponseEntity<Page<IndiceImpactoOutput>> findIndicesImpacto(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findIndicesImpacto(Long id, String query, Pageable paging) - start");
-    service.checkAccesibleByInvestigador(id);
-
     Page<IndiceImpacto> page = indiceImpactoService.findAllByProduccionCientificaId(id, query, paging);
     if (page.isEmpty()) {
       log.debug("findIndicesImpacto(Long id, String query, Pageable paging) - end");
@@ -479,8 +605,6 @@ public class ProduccionCientificaController {
   public ResponseEntity<Page<AutorOutput>> findAutores(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAutores(Long id, String query, Pageable paging) - start");
-    service.checkAccesibleByInvestigador(id);
-
     Page<Autor> page = autorService.findAllByProduccionCientificaId(id, query, paging);
     if (page.isEmpty()) {
       log.debug("findAutores(Long id, String query, Pageable paging) - end");
@@ -516,8 +640,6 @@ public class ProduccionCientificaController {
   public ResponseEntity<Page<ProyectoOutput>> findProyectos(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findProyectos(Long id, String query, Pageable paging) - start");
-    service.checkAccesibleByInvestigador(id);
-
     Page<Proyecto> page = proyectoService.findAllByProduccionCientificaId(id, query, paging);
     if (page.isEmpty()) {
       log.debug("findProyectos(Long id, String query, Pageable paging) - end");
@@ -553,8 +675,6 @@ public class ProduccionCientificaController {
   public ResponseEntity<Page<AcreditacionOutput>> findAcreditaciones(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAcreditaciones(Long id, String query, Pageable paging) - start");
-    service.checkAccesibleByInvestigador(id);
-
     Page<Acreditacion> page = acreditacionService.findAllByProduccionCientificaId(id, query, paging);
     if (page.isEmpty()) {
       log.debug("findAcreditaciones(Long id, String query, Pageable paging) - end");
@@ -589,18 +709,12 @@ public class ProduccionCientificaController {
   @PreAuthorize("hasAnyAuthority('PRC-VAL-V', 'PRC-VAL-E', 'PRC-VAL-INV-ER')")
   public ResponseEntity<Page<CampoProduccionCientificaOutput>> findCampos(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
-    log.debug("findAll(String query, Pageable paging) - start");
-    service.checkAccesibleByInvestigador(id);
-
+    log.debug("findCampos(String query, Pageable paging) - start");
     Page<CampoProduccionCientifica> page = campoProduccionCientificaService.findAllByProduccionCientificaId(id, query,
         paging);
-    if (page.isEmpty()) {
-      log.debug("findAll(String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    log.debug("findAll(String query, Pageable paging) - end");
-    return new ResponseEntity<>(convert(page), HttpStatus.OK);
+    log.debug("findCampos(String query, Pageable paging) - end");
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(convert(page), HttpStatus.OK);
   }
 
   private Page<CampoProduccionCientificaOutput> convert(Page<CampoProduccionCientifica> page) {
@@ -629,21 +743,10 @@ public class ProduccionCientificaController {
   public ResponseEntity<Page<ValorCampoOutput>> findValores(@PathVariable Long id, @PathVariable Long campoId,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findValores(Long id, Long campoId, String query, Pageable paging) - start");
-    service.checkAccesibleByInvestigador(id);
-
-    final CampoProduccionCientifica relatedCampoProduccionCientifica = campoProduccionCientificaService
-        .findById(campoId);
-    if (!id.equals(relatedCampoProduccionCientifica.getProduccionCientificaId())) {
-      throw new NoRelatedEntitiesException(CampoProduccionCientifica.class, ProduccionCientifica.class);
-    }
-
-    Page<ValorCampo> page = valorCampoService.findAllByCampoProduccionCientificaId(campoId, query, paging);
-    if (page.isEmpty()) {
-      log.debug("findValores(Long id, Long campoId, String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+    Page<ValorCampo> page = valorCampoService.findAllByCampoProduccionCientificaId(id, campoId, query, paging);
     log.debug("findValores(Long id, Long campoId, String query, Pageable paging) - end");
-    return new ResponseEntity<>(convertValorCampo(page), HttpStatus.OK);
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(convertValorCampo(page), HttpStatus.OK);
   }
 
   private Page<ValorCampoOutput> convertValorCampo(Page<ValorCampo> page) {

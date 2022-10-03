@@ -1,26 +1,22 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.Objects;
 import java.util.Optional;
 
-import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaDocumentoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
-import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
-import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
-import org.crue.hercules.sgi.csp.model.Convocatoria.Estado;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaDocumento;
 import org.crue.hercules.sgi.csp.model.ModeloTipoDocumento;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFase;
-import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoFaseRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaDocumentoSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaDocumentoService;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
-import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import io.micrometer.core.instrument.util.StringUtils;
-import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -45,17 +40,17 @@ public class ConvocatoriaDocumentoServiceImpl implements ConvocatoriaDocumentoSe
   private final ConvocatoriaRepository convocatoriaRepository;
   private final ModeloTipoFaseRepository modeloTipoFaseRepository;
   private final ModeloTipoDocumentoRepository modeloTipoDocumentoRepository;
-  private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
+  private final ConvocatoriaAuthorityHelper authorityHelper;
 
   public ConvocatoriaDocumentoServiceImpl(ConvocatoriaDocumentoRepository convocatoriaDocumentoRepository,
       ConvocatoriaRepository convocatoriaRepository, ModeloTipoFaseRepository modeloTipoFaseRepository,
       ModeloTipoDocumentoRepository modeloTipoDocumentoRepository,
-      ConfiguracionSolicitudRepository configuracionSolicitudRepository) {
+      ConvocatoriaAuthorityHelper authorityHelper) {
     this.repository = convocatoriaDocumentoRepository;
     this.convocatoriaRepository = convocatoriaRepository;
     this.modeloTipoFaseRepository = modeloTipoFaseRepository;
     this.modeloTipoDocumentoRepository = modeloTipoDocumentoRepository;
-    this.configuracionSolicitudRepository = configuracionSolicitudRepository;
+    this.authorityHelper = authorityHelper;
   }
 
   /**
@@ -164,27 +159,16 @@ public class ConvocatoriaDocumentoServiceImpl implements ConvocatoriaDocumentoSe
    */
   @Override
   public Page<ConvocatoriaDocumento> findAllByConvocatoria(Long convocatoriaId, String query, Pageable paging) {
-    log.debug("findAllByConvocatoria(Long idConvocatoria, String query, Pageable pageable) - start");
+    log.debug("findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) - start");
 
-    Convocatoria convocatoria = convocatoriaRepository.findById(
-        convocatoriaId)
-        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaId));
-    if (hasAuthorityViewInvestigador()) {
-      ConfiguracionSolicitud configuracionSolicitud = configuracionSolicitudRepository
-          .findByConvocatoriaId(convocatoriaId)
-          .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(convocatoriaId));
-      if (!convocatoria.getEstado().equals(Estado.REGISTRADA)
-          || Boolean.FALSE.equals(configuracionSolicitud.getTramitacionSGI())) {
-        throw new UserNotAuthorizedToAccessConvocatoriaException();
-      }
-    }
+    authorityHelper.checkUserHasAuthorityViewConvocatoria(convocatoriaId);
 
     Specification<ConvocatoriaDocumento> specs = ConvocatoriaDocumentoSpecifications.byConvocatoriaId(
         convocatoriaId)
         .and(SgiRSQLJPASupport.toSpecification(query));
 
     Page<ConvocatoriaDocumento> returnValue = repository.findAll(specs, paging);
-    log.debug("findAllByConvocatoria(Long idConvocatoria, String query, Pageable pageable) - end");
+    log.debug("findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) - end");
     return returnValue;
 
   }
@@ -327,7 +311,4 @@ public class ConvocatoriaDocumentoServiceImpl implements ConvocatoriaDocumentoSe
     return repository.existsByConvocatoriaId(convocatoriaId);
   }
 
-  private boolean hasAuthorityViewInvestigador() {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
-  }
 }

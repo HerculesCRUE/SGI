@@ -16,6 +16,9 @@
         <mat-error *ngIf="formGroup.controls.tipo.errors?.duplicated">
           {{'error.prc.moduladores-rango.tipo.duplicated' | translate}}
         </mat-error>
+        <mat-error *ngIf="formGroup.controls.tipo.errors?.notHasRangoInicial">
+          {{'error.prc.moduladores-rango.tipo.notHasRangoInicial' | translate}}
+        </mat-error>
       </mat-form-field>
     </div>
 

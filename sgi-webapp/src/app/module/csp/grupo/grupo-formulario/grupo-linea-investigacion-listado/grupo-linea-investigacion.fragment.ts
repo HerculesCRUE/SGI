@@ -20,7 +20,7 @@ export class GrupoLineaInvestigacionFragment extends Fragment {
     private readonly grupoService: GrupoService,
     private readonly grupoLineaInvestigacionService: GrupoLineaInvestigacionService,
     private readonly lineaInvestigacionService: LineaInvestigacionService,
-    private readonly: boolean,
+    public readonly readonly: boolean,
   ) {
     super(key);
     this.setComplete(true);
@@ -37,7 +37,7 @@ export class GrupoLineaInvestigacionFragment extends Fragment {
                 return this.lineaInvestigacionService.findById(element.lineaInvestigacion.id).pipe(
                   map(lineaInvestigacion => {
                     element.lineaInvestigacion = lineaInvestigacion;
-                    return element as IGrupoLineaInvestigacion;
+                    return element;
                   })
                 );
               }),
@@ -47,7 +47,7 @@ export class GrupoLineaInvestigacionFragment extends Fragment {
           map(grupoLineasInvestigacion => {
             return grupoLineasInvestigacion.items.map(grupoLineaInvestigacion => {
               grupoLineaInvestigacion.grupo = { id: this.getKey() } as IGrupo;
-              return new StatusWrapper<IGrupoLineaInvestigacion>(grupoLineaInvestigacion as IGrupoLineaInvestigacion);
+              return new StatusWrapper<IGrupoLineaInvestigacion>(grupoLineaInvestigacion);
             });
           })
         ).subscribe(

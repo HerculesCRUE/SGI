@@ -36,13 +36,11 @@
               <mat-icon>visibility</mat-icon>
             </a>
           </ng-container>
-          <ng-container *sgiHasAuthorityForAnyUO="'CSP-GIN-E'">
+          <ng-container *ngIf="!formPart.readonly">
             <button mat-button matTooltip="{{'btn.edit' | translate}}" [routerLink]="[wrapper.value.id]"
               matTooltip="{{'btn.edit' | translate}}">
               <mat-icon color="primary">border_color</mat-icon>
             </button>
-          </ng-container>
-          <ng-container *sgiHasAuthorityForAnyUO="'CSP-GIN-E'">
             <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deleteEquipo(wrapper)">
               <mat-icon color="warn">highlight_off</mat-icon>
             </button>
@@ -57,7 +55,7 @@
     <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
     </mat-paginator>
   </div>
-  <ng-container *sgiHasAuthorityForAnyUO="'CSP-GIN-E'">
+  <ng-container *ngIf="!formPart.readonly">
     <div class="separation-button">
       <!-- Botón añadir equipos -->
       <button color="three" mat-button mat-raised-button [routerLink]="[ROUTE_NAMES.NEW]">

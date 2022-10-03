@@ -10,3 +10,6 @@ databaseChangeLog:
   - include:
       file: classpath*:db/changelog/changes/0000000000000-sample-data.xml
   # HERCULES_0.0.5
+  # HERCULES_0.0.11
+  - include:
+      file: classpath*:db/changelog/changes/0000000000001-initial-master-data.xml

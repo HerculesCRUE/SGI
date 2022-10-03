@@ -48,6 +48,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PeticionEvaluacionController {
 
+  private static final String FIND_ALL_STRING_QUERY_PAGEABLE_PAGING_END = "findAll(String query,Pageable paging) - end";
+
   /** EquipoTrabajo service */
   private final EquipoTrabajoService equipoTrabajoService;
 
@@ -98,10 +100,10 @@ public class PeticionEvaluacionController {
         .findAllPeticionesWithPersonaRefCreadorPeticionesEvaluacionOrResponsableMemoria(query, paging, null);
 
     if (page.isEmpty()) {
-      log.debug("findAll(String query,Pageable paging) - end");
+      log.debug(FIND_ALL_STRING_QUERY_PAGEABLE_PAGING_END);
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    log.debug("findAll(String query,Pageable paging) - end");
+    log.debug(FIND_ALL_STRING_QUERY_PAGEABLE_PAGING_END);
     return new ResponseEntity<>(page, HttpStatus.OK);
   }
 
@@ -387,10 +389,10 @@ public class PeticionEvaluacionController {
     Page<PeticionEvaluacion> page = service.findAllByPersonaRef(query, paging, personaRef);
 
     if (page.isEmpty()) {
-      log.debug("findAll(String query,Pageable paging) - end");
+      log.debug(FIND_ALL_STRING_QUERY_PAGEABLE_PAGING_END);
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    log.debug("findAll(String query,Pageable paging) - end");
+    log.debug(FIND_ALL_STRING_QUERY_PAGEABLE_PAGING_END);
     return new ResponseEntity<>(page, HttpStatus.OK);
   }
 

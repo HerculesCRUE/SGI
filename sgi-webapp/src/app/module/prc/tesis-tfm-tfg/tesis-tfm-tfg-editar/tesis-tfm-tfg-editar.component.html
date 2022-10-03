@@ -7,7 +7,7 @@
   </ng-container>
   <ng-container footer>
     <sgi-action-empty-footer [actionService]="actionService">
-      <ng-container *sgiHasAuthority="'PRC-VAL-E'">
+      <ng-container *ngIf="!isInvestigador && canEdit">
         <sgi-action-footer-button action="validar" color="accent" icon="check_circle_outline"
           text="{{'btn.validate' | translate}}" [disabled]="isProduccionCientificaDisabled">
         </sgi-action-footer-button>
@@ -15,7 +15,7 @@
           text="{{'btn.reject' | translate}}" [disabled]="isProduccionCientificaDisabled">
         </sgi-action-footer-button>
       </ng-container>
-      <ng-container *sgiHasAuthority="'PRC-VAL-INV-ER'">
+      <ng-container *ngIf="isInvestigador">
         <sgi-action-footer-button action="validarInvestigador" color="accent" icon="check_circle_outline"
           text="{{'btn.validate' | translate}}" [disabled]="!canEdit || isProduccionCientificaDisabled">
         </sgi-action-footer-button>

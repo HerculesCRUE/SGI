@@ -23,8 +23,8 @@ import { DialogService } from '@core/services/dialog.service';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
-import { from, Subscription } from 'rxjs';
-import { map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { from, Observable, of, Subscription } from 'rxjs';
+import { map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../../csp-route-names';
 import { SOLICITUD_ROUTE_NAMES } from '../../../solicitud/solicitud-route-names';
 import { ProyectoActionService } from '../../proyecto.action.service';
@@ -341,6 +341,10 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
         }
       )
     );
+  }
+
+  public showEnviarSgeButton(data: StatusWrapper<IProyectoAnualidadResumen>): Observable<boolean> {
+    return of(!data.value.enviadoSge && data.value.presupuestar && data.value.hasGastosIngresos);
   }
 }
 

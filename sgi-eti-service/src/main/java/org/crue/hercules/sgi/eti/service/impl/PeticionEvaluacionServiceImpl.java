@@ -77,13 +77,13 @@ public class PeticionEvaluacionServiceImpl implements PeticionEvaluacionService 
       numEvaluacion++;
     }
 
-    StringBuffer codigoPeticionEvaluacion = new StringBuffer();
+    StringBuilder codigoPeticionEvaluacion = new StringBuilder();
 
     codigoPeticionEvaluacion.append(anioInicio).append("/").append(String.format("%03d", numEvaluacion));
 
     peticionEvaluacion.setCodigo(codigoPeticionEvaluacion.toString());
 
-    if (peticionEvaluacion.getExisteFinanciacion()) {
+    if (peticionEvaluacion.getExisteFinanciacion().booleanValue()) {
       Assert.notNull(peticionEvaluacion.getFuenteFinanciacion(),
           "PeticionEvaluacion fuenteFinanciacion no puede ser null si existeFinanciacion");
       Assert.notNull(peticionEvaluacion.getEstadoFinanciacion(),
@@ -128,10 +128,10 @@ public class PeticionEvaluacionServiceImpl implements PeticionEvaluacionService 
    */
   public PeticionEvaluacion findById(final Long id) throws PeticionEvaluacionNotFoundException {
     log.debug("Petición a get PeticionEvaluacion : {}  - start", id);
-    final PeticionEvaluacion PeticionEvaluacion = peticionEvaluacionRepository.findById(id)
+    final PeticionEvaluacion peticionEvaluacion = peticionEvaluacionRepository.findById(id)
         .orElseThrow(() -> new PeticionEvaluacionNotFoundException(id));
     log.debug("Petición a get PeticionEvaluacion : {}  - end", id);
-    return PeticionEvaluacion;
+    return peticionEvaluacion;
 
   }
 
@@ -184,7 +184,7 @@ public class PeticionEvaluacionServiceImpl implements PeticionEvaluacionService 
     Assert.notNull(peticionEvaluacionActualizar.getTitulo(),
         "PeticionEvaluacion titulo no puede ser null para actualizar una petición de evaluación");
 
-    if (peticionEvaluacionActualizar.getExisteFinanciacion()) {
+    if (peticionEvaluacionActualizar.getExisteFinanciacion().booleanValue()) {
       Assert.notNull(peticionEvaluacionActualizar.getFuenteFinanciacion(),
           "PeticionEvaluacion fuenteFinanciacion no puede ser null si existeFinanciacion");
       Assert.notNull(peticionEvaluacionActualizar.getEstadoFinanciacion(),

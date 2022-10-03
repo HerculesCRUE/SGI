@@ -1,0 +1,15 @@
+# Ignore everything
+**
+
+# Exceptions
+!sgi-esb-common/sgi-auth-mediator/target/*.jar
+!sgi-esb-common/esb-composite-application/target/*.car
+!sgi-esb-sgdoc/sgdoc-composite-application/target/*.car
+!sgi-esb-sge/sge-composite-application/target/*.car
+!sgi-esb-sgemp/sgemp-composite-application/target/*.car
+!sgi-esb-sgepii/sgepii-composite-application/target/*.car
+!sgi-esb-sgi/sgi-composite-application/target/*.car
+!sgi-esb-sgo/sgo-composite-application/target/*.car
+!sgi-esb-sgp/sgp-composite-application/target/*.car
+!docker/sgi-esb-entrypoint.sh
+!docker/deployment.toml

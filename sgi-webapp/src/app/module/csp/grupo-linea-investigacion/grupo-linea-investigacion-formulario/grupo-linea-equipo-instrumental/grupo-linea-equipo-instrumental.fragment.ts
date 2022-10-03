@@ -24,7 +24,7 @@ export class GrupoLineaEquipoInstrumentalFragment extends Fragment {
     private readonly grupoLineaInvestigacionService: GrupoLineaInvestigacionService,
     private readonly grupoLineaEquipoInstrumentalService: GrupoLineaEquipoInstrumentalService,
     private readonly grupoEquipoInstrumentalService: GrupoEquipoInstrumentalService,
-    private readonly: boolean,
+    public readonly readonly: boolean,
   ) {
     super(key);
     this.setComplete(true);
@@ -41,7 +41,7 @@ export class GrupoLineaEquipoInstrumentalFragment extends Fragment {
                 return this.grupoEquipoInstrumentalService.findById(element.grupoEquipoInstrumental.id).pipe(
                   map(equipoInstrumental => {
                     element.grupoEquipoInstrumental = equipoInstrumental;
-                    return element as IGrupoLineaEquipoInstrumental;
+                    return element;
                   })
                 );
               }),
@@ -51,7 +51,7 @@ export class GrupoLineaEquipoInstrumentalFragment extends Fragment {
           map(lineaEquiposInstrumentales => {
             return lineaEquiposInstrumentales.items.map(lineaEquipoInstrumental => {
               lineaEquipoInstrumental.grupoLineaInvestigacion = { id: this.getKey() } as IGrupoLineaInvestigacion;
-              return new StatusWrapper<IGrupoLineaEquipoInstrumental>(lineaEquipoInstrumental as IGrupoLineaEquipoInstrumental);
+              return new StatusWrapper<IGrupoLineaEquipoInstrumental>(lineaEquipoInstrumental);
             });
           })
         ).subscribe(
@@ -115,7 +115,7 @@ export class GrupoLineaEquipoInstrumentalFragment extends Fragment {
         map(equiposInstrumentales => {
           return equiposInstrumentales.map(equipoInstrumental => {
             equipoInstrumental.grupoLineaInvestigacion = { id: this.getKey() } as IGrupoLineaInvestigacion;
-            return new StatusWrapper<IGrupoLineaEquipoInstrumental>(equipoInstrumental as IGrupoLineaEquipoInstrumental);
+            return new StatusWrapper<IGrupoLineaEquipoInstrumental>(equipoInstrumental);
           });
         }),
         takeLast(1),

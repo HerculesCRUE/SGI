@@ -10,15 +10,19 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IGrupo } from '@core/models/csp/grupo';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
+import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { merge, Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
-import { ACTION_MODAL_MODE, IProyectoEconomicoFormlyData, ProyectoEconomicoFormlyModalComponent } from 'src/app/esb/sge/formly-forms/proyecto-economico-formly-modal/proyecto-economico-formly-modal.component';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { IProyectoEconomicoFormlyData, ProyectoEconomicoFormlyModalComponent } from 'src/app/esb/sge/formly-forms/proyecto-economico-formly-modal/proyecto-economico-formly-modal.component';
+import { ACTION_MODAL_MODE } from 'src/app/esb/shared/formly-forms/core/base-formly-modal.component';
 
 const TIPO_PROYECTO_KEY = marker('sge.proyecto');
+const MSG_SAVE_SUCCESS = marker('msg.save.request.entity.success');
+const MSG_UPDATE_SUCCESS = marker('msg.update.request.entity.success');
 
 export interface SearchProyectoEconomicoModalData extends SearchModalData {
   selectedProyectos: IProyectoSge[];
@@ -49,9 +53,12 @@ export class SearchProyectoEconomicoModalComponent extends DialogCommonComponent
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   msgParamEntity: {};
+  private textoCrearSuccess: string;
+  private textoUpdateSuccess: string;
 
   constructor(
     private readonly logger: NGXLogger,
+    private readonly snackBarService: SnackBarService,
     dialogRef: MatDialogRef<SearchProyectoEconomicoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SearchProyectoEconomicoModalData,
     private proyectoService: ProyectoSgeService,
@@ -80,6 +87,30 @@ export class SearchProyectoEconomicoModalComponent extends DialogCommonComponent
       TIPO_PROYECTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamEntity = { entity: value });
+
+    this.translate.get(
+      TIPO_PROYECTO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_SAVE_SUCCESS,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.textoCrearSuccess = value);
+
+    this.translate.get(
+      TIPO_PROYECTO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_UPDATE_SUCCESS,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.textoUpdateSuccess = value);
 
   }
 
@@ -159,19 +190,17 @@ export class SearchProyectoEconomicoModalComponent extends DialogCommonComponent
    */
   private buildFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
-    const rsqlFilter =
-      new RSQLSgiRestFilter('fechaInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioDesde.value))
-        .and('fechaInicio', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioHasta.value))
-        .and('fechaFin', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinDesde.value))
-        .and('fechaFin', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinHasta.value))
-        .and('id', SgiRestFilterOperator.LIKE_ICASE, controls.datosProyecto.value)
-        .or('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.datosProyecto.value)
-        .and('fechaInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioDesde.value))
-        .and('fechaInicio', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioHasta.value))
-        .and('fechaFin', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinDesde.value))
-        .and('fechaFin', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinHasta.value));
-
-    return rsqlFilter;
+    return new RSQLSgiRestFilter('fechaInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL,
+      LuxonUtils.toBackend(controls.fechaInicioDesde.value))
+      .and('fechaInicio', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioHasta.value))
+      .and('fechaFin', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinDesde.value))
+      .and('fechaFin', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinHasta.value))
+      .and('id', SgiRestFilterOperator.LIKE_ICASE, controls.datosProyecto.value)
+      .or('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.datosProyecto.value)
+      .and('fechaInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioDesde.value))
+      .and('fechaInicio', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioHasta.value))
+      .and('fechaFin', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinDesde.value))
+      .and('fechaFin', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinHasta.value));
   }
 
   openProyectoCreateModal(): void {
@@ -192,6 +221,7 @@ export class SearchProyectoEconomicoModalComponent extends DialogCommonComponent
       (proyectoSge) => {
         if (proyectoSge) {
           this.closeModal(proyectoSge);
+          this.snackBarService.showSuccess(this.textoCrearSuccess);
         }
       }
     );
@@ -215,6 +245,7 @@ export class SearchProyectoEconomicoModalComponent extends DialogCommonComponent
       (proyectoSge) => {
         if (proyectoSge) {
           this.closeModal(proyectoSge);
+          this.snackBarService.showSuccess(this.textoUpdateSuccess);
         }
       }
     );

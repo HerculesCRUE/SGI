@@ -1,0 +1,242 @@
+<sgi-fragment title="{{'csp.convocatoria-requisito-equipo' | translate}}">
+
+  <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+    [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+
+    <!-- Edad máxima -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field class="input-form">
+        <mat-label>{{'csp.convocatoria-requisito-equipo.nivel-academico.edad-maxima' | translate}}</mat-label>
+        <input matInput formControlName="edadMaxima" type="number" id="edadMaxima" min="0"
+          placeholder="{{'csp.convocatoria-requisito-equipo.nivel-academico.edad-maxima' | translate}}">
+      </mat-form-field>
+    </div>
+
+    <!-- Sexo -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field class="input-form">
+        <mat-label>{{'csp.convocatoria-requisito-equipo.sexo' | translate}}</mat-label>
+        <sgi-select-entity formControlName="sexo" [options]="sexos$ | async">
+        </sgi-select-entity>
+      </mat-form-field>
+    </div>
+
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <!-- Ratio Sexo -->
+      <mat-form-field class="input-form">
+        <mat-label>{{'csp.convocatoria-requisito-equipo.sexo-ratio' | translate}}</mat-label>
+        <input matInput formControlName="ratioSexo" type="number" id="ratioSexo" min="0"
+          placeholder="{{'csp.convocatoria-requisito-equipo.sexo-ratio' | translate}}">
+      </mat-form-field>
+    </div>
+    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexProperties.order"
+      [fxLayoutGap]="fxLayoutProperties.gap">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <h3>{{'csp.convocatoria.restricciones-nivel-academico' | translate}}</h3>
+
+        <table mat-table [dataSource]="nivelAcademicoDataSource" matSort matSortActive="nombre" matSortDirection="asc"
+          matSortDisableClear #sortNivelAcademico="matSort">
+
+          <!-- Nombre Nivel Academico Column -->
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{'csp.convocatoria.nivel-academico' | translate}}
+            </th>
+            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.nivelAcademico.nombre}} </td>
+          </ng-container>
+
+          <!-- Acciones Column -->
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+            <td mat-cell *matCellDef="let wrapper; let i = index">
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsNivelAcademico"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsNivelAcademico;"></tr>
+        </table>
+      </div>
+    </div>
+
+    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+      {{'csp.convocatoria-requisito-equipo.nivel-acadmemico.limitacion-fechas' | translate}}
+    </div>
+    <!-- Fechas nivel académico -->
+    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexProperties.order"
+      [fxLayoutGap]="fxLayoutProperties.gap">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <!-- Fecha posterior -->
+        <mat-form-field color="primary">
+          <mat-label>{{'csp.convocatoria-requisito-equipo.fecha-posterior'| translate}}</mat-label>
+          <input matInput [matDatepicker]="pickerFechaMinimaNivelAcademico" formControlName="fechaMinimaNivelAcademico">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaMinimaNivelAcademico">
+          </mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaMinimaNivelAcademico>
+          </mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <!-- Fecha anterior -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field color="primary" sgiEndDate>
+          <mat-label>{{'csp.convocatoria-requisito-equipo.fecha-anterior'| translate}}</mat-label>
+          <input matInput [matDatepicker]="pickerFechaMaximaNivelAcademico" formControlName="fechaMaximaNivelAcademico">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaMaximaNivelAcademico">
+          </mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaMaximaNivelAcademico>
+          </mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Vinculación con universidad -->
+    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexProperties.order"
+      [fxLayoutGap]="fxLayoutProperties.gap">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.convocatoria-requisito-equipo.vinculacion-universidad' | translate}}
+          </mat-label>
+          <sgi-select-boolean formControlName="vinculacionUniversidad">
+          </sgi-select-boolean>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexProperties.order"
+      [fxLayoutGap]="fxLayoutProperties.gap">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <h3>{{'csp.convocatoria.restricciones-vinculacion-universidad' | translate}}</h3>
+
+        <table mat-table [dataSource]="categoriaProfesionalDataSource" matSort matSortActive="nombre"
+          matSortDirection="asc" matSortDisableClear #sortCategoriaProfesional="matSort">
+
+          <!-- Nombre Categoría Profesional Column -->
+          <ng-container matColumnDef="nombre">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              {{'csp.convocatoria.categoria-profesional' | translate}}
+            </th>
+            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.categoriaProfesional.nombre}} </td>
+          </ng-container>
+
+          <!-- Acciones Column -->
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
+            <td mat-cell *matCellDef="let wrapper; let i = index">
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsCategoriaProfesional"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumnsCategoriaProfesional;"></tr>
+        </table>
+      </div>
+    </div>
+
+    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+      {{'csp.convocatoria-requisito-equipo.categoria-profesional.limitacion-fechas' | translate}}
+    </div>
+    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexProperties.order"
+      [fxLayoutGap]="fxLayoutProperties.gap">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <!-- Fechas categoria profesional -->
+        <!-- Fecha posterior -->
+        <mat-form-field color="primary">
+          <mat-label>{{'csp.convocatoria-requisito-equipo.fecha-posterior'| translate}}</mat-label>
+          <input matInput [matDatepicker]="pickerFechaMinimaCategoriaProfesional"
+            formControlName="fechaMinimaCategoriaProfesional">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaMinimaCategoriaProfesional">
+          </mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaMinimaCategoriaProfesional>
+          </mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <!-- Fecha anterior -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field color="primary" sgiEndDate>
+          <mat-label>{{'csp.convocatoria-requisito-equipo.fecha-anterior'| translate}}</mat-label>
+          <input matInput [matDatepicker]="pickerFechaMaximaCategoriaProfesional"
+            formControlName="fechaMaximaCategoriaProfesional">
+          <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaMaximaCategoriaProfesional">
+          </mat-datepicker-toggle>
+          <mat-datepicker #pickerFechaMaximaCategoriaProfesional>
+          </mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexProperties.order"
+      [fxLayoutGap]="fxLayoutProperties.gap">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <!-- Número proyectos competitivos mínimos -->
+
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.convocatoria-requisito-equipo.proyectos-competitivos.minimo' | translate}}</mat-label>
+          <input matInput formControlName="numMinimoCompetitivos" type="number" id="numMinimoCompetitivos" min="0"
+            placeholder="{{'csp.convocatoria-requisito-equipo.proyectos-competitivos.minimo' | translate}}">
+        </mat-form-field>
+      </div>
+
+      <!-- Número proyectos NO competitivos mínimos -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.convocatoria-requisito-equipo.proyectos-no-competitivos.minimo' | translate}}</mat-label>
+          <input matInput formControlName="numMinimoNoCompetitivos" type="number" id="numMinimoNoCompetitivos" min="0"
+            placeholder="{{'csp.convocatoria-requisito-equipo.proyectos-no-competitivos.minimo' | translate}}">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexProperties.order"
+      [fxLayoutGap]="fxLayoutProperties.gap">
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <!-- Número proyectos competitivos activos máximos -->
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.convocatoria-requisito-equipo.proyectos-competitivos.maximo' | translate}}</mat-label>
+          <input matInput formControlName="numMaximoCompetitivosActivos" type="number" id="numMaximoCompetitivosActivos"
+            min="0" placeholder="{{'csp.convocatoria-requisito-equipo.proyectos-competitivos.maximo' | translate}}">
+        </mat-form-field>
+      </div>
+
+      <!-- Número proyectos NO competitivos activos máximos -->
+      <div [fxFlex.sm]=" fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field class="input-form">
+          <mat-label>{{'csp.convocatoria-requisito-equipo.proyectos-no-competitivos.maximo' | translate}}</mat-label>
+          <input matInput formControlName="numMaximoNoCompetitivosActivos" type="number" min="0"
+            id="numMaximoNoCompetitivosActivos"
+            placeholder="{{'csp.convocatoria-requisito-equipo.proyectos-no-competitivos.maximo' | translate}}">
+        </mat-form-field>
+      </div>
+    </div>
+    <!-- Otros requisitos -->
+    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
+      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexPropertiesInline.order">
+      <mat-form-field>
+        <mat-label>{{'csp.convocatoria-requisito-equipo.otros-requisitos' | translate}}</mat-label>
+        <textarea #resumen matInput formControlName="otrosRequisitos" id="otrosRequisitos"
+          placeholder="{{'csp.convocatoria-requisito-equipo.otros-requisitos' | translate}}" maxlength="250"></textarea>
+        <mat-hint>{{resumen.value.length}} / 250</mat-hint>
+      </mat-form-field>
+    </div>
+  </form>
+
+</sgi-fragment>

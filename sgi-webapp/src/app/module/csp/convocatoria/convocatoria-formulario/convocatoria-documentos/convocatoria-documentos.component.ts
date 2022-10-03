@@ -142,7 +142,6 @@ export class ConvocatoriaDocumentosComponent extends FragmentComponent implement
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamNombreEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
-
     this.translate.get(
       CONVOCATORIA_DOCUMENTO_FICHERO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

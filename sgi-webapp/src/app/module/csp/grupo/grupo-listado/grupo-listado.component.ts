@@ -21,8 +21,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { EMPTY, from, Observable } from 'rxjs';
-import { catchError, filter, map, mergeMap, startWith, switchMap, toArray } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, from, Observable } from 'rxjs';
+import { catchError, filter, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 import { GrupoListadoExportModalComponent, IGrupoListadoModalData } from '../modals/grupo-listado-export-modal/grupo-listado-export-modal.component';
 
@@ -65,8 +65,7 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
   textoErrorReactivar: string;
 
   busquedaAvanzada = false;
-  lineasInvestigacionListado: ILineaInvestigacion[];
-  filteredLineasInvestigacion: Observable<ILineaInvestigacion[]>;
+  readonly lineasInvestigacion$ = new BehaviorSubject<ILineaInvestigacion[]>([]);
 
   get TIPO_MAP() {
     return TIPO_MAP;
@@ -366,45 +365,12 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
     this.busquedaAvanzada = !this.busquedaAvanzada;
   }
 
-  /**
-   * Devuelve el nombre de la Línea de Investigación.
-   * @param lineaInvestigacion LineaInvestigacion
-   * returns nombre LineaInvestigacion
-   */
-  getLineaInvestigacion(lineaInvestigacion: ILineaInvestigacion): string {
-    return lineaInvestigacion?.nombre;
-  }
-
   getLineasInvestigacion() {
     const lineasInvestigacionSubscription = this.lineaInvestigacionService.findTodos().subscribe(
       (response) => {
-        this.lineasInvestigacionListado = response.items;
-
-        this.filteredLineasInvestigacion = this.formGroup.controls.lineaInvestigacion.valueChanges
-          .pipe(
-            startWith(''),
-            map(value => this._filterLineaInvestigacion(value))
-          );
+        this.lineasInvestigacion$.next(response.items);
       });
-
     this.suscripciones.push(lineasInvestigacionSubscription);
-  }
-
-  /**
-   * Filtro de campo autocompletable LineaInvestigacion.
-   * @param value value a filtrar (string o nombre LineaInvestigacion).
-   * @returns lista de líneas de investigación filtradas.
-   */
-  private _filterLineaInvestigacion(value: string | ILineaInvestigacion): ILineaInvestigacion[] {
-    let filterValue: string;
-    if (typeof value === 'string') {
-      filterValue = value.toLowerCase();
-    } else {
-      filterValue = value.nombre.toLowerCase();
-    }
-
-    return this.lineasInvestigacionListado.filter
-      (lineaInvestigacion => lineaInvestigacion.nombre.toLowerCase().includes(filterValue));
   }
 
   openExportModal(): void {

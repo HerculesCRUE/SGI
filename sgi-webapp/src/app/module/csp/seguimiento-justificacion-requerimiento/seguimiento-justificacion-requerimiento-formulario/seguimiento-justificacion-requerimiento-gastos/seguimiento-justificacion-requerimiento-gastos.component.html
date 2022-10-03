@@ -1,0 +1,120 @@
+<sgi-fragment title="{{ 'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos' | translate }}: {{ 
+    formPart.currentRequerimientoJustificacion?.tipoRequerimiento?.nombre }}">
+  <div class="mat-elevation-z4">
+    <mat-table [dataSource]="dataSource" matSort matSortActive="justificacionId" matSortDirection="asc">
+
+      <!-- Proyecto SGI: ID interno Column -->
+      <ng-container matColumnDef="proyectoSgiId">
+        <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.proyecto-sgi-id' | translate}}
+        </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let wrapper">
+          {{wrapper.value.proyectoSgiId }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- ID Justificación Column -->
+      <ng-container matColumnDef="justificacionId">
+        <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.id-justificacion' | translate}}
+        </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let wrapper">
+          {{wrapper.value.gasto.justificacionId }}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Columnas dinamicas -->
+      <ng-container *ngFor="let column of formPart.columns" [matColumnDef]="column.id">
+        <mat-header-cell *matHeaderCellDef [class.computed]="column.compute" mat-sort-header>
+          {{column.name}}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let wrapper" [class.computed]="column.compute">
+          <ng-container *ngIf="column.compute">
+            {{wrapper?.value.gasto.columnas[column.id] | number: '1.2-2'}}
+          </ng-container>
+          <ng-container *ngIf="!column.compute">
+            {{wrapper?.value.gasto.columnas[column.id]}}
+          </ng-container>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Aceptado Column -->
+      <ng-container matColumnDef="aceptado">
+        <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.aceptado' | translate}}
+        </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let wrapper">
+          {{wrapper.value.aceptado | booleanToText | translate}}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Importe aceptado Column -->
+      <ng-container matColumnDef="importeAceptado">
+        <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.importe-aceptado' | translate}}
+        </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let wrapper">
+          {{wrapper?.value.importeAceptado | number: '1.2-2'}}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Importe rechazado Column -->
+      <ng-container matColumnDef="importeRechazado">
+        <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.importe-rechazado' | translate}}
+        </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let wrapper">
+          {{wrapper?.value.importeRechazado | number: '1.2-2'}}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Importe alegado Column -->
+      <ng-container matColumnDef="importeAlegado">
+        <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.importe-alegado' | translate}}
+        </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let wrapper">
+          {{wrapper?.value.importeAlegado | number: '1.2-2'}}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones">
+        <mat-header-cell mat-header-cell *matHeaderCellDef>
+          {{ 'label.actions' | translate }}
+        </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let wrapper; let i = index">
+          <ng-container *sgiHasAuthorityForAnyUO="'CSP-SJUS-E'">
+            <button mat-icon-button matTooltip="{{'btn.edit' | translate}}" color="primary"
+              (click)="openDetalleModal(wrapper, false, i)">
+              <mat-icon>border_color</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAuthorityForAnyUO="'CSP-SJUS-V'">
+            <button mat-icon-button matTooltip="{{'btn.view' | translate}}" color="primary"
+              (click)="openDetalleModal(wrapper, true, i)">
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </ng-container>
+          <ng-container *sgiHasAuthorityForAnyUO="'CSP-SJUS-E'">
+            <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deleteGasto(wrapper)">
+              <mat-icon color="warn">highlight_off</mat-icon>
+            </button>
+          </ng-container>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="formPart.displayColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: formPart.displayColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator [pageSizeOptions]="elementsPage" showFirstLastButtons></mat-paginator>
+  </div>
+  <ng-container *sgiHasAuthorityForAnyUO="'CSP-SJUS-E'">
+    <div class="separation-button">
+      <button color="three" mat-button mat-raised-button (click)="openGastosJustificadosModalComponent()">
+        <mat-icon color="accent">add_circle</mat-icon>
+        {{ 'btn.add.entity' | translate:msgParamEntity }}
+      </button>
+    </div>
+  </ng-container>
+
+</sgi-fragment>

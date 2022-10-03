@@ -3,6 +3,9 @@
   <artifact name="sgdoc-api" groupId="org.crue.hercules.sgi.esb.sgdoc.api" version="${revision}" type="synapse/api" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/api/sgdoc-api.xml</file>
   </artifact>
+  <artifact name="sgdoc-public-api" groupId="org.crue.hercules.sgi.esb.sgdoc.api" version="${revision}" type="synapse/api" serverRole="EnterpriseServiceBus">
+    <file>src/main/synapse-config/api/sgdoc-public-api.xml</file>
+  </artifact>
   <artifact name="sgdoc-endpoint" groupId="org.crue.hercules.sgi.esb.sgdoc.endpoint" version="${revision}" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/endpoints/sgdoc-endpoint.xml</file>
   </artifact>

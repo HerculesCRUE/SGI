@@ -21,7 +21,9 @@ import { ConvocatoriaEnlaceListadoExportService } from '../../convocatoria-enlac
 import { ConvocatoriaEntidadConvocanteListadoExportService } from '../../convocatoria-entidad-convocante-listado-export.service';
 import { ConvocatoriaEntidadFinanciadoraListadoExportService } from '../../convocatoria-entidad-financiadora-listado-export.service';
 import { ConvocatoriaFaseListadoExportService } from '../../convocatoria-fase-listado-export.service';
+import { ConvocatoriaFooterListadoExportService } from '../../convocatoria-footer-listado-export.service';
 import { ConvocatoriaGeneralListadoExportService } from '../../convocatoria-general-listado-export.service';
+import { ConvocatoriaHeaderListadoExportService } from '../../convocatoria-header-listado-export.service';
 import { ConvocatoriaHitoListadoExportService } from '../../convocatoria-hito-listado-export.service';
 import { ConvocatoriaListadoExportService } from '../../convocatoria-listado-export.service';
 import { ConvocatoriaPartidaPresupuestariaListadoExportService } from '../../convocatoria-partida-presupuestaria-listado-export.service';
@@ -72,6 +74,8 @@ describe('ConvocatoriaListadoExportModalComponent', () => {
         ConvocatoriaConceptoGastoListadoExportService,
         ConvocatoriaPartidaPresupuestariaListadoExportService,
         ConvocatoriaConfiguracionSolicitudListadoExportService,
+        ConvocatoriaFooterListadoExportService,
+        ConvocatoriaHeaderListadoExportService,
         LuxonDatePipe,
         DecimalPipe,
         PercentPipe,

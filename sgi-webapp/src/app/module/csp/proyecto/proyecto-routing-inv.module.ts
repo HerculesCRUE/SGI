@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentGuard } from '@core/guards/detail-form.guard';
 import { ActionGuard } from '@core/guards/master-form.guard';
+import { Module } from '@core/module';
 import { SgiRoutes } from '@core/route';
 import { SgiAuthGuard } from '@sgi/framework/auth';
 import { ProyectoDataResolver, PROYECTO_DATA_KEY } from './proyecto-data.resolver';
@@ -24,6 +25,7 @@ const routes: SgiRoutes = [
     data: {
       title: MSG_PROYECTOS_TITLE,
       hasAuthorityForAnyUO: 'CSP-PRO-INV-VR',
+      module: Module.INV
     }
   },
   {
@@ -37,6 +39,7 @@ const routes: SgiRoutes = [
     data: {
       title: MSG_PROYECTOS_VER_TITLE,
       hasAuthorityForAnyUO: 'CSP-PRO-INV-VR',
+      module: Module.INV
     },
     children: [
       {

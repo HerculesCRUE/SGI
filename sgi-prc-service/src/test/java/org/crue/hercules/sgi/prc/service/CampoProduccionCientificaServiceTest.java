@@ -15,6 +15,7 @@ import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 import org.crue.hercules.sgi.prc.exceptions.CampoProduccionCientificaNotFoundException;
 import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica;
 import org.crue.hercules.sgi.prc.repository.CampoProduccionCientificaRepository;
+import org.crue.hercules.sgi.prc.util.ProduccionCientificaAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -50,6 +51,9 @@ class CampoProduccionCientificaServiceTest extends BaseServiceTest {
 
   @MockBean
   private PersistenceUnitUtil persistenceUnitUtil;
+
+  @MockBean
+  private ProduccionCientificaAuthorityHelper authorityHelper;
 
   // This bean must be created by Spring so validations can be applied
   @Autowired
@@ -93,7 +97,7 @@ class CampoProduccionCientificaServiceTest extends BaseServiceTest {
     Page<CampoProduccionCientifica> page = service.findAll(null, paging);
 
     // then: Devuelve la pagina 3 con los CampoProduccionCientifica del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().hasSize()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -162,7 +166,7 @@ class CampoProduccionCientificaServiceTest extends BaseServiceTest {
     List<CampoProduccionCientifica> campoProduccionCientificasBuscados = service
         .findAllByProduccionCientificaId(produccionCientificaId);
     // then: Cada CampoProduccionCientifica tiene produccionCientificaId buscado
-    Assertions.assertThat(campoProduccionCientificasBuscados.size()).as("size()").isEqualTo(3);
+    Assertions.assertThat(campoProduccionCientificasBuscados).as("hasSize()").hasSize(3);
     campoProduccionCientificasBuscados.stream().forEach(autoGrupoBuscado -> {
       Assertions.assertThat(autoGrupoBuscado.getProduccionCientificaId()).as("getProduccionCientificaId")
           .isEqualTo(produccionCientificaId);
@@ -185,7 +189,6 @@ class CampoProduccionCientificaServiceTest extends BaseServiceTest {
         .willAnswer(new Answer<Page<CampoProduccionCientifica>>() {
           @Override
           public Page<CampoProduccionCientifica> answer(InvocationOnMock invocation) throws Throwable {
-            Specification<CampoProduccionCientifica> spec = invocation.getArgument(0);
             Pageable pageable = invocation.getArgument(1, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
@@ -209,7 +212,7 @@ class CampoProduccionCientificaServiceTest extends BaseServiceTest {
         paging);
 
     // then: Devuelve la pagina 3 con los CampoProduccionCientifica del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().hasSize()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);

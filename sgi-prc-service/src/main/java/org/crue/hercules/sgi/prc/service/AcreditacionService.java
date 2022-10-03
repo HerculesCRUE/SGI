@@ -10,6 +10,7 @@ import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
 import org.crue.hercules.sgi.prc.repository.AcreditacionRepository;
 import org.crue.hercules.sgi.prc.repository.specification.AcreditacionSpecifications;
 import org.crue.hercules.sgi.prc.util.AssertHelper;
+import org.crue.hercules.sgi.prc.util.ProduccionCientificaAuthorityHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AcreditacionService {
 
   private final AcreditacionRepository repository;
+  private final ProduccionCientificaAuthorityHelper authorityHelper;
 
   /**
    * Guardar un nuevo {@link Acreditacion}.
@@ -113,6 +115,7 @@ public class AcreditacionService {
       Pageable pageable) {
     log.debug(
         "findAllByProduccionCientificaId(Long prodduccionCientificaId, String query, Pageable pageable) - start");
+    authorityHelper.checkUserHasAuthorityViewProduccionCientifica(produccionCientificaId);
     Specification<Acreditacion> specs = AcreditacionSpecifications.byProduccionCientificaId(
         produccionCientificaId)
         .and(SgiRSQLJPASupport.toSpecification(query));

@@ -5,52 +5,41 @@
   <form class="formulario mat-elevation-z8" [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs"
     [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
-    <div fxFlex="85%" fxFlex.sm="50%" fxFlex.md="73%" [fxLayout.xs]="fxLayoutProperties.xs"
-      [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Código -->
-      <div class="col">
-        <mat-form-field>
-          <mat-label>{{'eti.peticion-evaluacion.codigo' | translate}}</mat-label>
-          <input matInput type="text" placeholder="{{'eti.peticion-evaluacion.codigo' | translate}}"
-            formControlName="codigo">
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="15%">
+        <mat-label>{{'eti.peticion-evaluacion.codigo' | translate}}</mat-label>
+        <input matInput type="text" placeholder="{{'eti.peticion-evaluacion.codigo' | translate}}"
+          formControlName="codigo">
+      </mat-form-field>
 
       <!-- Título proyecto -->
-      <div class="col">
-        <mat-form-field>
-          <mat-label>{{'eti.peticion-evaluacion.proyecto-titulo' | translate}}</mat-label>
-          <input matInput type="text" placeholder="{{'eti.peticion-evaluacion.proyecto-titulo' | translate}}"
-            formControlName="titulo">
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="20%">
+        <mat-label>{{'eti.peticion-evaluacion.proyecto-titulo' | translate}}</mat-label>
+        <input matInput type="text" placeholder="{{'eti.peticion-evaluacion.proyecto-titulo' | translate}}"
+          formControlName="titulo">
+      </mat-form-field>
 
       <!-- Comité -->
-      <div class="col">
-        <mat-form-field class="input-form">
-          <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-          <sgi-select-comite #selectComite formControlName="comite"></sgi-select-comite>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="8%">
+        <mat-label>{{'label.eti.comite' | translate}}</mat-label>
+        <sgi-select-comite #selectComite formControlName="comite"></sgi-select-comite>
+      </mat-form-field>
 
       <!--Persona-->
-      <div class="col">
-        <mat-form-field fxFill>
-          <mat-label>{{'title.eti.search.solicitante' | translate}}</mat-label>
-          <sgi-select-persona placeholder="{{'title.eti.search.solicitante' | translate}}"
-            [tipoColectivo]="tipoColectivoSolicitante" formControlName="solicitante">
-          </sgi-select-persona>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="37%">
+        <mat-label>{{'eti.solicitante' | translate}}</mat-label>
+        <sgi-select-persona placeholder="{{'eti.solicitante' | translate}}" [tipoColectivo]="tipoColectivoSolicitante"
+          formControlName="solicitante">
+        </sgi-select-persona>
+      </mat-form-field>
 
       <!-- Estado Memoria -->
-      <div class="col">
-        <mat-form-field>
-          <mat-label>{{'eti.peticion-evaluacion.estado-memoria' | translate}}</mat-label>
-          <sgi-select-enum formControlName="tipoEstadoMemoria" [enumMap]="ESTADO_MEMORIA_MAP">
-          </sgi-select-enum>
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex="20%">
+        <mat-label>{{'eti.peticion-evaluacion.estado-memoria' | translate}}</mat-label>
+        <sgi-select-enum formControlName="tipoEstadoMemoria" [enumMap]="ESTADO_MEMORIA_MAP">
+        </sgi-select-enum>
+      </mat-form-field>
     </div>
 
     <div class="buttons-final">

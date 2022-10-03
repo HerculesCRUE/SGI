@@ -20,6 +20,7 @@ import org.crue.hercules.sgi.csp.repository.ModeloTipoFaseRepository;
 import org.crue.hercules.sgi.csp.repository.specification.DocumentoRequeridoSolicitudSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
 import org.crue.hercules.sgi.csp.service.DocumentoRequeridoSolicitudService;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -73,7 +74,10 @@ public class DocumentoRequeridoSolicitudServiceImpl implements DocumentoRequerid
 
     Assert.isNull(documentoRequeridoSolicitud.getId(), "Id tiene que ser null para crear DocumentoRequeridoSolicitud");
 
-    validarDocumentoRequeridoSolicitud(documentoRequeridoSolicitud, null, new String[] { "CSP-CON-E", "CSP-CON-C" });
+    validarDocumentoRequeridoSolicitud(documentoRequeridoSolicitud, null, new String[] {
+        ConvocatoriaAuthorityHelper.CSP_CON_C,
+        ConvocatoriaAuthorityHelper.CSP_CON_E
+    });
 
     DocumentoRequeridoSolicitud returnValue = repository.save(documentoRequeridoSolicitud);
 
@@ -99,7 +103,8 @@ public class DocumentoRequeridoSolicitudServiceImpl implements DocumentoRequerid
 
     return repository.findById(documentoRequeridoSolicitud.getId()).map(datosOriginales -> {
 
-      validarDocumentoRequeridoSolicitud(documentoRequeridoSolicitud, datosOriginales, new String[] { "CSP-CON-E" });
+      validarDocumentoRequeridoSolicitud(documentoRequeridoSolicitud, datosOriginales,
+          new String[] { ConvocatoriaAuthorityHelper.CSP_CON_E });
 
       datosOriginales.setTipoDocumento(documentoRequeridoSolicitud.getTipoDocumento());
       datosOriginales.setObservaciones(documentoRequeridoSolicitud.getObservaciones());
@@ -131,7 +136,7 @@ public class DocumentoRequeridoSolicitudServiceImpl implements DocumentoRequerid
               documentoRequeridoSolicitud.get().getConfiguracionSolicitudId()));
       Assert.isTrue(
           convocatoriaService.isRegistradaConSolicitudesOProyectos(configuracionSolicitud.getConvocatoriaId(), null,
-              new String[] { "CSP-CON-E" }),
+              new String[] { ConvocatoriaAuthorityHelper.CSP_CON_E }),
           "No se puede eliminar DocumentoRequeridoSolicitud. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
     } else {
       throw new DocumentoRequeridoSolicitudNotFoundException(id);

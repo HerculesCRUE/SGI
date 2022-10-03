@@ -104,6 +104,7 @@ public abstract class BaremacionCosteIndirectoService extends BaremacionCommonSe
 
   protected abstract EpigrafeCVN getEpigrafeCVNCostesIndirectos();
 
+  @Override
   protected TipoPuntuacion getTipoPuntuacion() {
     return TipoPuntuacion.COSTE_INDIRECTO;
   }
@@ -183,20 +184,6 @@ public abstract class BaremacionCosteIndirectoService extends BaremacionCommonSe
 
     getPuntuacionItemInvestigadorRepository().save(puntuacionItemInvestigador);
     log.debug("evaluatePuntuacioItemInvestigador(produccionCientificaId, puntosInvestigador, autor) - end");
-  }
-
-  protected BigDecimal evaluateBaremoModulador(BaremacionInput baremacionInput) {
-    log.debug("evaluateBaremoModulador(baremacionInput) - start");
-
-    log.debug("evaluateBaremoModulador(baremacionInput) - end");
-    return new BigDecimal("1.00");
-  }
-
-  protected BigDecimal evaluateBaremoExtra(BaremacionInput baremacionInput) {
-    log.debug("evaluateBaremoExtra(baremacionInput) - start");
-
-    log.debug("evaluateBaremoExtra(baremacionInput) - end");
-    return BigDecimal.ZERO;
   }
 
   @Override

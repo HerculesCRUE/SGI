@@ -128,7 +128,7 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let proyecto">
-          <ng-container *sgiHasAnyAuthority="['CSP-PRO-INV-VR','CSP-PRO-V', 'CSP-PRO-V_' + proyecto.unidadGestion.id ]">
+          <ng-container *sgiHasAuthority="'CSP-PRO-INV-VR'">
             <a mat-button matTooltip="{{'btn.view' | translate}}" [routerLink]="[proyecto.id]">
               <mat-icon color="primary">visibility</mat-icon>
             </a>

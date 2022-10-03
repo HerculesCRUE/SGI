@@ -26,6 +26,7 @@ import { SolicitudCrearGuard } from './solicitud-crear/solicitud-crear.guard';
 import { SolicitudDataResolver } from './solicitud-data.resolver';
 import { SolicitudEditarComponent } from './solicitud-editar/solicitud-editar.component';
 import { SolicitudEntidadConvocanteListadoExportService } from './solicitud-entidad-convocante-listado-export.service';
+import { SolicitudFooterListadoExportService } from './solicitud-footer-listado-export.service';
 import { SolicitudAutoevaluacionComponent } from './solicitud-formulario/solicitud-autoevaluacion/solicitud-autoevaluacion.component';
 import { SolicitudDatosGeneralesComponent } from './solicitud-formulario/solicitud-datos-generales/solicitud-datos-generales.component';
 import { SolicitudDocumentosComponent } from './solicitud-formulario/solicitud-documentos/solicitud-documentos.component';
@@ -45,6 +46,7 @@ import { SolicitudRrhhRequisitosConvocatoriaComponent } from './solicitud-formul
 import { SolicitudRrhhSolitanteComponent } from './solicitud-formulario/solicitud-rrhh-solicitante/solicitud-rrhh-solicitante.component';
 import { SolicitudRrhhTutorComponent } from './solicitud-formulario/solicitud-rrhh-tutor/solicitud-rrhh-tutor.component';
 import { SolicitudGeneralListadoExportService } from './solicitud-general-listado-export.service';
+import { SolicitudHeaderListadoExportService } from './solicitud-header-listado-export.service';
 import { SolicitudListadoExportService } from './solicitud-listado-export.service';
 import { SolicitudListadoComponent } from './solicitud-listado/solicitud-listado.component';
 import { SolicitudProyectoAreaConocimientoListadoExportService } from './solicitud-proyecto-area-conocimiento-listado-export.service';
@@ -123,7 +125,9 @@ import { SolicitudRrhhListadoExportService } from './solicitud-rrhh-listado-expo
     SolicitudProyectoSocioListadoExportService,
     SolicitudProyectoEntidadFinanciadoraListadoExportService,
     SolicitudProyectoPresupuestoListadoExportService,
-    SolicitudRrhhListadoExportService
+    SolicitudRrhhListadoExportService,
+    SolicitudHeaderListadoExportService,
+    SolicitudFooterListadoExportService
   ]
 })
 export class SolicitudModule { }

@@ -34,6 +34,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ComentarioServiceImpl implements ComentarioService {
+  private static final String MSG_EL_BLOQUE_SELECCIONADO_NO_ES_CORRECTO_PARA_EL_TIPO_DE_EVALUACION = "El bloque seleccionado no es correcto para el tipo de evaluación.";
+  private static final String MSG_EL_ID_DE_LA_EVALUACION_NO_PUEDE_SER_NULO_PARA_LISTAR_SUS_COMENTARIOS = "El id de la evaluación no puede ser nulo para listar sus comentarios";
+  private static final String MSG_COMENTARIO_ID_NO_PUEDE_SER_NULL_PARA_ELIMINAR_UN_COMENTARIO = "Comentario id no puede ser null para eliminar un comentario.";
+  private static final String MSG_EVALUACION_ID_NO_PUEDE_SER_NULL_PARA_ELIMINAR_UN_COMENTARIO = "Evaluación id no puede ser null para eliminar un comentario.";
+  private static final String MSG_EL_USUARIO_NO_COINCIDE_CON_NINGUNO_DE_LOS_EVALUADORES_DE_LA_EVALUACION = "El usuario no coincide con ninguno de los Evaluadores de la Evaluación.";
+  private static final String MSG_EVALUACION_ID_NO_PUEDE_SER_NULL_PARA_CREAR_UN_NUEVO_COMENTARIO = "Evaluación id no puede ser null para crear un nuevo comentario.";
+
   private final ComentarioRepository comentarioRepository;
   private final EvaluacionRepository evaluacionRepository;
   private final EvaluadorRepository evaluadorRepository;
@@ -58,7 +65,7 @@ public class ComentarioServiceImpl implements ComentarioService {
   public Comentario createComentarioGestor(Long evaluacionId, Comentario comentario) {
     log.debug("createComentarioGestor(Long evaluacionId, Comentario comentario) - start");
 
-    Assert.notNull(evaluacionId, "Evaluación id no puede ser null para crear un nuevo comentario.");
+    Assert.notNull(evaluacionId, MSG_EVALUACION_ID_NO_PUEDE_SER_NULL_PARA_CREAR_UN_NUEVO_COMENTARIO);
 
     return evaluacionRepository.findById(evaluacionId).map(evaluacion -> {
 
@@ -89,7 +96,7 @@ public class ComentarioServiceImpl implements ComentarioService {
   public Comentario createComentarioEvaluador(Long evaluacionId, Comentario comentario, String personaRef) {
     log.debug("createComentarioEvaluador(Long evaluacionId, Comentario comentario) - start");
 
-    Assert.notNull(evaluacionId, "Evaluación id no puede ser null para crear un nuevo comentario.");
+    Assert.notNull(evaluacionId, MSG_EVALUACION_ID_NO_PUEDE_SER_NULL_PARA_CREAR_UN_NUEVO_COMENTARIO);
 
     return evaluacionRepository.findById(evaluacionId).map(evaluacion -> {
 
@@ -102,7 +109,7 @@ public class ComentarioServiceImpl implements ComentarioService {
               || evaluacion.getEvaluador2().getPersonaRef().equals(personaRef) || isMiembroComite(personaRef,
                   evaluacion.getMemoria().getComite()
                       .getComite()),
-          "El usuario no coincide con ninguno de los Evaluadores de la Evaluación.");
+          MSG_EL_USUARIO_NO_COINCIDE_CON_NINGUNO_DE_LOS_EVALUADORES_DE_LA_EVALUACION);
 
       log.debug("createComentarioEvaluador(Long evaluacionId, Comentario comentario) - end");
       return createComentarioEvaluacion(evaluacionId, comentario, 2L);
@@ -143,7 +150,7 @@ public class ComentarioServiceImpl implements ComentarioService {
   public Comentario createComentarioActa(Long evaluacionId, Comentario comentario) {
     log.debug("createComentarioActa(Long evaluacionId, Comentario comentario) - start");
 
-    Assert.notNull(evaluacionId, "Evaluación id no puede ser null para crear un nuevo comentario.");
+    Assert.notNull(evaluacionId, MSG_EVALUACION_ID_NO_PUEDE_SER_NULL_PARA_CREAR_UN_NUEVO_COMENTARIO);
 
     return evaluacionRepository.findById(evaluacionId).map(evaluacion -> {
 
@@ -189,19 +196,17 @@ public class ComentarioServiceImpl implements ComentarioService {
   public void deleteComentarioGestor(Long evaluacionId, Long comentarioId) throws ComentarioNotFoundException {
     log.debug("deleteComentarioGestor(Long evaluacionId, Long comentarioId) - start");
 
-    Assert.notNull(evaluacionId, "Evaluación id no puede ser null para eliminar un comentario.");
-    Assert.notNull(comentarioId, "Comentario id no puede ser null para eliminar un comentario.");
+    Assert.notNull(evaluacionId, MSG_EVALUACION_ID_NO_PUEDE_SER_NULL_PARA_ELIMINAR_UN_COMENTARIO);
+    Assert.notNull(comentarioId, MSG_COMENTARIO_ID_NO_PUEDE_SER_NULL_PARA_ELIMINAR_UN_COMENTARIO);
 
-    evaluacionRepository.findById(evaluacionId).map(evaluacion -> {
+    Evaluacion evaluacion = evaluacionRepository.findById(evaluacionId)
+      .orElseThrow(() -> new EvaluacionNotFoundException(evaluacionId));
 
-      validateEstadoEvaluacion(evaluacion);
+    validateEstadoEvaluacion(evaluacion);
 
-      deleteComentarioEvaluacion(evaluacionId, comentarioId, 1L);
+    deleteComentarioEvaluacion(evaluacionId, comentarioId, 1L);
 
-      log.debug("deleteComentarioGestor(Long evaluacionId, Long comentarioId) - end");
-      return evaluacion;
-
-    }).orElseThrow(() -> new EvaluacionNotFoundException(evaluacionId));
+    log.debug("deleteComentarioGestor(Long evaluacionId, Long comentarioId) - end");
 
   }
 
@@ -217,24 +222,22 @@ public class ComentarioServiceImpl implements ComentarioService {
       throws ComentarioNotFoundException {
     log.debug("deleteComentarioEvaluador(Long evaluacionId, Long comentarioId) - start");
 
-    Assert.notNull(evaluacionId, "Evaluación id no puede ser null para eliminar un comentario.");
-    Assert.notNull(comentarioId, "Comentario id no puede ser null para eliminar un comentario.");
+    Assert.notNull(evaluacionId, MSG_EVALUACION_ID_NO_PUEDE_SER_NULL_PARA_ELIMINAR_UN_COMENTARIO);
+    Assert.notNull(comentarioId, MSG_COMENTARIO_ID_NO_PUEDE_SER_NULL_PARA_ELIMINAR_UN_COMENTARIO);
 
-    evaluacionRepository.findById(evaluacionId).map(evaluacion -> {
+    Evaluacion evaluacion = evaluacionRepository.findById(evaluacionId)
+        .orElseThrow(() -> new EvaluacionNotFoundException(evaluacionId));
 
-      Assert.isTrue(
-          (evaluacion.getEvaluador1().getPersonaRef()).equals(personaRef)
-              || evaluacion.getEvaluador2().getPersonaRef().equals(personaRef) || isMiembroComite(personaRef,
-                  evaluacion.getMemoria().getComite()
-                      .getComite()),
-          "El usuario no coincide con ninguno de los Evaluadores de la Evaluación.");
+    Assert.isTrue(
+        (evaluacion.getEvaluador1().getPersonaRef()).equals(personaRef)
+            || evaluacion.getEvaluador2().getPersonaRef().equals(personaRef) || isMiembroComite(personaRef,
+                evaluacion.getMemoria().getComite()
+                    .getComite()),
+        MSG_EL_USUARIO_NO_COINCIDE_CON_NINGUNO_DE_LOS_EVALUADORES_DE_LA_EVALUACION);
 
-      deleteComentarioEvaluacion(evaluacionId, comentarioId, 2L);
+    deleteComentarioEvaluacion(evaluacionId, comentarioId, 2L);
 
-      log.debug("deleteComentarioEvaluador(Long evaluacionId, Long comentarioId) - end");
-      return evaluacion;
-    }).orElseThrow(() -> new EvaluacionNotFoundException(evaluacionId));
-
+    log.debug("deleteComentarioEvaluador(Long evaluacionId, Long comentarioId) - end");
   }
 
   /**
@@ -248,17 +251,16 @@ public class ComentarioServiceImpl implements ComentarioService {
   public void deleteComentarioActa(Long evaluacionId, Long comentarioId) throws ComentarioNotFoundException {
     log.debug("deleteComentarioActa(Long evaluacionId, Long comentarioId) - start");
 
-    Assert.notNull(evaluacionId, "Evaluación id no puede ser null para eliminar un comentario.");
-    Assert.notNull(comentarioId, "Comentario id no puede ser null para eliminar un comentario.");
+    Assert.notNull(evaluacionId, MSG_EVALUACION_ID_NO_PUEDE_SER_NULL_PARA_ELIMINAR_UN_COMENTARIO);
+    Assert.notNull(comentarioId, MSG_COMENTARIO_ID_NO_PUEDE_SER_NULL_PARA_ELIMINAR_UN_COMENTARIO);
 
-    evaluacionRepository.findById(evaluacionId).map(evaluacion -> {
+    if (!evaluacionRepository.existsById(evaluacionId)) {
+      throw new EvaluacionNotFoundException(evaluacionId);
+    }
 
-      deleteComentarioEvaluacion(evaluacionId, comentarioId, 3L);
+    deleteComentarioEvaluacion(evaluacionId, comentarioId, 3L);
 
-      log.debug("deleteComentarioActa(Long evaluacionId, Long comentarioId) - end");
-      return evaluacion;
-    }).orElseThrow(() -> new EvaluacionNotFoundException(evaluacionId));
-
+    log.debug("deleteComentarioActa(Long evaluacionId, Long comentarioId) - end");
   }
 
   /**
@@ -322,7 +324,7 @@ public class ComentarioServiceImpl implements ComentarioService {
               || evaluacion.getEvaluador2().getPersonaRef().equals(personaRef) || isMiembroComite(personaRef,
                   evaluacion.getMemoria().getComite()
                       .getComite()),
-          "El usuario no coincide con ninguno de los Evaluadores de la Evaluación.");
+          MSG_EL_USUARIO_NO_COINCIDE_CON_NINGUNO_DE_LOS_EVALUADORES_DE_LA_EVALUACION);
 
       return updateComentarioEvaluacion(evaluacionId, comentarioActualizar);
 
@@ -340,7 +342,7 @@ public class ComentarioServiceImpl implements ComentarioService {
   @Override
   public Page<Comentario> findByEvaluacionIdGestor(Long id, Pageable pageable) {
     log.debug("findByEvaluacionIdGestor(Long id, Pageable pageable) - start");
-    Assert.notNull(id, "El id de la evaluación no puede ser nulo para listar sus comentarios");
+    Assert.notNull(id, MSG_EL_ID_DE_LA_EVALUACION_NO_PUEDE_SER_NULO_PARA_LISTAR_SUS_COMENTARIOS);
 
     return evaluacionRepository.findById(id).map(evaluacion -> {
       Page<Comentario> returnValue = comentarioRepository.findByEvaluacionIdAndTipoComentarioId(id, 1L, pageable);
@@ -362,7 +364,7 @@ public class ComentarioServiceImpl implements ComentarioService {
   @Override
   public Page<Comentario> findByEvaluacionIdEvaluador(Long id, Pageable pageable, String personaRef) {
     log.debug("findByEvaluacionIdEvaluador(Long id, Pageable pageable, String personaRef) - start");
-    Assert.notNull(id, "El id de la evaluación no puede ser nulo para listar sus comentarios");
+    Assert.notNull(id, MSG_EL_ID_DE_LA_EVALUACION_NO_PUEDE_SER_NULO_PARA_LISTAR_SUS_COMENTARIOS);
 
     return evaluacionRepository.findById(id).map(evaluacion -> {
       Page<Comentario> returnValue = comentarioRepository.findByEvaluacionIdAndTipoComentarioId(id, 2L, pageable);
@@ -383,7 +385,7 @@ public class ComentarioServiceImpl implements ComentarioService {
   @Override
   public Page<Comentario> findByEvaluacionIdActa(Long id, Pageable pageable) {
     log.debug("findByEvaluacionIdActa(Long id, Pageable pageable) - start");
-    Assert.notNull(id, "El id de la evaluación no puede ser nulo para listar sus comentarios");
+    Assert.notNull(id, MSG_EL_ID_DE_LA_EVALUACION_NO_PUEDE_SER_NULO_PARA_LISTAR_SUS_COMENTARIOS);
 
     return evaluacionRepository.findById(id).map(evaluacion -> {
       Page<Comentario> returnValue = comentarioRepository.findByEvaluacionIdAndTipoComentarioId(id, 3L, pageable);
@@ -500,7 +502,7 @@ public class ComentarioServiceImpl implements ComentarioService {
         // Tipo Evaluación Retrospectiva
 
         // El id formulario debe ser del tipo 6 - > Retrospectiva
-        Assert.isTrue(idFormulario.equals(6L), "El bloque seleccionado no es correcto para el tipo de evaluación.");
+        Assert.isTrue(idFormulario.equals(6L), MSG_EL_BLOQUE_SELECCIONADO_NO_ES_CORRECTO_PARA_EL_TIPO_DE_EVALUACION);
         break;
       }
       case 2: {
@@ -510,7 +512,7 @@ public class ComentarioServiceImpl implements ComentarioService {
         Assert.isTrue(
             (idFormulario.equals(1L) && comite.equals("CEI")) || (idFormulario.equals(2L) && comite.equals("CEEA"))
                 || (idFormulario.equals(3L) && comite.equals("CBE")),
-            "El bloque seleccionado no es correcto para el tipo de evaluación.");
+            MSG_EL_BLOQUE_SELECCIONADO_NO_ES_CORRECTO_PARA_EL_TIPO_DE_EVALUACION);
 
         break;
       }
@@ -518,14 +520,18 @@ public class ComentarioServiceImpl implements ComentarioService {
         // Tipo Evaluación Seguimiento Anual
 
         // El id formulario debe ser del tipo 4 - > Seguimiento Anual
-        Assert.isTrue(idFormulario.equals(4L), "El bloque seleccionado no es correcto para el tipo de evaluación.");
+        Assert.isTrue(idFormulario.equals(4L), MSG_EL_BLOQUE_SELECCIONADO_NO_ES_CORRECTO_PARA_EL_TIPO_DE_EVALUACION);
         break;
       }
       case 4: {
         // Tipo Evaluación Seguimiento Final
         // El id formulario debe ser del tipo 5 - > Seguimiento Final
-        Assert.isTrue(idFormulario.equals(5L), "El bloque seleccionado no es correcto para el tipo de evaluación.");
+        Assert.isTrue(idFormulario.equals(5L), MSG_EL_BLOQUE_SELECCIONADO_NO_ES_CORRECTO_PARA_EL_TIPO_DE_EVALUACION);
+        break;
       }
+      default:
+        log.warn("Tipo de Evaluación con el id: {} no encontrado.", idTipoEvaluacion.intValue());
+        break;
     }
   }
 

@@ -46,9 +46,7 @@ public class TypeConverter {
     TypeMap<EmailInput, Email> reverseEmailPropertyMapper = modelMapper.createTypeMap(EmailInput.class, Email.class);
     reverseEmailPropertyMapper.addMapping(EmailInput::getTemplate,
         (dest,
-            v) -> {
-          dest.getEmailTpl().setName((String) v);
-        });
+            v) -> dest.getEmailTpl().setName((String) v));
 
     // EmailParam (Entity) --> EmailParam (DTO)
     TypeMap<org.crue.hercules.sgi.com.model.EmailParam, EmailParam> emailParamPropertyMapper = modelMapper
@@ -68,9 +66,7 @@ public class TypeConverter {
             org.crue.hercules.sgi.com.model.EmailParam.class);
     reverseEmailParamPropertyMapper.addMapping(EmailParam::getName,
         (dest,
-            v) -> {
-          dest.getParam().setName((String) v);
-        });
+            v) -> dest.getParam().setName((String) v));
   }
 
   /**

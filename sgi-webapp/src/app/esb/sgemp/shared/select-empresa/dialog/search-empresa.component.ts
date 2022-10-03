@@ -9,16 +9,19 @@ import { SearchModalData } from '@core/component/select-dialog/select-dialog.com
 import { MSG_PARAMS } from '@core/i18n';
 import { IEmpresa } from '@core/models/sgemp/empresa';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
+import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormGroupUtil } from '@core/utils/form-group-util';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { merge, Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, tap, switchMap } from 'rxjs/operators';
 import { ACTION_MODAL_MODE } from 'src/app/esb/shared/formly-forms/core/base-formly-modal.component';
 import { EmpresaFormlyModalComponent, IEmpresaFormlyData } from '../../../formly-forms/empresa-formly-modal/empresa-formly-modal.component';
 
 const TIPO_EMPRESA_KEY = marker('sgemp.empresa');
+const MSG_SAVE_SUCCESS = marker('msg.save.request.entity.success');
+const MSG_UPDATE_SUCCESS = marker('msg.update.request.entity.success');
 
 export interface SearchEmpresaModalData extends SearchModalData {
   selectedEmpresas: IEmpresa[];
@@ -47,9 +50,12 @@ export class SearchEmpresaModalComponent extends DialogCommonComponent implement
   empresas$: Observable<EmpresaListado[]> = of();
 
   msgParamEntity: {};
+  private textoCrearSuccess: string;
+  private textoUpdateSuccess: string;
 
   constructor(
     private readonly logger: NGXLogger,
+    private readonly snackBarService: SnackBarService,
     public dialogRef: MatDialogRef<SearchEmpresaModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SearchEmpresaModalData,
     private empresaService: EmpresaService,
@@ -72,6 +78,30 @@ export class SearchEmpresaModalComponent extends DialogCommonComponent implement
       TIPO_EMPRESA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamEntity = { entity: value });
+
+    this.translate.get(
+      TIPO_EMPRESA_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_SAVE_SUCCESS,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.textoCrearSuccess = value);
+
+    this.translate.get(
+      TIPO_EMPRESA_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_UPDATE_SUCCESS,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.textoUpdateSuccess = value);
 
   }
 
@@ -152,18 +182,18 @@ export class SearchEmpresaModalComponent extends DialogCommonComponent implement
   }
 
   openEmpresaCreateModal(): void {
-    this.openEmpresaFormlyModal(ACTION_MODAL_MODE.NEW);
+    this.openEmpresaFormlyModal(ACTION_MODAL_MODE.NEW, null, this.textoCrearSuccess);
   }
 
   openEmpresaEditModal(empresa: IEmpresa): void {
-    this.openEmpresaFormlyModal(ACTION_MODAL_MODE.EDIT, empresa);
+    this.openEmpresaFormlyModal(ACTION_MODAL_MODE.EDIT, empresa, this.textoUpdateSuccess);
   }
 
   openEmpresaViewModal(empresa: IEmpresa): void {
     this.openEmpresaFormlyModal(ACTION_MODAL_MODE.VIEW, empresa);
   }
 
-  private openEmpresaFormlyModal(modalAction: ACTION_MODAL_MODE, empresaItem?: IEmpresa): void {
+  private openEmpresaFormlyModal(modalAction: ACTION_MODAL_MODE, empresaItem?: IEmpresa, textoActionSuccess?: string): void {
     const empresaData: IEmpresaFormlyData = {
       empresaId: empresaItem ? empresaItem.id : '',
       action: modalAction
@@ -179,6 +209,7 @@ export class SearchEmpresaModalComponent extends DialogCommonComponent implement
       (empresa) => {
         if (empresa) {
           this.closeModal(empresa);
+          this.snackBarService.showSuccess(textoActionSuccess);
         }
       }
     );

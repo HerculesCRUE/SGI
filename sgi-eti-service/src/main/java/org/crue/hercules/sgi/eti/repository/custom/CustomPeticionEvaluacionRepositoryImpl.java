@@ -5,12 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
@@ -54,9 +54,9 @@ public class CustomPeticionEvaluacionRepositoryImpl implements CustomPeticionEva
     countQuery.select(cb.count(rootCount));
 
     Predicate predicateMemoria = cb.in(root.get(PeticionEvaluacion_.id))
-        .value(getIdsPeticionEvaluacionMemoria(root, cb, cq, specsMem, personaRefConsulta));
+        .value(getIdsPeticionEvaluacionMemoria(cb, cq, specsMem, personaRefConsulta));
     Predicate predicateMemoriaCount = cb.in(rootCount.get(PeticionEvaluacion_.id))
-        .value(getIdsPeticionEvaluacionMemoria(rootCount, cb, cq, specsMem, personaRefConsulta));
+        .value(getIdsPeticionEvaluacionMemoria(cb, cq, specsMem, personaRefConsulta));
 
     Predicate predicatePersonaRef = null;
     Predicate predicatePersonaRefCount = null;
@@ -65,8 +65,8 @@ public class CustomPeticionEvaluacionRepositoryImpl implements CustomPeticionEva
       predicatePersonaRefCount = cb.equal(rootCount.get(PeticionEvaluacion_.personaRef), personaRefConsulta);
     }
 
-    List<Predicate> predicates = new ArrayList<Predicate>();
-    List<Predicate> predicatesCount = new ArrayList<Predicate>();
+    List<Predicate> predicates = new ArrayList<>();
+    List<Predicate> predicatesCount = new ArrayList<>();
     // Where
     if (specsMem != null) {
       if (predicatePersonaRef != null) {
@@ -104,15 +104,14 @@ public class CustomPeticionEvaluacionRepositoryImpl implements CustomPeticionEva
 
     Long count = entityManager.createQuery(countQuery).getSingleResult();
     TypedQuery<PeticionEvaluacionWithIsEliminable> typedQuery = entityManager.createQuery(cq);
-    if (pageable != null && pageable.isPaged()) {
+    if (pageable.isPaged()) {
       typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
       typedQuery.setMaxResults(pageable.getPageSize());
     }
 
     List<PeticionEvaluacionWithIsEliminable> result = typedQuery.getResultList();
-    Page<PeticionEvaluacionWithIsEliminable> returnValue = new PageImpl<PeticionEvaluacionWithIsEliminable>(result,
+    return new PageImpl<>(result,
         pageable, count);
-    return returnValue;
   }
 
   /**
@@ -125,7 +124,7 @@ public class CustomPeticionEvaluacionRepositoryImpl implements CustomPeticionEva
    * @param personaRef
    * @return
    */
-  private Subquery<Long> getIdsPeticionEvaluacionMemoria(Root<PeticionEvaluacion> root, CriteriaBuilder cb,
+  private Subquery<Long> getIdsPeticionEvaluacionMemoria(CriteriaBuilder cb,
       CriteriaQuery<PeticionEvaluacionWithIsEliminable> cq, Specification<Memoria> specsMem, String personaRef) {
 
     log.debug(
@@ -134,7 +133,7 @@ public class CustomPeticionEvaluacionRepositoryImpl implements CustomPeticionEva
     Subquery<Long> queryGetIdPeticionEvaluacion = cq.subquery(Long.class);
     Root<Memoria> subqRoot = queryGetIdPeticionEvaluacion.from(Memoria.class);
 
-    List<Predicate> predicates = new ArrayList<Predicate>();
+    List<Predicate> predicates = new ArrayList<>();
     predicates.add(cb.isTrue(subqRoot.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.activo)));
     predicates.add(cb.isTrue(subqRoot.get(Memoria_.activo)));
 

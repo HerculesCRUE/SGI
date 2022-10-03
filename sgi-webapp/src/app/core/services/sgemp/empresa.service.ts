@@ -1,11 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IEmpresa } from '@core/models/sgemp/empresa';
-import { ITipoIdentificador } from '@core/models/sgemp/tipo-identificador';
 import { environment } from '@env';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult, SgiRestService } from '@sgi/framework/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

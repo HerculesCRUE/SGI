@@ -35,7 +35,7 @@ import org.springframework.data.jpa.domain.Specification;
  * EmpresaServiceTest
  */
 @Import({ EmpresaService.class, ApplicationContextSupport.class })
-public class EmpresaServiceTest extends BaseServiceTest {
+class EmpresaServiceTest extends BaseServiceTest {
 
   @MockBean
   private EmpresaRepository empresaRepository;
@@ -59,7 +59,7 @@ public class EmpresaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithId_ReturnsEmpresa() {
+  void findById_WithId_ReturnsEmpresa() {
     BDDMockito.given(empresaRepository.findById(1L))
         .willReturn(Optional.of(generarMockEmpresa(1L, "Empresa1")));
 
@@ -71,7 +71,7 @@ public class EmpresaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void find_NotFound_ThrowsEmpresaNotFoundException() throws Exception {
+  void find_NotFound_ThrowsEmpresaNotFoundException() throws Exception {
     BDDMockito.given(empresaRepository.findById(1L)).willReturn(Optional.empty());
 
     Assertions.assertThatThrownBy(() -> empresaService.findById(1L))
@@ -79,7 +79,7 @@ public class EmpresaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_ReturnsEmpresa() {
+  void create_ReturnsEmpresa() {
     // given: Un nuevo Empresa
     Empresa empresa = generarMockEmpresa(null);
 
@@ -105,7 +105,7 @@ public class EmpresaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsEmpresa() {
+  void update_ReturnsEmpresa() {
     // given: Un nuevo tipo Fase con el servicio actualizado
     Empresa empresaServicioActualizada = generarMockEmpresa(1L,
         "Empresa1 actualizada");
@@ -128,7 +128,7 @@ public class EmpresaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_NoActivaEmpresa_ThrowsValidationException() {
+  void update_NoActivaEmpresa_ThrowsValidationException() {
     // given: Un Empresa actualizado
     Long id = 1L;
     Empresa fuenteFinanciacion = generarMockEmpresa(id);
@@ -143,7 +143,7 @@ public class EmpresaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_ReturnsEmpresa() {
+  void disable_ReturnsEmpresa() {
     // given: Un nuevo Empresa activo
     Empresa empresa = generarMockEmpresa(1L);
 
@@ -172,7 +172,7 @@ public class EmpresaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void disable_WithIdNotExist_ThrowsEmpresaNotFoundException() {
+  void disable_WithIdNotExist_ThrowsEmpresaNotFoundException() {
     // given: Un id de un Empresa que no existe
     Long idNoExiste = 1L;
     BDDMockito.given(empresaRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -183,7 +183,7 @@ public class EmpresaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findActivos_WithPaging_ReturnsPage() {
+  void findActivos_WithPaging_ReturnsPage() {
     // given: One hundred Empresas
     List<Empresa> empresaList = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {

@@ -1859,7 +1859,7 @@ public class ComentarioServiceTest extends BaseServiceTest {
     final Long evaluacionId = 12L;
     final Long comentarioId = 1L;
 
-    BDDMockito.given(evaluacionRepository.findById(12L)).willReturn(Optional.of(generarMockEvaluacion(evaluacionId)));
+    BDDMockito.given(evaluacionRepository.existsById(12L)).willReturn(Boolean.TRUE);
 
     BDDMockito.given(comentarioRepository.findById(comentarioId))
         .willReturn(Optional.of(generarMockComentario(comentarioId, "", 2L)));
@@ -1876,12 +1876,12 @@ public class ComentarioServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void deleteComentarioActa_TipoComentarioNotValid() {
+  void deleteComentarioActa_TipoComentarioNotValid() {
     // given: EL id de la evaluación es válido
     final Long evaluacionId = 200L;
     final Long comentarioId = 1L;
 
-    BDDMockito.given(evaluacionRepository.findById(200L)).willReturn(Optional.of(generarMockEvaluacion(evaluacionId)));
+    BDDMockito.given(evaluacionRepository.existsById(200L)).willReturn(Boolean.TRUE);
 
     BDDMockito.given(comentarioRepository.findById(comentarioId))
         .willReturn(Optional.of(generarMockComentario(comentarioId, "", 1L)));
@@ -1902,7 +1902,7 @@ public class ComentarioServiceTest extends BaseServiceTest {
     final Long evaluacionId = 12L;
     final Long comentarioId = 1L;
 
-    BDDMockito.given(evaluacionRepository.findById(12L)).willReturn(Optional.of(generarMockEvaluacion(evaluacionId)));
+    BDDMockito.given(evaluacionRepository.existsById(12L)).willReturn(Boolean.TRUE);
 
     // when: se quiera eliminar un comentario que no existe
 

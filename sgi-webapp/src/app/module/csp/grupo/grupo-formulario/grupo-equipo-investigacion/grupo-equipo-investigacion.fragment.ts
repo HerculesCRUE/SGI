@@ -8,7 +8,6 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, from, Observable } from 'rxjs';
@@ -28,8 +27,7 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
     private readonly grupoEquipoService: GrupoEquipoService,
     private readonly personaService: PersonaService,
     private readonly vinculacionService: VinculacionService,
-    private sgiAuthService: SgiAuthService,
-    private readonly: boolean,
+    public readonly readonly: boolean,
   ) {
     super(key);
     this.setComplete(true);
@@ -46,10 +44,6 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
                 return this.personaService.findById(element.persona.id).pipe(
                   map(persona => {
                     element.persona = persona;
-                    if (persona.id === this.sgiAuthService.authStatus$?.getValue()?.userRefId) {
-                      // Es miembro del equipo
-                      this.readonly = false;
-                    }
                     return element as IGrupoEquipoListado;
                   })
                 );
@@ -151,7 +145,7 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
         map(miembrosEquipo => {
           return miembrosEquipo.map(miembroEquipo => {
             miembroEquipo.grupo = { id: this.getKey() } as IGrupo;
-            return new StatusWrapper<IGrupoEquipoListado>(miembroEquipo as IGrupoEquipoListado);
+            return new StatusWrapper<IGrupoEquipoListado>(miembroEquipo);
           });
         }),
         takeLast(1),

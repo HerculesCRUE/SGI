@@ -12,6 +12,7 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateValidator } from '@core/validators/date-validator';
 import { TranslateService } from '@ngx-translate/core';
+import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { DateTime, Interval } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, from } from 'rxjs';
@@ -77,8 +78,12 @@ export class GrupoLineaInvestigadorModalComponent extends DialogFormComponent<Gr
       return a.fechaInicio.toMillis() - b.fechaInicio.toMillis();
     });
 
+    const options: SgiRestFindOptions = {
+      sort: new RSQLSgiRestSort('personaRef', SgiRestSortDirection.ASC)
+    };
+
     this.subscriptions.push(
-      this.grupoService.findMiembrosEquipo(this.data.idGrupo).pipe(
+      this.grupoService.findMiembrosEquipo(this.data.idGrupo, options).pipe(
         switchMap(result => {
           return from(result.items).pipe(
             mergeMap(element => {
@@ -100,8 +105,18 @@ export class GrupoLineaInvestigadorModalComponent extends DialogFormComponent<Gr
         }),
       ).subscribe(
         result => {
-          this.miembrosEquipo$.next(result.map(
-            equipo => new StatusWrapper<IPersona>(equipo.value.persona)));
+          let personaRefAnterior = null;
+
+          const personas: IPersona[] = [];
+
+          result.forEach(miembroWp => {
+            if (!personaRefAnterior || (personaRefAnterior != null && miembroWp.value.persona.id !== personaRefAnterior)) {
+              personas.push(miembroWp.value.persona);
+            }
+            personaRefAnterior = miembroWp.value.persona.id;
+          });
+          this.miembrosEquipo$.next(personas.map(
+            persona => new StatusWrapper<IPersona>(persona)));
         },
         error => {
           this.logger.error(error);

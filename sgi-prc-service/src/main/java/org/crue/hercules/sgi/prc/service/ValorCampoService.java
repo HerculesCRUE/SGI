@@ -1,19 +1,21 @@
 package org.crue.hercules.sgi.prc.service;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
+import org.crue.hercules.sgi.prc.exceptions.CampoProduccionCientificaNotFoundException;
+import org.crue.hercules.sgi.prc.exceptions.NoRelatedEntitiesException;
 import org.crue.hercules.sgi.prc.exceptions.ValorCampoNotFoundException;
 import org.crue.hercules.sgi.prc.model.BaseEntity;
 import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica;
 import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
 import org.crue.hercules.sgi.prc.model.ValorCampo;
+import org.crue.hercules.sgi.prc.repository.CampoProduccionCientificaRepository;
 import org.crue.hercules.sgi.prc.repository.ValorCampoRepository;
 import org.crue.hercules.sgi.prc.repository.specification.ValorCampoSpecifications;
+import org.crue.hercules.sgi.prc.util.ProduccionCientificaAuthorityHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -40,10 +42,16 @@ public class ValorCampoService {
   private static final String MESSAGE_KEY_NAME = "name";
 
   private final ValorCampoRepository repository;
+  private final CampoProduccionCientificaRepository campoProduccionCientificaRepository;
+  private final ProduccionCientificaAuthorityHelper authorityHelper;
 
   public ValorCampoService(
-      ValorCampoRepository valorCampoRepository) {
+      ValorCampoRepository valorCampoRepository,
+      CampoProduccionCientificaRepository campoProduccionCientificaRepository,
+      ProduccionCientificaAuthorityHelper authorityHelper) {
     this.repository = valorCampoRepository;
+    this.campoProduccionCientificaRepository = campoProduccionCientificaRepository;
+    this.authorityHelper = authorityHelper;
   }
 
   /**
@@ -159,38 +167,37 @@ public class ValorCampoService {
   }
 
   /**
-   * Obtiene todos los {@link ValorCampo} por su campoProduccionCientificaId.
-   *
-   * @param campoProduccionCientificaId el id de {@link ProduccionCientifica}.
-   * @return listado de {@link ValorCampo}.
-   */
-  public List<ValorCampo> findAllByCampoProduccionCientificaId(Long campoProduccionCientificaId) {
-    log.debug("findAllByCampoProduccionCientificaId(Long campoProduccionCientificaId)  - start");
-    final List<ValorCampo> returnValue = repository.findAllByCampoProduccionCientificaId(campoProduccionCientificaId);
-    log.debug("findAllByCampoProduccionCientificaId(Long campoProduccionCientificaId)  - end");
-    return returnValue;
-  }
-
-  /**
    * Obtiene todos los {@link ValorCampo} por su campoProduccionCientificaId
    * paginadas y/o filtradas.
    *
+   * @param produccionCientificaId      el id de {@link ProduccionCientifica}.
    * @param campoProduccionCientificaId el id de
    *                                    {@link CampoProduccionCientifica}.
    * @param query                       la información del filtro.
    * @param pageable                    la información de la paginación.
    * @return listado de {@link ValorCampo} paginadas y/o filtradas.
    */
-  public Page<ValorCampo> findAllByCampoProduccionCientificaId(Long campoProduccionCientificaId, String query,
+  public Page<ValorCampo> findAllByCampoProduccionCientificaId(Long produccionCientificaId,
+      Long campoProduccionCientificaId, String query,
       Pageable pageable) {
     log.debug(
-        "findAllByCampoProduccionCientificaId(Long campoProduccionCientificaId, String query, Pageable pageable) - start");
-    Specification<ValorCampo> specs = ValorCampoSpecifications.byCampoProduccionCientificaId(
-        campoProduccionCientificaId)
+        "findAllByCampoProduccionCientificaId(Long produccionCientificaId, Long campoProduccionCientificaId, String query, Pageable pageable) - start");
+
+    authorityHelper.checkUserHasAuthorityViewProduccionCientifica(produccionCientificaId);
+
+    final CampoProduccionCientifica relatedCampoProduccionCientifica = campoProduccionCientificaRepository
+        .findById(campoProduccionCientificaId)
+        .orElseThrow(() -> new CampoProduccionCientificaNotFoundException(campoProduccionCientificaId.toString()));
+    if (!produccionCientificaId.equals(relatedCampoProduccionCientifica.getProduccionCientificaId())) {
+      throw new NoRelatedEntitiesException(CampoProduccionCientifica.class, ProduccionCientifica.class);
+    }
+
+    Specification<ValorCampo> specs = ValorCampoSpecifications
+        .byCampoProduccionCientificaId(campoProduccionCientificaId)
         .and(SgiRSQLJPASupport.toSpecification(query));
     final Page<ValorCampo> returnValue = repository.findAll(specs, pageable);
     log.debug(
-        "findAllByCampoProduccionCientificaId(Long campoProduccionCientificaId, String query, Pageable pageable) - end");
+        "findAllByCampoProduccionCientificaId(Long produccionCientificaId, Long campoProduccionCientificaId, String query, Pageable pageable) - end");
     return returnValue;
   }
 

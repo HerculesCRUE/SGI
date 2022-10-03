@@ -41,6 +41,10 @@ export class ComiteEditorialEditarComponent extends ActionComponent implements O
     return this.actionService.canEdit;
   }
 
+  get isInvestigador(): boolean {
+    return this.actionService.isInvestigador;
+  }
+
   constructor(
     private readonly logger: NGXLogger,
     protected readonly snackBarService: SnackBarService,

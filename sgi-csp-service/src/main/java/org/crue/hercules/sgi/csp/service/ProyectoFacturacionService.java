@@ -1,23 +1,17 @@
 package org.crue.hercules.sgi.csp.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoFacturacionNotFoundException;
-import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessProyectoException;
 import org.crue.hercules.sgi.csp.model.EstadoValidacionIP;
 import org.crue.hercules.sgi.csp.model.EstadoValidacionIP.TipoEstadoValidacion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
 import org.crue.hercules.sgi.csp.repository.EstadoValidacionIPRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoFacturacionRepository;
-import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.TipoFacturacionRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.ProyectoFacturacionPredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoFacturacionSpecifications;
-import org.crue.hercules.sgi.csp.util.ProyectoHelper;
+import org.crue.hercules.sgi.csp.util.ProyectoFacturacionAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
-import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,20 +19,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Transactional(readOnly = true)
 @Service
 @RequiredArgsConstructor
 public class ProyectoFacturacionService {
 
-  private static final String USER_NOT_ALLOWED_MESSAGE = "La Unidad de Gestión no es gestionable por el usuario";
-  private static final String ALLOWED_ROLE = "CSP-PRO-E";
-
   private final ProyectoFacturacionRepository proyectoFacturacionRepository;
   private final EstadoValidacionIPRepository estadoValidacionIPRepository;
-  private final ProyectoRepository proyectoRepository;
   private final TipoFacturacionRepository tipoFacturacionRepository;
-  private final ProyectoHelper proyectoHelper;
+  private final ProyectoFacturacionAuthorityHelper authorityHelper;
   private final ProyectoFacturacionComService proyectoFacturacionComService;
 
   /**
@@ -50,7 +43,7 @@ public class ProyectoFacturacionService {
    * @return pagina de {@link ProyectoFacturacion}
    */
   public Page<ProyectoFacturacion> findByProyectoId(Long proyectoId, Pageable paging) {
-    proyectoHelper.checkCanAccessProyecto(proyectoId);
+    authorityHelper.checkCanAccessProyecto(proyectoId);
     return this.proyectoFacturacionRepository.findByProyectoId(proyectoId, paging);
   }
 
@@ -65,9 +58,7 @@ public class ProyectoFacturacionService {
 
     Assert.isNull(toCreate.getId(), "ProyectoFacturacion id tiene que ser null para crear un item de facturación");
 
-    Assert.isTrue(
-        SgiSecurityContextHolder.hasAuthorityForUO(ALLOWED_ROLE, getUnidadGestionRef(toCreate.getProyectoId())),
-        USER_NOT_ALLOWED_MESSAGE);
+    authorityHelper.checkUserHasAuthorityModifyProyecto(toCreate.getProyectoId());
 
     ProyectoFacturacion proyectoFacturacionAfterCreate = this.proyectoFacturacionRepository.save(toCreate);
 
@@ -88,17 +79,7 @@ public class ProyectoFacturacionService {
   @Transactional
   public ProyectoFacturacion update(ProyectoFacturacion toUpdate) {
 
-    if (proyectoHelper.hasUserAuthorityInvestigador()
-        && !proyectoHelper.checkUserPresentInEquipos(toUpdate.getProyectoId())
-        && !proyectoHelper.checkUserIsResponsableEconomico(toUpdate.getProyectoId())) {
-      throw new UserNotAuthorizedToAccessProyectoException();
-    } else if (!proyectoHelper.hasUserAuthorityInvestigador()) {
-      Assert.isTrue(
-          SgiSecurityContextHolder.hasAuthorityForUO(
-              ALLOWED_ROLE,
-              getUnidadGestionRef(toUpdate.getProyectoId())),
-          USER_NOT_ALLOWED_MESSAGE);
-    }
+    authorityHelper.checkUserHasAuthorityModifyProyecto(toUpdate.getProyectoId());
 
     ProyectoFacturacion beforeUpdate = this.proyectoFacturacionRepository.findById(toUpdate.getId())
         .orElseThrow(() -> new ProyectoFacturacionNotFoundException(toUpdate.getId()));
@@ -132,12 +113,9 @@ public class ProyectoFacturacionService {
       case RECHAZADA:
       case VALIDADA:
         res = !((!TipoEstadoValidacion.VALIDADA.equals(proyectoFacturacion.getEstadoValidacionIP().getEstado())
-            && !TipoEstadoValidacion.RECHAZADA
-                .equals(proyectoFacturacion.getEstadoValidacionIP().getEstado()))
-            || ((!proyectoHelper.hasUserAuthorityInvestigador()
-                && !proyectoHelper.checkIfUserIsInvestigadorPrincipal(proyectoFacturacion
-                    .getProyectoId()))
-                && !proyectoHelper.checkUserIsResponsableEconomico(proyectoFacturacion.getProyectoId())));
+            && !TipoEstadoValidacion.RECHAZADA.equals(proyectoFacturacion.getEstadoValidacionIP().getEstado()))
+            || ((!authorityHelper.checkIfUserIsInvestigadorPrincipal(proyectoFacturacion.getProyectoId()))
+                && !authorityHelper.checkUserIsResponsableEconomico(proyectoFacturacion.getProyectoId())));
         break;
       case NOTIFICADA:
         res = true;
@@ -165,9 +143,7 @@ public class ProyectoFacturacionService {
     ProyectoFacturacion proyectoToDelete = this.proyectoFacturacionRepository.findById(toDeleteId)
         .orElseThrow(() -> new ProyectoFacturacionNotFoundException(toDeleteId));
 
-    Assert.isTrue(
-        SgiSecurityContextHolder.hasAuthorityForUO(ALLOWED_ROLE, getUnidadGestionRef(proyectoToDelete.getProyectoId())),
-        USER_NOT_ALLOWED_MESSAGE);
+    authorityHelper.checkUserHasAuthorityModifyProyecto(proyectoToDelete.getProyectoId());
 
     proyectoToDelete.setEstadoValidacionIP(null);
 
@@ -176,13 +152,6 @@ public class ProyectoFacturacionService {
     this.estadoValidacionIPRepository.deleteByProyectoFacturacionId(toDeleteId);
 
     this.proyectoFacturacionRepository.deleteById(toDeleteId);
-  }
-
-  private String getUnidadGestionRef(Long proyectoId) {
-
-    return proyectoRepository.findById(proyectoId).map(proyecto -> proyecto.getUnidadGestionRef())
-        .orElse(StringUtils.EMPTY);
-
   }
 
   /**

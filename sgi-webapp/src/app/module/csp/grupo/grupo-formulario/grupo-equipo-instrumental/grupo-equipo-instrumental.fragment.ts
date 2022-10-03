@@ -17,7 +17,7 @@ export class GrupoEquipoInstrumentalFragment extends Fragment {
     key: number,
     private readonly grupoService: GrupoService,
     private readonly grupoEquipoInstrumentalService: GrupoEquipoInstrumentalService,
-    private readonly: boolean,
+    public readonly readonly: boolean,
   ) {
     super(key);
     this.setComplete(true);
@@ -85,7 +85,7 @@ export class GrupoEquipoInstrumentalFragment extends Fragment {
         map(equiposInstrumentales => {
           return equiposInstrumentales.map(equipoInstrumental => {
             equipoInstrumental.grupo = { id: this.getKey() } as IGrupo;
-            return new StatusWrapper<IGrupoEquipoInstrumental>(equipoInstrumental as IGrupoEquipoInstrumental);
+            return new StatusWrapper<IGrupoEquipoInstrumental>(equipoInstrumental);
           });
         }),
         takeLast(1),

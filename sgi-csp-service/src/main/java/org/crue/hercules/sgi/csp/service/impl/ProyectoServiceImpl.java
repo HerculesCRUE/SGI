@@ -355,7 +355,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("update(Proyecto proyecto) - start");
 
     return repository.findById(proyectoActualizar.getId()).map(data -> {
-      proyectoHelper.checkCanRead(data);
+      proyectoHelper.checkCanAccessProyecto(data);
       Assert.isTrue(
           proyectoActualizar.getEstado().getId().equals(data.getEstado().getId())
               && ((proyectoActualizar.getConvocatoriaId() == null && data.getConvocatoriaId() == null)
@@ -546,8 +546,7 @@ public class ProyectoServiceImpl implements ProyectoService {
   public Proyecto findById(Long id) {
     log.debug("findById(Long id) - start");
     final Proyecto returnValue = repository.findById(id).orElseThrow(() -> new ProyectoNotFoundException(id));
-    proyectoHelper.checkCanRead(returnValue);
-    proyectoHelper.checkCanAccessProyecto(id);
+    proyectoHelper.checkCanAccessProyecto(returnValue);
     log.debug("findById(Long id) - end");
     return returnValue;
   }
@@ -577,14 +576,13 @@ public class ProyectoServiceImpl implements ProyectoService {
    */
   @Override
   public Page<Proyecto> findAllRestringidos(String query, Pageable paging) {
-    log.debug("findAll(String query, Pageable paging) - start");
+    log.debug("findAllRestringidos(String query, Pageable paging) - start");
 
     Specification<Proyecto> specs = ProyectoSpecifications.activos().and(SgiRSQLJPASupport.toSpecification(query,
         ProyectoPredicateResolver.getInstance(programaRepository, proyectoProrrogaRepository, sgiConfigProperties)));
 
     // No tiene acceso a todos los UO
-    List<String> unidadesGestion = SgiSecurityContextHolder
-        .getUOsForAnyAuthority(new String[] { "CSP-PRO-V", "CSP-PRO-C", "CSP-PRO-E", "CSP-PRO-B", "CSP-PRO-R" });
+    List<String> unidadesGestion = proyectoHelper.getUserUOsProyecto();
 
     if (!CollectionUtils.isEmpty(unidadesGestion)) {
       Specification<Proyecto> specByUnidadGestionRefIn = ProyectoSpecifications.unidadGestionRefIn(unidadesGestion);
@@ -592,13 +590,14 @@ public class ProyectoServiceImpl implements ProyectoService {
     }
 
     Page<Proyecto> returnValue = repository.findAll(specs, paging);
-    log.debug("findAll(String query, Pageable paging) - end");
+    log.debug("findAllRestringidos(String query, Pageable paging) - end");
     return returnValue;
   }
 
   /**
    * Obtiene todas las entidades {@link Proyecto} activas, que no estén en estado
-   * borrador, en las que el usuario logueado está dentro del equipo,
+   * borrador, en las que el usuario logueado está dentro del equipo o es un
+   * responsable economico,
    * paginadas y filtradas
    *
    * @param query  información del filtro.
@@ -1650,7 +1649,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     // VALIDACIONES
     // Permisos
-    proyectoHelper.checkCanModifyProyecto(proyecto);
+    proyectoHelper.checkUserHasAuthorityModifyProyecto(proyecto);
 
     // El nuevo estado es diferente al estado actual de del proyecto
     if (estadoProyecto.getEstado().equals(proyecto.getEstado().getEstado())) {
@@ -1754,13 +1753,12 @@ public class ProyectoServiceImpl implements ProyectoService {
    * modificación o eliminación de ciertas entidades relacionadas con el
    * {@link Proyecto}.
    *
-   * @param proyectoId  Id del {@link Proyecto}.
-   * @param authorities Authorities a validar
+   * @param proyectoId Id del {@link Proyecto}.
    * @return true si puede ser modificada / false si no puede ser modificada
    */
   @Override
-  public boolean modificable(Long proyectoId, String[] authorities) {
-    List<String> unidadesGestion = SgiSecurityContextHolder.getUOsForAnyAuthority(authorities);
+  public boolean modificable(Long proyectoId) {
+    List<String> unidadesGestion = SgiSecurityContextHolder.getUOsForAuthority(ProyectoHelper.CSP_PRO_E);
 
     if (!CollectionUtils.isEmpty(unidadesGestion)) {
       return repository.existsByIdAndUnidadGestionRefInAndActivoIsTrue(proyectoId, unidadesGestion);

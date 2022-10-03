@@ -87,10 +87,12 @@ public class BaremacionComiteEditorialService extends BaremacionPublicacionAndCo
     loadPredicates();
   }
 
+  @Override
   protected TipoPuntuacion getTipoPuntuacion() {
     return TipoPuntuacion.COMITES_EDITORIALES;
   }
 
+  @Override
   protected void loadPredicates() {
     loadComitesEditorialesJCRPredicates();
     loadComitesEditorialesSCIMAGOPredicates();
@@ -111,7 +113,7 @@ public class BaremacionComiteEditorialService extends BaremacionPublicacionAndCo
     loadExtraPredicates();
   }
 
-  protected void loadExtraPredicates() {
+  private void loadExtraPredicates() {
     loadComitesEditorialesJCREditorPredicates();
     loadComitesEditorialesSCIMAGOEditorPredicates();
     loadComitesEditorialesCITECEditorPredicates();
@@ -584,13 +586,7 @@ public class BaremacionComiteEditorialService extends BaremacionPublicacionAndCo
         .and(getPredicateHasPosicionRevistaGreatherThan75AndFECYT());
   }
 
-  protected BigDecimal evaluateBaremoModulador(BaremacionInput baremacionInput) {
-    log.debug("evaluateBaremoModulador(baremacionInput) - start");
-
-    log.debug("evaluateBaremoModulador(baremacionInput) - end");
-    return new BigDecimal("1.00");
-  }
-
+  @Override
   protected BigDecimal evaluateBaremoExtra(BaremacionInput baremacionInput) {
     log.debug("evaluateBaremoExtra(baremacionInput) - start");
     BigDecimal puntos = BigDecimal.ZERO;

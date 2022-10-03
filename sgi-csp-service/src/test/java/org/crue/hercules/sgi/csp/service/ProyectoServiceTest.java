@@ -16,6 +16,7 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.dto.ProyectoSeguimientoEjecucionEconomica;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessProyectoException;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloUnidad;
@@ -190,7 +191,7 @@ class ProyectoServiceTest extends BaseServiceTest {
 
   @BeforeEach
   void setUp() throws Exception {
-    proyectoHelper = new ProyectoHelper(proyectoEquipoRepository, proyectoResponsableEconomicoRepository);
+    proyectoHelper = new ProyectoHelper(repository, proyectoEquipoRepository, proyectoResponsableEconomicoRepository);
     service = new ProyectoServiceImpl(sgiConfigProperties, repository, estadoProyectoRepository, modeloUnidadRepository,
         convocatoriaRepository, convocatoriaEntidadFinanciadoraRepository, proyectoEntidadFinanciadoraService,
         convocatoriaEntidadConvocanteRepository, proyectoEntidadConvocanteService, convocatoriaEntidadGestoraRepository,
@@ -661,8 +662,8 @@ class ProyectoServiceTest extends BaseServiceTest {
 
     // when: Actualizamos el Proyecto
     // then: Lanza una excepcion
-    Assertions.assertThatThrownBy(() -> service.update(proyecto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El proyecto no pertenece a una Unidad de Gestión gestionable por el usuario");
+    Throwable thrown = Assertions.catchThrowable(() -> this.service.update(proyecto));
+    Assertions.assertThat(thrown).isInstanceOf(UserNotAuthorizedToAccessProyectoException.class);
   }
 
   @Test

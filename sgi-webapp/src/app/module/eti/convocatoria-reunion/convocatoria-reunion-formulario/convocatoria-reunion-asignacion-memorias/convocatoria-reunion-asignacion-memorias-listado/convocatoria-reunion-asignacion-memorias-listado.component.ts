@@ -204,7 +204,11 @@ export class ConvocatoriaReunionAsignacionMemoriasListadoComponent extends Fragm
     dialogRef.afterClosed().subscribe(
       (modelData: ConvocatoriaReunionAsignacionMemoriasModalComponentData) => {
         if (modelData && modelData.evaluacion) {
-          evaluacion.setEdited();
+          if (modelData?.evaluacion?.id) {
+            evaluacion.setEdited();
+          } else {
+            evaluacion.setCreated();
+          }
           this.fragment.setChanges(true);
           this.fragment.setComplete(true);
         }

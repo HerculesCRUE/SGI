@@ -19,8 +19,8 @@ import org.crue.hercules.sgi.com.exceptions.RecipientException;
 import org.crue.hercules.sgi.com.exceptions.SubjectException;
 import org.crue.hercules.sgi.com.model.Attachment;
 import org.crue.hercules.sgi.com.model.Email;
-import org.crue.hercules.sgi.com.model.EmailAttachmentDeferrable;
 import org.crue.hercules.sgi.com.model.Email.OnSend;
+import org.crue.hercules.sgi.com.model.EmailAttachmentDeferrable;
 import org.crue.hercules.sgi.com.model.EmailParam;
 import org.crue.hercules.sgi.com.model.EmailParamDeferrable;
 import org.crue.hercules.sgi.com.model.EmailRecipientDeferrable;
@@ -143,14 +143,13 @@ public class EmailService extends BaseService {
               .build()));
     }
     if (CollectionUtils.isNotEmpty(emailParams)) {
-      emailParams.stream().forEach(e -> {
-        // Make sure all emailParam emailId are null
-        Assert.isNull(e.getPk().getEmailId(),
-            () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NULL)
-                .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_EMAIL_ID))
-                .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(EmailParam.class))
-                .build());
-      });
+      emailParams.stream().forEach(e ->
+      // Make sure all emailParam emailId are null
+      Assert.isNull(e.getPk().getEmailId(),
+          () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NULL)
+              .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_EMAIL_ID))
+              .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(EmailParam.class))
+              .build()));
     }
 
     // Fetch EmailTpl from database
@@ -454,19 +453,19 @@ public class EmailService extends BaseService {
           emailData.getHtmlBody(), emailData.getAttachments());
       status = Status.builder().emailId(id).message("SENT").build();
     } catch (RecipientException e) {
-      e.printStackTrace();
+      log.error(e.getMessage(), e);
       status = Status.builder().emailId(id).error(ErrorType.RECIPIENT).message(ExceptionUtils.getStackTrace(e)).build();
     } catch (SubjectException e) {
-      e.printStackTrace();
+      log.error(e.getMessage(), e);
       status = Status.builder().emailId(id).error(ErrorType.SUBJECT).message(ExceptionUtils.getStackTrace(e)).build();
     } catch (ContentException e) {
-      e.printStackTrace();
+      log.error(e.getMessage(), e);
       status = Status.builder().emailId(id).error(ErrorType.CONTENT).message(ExceptionUtils.getStackTrace(e)).build();
     } catch (ParamException e) {
-      e.printStackTrace();
+      log.error(e.getMessage(), e);
       status = Status.builder().emailId(id).error(ErrorType.PARAM).message(ExceptionUtils.getStackTrace(e)).build();
     } catch (MessagingException e) {
-      e.printStackTrace();
+      log.error(e.getMessage(), e);
       status = Status.builder().emailId(id).error(ErrorType.SEND).message(ExceptionUtils.getStackTrace(e)).build();
     }
     if (status != null) {

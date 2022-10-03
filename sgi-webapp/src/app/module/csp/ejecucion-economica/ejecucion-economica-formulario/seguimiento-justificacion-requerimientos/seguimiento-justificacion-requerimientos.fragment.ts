@@ -5,6 +5,7 @@ import { ProyectoProyectoSgeService } from '@core/services/csp/proyecto-proyecto
 import { ProyectoSeguimientoEjecucionEconomicaService } from '@core/services/csp/proyecto-seguimiento-ejecucion-economica/proyecto-seguimiento-ejecucion-economica.service';
 import { RequerimientoJustificacionService } from '@core/services/csp/requerimiento-justificacion/requerimiento-justificacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { DateTime } from 'luxon';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { concatMap, map, mergeMap, takeLast, tap, toArray } from 'rxjs/operators';
 
@@ -27,12 +28,11 @@ export class SeguimientoJustificacionRequerimientosFragment extends Fragment {
     const proyectoSgeRef = this.getKey() as string;
     if (proyectoSgeRef) {
       this.proyectoSeguimientoEjecucionEconomicaService.findRequerimientosJustificacion(proyectoSgeRef).pipe(
-        // De existir el requerimientoPrevio debe estar dentro del array
-        map(({ items }) => items.map(item => ({
-          ...item,
-          requerimientoPrevio: this.findRequerimientoPrevio(item, items)
-        }))),
-        map((requerimientosJustificacion) => requerimientosJustificacion.map(item => new StatusWrapper(item))),
+        map(({ items }) => items.map(item => {
+          // De existir el requerimientoPrevio debe estar dentro del array
+          item.requerimientoPrevio = this.findRequerimientoPrevio(item, items);
+          return new StatusWrapper(item);
+        })),
         mergeMap(requerimientosJustificacion =>
           from(requerimientosJustificacion).pipe(
             mergeMap(requerimientoJustificacion => this.fillProyectoProyectoSge(requerimientoJustificacion)),
@@ -46,7 +46,7 @@ export class SeguimientoJustificacionRequerimientosFragment extends Fragment {
 
   private findRequerimientoPrevio(
     requerimientoJustificacion: IRequerimientoJustificacion,
-    requerimientosJustificacionToFind: IRequerimientoJustificacion[]): IRequerimientoJustificacion {
+    requerimientosJustificacionToFind: IRequerimientoJustificacion[]): IRequerimientoJustificacion | undefined {
     if (requerimientoJustificacion.requerimientoPrevio?.id) {
       return requerimientosJustificacionToFind.find(requerimientoJustificacionToFind =>
         requerimientoJustificacionToFind.id === requerimientoJustificacion.requerimientoPrevio.id);
@@ -97,13 +97,35 @@ export class SeguimientoJustificacionRequerimientosFragment extends Fragment {
         this.requerimientosJustificacionEliminados.push(current[index]);
       }
       current.splice(index, 1);
+      this.recalcularNumRequerimientos(current);
       this.requerimientosJustificacion$.next(current);
       this.setChanges(true);
     }
   }
 
+  private recalcularNumRequerimientos(current: StatusWrapper<IRequerimientoJustificacion>[]) {
+    let previousId: number;
+    let numRequerimiento = 0;
+    [...current].sort((a, b) =>
+      a.value.proyectoProyectoSge.id - b.value.proyectoProyectoSge.id !== 0 ?
+        a.value.proyectoProyectoSge.id - b.value.proyectoProyectoSge.id :
+        this.getDateInMillis(a.value.fechaNotificacion) - this.getDateInMillis(b.value.fechaNotificacion)
+    ).forEach((wrapper) => {
+      if (wrapper.value.proyectoProyectoSge.id !== previousId) {
+        numRequerimiento = 0;
+      }
+      previousId = wrapper.value.proyectoProyectoSge.id;
+      numRequerimiento += 1;
+      wrapper.value.numRequerimiento = numRequerimiento;
+    });
+  }
+
+  private getDateInMillis(date: DateTime | undefined | null): number {
+    return date?.toMillis() ?? 0;
+  }
+
   saveOrUpdate(): Observable<void> {
-    return this.deletePeriodoSeguimientos().pipe(
+    return this.deleteRequerimientos().pipe(
       takeLast(1),
       tap(() => {
         if (this.isSaveOrUpdateComplete()) {
@@ -113,16 +135,23 @@ export class SeguimientoJustificacionRequerimientosFragment extends Fragment {
     );
   }
 
-  private deletePeriodoSeguimientos(): Observable<void> {
+  private deleteRequerimientos(): Observable<void> {
     if (this.requerimientosJustificacionEliminados.length === 0) {
       return of(void 0);
     }
     return from(this.requerimientosJustificacionEliminados).pipe(
-      tap(console.log),
-      concatMap((wrapped) => {
-        return this.requerimientoJustificacionService.deleteById(wrapped.value.id);
+      concatMap((wrapper) => {
+        return this.deleteRequerimientoById(wrapper);
       })
     );
+  }
+
+  private deleteRequerimientoById(wrapper: StatusWrapper<IRequerimientoJustificacion>): Observable<void> {
+    return this.requerimientoJustificacionService.deleteById(wrapper.value.id)
+      .pipe(
+        tap(() => this.requerimientosJustificacionEliminados = this.requerimientosJustificacionEliminados.filter(
+          entidadEliminada => entidadEliminada.value.id !== wrapper.value.id))
+      );
   }
 
   private isSaveOrUpdateComplete(): boolean {

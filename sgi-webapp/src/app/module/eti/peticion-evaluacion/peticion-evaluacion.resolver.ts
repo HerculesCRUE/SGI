@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IPeticionEvaluacion } from '@core/models/eti/peticion-evaluacion';
+import { Module } from '@core/module';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -26,7 +27,7 @@ export class PeticionEvaluacionResolver extends SgiResolverResolver<IPeticionEva
 
   protected resolveEntity(route: ActivatedRouteSnapshot): Observable<IPeticionEvaluacion> {
     const peticion = this.service.findById(Number(route.paramMap.get('id')));
-    if (this.authService.hasAuthorityForAnyUO('ETI-PEV-INV-ER')) {
+    if (this.hasViewAuthorityInv() && route.data.module === Module.INV) {
       return this.service.isResponsableOrCreador(Number(route.paramMap.get('id'))).pipe(
         switchMap(response => {
           if (response) {
@@ -39,4 +40,9 @@ export class PeticionEvaluacionResolver extends SgiResolverResolver<IPeticionEva
       return peticion;
     }
   }
+
+  private hasViewAuthorityInv(): boolean {
+    return this.authService.hasAuthority('ETI-PEV-INV-ER');
+  }
+
 }

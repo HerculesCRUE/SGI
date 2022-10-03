@@ -28,7 +28,7 @@ export class GrupoLineaClasificacionesFragment extends Fragment {
     private service: GrupoLineaClasificacionService,
     private grupoLineaInvestigacionService: GrupoLineaInvestigacionService,
     private clasificacionService: ClasificacionService,
-    public readonly: boolean
+    public readonly readonly: boolean
   ) {
     super(key);
     this.setComplete(true);

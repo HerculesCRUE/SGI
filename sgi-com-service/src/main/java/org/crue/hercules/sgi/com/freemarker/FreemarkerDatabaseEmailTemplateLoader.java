@@ -147,6 +147,9 @@ public class FreemarkerDatabaseEmailTemplateLoader implements TemplateLoader {
               emailTplTemplateSource.getName() + emailTplTemplateSource.getPath()));
         }
         break;
+      default:
+        log.warn("No se ha detectado ninguna plantilla que cumpla con el path: {}", emailTplTemplateSource.getPath());
+        break;
     }
     log.debug(
         "getReader(Object templateSource, String encoding) - end");

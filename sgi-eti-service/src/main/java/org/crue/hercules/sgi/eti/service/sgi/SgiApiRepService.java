@@ -9,6 +9,7 @@ import org.crue.hercules.sgi.eti.exceptions.rep.GetDataReportException;
 import org.crue.hercules.sgi.eti.model.Acta;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.util.AssertHelper;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.core.ParameterizedTypeReference;
@@ -32,9 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 public class SgiApiRepService extends SgiApiBaseService {
 
   private static final String ID = "id";
-  private static final String ENTITY = "entity";
-  private static final String FIELD = "field";
-  private static final String NOT_NULL = "notNull";
 
   public SgiApiRepService(RestApiProperties restApiProperties, RestTemplate restTemplate) {
     super(restApiProperties, restTemplate);
@@ -51,9 +49,11 @@ public class SgiApiRepService extends SgiApiBaseService {
     log.debug("getMXX(Long idMemoria, Long idFormulario)- start");
     Assert.notNull(idMemoria,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
-            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(Memoria.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, AssertHelper.PROBLEM_MESSAGE_NOTNULL)
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ID))
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(Memoria.class))
+            .build());
 
     Resource informe = null;
     try {
@@ -87,9 +87,11 @@ public class SgiApiRepService extends SgiApiBaseService {
 
     Assert.notNull(idEvaluacion,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
-            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(Evaluacion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, AssertHelper.PROBLEM_MESSAGE_NOTNULL)
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ID))
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(Evaluacion.class))
+            .build());
 
     Resource informe = null;
     try {
@@ -120,9 +122,11 @@ public class SgiApiRepService extends SgiApiBaseService {
     log.debug("getInformeEvaluador(idEvaluacion)- start");
     Assert.notNull(idEvaluacion,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
-            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(Evaluacion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, AssertHelper.PROBLEM_MESSAGE_NOTNULL)
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ID))
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(Evaluacion.class))
+            .build());
 
     Resource informe = null;
     try {
@@ -153,9 +157,11 @@ public class SgiApiRepService extends SgiApiBaseService {
     log.debug("getInformeFavorableMemoria(idEvaluacion)- start");
     Assert.notNull(idEvaluacion,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
-            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(Evaluacion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, AssertHelper.PROBLEM_MESSAGE_NOTNULL)
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ID))
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(Evaluacion.class))
+            .build());
 
     Resource informe = null;
     try {
@@ -187,9 +193,11 @@ public class SgiApiRepService extends SgiApiBaseService {
     log.debug("getInformeFavorableRatificacion(idEvaluacion)- start");
     Assert.notNull(idEvaluacion,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
-            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(Evaluacion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, AssertHelper.PROBLEM_MESSAGE_NOTNULL)
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ID))
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(Evaluacion.class))
+            .build());
 
     Resource informe = null;
     try {
@@ -221,9 +229,11 @@ public class SgiApiRepService extends SgiApiBaseService {
     log.debug("getInformeFavorableModificacion(idEvaluacion)- start");
     Assert.notNull(idEvaluacion,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
-            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(Evaluacion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, AssertHelper.PROBLEM_MESSAGE_NOTNULL)
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ID))
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(Evaluacion.class))
+            .build());
 
     Resource informe = null;
     try {
@@ -254,9 +264,10 @@ public class SgiApiRepService extends SgiApiBaseService {
     log.debug("getInformeActa(idActa)- start");
     Assert.notNull(idActa,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
-            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(Acta.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, AssertHelper.PROBLEM_MESSAGE_NOTNULL)
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ID))
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Acta.class))
+            .build());
     Resource informe = null;
     try {
       ServiceType serviceType = ServiceType.REP;
@@ -288,9 +299,11 @@ public class SgiApiRepService extends SgiApiBaseService {
     log.debug("getInformeEvaluacionRetrospectiva(idEvaluacion, fecha)- start");
     Assert.notNull(idEvaluacion,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, NOT_NULL)
-            .parameter(FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(ENTITY, ApplicationContextSupport.getMessage(Evaluacion.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, AssertHelper.PROBLEM_MESSAGE_NOTNULL)
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ID))
+            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(Evaluacion.class))
+            .build());
 
     InformeEvaluacionReportInput input = InformeEvaluacionReportInput.builder().idEvaluacion(idEvaluacion).fecha(fecha)
         .build();

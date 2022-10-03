@@ -1,0 +1,121 @@
+<sgi-dialog-header
+  title="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.detalle' | translate}}">
+</sgi-dialog-header>
+<sgi-dialog-content>
+  <h3>
+    {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sge'
+    | translate}}</h3>
+  <section class="card">
+    <sgi-detalle-gasto-justificado [gasto]="gastoJustificadoDetalleWithProyectoPeriodoJusificacion$ | async"
+      (handleError)="onHandleError($event)">
+    </sgi-detalle-gasto-justificado>
+  </section>
+
+  <h3>
+    {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento'
+    | translate}}</h3>
+  <section class="card">
+    <form [formGroup]="formGroup" fxLayout="column">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Aceptado/Rechazado -->
+        <mat-radio-group class="radio-inline" name="aceptado" formControlName="aceptado">
+          <mat-radio-button color="primary" class="radio" [value]="true">
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento.aceptado'
+            | translate}}
+          </mat-radio-button>
+          <mat-radio-button color="primary" class="radio" [value]="false">
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento.rechazado'
+            | translate}}
+          </mat-radio-button>
+        </mat-radio-group>
+
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Importe aceptado -->
+        <mat-form-field>
+          <mat-label>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento.importe-aceptado'
+            | translate}}
+          </mat-label>
+          <input matInput type="number"
+            placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento.importe-aceptado' | translate}}"
+            formControlName="importeAceptado">
+        </mat-form-field>
+
+        <!-- Importe rechazado -->
+        <mat-form-field>
+          <mat-label>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento.importe-rechazado'
+            | translate}}
+          </mat-label>
+          <input matInput type="number"
+            placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento.importe-rechazado' | translate}}"
+            formControlName="importeRechazado">
+        </mat-form-field>
+
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Incidencia en el gasto o motivo de rechazo -->
+        <mat-form-field fxFlex>
+          <mat-label>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento.incidencia'
+            | translate}}</mat-label>
+          <textarea matInput formControlName="incidencia" id="incidencia"
+            placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento.incidencia' | translate}}">
+          </textarea>
+          <mat-error *ngIf="formGroup.controls.incidencia.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamIncidenciaEntity}}
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+    </form>
+  </section>
+
+  <h3>
+    {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-respuesta'
+    | translate}}</h3>
+  <section class="card">
+    <form [formGroup]="formGroup" fxLayout="column">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Importe alegado -->
+        <mat-form-field>
+          <mat-label>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento.importe-alegado'
+            | translate}}
+          </mat-label>
+          <input matInput type="number"
+            placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento.importe-alegado' | translate}}"
+            formControlName="importeAlegado">
+        </mat-form-field>
+
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Alegación -->
+        <mat-form-field fxFlex>
+          <mat-label>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento.alegacion'
+            | translate}}</mat-label>
+          <textarea matInput formControlName="alegacion" id="alegacion"
+            placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento.alegacion' | translate}}">
+                  </textarea>
+          <mat-error *ngIf="formGroup.controls.alegacion.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamAlegacionEntity}}
+          </mat-error>
+        </mat-form-field>
+
+      </div>
+    </form>
+  </section>
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{'btn.ok' | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

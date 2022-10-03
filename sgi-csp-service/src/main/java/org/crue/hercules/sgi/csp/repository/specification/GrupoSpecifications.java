@@ -39,6 +39,16 @@ public class GrupoSpecifications {
   }
 
   /**
+   * {@link Grupo} activos.
+   * 
+   * @return specification para obtener los {@link Grupo} cuyo proyectoSgeRef no
+   *         sea null.
+   */
+  public static Specification<Grupo> byProyectoSgeRefNotNull() {
+    return (root, query, cb) -> cb.isNotNull(root.get(Grupo_.proyectoSgeRef));
+  }
+
+  /**
    * {@link Grupo} distintos.
    * 
    * @return specification para obtener las entidades {@link Grupo} sin repetidos.

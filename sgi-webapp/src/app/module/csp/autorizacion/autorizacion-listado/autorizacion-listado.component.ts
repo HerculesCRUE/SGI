@@ -12,7 +12,6 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { ROUTE_NAMES } from '@core/route.names';
 import { AutorizacionService } from '@core/services/csp/autorizacion/autorizacion.service';
 import { EstadoAutorizacionService } from '@core/services/csp/estado-autorizacion/estado-autorizacion.service';
-import { NotificacionProyectoExternoCvnService } from '@core/services/csp/notificacion-proyecto-externo-cvn/notificacion-proyecto-externo-cvn.service';
 import { DialogService } from '@core/services/dialog.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
@@ -35,7 +34,6 @@ const MSG_ERROR_DELETE = marker('error.delete.entity');
 const MSG_SUCCESS_DELETE = marker('msg.delete.entity.success');
 const AUTORIZACION_KEY = marker('csp.autorizacion');
 const AUTORIZACION_SOLICITUD_KEY = marker('csp.autorizacion-solicitud');
-const MSG_BUTTON_SAVE = marker('btn.save.entity');
 const NOTIFICACION_KEY = marker('csp.notificacion-cvn');
 const PROYECTO_KEY = marker('csp.proyecto');
 const MSG_DOWNLOAD_ERROR = marker('error.file.download');
@@ -68,9 +66,6 @@ export class AutorizacionListadoComponent extends AbstractTablePaginationCompone
   textoSuccessDelete: string;
   textoErrorDelete: string;
   mapCanBeDeleted: Map<number, boolean> = new Map();
-  isInvestigador: boolean;
-  isVisor: boolean;
-  columnasGestor: string[];
 
   msgParamNotificacionEntity = {};
   msgParamProyectoEntity = {};
@@ -88,7 +83,6 @@ export class AutorizacionListadoComponent extends AbstractTablePaginationCompone
     private personaService: PersonaService,
     private dialogService: DialogService,
     private documentoService: DocumentoService,
-    private notificacionProyectoExternoCVNService: NotificacionProyectoExternoCvnService,
     public authService: SgiAuthService,
     private readonly translate: TranslateService,
   ) {
@@ -116,9 +110,6 @@ export class AutorizacionListadoComponent extends AbstractTablePaginationCompone
       solicitante: new FormControl(null),
     });
     this.filter = this.createFilter();
-    this.isInvestigador = this.authService.hasAnyAuthority(['CSP-AUT-INV-C', 'CSP-AUT-INV-ER', 'CSP-AUT-INV-BR']);
-    this.isVisor = this.authService.hasAnyAuthority(['CSP-AUT-V']);
-
   }
 
   private setupI18N(): void {
@@ -184,8 +175,7 @@ export class AutorizacionListadoComponent extends AbstractTablePaginationCompone
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IAutorizacionListado>> {
-    const autorizaciones$ = this.isInvestigador ? this.autorizacionService.findAllInvestigador(this.getFindOptions(reset)) : this.autorizacionService.findAll(this.getFindOptions(reset));
-    return autorizaciones$.pipe(
+    return this.autorizacionService.findAll(this.getFindOptions(reset)).pipe(
       map(result => {
         const autorizaciones = result.items.map((autorizacion) => {
           return {
@@ -293,10 +283,6 @@ export class AutorizacionListadoComponent extends AbstractTablePaginationCompone
 
   protected initColumns(): void {
     this.columnas = [
-      'fechaFirstEstado', 'tituloProyecto', 'entidadParticipacion', 'estado',
-      'fechaEstado', 'acciones'
-    ];
-    this.columnasGestor = [
       'fechaFirstEstado', 'solicitante', 'tituloProyecto', 'entidadParticipacion', 'estado',
       'fechaEstado', 'acciones'
     ];

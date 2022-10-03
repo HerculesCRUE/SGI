@@ -79,8 +79,9 @@ public interface ProyectoService {
   Page<Proyecto> findAllRestringidos(String query, Pageable paging);
 
   /**
-   * Obtiene todas las entidades {@link Proyecto} activas paginadas y filtradas a
-   * las que tiene acceso el investigador que ha inciado sesión
+   * Obtiene todas las entidades {@link Proyecto} activas, que no estén en estado
+   * borrador, en las que el usuario logueado está dentro del equipo o es un
+   * responsable economico, paginadas y filtradas
    *
    * @param query  información del filtro.
    * @param paging información de paginación.
@@ -132,11 +133,10 @@ public interface ProyectoService {
    * modificación o eliminación de ciertas entidades relacionadas con el
    * {@link Proyecto}.
    *
-   * @param proyectoId  Id del {@link Proyecto}.
-   * @param authorities Authorities a validar
+   * @param proyectoId Id del {@link Proyecto}.
    * @return true si puede ser modificada / false si no puede ser modificada
    */
-  boolean modificable(Long proyectoId, String[] authorities);
+  boolean modificable(Long proyectoId);
 
   /**
    * Obtiene los ids de {@link Proyecto} modificados que esten

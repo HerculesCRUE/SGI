@@ -9,7 +9,7 @@ import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { ProduccionCientificaService } from '@core/services/prc/produccion-cientifica/produccion-cientifica.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { NGXLogger } from 'ngx-logger';
-import { forkJoin, Observable, throwError } from 'rxjs';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { PRODUCCION_CIENTIFICA_ROUTE_PARAMS } from './produccion-cientifica-route-params';
 
@@ -17,6 +17,7 @@ const MSG_NOT_FOUND = marker('error.load');
 
 export interface IProduccionCientificaData {
   canEdit: boolean;
+  isInvestigador: boolean;
   produccionCientifica: IProduccionCientifica;
 }
 
@@ -36,7 +37,8 @@ export class ProduccionCientificaInvResolver extends SgiResolverResolver<IProduc
     const produccionCientificaId = Number(route.paramMap.get(PRODUCCION_CIENTIFICA_ROUTE_PARAMS.ID));
 
     return forkJoin({
-      canEdit: this.service.isEditableByInvestigador(produccionCientificaId),
+      canEdit: this.service.modificableByInvestigador(produccionCientificaId),
+      isInvestigador: of(true),
       produccionCientifica: this.service.findById(produccionCientificaId)
     }).pipe(
       tap(produccionCientifica => {

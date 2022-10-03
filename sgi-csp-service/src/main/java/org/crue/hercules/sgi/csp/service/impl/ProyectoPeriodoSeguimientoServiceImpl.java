@@ -12,6 +12,7 @@ import org.crue.hercules.sgi.csp.repository.ProyectoPeriodoSeguimientoRepository
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoPeriodoSeguimientoSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoPeriodoSeguimientoService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -120,6 +121,25 @@ public class ProyectoPeriodoSeguimientoServiceImpl implements ProyectoPeriodoSeg
 
   }
 
+  @Override
+  @Transactional
+  public ProyectoPeriodoSeguimiento updateFechaPresentacionDocumentacion(Long id,
+      Instant fechaPresentacionDocumentacion) {
+    log.debug("updateFechaPresentacionDocumentacion(Long id, Instant fechaPresentacionDocumentacion) - start");
+
+    AssertHelper.idNotNull(id, ProyectoPeriodoSeguimiento.class);
+
+    return repository.findById(id).map(proyectoPeriodoSeguimiento -> {
+
+      proyectoPeriodoSeguimiento.setFechaPresentacionDocumentacion(fechaPresentacionDocumentacion);
+
+      ProyectoPeriodoSeguimiento returnValue = repository.save(proyectoPeriodoSeguimiento);
+
+      log.debug("updateFechaPresentacionDocumentacion(Long id, Instant fechaPresentacionDocumentacion) - end");
+      return returnValue;
+    }).orElseThrow(() -> new ProyectoPeriodoSeguimientoNotFoundException(id));
+  }
+
   /**
    * Actualiza el número de período en función de la fecha de inicio de los
    * períodos de seguimiento del {@link Proyecto} que haya en el sistema
@@ -213,6 +233,19 @@ public class ProyectoPeriodoSeguimientoServiceImpl implements ProyectoPeriodoSeg
 
     Page<ProyectoPeriodoSeguimiento> returnValue = repository.findAll(specs, pageable);
     log.debug("findAllByProyecto(Long proyectoId, String query, Pageable pageable) - end");
+    return returnValue;
+  }
+
+  @Override
+  public Page<ProyectoPeriodoSeguimiento> findAllByProyectoSgeRef(String proyectoSgeRef, String query,
+      Pageable paging) {
+    log.debug("findAllByProyectoSgeRef(String proyectoSgeRef, String query, Pageable paging) - start");
+
+    Specification<ProyectoPeriodoSeguimiento> specs = ProyectoPeriodoSeguimientoSpecifications
+        .byProyectoSgeRef(proyectoSgeRef).and(SgiRSQLJPASupport.toSpecification(query));
+
+    Page<ProyectoPeriodoSeguimiento> returnValue = repository.findAll(specs, paging);
+    log.debug("findAllByProyectoSgeRef(String proyectoSgeRef, String query, Pageable paging) - end");
     return returnValue;
   }
 

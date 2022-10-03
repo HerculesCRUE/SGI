@@ -113,4 +113,17 @@ export class ProyectoPeriodoJustificacionService extends _ProyectoPeriodoJstific
     );
   }
 
+  /**
+   * Obtiene el ProyectoPeriodoJustificacion con el identificadorJustificacion indicado.
+   *
+   * @param identificadorJustificacion del ProyectoPeriodoJustificacion.
+   * @returns ProyectoPeriodoJustificacion.
+   */
+  findByIdentificadorJustificacion(identificadorJustificacion: string): Observable<IProyectoPeriodoJustificacion> {
+    return this.http.get<IProyectoPeriodoJustificacionResponse>(
+      `${this.endpointUrl}/identificadorjustificacion`, { params: { identificadorJustificacion } })
+      .pipe(
+        map((response) => PROYECTO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER.toTarget(response))
+      );
+  }
 }

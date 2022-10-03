@@ -59,7 +59,8 @@ class ProyectoSocioServiceTest extends BaseServiceTest {
 
   @BeforeEach
   void setUp() throws Exception {
-    proyectoHelper = new ProyectoHelper(proyectoEquipoRepository, proyectoResponsableEconomicoRepository);
+    proyectoHelper = new ProyectoHelper(proyectoRepository, proyectoEquipoRepository,
+        proyectoResponsableEconomicoRepository);
     service = new ProyectoSocioServiceImpl(repository, equipoRepository, periodoPagoRepository, documentoRepository,
         periodoJustificacionRepository, proyectoRepository, this.proyectoHelper);
   }

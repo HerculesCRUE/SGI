@@ -3,7 +3,9 @@ import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { Estado } from '@core/models/csp/estado-solicitud';
+import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudRrhhTutor } from '@core/models/csp/solicitud-rrhh-tutor';
+import { Module } from '@core/module';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { SolicitudProyectoService } from '@core/services/csp/solicitud-proyecto.service';
 import { SolicitudRrhhService } from '@core/services/csp/solicitud-rrhh/solicitud-rrhh.service';
@@ -11,7 +13,7 @@ import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
-import { forkJoin, Observable, of } from 'rxjs';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { SOLICITUD_ROUTE_PARAMS } from './solicitud-route-params';
 import { ISolicitudData } from './solicitud.action.service';
@@ -42,7 +44,9 @@ export class SolicitudDataResolver extends SgiResolverResolver<ISolicitudData> {
   }
 
   protected resolveEntity(route: ActivatedRouteSnapshot): Observable<ISolicitudData> {
-    const isInvestigador = this.authService.hasAnyAuthority(['CSP-SOL-INV-BR', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER']);
+    const isInvestigador = route.data.module === Module.INV && this.hasViewAuthorityInv();
+    const currentUser = this.authService.authStatus$?.getValue()?.userRefId;
+
 
     return this.service.findById(Number(route.paramMap.get(SOLICITUD_ROUTE_PARAMS.ID))).pipe(
       map(solicitud => {
@@ -59,7 +63,10 @@ export class SolicitudDataResolver extends SgiResolverResolver<ISolicitudData> {
         );
       }),
       switchMap(data => {
-        return this.service.modificable(data.solicitud.id).pipe(
+        const modificable$ = isInvestigador
+          ? this.service.modificableByInvestigador(data.solicitud.id)
+          : this.service.modificableByUO(data.solicitud.id);
+        return modificable$.pipe(
           map(value => {
             data.readonly = !value;
             return data;
@@ -67,9 +74,16 @@ export class SolicitudDataResolver extends SgiResolverResolver<ISolicitudData> {
         );
       }),
       switchMap(data => {
+        data.isInvestigador = isInvestigador;
+
         if (!isInvestigador) {
           data.estadoAndDocumentosReadonly = data.readonly;
-          return of(data);
+
+          if (route.data.module === Module.CSP && this.hasViewAuthorityUO(data.solicitud)) {
+            return of(data);
+          }
+
+          return throwError('NOT_FOUND');
         }
 
         return forkJoin(
@@ -81,12 +95,18 @@ export class SolicitudDataResolver extends SgiResolverResolver<ISolicitudData> {
               ? this.solicitudRrhhService.findTutor(data.solicitud.id) : of({} as ISolicitudRrhhTutor)
           }
         ).pipe(
-          map(({ modificableEstadoAndDocumentos, modificableEstadoAsTutor, tutorRrhh }) => {
+          switchMap(({ modificableEstadoAndDocumentos, modificableEstadoAsTutor, tutorRrhh }) => {
             data.estadoAndDocumentosReadonly = !modificableEstadoAndDocumentos;
             data.modificableEstadoAsTutor = modificableEstadoAsTutor;
-            data.isTutor = tutorRrhh?.tutor?.id === this.authService.authStatus$?.getValue()?.userRefId;
-            return data;
-          })
+            data.isTutor = tutorRrhh?.tutor?.id === currentUser;
+
+            if (data.isTutor || data.solicitud.solicitante?.id === currentUser) {
+              return of(data);
+            }
+
+            return throwError('NOT_FOUND');
+          }),
+
         );
       }),
       switchMap(data => {
@@ -120,6 +140,21 @@ export class SolicitudDataResolver extends SgiResolverResolver<ISolicitudData> {
         }
         return of(data);
       })
+    );
+  }
+
+  private hasViewAuthorityInv(): boolean {
+    return this.authService.hasAuthority('CSP-SOL-INV-ER');
+  }
+
+  private hasViewAuthorityUO(solicitud: ISolicitud): boolean {
+    return this.authService.hasAnyAuthority(
+      [
+        'CSP-SOL-E',
+        'CSP-SOL-E_' + solicitud.unidadGestion.id,
+        'CSP-SOL-V',
+        'CSP-SOL-V_' + solicitud.unidadGestion.id
+      ]
     );
   }
 

@@ -14,7 +14,6 @@ import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatori
 import org.crue.hercules.sgi.csp.model.Autorizacion;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
-import org.crue.hercules.sgi.csp.model.Convocatoria.Estado;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.ModeloUnidad;
@@ -43,6 +42,7 @@ import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaSpecificat
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaClonerService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
@@ -79,6 +79,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   private final AutorizacionRepository autorizacionRepository;
   private final ProyectoHelper proyectoHelper;
   private final SgiConfigProperties sgiConfigProperties;
+  private final ConvocatoriaAuthorityHelper authorityHelper;
 
   public ConvocatoriaServiceImpl(ConvocatoriaRepository repository,
       ConvocatoriaPeriodoJustificacionRepository convocatoriaPeriodoJustificacionRepository,
@@ -90,7 +91,8 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
       final ProyectoRepository proyectoRepository, final ConvocatoriaClonerService convocatoriaClonerService,
       AutorizacionRepository autorizacionRepository,
       ProyectoHelper proyectoHelper,
-      SgiConfigProperties sgiConfigProperties) {
+      SgiConfigProperties sgiConfigProperties,
+      ConvocatoriaAuthorityHelper authorityHelper) {
     this.repository = repository;
     this.convocatoriaPeriodoJustificacionRepository = convocatoriaPeriodoJustificacionRepository;
     this.modeloUnidadRepository = modeloUnidadRepository;
@@ -105,6 +107,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     this.autorizacionRepository = autorizacionRepository;
     this.proyectoHelper = proyectoHelper;
     this.sgiConfigProperties = sgiConfigProperties;
+    this.authorityHelper = authorityHelper;
   }
 
   /**
@@ -120,13 +123,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
 
     Assert.isNull(convocatoria.getId(), "Id tiene que ser null para crear la Convocatoria");
 
-    // Validación permisos
-    String authority = "CSP-CON-C";
-
-    Assert.isTrue(
-        SgiSecurityContextHolder.hasAuthority(authority)
-            || SgiSecurityContextHolder.hasAuthorityForUO(authority, convocatoria.getUnidadGestionRef()),
-        "El usuario no tiene permisos para crear una convocatoria asociada a la unidad de gestión recibida.");
+    authorityHelper.checkUserHasAuthorityCreateConvocatoria(convocatoria);
 
     convocatoria.setEstado(Convocatoria.Estado.BORRADOR);
     convocatoria.setActivo(Boolean.TRUE);
@@ -155,7 +152,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
         "FormularioSolicitud no puede ser null para actualizar Convocatoria");
 
     return repository.findById(convocatoria.getId()).map(data -> {
-
+      authorityHelper.checkUserHasAuthorityModifyConvocatoria(data);
       Convocatoria validConvocatoria = validarDatosConvocatoria(convocatoria, data);
 
       data.setUnidadGestionRef(validConvocatoria.getUnidadGestionRef());
@@ -256,10 +253,9 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
       }
 
       // Comprobación de permisos para borrado lógico de convocatorias
-      String authority = "CSP-CON-B";
+      String authority = ConvocatoriaAuthorityHelper.CSP_CON_B;
       Assert.isTrue(
-          (SgiSecurityContextHolder.hasAuthority(authority)
-              || SgiSecurityContextHolder.hasAuthorityForUO(authority, convocatoria.getUnidadGestionRef()))
+          (SgiSecurityContextHolder.hasAuthorityForUO(authority, convocatoria.getUnidadGestionRef()))
               && !repository.isRegistradaConSolicitudesOProyectos(id),
           "No se puede eliminar Convocatoria. No tiene los permisos necesarios o está registrada y cuenta con solicitudes o proyectos asociados");
 
@@ -293,24 +289,24 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
    *
    * @param id                 Id del {@link Convocatoria}.
    * @param unidadConvocatoria unidadGestionRef {@link Convocatoria}.
-   * @param atuhorities        Authorities a validar
+   * @param authorities        Authorities a validar
    * @return true si puede ser modificada / false si no puede ser modificada
    */
   @Override
-  public boolean isRegistradaConSolicitudesOProyectos(Long id, String unidadConvocatoria, String[] atuhorities) {
-    log.debug("isRegistradaConSolicitudesOProyectos(Long id, String unidadConvocatoria) - start");
+  public boolean isRegistradaConSolicitudesOProyectos(Long id, String unidadConvocatoria, String[] authorities) {
+    log.debug("isRegistradaConSolicitudesOProyectos(Long id, String unidadConvocatoria, String[] authorities) - start");
 
     if (StringUtils.isEmpty(unidadConvocatoria)) {
       unidadConvocatoria = repository.findById(id).map(Convocatoria::getUnidadGestionRef)
           .orElseThrow(() -> new ConvocatoriaNotFoundException(id));
     }
 
-    if (SgiSecurityContextHolder.hasAnyAuthorityForUO(atuhorities, unidadConvocatoria)) {
+    if (SgiSecurityContextHolder.hasAnyAuthorityForUO(authorities, unidadConvocatoria)) {
       // Será modificable si no tiene solicitudes o proyectos asociados
       return !(repository.isRegistradaConSolicitudesOProyectos(id));
     }
 
-    log.debug("isRegistradaConSolicitudesOProyectos(Long id, String unidadConvocatoria) - end");
+    log.debug("isRegistradaConSolicitudesOProyectos(Long id, String unidadConvocatoria, String[] authorities) - end");
     return false;
   }
 
@@ -378,37 +374,9 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     log.debug("findById(Long id) - start");
     final Convocatoria returnValue = repository.findById(id).orElseThrow(() -> new ConvocatoriaNotFoundException(id));
 
-    if (hasAuthorityViewInvestigador()) {
-      ConfiguracionSolicitud configuracionSolicitud = configuracionSolicitudRepository.findByConvocatoriaId(id)
-          .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(id));
-
-      if (!returnValue.getEstado().equals(Estado.REGISTRADA)
-          || Boolean.FALSE.equals(configuracionSolicitud.getTramitacionSGI())) {
-        throw new UserNotAuthorizedToAccessConvocatoriaException();
-      }
-    }
+    authorityHelper.checkUserHasAuthorityViewConvocatoria(id);
 
     log.debug("findById(Long id) - end");
-    return returnValue;
-  }
-
-  /**
-   * Obtiene todas las entidades {@link Convocatoria} activas paginadas y
-   * filtradas.
-   *
-   * @param query  información del filtro.
-   * @param paging información de paginación.
-   * @return el listado de entidades {@link Convocatoria} activas paginadas y
-   *         filtradas.
-   */
-  @Override
-  public Page<Convocatoria> findAll(String query, Pageable paging) {
-    log.debug("findAll(String query, Pageable paging) - start");
-    Specification<Convocatoria> specs = ConvocatoriaSpecifications.distinct().and(ConvocatoriaSpecifications.activos()
-        .and(SgiRSQLJPASupport.toSpecification(query)));
-
-    Page<Convocatoria> returnValue = repository.findAll(specs, paging);
-    log.debug("findAll(String query, Pageable paging) - end");
     return returnValue;
   }
 
@@ -423,14 +391,35 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
    */
   @Override
   public Page<Convocatoria> findAllInvestigador(String query, Pageable paging) {
-    log.debug("findAll(String query, Pageable paging) - start");
+    log.debug("findAllInvestigador(String query, Pageable paging) - start");
     Specification<Convocatoria> specs = ConvocatoriaSpecifications.distinct().and(ConvocatoriaSpecifications.activos()
         .and(ConvocatoriaSpecifications.registradas())
         .and(ConvocatoriaSpecifications.configuracionSolicitudTramitacionSGI())
         .and(SgiRSQLJPASupport.toSpecification(query, ConvocatoriaPredicateResolver.getInstance(sgiConfigProperties))));
 
     Page<Convocatoria> returnValue = repository.findAll(specs, paging);
-    log.debug("findAll(String query, Pageable paging) - end");
+    log.debug("findAllInvestigador(String query, Pageable paging) - end");
+    return returnValue;
+  }
+
+  /**
+   * Obtiene todas las entidades {@link Convocatoria} que puede visualizar un
+   * investigador paginadas y filtradas.
+   *
+   * @param query  información del filtro.
+   * @param paging información de paginación.
+   * @return el listado de entidades {@link Convocatoria} que puede visualizar un
+   *         investigador paginadas y filtradas.
+   */
+  @Override
+  public Page<Convocatoria> findAllPublicas(String query, Pageable paging) {
+    log.debug("findAllPublicas(String query, Pageable paging) - start");
+    Specification<Convocatoria> specs = ConvocatoriaSpecifications.distinct()
+        .and(ConvocatoriaSpecifications.publicas())
+        .and(SgiRSQLJPASupport.toSpecification(query, ConvocatoriaPredicateResolver.getInstance(sgiConfigProperties)));
+
+    Page<Convocatoria> returnValue = repository.findAll(specs, paging);
+    log.debug("findAllPublicas(String query, Pageable paging) - end");
     return returnValue;
   }
 
@@ -473,8 +462,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
         .and(SgiRSQLJPASupport.toSpecification(query,
             ConvocatoriaPredicateResolver.getInstance(sgiConfigProperties)));
 
-    List<String> unidadesGestion = SgiSecurityContextHolder.getUOsForAnyAuthority(
-        new String[] { "CSP-CON-C", "CSP-CON-V", "CSP-CON-E", "CSP-CON-INV-V", "CSP-CON-B", "CSP-CON-R" });
+    List<String> unidadesGestion = authorityHelper.getUserUOsConvocatoria();
 
     if (!CollectionUtils.isEmpty(unidadesGestion)) {
       Specification<Convocatoria> specByUnidadGestionRefIn = ConvocatoriaSpecifications.acronimosIn(unidadesGestion);
@@ -849,7 +837,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
    */
   @Override
   public boolean hasAnySolicitudReferenced(Long convocatoriaId) {
-    return this.solicitudRepository.existsByConvocatoriaId(convocatoriaId);
+    return this.solicitudRepository.existsByConvocatoriaIdAndActivoTrue(convocatoriaId);
   }
 
   /**
@@ -860,7 +848,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
    */
   @Override
   public boolean hasAnyProyectoReferenced(Long convocatoriaId) {
-    return this.proyectoRepository.existsByConvocatoriaId(convocatoriaId);
+    return this.proyectoRepository.existsByConvocatoriaIdAndActivoTrue(convocatoriaId);
   }
 
   /**
@@ -901,10 +889,6 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     this.convocatoriaClonerService.clonePartidasPresupuestarias(convocatoriaId, cloned.getId());
 
     return cloned;
-  }
-
-  private boolean hasAuthorityViewInvestigador() {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
   }
 
 }

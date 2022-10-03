@@ -5,7 +5,6 @@ import { GrupoResponsableEconomicoService } from '@core/services/csp/grupo-respo
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
@@ -19,8 +18,7 @@ export class GrupoResponsableEconomicoFragment extends Fragment {
     private readonly grupoService: GrupoService,
     private readonly grupoResponsableEconomicoService: GrupoResponsableEconomicoService,
     private readonly personaService: PersonaService,
-    private sgiAuthService: SgiAuthService,
-    private readonly: boolean,
+    public readonly readonly: boolean
   ) {
     super(key);
     this.setComplete(true);
@@ -37,11 +35,7 @@ export class GrupoResponsableEconomicoFragment extends Fragment {
                 return this.personaService.findById(element.persona.id).pipe(
                   map(persona => {
                     element.persona = persona;
-                    if (persona.id === this.sgiAuthService.authStatus$?.getValue()?.userRefId) {
-                      // Es responsable economico
-                      this.readonly = false;
-                    }
-                    return element as IGrupoResponsableEconomico;
+                    return element;
                   })
                 );
               }),
@@ -51,7 +45,7 @@ export class GrupoResponsableEconomicoFragment extends Fragment {
           map(miembrosEquipo => {
             return miembrosEquipo.items.map(miembroEquipo => {
               miembroEquipo.grupo = { id: this.getKey() } as IGrupo;
-              return new StatusWrapper<IGrupoResponsableEconomico>(miembroEquipo as IGrupoResponsableEconomico);
+              return new StatusWrapper<IGrupoResponsableEconomico>(miembroEquipo);
             });
           })
         ).subscribe(
@@ -117,7 +111,7 @@ export class GrupoResponsableEconomicoFragment extends Fragment {
         map(miembrosEquipo => {
           return miembrosEquipo.map(miembroEquipo => {
             miembroEquipo.grupo = { id: this.getKey() } as IGrupo;
-            return new StatusWrapper<IGrupoResponsableEconomico>(miembroEquipo as IGrupoResponsableEconomico);
+            return new StatusWrapper<IGrupoResponsableEconomico>(miembroEquipo);
           });
         }),
         takeLast(1),

@@ -19,7 +19,6 @@ public class TipoDocumentoConverter {
   }
 
   public TipoDocumentoOutput convert(TipoDocumento source) {
-    TipoDocumentoOutput target = modelMapper.map(source, TipoDocumentoOutput.class);
-    return target;
+    return modelMapper.map(source, TipoDocumentoOutput.class);
   }
 }

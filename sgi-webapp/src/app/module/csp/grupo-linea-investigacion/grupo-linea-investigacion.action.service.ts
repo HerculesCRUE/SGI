@@ -11,7 +11,6 @@ import { GrupoLineaInvestigacionService } from '@core/services/csp/grupo-linea-i
 import { GrupoLineaInvestigadorService } from '@core/services/csp/grupo-linea-investigador/grupo-linea-investigador.service';
 import { ClasificacionService } from '@core/services/sgo/clasificacion.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
 import { GrupoLineaClasificacionesFragment } from './grupo-linea-investigacion-formulario/grupo-linea-clasificaciones/grupo-linea-clasificaciones.fragment';
 import { GrupoLineaEquipoInstrumentalFragment } from './grupo-linea-investigacion-formulario/grupo-linea-equipo-instrumental/grupo-linea-equipo-instrumental.fragment';
@@ -53,7 +52,6 @@ export class GrupoLineaInvestigacionActionService extends ActionService {
     fb: FormBuilder,
     route: ActivatedRoute,
     personaService: PersonaService,
-    sgiAuthService: SgiAuthService,
     service: GrupoLineaInvestigacionService,
     grupoLineaInvestigadorService: GrupoLineaInvestigadorService,
     grupoLineaClasificacionService: GrupoLineaClasificacionService,
@@ -84,7 +82,6 @@ export class GrupoLineaInvestigacionActionService extends ActionService {
       service,
       grupoLineaInvestigadorService,
       personaService,
-      sgiAuthService,
       this.readonly
     );
 

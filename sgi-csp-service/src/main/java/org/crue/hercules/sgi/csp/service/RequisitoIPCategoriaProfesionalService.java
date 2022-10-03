@@ -6,26 +6,19 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
-import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.RequisitoIPCategoriaProfesionalNotFoundException;
-import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessSolicitudException;
-import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
-import org.crue.hercules.sgi.csp.model.Convocatoria.Estado;
 import org.crue.hercules.sgi.csp.model.RequisitoIP;
 import org.crue.hercules.sgi.csp.model.RequisitoIPCategoriaProfesional;
 import org.crue.hercules.sgi.csp.model.Solicitud;
-import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
-import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.RequisitoIPCategoriaProfesionalRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.specification.RequisitoIPCategoriaProfesionalSpecifications;
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudSpecifications;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
-import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,17 +39,16 @@ import lombok.extern.slf4j.Slf4j;
 public class RequisitoIPCategoriaProfesionalService {
 
   private final RequisitoIPCategoriaProfesionalRepository repository;
-  private final ConvocatoriaRepository convocatoriaRepository;
-  private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
   private final SolicitudRepository solicitudRepository;
+  private final ConvocatoriaAuthorityHelper authorityHelper;
 
-  public RequisitoIPCategoriaProfesionalService(RequisitoIPCategoriaProfesionalRepository repository,
-      ConvocatoriaRepository convocatoriaRepository,
-      ConfiguracionSolicitudRepository configuracionSolicitudRepository, SolicitudRepository solicitudRepository) {
+  public RequisitoIPCategoriaProfesionalService(
+      RequisitoIPCategoriaProfesionalRepository repository,
+      SolicitudRepository solicitudRepository,
+      ConvocatoriaAuthorityHelper authorityHelper) {
     this.repository = repository;
-    this.convocatoriaRepository = convocatoriaRepository;
-    this.configuracionSolicitudRepository = configuracionSolicitudRepository;
     this.solicitudRepository = solicitudRepository;
+    this.authorityHelper = authorityHelper;
   }
 
   /**
@@ -68,13 +60,13 @@ public class RequisitoIPCategoriaProfesionalService {
    *         {@link RequisitoIP} paginadas.
    */
   public List<RequisitoIPCategoriaProfesional> findByRequisitoIP(Long requisitoIPId) {
-    log.debug("findByRequisitoIP(Long requisitoIPId, String query, Pageable paging) - start");
+    log.debug("findByRequisitoIP(Long requisitoIPId) - start");
 
     Specification<RequisitoIPCategoriaProfesional> specs = RequisitoIPCategoriaProfesionalSpecifications
         .byRequisitoIPId(requisitoIPId);
 
     List<RequisitoIPCategoriaProfesional> returnValue = repository.findAll(specs);
-    log.debug("findByRequisitoIP(Long requisitoIPId, String query, Pageable paging) - end");
+    log.debug("findByRequisitoIP(Long requisitoIPId) - end");
     return returnValue;
   }
 
@@ -152,17 +144,7 @@ public class RequisitoIPCategoriaProfesionalService {
   public List<RequisitoIPCategoriaProfesional> findByConvocatoria(Long convocatoriaId) {
     log.debug("findByConvocatoria(Long requisitoIPId) - start");
 
-    Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaId)
-        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaId));
-    if (hasAuthorityViewInvestigador()) {
-      ConfiguracionSolicitud configuracionSolicitud = configuracionSolicitudRepository
-          .findByConvocatoriaId(convocatoriaId)
-          .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(convocatoriaId));
-      if (!convocatoria.getEstado().equals(Estado.REGISTRADA)
-          || Boolean.FALSE.equals(configuracionSolicitud.getTramitacionSGI())) {
-        throw new UserNotAuthorizedToAccessConvocatoriaException();
-      }
-    }
+    authorityHelper.checkUserHasAuthorityViewConvocatoria(convocatoriaId);
 
     Specification<RequisitoIPCategoriaProfesional> specs = RequisitoIPCategoriaProfesionalSpecifications
         .byConvocatoriaId(convocatoriaId);
@@ -222,10 +204,6 @@ public class RequisitoIPCategoriaProfesionalService {
 
     specs = specs.and(RequisitoIPCategoriaProfesionalSpecifications.withRelatedEntities());
     return repository.count(specs) == 0;
-  }
-
-  private boolean hasAuthorityViewInvestigador() {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
   }
 
 }

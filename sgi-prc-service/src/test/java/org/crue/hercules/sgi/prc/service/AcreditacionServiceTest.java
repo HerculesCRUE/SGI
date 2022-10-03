@@ -11,6 +11,7 @@ import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContext
 import org.crue.hercules.sgi.prc.exceptions.AcreditacionNotFoundException;
 import org.crue.hercules.sgi.prc.model.Acreditacion;
 import org.crue.hercules.sgi.prc.repository.AcreditacionRepository;
+import org.crue.hercules.sgi.prc.util.ProduccionCientificaAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -41,6 +42,9 @@ class AcreditacionServiceTest extends BaseServiceTest {
 
   @MockBean
   private PersistenceUnitUtil persistenceUnitUtil;
+
+  @MockBean
+  private ProduccionCientificaAuthorityHelper authorityHelper;
 
   // This bean must be created by Spring so validations can be applied
   @Autowired

@@ -13,6 +13,7 @@ import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToCreateConvocatoriaException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
@@ -37,6 +38,7 @@ import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.TipoAmbitoGeograficoRepository;
 import org.crue.hercules.sgi.csp.repository.TipoRegimenConcurrenciaRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaServiceImpl;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,6 +85,8 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
   @Mock
   private ProyectoHelper proyectoHelper;
 
+  private ConvocatoriaAuthorityHelper authorityHelper;
+
   private ConvocatoriaService service;
 
   @Autowired
@@ -90,11 +94,12 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @BeforeEach
   void setUp() throws Exception {
+    authorityHelper = new ConvocatoriaAuthorityHelper(repository, configuracionSolicitudRepository);
     service = new ConvocatoriaServiceImpl(repository, convocatoriaPeriodoJustificacionRepository,
         modeloUnidadRepository, modeloTipoFinalidadRepository, tipoRegimenConcurrenciaRepository,
         tipoAmbitoGeograficoRepository, convocatoriaPeriodoSeguimientoCientificoRepository,
         configuracionSolicitudRepository, this.solicitudReposiotry, this.proyectoReposiotry, convocatoriaClonerService,
-        autorizacionRepository, proyectoHelper, sgiConfigProperties);
+        autorizacionRepository, proyectoHelper, sgiConfigProperties, authorityHelper);
   }
 
   @Test
@@ -241,12 +246,10 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
     convocatoria.setUnidadGestionRef("2");
 
-    Assertions.assertThatThrownBy(
-        // when: create Convocatoria
-        () -> service.create(convocatoria))
-        // then: throw exception as id can't be provided
-        .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "El usuario no tiene permisos para crear una convocatoria asociada a la unidad de gestión recibida.");
+    // when: create Convocatoria
+    Throwable thrown = Assertions.catchThrowable(() -> this.service.create(convocatoria));
+    // then: throw exception as id can't be provided
+    Assertions.assertThat(thrown).isInstanceOf(UserNotAuthorizedToCreateConvocatoriaException.class);
   }
 
   @Test
@@ -2507,97 +2510,6 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.findById(1L))
         // then: NotFoundException is thrown
         .isInstanceOf(ConvocatoriaNotFoundException.class);
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
-  void findAll_WithPaging_ReturnsPage() {
-    // given: One hundred Convocatoria
-    List<Convocatoria> convocatorias = new ArrayList<>();
-    for (int i = 1; i <= 100; i++) {
-      if (i % 2 == 0) {
-        convocatorias.add(generarMockConvocatoria(Long.valueOf(i), 1L, 1L, 1L, 1L, 1L, Boolean.TRUE));
-      }
-    }
-
-    BDDMockito
-        .given(
-            repository.findAll(ArgumentMatchers.<Specification<Convocatoria>>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<Convocatoria>>() {
-          @Override
-          public Page<Convocatoria> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            List<Convocatoria> content = convocatorias.subList(fromIndex, toIndex);
-            Page<Convocatoria> page = new PageImpl<>(content, pageable, convocatorias.size());
-            return page;
-          }
-        });
-
-    // when: Get page=3 with pagesize=10
-    Pageable paging = PageRequest.of(3, 10);
-    Page<Convocatoria> page = service.findAll(null, paging);
-
-    // then: A Page with ten Convocatoria are returned
-    // containing Codigo='codigo-62' to 'codigo-80'
-    Assertions.assertThat(page.getContent()).hasSize(10);
-    Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page).hasSize(10);
-    Assertions.assertThat(page.getTotalElements()).isEqualTo(50);
-
-    for (int i = 0, j = 62; i < 10; i++, j += 2) {
-      Convocatoria item = page.getContent().get(i);
-      Assertions.assertThat(item.getCodigo()).isEqualTo("codigo-" + String.format("%03d", j));
-      Assertions.assertThat(item.getActivo()).isEqualTo(Boolean.TRUE);
-    }
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
-  void findAllTodos_WithPaging_ReturnsPage() {
-    // given: One hundred Convocatoria
-    List<Convocatoria> convocatorias = new ArrayList<>();
-    for (int i = 1; i <= 100; i++) {
-      convocatorias.add(
-          generarMockConvocatoria(Long.valueOf(i), 1L, 1L, 1L, 1L, 1L, (i % 2 == 0) ? Boolean.TRUE : Boolean.FALSE));
-    }
-
-    BDDMockito
-        .given(
-            repository.findAll(ArgumentMatchers.<Specification<Convocatoria>>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<Convocatoria>>() {
-          @Override
-          public Page<Convocatoria> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            List<Convocatoria> content = convocatorias.subList(fromIndex, toIndex);
-            Page<Convocatoria> page = new PageImpl<>(content, pageable, convocatorias.size());
-            return page;
-          }
-        });
-
-    // when: Get page=3 with pagesize=10
-    Pageable paging = PageRequest.of(3, 10);
-    Page<Convocatoria> page = service.findAll(null, paging);
-
-    // then: A Page with ten Convocatoria are returned containing
-    // Nombre='nombre-31' to
-    // 'nombre-40'
-    Assertions.assertThat(page.getContent()).hasSize(10);
-    Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page).hasSize(10);
-    Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
-    for (int i = 0, j = 31; i < 10; i++, j++) {
-      Convocatoria item = page.getContent().get(i);
-      Assertions.assertThat(item.getCodigo()).isEqualTo("codigo-" + String.format("%03d", j));
-      Assertions.assertThat(item.getActivo()).isEqualTo((j % 2 == 0 ? Boolean.TRUE : Boolean.FALSE));
-    }
   }
 
   @Test

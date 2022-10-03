@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.eti.service;
 
+import static org.crue.hercules.sgi.eti.util.AssertHelper.PROBLEM_MESSAGE_NOTNULL;
+import static org.crue.hercules.sgi.eti.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY;
+import static org.crue.hercules.sgi.eti.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
+
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -44,8 +48,9 @@ public class ChecklistService {
     Assert.notNull(id,
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Checklist.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Checklist.class))
+            .build());
     final Checklist returnValue = repository.findById(id).orElseThrow(() -> new ChecklistNotFoundException(id));
     log.debug("getById(Long id) - end");
     return returnValue;
@@ -64,23 +69,26 @@ public class ChecklistService {
     Assert.isNull(checklist.getId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Checklist.class)).build());
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Checklist.class))
+            .build());
     Assert.notNull(checklist.getFormly(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage(Formly.class))
-            .parameter("entity", ApplicationContextSupport.getMessage(Checklist.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(Formly.class))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Checklist.class))
+            .build());
     Assert.notNull(checklist.getFormly().getId(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Formly.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Formly.class)).build());
     Assert.notNull(checklist.getRespuesta(),
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("respuesta"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Checklist.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("respuesta"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Checklist.class))
+            .build());
 
     // formly property is not a full fledged Fromly instance, it only contains the
     // id, so we need to force "reload" the just created instance from the database.
@@ -104,14 +112,16 @@ public class ChecklistService {
 
     Assert.notNull(id,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Checklist.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Checklist.class))
+            .build());
     Assert.notNull(respuesta,
         // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("respuesta"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Checklist.class)).build());
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("respuesta"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Checklist.class))
+            .build());
 
     Optional<Checklist> checklist = repository.findById(id);
     if (!checklist.isPresent()) {

@@ -66,6 +66,7 @@ import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { IProyectoResponsableEconomico } from '@core/models/csp/proyecto-responsable-economico';
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
 import { IProyectosCompetitivosPersonas } from '@core/models/csp/proyectos-competitivos-personas';
+import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-justificacion';
 import { environment } from '@env';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import {
@@ -103,6 +104,8 @@ import { IProyectosCompetitivosPersonasResponse } from './proyectos-competitivos
 import { PROYECTOS_COMPETITIVOS_PERSONAS_RESPONSE_CONVERTER } from './proyectos-competitivos-personas/proyectos-competitivos-personas-response.converter';
 import { PROYECTO_FASE_RESPONSE_CONVERTER } from './proyecto-fase/proyecto-fase-response.converter';
 import { IProyectoFaseResponse } from './proyecto-fase/proyecto-fase-response';
+import { IRequerimientoJustificacionResponse } from './requerimiento-justificacion/requerimiento-justificacion-response';
+import { REQUERIMIENTO_JUSTIFICACION_RESPONSE_CONVERTER } from './requerimiento-justificacion/requerimiento-justificacion-response.converter';
 
 @Injectable({
   providedIn: 'root'
@@ -866,4 +869,11 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
     );
   }
 
+  findRequerimientosJustificacion(id: number, options: SgiRestFindOptions):
+    Observable<SgiRestListResult<IRequerimientoJustificacion>> {
+    return this.find<IRequerimientoJustificacionResponse, IRequerimientoJustificacion>(
+      `${this.endpointUrl}/${id}/requerimientos-justificacion`,
+      options,
+      REQUERIMIENTO_JUSTIFICACION_RESPONSE_CONVERTER);
+  }
 }

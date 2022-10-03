@@ -4,6 +4,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentGuard } from '@core/guards/detail-form.guard';
 import { ActionGuard } from '@core/guards/master-form.guard';
 import { MSG_PARAMS } from '@core/i18n';
+import { Module } from '@core/module';
 import { SgiRoutes } from '@core/route';
 import { ROUTE_NAMES } from '@core/route.names';
 import { SgiAuthGuard } from '@sgi/framework/auth';
@@ -46,7 +47,8 @@ const routes: SgiRoutes = [
     data: {
       title: SOLICITUD_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-      hasAnyAuthorityForAnyUO: ['CSP-SOL-V', 'CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-B', 'CSP-SOL-R', 'CSP-PRO-C']
+      hasAnyAuthorityForAnyUO: ['CSP-SOL-V', 'CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-B', 'CSP-SOL-R', 'CSP-PRO-C'],
+      module: Module.CSP
     }
   },
   {
@@ -59,7 +61,8 @@ const routes: SgiRoutes = [
       titleParams: {
         entity: SOLICITUD_KEY, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR
       },
-      hasAuthorityForAnyUO: 'CSP-SOL-C'
+      hasAuthorityForAnyUO: 'CSP-SOL-C',
+      module: Module.CSP
     },
     children: [
       {
@@ -85,7 +88,8 @@ const routes: SgiRoutes = [
     data: {
       title: SOLICITUD_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
-      hasAnyAuthorityForAnyUO: ['CSP-SOL-E', 'CSP-SOL-V']
+      hasAnyAuthorityForAnyUO: ['CSP-SOL-E', 'CSP-SOL-V'],
+      module: Module.CSP
     },
     children: [
       {
@@ -203,7 +207,8 @@ const routes: SgiRoutes = [
     data: {
       title: SOLICITUD_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
-      hasAnyAuthorityForAnyUO: ['CSP-SOL-E', 'CSP-SOL-V']
+      hasAnyAuthorityForAnyUO: ['CSP-SOL-E', 'CSP-SOL-V'],
+      module: Module.CSP
     },
     resolve: {
       [SOLICITUD_DATA_KEY]: SolicitudDataResolver
@@ -217,7 +222,8 @@ const routes: SgiRoutes = [
           ),
         canActivate: [SgiAuthGuard],
         data: {
-          title: PROYECTO_SOCIO_KEY
+          title: PROYECTO_SOCIO_KEY,
+          module: Module.CSP
         }
       },
       {
@@ -230,7 +236,8 @@ const routes: SgiRoutes = [
         data: {
           [SOLICITUD_PROYECTO_PRESUPUESTO_AJENA_KEY]: false,
           [SOLICITUD_PROYECTO_PRESUPUESTO_FINANCIADORA_KEY]: true,
-          title: PROYECTO_PRESUPUESTO_KEY
+          title: PROYECTO_PRESUPUESTO_KEY,
+          module: Module.CSP
         }
       },
       {
@@ -243,7 +250,8 @@ const routes: SgiRoutes = [
         data: {
           [SOLICITUD_PROYECTO_PRESUPUESTO_AJENA_KEY]: true,
           [SOLICITUD_PROYECTO_PRESUPUESTO_FINANCIADORA_KEY]: true,
-          title: PROYECTO_PRESUPUESTO_KEY
+          title: PROYECTO_PRESUPUESTO_KEY,
+          module: Module.CSP
         }
       },
       {
@@ -256,7 +264,8 @@ const routes: SgiRoutes = [
         data: {
           [SOLICITUD_PROYECTO_PRESUPUESTO_AJENA_KEY]: false,
           [SOLICITUD_PROYECTO_PRESUPUESTO_FINANCIADORA_KEY]: false,
-          title: PROYECTO_PRESUPUESTO_KEY
+          title: PROYECTO_PRESUPUESTO_KEY,
+          module: Module.CSP
         }
       }
     ]

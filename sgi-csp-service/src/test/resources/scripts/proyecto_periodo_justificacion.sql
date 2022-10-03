@@ -28,8 +28,8 @@ INSERT INTO test.estado_proyecto_periodo_justificacion
 VALUES(1, 'estado testing', 'PENDIENTE', '2021-12-23T11:11:00Z');
 
 INSERT INTO test.proyecto_periodo_justificacion
-(id, convocatoria_periodo_justificacion_id, fecha_fin, fecha_inicio, num_periodo, observaciones, proyecto_id, tipo_justificacion, estado)
+(id, convocatoria_periodo_justificacion_id, fecha_fin, fecha_inicio, num_periodo, observaciones, proyecto_id, tipo_justificacion, estado, identificador_justificacion)
 VALUES
-(1, 1, '2021-12-31 22:59:59.000', '2021-11-30 23:00:00.000', 1, 'testing periodo 1', 1, 'PERIODICO', 1),
-(2, 1, '2022-01-30 22:59:59.000', '2021-12-31 23:00:00.000', 2, 'testing periodo 2', 1, 'PERIODICO', 1),
-(3, 1, '2021-02-28 22:59:59.000', '2022-01-30 23:00:00.000', 3, 'testing periodo 3', 1, 'FINAL', 1);
+(1, 1, '2021-12-31 22:59:59.000', '2021-11-30 23:00:00.000', 1, 'testing periodo 1', 1, 'PERIODICO', 1, '11/1111'),
+(2, 1, '2022-01-30 22:59:59.000', '2021-12-31 23:00:00.000', 2, 'testing periodo 2', 1, 'PERIODICO', 1, '22/2222'),
+(3, 1, '2021-02-28 22:59:59.000', '2022-01-30 23:00:00.000', 3, 'testing periodo 3', 1, 'FINAL', 1, NULL);

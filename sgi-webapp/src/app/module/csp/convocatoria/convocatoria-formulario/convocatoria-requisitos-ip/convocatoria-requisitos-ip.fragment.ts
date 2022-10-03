@@ -2,7 +2,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IConvocatoriaRequisitoIP } from '@core/models/csp/convocatoria-requisito-ip';
 import { IRequisitoIPCategoriaProfesional } from '@core/models/csp/requisito-ip-categoria-profesional';
 import { IRequisitoIPNivelAcademico } from '@core/models/csp/requisito-ip-nivel-academico';
-import { IClasificacion } from '@core/models/sgo/clasificacion';
 import { ICategoriaProfesional } from '@core/models/sgp/categoria-profesional';
 import { INivelAcademico } from '@core/models/sgp/nivel-academico';
 import { FormFragment } from '@core/services/action-service';
@@ -13,15 +12,6 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateValidator } from '@core/validators/date-validator';
 import { BehaviorSubject, Observable, of, zip } from 'rxjs';
 import { map, switchMap, takeLast, tap } from 'rxjs/operators';
-
-export interface SolicitudProyectoClasificacionListado {
-  id: number;
-  proyectoId: number;
-  clasificacion: IClasificacion;
-  niveles: IClasificacion[];
-  nivelesTexto: string;
-  nivelSeleccionado: IClasificacion;
-}
 
 export interface RequisitoIPNivelAcademicoListado extends IRequisitoIPNivelAcademico {
   eliminable: boolean;

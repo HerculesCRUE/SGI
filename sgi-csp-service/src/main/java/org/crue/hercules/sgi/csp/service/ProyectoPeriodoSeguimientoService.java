@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.time.Instant;
+
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
 import org.springframework.data.domain.Page;
@@ -68,4 +70,28 @@ public interface ProyectoPeriodoSeguimientoService {
    */
   Page<ProyectoPeriodoSeguimiento> findAllByProyecto(Long proyectoId, String query, Pageable pageable);
 
+  /**
+   * Obtiene ltodos los {@link ProyectoPeriodoSeguimiento} del ProyectoSGE
+   * filtrados y/o paginados.
+   *
+   * @param proyectoSgeRef identificador del ProyectoSGE
+   * @param query          la información del filtro.
+   * @param paging         la información de la paginación.
+   * @return la lista de entidades {@link ProyectoPeriodoSeguimiento}
+   */
+  public Page<ProyectoPeriodoSeguimiento> findAllByProyectoSgeRef(String proyectoSgeRef, String query,
+      Pageable paging);
+
+  /**
+   * Actualiza la fechaPresentacionDocumentacion de la entidad
+   * {@link ProyectoPeriodoSeguimiento}.
+   * 
+   * @param id                             el id de la entidad
+   *                                       {@link ProyectoPeriodoSeguimiento}.
+   * @param fechaPresentacionDocumentacion fechaPresentacionDocumentacion a
+   *                                       actualizar.
+   * @return ProyectoPeriodoSeguimiento la entidad
+   *         {@link ProyectoPeriodoSeguimiento} persistida.
+   */
+  ProyectoPeriodoSeguimiento updateFechaPresentacionDocumentacion(Long id, Instant fechaPresentacionDocumentacion);
 }

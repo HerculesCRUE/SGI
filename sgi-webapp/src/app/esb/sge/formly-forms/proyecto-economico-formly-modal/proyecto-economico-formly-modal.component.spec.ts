@@ -33,7 +33,7 @@ describe('ProyectoEconomicoFormlyModalComponent', () => {
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
-        { provide: MatDialogRef, useValue: {} as IProyectoEconomicoFormlyData },
+        { provide: MatDialogRef, useValue: TestUtils.buildDialogActionMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: {} as IProyectoEconomicoFormlyData },
 
       ]

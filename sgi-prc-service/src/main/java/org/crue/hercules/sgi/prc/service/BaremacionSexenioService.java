@@ -91,10 +91,12 @@ public class BaremacionSexenioService extends BaremacionCommonService {
     loadPredicates();
   }
 
+  @Override
   protected TipoPuntuacion getTipoPuntuacion() {
     return TipoPuntuacion.SEXENIO;
   }
 
+  @Override
   protected void loadPredicates() {
 
     // SEXENIO
@@ -158,20 +160,6 @@ public class BaremacionSexenioService extends BaremacionCommonService {
 
     log.debug("calcularBaremoPrincipalPublicacion(produccionCientificaId, baremo) - end");
     return puntos;
-  }
-
-  protected BigDecimal evaluateBaremoModulador(BaremacionInput baremacionInput) {
-    log.debug("evaluateBaremoModulador(baremacionInput) - start");
-
-    log.debug("evaluateBaremoModulador(baremacionInput) - end");
-    return new BigDecimal("1.00");
-  }
-
-  protected BigDecimal evaluateBaremoExtra(BaremacionInput baremacionInput) {
-    log.debug("evaluateBaremoExtra(baremacionInput) - start");
-
-    log.debug("evaluateBaremoExtra(baremacionInput) - end");
-    return BigDecimal.ZERO;
   }
 
   public void copySexenios(Integer anioInicio, Integer anioFin) {

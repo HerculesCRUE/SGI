@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IGrupo } from '@core/models/csp/grupo';
+import { Module } from '@core/module';
 import { ActionService } from '@core/services/action-service';
 import { GrupoEnlaceService } from '@core/services/csp/grupo-enlace/grupo-enlace.service';
 import { GrupoEquipoInstrumentalService } from '@core/services/csp/grupo-equipo-instrumental/grupo-equipo-instrumental.service';
@@ -57,7 +58,7 @@ export class GrupoActionService extends ActionService implements OnDestroy {
   public readonly id: number;
 
   get isInvestigador(): boolean {
-    return this.data.isInvestigador;
+    return this.data.isInvestigador ?? (this.isModuleINV() && this.hasAnyAuthorityInv());
   }
 
   get grupo(): IGrupo {
@@ -70,14 +71,14 @@ export class GrupoActionService extends ActionService implements OnDestroy {
 
   constructor(
     logger: NGXLogger,
-    route: ActivatedRoute,
+    private route: ActivatedRoute,
     grupoService: GrupoService,
     grupoEquipoService: GrupoEquipoService,
     palabraClaveService: PalabraClaveService,
     rolProyectoService: RolProyectoService,
     vinculacionService: VinculacionService,
     personaService: PersonaService,
-    sgiAuthService: SgiAuthService,
+    private readonly sgiAuthService: SgiAuthService,
     grupoResponsableEconomicoService: GrupoResponsableEconomicoService,
     grupoEquipoInstrumentalService: GrupoEquipoInstrumentalService,
     grupoEnlaceService: GrupoEnlaceService,
@@ -109,7 +110,6 @@ export class GrupoActionService extends ActionService implements OnDestroy {
       grupoEquipoService,
       personaService,
       vinculacionService,
-      sgiAuthService,
       this.data?.readonly
     );
 
@@ -119,7 +119,6 @@ export class GrupoActionService extends ActionService implements OnDestroy {
       grupoService,
       grupoResponsableEconomicoService,
       personaService,
-      sgiAuthService,
       this.data?.readonly
     );
 
@@ -138,7 +137,7 @@ export class GrupoActionService extends ActionService implements OnDestroy {
       this.id,
       grupoService,
       grupoPersonaAutorizadaService,
-      personaService, sgiAuthService,
+      personaService,
       this.data?.readonly
     );
 
@@ -160,6 +159,14 @@ export class GrupoActionService extends ActionService implements OnDestroy {
     this.addFragment(this.FRAGMENT.LINEA_INVESTIGACION, this.lineasInvestigacion);
 
     this.datosGenerales.initialize();
+  }
+
+  private isModuleINV(): boolean {
+    return this.route.snapshot.data.module === Module.INV;
+  }
+
+  private hasAnyAuthorityInv(): boolean {
+    return this.sgiAuthService.hasAuthority('CSP-GIN-INV-VR');
   }
 
 }

@@ -13,6 +13,7 @@ import org.crue.hercules.sgi.prc.model.BaseEntity;
 import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
 import org.crue.hercules.sgi.prc.repository.AutorRepository;
 import org.crue.hercules.sgi.prc.repository.specification.AutorSpecifications;
+import org.crue.hercules.sgi.prc.util.ProduccionCientificaAuthorityHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -39,10 +40,13 @@ public class AutorService {
   private static final String MESSAGE_KEY_NAME = "name";
 
   private final AutorRepository repository;
+  private final ProduccionCientificaAuthorityHelper authorityHelper;
 
   public AutorService(
-      AutorRepository autorRepository) {
+      AutorRepository autorRepository,
+      ProduccionCientificaAuthorityHelper authorityHelper) {
     this.repository = autorRepository;
+    this.authorityHelper = authorityHelper;
   }
 
   /**
@@ -190,8 +194,8 @@ public class AutorService {
       Pageable pageable) {
     log.debug(
         "findAllByProduccionCientificaId(Long produccionCientificaId, String query, Pageable pageable) - start");
-    Specification<Autor> specs = AutorSpecifications.byProduccionCientificaId(
-        produccionCientificaId)
+    authorityHelper.checkUserHasAuthorityViewProduccionCientifica(produccionCientificaId);
+    Specification<Autor> specs = AutorSpecifications.byProduccionCientificaId(produccionCientificaId)
         .and(SgiRSQLJPASupport.toSpecification(query));
     final Page<Autor> returnValue = repository.findAll(specs, pageable);
     log.debug("findAllByProduccionCientificaId(Long produccionCientificaId, String query, Pageable pageable) - end");

@@ -15,11 +15,11 @@ import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
-import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEnlaceRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoEnlaceRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaEnlaceServiceImpl;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -39,14 +39,14 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   @Mock
   private ModeloTipoEnlaceRepository modeloTipoEnlaceRepository;
   @Mock
-  ConfiguracionSolicitudRepository configuracionSolicitudRepository;
+  private ConvocatoriaAuthorityHelper authorityHelper;
 
   private ConvocatoriaEnlaceService service;
 
   @BeforeEach
   void setUp() throws Exception {
     service = new ConvocatoriaEnlaceServiceImpl(repository, convocatoriaRepository, modeloTipoEnlaceRepository,
-        configuracionSolicitudRepository);
+        authorityHelper);
   }
 
   @Test

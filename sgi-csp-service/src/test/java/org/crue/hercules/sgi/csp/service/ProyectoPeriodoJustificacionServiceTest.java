@@ -199,6 +199,18 @@ class ProyectoPeriodoJustificacionServiceTest extends BaseServiceTest {
         .as("getIdentificadorJustificacion()").isEqualTo(newIdJustificacion);
   }
 
+  @Test
+  void findByIdentificadorJustificacion_WithIdentificadorJustificacionNull_ThrowsIllegalArgumentException() {
+    // given: Un Identificador de justificacion nulo
+    String identificadorJustificacion = null;
+
+    // when: Buscamos un ProyectoPeriodoJustificacion con identificadorJustificacion
+    // then: Obtenemos una excepcion indicando que el identificadorJustificacion no
+    // puede ser nulo
+    Assertions.assertThatThrownBy(() -> service.findByIdentificadorJustificacion(identificadorJustificacion))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
+
   private ProyectoPeriodoJustificacion generarMockProyectoPeriodoJustificacion(Long id) {
     final String observacionesSuffix = id != null ? String.format("%03d", id) : "001";
     return generarMockProyectoPeriodoJustificacion(id, "XX/AAAA", "observaciones-" + observacionesSuffix);

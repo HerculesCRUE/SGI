@@ -13,8 +13,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RespuestaRetrospectivaFormulario implements Serializable {
   private static final long serialVersionUID = 8454547215344558766L;
-  public String evaluacionRetrospectivaRadio;
-  public List<String> motivoEvaluacionRetrospectivaCheck;
-  public Date fechaEvRetrospectiva;
-  public String especificarMotivo;
+
+  private String evaluacionRetrospectivaRadio;
+  private List<String> motivoEvaluacionRetrospectivaCheck;
+  private Date fechaEvRetrospectiva;
+  private String especificarMotivo;
 }

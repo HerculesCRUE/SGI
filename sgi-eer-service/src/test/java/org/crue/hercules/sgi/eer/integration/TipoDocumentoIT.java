@@ -23,7 +23,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de TipoDocumento.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TipoDocumentoIT extends BaseIT {
+class TipoDocumentoIT extends BaseIT {
   private static final String REQUEST_MAPPING = TipoDocumentoController.REQUEST_MAPPING;
   private static final String PATH_SUBTIPOS = TipoDocumentoController.PATH_SUBTIPOS;
 
@@ -46,7 +46,7 @@ public class TipoDocumentoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findTiposActivos_WithPagingSorting_ReturnsTipoDocumentoSubList() throws Exception {
+  void findTiposActivos_WithPagingSorting_ReturnsTipoDocumentoSubList() throws Exception {
     // given: data for TipoDocumento
 
     // first page, 3 elements per page sorted by id desc and filtered
@@ -88,7 +88,7 @@ public class TipoDocumentoIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  public void findSubtiposActivos_WithPagingSorting_ReturnsTipoDocumentoSubList() throws Exception {
+  void findSubtiposActivos_WithPagingSorting_ReturnsTipoDocumentoSubList() throws Exception {
     // given: data for TipoDocumento
     Long padreId = 1L;
     // first page, 3 elements per page sorted by id desc and filtered

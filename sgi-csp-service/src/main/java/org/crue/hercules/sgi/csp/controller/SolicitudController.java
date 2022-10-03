@@ -117,6 +117,7 @@ public class SolicitudController {
   public static final String PATH_DOCUMENTOS = PATH_ID + PATH_DELIMITER + "solicituddocumentos";
   public static final String PATH_HISTORICO_ESTADOS = PATH_ID + PATH_DELIMITER + "estadosolicitudes";
   public static final String PATH_MODIFICABLE = PATH_ID + PATH_DELIMITER + "modificable";
+  public static final String PATH_MODIFICABLE_BY_INV = PATH_MODIFICABLE + PATH_DELIMITER + "investigador";
   public static final String PATH_MODIFICABLE_ESTADO_DOCUMENTOS_BY_INV = PATH_ID + PATH_DELIMITER
       + "modificableestadoanddocumentosbyinvestigador";
   public static final String PATH_MODIFICABLE_ESTADO_AS_TUTOR = PATH_ID + PATH_DELIMITER + "modificableestadoastutor";
@@ -803,18 +804,36 @@ public class SolicitudController {
 
   /**
    * Hace las comprobaciones necesarias para determinar si la {@link Solicitud}
-   * puede ser modificada.
+   * puede ser modificada por un investigador.
+   * 
+   * @param id Id del {@link Solicitud}.
+   * @return HTTP-200 Si se permite modificación / HTTP-204 Si no se permite
+   *         modificación
+   */
+  @RequestMapping(path = PATH_MODIFICABLE_BY_INV, method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-INV-ER', 'CSP-SOL-INV-BR')")
+  public ResponseEntity<Solicitud> modificableByInvestigador(@PathVariable Long id) {
+    log.debug("modificableByInvestigador(Long id) - start");
+    Boolean returnValue = service.modificableByInvestigador(id);
+    log.debug("modificableByInvestigador(Long id) - end");
+    return returnValue.booleanValue() ? new ResponseEntity<>(HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si la {@link Solicitud}
+   * puede ser modificada por un miembro de la uo.
    * 
    * @param id Id del {@link Solicitud}.
    * @return HTTP-200 Si se permite modificación / HTTP-204 Si no se permite
    *         modificación
    */
   @RequestMapping(path = PATH_MODIFICABLE, method = RequestMethod.HEAD)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER' , 'CSP-SOL-INV-BR')")
-  public ResponseEntity<Solicitud> modificable(@PathVariable Long id) {
-    log.debug("modificable(Long id) - start");
-    Boolean returnValue = service.modificable(id);
-    log.debug("modificable(Long id) - end");
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  public ResponseEntity<Solicitud> modificableByUO(@PathVariable Long id) {
+    log.debug("modificableByUO(Long id) - start");
+    Boolean returnValue = service.modificableByUnidadGestion(id);
+    log.debug("modificableByUO(Long id) - end");
     return returnValue.booleanValue() ? new ResponseEntity<>(HttpStatus.OK)
         : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
@@ -1466,4 +1485,5 @@ public class SolicitudController {
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
+
 }

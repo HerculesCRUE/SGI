@@ -90,7 +90,7 @@
                 </button>
               </ng-container>
               <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-CON-E', 'CSP-CON-C']">
-                <button *ngIf="!data.value.enviadoSge && data.value.presupuestar" color="primary" mat-raised-button
+                <button *ngIf="showEnviarSgeButton(data) | async" color="primary" mat-raised-button
                   matTooltip="{{'btn.enviar-sge' | translate}}" (click)="sendSGE(data)"
                   [disabled]="this.formPart.hasChanges()">
                   {{'btn.enviar-sge' | translate}}

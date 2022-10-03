@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.util.Collections;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.controller.ProyectoPeriodoSeguimientoController;
+import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoSeguimientoPresentacionDocumentacionInput;
 import org.crue.hercules.sgi.csp.enums.TipoSeguimiento;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
@@ -25,16 +27,17 @@ class ProyectoPeriodoSeguimientoIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/proyectoperiodoseguimientos";
+  private static final String PATH_FECHA_PRESENTACION_DOCUMENTACION = ProyectoPeriodoSeguimientoController.PATH_FECHA_PRESENTACION_DOCUMENTACION;
 
-  private HttpEntity<ProyectoPeriodoSeguimiento> buildRequest(HttpHeaders headers, ProyectoPeriodoSeguimiento entity)
+  private HttpEntity<Object> buildRequest(HttpHeaders headers, Object entity)
       throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization", String.format("bearer %s",
-        tokenBuilder.buildToken("user", "CSP-PRO-B", "CSP-PRO-C", "CSP-PRO-E", "CSP-PRO-V")));
+        tokenBuilder.buildToken("user", "CSP-PRO-B", "CSP-PRO-C", "CSP-PRO-E", "CSP-PRO-V", "CSP-SJUS-E")));
 
-    HttpEntity<ProyectoPeriodoSeguimiento> request = new HttpEntity<>(entity, headers);
+    HttpEntity<Object> request = new HttpEntity<>(entity, headers);
     return request;
 
   }
@@ -103,6 +106,40 @@ class ProyectoPeriodoSeguimientoIT extends BaseIT {
     Assertions.assertThat(proyectoPeriodoSeguimientoActualizado.getObservaciones()).as("getObservaciones()")
         .isEqualTo(proyectoPeriodoSeguimiento.getObservaciones());
 
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      "classpath:scripts/modelo_ejecucion.sql",
+      "classpath:scripts/modelo_unidad.sql",
+      "classpath:scripts/tipo_finalidad.sql",
+      "classpath:scripts/tipo_ambito_geografico.sql",
+      "classpath:scripts/tipo_regimen_concurrencia.sql",
+      "classpath:scripts/convocatoria.sql",
+      "classpath:scripts/proyecto.sql",
+      "classpath:scripts/estado_proyecto.sql",
+      "classpath:scripts/proyecto_periodo_seguimiento.sql" })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void updateFechaPresentacionDocumentacion_ReturnsProyectoPeriodoSeguimiento() throws Exception {
+    Long proyectoPeriodoSeguimientoId = 1L;
+    Instant fechaPresentacionDocumentacionToUpdate = Instant.parse("2020-10-10T23:59:59Z");
+    ProyectoPeriodoSeguimientoPresentacionDocumentacionInput input = ProyectoPeriodoSeguimientoPresentacionDocumentacionInput
+        .builder()
+        .fechaPresentacionDocumentacion(fechaPresentacionDocumentacionToUpdate)
+        .build();
+
+    final ResponseEntity<ProyectoPeriodoSeguimiento> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_FECHA_PRESENTACION_DOCUMENTACION, HttpMethod.PATCH, buildRequest(null, input),
+        ProyectoPeriodoSeguimiento.class, proyectoPeriodoSeguimientoId);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoActualizado = response.getBody();
+    Assertions.assertThat(proyectoPeriodoSeguimientoActualizado.getId()).as("getId()").isNotNull();
+
+    Assertions.assertThat(proyectoPeriodoSeguimientoActualizado.getFechaPresentacionDocumentacion())
+        .as("getFechaPresentacionDocumentacion()")
+        .isEqualTo(fechaPresentacionDocumentacionToUpdate);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = { "classpath:scripts/modelo_ejecucion.sql",

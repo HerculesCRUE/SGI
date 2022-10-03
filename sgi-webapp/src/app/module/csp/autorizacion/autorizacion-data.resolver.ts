@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { Module } from '@core/module';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { AutorizacionService } from '@core/services/csp/autorizacion/autorizacion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -36,17 +37,43 @@ export class AutorizacionDataResolver extends SgiResolverResolver<IAutorizacionD
         if (!value) {
           return throwError('NOT_FOUND');
         }
+
+        const isInvestigador = this.hasViewAuthorityInv() && route.data.module === Module.INV;
+        const isUO = this.hasViewAuthorityUO() && route.data.module === Module.CSP;
+
+        if (!isInvestigador && !isUO) {
+          return throwError('NOT_FOUND');
+        }
+
         return this.service.presentable(autorizacionId).pipe(
           map(presentable => {
             return {
               presentable,
-              isInvestigador: this.authService.hasAnyAuthority(['CSP-AUT-INV-C', 'CSP-AUT-INV-ER', 'CSP-AUT-INV-BR']),
+              isInvestigador,
+              canEdit: this.hasEditAuthority(),
               autorizacion: value,
             } as IAutorizacionData;
           })
         );
       }),
     );
+  }
+
+  private hasViewAuthorityInv(): boolean {
+    return this.authService.hasAnyAuthority(['CSP-AUT-INV-C', 'CSP-AUT-INV-ER', 'CSP-AUT-INV-BR']);
+  }
+
+  private hasViewAuthorityUO(): boolean {
+    return this.authService.hasAnyAuthority(
+      [
+        'CSP-AUT-E',
+        'CSP-AUT-V'
+      ]
+    );
+  }
+
+  private hasEditAuthority(): boolean {
+    return this.authService.hasAnyAuthority(['CSP-AUT-E', 'CSP-AUT-INV-ER']);
   }
 
 

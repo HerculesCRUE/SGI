@@ -24,6 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class RelacionService {
 
+  private static final String ENTITY = "entity";
+  private static final String FIELD = "field";
+
   private final RelacionRepository repository;
 
   public RelacionService(RelacionRepository relacionRepository) {
@@ -73,8 +76,8 @@ public class RelacionService {
     Assert.isNull(relacion.getId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "isNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Relacion.class)).build());
+            .parameter(FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(ENTITY, ApplicationContextSupport.getMessage(Relacion.class)).build());
 
     Relacion returnValue = repository.save(relacion);
 
@@ -95,8 +98,8 @@ public class RelacionService {
     Assert.notNull(relacion.getId(),
         // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Relacion.class)).build());
+            .parameter(FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(ENTITY, ApplicationContextSupport.getMessage(Relacion.class)).build());
 
     return repository.findById(relacion.getId()).map(relacionExistente -> {
 
@@ -123,8 +126,8 @@ public class RelacionService {
     log.debug("delete(Long relacionId) - start");
     Assert.notNull(relacionId, // Defer message resolution untill is needed
         () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(Relacion.class)).build());
+            .parameter(FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(ENTITY, ApplicationContextSupport.getMessage(Relacion.class)).build());
     if (!repository.existsById(relacionId)) {
       throw new RelacionNotFoundException(relacionId);
     }

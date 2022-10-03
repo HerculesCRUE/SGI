@@ -24,13 +24,13 @@ import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
 import org.crue.hercules.sgi.prc.exceptions.ProduccionCientificaDataErrorException;
 import org.crue.hercules.sgi.prc.exceptions.ProduccionCientificaNotFoundException;
 import org.crue.hercules.sgi.prc.exceptions.ProduccionCientificaNotUpdatableException;
-import org.crue.hercules.sgi.prc.exceptions.UserNotAuthorizedToAccessProduccionCientificaException;
 import org.crue.hercules.sgi.prc.model.AutorGrupo;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica;
 import org.crue.hercules.sgi.prc.model.EstadoProduccionCientifica.TipoEstadoProduccion;
 import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
 import org.crue.hercules.sgi.prc.repository.ProduccionCientificaRepository;
 import org.crue.hercules.sgi.prc.service.sgi.SgiApiCspService;
+import org.crue.hercules.sgi.prc.util.ProduccionCientificaAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -74,6 +74,9 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
   @MockBean
   private AutorGrupoService autorGrupoService;
 
+  @MockBean
+  private ProduccionCientificaAuthorityHelper authorityHelper;
+
   // This bean must be created by Spring so validations can be applied
   @Autowired
   private ProduccionCientificaService service;
@@ -115,7 +118,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     Page<ProduccionCientifica> page = service.findAll(null, paging);
 
     // then: Devuelve la pagina 3 con los ProduccionCientifica del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().hasSize()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -167,12 +170,11 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     BDDMockito.given(
         repository.findAllPublicaciones(
             ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
-            ArgumentMatchers.<String>any(),
             ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<PublicacionResumen>>() {
           @Override
           public Page<PublicacionResumen> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            Pageable pageable = invocation.getArgument(1, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;
@@ -186,7 +188,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
 
     // when: Get page=3 with pagesize=10
     Pageable paging = PageRequest.of(3, 10);
-    Page<PublicacionResumen> page = service.findAllPublicaciones(null, paging);
+    Page<PublicacionResumen> page = service.findAllPublicaciones(null, paging, false);
 
     // then: Devuelve la pagina 3 con los PublicacionResumen del 31 al 37
     Assertions.assertThat(page.getContent()).as("getContent()").hasSize(7);
@@ -215,12 +217,11 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     BDDMockito.given(
         repository.findAllPublicaciones(
             ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
-            ArgumentMatchers.<String>any(),
             ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<PublicacionResumen>>() {
           @Override
           public Page<PublicacionResumen> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            Pageable pageable = invocation.getArgument(1, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;
@@ -234,7 +235,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
 
     // when: Get page=3 with pagesize=10
     Pageable paging = PageRequest.of(3, 10);
-    Page<PublicacionResumen> page = service.findAllPublicaciones(null, paging);
+    Page<PublicacionResumen> page = service.findAllPublicaciones(null, paging, true);
 
     // then: Devuelve la pagina 3 con los PublicacionResumen del 31 al 37
     Assertions.assertThat(page.getContent()).as("getContent()").hasSize(7);
@@ -260,12 +261,11 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     BDDMockito.given(
         repository.findAllComitesEditoriales(
             ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
-            ArgumentMatchers.<String>any(),
             ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<ComiteEditorialResumen>>() {
           @Override
           public Page<ComiteEditorialResumen> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            Pageable pageable = invocation.getArgument(1, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;
@@ -279,7 +279,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
 
     // when: Get page=3 with pagesize=10
     Pageable paging = PageRequest.of(3, 10);
-    Page<ComiteEditorialResumen> page = service.findAllComitesEditoriales(null, paging);
+    Page<ComiteEditorialResumen> page = service.findAllComitesEditoriales(null, paging, false);
 
     // then: Devuelve la pagina 3 con los ComiteEditorialResumen del 31 al 37
     Assertions.assertThat(page.getContent()).as("getContent()").hasSize(7);
@@ -308,12 +308,11 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     BDDMockito.given(
         repository.findAllComitesEditoriales(
             ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
-            ArgumentMatchers.<String>any(),
             ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<ComiteEditorialResumen>>() {
           @Override
           public Page<ComiteEditorialResumen> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            Pageable pageable = invocation.getArgument(1, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;
@@ -327,7 +326,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
 
     // when: Get page=3 with pagesize=10
     Pageable paging = PageRequest.of(3, 10);
-    Page<ComiteEditorialResumen> page = service.findAllComitesEditoriales(null, paging);
+    Page<ComiteEditorialResumen> page = service.findAllComitesEditoriales(null, paging, true);
 
     // then: Devuelve la pagina 3 con los ComiteEditorialResumen del 31 al 37
     Assertions.assertThat(page.getContent()).as("getContent()").hasSize(7);
@@ -353,12 +352,11 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     BDDMockito.given(
         repository.findAllCongresos(
             ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
-            ArgumentMatchers.<String>any(),
             ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<CongresoResumen>>() {
           @Override
           public Page<CongresoResumen> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            Pageable pageable = invocation.getArgument(1, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;
@@ -372,7 +370,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
 
     // when: Get page=3 with pagesize=10
     Pageable paging = PageRequest.of(3, 10);
-    Page<CongresoResumen> page = service.findAllCongresos(null, paging);
+    Page<CongresoResumen> page = service.findAllCongresos(null, paging, false);
 
     // then: Devuelve la pagina 3 con los CongresoResumen del 31 al 37
     Assertions.assertThat(page.getContent()).as("getContent()").hasSize(7);
@@ -401,12 +399,11 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     BDDMockito.given(
         repository.findAllCongresos(
             ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
-            ArgumentMatchers.<String>any(),
             ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<CongresoResumen>>() {
           @Override
           public Page<CongresoResumen> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            Pageable pageable = invocation.getArgument(1, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;
@@ -420,7 +417,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
 
     // when: Get page=3 with pagesize=10
     Pageable paging = PageRequest.of(3, 10);
-    Page<CongresoResumen> page = service.findAllCongresos(null, paging);
+    Page<CongresoResumen> page = service.findAllCongresos(null, paging, true);
 
     // then: Devuelve la pagina 3 con los CongresoResumen del 31 al 37
     Assertions.assertThat(page.getContent()).as("getContent()").hasSize(7);
@@ -446,12 +443,11 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     BDDMockito.given(
         repository.findAllObrasArtisticas(
             ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
-            ArgumentMatchers.<String>any(),
             ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<ObraArtisticaResumen>>() {
           @Override
           public Page<ObraArtisticaResumen> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            Pageable pageable = invocation.getArgument(1, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;
@@ -465,7 +461,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
 
     // when: Get page=3 with pagesize=10
     Pageable paging = PageRequest.of(3, 10);
-    Page<ObraArtisticaResumen> page = service.findAllObrasArtisticas(null, paging);
+    Page<ObraArtisticaResumen> page = service.findAllObrasArtisticas(null, paging, false);
 
     // then: Devuelve la pagina 3 con los ObraArtisticaResumen del 31 al 37
     Assertions.assertThat(page.getContent()).as("getContent()").hasSize(7);
@@ -494,12 +490,11 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     BDDMockito.given(
         repository.findAllObrasArtisticas(
             ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
-            ArgumentMatchers.<String>any(),
             ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<ObraArtisticaResumen>>() {
           @Override
           public Page<ObraArtisticaResumen> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            Pageable pageable = invocation.getArgument(1, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;
@@ -513,7 +508,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
 
     // when: Get page=3 with pagesize=10
     Pageable paging = PageRequest.of(3, 10);
-    Page<ObraArtisticaResumen> page = service.findAllObrasArtisticas(null, paging);
+    Page<ObraArtisticaResumen> page = service.findAllObrasArtisticas(null, paging, true);
 
     // then: Devuelve la pagina 3 con los ObraArtisticaResumen del 31 al 37
     Assertions.assertThat(page.getContent()).as("getContent()").hasSize(7);
@@ -539,12 +534,11 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     BDDMockito.given(
         repository.findAllActividades(
             ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
-            ArgumentMatchers.<String>any(),
             ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<ActividadResumen>>() {
           @Override
           public Page<ActividadResumen> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            Pageable pageable = invocation.getArgument(1, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;
@@ -558,7 +552,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
 
     // when: Get page=3 with pagesize=10
     Pageable paging = PageRequest.of(3, 10);
-    Page<ActividadResumen> page = service.findAllActividades(null, paging);
+    Page<ActividadResumen> page = service.findAllActividades(null, paging, false);
 
     // then: Devuelve la pagina 3 con los ActividadResumen del 31 al 37
     Assertions.assertThat(page.getContent()).as("getContent()").hasSize(7);
@@ -587,12 +581,11 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     BDDMockito.given(
         repository.findAllActividades(
             ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
-            ArgumentMatchers.<String>any(),
             ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<ActividadResumen>>() {
           @Override
           public Page<ActividadResumen> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            Pageable pageable = invocation.getArgument(1, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;
@@ -606,7 +599,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
 
     // when: Get page=3 with pagesize=10
     Pageable paging = PageRequest.of(3, 10);
-    Page<ActividadResumen> page = service.findAllActividades(null, paging);
+    Page<ActividadResumen> page = service.findAllActividades(null, paging, true);
 
     // then: Devuelve la pagina 3 con los ActividadResumen del 31 al 37
     Assertions.assertThat(page.getContent()).as("getContent()").hasSize(7);
@@ -632,12 +625,11 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     BDDMockito.given(
         repository.findAllDireccionesTesis(
             ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
-            ArgumentMatchers.<String>any(),
             ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<DireccionTesisResumen>>() {
           @Override
           public Page<DireccionTesisResumen> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            Pageable pageable = invocation.getArgument(1, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;
@@ -651,7 +643,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
 
     // when: Get page=3 with pagesize=10
     Pageable paging = PageRequest.of(3, 10);
-    Page<DireccionTesisResumen> page = service.findAllDireccionesTesis(null, paging);
+    Page<DireccionTesisResumen> page = service.findAllDireccionesTesis(null, paging, false);
 
     // then: Devuelve la pagina 3 con los DireccionTesisResumen del 31 al 37
     Assertions.assertThat(page.getContent()).as("getContent()").hasSize(7);
@@ -680,12 +672,11 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     BDDMockito.given(
         repository.findAllDireccionesTesis(
             ArgumentMatchers.<Specification<ProduccionCientifica>>any(),
-            ArgumentMatchers.<String>any(),
             ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<DireccionTesisResumen>>() {
           @Override
           public Page<DireccionTesisResumen> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            Pageable pageable = invocation.getArgument(1, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;
@@ -699,7 +690,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
 
     // when: Get page=3 with pagesize=10
     Pageable paging = PageRequest.of(3, 10);
-    Page<DireccionTesisResumen> page = service.findAllDireccionesTesis(null, paging);
+    Page<DireccionTesisResumen> page = service.findAllDireccionesTesis(null, paging, true);
 
     // then: Devuelve la pagina 3 con los DireccionTesisResumen del 31 al 37
     Assertions.assertThat(page.getContent()).as("getContent()").hasSize(7);
@@ -714,14 +705,14 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void cambiarEstado_WithIdIsNull_ThrowsIllegalArgumentException() {
-    Assertions.assertThatThrownBy(() -> this.service.cambiarEstado(null, null, null))
+  void cambiarEstadoGestor_WithIdIsNull_ThrowsIllegalArgumentException() {
+    Assertions.assertThatThrownBy(() -> this.service.cambiarEstadoGestor(null, null, null))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-E" })
-  void cambiarEstado_Gestor_ThrowsProduccionCientificaNotFoundException() {
+  void cambiarEstadoGestor_ThrowsProduccionCientificaNotFoundException() {
     Long produccionCientificaId = 1L;
     BDDMockito.given(
         repository.findById(ArgumentMatchers.<Long>any()))
@@ -731,14 +722,14 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
             return Optional.empty();
           }
         });
-    Assertions.assertThatThrownBy(() -> this.service.cambiarEstado(produccionCientificaId,
+    Assertions.assertThatThrownBy(() -> this.service.cambiarEstadoGestor(produccionCientificaId,
         TipoEstadoProduccion.VALIDADO, null))
         .isInstanceOf(ProduccionCientificaNotFoundException.class);
   }
 
   @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-E" })
-  void cambiarEstado_Gestor_ProduccionCientificaEstadoNotPendiente_ReturnsProduccionCientifica() {
+  void cambiarEstadoGestor_ProduccionCientificaEstadoNotPendiente_ReturnsProduccionCientifica() {
     BDDMockito.given(
         repository.findById(ArgumentMatchers.<Long>any()))
         .willAnswer(new Answer<Optional<ProduccionCientifica>>() {
@@ -755,13 +746,19 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
             return Optional.of(produccionCientifica);
           }
         });
-    Assertions.assertThatThrownBy(() -> service.cambiarEstado(1L, TipoEstadoProduccion.VALIDADO, null))
+    Assertions.assertThatThrownBy(() -> service.cambiarEstadoGestor(1L, TipoEstadoProduccion.VALIDADO, null))
         .isInstanceOf(ProduccionCientificaNotUpdatableException.class);
   }
 
   @Test
+  void cambiarEstadoInvestigador_WithIdIsNull_ThrowsIllegalArgumentException() {
+    Assertions.assertThatThrownBy(() -> this.service.cambiarEstadoGestor(null, null, null))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-INV-ER" })
-  void cambiarEstado_Investigador_ThrowsProduccionCientificaNotFoundException() {
+  void cambiarEstadoInvestigador_ThrowsProduccionCientificaNotFoundException() {
     Long produccionCientificaId = 1L;
     BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.anyString()))
         .willReturn(Arrays.asList(generarMockGrupoDto(1L)));
@@ -769,14 +766,14 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
     BDDMockito.given(
         repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
 
-    Assertions.assertThatThrownBy(() -> this.service.cambiarEstado(produccionCientificaId,
+    Assertions.assertThatThrownBy(() -> this.service.cambiarEstadoInvestigador(produccionCientificaId,
         TipoEstadoProduccion.VALIDADO, null))
         .isInstanceOf(ProduccionCientificaNotFoundException.class);
   }
 
   @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-INV-ER" })
-  void cambiarEstado_Investigador_ThrowsProduccionCientificaDataErrorException() {
+  void cambiarEstadoInvestigador_ThrowsProduccionCientificaDataErrorException() {
     Long produccionCientificaId = 1L;
     ProduccionCientifica produccionCientifica = ProduccionCientifica.builder()
         .id(produccionCientificaId)
@@ -797,14 +794,14 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
             ArgumentMatchers.<Long>anyList()))
         .willReturn(new ArrayList<AutorGrupo>());
 
-    Assertions.assertThatThrownBy(() -> this.service.cambiarEstado(produccionCientificaId,
+    Assertions.assertThatThrownBy(() -> this.service.cambiarEstadoInvestigador(produccionCientificaId,
         TipoEstadoProduccion.VALIDADO, null))
         .isInstanceOf(ProduccionCientificaDataErrorException.class);
   }
 
   @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-INV-ER" })
-  void cambiarEstado_Investigador_ProduccionCientificaEstadoFinal_ReturnsProduccionCientifica() {
+  void cambiarEstadoInvestigador_ProduccionCientificaEstadoFinal_ReturnsProduccionCientifica() {
     BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.anyString()))
         .willReturn(Arrays.asList(generarMockGrupoDto(1L)));
     BDDMockito.given(repository.count(ArgumentMatchers.<Specification<ProduccionCientifica>>any())).willReturn(1L);
@@ -825,13 +822,13 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
             return Optional.of(produccionCientifica);
           }
         });
-    Assertions.assertThatThrownBy(() -> service.cambiarEstado(1L, TipoEstadoProduccion.VALIDADO, null))
+    Assertions.assertThatThrownBy(() -> service.cambiarEstadoInvestigador(1L, TipoEstadoProduccion.VALIDADO, null))
         .isInstanceOf(ProduccionCientificaNotUpdatableException.class);
   }
 
   @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-INV-ER" })
-  void cambiarEstado_Investigador_ProduccionCientificaEstadoPendienteToRechazar_ReturnsProduccionCientifica() {
+  void cambiarEstadoInvestigador_ProduccionCientificaEstadoPendienteToRechazar_ReturnsProduccionCientifica() {
     Long produccionCientificaId = 1L;
     String comentario = "rechazar";
     TipoEstadoProduccion estadoToChange = TipoEstadoProduccion.RECHAZADO;
@@ -875,7 +872,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
           }
         });
 
-    ProduccionCientifica produccionCientificaUpdated = service.cambiarEstado(1L,
+    ProduccionCientifica produccionCientificaUpdated = service.cambiarEstadoInvestigador(1L,
         estadoToChange, comentario);
 
     Assertions.assertThat(produccionCientificaUpdated.getEstado().getEstado()).as("getEstado().getEstado()")
@@ -884,7 +881,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-INV-ER" })
-  void cambiarEstado_Investigador_ProduccionCientificaEstadoPendienteToValidar_ReturnsProduccionCientifica() {
+  void cambiarEstadoInvestigador_ProduccionCientificaEstadoPendienteToValidar_ReturnsProduccionCientifica() {
     Long produccionCientificaId = 1L;
     String comentario = "rechazar";
     TipoEstadoProduccion estadoToChange = TipoEstadoProduccion.VALIDADO;
@@ -930,7 +927,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
           }
         });
 
-    ProduccionCientifica produccionCientificaUpdated = service.cambiarEstado(1L,
+    ProduccionCientifica produccionCientificaUpdated = service.cambiarEstadoInvestigador(1L,
         estadoToChange, comentario);
 
     Assertions.assertThat(produccionCientificaUpdated.getEstado().getEstado()).as("getEstado().getEstado()")
@@ -939,7 +936,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-INV-ER" })
-  void cambiarEstado_Investigador_ProduccionCientificaEstadoPendienteToValidarParcialmente_ReturnsProduccionCientifica() {
+  void cambiarEstadoInvestigador_ProduccionCientificaEstadoPendienteToValidarParcialmente_ReturnsProduccionCientifica() {
     Long produccionCientificaId = 1L;
     String comentario = "rechazar";
     TipoEstadoProduccion estadoToChange = TipoEstadoProduccion.VALIDADO;
@@ -988,7 +985,7 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
           }
         });
 
-    ProduccionCientifica produccionCientificaUpdated = service.cambiarEstado(1L,
+    ProduccionCientifica produccionCientificaUpdated = service.cambiarEstadoInvestigador(1L,
         estadoToChange, comentario);
 
     Assertions.assertThat(produccionCientificaUpdated.getEstado().getEstado()).as("getEstado().getEstado()")
@@ -997,13 +994,11 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "PRC-VAL-INV-ER" })
-  void accesibleByInvestigador_ReturnsTrue() {
+  void accesible_ReturnsTrue() {
     // given: Un id de una ProduccionCientifca editable por el mock user
     Long produccionCientificaId = 1L;
-    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
-        .willReturn(Arrays.asList(generarMockGrupoDto(1L)));
-    BDDMockito.given(repository.count(ArgumentMatchers.<Specification<ProduccionCientifica>>any())).willReturn(1L);
-
+    BDDMockito.given(authorityHelper.hasAuthorityViewProduccionCientificaInvestigador(produccionCientificaId))
+        .willReturn(true);
     // when: Comprobamos si la ProduccionCientifca es editable por el investigador
     Boolean isEditable = service.accesibleByInvestigador(produccionCientificaId);
 
@@ -1016,30 +1011,14 @@ class ProduccionCientificaServiceTest extends BaseServiceTest {
   void editableByInvestigador_ReturnsTrue() {
     // given: Un id de una ProduccionCientifca editable por el mock user
     Long produccionCientificaId = 1L;
-    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
-        .willReturn(Arrays.asList(generarMockGrupoDto(1L)));
-    BDDMockito.given(repository.count(ArgumentMatchers.<Specification<ProduccionCientifica>>any())).willReturn(1L);
+    BDDMockito.given(authorityHelper.hasAuthorityModifyProduccionCientificaInvestigador(produccionCientificaId))
+        .willReturn(true);
 
     // when: Comprobamos si la ProduccionCientifca es editable por el investigador
-    Boolean isEditable = service.editableByInvestigador(produccionCientificaId);
+    Boolean isEditable = service.modificableByInvestigador(produccionCientificaId);
 
     // then: La respuesta es true
     Assertions.assertThat(isEditable).isTrue();
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "PRC-VAL-INV-ER" })
-  void checkAccesibleByInvestigador_ThrowsUserNotAuthorizedToAccessProduccionCientificaException() {
-    // given: Un id de una ProduccionCientifca no editable por el mock user
-    Long produccionCientificaId = 1L;
-    BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
-        .willReturn(Arrays.asList(generarMockGrupoDto(1L)));
-    BDDMockito.given(repository.count(ArgumentMatchers.<Specification<ProduccionCientifica>>any())).willReturn(0L);
-
-    // when: Comprobamos si la ProduccionCientifca es editable por el investigador
-    // then: throws UserNotAuthorizedToAccessProduccionCientificaException
-    Assertions.assertThatThrownBy(() -> service.checkAccesibleByInvestigador(produccionCientificaId)).isInstanceOf(
-        UserNotAuthorizedToAccessProduccionCientificaException.class);
   }
 
   /**

@@ -116,6 +116,17 @@ export class ProduccionCientificaService extends _ProduccionCientificaServiceMix
   }
 
   /**
+   * Validar la Producción Científica.
+   * @param id id de la Producción Científica.
+   */
+  validarByInvestigador(id: number): Observable<IProduccionCientifica> {
+    return this.http.patch<IProduccionCientificaResponse>(`${this.endpointUrl}/${id}/validar/investigador`, { id })
+      .pipe(
+        map(response => PRODUCCION_CIENTIFICA_RESPONSE_CONVERTER.toTarget(response))
+      );
+  }
+
+  /**
    * Rechazar la Producción Científica.
    * @param id id de la Producción Científica.
    */
@@ -127,11 +138,22 @@ export class ProduccionCientificaService extends _ProduccionCientificaServiceMix
   }
 
   /**
-   * Comprueba si Producción Científica es accesible por el investigador.
+   * Rechazar la Producción Científica.
    * @param id id de la Producción Científica.
    */
-  isAccesibleByInvestigador(id: number): Observable<boolean> {
-    return this.http.head<boolean>(`${this.endpointUrl}/${id}`, { observe: 'response' })
+  rechazarByInvestigador(id: number, estadoProduccionCientifica: IEstadoProduccionCientificaRequest): Observable<IProduccionCientifica> {
+    return this.http.patch<IProduccionCientificaResponse>(`${this.endpointUrl}/${id}/rechazar/investigador`, estadoProduccionCientifica)
+      .pipe(
+        map(response => PRODUCCION_CIENTIFICA_RESPONSE_CONVERTER.toTarget(response))
+      );
+  }
+
+  /**
+   * Comprueba si Producción Científica es accesible por el usuario.
+   * @param id id de la Producción Científica.
+   */
+  accesibleByInvestigador(id: number): Observable<boolean> {
+    return this.http.head<boolean>(`${this.endpointUrl}/${id}/accesible/investigador`, { observe: 'response' })
       .pipe(
         map(response => response.status === 200)
       );
@@ -141,8 +163,8 @@ export class ProduccionCientificaService extends _ProduccionCientificaServiceMix
    * Comprueba si Producción Científica es modificable por el investigador.
    * @param id id de la Producción Científica.
    */
-  isEditableByInvestigador(id: number): Observable<boolean> {
-    return this.http.head<boolean>(`${this.endpointUrl}/${id}/modificable`, { observe: 'response' })
+  modificableByInvestigador(id: number): Observable<boolean> {
+    return this.http.head<boolean>(`${this.endpointUrl}/${id}/modificable/investigador`, { observe: 'response' })
       .pipe(
         map(response => response.status === 200)
       );

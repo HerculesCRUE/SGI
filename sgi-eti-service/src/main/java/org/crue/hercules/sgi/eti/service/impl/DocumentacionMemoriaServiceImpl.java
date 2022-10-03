@@ -1,7 +1,6 @@
 package org.crue.hercules.sgi.eti.service.impl;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -39,6 +38,10 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaService {
 
+  private static final String MSG_EL_ID_DE_LA_MEMORIA_NO_PUEDE_SER_NULO_PARA_MOSTRAR_SU_DOCUMENTACION = "El id de la memoria no puede ser nulo para mostrar su documentación";
+  private static final String MSG_LA_MEMORIA_NO_SE_ENCUENTRA_EN_UN_ESTADO_ADECUADO_PARA_ANADIR_DOCUMENTACION = "La memoria no se encuentra en un estado adecuado para añadir documentación.";
+  private static final String MSG_DOCUMENTACION_MEMORIA_ID_TIENE_QUE_SER_NULL_PARA_CREAR_UN_NUEVO_DOCUMENTACION_MEMORIA = "DocumentacionMemoria id tiene que ser null para crear un nuevo DocumentacionMemoria";
+
   /** Documentacion memoria repository */
   private final DocumentacionMemoriaRepository documentacionMemoriaRepository;
 
@@ -75,7 +78,7 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
       Authentication authentication) {
     log.debug("Petición a create DocumentacionMemoria : {} - start", documentacionMemoria);
     Assert.isNull(documentacionMemoria.getId(),
-        "DocumentacionMemoria id tiene que ser null para crear un nuevo DocumentacionMemoria");
+        MSG_DOCUMENTACION_MEMORIA_ID_TIENE_QUE_SER_NULL_PARA_CREAR_UN_NUEVO_DOCUMENTACION_MEMORIA);
 
     Assert.notNull(idMemoria,
         "El identificador de la memoria no puede ser null para crear un nuevo documento asociado a esta");
@@ -85,9 +88,9 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
 
     return memoriaRepository.findByIdAndActivoTrue(idMemoria).map(memoria -> {
       TipoEstadoMemoria.Tipo estado = TipoEstadoMemoria.Tipo.fromId(memoria.getEstadoActual().getId());
-      if (isGestor) {
+      if (isGestor.booleanValue()) {
         Assert.isTrue((estado.getId() >= TipoEstadoMemoria.Tipo.EN_EVALUACION.getId()),
-            "La memoria no se encuentra en un estado adecuado para añadir documentación.");
+            MSG_LA_MEMORIA_NO_SE_ENCUENTRA_EN_UN_ESTADO_ADECUADO_PARA_ANADIR_DOCUMENTACION);
       } else {
         Assert.isTrue(
             (estado == TipoEstadoMemoria.Tipo.EN_ELABORACION || estado == TipoEstadoMemoria.Tipo.COMPLETADA
@@ -95,7 +98,7 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
                 || estado == TipoEstadoMemoria.Tipo.PENDIENTE_CORRECCIONES
                 || estado == TipoEstadoMemoria.Tipo.NO_PROCEDE_EVALUAR
                 || estado.getId() >= TipoEstadoMemoria.Tipo.FIN_EVALUACION.getId()),
-            "La memoria no se encuentra en un estado adecuado para añadir documentación.");
+            MSG_LA_MEMORIA_NO_SE_ENCUENTRA_EN_UN_ESTADO_ADECUADO_PARA_ANADIR_DOCUMENTACION);
       }
 
       documentacionMemoria.setMemoria(memoria);
@@ -116,10 +119,10 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
 
   public DocumentacionMemoria findById(final Long id) throws DocumentacionMemoriaNotFoundException {
     log.debug("Petición a get DocumentacionMemoria : {}  - start", id);
-    final DocumentacionMemoria DocumentacionMemoria = documentacionMemoriaRepository.findById(id)
+    final DocumentacionMemoria documentacionMemoria = documentacionMemoriaRepository.findById(id)
         .orElseThrow(() -> new DocumentacionMemoriaNotFoundException(id));
     log.debug("Petición a get DocumentacionMemoria : {}  - end", id);
-    return DocumentacionMemoria;
+    return documentacionMemoria;
 
   }
 
@@ -137,7 +140,7 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
       Pageable pageable) {
     log.debug(
         "findByMemoriaIdAndTipoEvaluacion(Long idMemoria, TipoEvaluacion.Tipo tipoEvaluacion, Pageable pageable) - start");
-    Assert.isTrue(idMemoria != null, "El id de la memoria no puede ser nulo para mostrar su documentación");
+    Assert.isTrue(idMemoria != null, MSG_EL_ID_DE_LA_MEMORIA_NO_PUEDE_SER_NULO_PARA_MOSTRAR_SU_DOCUMENTACION);
     Assert.isTrue(tipoEvaluacion != null,
         "El id del tipo de evaluación no puede ser nulo para mostrar su documentacion");
 
@@ -184,7 +187,7 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
   @Override
   public Page<DocumentacionMemoria> findDocumentacionMemoria(Long idMemoria, Pageable pageable) {
     log.debug("findDocumentacionMemoria(Long idMemoria, Pageable pageable) - start");
-    Assert.isTrue(idMemoria != null, "El id de la memoria no puede ser nulo para mostrar su documentación");
+    Assert.isTrue(idMemoria != null, MSG_EL_ID_DE_LA_MEMORIA_NO_PUEDE_SER_NULO_PARA_MOSTRAR_SU_DOCUMENTACION);
 
     return memoriaRepository.findByIdAndActivoTrue(idMemoria).map(memoria -> {
 
@@ -215,7 +218,7 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
   @Override
   public Page<DocumentacionMemoria> findDocumentacionSeguimientoAnual(Long idMemoria, Pageable pageable) {
     log.debug("findDocumentacionSeguimientoAnual(Long idMemoria, Pageable pageable) - start");
-    Assert.isTrue(idMemoria != null, "El id de la memoria no puede ser nulo para mostrar su documentación");
+    Assert.isTrue(idMemoria != null, MSG_EL_ID_DE_LA_MEMORIA_NO_PUEDE_SER_NULO_PARA_MOSTRAR_SU_DOCUMENTACION);
 
     return memoriaRepository.findByIdAndActivoTrue(idMemoria).map(memoria -> {
 
@@ -245,7 +248,7 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
   @Override
   public Page<DocumentacionMemoria> findDocumentacionSeguimientoFinal(Long idMemoria, Pageable pageable) {
     log.debug("findDocumentacionSeguimientoFinal(Long idMemoria, Pageable pageable) - start");
-    Assert.isTrue(idMemoria != null, "El id de la memoria no puede ser nulo para mostrar su documentación");
+    Assert.isTrue(idMemoria != null, MSG_EL_ID_DE_LA_MEMORIA_NO_PUEDE_SER_NULO_PARA_MOSTRAR_SU_DOCUMENTACION);
 
     return memoriaRepository.findByIdAndActivoTrue(idMemoria).map(memoria -> {
 
@@ -275,7 +278,7 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
   @Override
   public Page<DocumentacionMemoria> findDocumentacionRetrospectiva(Long idMemoria, Pageable pageable) {
     log.debug("findDocumentacionRetrospectiva(Long idMemoria, Pageable pageable) - start");
-    Assert.isTrue(idMemoria != null, "El id de la memoria no puede ser nulo para mostrar su documentación");
+    Assert.isTrue(idMemoria != null, MSG_EL_ID_DE_LA_MEMORIA_NO_PUEDE_SER_NULO_PARA_MOSTRAR_SU_DOCUMENTACION);
 
     return memoriaRepository.findByIdAndActivoTrue(idMemoria).map(memoria -> {
 
@@ -306,7 +309,7 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
   public DocumentacionMemoria createSeguimientoAnual(Long idMemoria, @Valid DocumentacionMemoria documentacionMemoria) {
     log.debug("Petición a create DocumentacionMemoria seguimiento anual : {} - start", documentacionMemoria);
     Assert.isNull(documentacionMemoria.getId(),
-        "DocumentacionMemoria id tiene que ser null para crear un nuevo DocumentacionMemoria");
+        MSG_DOCUMENTACION_MEMORIA_ID_TIENE_QUE_SER_NULL_PARA_CREAR_UN_NUEVO_DOCUMENTACION_MEMORIA);
 
     Assert.notNull(idMemoria,
         "El identificador de la memoria no puede ser null para crear un nuevo documento de tipo seguimiento anual asociado a esta");
@@ -341,7 +344,7 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
   public DocumentacionMemoria createSeguimientoFinal(Long idMemoria, @Valid DocumentacionMemoria documentacionMemoria) {
     log.debug("Petición a create DocumentacionMemoria seguimiento final : {} - start", documentacionMemoria);
     Assert.isNull(documentacionMemoria.getId(),
-        "DocumentacionMemoria id tiene que ser null para crear un nuevo DocumentacionMemoria");
+        MSG_DOCUMENTACION_MEMORIA_ID_TIENE_QUE_SER_NULL_PARA_CREAR_UN_NUEVO_DOCUMENTACION_MEMORIA);
 
     Assert.notNull(idMemoria,
         "El identificador de la memoria no puede ser null para crear un nuevo documento de tipo seguimiento final asociado a esta");
@@ -379,7 +382,7 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
   public DocumentacionMemoria createRetrospectiva(Long idMemoria, @Valid DocumentacionMemoria documentacionMemoria) {
     log.debug("Petición a create DocumentacionMemoria retrospectiva : {} - start", documentacionMemoria);
     Assert.isNull(documentacionMemoria.getId(),
-        "DocumentacionMemoria id tiene que ser null para crear un nuevo DocumentacionMemoria");
+        MSG_DOCUMENTACION_MEMORIA_ID_TIENE_QUE_SER_NULL_PARA_CREAR_UN_NUEVO_DOCUMENTACION_MEMORIA);
 
     Assert.notNull(idMemoria,
         "El identificador de la memoria no puede ser null para crear un nuevo documento de tipo retrospectiva asociado a esta");
@@ -423,24 +426,21 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
     Assert.notNull(idMemoria,
         "El identificador de la memoria no puede ser null para eliminar un documento de tipo seguimiento anual asociado a esta");
 
-    memoriaRepository.findByIdAndActivoTrue(idMemoria).map(memoria -> {
-      TipoEstadoMemoria.Tipo estado = TipoEstadoMemoria.Tipo.fromId(memoria.getEstadoActual().getId());
-      Assert.isTrue(
-          (estado == TipoEstadoMemoria.Tipo.FIN_EVALUACION
-              || estado == TipoEstadoMemoria.Tipo.COMPLETADA_SEGUIMIENTO_ANUAL),
-          "La memoria no se encuentra en un estado adecuado para eliminar documentación de seguimiento anual");
+    Memoria memoria = memoriaRepository.findByIdAndActivoTrue(idMemoria)
+        .orElseThrow(() -> new MemoriaNotFoundException(idMemoria));
 
-      documentacionMemoriaRepository
-          .findByIdAndMemoriaIdAndTipoDocumentoFormularioIdAndMemoriaActivoTrue(idDocumentacionMemoria, idMemoria,
-              Formulario.Tipo.SEGUIMIENTO_ANUAL.getId())
-          .map(documentacionMemoria -> {
-            documentacionMemoriaRepository.delete(documentacionMemoria);
-            return Optional.empty();
-          }).orElseThrow(() -> new DocumentacionMemoriaNotFoundException(idDocumentacionMemoria));
+    TipoEstadoMemoria.Tipo estado = TipoEstadoMemoria.Tipo.fromId(memoria.getEstadoActual().getId());
+    Assert.isTrue(
+        (estado == TipoEstadoMemoria.Tipo.FIN_EVALUACION
+            || estado == TipoEstadoMemoria.Tipo.COMPLETADA_SEGUIMIENTO_ANUAL),
+        "La memoria no se encuentra en un estado adecuado para eliminar documentación de seguimiento anual");
 
-      return memoria;
-    }).orElseThrow(() -> new MemoriaNotFoundException(idMemoria));
+    DocumentacionMemoria documentacionMemoria = documentacionMemoriaRepository
+        .findByIdAndMemoriaIdAndTipoDocumentoFormularioIdAndMemoriaActivoTrue(idDocumentacionMemoria, idMemoria,
+            Formulario.Tipo.SEGUIMIENTO_ANUAL.getId())
+        .orElseThrow(() -> new DocumentacionMemoriaNotFoundException(idDocumentacionMemoria));
 
+    documentacionMemoriaRepository.delete(documentacionMemoria);
   }
 
   /**
@@ -460,24 +460,22 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
     Assert.notNull(idMemoria,
         "El identificador de la memoria no puede ser null para eliminar un documento de tipo seguimiento final asociado a esta");
 
-    memoriaRepository.findByIdAndActivoTrue(idMemoria).map(memoria -> {
-      TipoEstadoMemoria.Tipo estado = TipoEstadoMemoria.Tipo.fromId(memoria.getEstadoActual().getId());
-      Assert.isTrue(
-          (estado == TipoEstadoMemoria.Tipo.FIN_EVALUACION_SEGUIMIENTO_ANUAL
-              || estado == TipoEstadoMemoria.Tipo.COMPLETADA_SEGUIMIENTO_FINAL
-              || estado == TipoEstadoMemoria.Tipo.EN_ACLARACION_SEGUIMIENTO_FINAL),
-          "La memoria no se encuentra en un estado adecuado para eliminar documentación de seguimiento final");
-      documentacionMemoriaRepository
-          .findByIdAndMemoriaIdAndTipoDocumentoFormularioIdAndMemoriaActivoTrue(idDocumentacionMemoria, idMemoria,
-              Formulario.Tipo.SEGUIMIENTO_FINAL.getId())
-          .map(documentacionMemoria -> {
-            documentacionMemoriaRepository.delete(documentacionMemoria);
-            return Optional.empty();
-          }).orElseThrow(() -> new DocumentacionMemoriaNotFoundException(idDocumentacionMemoria));
+    Memoria memoria = memoriaRepository.findByIdAndActivoTrue(idMemoria)
+        .orElseThrow(() -> new MemoriaNotFoundException(idMemoria));
 
-      return memoria;
-    }).orElseThrow(() -> new MemoriaNotFoundException(idMemoria));
+    TipoEstadoMemoria.Tipo estado = TipoEstadoMemoria.Tipo.fromId(memoria.getEstadoActual().getId());
+    Assert.isTrue(
+        (estado == TipoEstadoMemoria.Tipo.FIN_EVALUACION_SEGUIMIENTO_ANUAL
+            || estado == TipoEstadoMemoria.Tipo.COMPLETADA_SEGUIMIENTO_FINAL
+            || estado == TipoEstadoMemoria.Tipo.EN_ACLARACION_SEGUIMIENTO_FINAL),
+        "La memoria no se encuentra en un estado adecuado para eliminar documentación de seguimiento final");
 
+    DocumentacionMemoria documentacionMemoria = documentacionMemoriaRepository
+        .findByIdAndMemoriaIdAndTipoDocumentoFormularioIdAndMemoriaActivoTrue(idDocumentacionMemoria, idMemoria,
+            Formulario.Tipo.SEGUIMIENTO_FINAL.getId())
+        .orElseThrow(() -> new DocumentacionMemoriaNotFoundException(idDocumentacionMemoria));
+
+    documentacionMemoriaRepository.delete(documentacionMemoria);
   }
 
   /**
@@ -497,26 +495,23 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
     Assert.notNull(idMemoria,
         "El identificador de la memoria no puede ser null para eliminar un documento de tipo retrospectiva asociado a esta");
 
-    memoriaRepository.findByIdAndActivoTrue(idMemoria).map(memoria -> {
+    Memoria memoria = memoriaRepository.findByIdAndActivoTrue(idMemoria)
+        .orElseThrow(() -> new MemoriaNotFoundException(idMemoria));
 
-      Assert.notNull(memoria.getRetrospectiva(),
-          "La retrospectiva no puede ser null para eliminar un documento de tipo retrospectiva");
+    Assert.notNull(memoria.getRetrospectiva(),
+        "La retrospectiva no puede ser null para eliminar un documento de tipo retrospectiva");
 
-      EstadoRetrospectiva.Tipo estado = EstadoRetrospectiva.Tipo
-          .fromId(memoria.getRetrospectiva().getEstadoRetrospectiva().getId());
-      Assert.isTrue((estado == EstadoRetrospectiva.Tipo.PENDIENTE || estado == EstadoRetrospectiva.Tipo.COMPLETADA),
-          "La retrospectiva no se encuentra en un estado adecuado para eliminar documentación de retrospectiva");
+    EstadoRetrospectiva.Tipo estado = EstadoRetrospectiva.Tipo
+        .fromId(memoria.getRetrospectiva().getEstadoRetrospectiva().getId());
+    Assert.isTrue((estado == EstadoRetrospectiva.Tipo.PENDIENTE || estado == EstadoRetrospectiva.Tipo.COMPLETADA),
+        "La retrospectiva no se encuentra en un estado adecuado para eliminar documentación de retrospectiva");
 
-      documentacionMemoriaRepository
-          .findByIdAndMemoriaIdAndTipoDocumentoFormularioIdAndMemoriaActivoTrue(idDocumentacionMemoria, idMemoria,
-              Formulario.Tipo.RETROSPECTIVA.getId())
-          .map(documentacionMemoria -> {
-            documentacionMemoriaRepository.delete(documentacionMemoria);
-            return Optional.empty();
-          }).orElseThrow(() -> new DocumentacionMemoriaNotFoundException(idDocumentacionMemoria));
+    DocumentacionMemoria documentacionMemoria = documentacionMemoriaRepository
+        .findByIdAndMemoriaIdAndTipoDocumentoFormularioIdAndMemoriaActivoTrue(idDocumentacionMemoria, idMemoria,
+            Formulario.Tipo.RETROSPECTIVA.getId())
+        .orElseThrow(() -> new DocumentacionMemoriaNotFoundException(idDocumentacionMemoria));
 
-      return memoria;
-    }).orElseThrow(() -> new MemoriaNotFoundException(idMemoria));
+    documentacionMemoriaRepository.delete(documentacionMemoria);
 
   }
 
@@ -541,33 +536,30 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
     Boolean isGestor = authentication.getAuthorities().stream()
         .anyMatch(authority -> authority.getAuthority().startsWith("ETI-MEM-EDOC"));
 
-    memoriaRepository.findByIdAndActivoTrue(idMemoria).map(memoria -> {
-      TipoEstadoMemoria.Tipo estado = TipoEstadoMemoria.Tipo.fromId(memoria.getEstadoActual().getId());
-      if (isGestor) {
-        Assert.isTrue((estado.getId() >= TipoEstadoMemoria.Tipo.EN_EVALUACION.getId()),
-            "La memoria no se encuentra en un estado adecuado para añadir documentación.");
-      } else {
-        Assert.isTrue(
-            (estado == TipoEstadoMemoria.Tipo.EN_ELABORACION || estado == TipoEstadoMemoria.Tipo.COMPLETADA
-                || estado == TipoEstadoMemoria.Tipo.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS
-                || estado == TipoEstadoMemoria.Tipo.PENDIENTE_CORRECCIONES
-                || estado == TipoEstadoMemoria.Tipo.NO_PROCEDE_EVALUAR
-                || estado.getId() >= TipoEstadoMemoria.Tipo.FIN_EVALUACION.getId()),
-            "La memoria no se encuentra en un estado adecuado para eliminar documentación inicial");
-      }
+    Memoria memoria = memoriaRepository.findByIdAndActivoTrue(idMemoria)
+        .orElseThrow(() -> new MemoriaNotFoundException(idMemoria));
 
-      Formulario formulario = formularioRepository.findByMemoriaId(idMemoria);
-      documentacionMemoriaRepository
-          .findByIdAndMemoriaIdAndTipoDocumentoFormularioIdAndMemoriaActivoTrue(idDocumentacionMemoria, idMemoria,
-              formulario.getId())
-          .map(documentacionMemoria -> {
-            documentacionMemoriaRepository.delete(documentacionMemoria);
-            return Optional.empty();
-          }).orElseThrow(() -> new DocumentacionMemoriaNotFoundException(idDocumentacionMemoria));
+    TipoEstadoMemoria.Tipo estado = TipoEstadoMemoria.Tipo.fromId(memoria.getEstadoActual().getId());
+    if (isGestor.booleanValue()) {
+      Assert.isTrue((estado.getId() >= TipoEstadoMemoria.Tipo.EN_EVALUACION.getId()),
+          MSG_LA_MEMORIA_NO_SE_ENCUENTRA_EN_UN_ESTADO_ADECUADO_PARA_ANADIR_DOCUMENTACION);
+    } else {
+      Assert.isTrue(
+          (estado == TipoEstadoMemoria.Tipo.EN_ELABORACION || estado == TipoEstadoMemoria.Tipo.COMPLETADA
+              || estado == TipoEstadoMemoria.Tipo.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS
+              || estado == TipoEstadoMemoria.Tipo.PENDIENTE_CORRECCIONES
+              || estado == TipoEstadoMemoria.Tipo.NO_PROCEDE_EVALUAR
+              || estado.getId() >= TipoEstadoMemoria.Tipo.FIN_EVALUACION.getId()),
+          "La memoria no se encuentra en un estado adecuado para eliminar documentación inicial");
+    }
 
-      return memoria;
-    }).orElseThrow(() -> new MemoriaNotFoundException(idMemoria));
+    Formulario formulario = formularioRepository.findByMemoriaId(idMemoria);
+    DocumentacionMemoria documentacionMemoria = documentacionMemoriaRepository
+        .findByIdAndMemoriaIdAndTipoDocumentoFormularioIdAndMemoriaActivoTrue(idDocumentacionMemoria, idMemoria,
+            formulario.getId())
+        .orElseThrow(() -> new DocumentacionMemoriaNotFoundException(idDocumentacionMemoria));
 
+    documentacionMemoriaRepository.delete(documentacionMemoria);
   }
 
 }

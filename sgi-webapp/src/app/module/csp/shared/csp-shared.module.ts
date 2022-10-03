@@ -36,6 +36,10 @@ import { SelectUnidadGestionComponent } from './select-unidad-gestion/select-uni
 import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-modal/solicitud-presupuesto-modal.component';
 import { SelectLineaInvestigacionComponent } from './select-linea-investigacion/select-linea-investigacion.component';
 import { EntidadFinanciadoraEmpresaNombrePipe } from './pipes/entidad-financiadora-empresa-nombre.pipe';
+import { SelectProyectoProyectoSgeComponent } from './select-proyecto-proyecto-sge/select-proyecto-proyecto-sge.component';
+import { SelectProyectoPeriodoJustificacionComponent } from './select-proyecto-periodo-justificacion/select-proyecto-periodo-justificacion.component';
+import { SelectTipoRequerimientoComponent } from './select-tipo-requerimiento/select-tipo-requerimiento.component';
+import { SelectRequerimientoJustificacionComponent } from './select-requerimiento-justificacion/select-requerimiento-justificacion.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +70,11 @@ import { EntidadFinanciadoraEmpresaNombrePipe } from './pipes/entidad-financiado
     SelectGrupoComponent,
     SearchGrupoModalComponent,
     SelectLineaInvestigacionComponent,
-    EntidadFinanciadoraEmpresaNombrePipe
+    SelectProyectoProyectoSgeComponent,
+    SelectProyectoPeriodoJustificacionComponent,
+    SelectTipoRequerimientoComponent,
+    SelectRequerimientoJustificacionComponent,
+    EntidadFinanciadoraEmpresaNombrePipe,
   ],
   imports: [
     SharedModule,
@@ -104,7 +112,11 @@ import { EntidadFinanciadoraEmpresaNombrePipe } from './pipes/entidad-financiado
     SelectDialogGrupoComponent,
     SelectGrupoComponent,
     SelectLineaInvestigacionComponent,
-    EntidadFinanciadoraEmpresaNombrePipe
+    SelectProyectoProyectoSgeComponent,
+    SelectProyectoPeriodoJustificacionComponent,
+    SelectTipoRequerimientoComponent,
+    SelectRequerimientoJustificacionComponent,
+    EntidadFinanciadoraEmpresaNombrePipe,
   ]
 })
 export class CspSharedModule { }

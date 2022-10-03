@@ -116,7 +116,7 @@ export class FuenteFinanciacionModalComponent
       descripcion: new FormControl(this.fuenteFinanciacion?.descripcion ?? ''),
       ambitoGeografico: new FormControl(this.fuenteFinanciacion?.tipoAmbitoGeografico ?? null),
       origen: new FormControl(this.fuenteFinanciacion?.tipoOrigenFuenteFinanciacion ?? null),
-      fondoEstructural: new FormControl(this.fuenteFinanciacion?.fondoEstructural ?? true),
+      fondoEstructural: new FormControl(this.fuenteFinanciacion?.fondoEstructural ?? null),
     });
     return formGroup;
   }

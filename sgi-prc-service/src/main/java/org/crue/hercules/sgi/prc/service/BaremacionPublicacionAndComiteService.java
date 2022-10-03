@@ -144,7 +144,7 @@ public abstract class BaremacionPublicacionAndComiteService extends BaremacionCo
     return puntos;
   }
 
-  protected BigDecimal getValorModuladorByNumAutores(Modulador modulador, Integer numAutores) {
+  private BigDecimal getValorModuladorByNumAutores(Modulador modulador, Integer numAutores) {
     log.debug("getValorModuladorByNumAutores(modulador, numAutores) - start");
 
     if (numAutores == 1) {
@@ -209,14 +209,14 @@ public abstract class BaremacionPublicacionAndComiteService extends BaremacionCo
     return areas;
   }
 
-  protected List<String> getAreaRefByAutor(Autor autorBaremable) {
+  private List<String> getAreaRefByAutor(Autor autorBaremable) {
     return Stream.of(autorBaremable)
         .filter(autor -> isPersonaRefAndBaremable(autor.getPersonaRef()))
         .findFirst()
         .map(autor -> getAreaNodoRaizByPersonaRef(autor.getPersonaRef())).orElse(null);
   }
 
-  protected List<String> getAreaNodoRaizByPersonaRef(String personaRef) {
+  private List<String> getAreaNodoRaizByPersonaRef(String personaRef) {
     List<String> areas = new ArrayList<>();
     AreaConocimientoDto areaRefPersona = getSgiApiSgpService().findVinculacionByPersonaId(personaRef)
         .map(VinculacionDto::getAreaConocimiento)
@@ -231,7 +231,7 @@ public abstract class BaremacionPublicacionAndComiteService extends BaremacionCo
     return areas;
   }
 
-  protected List<AreaConocimientoDto> getAreaNodoRaizById(List<AreaConocimientoDto> areas) {
+  private List<AreaConocimientoDto> getAreaNodoRaizById(List<AreaConocimientoDto> areas) {
     AreaConocimientoDto areaRefPersona = areas.get(areas.size() - 1);
     if (StringUtils.hasText(areaRefPersona.getPadreId())) {
       List<AreaConocimientoDto> areaPadre = sgiApiSgoService
@@ -441,7 +441,7 @@ public abstract class BaremacionPublicacionAndComiteService extends BaremacionCo
         .anyMatch(this::isPosicionRevistaGreatherThan75);
   }
 
-  protected boolean isRevista25AndPosicionRevistaLessEqualThan10(IndiceImpacto indiceImpacto) {
+  private boolean isRevista25AndPosicionRevistaLessEqualThan10(IndiceImpacto indiceImpacto) {
     if (Boolean.TRUE.equals(indiceImpacto.getRevista25()) && !Objects.isNull(indiceImpacto.getPosicionPublicacion())
         && !Objects.isNull(indiceImpacto.getNumeroRevistas())) {
       return indiceImpacto.getPosicionPublicacion().divide(indiceImpacto.getNumeroRevistas(), 2, RoundingMode.HALF_UP)
@@ -473,7 +473,7 @@ public abstract class BaremacionPublicacionAndComiteService extends BaremacionCo
     return false;
   }
 
-  protected boolean isPosicionRevistaGreatherThan25AndLessThanEqual50(IndiceImpacto indiceImpacto) {
+  private boolean isPosicionRevistaGreatherThan25AndLessThanEqual50(IndiceImpacto indiceImpacto) {
     if (!Objects.isNull(indiceImpacto.getPosicionPublicacion())
         && !Objects.isNull(indiceImpacto.getNumeroRevistas())) {
       BigDecimal posicionRevista = indiceImpacto.getPosicionPublicacion().divide(indiceImpacto.getNumeroRevistas(), 2,
@@ -485,7 +485,7 @@ public abstract class BaremacionPublicacionAndComiteService extends BaremacionCo
     return false;
   }
 
-  protected boolean isPosicionRevistaGreatherThan50AndLessThanEqual75(IndiceImpacto indiceImpacto) {
+  private boolean isPosicionRevistaGreatherThan50AndLessThanEqual75(IndiceImpacto indiceImpacto) {
     if (!Objects.isNull(indiceImpacto.getPosicionPublicacion())
         && !Objects.isNull(indiceImpacto.getNumeroRevistas())) {
       BigDecimal posicionRevista = indiceImpacto.getPosicionPublicacion().divide(indiceImpacto.getNumeroRevistas(), 2,
@@ -497,7 +497,7 @@ public abstract class BaremacionPublicacionAndComiteService extends BaremacionCo
     return false;
   }
 
-  protected boolean isPosicionRevistaGreatherThan75(IndiceImpacto indiceImpacto) {
+  private boolean isPosicionRevistaGreatherThan75(IndiceImpacto indiceImpacto) {
     if (!Objects.isNull(indiceImpacto.getPosicionPublicacion())
         && !Objects.isNull(indiceImpacto.getNumeroRevistas())) {
       return indiceImpacto.getPosicionPublicacion().divide(indiceImpacto.getNumeroRevistas(), 2, RoundingMode.HALF_UP)

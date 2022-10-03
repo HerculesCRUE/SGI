@@ -13,11 +13,10 @@ public interface CustomComiteEditorialRepository {
   /**
    * Recupera todas los {@link ComiteEditorialResumen} paginadas y/o filtradas
    * 
-   * @param specIsInvestigador filtro para investigadores.
-   * @param query              la información del filtro.
-   * @param pageable           la información de la paginación.
+   * @param specs    Specification para filtrar
+   * @param pageable la información de la paginación.
    * @return Listado paginado y/o filtrado de {@link ComiteEditorialResumen}
    */
-  public Page<ComiteEditorialResumen> findAllComitesEditoriales(Specification<ProduccionCientifica> specIsInvestigador,
-      String query, Pageable pageable);
+  public Page<ComiteEditorialResumen> findAllComitesEditoriales(Specification<ProduccionCientifica> specs,
+      Pageable pageable);
 }

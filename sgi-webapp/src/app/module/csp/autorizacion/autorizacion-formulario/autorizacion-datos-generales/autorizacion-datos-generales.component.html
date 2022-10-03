@@ -12,7 +12,7 @@
       </mat-form-field>
 
       <!-- Fecha Solicitud -->
-      <mat-form-field fxFlex="25%" *sgiHasAnyAuthorityForAnyUO="['CSP-AUT-E','CSP-AUT-V']">
+      <mat-form-field fxFlex="25%" *ngIf="!formPart.isInvestigador">
         <mat-label>{{'csp.autorizacion.fecha-solicitud'| translate}}</mat-label>
         <input matInput [matDatepicker]="pickerfechaSolicitud" formControlName="fechaSolicitud" required>
         <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerfechaSolicitud"></mat-datepicker-toggle>
@@ -21,7 +21,7 @@
       </mat-form-field>
 
       <!--Solicitante-->
-      <mat-form-field fxFlex="50%" *sgiHasAnyAuthorityForAnyUO="['CSP-AUT-E','CSP-AUT-V']">
+      <mat-form-field fxFlex="50%" *ngIf="!formPart.isInvestigador">
         <mat-label>{{'csp.autorizacion.solicitante' | translate}}</mat-label>
         <sgi-select-persona placeholder="{{'csp.autorizacion.solicitante' | translate}}" formControlName="solicitante">
         </sgi-select-persona>

@@ -66,7 +66,13 @@ const routes: SgiRoutes = [
       ),
     canActivate: [SgiAuthGuard, AllowModuleGuard]
   },
-
+  {
+    path: 'pub',
+    loadChildren: () =>
+      import('./module/pub/pub.module').then(
+        (m) => m.PubModule
+      )
+  },
   {
     path: '**',
     component: RootComponent

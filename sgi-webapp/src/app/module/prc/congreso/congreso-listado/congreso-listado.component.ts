@@ -5,6 +5,8 @@ import { AbstractTablePaginationComponent } from '@core/component/abstract-table
 import { ICongreso, TIPO_EVENTO_MAP } from '@core/models/prc/congreso';
 import { TipoEstadoProduccion, TIPO_ESTADO_PRODUCCION_MAP } from '@core/models/prc/estado-produccion-cientifica';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { Module } from '@core/module';
+import { LayoutService } from '@core/services/layout.service';
 import { CongresoService } from '@core/services/prc/congreso/congreso.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -41,10 +43,15 @@ export class CongresoListadoComponent extends AbstractTablePaginationComponent<I
     return this.authService.authStatus$.asObservable();
   }
 
+  get isModuleINV(): boolean {
+    return this.layoutService.activeModule$.value === Module.INV;
+  }
+
   constructor(
     protected readonly snackBarService: SnackBarService,
     private readonly authService: SgiAuthService,
-    private readonly congresoService: CongresoService
+    private readonly congresoService: CongresoService,
+    private readonly layoutService: LayoutService
   ) {
     super(snackBarService, MSG_ERROR);
     this.TIPO_ESTADO_PRODUCCION_LIST = Object.values(TipoEstadoProduccion);
@@ -70,7 +77,9 @@ export class CongresoListadoComponent extends AbstractTablePaginationComponent<I
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<ICongreso>> {
-    return this.congresoService.findAll(this.getFindOptions(reset));
+    return this.isModuleINV
+      ? this.congresoService.findCongresosInvestigador(this.getFindOptions(reset))
+      : this.congresoService.findAll(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {

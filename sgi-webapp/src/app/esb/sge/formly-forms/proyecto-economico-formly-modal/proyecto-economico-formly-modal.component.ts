@@ -1,11 +1,11 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { MSG_PARAMS } from '@core/i18n';
 import { IGrupo } from '@core/models/csp/grupo';
-import { CausaExencion, CAUSA_EXENCION_MAP, IProyecto } from '@core/models/csp/proyecto';
+import { CAUSA_EXENCION_MAP } from '@core/models/csp/proyecto';
 import { Orden } from '@core/models/csp/rol-proyecto';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { IPersona } from '@core/models/sgp/persona';
@@ -14,28 +14,16 @@ import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { SolicitudProyectoService } from '@core/services/csp/solicitud-proyecto.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormlyUtils } from '@core/utils/formly-utils';
-import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
+import { FormlyFieldConfig } from '@ngx-formly/core';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
-import { NGXLogger } from 'ngx-logger';
-import { Observable, of, Subscription } from 'rxjs';
-import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
+import { ACTION_MODAL_MODE, BaseFormlyModalComponent, IFormlyData } from 'src/app/esb/shared/formly-forms/core/base-formly-modal.component';
 
 const PROYECTO_KEY = marker('sge.proyecto');
-const MSG_ERROR = marker('error.load');
-const MSG_SAVE_ERROR = marker('error.save.request.entity');
-const MSG_SAVE_SUCCESS = marker('msg.save.request.entity.success');
-const MSG_UPDATE_ERROR = marker('error.update.request.entity');
-const MSG_UPDATE_SUCCESS = marker('msg.update.request.entity.success');
-
-export enum ACTION_MODAL_MODE {
-  VIEW = 'view',
-  NEW = 'new',
-  EDIT = 'edit'
-}
 
 export interface IProyectoEconomicoFormlyData {
   proyectoSgiId: number;
@@ -44,21 +32,6 @@ export interface IProyectoEconomicoFormlyData {
   grupoInvestigacion: IGrupo;
 }
 
-interface IFormlyData {
-  fields: FormlyFieldConfig[];
-  data: any;
-  model: any;
-}
-
-interface IDatosProyecto {
-  proyecto: IProyecto;
-  numeroDocumentoResponsable: string;
-  importeTotalGastos: number;
-  importeTotalIngresos: number;
-  porIva: number;
-  causaExencion: CausaExencion;
-  causaExencionDesc?: string;
-}
 interface IResponsable {
   fechaInicio: DateTime;
   fechaFin: DateTime;
@@ -69,38 +42,14 @@ interface IResponsable {
   templateUrl: './proyecto-economico-formly-modal.component.html',
   styleUrls: ['./proyecto-economico-formly-modal.component.scss']
 })
-export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy {
-
-  ACTION_MODAL_MODE = ACTION_MODAL_MODE;
-
-  title: string;
-
-  private textoCrearSuccess: string;
-  private textoCrearError: string;
-  private textoUpdateSuccess: string;
-  private textoUpdateError: string;
-
-  private subscriptions: Subscription[] = [];
-
-  formGroup: FormGroup = new FormGroup({});
-  formlyData: IFormlyData = {
-    fields: [],
-    data: {},
-    model: {}
-  };
-
-  options: FormlyFormOptions = {
-    formState: {
-      mainModel: {},
-    },
-  };
+export class ProyectoEconomicoFormlyModalComponent
+  extends BaseFormlyModalComponent<IProyectoEconomicoFormlyData, IProyectoSge>
+  implements OnInit {
 
   constructor(
-    private readonly logger: NGXLogger,
-    protected readonly snackBarService: SnackBarService,
     public readonly matDialogRef: MatDialogRef<ProyectoEconomicoFormlyModalComponent>,
     @Inject(MAT_DIALOG_DATA) public proyectoData: IProyectoEconomicoFormlyData,
-    private readonly translate: TranslateService,
+    protected readonly translate: TranslateService,
     private readonly proyectoService: ProyectoService,
     private readonly proyectoSgeService: ProyectoSgeService,
     private readonly solicitudProyectoService: SolicitudProyectoService,
@@ -108,45 +57,76 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
     private readonly grupoService: GrupoService
 
   ) {
-    this.subscriptions.push(
-      this.loadFormlyData(proyectoData?.action, proyectoData?.proyectoSgiId, proyectoData?.proyectoSge?.id, proyectoData?.grupoInvestigacion).subscribe(
-        (formlyData) => {
-          this.options.formState.mainModel = formlyData.data;
-          this.formlyData.model = {};
-          this.formlyData = formlyData;
-        },
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR);
-          this.matDialogRef.close();
-        }
-      )
+    super(matDialogRef, proyectoData?.action === ACTION_MODAL_MODE.EDIT, translate);
+  }
+
+  protected initializer = (): Observable<void> => this.loadFormlyData(
+    this.proyectoData?.action,
+    this.proyectoData?.proyectoSgiId,
+    this.proyectoData?.proyectoSge?.id,
+    this.proyectoData?.grupoInvestigacion
+  )
+
+  ngOnInit(): void {
+    super.ngOnInit();
+  }
+
+  protected buildFormGroup(): FormGroup {
+    return new FormGroup({});
+  }
+
+  protected getValue(): IProyectoEconomicoFormlyData {
+    return this.proyectoData;
+  }
+
+  protected getKey(): string {
+    return PROYECTO_KEY;
+  }
+
+  protected getGender() {
+    return MSG_PARAMS.GENDER.FEMALE;
+  }
+
+  protected loadFormlyData(action: ACTION_MODAL_MODE, proyectoSgiId: number, proyectoSgeId: any, grupo: IGrupo): Observable<void> {
+    let formly$: Observable<FormlyFieldConfig[]>;
+    switch (action) {
+      case ACTION_MODAL_MODE.EDIT:
+        formly$ = this.proyectoSgeService.getFormlyUpdate();
+        break;
+      case ACTION_MODAL_MODE.NEW:
+        formly$ = this.proyectoSgeService.getFormlyCreate();
+        break;
+      default:
+        formly$ = of([]);
+    }
+
+    let load$: Observable<IFormlyData>;
+
+    if (grupo == null) {
+      load$ = this.fillProyectoData(formly$, action, proyectoSgiId, proyectoSgeId);
+    } else {
+      load$ = this.fillGrupoData(formly$, grupo);
+    }
+
+    return load$.pipe(
+      tap(formlyData => {
+        this.options.formState.mainModel = formlyData.data;
+        this.formlyData.model = {};
+        this.formlyData = formlyData;
+      }),
+      switchMap(() => of(void 0))
     );
   }
 
-  ngOnInit(): void {
-    this.setupI18N();
+  protected saveOrUpdate(): Observable<IProyectoSge> {
+    delete this.formlyData.model.proyectoSgeId;
+    this.parseModel();
+
+    return this.proyectoData.action === ACTION_MODAL_MODE.NEW
+      ? this.createProyectoSge(this.formlyData)
+      : this.updateProyectoSge(this.proyectoData.proyectoSge, this.formlyData);
   }
 
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(subscription => subscription.unsubscribe());
-  }
-
-
-  private loadFormlyData(action: ACTION_MODAL_MODE, proyectoSgiId: number, proyectoSgeId: any, grupo: IGrupo): Observable<IFormlyData> {
-    let load$: Observable<FormlyFieldConfig[]>;
-    if (action === ACTION_MODAL_MODE.NEW) {
-      load$ = this.proyectoSgeService.getFormlyCreate();
-    } else {
-      load$ = this.proyectoSgeService.getFormlyUpdate();
-    }
-    if (grupo == null) {
-      return this.fillProyectoData(load$, action, proyectoSgiId, proyectoSgeId);
-    } else {
-      return this.fillGrupoData(load$, grupo);
-    }
-
-  }
 
   private fillProyectoData(
     load$: Observable<FormlyFieldConfig[]>, action: ACTION_MODAL_MODE, proyectoSgiId: number, proyectoSgeId: any): Observable<IFormlyData> {
@@ -160,14 +140,14 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
       }),
       switchMap((formlyData) => {
         return this.proyectoService.findById(proyectoSgiId).pipe(
-          map((proyectoEconomico) => {
-            formlyData.data.proyecto = proyectoEconomico;
-            formlyData.data.fechaInicio = proyectoEconomico.fechaInicio;
-            formlyData.data.fechaFin = proyectoEconomico.fechaFin;
-            formlyData.data.porIva = proyectoEconomico.iva?.iva;
-            formlyData.data.importeTotalGastos = proyectoEconomico.importePresupuesto;
-            formlyData.data.causaExencion = proyectoEconomico.causaExencion;
-            formlyData.data.tipoFinalidad = proyectoEconomico.finalidad;
+          map((proyecto) => {
+            formlyData.data.proyecto = proyecto;
+            formlyData.data.fechaInicio = proyecto.fechaInicio;
+            formlyData.data.fechaFin = proyecto.fechaFin;
+            formlyData.data.porIva = proyecto.iva?.iva;
+            formlyData.data.importeTotalGastos = proyecto.importePresupuesto;
+            formlyData.data.causaExencion = proyecto.causaExencion;
+            formlyData.data.tipoFinalidad = proyecto.finalidad;
             if (action === ACTION_MODAL_MODE.EDIT) {
               formlyData.data.sgeId = proyectoSgeId;
             }
@@ -182,13 +162,13 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
         );
       }),
       switchMap((formlyData) => {
-        return this.findNumeroDocumentoResponsableEcnomicoOrMiembroEquipo(proyectoSgiId, formlyData);
+        return this.fillNumeroDocumentoResponsableEcnomicoOrMiembroEquipo(proyectoSgiId, formlyData);
       }),
       switchMap((formlyData) => {
         const proyectoEconomico = formlyData.data.proyecto;
 
         if (!formlyData.data.importeTotalGastos && proyectoEconomico.solicitudId) {
-          return this.findImportePresupuestoBySolicitudProyecto(proyectoEconomico, formlyData);
+          return this.fillImportePresupuestoBySolicitudProyecto(proyectoEconomico, formlyData);
         } else {
           return of(formlyData);
         }
@@ -197,7 +177,7 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
         const proyectoEconomico = formlyData.data.proyecto;
 
         if (!formlyData.data.importeTotalGastos && proyectoEconomico.solicitudId) {
-          return this.findImportePresupuestoBySolicitudProyectoGastos(proyectoEconomico, formlyData);
+          return this.fillImportePresupuestoBySolicitudProyectoGastos(proyectoEconomico, formlyData);
         } else {
           return of(formlyData);
         }
@@ -210,7 +190,9 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
   }
 
   private fillGrupoData(
-    load$: Observable<FormlyFieldConfig[]>, grupo: IGrupo): Observable<IFormlyData> {
+    load$: Observable<FormlyFieldConfig[]>,
+    grupo: IGrupo
+  ): Observable<IFormlyData> {
     return load$.pipe(
       map(fields => {
         return {
@@ -241,12 +223,12 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
         } as IFormlyData;
       }),
       switchMap((formlyData) => {
-        return this.findNumeroDocumentoResponsableEconomicoOrMiembroEquipo(grupo, formlyData);
+        return this.fillNumeroDocumentoResponsableEconomicoOrMiembroEquipo(grupo, formlyData);
       }),
     );
   }
 
-  private findImportePresupuestoBySolicitudProyecto(proyectoEconomico: any, formlyData: IFormlyData): Observable<IFormlyData> {
+  private fillImportePresupuestoBySolicitudProyecto(proyectoEconomico: any, formlyData: IFormlyData): Observable<IFormlyData> {
     return this.solicitudService.findById(proyectoEconomico.solicitudId).pipe(
       switchMap(solicitud => {
         if (!!!solicitud || solicitud.formularioSolicitud !== FormularioSolicitud.PROYECTO) {
@@ -265,7 +247,7 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
     );
   }
 
-  private findImportePresupuestoBySolicitudProyectoGastos(proyectoEconomico: any, formlyData: IFormlyData): Observable<IFormlyData> {
+  private fillImportePresupuestoBySolicitudProyectoGastos(proyectoEconomico: any, formlyData: IFormlyData): Observable<IFormlyData> {
     return this.solicitudService.findAllSolicitudProyectoPresupuesto(proyectoEconomico.solicitudId).pipe(
       map(response => {
         return response.items.reduce(
@@ -278,7 +260,7 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
     );
   }
 
-  private findNumeroDocumentoResponsableEcnomicoOrMiembroEquipo(id: number, formlyData: IFormlyData): Observable<IFormlyData> {
+  private fillNumeroDocumentoResponsableEcnomicoOrMiembroEquipo(id: number, formlyData: IFormlyData): Observable<IFormlyData> {
     return this.proyectoService.findAllProyectoResponsablesEconomicos(id).pipe(
       map(response => response.items.map(responsable => {
         return {
@@ -305,7 +287,7 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
     );
   }
 
-  private findNumeroDocumentoResponsableEconomicoOrMiembroEquipo(grupo: IGrupo, formlyData: IFormlyData): Observable<IFormlyData> {
+  private fillNumeroDocumentoResponsableEconomicoOrMiembroEquipo(grupo: IGrupo, formlyData: IFormlyData): Observable<IFormlyData> {
     return this.grupoService.findResponsablesEconomicos(grupo?.id).pipe(
       map(response => response.items.map(responsable => {
         return {
@@ -354,53 +336,6 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
     );
   }
 
-  /**
-   * Checks the formGroup, returns the entered data and closes the modal
-   */
-  saveOrUpdate(): void {
-    this.formGroup.markAllAsTouched();
-
-    if (this.formGroup.valid) {
-
-      if (this.proyectoData.action === ACTION_MODAL_MODE.NEW) {
-        this.parseModel();
-
-        this.subscriptions.push(this.proyectoSgeService.createProyecto(this.formlyData.model).pipe(
-          mergeMap(response =>
-            //TODO se busca proyecto SGE según respuesta actual del servicio. Es posible que esta cambie
-            this.proyectoSgeService.findById(response).pipe(
-              map(proyecto => {
-                return proyecto;
-              })
-            )
-          )
-        ).subscribe(
-          (proyectoCreado) => {
-            this.matDialogRef.close(proyectoCreado);
-            this.snackBarService.showSuccess(this.textoCrearSuccess);
-          },
-          (error) => {
-            this.logger.error(error);
-            this.snackBarService.showError(this.textoCrearError);
-          }
-        ));
-      } else if (this.proyectoData.action === ACTION_MODAL_MODE.EDIT) {
-        delete this.formlyData.model.proyectoSgeId;
-        this.parseModel();
-        this.subscriptions.push(this.proyectoSgeService.updateProyecto(this.proyectoData.proyectoSge.id, this.formlyData.model).subscribe(
-          () => {
-            this.snackBarService.showSuccess(this.textoUpdateSuccess);
-            this.matDialogRef.close(this.proyectoData.proyectoSge);
-          },
-          (error) => {
-            this.logger.error(error);
-            this.snackBarService.showError(this.textoUpdateError);
-          }
-        ));
-      }
-    }
-  }
-
   private parseModel() {
     FormlyUtils.convertFormlyToJSON(this.formlyData.model, this.formlyData.fields);
     this.formlyData.model.causaExencion = this.formlyData.data.causaExencion;
@@ -412,62 +347,6 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
       id: this.formlyData.model.tipoFinalidad?.id,
       nombre: this.formlyData.model.tipoFinalidad?.nombre,
     };
-  }
-
-  private setupI18N(): void {
-
-    this.translate.get(
-      PROYECTO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.title = value);
-
-    this.translate.get(
-      PROYECTO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_SAVE_SUCCESS,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
-        );
-      })
-    ).subscribe((value) => this.textoCrearSuccess = value);
-
-    this.translate.get(
-      PROYECTO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_SAVE_ERROR,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
-        );
-      })
-    ).subscribe((value) => this.textoCrearError = value);
-
-    this.translate.get(
-      PROYECTO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_UPDATE_SUCCESS,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
-        );
-      })
-    ).subscribe((value) => this.textoUpdateSuccess = value);
-
-    this.translate.get(
-      PROYECTO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_UPDATE_ERROR,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
-        );
-      })
-    ).subscribe((value) => this.textoUpdateError = value);
   }
 
   private getCurrentMiembroEquipoWithRolOrdenPrimario(id: number): Observable<IResponsable> {
@@ -507,7 +386,17 @@ export class ProyectoEconomicoFormlyModalComponent implements OnInit, OnDestroy 
       })
     );
   }
+
+  private createProyectoSge(formlyData: IFormlyData): Observable<IProyectoSge> {
+    return this.proyectoSgeService.createProyecto(formlyData.model).pipe(
+      switchMap(response => this.proyectoSgeService.findById(response))
+    );
+  }
+
+  private updateProyectoSge(proyectoSge: IProyectoSge, formlyData: IFormlyData): Observable<IProyectoSge> {
+    return this.proyectoSgeService.updateProyecto(proyectoSge.id, formlyData.model).pipe(
+      map(() => proyectoSge)
+    );
+  }
+
 }
-
-
-

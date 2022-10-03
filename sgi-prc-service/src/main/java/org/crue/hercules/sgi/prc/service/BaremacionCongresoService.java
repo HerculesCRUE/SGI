@@ -80,10 +80,12 @@ public class BaremacionCongresoService extends BaremacionCommonService {
     loadPredicates();
   }
 
+  @Override
   protected TipoPuntuacion getTipoPuntuacion() {
     return TipoPuntuacion.CONGRESOS;
   }
 
+  @Override
   protected void loadPredicates() {
 
     LongPredicate isCongreso = getPredicateIsCongreso();
@@ -134,7 +136,7 @@ public class BaremacionCongresoService extends BaremacionCommonService {
     loadPredicatesExtra();
   }
 
-  protected void loadPredicatesExtra() {
+  private void loadPredicatesExtra() {
     getHmTipoBaremoPredicates().put(TipoBaremo.CONGRESO_RESUMEN_O_ABSTRACT, getPredicateIsResumenEnRevista());
 
     getHmTipoBaremoPredicates().put(TipoBaremo.CONGRESO_INTERNACIONAL_OBRA_COLECTIVA, getPredicateIsISSNForeign());
@@ -210,30 +212,24 @@ public class BaremacionCongresoService extends BaremacionCommonService {
         .anyMatch(indiceImpacto -> isGIIWithClase1orCOREwithAPor(indiceImpacto, TipoRanking.A));
   }
 
-  protected boolean isGIIWithClase1orCOREwithAPor(IndiceImpacto indiceImpacto, TipoRanking tipoRankingCORE) {
+  private boolean isGIIWithClase1orCOREwithAPor(IndiceImpacto indiceImpacto, TipoRanking tipoRankingCORE) {
     return ((indiceImpacto.getFuenteImpacto().equals(TipoFuenteImpacto.GII_GRIN_SCIE)
         && indiceImpacto.getRanking().equals(TipoRanking.CLASE1)) ||
         (indiceImpacto.getFuenteImpacto().equals(TipoFuenteImpacto.CORE)
             && indiceImpacto.getRanking().equals(tipoRankingCORE)));
   }
 
-  protected LongPredicate getPredicateIsISBNNational() {
+  private LongPredicate getPredicateIsISBNNational() {
     return produccionCientificaId -> isValorCampoISBNNational(produccionCientificaId,
         CodigoCVN.E060_010_020_320);
   }
 
-  protected LongPredicate getPredicateIsISSNForeign() {
+  private LongPredicate getPredicateIsISSNForeign() {
     return produccionCientificaId -> !isValorCampoISBNNational(produccionCientificaId,
         CodigoCVN.E060_010_020_320);
   }
 
-  protected BigDecimal evaluateBaremoModulador(BaremacionInput baremacionInput) {
-    log.debug("evaluateBaremoModulador(baremacionInput) - start");
-
-    log.debug("evaluateBaremoModulador(baremacionInput) - end");
-    return new BigDecimal("1.00");
-  }
-
+  @Override
   protected BigDecimal evaluateBaremoExtra(BaremacionInput baremacionInput) {
     log.debug("evaluateBaremoExtra(baremacionInput) - start");
     BigDecimal puntos = BigDecimal.ZERO;

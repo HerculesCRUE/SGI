@@ -6,6 +6,9 @@
   <artifact name="sgp-api" groupId="org.crue.hercules.sgi.esb.sgp.api" version="${revision}" type="synapse/api" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/api/sgp-api.xml</file>
   </artifact>
+  <artifact name="sgp-public-api" groupId="org.crue.hercules.sgi.esb.sgp.api" version="${revision}" type="synapse/api" serverRole="EnterpriseServiceBus">
+    <file>src/main/synapse-config/api/sgp-public-api.xml</file>
+  </artifact>
   <artifact name="sgp-endpoint" groupId="org.crue.hercules.sgi.esb.sgp.endpoint" version="${revision}" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/endpoints/sgp-endpoint.xml</file>
   </artifact>

@@ -94,10 +94,12 @@ public class BaremacionDireccionTesisService extends BaremacionCommonService {
     loadPredicates();
   }
 
+  @Override
   protected TipoPuntuacion getTipoPuntuacion() {
     return TipoPuntuacion.DIRECCION_TESIS;
   }
 
+  @Override
   protected void loadPredicates() {
 
     // DIRECCION_TESIS_TESIS
@@ -112,7 +114,7 @@ public class BaremacionDireccionTesisService extends BaremacionCommonService {
     loadPredicatesExtra();
   }
 
-  protected void loadPredicatesExtra() {
+  private void loadPredicatesExtra() {
     getHmTipoBaremoPredicates().put(TipoBaremo.DIRECCION_TESIS_MENCION_INDUSTRIAL,
         getPredicateIsTesisDoctoral().and(getPredicateIsMencionIndustrial()));
 
@@ -315,13 +317,7 @@ public class BaremacionDireccionTesisService extends BaremacionCommonService {
         produccionCientificaId);
   }
 
-  protected BigDecimal evaluateBaremoModulador(BaremacionInput baremacionInput) {
-    log.debug("evaluateBaremoModulador(baremacionInput) - start");
-
-    log.debug("evaluateBaremoModulador(baremacionInput) - end");
-    return new BigDecimal("1.00");
-  }
-
+  @Override
   protected BigDecimal evaluateBaremoExtra(BaremacionInput baremacionInput) {
     log.debug("evaluateBaremoExtra(baremacionInput) - start");
     BigDecimal puntos = BigDecimal.ZERO;

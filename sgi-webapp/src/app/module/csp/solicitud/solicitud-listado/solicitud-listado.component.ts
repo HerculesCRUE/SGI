@@ -338,7 +338,7 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
 
               solicitud.solicitante = personas.find((persona) => solicitud.solicitante?.id === persona.id);
               if (this.authService.hasAnyAuthorityForAnyUO(['CSP-SOL-E', 'CSP-SOL-V'])) {
-                this.suscripciones.push(this.solicitudService.modificable(solicitud.id).subscribe((value) => {
+                this.suscripciones.push(this.solicitudService.modificableByUO(solicitud.id).subscribe((value) => {
                   this.mapModificable.set(solicitud.id, value);
                 }));
 

@@ -10,7 +10,7 @@
 
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-starter-parent</artifactId>
-  <version>0.0.10</version>
+  <version>0.0.11</version>
   <packaging>pom</packaging>
   <name>sgi-starter-parent</name>
   <description>Parent pom providing dependency and plugin management for applications built with Maven</description>
@@ -38,8 +38,8 @@
 
   <properties>
     <!-- Distribution Management URL's -->
-    <dist.repo.rel.url>file:///maven-repositories/releases/</dist.repo.rel.url>
-    <dist.repo.snap.url>file:///maven-repositories/snapshots/</dist.repo.snap.url>
+    <dist.repo.rel.url>http://nexus.treelogic.local/content/repositories/releases/</dist.repo.rel.url>
+    <dist.repo.snap.url>http://nexus.treelogic.local/content/repositories/snapshots/</dist.repo.snap.url>
     <!-- spring-boot-starter-parent version to allow reconfiguration of spring boot dependencies defined there  -->
     <spring-boot-starter-parent.version>2.3.9.RELEASE</spring-boot-starter-parent.version>
     <!-- Dependencies versions (not defined in parent pom) -->

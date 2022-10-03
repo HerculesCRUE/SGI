@@ -64,9 +64,12 @@ class ProduccionCientificaIT extends BaseIT {
   private static final String PATH_ACREDITACIONES = ProduccionCientificaController.PATH_ACREDITACIONES;
   private static final String PATH_RECHAZAR = "/rechazar";
   private static final String PATH_VALIDAR = "/validar";
+  private static final String PATH_VALIDAR_INVESTIGADOR = ProduccionCientificaController.PATH_VALIDAR_INVESTIGADOR;
+  private static final String PATH_RECHAZAR_INVESTIGADOR = ProduccionCientificaController.PATH_RECHAZAR_INVESTIGADOR;
   public static final String PATH_CAMPOS = ProduccionCientificaController.PATH_CAMPOS;
   public static final String PATH_VALORES = ProduccionCientificaController.PATH_VALORES;
-  public static final String PATH_MODIFICABLE = ProduccionCientificaController.PATH_MODIFICABLE;
+  public static final String PATH_MODIFICABLE_BY_INV = ProduccionCientificaController.PATH_MODIFICABLE_BY_INV;
+  public static final String PATH_ACCESIBLE_BY_INV = ProduccionCientificaController.PATH_ACCESIBLE_BY_INV;
 
   private static final String PUBLICACION_REF_VALUE = "publicacion-ref-";
   private static final String COMITE_EDITORIAL_REF_VALUE = "comite-ref-";
@@ -700,8 +703,7 @@ class ProduccionCientificaIT extends BaseIT {
     BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
         .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 1L, 2L })));
 
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
-        PATH_PARAMETER_ID + PATH_VALIDAR)
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_VALIDAR_INVESTIGADOR)
         .buildAndExpand(produccionCientificaId)
         .toUri();
 
@@ -738,8 +740,7 @@ class ProduccionCientificaIT extends BaseIT {
     BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
         .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 1L, 2L })));
 
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
-        PATH_PARAMETER_ID + PATH_VALIDAR)
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_VALIDAR_INVESTIGADOR)
         .buildAndExpand(produccionCientificaId)
         .toUri();
 
@@ -776,8 +777,7 @@ class ProduccionCientificaIT extends BaseIT {
     BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
         .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 1L, 2L })));
 
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
-        PATH_PARAMETER_ID + PATH_VALIDAR)
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_VALIDAR_INVESTIGADOR)
         .buildAndExpand(produccionCientificaId)
         .toUri();
 
@@ -814,8 +814,7 @@ class ProduccionCientificaIT extends BaseIT {
     BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
         .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 1L, 2L })));
 
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
-        PATH_PARAMETER_ID + PATH_VALIDAR)
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_VALIDAR_INVESTIGADOR)
         .buildAndExpand(produccionCientificaId)
         .toUri();
 
@@ -888,8 +887,7 @@ class ProduccionCientificaIT extends BaseIT {
     BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
         .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 1L, 2L })));
 
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
-        PATH_PARAMETER_ID + PATH_RECHAZAR)
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_RECHAZAR_INVESTIGADOR)
         .buildAndExpand(produccionCientificaId)
         .toUri();
 
@@ -958,8 +956,7 @@ class ProduccionCientificaIT extends BaseIT {
     BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
         .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 99L })));
 
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
-        PATH_PARAMETER_ID)
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_ACCESIBLE_BY_INV)
         .buildAndExpand(produccionCientificaId)
         .toUri();
 
@@ -988,8 +985,7 @@ class ProduccionCientificaIT extends BaseIT {
     BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
         .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 1L, 2L })));
 
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
-        PATH_MODIFICABLE)
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_MODIFICABLE_BY_INV)
         .buildAndExpand(produccionCientificaId)
         .toUri();
 
@@ -1018,8 +1014,7 @@ class ProduccionCientificaIT extends BaseIT {
     BDDMockito.given(sgiApiCspService.findAllGruposByPersonaRef(ArgumentMatchers.<String>any()))
         .willReturn(generarMockGrupoDtoList(Arrays.asList(new Long[] { 1L, 2L })));
 
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH +
-        PATH_MODIFICABLE)
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_MODIFICABLE_BY_INV)
         .buildAndExpand(produccionCientificaId)
         .toUri();
 

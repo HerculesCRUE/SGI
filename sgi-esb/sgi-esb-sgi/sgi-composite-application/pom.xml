@@ -203,7 +203,7 @@
             </executions>
             <configuration>
               <!-- enable this to re define an archive location other than the default location-->
-              <archiveLocation>/carbonapps</archiveLocation>
+              <!--<archiveLocation>/carbonapps</archiveLocation>-->
               <!-- enable this to rename the .car file name
                 <archiveName>archive_name</archiveName-->
               <!-- enable this to rename the carbon application name

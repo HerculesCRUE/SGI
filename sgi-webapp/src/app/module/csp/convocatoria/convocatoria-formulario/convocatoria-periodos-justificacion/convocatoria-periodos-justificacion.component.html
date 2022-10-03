@@ -83,15 +83,13 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let periodoJustificacion">
           <ng-container>
-            <button mat-button matTooltip="{{'btn.edit' | translate}}"
-              *sgiHasAnyAuthorityForAnyUO="['CSP-CON-C', 'CSP-CON-E']"
+            <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="formPart.canEdit"
               (click)="openModalPeriodoJustificacion(periodoJustificacion)">
               <mat-icon color="primary">border_color</mat-icon>
             </button>
           </ng-container>
           <ng-container>
-            <button mat-button matTooltip="{{'btn.delete' | translate}}"
-              *sgiHasAnyAuthorityForAnyUO="['CSP-CON-C', 'CSP-CON-E']"
+            <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="formPart.canEdit"
               (click)="deletePeriodoJustificacion(periodoJustificacion)">
               <mat-icon color="warn">highlight_off</mat-icon>
             </button>
@@ -108,7 +106,7 @@
   </div>
   <div class="separation-button">
     <button color="three" aria-label="Center Align" mat-raised-button (click)="openModalPeriodoJustificacion()"
-      *sgiHasAnyAuthorityForAnyUO="['CSP-CON-C', 'CSP-CON-E']">
+      *ngIf="formPart.canEdit">
       <mat-icon color="accent">add_circle</mat-icon>
       {{ 'btn.add.entity' | translate:msgParamEntity }}
     </button>

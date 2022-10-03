@@ -18,6 +18,7 @@ import { ISolicitudRrhhMemoria } from '@core/models/csp/solicitud-rrhh-memoria';
 import { ISolicitudRrhhRequisitoCategoria } from '@core/models/csp/solicitud-rrhh-requisito-categoria';
 import { ISolicitudRrhhRequisitoNivelAcademico } from '@core/models/csp/solicitud-rrhh-requisito-nivel-academico';
 import { ISolicitudRrhhTutor } from '@core/models/csp/solicitud-rrhh-tutor';
+import { OutputReport } from '@core/models/rep/output-report.enum';
 import { ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiGroupReport } from '@core/models/rep/sgi-group.report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
@@ -30,9 +31,11 @@ import { NGXLogger } from 'ngx-logger';
 import { concat, Observable, of, zip } from 'rxjs';
 import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
 import { SolicitudEntidadConvocanteListadoExportService } from './solicitud-entidad-convocante-listado-export.service';
+import { SolicitudFooterListadoExportService } from './solicitud-footer-listado-export.service';
 import { SolicitudDatosGenerales } from './solicitud-formulario/solicitud-datos-generales/solicitud-datos-generales.fragment';
 import { SolicitudProyectoClasificacionListado } from './solicitud-formulario/solicitud-proyecto-clasificaciones/solicitud-proyecto-clasificaciones.fragment';
 import { SolicitudGeneralListadoExportService } from './solicitud-general-listado-export.service';
+import { SolicitudHeaderListadoExportService } from './solicitud-header-listado-export.service';
 import { ISolicitudListadoData } from './solicitud-listado/solicitud-listado.component';
 import { SolicitudProyectoAreaConocimientoListadoExportService } from './solicitud-proyecto-area-conocimiento-listado-export.service';
 import { SolicitudProyectoClasificacionListadoExportService } from './solicitud-proyecto-clasificacion-listado-export.service';
@@ -98,7 +101,9 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
     private readonly solicitudProyectoResponsableEconomicoListadoExportService: SolicitudProyectoResponsableEconomicoListadoExportService,
     private readonly solicitudProyectoSocioListadoExportService: SolicitudProyectoSocioListadoExportService,
     private readonly solicitudProyectoEntidadFinanciadoraListadoExportService: SolicitudProyectoEntidadFinanciadoraListadoExportService,
-    private readonly solicitudRrhhListadoExportService: SolicitudRrhhListadoExportService
+    private readonly solicitudRrhhListadoExportService: SolicitudRrhhListadoExportService,
+    private readonly solicitudHeaderListadoExportService: SolicitudHeaderListadoExportService,
+    private readonly solicitudFooterListadoExportService: SolicitudFooterListadoExportService
   ) {
     super(reportService);
   }
@@ -124,6 +129,9 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
     return of(rowReport).pipe(
       map((row) => {
         row.elements.push(...this.solicitudGeneralListadoExportService.fillRows(solicitudes, index, reportConfig));
+        if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
+          row.elements.push(...this.solicitudHeaderListadoExportService.fillRows(solicitudes, index, reportConfig));
+        }
         if (reportConfig.reportOptions?.showSolicitudEntidadesConvocantes) {
           row.elements.push(...this.solicitudEntidadConvocanteListadoExportService.fillRows(solicitudes, index, reportConfig));
         }
@@ -151,6 +159,9 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
         if (reportConfig.reportOptions?.showSolicitudRrhh) {
           row.elements.push(...this.solicitudRrhhListadoExportService.fillRows(solicitudes, index, reportConfig));
         }
+        if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
+          row.elements.push(...this.solicitudFooterListadoExportService.fillRows(solicitudes, index, reportConfig));
+        }
         return row;
       })
     );
@@ -175,7 +186,7 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
         const requestsSolicitud: Observable<ISolicitudReportData>[] = [];
 
         solicitudesReportData.forEach(solicitud => {
-          requestsSolicitud.push(this.getDataReportInner(solicitud, reportConfig.reportOptions));
+          requestsSolicitud.push(this.getDataReportInner(solicitud, reportConfig.reportOptions, reportConfig.outputType));
         });
         return zip(...requestsSolicitud);
       }),
@@ -183,8 +194,9 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
     );
   }
 
-  private getDataReportInner(solicitudData: ISolicitudReportData, reportOptions: ISolicitudReportOptions): Observable<ISolicitudReportData> {
+  private getDataReportInner(solicitudData: ISolicitudReportData, reportOptions: ISolicitudReportOptions, output: OutputReport): Observable<ISolicitudReportData> {
     return concat(
+      this.getDataReportHeader(solicitudData, output),
       this.getDataReportListadoGeneral(solicitudData),
       this.getDataReportEntidadesConvocantes(solicitudData, reportOptions),
       this.getDataReportSolicitudProyectoFichaGeneral(solicitudData, reportOptions),
@@ -195,7 +207,8 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
       this.getDataReportSolicitudProyectoSocio(solicitudData, reportOptions),
       this.getDataReportSolicitudProyectoEntidadFinanciadora(solicitudData, reportOptions),
       this.getDataReportSolicitudProyectoEntidadFinanciadoraConv(solicitudData, reportOptions),
-      this.getDataReportSolicitudRrhh(solicitudData, reportOptions)
+      this.getDataReportSolicitudRrhh(solicitudData, reportOptions),
+      this.getDataReportFooter(solicitudData, output),
     ).pipe(
       takeLast(1),
       catchError((err) => {
@@ -319,6 +332,28 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
     }
   }
 
+  private getDataReportHeader(convocatoriaData: ISolicitudReportData,
+    output: OutputReport
+  ): Observable<ISolicitudReportData> {
+    if (output === OutputReport.PDF || output === OutputReport.RTF) {
+      return this.solicitudHeaderListadoExportService.getData(convocatoriaData)
+        .pipe(tap({ error: (err) => this.logger.error(err) }));
+    } else {
+      return of(convocatoriaData);
+    }
+  }
+
+  private getDataReportFooter(convocatoriaData: ISolicitudReportData,
+    output: OutputReport
+  ): Observable<ISolicitudReportData> {
+    if (output === OutputReport.PDF || output === OutputReport.RTF) {
+      return this.solicitudFooterListadoExportService.getData(convocatoriaData)
+        .pipe(tap({ error: (err) => this.logger.error(err) }));
+    } else {
+      return of(convocatoriaData);
+    }
+  }
+
   private getDataReportSolicitudRrhh(
     solicitudData: ISolicitudReportData,
     reportOptions: ISolicitudReportOptions
@@ -337,6 +372,9 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
 
     columns.push(... this.solicitudGeneralListadoExportService.fillColumns(resultados, reportConfig));
 
+    if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
+      columns.push(... this.solicitudHeaderListadoExportService.fillColumns(resultados, reportConfig));
+    }
     if (reportConfig.reportOptions?.showSolicitudEntidadesConvocantes) {
       columns.push(... this.solicitudEntidadConvocanteListadoExportService.fillColumns(resultados, reportConfig));
     }
@@ -364,13 +402,16 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
     if (reportConfig.reportOptions?.showSolicitudRrhh) {
       columns.push(... this.solicitudRrhhListadoExportService.fillColumns(resultados, reportConfig));
     }
+    if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
+      columns.push(... this.solicitudFooterListadoExportService.fillColumns(resultados, reportConfig));
+    }
     return of(columns);
   }
 
   protected getGroupBy(): ISgiGroupReport {
     const groupBy: ISgiGroupReport = {
-      name: 'titulo',
-      visible: true
+      name: 'header',
+      visible: true,
     };
     return groupBy;
   }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaEntidadGestoraNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
@@ -13,6 +14,7 @@ import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadGestoraRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaEntidadGestoraServiceImpl;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -35,14 +37,16 @@ class ConvocatoriaEntidadGestoraServiceTest extends BaseServiceTest {
   @Mock
   private ConvocatoriaRepository convocatoriaRepository;
   @Mock
-  ConfiguracionSolicitudRepository configuracionSolicitudRepository;
+  private ConfiguracionSolicitudRepository configuracionSolicitudRepository;
 
+  private ConvocatoriaAuthorityHelper authorityHelper;
   private ConvocatoriaEntidadGestoraService service;
 
   @BeforeEach
   void setUp() throws Exception {
+    this.authorityHelper = new ConvocatoriaAuthorityHelper(convocatoriaRepository, configuracionSolicitudRepository);
     service = new ConvocatoriaEntidadGestoraServiceImpl(convocatoriaEntidadGestoraRepository, convocatoriaRepository,
-        configuracionSolicitudRepository);
+        authorityHelper);
   }
 
   @Test
@@ -247,7 +251,11 @@ class ConvocatoriaEntidadGestoraServiceTest extends BaseServiceTest {
   }
 
   private Convocatoria generarMockConvocatoria(Long convocatoriaId) {
-    return Convocatoria.builder().id(convocatoriaId).build();
+    return Convocatoria.builder()
+        .id(convocatoriaId)
+        .formularioSolicitud(FormularioSolicitud.PROYECTO)
+        .activo(true)
+        .build();
   }
 
   /**

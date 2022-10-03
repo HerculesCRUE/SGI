@@ -53,7 +53,7 @@ export class ActaComentariosFragment extends Fragment {
                 return this.service.getComentariosActa(evaluacion.id).pipe(
                   map((comentarios) => {
                     if (comentarios.items.length > 0) {
-                      const current = this.comentarios$.value;
+                      const current = [];
                       this.comentarios$.value.map(comentario => {
                         if (!evaluacionesComentario.some(ev => ev.id === comentario.value.evaluacion.id)) {
                           evaluacionesComentario.push(comentario.value.evaluacion);

@@ -26,8 +26,7 @@ public class EmpresaDocumentoConverter {
   }
 
   public EmpresaDocumentoOutput convert(EmpresaDocumento source) {
-    EmpresaDocumentoOutput target = modelMapper.map(source, EmpresaDocumentoOutput.class);
-    return target;
+    return modelMapper.map(source, EmpresaDocumentoOutput.class);
   }
 
   public Page<EmpresaDocumentoOutput> convert(Page<EmpresaDocumento> page) {

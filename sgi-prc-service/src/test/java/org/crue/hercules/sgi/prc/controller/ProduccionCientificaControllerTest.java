@@ -4,8 +4,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.crue.hercules.sgi.prc.dto.AcreditacionOutput;
@@ -65,6 +63,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 /**
  * ProduccionCientificaControllerTest
  */
@@ -96,13 +96,14 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
   private static final String PATH_DIRECCIONES_TESIS = ProduccionCientificaController.PATH_DIRECCIONES_TESIS;
   private static final String PATH_PARAMETER_VALIDAR = "/validar";
   private static final String PATH_PARAMETER_RECHAZAR = "/rechazar";
-  private static final String PATH_PARAMETER_MODIFICABLE = "/modificable";
+  private static final String PATH_PARAMETER_MODIFICABLE_BY_INV = ProduccionCientificaController.PATH_MODIFICABLE_BY_INV;
   private static final String PATH_INDICES_IMPACTO = ProduccionCientificaController.PATH_INDICES_IMPACTO;
   private static final String PATH_PROYECTOS = ProduccionCientificaController.PATH_PROYECTOS;
   private static final String PATH_ACREDITACIONES = ProduccionCientificaController.PATH_ACREDITACIONES;
   private static final String PATH_AUTORES = ProduccionCientificaController.PATH_AUTORES;
   public static final String PATH_CAMPOS = ProduccionCientificaController.PATH_CAMPOS;
   public static final String PATH_VALORES = ProduccionCientificaController.PATH_VALORES;
+  private static final String PATH_ACCESIBLE_BY_INV = ProduccionCientificaController.PATH_ACCESIBLE_BY_INV;
   private static Long estadoProduccionCientificaId = 0L;
 
   @Test
@@ -118,7 +119,8 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     Integer pageSize = 10;
 
     BDDMockito.given(service.findAllPublicaciones(ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<Pageable>any()))
+        ArgumentMatchers.<Pageable>any(),
+        ArgumentMatchers.eq(false)))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
           int size = pageable.getPageSize();
@@ -171,7 +173,8 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     Integer pageSize = 10;
 
     BDDMockito.given(service.findAllPublicaciones(ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<Pageable>any()))
+        ArgumentMatchers.<Pageable>any(),
+        ArgumentMatchers.eq(false)))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
           Page<PublicacionResumen> pageResponse = new PageImpl<>(publicaciones, pageable,
@@ -205,7 +208,8 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     Integer pageSize = 10;
 
     BDDMockito.given(service.findAllComitesEditoriales(ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<Pageable>any()))
+        ArgumentMatchers.<Pageable>any(),
+        ArgumentMatchers.eq(false)))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
           int size = pageable.getPageSize();
@@ -258,7 +262,8 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     Integer pageSize = 10;
 
     BDDMockito.given(service.findAllComitesEditoriales(ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<Pageable>any()))
+        ArgumentMatchers.<Pageable>any(),
+        ArgumentMatchers.eq(false)))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
           Page<ComiteEditorialResumen> pageResponse = new PageImpl<>(produccionCientificas, pageable,
@@ -292,7 +297,8 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     Integer pageSize = 10;
 
     BDDMockito.given(service.findAllCongresos(ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<Pageable>any()))
+        ArgumentMatchers.<Pageable>any(),
+        ArgumentMatchers.eq(false)))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
           int size = pageable.getPageSize();
@@ -345,7 +351,8 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     Integer pageSize = 10;
 
     BDDMockito.given(service.findAllCongresos(ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<Pageable>any()))
+        ArgumentMatchers.<Pageable>any(),
+        ArgumentMatchers.eq(false)))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
           Page<CongresoResumen> pageResponse = new PageImpl<>(congresos, pageable,
@@ -379,7 +386,8 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     Integer pageSize = 10;
 
     BDDMockito.given(service.findAllObrasArtisticas(ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<Pageable>any()))
+        ArgumentMatchers.<Pageable>any(),
+        ArgumentMatchers.eq(false)))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
           int size = pageable.getPageSize();
@@ -432,7 +440,8 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     Integer pageSize = 10;
 
     BDDMockito.given(service.findAllObrasArtisticas(ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<Pageable>any()))
+        ArgumentMatchers.<Pageable>any(),
+        ArgumentMatchers.eq(false)))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
           Page<ObraArtisticaResumen> pageResponse = new PageImpl<>(obrasArtisticas, pageable,
@@ -466,7 +475,8 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     Integer pageSize = 10;
 
     BDDMockito.given(service.findAllActividades(ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<Pageable>any()))
+        ArgumentMatchers.<Pageable>any(),
+        ArgumentMatchers.eq(false)))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
           int size = pageable.getPageSize();
@@ -519,7 +529,8 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     Integer pageSize = 10;
 
     BDDMockito.given(service.findAllActividades(ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<Pageable>any()))
+        ArgumentMatchers.<Pageable>any(),
+        ArgumentMatchers.eq(false)))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
           Page<ActividadResumen> pageResponse = new PageImpl<>(actividades, pageable,
@@ -553,7 +564,8 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     Integer pageSize = 10;
 
     BDDMockito.given(service.findAllDireccionesTesis(ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<Pageable>any()))
+        ArgumentMatchers.<Pageable>any(),
+        ArgumentMatchers.eq(false)))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
           int size = pageable.getPageSize();
@@ -606,7 +618,8 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     Integer pageSize = 10;
 
     BDDMockito.given(service.findAllDireccionesTesis(ArgumentMatchers.<String>any(),
-        ArgumentMatchers.<Pageable>any()))
+        ArgumentMatchers.<Pageable>any(),
+        ArgumentMatchers.eq(false)))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
           Page<DireccionTesisResumen> pageResponse = new PageImpl<>(direccionesTesis, pageable,
@@ -674,8 +687,10 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     ProduccionCientifica produccionCientifica = generarMockProduccionCientifica(1L,
         "ProduccionCientifica" + String.format("%03d", 1));
 
-    BDDMockito.given(service.cambiarEstado(ArgumentMatchers.<Long>any(), ArgumentMatchers.<TipoEstadoProduccion>any(),
-        ArgumentMatchers.<String>any())).willAnswer((InvocationOnMock invocation) -> {
+    BDDMockito
+        .given(service.cambiarEstadoGestor(ArgumentMatchers.<Long>any(), ArgumentMatchers.<TipoEstadoProduccion>any(),
+            ArgumentMatchers.<String>any()))
+        .willAnswer((InvocationOnMock invocation) -> {
           ProduccionCientifica produccionCientificaValidated = new ProduccionCientifica();
           BeanUtils.copyProperties(produccionCientifica, produccionCientificaValidated);
           produccionCientificaValidated.setEstado(generarMockEstadoProduccionCientifica(
@@ -700,7 +715,7 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     // given: non existing id
     Long id = 1L;
 
-    BDDMockito.willThrow(new ProduccionCientificaNotFoundException(id.toString())).given(service).cambiarEstado(
+    BDDMockito.willThrow(new ProduccionCientificaNotFoundException(id.toString())).given(service).cambiarEstadoGestor(
         ArgumentMatchers.<Long>any(), ArgumentMatchers.<TipoEstadoProduccion>any(),
         ArgumentMatchers.<String>any());
 
@@ -723,8 +738,10 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     EstadoProduccionCientificaInput estado = EstadoProduccionCientificaInput.builder().comentario("Motivo rechazo")
         .build();
 
-    BDDMockito.given(service.cambiarEstado(ArgumentMatchers.<Long>any(), ArgumentMatchers.<TipoEstadoProduccion>any(),
-        ArgumentMatchers.<String>any())).willAnswer((InvocationOnMock invocation) -> {
+    BDDMockito
+        .given(service.cambiarEstadoGestor(ArgumentMatchers.<Long>any(), ArgumentMatchers.<TipoEstadoProduccion>any(),
+            ArgumentMatchers.<String>any()))
+        .willAnswer((InvocationOnMock invocation) -> {
           ProduccionCientifica produccionCientificaValidated = new ProduccionCientifica();
           BeanUtils.copyProperties(produccionCientifica, produccionCientificaValidated);
           produccionCientificaValidated.setEstado(generarMockEstadoProduccionCientifica(
@@ -752,7 +769,7 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     EstadoProduccionCientificaInput estado = EstadoProduccionCientificaInput.builder().comentario("Motivo rechazo")
         .build();
 
-    BDDMockito.willThrow(new ProduccionCientificaNotFoundException(id.toString())).given(service).cambiarEstado(
+    BDDMockito.willThrow(new ProduccionCientificaNotFoundException(id.toString())).given(service).cambiarEstadoGestor(
         ArgumentMatchers.<Long>any(), ArgumentMatchers.<TipoEstadoProduccion>any(),
         ArgumentMatchers.<String>any());
 
@@ -776,7 +793,7 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
 
     // when: check is editable
     mockMvc
-        .perform(MockMvcRequestBuilders.head(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, id)
+        .perform(MockMvcRequestBuilders.head(CONTROLLER_BASE_PATH + PATH_ACCESIBLE_BY_INV, id)
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
         .andDo(SgiMockMvcResultHandlers.printOnError())
@@ -789,11 +806,11 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
   void editableByInvestigador_ResturnsOK() throws Exception {
     // given: editable id
     Long id = 1L;
-    BDDMockito.given(service.editableByInvestigador(id)).willReturn(Boolean.TRUE);
+    BDDMockito.given(service.modificableByInvestigador(id)).willReturn(Boolean.TRUE);
 
     // when: check is editable
     mockMvc
-        .perform(MockMvcRequestBuilders.head(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_PARAMETER_MODIFICABLE, id)
+        .perform(MockMvcRequestBuilders.head(CONTROLLER_BASE_PATH + PATH_PARAMETER_MODIFICABLE_BY_INV, id)
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
         .andDo(SgiMockMvcResultHandlers.printOnError())
@@ -810,7 +827,7 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
 
     // when: check is editable
     mockMvc
-        .perform(MockMvcRequestBuilders.head(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_PARAMETER_MODIFICABLE, id)
+        .perform(MockMvcRequestBuilders.head(CONTROLLER_BASE_PATH + PATH_PARAMETER_MODIFICABLE_BY_INV, id)
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
         .andDo(SgiMockMvcResultHandlers.printOnError())
@@ -1326,12 +1343,12 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
         .willReturn(generarMockCampoProduccionCientifica(campoId, produccionCientificaId));
 
     BDDMockito.given(valorCampoService
-        .findAllByCampoProduccionCientificaId(ArgumentMatchers.<Long>any(),
+        .findAllByCampoProduccionCientificaId(ArgumentMatchers.<Long>any(), ArgumentMatchers.<Long>any(),
             ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<ValorCampo>>() {
           @Override
           public Page<ValorCampo> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            Pageable pageable = invocation.getArgument(3, Pageable.class);
             int size = pageable.getPageSize();
             int index = pageable.getPageNumber();
             int fromIndex = size * index;
@@ -1385,12 +1402,14 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
     BDDMockito.given(campoProduccionCientificaService.findById(ArgumentMatchers.anyLong()))
         .willReturn(generarMockCampoProduccionCientifica(campoId, produccionCientificaId));
 
-    BDDMockito.given(valorCampoService.findAllByCampoProduccionCientificaId(ArgumentMatchers.<Long>any(),
-        ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
+    BDDMockito
+        .given(valorCampoService.findAllByCampoProduccionCientificaId(ArgumentMatchers.<Long>any(),
+            ArgumentMatchers.<Long>any(),
+            ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<ValorCampo>>() {
           @Override
           public Page<ValorCampo> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
+            Pageable pageable = invocation.getArgument(3, Pageable.class);
             Page<ValorCampo> page = new PageImpl<>(indicesImpacto, pageable, 0);
             return page;
           }
@@ -1404,31 +1423,6 @@ class ProduccionCientificaControllerTest extends BaseControllerTest {
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Devuelve un 204
         .andExpect(MockMvcResultMatchers.status().isNoContent());
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "PRC-VAL-V" })
-  void findValores_Returns400() throws Exception {
-    // given: Un expectedProduccionCientificaId diferente del
-    // actualProduccionCientificaId
-    Long expectedProduccionCientificaId = 1L;
-    Long actualProduccionCientificaId = 2L;
-    Long campoId = 2L;
-    Integer page = 0;
-    Integer pageSize = 10;
-
-    BDDMockito.given(campoProduccionCientificaService.findById(ArgumentMatchers.anyLong()))
-        .willReturn(generarMockCampoProduccionCientifica(campoId, actualProduccionCientificaId));
-
-    // when: Get page=0 with pagesize=10
-    mockMvc
-        .perform(MockMvcRequestBuilders
-            .get(CONTROLLER_BASE_PATH + PATH_VALORES, expectedProduccionCientificaId, campoId)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
-            .accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Devuelve un 200
-        .andExpect(MockMvcResultMatchers.status().isBadRequest());
   }
 
   private ProduccionCientifica generarMockProduccionCientifica(Long id, String idRef) {

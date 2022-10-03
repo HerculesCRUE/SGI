@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.converter;
 
+import org.crue.hercules.sgi.csp.dto.RequerimientoJustificacionInput;
 import org.crue.hercules.sgi.csp.dto.RequerimientoJustificacionOutput;
 import org.crue.hercules.sgi.csp.model.RequerimientoJustificacion;
 import org.modelmapper.ModelMapper;
@@ -19,5 +20,15 @@ public class RequerimientoJustificacionConverter {
 
   public Page<RequerimientoJustificacionOutput> convert(Page<RequerimientoJustificacion> page) {
     return page.map(this::convert);
+  }
+
+  public RequerimientoJustificacion convert(RequerimientoJustificacionInput entity) {
+    return modelMapper.map(entity, RequerimientoJustificacion.class);
+  }
+
+  public RequerimientoJustificacion convert(RequerimientoJustificacionInput entity, Long id) {
+    RequerimientoJustificacion requerimientoJustificacion = modelMapper.map(entity, RequerimientoJustificacion.class);
+    requerimientoJustificacion.setId(id);
+    return requerimientoJustificacion;
   }
 }

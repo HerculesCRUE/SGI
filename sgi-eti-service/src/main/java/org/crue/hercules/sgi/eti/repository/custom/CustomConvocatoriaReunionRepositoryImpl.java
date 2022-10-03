@@ -77,8 +77,8 @@ public class CustomConvocatoriaReunionRepositoryImpl implements CustomConvocator
     if (idConvocatoria != null) {
       cq.where(cb.equal(root.get(ConvocatoriaReunion_.id), idConvocatoria));
       // Execute query
-      cq.multiselect(root, getNumEvaluacionesActivasNoRevMin(root, cb, cq, idConvocatoria).alias("numEvaluaciones"),
-          getActaConvocatoria(root, cb, cq, idConvocatoria).alias("idActa"));
+      cq.multiselect(root, getNumEvaluacionesActivasNoRevMin(cb, cq, idConvocatoria).alias("numEvaluaciones"),
+          getActaConvocatoria(cb, cq, idConvocatoria).alias("idActa"));
     }
 
     TypedQuery<ConvocatoriaReunionDatosGenerales> typedQuery = entityManager.createQuery(cq);
@@ -111,10 +111,10 @@ public class CustomConvocatoriaReunionRepositoryImpl implements CustomConvocator
     // Definir FROM clause
     Root<ConvocatoriaReunion> root = cq.from(ConvocatoriaReunion.class);
 
-    List<Predicate> listPredicates = new ArrayList<Predicate>();
+    List<Predicate> listPredicates = new ArrayList<>();
 
     listPredicates.add(cb.equal(root.get(ConvocatoriaReunion_.activo), Boolean.TRUE));
-    listPredicates.add(root.get(ConvocatoriaReunion_.id).in(getConvocatoriasActa(cb, cq, root)).not());
+    listPredicates.add(root.get(ConvocatoriaReunion_.id).in(getConvocatoriasActa(cb, cq)).not());
 
     // Filtros
     cq.where(listPredicates.toArray(new Predicate[] {}));
@@ -146,10 +146,10 @@ public class CustomConvocatoriaReunionRepositoryImpl implements CustomConvocator
     // Definir FROM clause
     Root<ConvocatoriaReunion> root = cq.from(ConvocatoriaReunion.class);
 
-    List<Predicate> listPredicates = new ArrayList<Predicate>();
+    List<Predicate> listPredicates = new ArrayList<>();
 
     listPredicates.add(cb.equal(root.get(ConvocatoriaReunion_.activo), Boolean.TRUE));
-    listPredicates.add(root.get(ConvocatoriaReunion_.id).in(getConvocatoriasActaFinalizada(cb, cq, root)).not());
+    listPredicates.add(root.get(ConvocatoriaReunion_.id).in(getConvocatoriasActaFinalizada(cb, cq)).not());
     listPredicates.add(cb.equal(root.get(ConvocatoriaReunion_.comite).get(Comite_.id), idComite));
     listPredicates.add(root.get(ConvocatoriaReunion_.tipoConvocatoriaReunion).get(TipoConvocatoriaReunion_.id).in(Arrays
         .asList(Constantes.TIPO_CONVOCATORIA_REUNION_ORDINARIA, Constantes.TIPO_CONVOCATORIA_REUNION_EXTRAORDINARIA)));
@@ -180,7 +180,7 @@ public class CustomConvocatoriaReunionRepositoryImpl implements CustomConvocator
    * @param idConvocatoria
    * @return Subquery<Long>
    */
-  private Subquery<Long> getNumEvaluacionesActivasNoRevMin(Root<ConvocatoriaReunion> root, CriteriaBuilder cb,
+  private Subquery<Long> getNumEvaluacionesActivasNoRevMin(CriteriaBuilder cb,
       CriteriaQuery<ConvocatoriaReunionDatosGenerales> cq, Long idConvocatoria) {
 
     log.debug(
@@ -208,7 +208,7 @@ public class CustomConvocatoriaReunionRepositoryImpl implements CustomConvocator
    * @param idConvocatoria
    * @return Subquery<Long>
    */
-  private Subquery<Long> getActaConvocatoria(Root<ConvocatoriaReunion> root, CriteriaBuilder cb,
+  private Subquery<Long> getActaConvocatoria(CriteriaBuilder cb,
       CriteriaQuery<ConvocatoriaReunionDatosGenerales> cq, Long idConvocatoria) {
 
     log.debug(
@@ -237,8 +237,7 @@ public class CustomConvocatoriaReunionRepositoryImpl implements CustomConvocator
    *         finalizada
    * 
    */
-  private Subquery<Long> getConvocatoriasActaFinalizada(CriteriaBuilder cb, CriteriaQuery<ConvocatoriaReunion> cq,
-      Root<ConvocatoriaReunion> root) {
+  private Subquery<Long> getConvocatoriasActaFinalizada(CriteriaBuilder cb, CriteriaQuery<ConvocatoriaReunion> cq) {
 
     log.debug("getConvocatoriasActaFinalizada : {} - start");
 
@@ -265,8 +264,7 @@ public class CustomConvocatoriaReunionRepositoryImpl implements CustomConvocator
    * @return Subquery<Long> Listado de Convocatorias de Reunión que no tienen acta
    *         asociada
    */
-  private Subquery<Long> getConvocatoriasActa(CriteriaBuilder cb, CriteriaQuery<ConvocatoriaReunion> cq,
-      Root<ConvocatoriaReunion> root) {
+  private Subquery<Long> getConvocatoriasActa(CriteriaBuilder cb, CriteriaQuery<ConvocatoriaReunion> cq) {
 
     log.debug("getConvocatoriasActa : {} - start");
 

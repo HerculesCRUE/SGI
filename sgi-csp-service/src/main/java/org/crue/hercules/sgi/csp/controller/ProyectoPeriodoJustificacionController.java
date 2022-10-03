@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -43,7 +44,7 @@ public class ProyectoPeriodoJustificacionController {
 
   public static final String REQUEST_MAPPING = "/proyectoperiodosjustificacion";
   public static final String PATH_PARAMETER_ID = "/{id}";
-  public static final String PATH_IDENTIFICADOR_JUSTIFICACION = PATH_PARAMETER_ID + "/identificadorjustificacion";
+  public static final String PATH_IDENTIFICADOR_JUSTIFICACION = "/identificadorjustificacion";
 
   ModelMapper modelMapper;
 
@@ -96,7 +97,7 @@ public class ProyectoPeriodoJustificacionController {
    * @return {@link ProyectoPeriodoJustificacion} correspondiente al id.
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E')")
   public ProyectoPeriodoJustificacionOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ProyectoPeriodoJustificacionOutput returnValue = convert(service.findById(id));
@@ -141,7 +142,7 @@ public class ProyectoPeriodoJustificacionController {
    *                                                                    {@link ProyectoPeriodoJustificacion}.
    * @return {@link ProyectoPeriodoJustificacion} actualizado.
    */
-  @PatchMapping(PATH_IDENTIFICADOR_JUSTIFICACION)
+  @PatchMapping(PATH_PARAMETER_ID + PATH_IDENTIFICADOR_JUSTIFICACION)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-SJUS-E')")
   public ProyectoPeriodoJustificacionOutput updateIdentificadorJustificacion(
       @RequestBody @Valid ProyectoPeriodoJustificacionIdentificadorJustificacionInput proyectoPeriodoJustificacionIdentificadorJustificacionInput,
@@ -156,6 +157,31 @@ public class ProyectoPeriodoJustificacionController {
         "updateIdentificadorJustificacion(ProyectoPeriodoJustificacionIdentificadorJustificacionInput proyectoPeriodoJustificacionIdentificadorJustificacionInput, Long id) - end");
 
     return convert(returnValue);
+  }
+
+  /**
+   * Devuelve el {@link ProyectoPeriodoJustificacion} con el Identificador de
+   * justificacion indicado.
+   * 
+   * @param identificadorJustificacion Identificador de justificacion de
+   *                                   {@link ProyectoPeriodoJustificacion}.
+   * @return {@link ProyectoPeriodoJustificacion}.
+   */
+  @GetMapping(PATH_IDENTIFICADOR_JUSTIFICACION)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SJUS-V', 'CSP-SJUS-E')")
+  public ResponseEntity<ProyectoPeriodoJustificacionOutput> findByIdentificadorJustificacion(
+      @RequestParam(required = true) String identificadorJustificacion) {
+    log.debug("findByIdentificadorJustificacion(String identificadorJustificacion) - start");
+
+    Optional<ProyectoPeriodoJustificacion> proyectoPeriodoJustificacion = service
+        .findByIdentificadorJustificacion(identificadorJustificacion);
+    if (proyectoPeriodoJustificacion.isPresent()) {
+      log.debug("findByIdentificadorJustificacion(String identificadorJustificacion) - end");
+      return new ResponseEntity<>(convert(proyectoPeriodoJustificacion.get()), HttpStatus.OK);
+    }
+
+    log.debug("findByIdentificadorJustificacion(String identificadorJustificacion) - end");
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   private ProyectoPeriodoJustificacionOutput convert(ProyectoPeriodoJustificacion proyectoPeriodoJustificacion) {

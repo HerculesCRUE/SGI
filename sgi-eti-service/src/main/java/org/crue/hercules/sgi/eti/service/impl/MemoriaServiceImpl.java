@@ -235,21 +235,20 @@ public class MemoriaServiceImpl implements MemoriaService {
         .findByMemoriaIdAndMemoriaActivoTrue(memoria.getId(), null);
 
     List<DocumentacionMemoria> documentacionesMemoriaList = documentacionesMemoriaPage.getContent().stream()
-        .map(documentacionMemoria -> {
-          return new DocumentacionMemoria(null, memoriaCreada, documentacionMemoria.getTipoDocumento(),
-              documentacionMemoria.getDocumentoRef(), documentacionMemoria.getNombre());
-        }).collect(Collectors.toList());
+        .map(documentacionMemoria -> new DocumentacionMemoria(null, memoriaCreada,
+            documentacionMemoria.getTipoDocumento(),
+            documentacionMemoria.getDocumentoRef(), documentacionMemoria.getNombre()))
+        .collect(Collectors.toList());
 
     documentacionMemoriaRepository.saveAll(documentacionesMemoriaList);
 
     // Guardamos los ids de los apartados del formulario de retrospectiva
     List<Long> idsApartadosRetrospectiva = new ArrayList<>();
-    Page<Bloque> bloques = bloqueRepository.findByFormularioId(Constantes.FORMULARIO_RETROSPECTIVA, null);
+    Page<Bloque> bloques = bloqueRepository.findByFormularioId(Constantes.FORMULARIO_RETROSPECTIVA,
+        null);
     bloques.getContent().stream().forEach(bloque -> {
       Page<Apartado> apartados = apartadoRepository.findByBloqueIdAndPadreIsNull(bloque.getId(), null);
-      apartados.getContent().stream().forEach(apartado -> {
-        idsApartadosRetrospectiva.add(apartado.getId());
-      });
+      apartados.getContent().stream().forEach(apartado -> idsApartadosRetrospectiva.add(apartado.getId()));
     });
 
     Page<Respuesta> respuestasPage = respuestaRepository.findByMemoriaIdAndMemoriaActivoTrue(memoria.getId(), null);
@@ -258,20 +257,21 @@ public class MemoriaServiceImpl implements MemoriaService {
      * no guardar las respuestas en caso de que exista
      */
     List<Respuesta> respuestaList = respuestasPage.getContent().stream()
-        .filter(r -> idsApartadosRetrospectiva.indexOf(r.getApartado().getId()) == -1).map(respuesta -> {
-          return new Respuesta(null, memoriaCreada, respuesta.getApartado(), respuesta.getTipoDocumento(),
-              respuesta.getValor());
-        }).collect(Collectors.toList());
+        .filter(r -> idsApartadosRetrospectiva.indexOf(r.getApartado().getId()) == -1)
+        .map(respuesta -> new Respuesta(null, memoriaCreada, respuesta.getApartado(), respuesta.getTipoDocumento(),
+            respuesta.getValor()))
+        .collect(Collectors.toList());
 
     respuestaRepository.saveAll(respuestaList);
 
     /** Tarea */
-    List<Tarea> tareasMemoriaOriginal = tareaRepository.findAllByMemoriaId(memoria.getId());
+    List<Tarea> tareasMemoriaOriginal = tareaRepository
+        .findAllByMemoriaId(memoria.getId());
     if (!tareasMemoriaOriginal.isEmpty()) {
-      List<Tarea> tareasMemoriaCopy = tareasMemoriaOriginal.stream().map(tarea -> {
-        return new Tarea(null, tarea.getEquipoTrabajo(), nuevaMemoria, tarea.getTarea(), tarea.getFormacion(),
-            tarea.getFormacionEspecifica(), tarea.getOrganismo(), tarea.getAnio(), tarea.getTipoTarea());
-      }).collect(Collectors.toList());
+      List<Tarea> tareasMemoriaCopy = tareasMemoriaOriginal.stream()
+          .map(tarea -> new Tarea(null, tarea.getEquipoTrabajo(), nuevaMemoria, tarea.getTarea(), tarea.getFormacion(),
+              tarea.getFormacionEspecifica(), tarea.getOrganismo(), tarea.getAnio(), tarea.getTipoTarea()))
+          .collect(Collectors.toList());
       tareaRepository.saveAll(tareasMemoriaCopy);
     }
 
@@ -565,64 +565,62 @@ public class MemoriaServiceImpl implements MemoriaService {
 
     Optional<Memoria> returnMemoria = memoriaRepository.findById(id);
     Memoria memoria = null;
-    if (returnMemoria.isPresent()) {
-      memoria = returnMemoria.get();
-      if (Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA)
-          || Objects.equals(memoria.getEstadoActual().getId(),
-              Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA)
-          || Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO)
-          || Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION)) {
+    if (!returnMemoria.isPresent()) {
+      throw new MemoriaNotFoundException(id);
+    }
+    memoria = returnMemoria.get();
+    if (Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA)
+        || Objects.equals(memoria.getEstadoActual().getId(),
+            Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA)
+        || Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO)
+        || Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION)) {
 
-        try {
-          // Si la memoria se cambió al estado anterior estando en evaluación, se
-          // eliminará la evaluación.
-          if (Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION)) {
-            Evaluacion evaluacion = evaluacionRepository.findByMemoriaIdAndVersionAndActivoTrue(memoria.getId(),
-                memoria.getVersion());
+      try {
+        // Si la memoria se cambió al estado anterior estando en evaluación, se
+        // eliminará la evaluación.
+        if (Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION)) {
+          Evaluacion evaluacion = evaluacionRepository.findByMemoriaIdAndVersionAndActivoTrue(memoria.getId(),
+              memoria.getVersion());
 
-            Assert.isTrue(evaluacion.getConvocatoriaReunion().getFechaEvaluacion().isAfter(Instant.now()),
-                "La fecha de la convocatoria es anterior a la actual");
+          Assert.isTrue(evaluacion.getConvocatoriaReunion().getFechaEvaluacion().isAfter(Instant.now()),
+              "La fecha de la convocatoria es anterior a la actual");
 
-            Assert.isNull(evaluacion.getDictamen(), "No se pueden eliminar memorias que ya contengan un dictamen");
+          Assert.isNull(evaluacion.getDictamen(), "No se pueden eliminar memorias que ya contengan un dictamen");
 
-            Assert.isTrue(comentarioRepository.countByEvaluacionId(evaluacion.getId()) == 0L,
-                "No se puede eliminar una memoria que tenga comentarios asociados");
+          Assert.isTrue(comentarioRepository.countByEvaluacionId(evaluacion.getId()) == 0L,
+              "No se puede eliminar una memoria que tenga comentarios asociados");
 
-            memoria.setVersion(memoria.getVersion() - 1);
-            evaluacion.setActivo(Boolean.FALSE);
-            evaluacionRepository.save(evaluacion);
-          }
-
-          if (Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA)
-              || Objects.equals(memoria.getEstadoActual().getId(),
-                  Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA)) {
-            // se eliminan los informes en caso de que las memorias tengan alguno asociado
-            informeService.deleteInformeMemoria(memoria.getId());
-          }
-
-          // Se retrocede el estado de la memoria, no se hace nada con el estado de la
-          // retrospectiva
-          memoria = this.getEstadoAnteriorMemoria(memoria, false);
-          // Se actualiza la memoria con el estado anterior
-          return memoriaRepository.save(memoria);
-        } catch (Exception e) {
-          log.error("No se ha podido recuperar el estado anterior de la memoria", e);
-          return null;
+          memoria.setVersion(memoria.getVersion() - 1);
+          evaluacion.setActivo(Boolean.FALSE);
+          evaluacionRepository.save(evaluacion);
         }
 
-      } else {
-        Assert.isTrue(
-            Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA)
-                || Objects.equals(memoria.getEstadoActual().getId(),
-                    Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA)
-                || Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO)
-                || Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION),
-            "El estado actual de la memoria no es el correcto para recuperar el estado anterior");
+        if (Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA)
+            || Objects.equals(memoria.getEstadoActual().getId(),
+                Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA)) {
+          // se eliminan los informes en caso de que las memorias tengan alguno asociado
+          informeService.deleteInformeMemoria(memoria.getId());
+        }
+
+        // Se retrocede el estado de la memoria, no se hace nada con el estado de la
+        // retrospectiva
+        memoria = this.getEstadoAnteriorMemoria(memoria, false);
+        // Se actualiza la memoria con el estado anterior
+        return memoriaRepository.save(memoria);
+      } catch (Exception e) {
+        log.error("No se ha podido recuperar el estado anterior de la memoria", e);
         return null;
       }
 
     } else {
-      throw new MemoriaNotFoundException(id);
+      Assert.isTrue(
+          Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA)
+              || Objects.equals(memoria.getEstadoActual().getId(),
+                  Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA)
+              || Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO)
+              || Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION),
+          "El estado actual de la memoria no es el correcto para recuperar el estado anterior");
+      return null;
     }
   }
 
@@ -678,6 +676,7 @@ public class MemoriaServiceImpl implements MemoriaService {
           .findById(memoria.getRetrospectiva().getEstadoRetrospectiva().getId() - 1);
 
       Assert.isTrue(estadoRetrospectiva.isPresent(), "No se puede recuperar el estado anterior de la retrospectiva");
+
       memoria.getRetrospectiva().setEstadoRetrospectiva(estadoRetrospectiva.get());
     }
     return memoria;
@@ -695,71 +694,68 @@ public class MemoriaServiceImpl implements MemoriaService {
     log.debug("enviarSecretaria(Long id) - start");
     Assert.notNull(idMemoria, "Memoria id no puede ser null para actualizar la memoria");
 
-    memoriaRepository.findById(idMemoria).map(memoria -> {
-      Assert.isTrue(
-          memoria.getEstadoActual().getId() == 2L || memoria.getEstadoActual().getId() == 6L
-              || memoria.getEstadoActual().getId() == 7L || memoria.getEstadoActual().getId() == 8L
-              || memoria.getEstadoActual().getId() == 11L || memoria.getEstadoActual().getId() == 16L
-              || memoria.getEstadoActual().getId() == 21L,
-          "La memoria no está en un estado correcto para pasar al estado 'En secretaría'");
+    Memoria memoria = memoriaRepository.findById(idMemoria).orElseThrow(() -> new MemoriaNotFoundException(idMemoria));
+    Assert.isTrue(
+        memoria.getEstadoActual().getId() == 2L || memoria.getEstadoActual().getId() == 6L
+            || memoria.getEstadoActual().getId() == 7L || memoria.getEstadoActual().getId() == 8L
+            || memoria.getEstadoActual().getId() == 11L || memoria.getEstadoActual().getId() == 16L
+            || memoria.getEstadoActual().getId() == 21L,
+        "La memoria no está en un estado correcto para pasar al estado 'En secretaría'");
 
-      Assert.isTrue(memoria.getPeticionEvaluacion().getPersonaRef().equals(personaRef),
-          "El usuario no es el propietario de la petición evaluación.");
+    Assert.isTrue(memoria.getPeticionEvaluacion().getPersonaRef().equals(personaRef),
+        "El usuario no es el propietario de la petición evaluación.");
 
-      boolean crearEvaluacion = false;
+    boolean crearEvaluacion = false;
 
-      Long tipoEvaluacion = Constantes.TIPO_EVALUACION_MEMORIA;
+    Long tipoEvaluacion = Constantes.TIPO_EVALUACION_MEMORIA;
 
-      // Si el estado es 'Completada', 'Pendiente de correcciones' o 'No procede
-      // evaluar' se cambia el estado de la memoria a 'En secretaría'
-      if (memoria.getEstadoActual().getId() == 2L || memoria.getEstadoActual().getId() == 7L
-          || memoria.getEstadoActual().getId() == 8L) {
-        updateEstadoMemoria(memoria, 3L);
-      }
+    // Si el estado es 'Completada', 'Pendiente de correcciones' o 'No procede
+    // evaluar' se cambia el estado de la memoria a 'En secretaría'
+    if (memoria.getEstadoActual().getId() == 2L || memoria.getEstadoActual().getId() == 7L
+        || memoria.getEstadoActual().getId() == 8L) {
+      updateEstadoMemoria(memoria, 3L);
+    }
 
-      // Si el estado es 'Favorable pendiente de modificaciones mínimas'
-      // se cambia el estado de la memoria a 'En secretaría revisión mínima'
-      if (memoria.getEstadoActual().getId() == 6L) {
-        crearEvaluacion = true;
-        updateEstadoMemoria(memoria, 4L);
-      }
+    // Si el estado es 'Favorable pendiente de modificaciones mínimas'
+    // se cambia el estado de la memoria a 'En secretaría revisión mínima'
+    if (memoria.getEstadoActual().getId() == 6L) {
+      crearEvaluacion = true;
+      updateEstadoMemoria(memoria, 4L);
+    }
 
-      // Si el estado es 'Completada seguimiento anual'
-      // se cambia el estado de la memoria a 'En secretaría seguimiento anual'
-      if (memoria.getEstadoActual().getId() == 11L) {
-        tipoEvaluacion = Constantes.TIPO_EVALUACION_SEGUIMIENTO_ANUAL;
-        updateEstadoMemoria(memoria, 12L);
-      }
+    // Si el estado es 'Completada seguimiento anual'
+    // se cambia el estado de la memoria a 'En secretaría seguimiento anual'
+    if (memoria.getEstadoActual().getId() == 11L) {
+      tipoEvaluacion = Constantes.TIPO_EVALUACION_SEGUIMIENTO_ANUAL;
+      updateEstadoMemoria(memoria, 12L);
+    }
 
-      // Si el estado es 'Completada seguimiento final'
-      // se cambia el estado de la memoria a 'En secretaría seguimiento final'
-      if (memoria.getEstadoActual().getId() == 16L) {
-        tipoEvaluacion = Constantes.TIPO_EVALUACION_SEGUIMIENTO_FINAL;
-        updateEstadoMemoria(memoria, 17L);
-      }
+    // Si el estado es 'Completada seguimiento final'
+    // se cambia el estado de la memoria a 'En secretaría seguimiento final'
+    if (memoria.getEstadoActual().getId() == 16L) {
+      tipoEvaluacion = Constantes.TIPO_EVALUACION_SEGUIMIENTO_FINAL;
+      updateEstadoMemoria(memoria, 17L);
+    }
 
-      // Si el estado es 'En aclaración seguimiento final'
-      // se cambia el estado de la memoria a 'En secretaría seguimiento final
-      // aclaraciones'
-      if (memoria.getEstadoActual().getId() == 21L) {
-        tipoEvaluacion = Constantes.TIPO_EVALUACION_SEGUIMIENTO_FINAL;
-        crearEvaluacion = true;
-        updateEstadoMemoria(memoria, 18L);
-      }
+    // Si el estado es 'En aclaración seguimiento final'
+    // se cambia el estado de la memoria a 'En secretaría seguimiento final
+    // aclaraciones'
+    if (memoria.getEstadoActual().getId() == 21L) {
+      tipoEvaluacion = Constantes.TIPO_EVALUACION_SEGUIMIENTO_FINAL;
+      crearEvaluacion = true;
+      updateEstadoMemoria(memoria, 18L);
+    }
 
-      if (crearEvaluacion) {
-        this.crearEvaluacion(memoria, tipoEvaluacion);
-        memoria.setVersion(memoria.getVersion() + 1);
-      }
+    if (crearEvaluacion) {
+      this.crearEvaluacion(memoria, tipoEvaluacion);
+      memoria.setVersion(memoria.getVersion() + 1);
+    }
 
-      memoria.setFechaEnvioSecretaria(Instant.now());
+    memoria.setFechaEnvioSecretaria(Instant.now());
 
-      memoriaRepository.save(memoria);
+    memoriaRepository.save(memoria);
 
-      this.crearInforme(memoria, tipoEvaluacion);
-
-      return memoria;
-    }).orElseThrow(() -> new MemoriaNotFoundException(idMemoria));
+    this.crearInforme(memoria, tipoEvaluacion);
 
     log.debug("enviarSecretaria(Long id) - end");
   }
@@ -773,20 +769,20 @@ public class MemoriaServiceImpl implements MemoriaService {
    */
   private void crearEvaluacion(Memoria memoria, Long tipoEvaluacion) {
     log.debug("crearEvaluacion(memoria, tipoEvaluacion)- start");
-    evaluacionRepository.findFirstByMemoriaIdAndActivoTrueOrderByVersionDesc(memoria.getId()).map(evaluacion -> {
-      Evaluacion evaluacionNueva = new Evaluacion();
-      BeanUtils.copyProperties(evaluacion, evaluacionNueva);
-      evaluacionNueva.setId(null);
-      evaluacionNueva.setVersion(memoria.getVersion() + 1);
-      evaluacionNueva.setEsRevMinima(true);
-      evaluacionNueva.setDictamen(null);
-      evaluacionNueva.setTipoEvaluacion(new TipoEvaluacion());
-      evaluacionNueva.getTipoEvaluacion().setId(tipoEvaluacion);
-      evaluacionNueva.setActivo(true);
-      evaluacionRepository.save(evaluacionNueva);
+    Evaluacion evaluacion = evaluacionRepository.findFirstByMemoriaIdAndActivoTrueOrderByVersionDesc(memoria.getId())
+        .orElseThrow(() -> new EvaluacionNotFoundException(memoria.getId()));
 
-      return evaluacionNueva;
-    }).orElseThrow(() -> new EvaluacionNotFoundException(memoria.getId()));
+    Evaluacion evaluacionNueva = new Evaluacion();
+    BeanUtils.copyProperties(evaluacion, evaluacionNueva);
+    evaluacionNueva.setId(null);
+    evaluacionNueva.setVersion(memoria.getVersion() + 1);
+    evaluacionNueva.setEsRevMinima(true);
+    evaluacionNueva.setDictamen(null);
+    evaluacionNueva.setTipoEvaluacion(new TipoEvaluacion());
+    evaluacionNueva.getTipoEvaluacion().setId(tipoEvaluacion);
+    evaluacionNueva.setActivo(true);
+    evaluacionRepository.save(evaluacionNueva);
+
     log.debug("crearEvaluacion(memoria, tipoEvaluacion)- end");
   }
 
@@ -831,6 +827,9 @@ public class MemoriaServiceImpl implements MemoriaService {
         idFormulario = Constantes.FORMULARIO_RETROSPECTIVA;
         tituloInforme = TITULO_INFORME_RETROSPECTIVA;
         break;
+      default:
+        log.warn("Tipo de Evaluación {} no encontrado", tipoEvaluacion.intValue());
+        break;
     }
 
     // Se obtiene el informe en formato pdf creado mediante el servicio de reporting
@@ -860,30 +859,25 @@ public class MemoriaServiceImpl implements MemoriaService {
     log.debug("enviarSecretariaRetrospectiva(Long id) - start");
     Assert.notNull(idMemoria, "Memoria id no puede ser null para actualizar la memoria");
 
-    memoriaRepository.findById(idMemoria).map(memoria -> {
-      // Si el estado es 'Completada', Requiere retrospectiva y el comité es CEEA
-      Assert.isTrue(
-          (memoria.getEstadoActual().getId() >= 9L && memoria.getRequiereRetrospectiva()
-              && memoria.getComite().getComite().equals("CEEA")
-              && memoria.getRetrospectiva().getEstadoRetrospectiva().getId() == 2L),
-          "La memoria no está en un estado correcto para pasar al estado 'En secretaría'");
+    Memoria memoria = memoriaRepository.findById(idMemoria)
+        .orElseThrow(() -> new EstadoRetrospectivaNotFoundException(3L));
+    // Si el estado es 'Completada', Requiere retrospectiva y el comité es CEEA
+    Assert.isTrue(
+        (memoria.getEstadoActual().getId() >= 9L && memoria.getRequiereRetrospectiva()
+            && memoria.getComite().getComite().equals("CEEA")
+            && memoria.getRetrospectiva().getEstadoRetrospectiva().getId() == 2L),
+        "La memoria no está en un estado correcto para pasar al estado 'En secretaría'");
 
-      Assert.isTrue(memoria.getPeticionEvaluacion().getPersonaRef().equals(personaRef),
-          "El usuario no es el propietario de la petición evaluación.");
+    Assert.isTrue(memoria.getPeticionEvaluacion().getPersonaRef().equals(personaRef),
+        "El usuario no es el propietario de la petición evaluación.");
 
-      estadoRetrospectivaRepository.findById(3L).map(estadoRetrospectiva -> {
+    EstadoRetrospectiva estadoRetrospectiva = estadoRetrospectivaRepository.findById(3L)
+        .orElseThrow(() -> new MemoriaNotFoundException(idMemoria));
 
-        memoria.getRetrospectiva().setEstadoRetrospectiva(estadoRetrospectiva);
-        memoriaRepository.save(memoria);
-        return estadoRetrospectiva;
+    memoria.getRetrospectiva().setEstadoRetrospectiva(estadoRetrospectiva);
+    memoriaRepository.save(memoria);
 
-      }).orElseThrow(() -> new EstadoRetrospectivaNotFoundException(3L));
-
-      this.crearInforme(memoria, Constantes.TIPO_EVALUACION_RETROSPECTIVA);
-
-      return memoria;
-    }).orElseThrow(() -> new MemoriaNotFoundException(idMemoria));
-
+    this.crearInforme(memoria, Constantes.TIPO_EVALUACION_RETROSPECTIVA);
     // FALTA: crear un fichero en formato pdf con los datos del proyecto y con los
     // datos del formulario y subirlo al gestor documental y que el sistema guarde
     // en informes el identificador del documento.
@@ -1050,11 +1044,13 @@ public class MemoriaServiceImpl implements MemoriaService {
     Assert.notNull(memoria.getPeticionEvaluacion().getId(),
         "Petición evaluación id no puede ser null para crear una nueva memoria");
 
-    peticionEvaluacionRepository.findByIdAndActivoTrue(memoria.getPeticionEvaluacion().getId())
-        .orElseThrow(() -> new PeticionEvaluacionNotFoundException(memoria.getPeticionEvaluacion().getId()));
+    if (!peticionEvaluacionRepository.findByIdAndActivoTrue(memoria.getPeticionEvaluacion().getId()).isPresent()) {
+      throw new PeticionEvaluacionNotFoundException(memoria.getPeticionEvaluacion().getId());
+    }
 
-    comiteRepository.findByIdAndActivoTrue(memoria.getComite().getId())
-        .orElseThrow(() -> new ComiteNotFoundException(memoria.getComite().getId()));
+    if (!comiteRepository.findByIdAndActivoTrue(memoria.getComite().getId()).isPresent()) {
+      throw new ComiteNotFoundException(memoria.getComite().getId());
+    }
 
     log.debug("validacionesCreateMemoria(Memoria memoria) - end");
   }
@@ -1074,8 +1070,10 @@ public class MemoriaServiceImpl implements MemoriaService {
 
     // Referencia memoria
     int anioActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).get(ChronoField.YEAR);
-    StringBuffer sbNumReferencia = new StringBuffer();
-    sbNumReferencia.append(comite.getFormulario().getNombre()).append("/").append(anioActual).append("/");
+    StringBuilder sbNumReferencia = new StringBuilder(comite.getFormulario().getNombre())
+        .append("/")
+        .append(anioActual)
+        .append("/");
 
     String numMemoria = "001";
 
@@ -1104,10 +1102,10 @@ public class MemoriaServiceImpl implements MemoriaService {
         Memoria ultimaMemoriaComite = memoriaRepository
             .findFirstByNumReferenciaContainingAndComiteIdOrderByNumReferenciaDesc(numReferencia, comite.getId());
 
-        StringBuffer sbReferencia = new StringBuffer();
+        StringBuilder sbReferencia = new StringBuilder();
         sbReferencia.append(ultimaMemoriaComite.getNumReferencia().split("MR")[0].split("/")[2].split("R")[0])
             .append("MR");
-        if (ultimaMemoriaComite != null && ultimaMemoriaComite.getNumReferencia().contains("MR")) {
+        if (ultimaMemoriaComite.getNumReferencia().contains("MR")) {
           Long numeroUltimaMemoria = Long.valueOf(ultimaMemoriaComite.getNumReferencia().split("MR")[1]);
           numeroUltimaMemoria++;
           sbReferencia.append(numeroUltimaMemoria);
@@ -1134,13 +1132,16 @@ public class MemoriaServiceImpl implements MemoriaService {
           numeroUltimaMemoria++;
         }
 
-        StringBuffer sbReferencia = new StringBuffer();
-        sbReferencia.append(String.format("%03d", numeroUltimaMemoria)).append("R");
-        numMemoria = sbReferencia.toString();
+        numMemoria = new StringBuilder(String.format("%03d", numeroUltimaMemoria))
+            .append("R").toString();
 
         break;
       }
+      default:
+        log.warn("Tipo de Memoria {} no resuleto", idTipoMemoria.intValue());
+        break;
     }
+    ;
 
     sbNumReferencia.append(numMemoria);
 

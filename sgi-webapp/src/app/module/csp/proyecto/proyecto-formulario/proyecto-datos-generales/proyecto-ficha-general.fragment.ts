@@ -65,7 +65,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
   readonly colaborativo$: Subject<boolean> = new BehaviorSubject<boolean>(null);
   readonly coordinado$: Subject<boolean> = new BehaviorSubject<boolean>(null);
   readonly coordinadorExterno$: Subject<boolean> = new BehaviorSubject<boolean>(null);
-  readonly vinculacionesModeloEjecucion$: Subject<boolean> = new BehaviorSubject<boolean>(false);
+  readonly vinculacionesModeloEjecucion$ = new BehaviorSubject<boolean>(false);
   readonly hasPopulatedSocios$ = new BehaviorSubject<boolean>(false);
   readonly hasProyectoCoordinadoAndCoordinadorExterno$ = new BehaviorSubject<boolean>(false);
   readonly hasAnyProyectoSocioWithRolCoordinador$ = new BehaviorSubject<boolean>(false);

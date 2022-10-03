@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Import;
  * EmpresaEquipoEmprendedorServiceTest
  */
 @Import({ EmpresaEquipoEmprendedorService.class, ApplicationContextSupport.class })
-public class EmpresaEquipoEmprendedorServiceTest extends BaseServiceTest {
+class EmpresaEquipoEmprendedorServiceTest extends BaseServiceTest {
 
   @MockBean
   private EmpresaEquipoEmprendedorRepository empresaEquipoRepository;
@@ -54,7 +54,7 @@ public class EmpresaEquipoEmprendedorServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findById_WithId_ReturnsEmpresaEquipoEmprendedor() {
+  void findById_WithId_ReturnsEmpresaEquipoEmprendedor() {
     BDDMockito.given(empresaEquipoRepository.findById(1L))
         .willReturn(Optional.of(generarMockEmpresaEquipoEmprendedor(1L)));
 
@@ -65,7 +65,7 @@ public class EmpresaEquipoEmprendedorServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void find_NotFound_ThrowsEmpresaEquipoEmprendedorNotFoundException() throws Exception {
+  void find_NotFound_ThrowsEmpresaEquipoEmprendedorNotFoundException() throws Exception {
     BDDMockito.given(empresaEquipoRepository.findById(1L)).willReturn(Optional.empty());
 
     Assertions.assertThatThrownBy(() -> empresaEquipoService.findById(1L))

@@ -10,11 +10,9 @@ public interface CustomCongresoRepository {
   /**
    * Recupera todas los {@link CongresoResumen} paginadas y/o filtradas
    * 
-   * @param specIsInvestigador filtro para investigadores.
-   * @param query              la información del filtro.
-   * @param pageable           la información de la paginación.
+   * @param specs    Specification para filtrar
+   * @param pageable la información de la paginación.
    * @return Listado paginado y/o filtrado de {@link CongresoResumen}
    */
-  public Page<CongresoResumen> findAllCongresos(Specification<ProduccionCientifica> specIsInvestigador, String query,
-      Pageable pageable);
+  public Page<CongresoResumen> findAllCongresos(Specification<ProduccionCientifica> specs, Pageable pageable);
 }

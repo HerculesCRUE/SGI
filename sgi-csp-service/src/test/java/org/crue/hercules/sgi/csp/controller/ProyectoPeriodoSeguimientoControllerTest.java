@@ -7,6 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoSeguimientoPresentacionDocumentacionInput;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoSeguimientoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimientoDocumento;
@@ -53,6 +54,7 @@ class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest {
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/proyectoperiodoseguimientos";
   private static final String PATH_DOCUMENTO = "/proyectoperiodoseguimientodocumentos";
+  private static final String PATH_FECHA_PRESENTACION_DOCUMENTACION = ProyectoPeriodoSeguimientoController.PATH_FECHA_PRESENTACION_DOCUMENTACION;
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
@@ -148,6 +150,44 @@ class ProyectoPeriodoSeguimientoControllerTest extends BaseControllerTest {
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: 404 error
         .andExpect(MockMvcResultMatchers.status().isNotFound());
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "CSP-SJUS-E" })
+  void updateFechaPresentacionDocumentacion_ReturnsProyectoPeriodoSeguimiento() throws Exception {
+    // given: Existing ProyectoPeriodoSeguimiento to be updated
+    Long proyectoPeriodoSeguimientoId = 1L;
+    Instant fechaPresentacionDocumentacionToUpdate = Instant.parse("2020-10-10T23:59:59Z");
+    ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoExistente = generarMockProyectoPeriodoSeguimiento(
+        proyectoPeriodoSeguimientoId);
+    ProyectoPeriodoSeguimientoPresentacionDocumentacionInput input = ProyectoPeriodoSeguimientoPresentacionDocumentacionInput
+        .builder()
+        .fechaPresentacionDocumentacion(fechaPresentacionDocumentacionToUpdate)
+        .build();
+
+    BDDMockito
+        .given(
+            service.updateFechaPresentacionDocumentacion(ArgumentMatchers.anyLong(), ArgumentMatchers.<Instant>any()))
+        .willAnswer((InvocationOnMock invocation) -> {
+          Instant fechaPresentacionDocumentacion = invocation.getArgument(1, Instant.class);
+          proyectoPeriodoSeguimientoExistente.setFechaPresentacionDocumentacion(fechaPresentacionDocumentacion);
+          return proyectoPeriodoSeguimientoExistente;
+        });
+
+    // when: updateFechaPresentacionDocumentacion ProyectoPeriodoSeguimiento
+    mockMvc
+        .perform(MockMvcRequestBuilders
+            .patch(CONTROLLER_BASE_PATH + PATH_FECHA_PRESENTACION_DOCUMENTACION, proyectoPeriodoSeguimientoId)
+            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(input)))
+        .andDo(SgiMockMvcResultHandlers.printOnError())
+        // then: ProyectoPeriodoSeguimiento is updated
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("id").value(proyectoPeriodoSeguimientoExistente.getId()))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("proyectoId").value(proyectoPeriodoSeguimientoId))
+        .andExpect(MockMvcResultMatchers.jsonPath("fechaPresentacionDocumentacion")
+            .value(fechaPresentacionDocumentacionToUpdate.toString()));
   }
 
   @Test

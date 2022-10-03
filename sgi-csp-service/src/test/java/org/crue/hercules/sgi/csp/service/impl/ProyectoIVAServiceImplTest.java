@@ -1,12 +1,13 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.Optional;
+
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessProyectoException;
-import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
-import org.crue.hercules.sgi.csp.model.ProyectoIVA;
-import org.crue.hercules.sgi.csp.model.ProyectoResponsableEconomico;
+import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoIVARepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoResponsableEconomicoRepository;
 import org.crue.hercules.sgi.csp.service.BaseServiceTest;
 import org.crue.hercules.sgi.csp.service.ProyectoIVAService;
@@ -18,7 +19,6 @@ import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.test.context.support.WithMockUser;
 
 class ProyectoIVAServiceImplTest extends BaseServiceTest {
@@ -29,35 +29,30 @@ class ProyectoIVAServiceImplTest extends BaseServiceTest {
   private ProyectoEquipoRepository proyectoEquipoRepository;
   @Mock
   private ProyectoResponsableEconomicoRepository proyectoResponsableEconomicoRepository;
+  @Mock
+  private ProyectoRepository proyectoRepository;
 
   private ProyectoHelper proyectoHelper;
   private ProyectoIVAService service;
 
   @BeforeEach
   void setup() {
-    this.proyectoHelper = new ProyectoHelper(proyectoEquipoRepository, proyectoResponsableEconomicoRepository);
+    this.proyectoHelper = new ProyectoHelper(proyectoRepository, proyectoEquipoRepository,
+        proyectoResponsableEconomicoRepository);
     this.service = new ProyectoIVAServiceImpl(repository, this.proyectoHelper);
   }
 
-  @WithMockUser(username = "user", authorities = { "CSP-PRO-E", "CSP-PRO-INV-VR" })
+  @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
   @Test
   void findAllByProyectoIdOrderByIdDesc_ThrowsUserNotAuthorizedToAccessProyectoException() {
     Long proyectoId = 1L;
     Pageable pageable = PageRequest.of(0, 10);
 
-    BDDMockito.given(this.proyectoEquipoRepository.count(ArgumentMatchers.<Specification<ProyectoEquipo>>any()))
-        .willReturn(0L);
-    BDDMockito.given(this.proyectoResponsableEconomicoRepository
-        .count(ArgumentMatchers.<Specification<ProyectoResponsableEconomico>>any())).willReturn(0L);
+    BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(Proyecto.builder().id(proyectoId).build()));
 
     Assertions.assertThatThrownBy(() -> this.service.findAllByProyectoIdOrderByIdDesc(proyectoId, pageable))
         .isInstanceOf(UserNotAuthorizedToAccessProyectoException.class);
   }
 
-  private ProyectoIVA buildMockProyectoIVA(Long id, Long proyectoId) {
-    return ProyectoIVA.builder()
-        .id(id)
-        .proyectoId(proyectoId)
-        .build();
-  }
 }

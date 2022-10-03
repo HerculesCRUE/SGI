@@ -16,8 +16,6 @@ import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,30 +23,31 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class CertificadoAutorizacionComService {
-  
+
   private final AutorizacionRepository autorizacionRepository;
   private final SgiConfigProperties sgiConfigProperties;
   private final SgiApiComService emailService;
   private final SgiApiSgpService sgiApiSgpService;
 
-  public void enviarComunicadoAddModificarCertificadoAutorizacionParticipacionProyectoExterno(CertificadoAutorizacion certificadoAutorizacion) {
-    Autorizacion autorizacion = this.autorizacionRepository.findById(certificadoAutorizacion.getAutorizacionId())
-    .orElseThrow(() -> new AutorizacionNotFoundException(certificadoAutorizacion.getAutorizacionId()));
-    
-    CspComAddModCertAutorizacionPartProyectoExtData data = CspComAddModCertAutorizacionPartProyectoExtData.builder()
-    .tituloProyectoExt(autorizacion.getTituloProyecto())
-    .enlaceAplicacion(sgiConfigProperties.getWebUrl())
-    .build();
-
+  public void enviarComunicadoAddModificarCertificadoAutorizacionParticipacionProyectoExterno(
+      CertificadoAutorizacion certificadoAutorizacion) {
     try {
+      Autorizacion autorizacion = this.autorizacionRepository.findById(certificadoAutorizacion.getAutorizacionId())
+          .orElseThrow(() -> new AutorizacionNotFoundException(certificadoAutorizacion.getAutorizacionId()));
+
+      CspComAddModCertAutorizacionPartProyectoExtData data = CspComAddModCertAutorizacionPartProyectoExtData.builder()
+          .tituloProyectoExt(autorizacion.getTituloProyecto())
+          .enlaceAplicacion(sgiConfigProperties.getWebUrl())
+          .build();
+
       log.debug("Construyendo comunicado para enviarlo inmediatamente al solicitante");
-      
+
       EmailOutput comunicado = this.emailService
           .createComunicadoAddModificarCertificadoAutorizacionParticipacionProyectoExterno(data,
               this.getSolicitanteRecipients(autorizacion.getSolicitanteRef()));
       this.emailService.sendEmail(comunicado.getId());
 
-    } catch (JsonProcessingException e) {
+    } catch (Exception e) {
       log.error(e.getMessage(), e);
     }
   }

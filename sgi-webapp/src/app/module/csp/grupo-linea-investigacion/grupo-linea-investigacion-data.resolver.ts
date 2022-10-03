@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { Module } from '@core/module';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { GrupoLineaInvestigacionService } from '@core/services/csp/grupo-linea-investigacion/grupo-linea-investigacion.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
@@ -35,6 +36,14 @@ export class GrupoLineaInvestigacionDataResolver extends SgiResolverResolver<IGr
   protected resolveEntity(route: ActivatedRouteSnapshot): Observable<IGrupoLineaInvestigacionData> {
     const grupoData: IGrupoData = route.parent.data[GRUPO_DATA_KEY];
     const grupoLineaInvestigacionId = Number(route.paramMap.get(GRUPO_LINEA_INVESTIGACION_ROUTE_PARAMS.ID));
+
+    const isInvestigador = this.hasViewAuthorityInv() && route.data.module === Module.INV;
+    const isUO = this.hasViewAuthorityUO() && route.data.module === Module.CSP;
+
+    if (!isInvestigador && !isUO) {
+      return throwError('NOT_FOUND');
+    }
+
     if (grupoLineaInvestigacionId) {
       return this.service.exists(grupoLineaInvestigacionId).pipe(
         switchMap(value => {
@@ -44,7 +53,7 @@ export class GrupoLineaInvestigacionDataResolver extends SgiResolverResolver<IGr
           return of(
             {
               id: grupoLineaInvestigacionId,
-              isInvestigador: this.authService.hasAnyAuthority(['CSP-GIN-INV-VR'])
+              isInvestigador
             } as IGrupoLineaInvestigacionData
           );
         }),
@@ -54,7 +63,7 @@ export class GrupoLineaInvestigacionDataResolver extends SgiResolverResolver<IGr
       );
     } else {
       const data = {
-        isInvestigador: this.authService.hasAnyAuthority(['CSP-GIN-INV-VR'])
+        isInvestigador
       } as IGrupoLineaInvestigacionData;
       return merge(
         this.loadGrupoLineaInvestigacionData(grupoData, data),
@@ -62,7 +71,10 @@ export class GrupoLineaInvestigacionDataResolver extends SgiResolverResolver<IGr
     }
   }
 
-  private loadGrupoLineaInvestigacionData(grupoData: IGrupoData, data: IGrupoLineaInvestigacionData): Observable<IGrupoLineaInvestigacionData> {
+  private loadGrupoLineaInvestigacionData(
+    grupoData: IGrupoData,
+    data: IGrupoLineaInvestigacionData
+  ): Observable<IGrupoLineaInvestigacionData> {
     return this.grupoService.findLineasInvestigacion(grupoData.grupo.id).pipe(
       map(gruposLineasInvestigacionResponse => {
         data.grupo = grupoData.grupo;
@@ -82,7 +94,10 @@ export class GrupoLineaInvestigacionDataResolver extends SgiResolverResolver<IGr
   }
 
   private isReadonly(data: IGrupoLineaInvestigacionData, grupoLineaInvestigacionId: number): Observable<IGrupoLineaInvestigacionData> {
-    if (grupoLineaInvestigacionId) {
+    if (data.isInvestigador) {
+      data.readonly = true;
+      return of(data);
+    } if (grupoLineaInvestigacionId) {
       return this.service.modificable(grupoLineaInvestigacionId)
         .pipe(
           map((value: boolean) => {
@@ -94,6 +109,19 @@ export class GrupoLineaInvestigacionDataResolver extends SgiResolverResolver<IGr
       data.readonly = false;
       return of(data);
     }
+  }
+
+  private hasViewAuthorityInv(): boolean {
+    return this.authService.hasAuthority('CSP-GIN-INV-VR');
+  }
+
+  private hasViewAuthorityUO(): boolean {
+    return this.authService.hasAnyAuthorityForAnyUO(
+      [
+        'CSP-GIN-E',
+        'CSP-GIN-V'
+      ]
+    );
   }
 
 

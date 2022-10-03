@@ -157,8 +157,8 @@ const routes: SgiRoutes = [
       {
         path: INV_ROUTE_NAMES.AUTORIZACIONES,
         loadChildren: () =>
-          import('../csp/autorizacion/autorizacion.module').then(
-            (m) => m.AutorizacionModule
+          import('../csp/autorizacion/autorizacion-inv.module').then(
+            (m) => m.AutorizacionInvModule
           ),
         canActivate: [SgiAuthGuard],
         data: {

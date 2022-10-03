@@ -1,0 +1,8 @@
+@import "colors.scss";
+
+:host {
+  .divider {
+    border-bottom: 1px solid map-get($sgi-custom-colors, divider);
+    margin-top: 1em;
+  }
+}

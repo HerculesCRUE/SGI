@@ -115,10 +115,12 @@ public class BaremacionProyectoService extends BaremacionCommonService {
     loadPredicates();
   }
 
+  @Override
   protected TipoPuntuacion getTipoPuntuacion() {
     return TipoPuntuacion.PROYECTOS_INVESTIGACION;
   }
 
+  @Override
   protected void loadPredicates() {
 
     // PROYECTO
@@ -137,13 +139,7 @@ public class BaremacionProyectoService extends BaremacionCommonService {
         getPredicateAmbitoIsNacional().and(getPredicateConvocatoriaIsExcelencia()));
   }
 
-  protected BigDecimal evaluateBaremoModulador(BaremacionInput baremacionInput) {
-    log.debug("evaluateBaremoModulador(baremacionInput) - start");
-
-    log.debug("evaluateBaremoModulador(baremacionInput) - end");
-    return new BigDecimal("1.00");
-  }
-
+  @Override
   protected BigDecimal evaluateBaremoExtra(BaremacionInput baremacionInput) {
     log.debug("evaluateBaremoExtra(baremacionInput) - start");
     BigDecimal puntos = BigDecimal.ZERO;

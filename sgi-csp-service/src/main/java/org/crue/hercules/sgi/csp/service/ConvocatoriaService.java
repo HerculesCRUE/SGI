@@ -94,17 +94,6 @@ public interface ConvocatoriaService {
   Convocatoria findById(final Long id);
 
   /**
-   * Obtiene todas las entidades {@link Convocatoria} activas paginadas y
-   * filtradas.
-   *
-   * @param query  información del filtro.
-   * @param paging información de paginación.
-   * @return el listado de entidades {@link Convocatoria} activas paginadas y
-   *         filtradas.
-   */
-  Page<Convocatoria> findAll(String query, Pageable paging);
-
-  /**
    * Obtiene todas las entidades {@link Convocatoria} que puede visualizar un
    * investigador paginadas y filtradas.
    *
@@ -114,6 +103,15 @@ public interface ConvocatoriaService {
    *         investigador paginadas y filtradas.
    */
   Page<Convocatoria> findAllInvestigador(String query, Pageable paging);
+
+  /**
+   * Devuelve todas las {@link Convocatoria} que son publicas.
+   * 
+   * @param query  información del filtro.
+   * @param paging información de paginación.
+   * @return el listado de entidades {@link Convocatoria} paginadas y filtradas.
+   */
+  Page<Convocatoria> findAllPublicas(String query, Pageable paging);
 
   /**
    * Devuelve todas las convocatorias activas registradas que se encuentren dentro

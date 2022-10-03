@@ -10,6 +10,7 @@ import { environment } from '@env';
 import { SgiMutableRestService, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { PROYECTO_PERIODO_SEGUIMIENTO_PRESENTACION_DOCUMENTACION_REQUEST_CONVERTER } from './proyecto-periodo-seguimiento/proyecto-periodo-seguimiento-presentacion-documentacion-request.converter';
 
 @Injectable({
   providedIn: 'root'
@@ -66,4 +67,13 @@ export class ProyectoPeriodoSeguimientoService
     );
   }
 
+  updateFechaPresentacionDocumentacion(periodoSeguimiento: IProyectoPeriodoSeguimiento) {
+    const url = `${this.endpointUrl}/${periodoSeguimiento.id}/presentacion-documentacion`;
+    return this.http.patch<IProyectoPeriodoSeguimientoBackend>(
+      url,
+      PROYECTO_PERIODO_SEGUIMIENTO_PRESENTACION_DOCUMENTACION_REQUEST_CONVERTER.fromTarget(periodoSeguimiento),
+    ).pipe(
+      map(response => PROYECTO_PERIODO_SEGUIMIENTO_CONVERTER.toTarget(response))
+    );
+  }
 }

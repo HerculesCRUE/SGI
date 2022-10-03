@@ -13,13 +13,10 @@ import org.crue.hercules.sgi.csp.dto.ConvocatoriaFaseAvisoInput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaFaseInput;
 import org.crue.hercules.sgi.csp.dto.com.Recipient;
 import org.crue.hercules.sgi.csp.dto.tp.SgiApiInstantTaskOutput;
-import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaFaseNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
-import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
-import org.crue.hercules.sgi.csp.model.Convocatoria.Estado;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFaseAviso;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFase;
@@ -40,8 +37,8 @@ import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiTpService;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
-import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -72,6 +69,7 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
   private final SgiApiSgpService personaService;
   private final SolicitudRepository solicitudRepository;
   private final ProyectoEquipoRepository proyectoEquipoRepository;
+  private final ConvocatoriaAuthorityHelper authorityHelper;
 
   public ConvocatoriaFaseServiceImpl(
       ConvocatoriaFaseRepository repository,
@@ -84,7 +82,8 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
       ProyectoEquipoRepository proyectoEquipoRepository,
       SgiApiComService emailService,
       SgiApiTpService sgiApiTaskService,
-      SgiApiSgpService personaService) {
+      SgiApiSgpService personaService,
+      ConvocatoriaAuthorityHelper authorityHelper) {
     this.repository = repository;
     this.convocatoriaRepository = convocatoriaRepository;
     this.configuracionSolicitudRepository = configuracionSolicitudRepository;
@@ -96,6 +95,7 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
     this.convocatoriaFaseAvisoRepository = convocatoriaFaseAvisoRepository;
     this.solicitudRepository = solicitudRepository;
     this.proyectoEquipoRepository = proyectoEquipoRepository;
+    this.authorityHelper = authorityHelper;
   }
 
   /**
@@ -380,24 +380,16 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
    */
   @Override
   public Page<ConvocatoriaFase> findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) {
-    log.debug("findAllByConvocatoria(Long idConvocatoria, String query, Pageable pageable) - start");
+    log.debug("findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) - start");
 
-    Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaId)
-        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaId));
-    if (hasAuthorityViewInvestigador()) {
-      ConfiguracionSolicitud configuracionSolicitud = configuracionSolicitudRepository
-          .findByConvocatoriaId(convocatoriaId)
-          .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(convocatoriaId));
-      if (!convocatoria.getEstado().equals(Estado.REGISTRADA)
-          || Boolean.FALSE.equals(configuracionSolicitud.getTramitacionSGI())) {
-        throw new UserNotAuthorizedToAccessConvocatoriaException();
-      }
-    }
+    authorityHelper.checkUserHasAuthorityViewConvocatoria(convocatoriaId);
 
     Specification<ConvocatoriaFase> specs = ConvocatoriaFaseSpecifications.byConvocatoriaId(convocatoriaId)
         .and(SgiRSQLJPASupport.toSpecification(query));
 
-    return repository.findAll(specs, pageable);
+    Page<ConvocatoriaFase> returnValue = repository.findAll(specs, pageable);
+    log.debug("findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) - end");
+    return returnValue;
   }
 
   /**
@@ -456,7 +448,7 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
         && Objects.equals(configuraciSolicitud.get().getFasePresentacionSolicitudes().getId(), convocatoriaFaseId)) {
 
       returnValue = convocatoriaService.isRegistradaConSolicitudesOProyectos(convocatoriaId, null,
-          new String[] { "CSP-CON-E" });
+          new String[] { ConvocatoriaAuthorityHelper.CSP_CON_E });
     }
     log.debug("Boolean isModificable(Long convocatoriaId, Long convocatoriaFaseId) - end");
     return returnValue;
@@ -465,10 +457,6 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
   @Override
   public boolean existsByConvocatoriaId(Long convocatoriaId) {
     return repository.existsByConvocatoriaId(convocatoriaId);
-  }
-
-  private boolean hasAuthorityViewInvestigador() {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
   }
 
   /**

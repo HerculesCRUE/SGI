@@ -5,6 +5,8 @@ import { AbstractTablePaginationComponent } from '@core/component/abstract-table
 import { TipoEstadoProduccion, TIPO_ESTADO_PRODUCCION_MAP } from '@core/models/prc/estado-produccion-cientifica';
 import { IObraArtistica } from '@core/models/prc/obra-artistica';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { Module } from '@core/module';
+import { LayoutService } from '@core/services/layout.service';
 import { ObraArtisticaService } from '@core/services/prc/obra-artistica/obra-artistica.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -37,10 +39,15 @@ export class ObraArtisticaListadoComponent extends AbstractTablePaginationCompon
     return this.authService.authStatus$.asObservable();
   }
 
+  get isModuleINV(): boolean {
+    return this.layoutService.activeModule$.value === Module.INV;
+  }
+
   constructor(
     protected readonly snackBarService: SnackBarService,
     private readonly authService: SgiAuthService,
-    private readonly obraArtisticaService: ObraArtisticaService
+    private readonly obraArtisticaService: ObraArtisticaService,
+    private readonly layoutService: LayoutService
   ) {
     super(snackBarService, MSG_ERROR);
     this.TIPO_ESTADO_PRODUCCION_LIST = Object.values(TipoEstadoProduccion);
@@ -65,7 +72,9 @@ export class ObraArtisticaListadoComponent extends AbstractTablePaginationCompon
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IObraArtistica>> {
-    return this.obraArtisticaService.findAll(this.getFindOptions(reset));
+    return this.isModuleINV
+      ? this.obraArtisticaService.findObrasArtisticasInvestigador(this.getFindOptions(reset))
+      : this.obraArtisticaService.findAll(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {

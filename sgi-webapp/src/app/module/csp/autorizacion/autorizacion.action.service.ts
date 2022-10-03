@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IAutorizacion } from '@core/models/csp/autorizacion';
 import { Estado, IEstadoAutorizacion } from '@core/models/csp/estado-autorizacion';
+import { Module } from '@core/module';
 import { ActionService } from '@core/services/action-service';
 import { AutorizacionService } from '@core/services/csp/autorizacion/autorizacion.service';
 import { CertificadoAutorizacionService } from '@core/services/csp/certificado-autorizacion/certificado-autorizacion.service';
@@ -16,11 +17,12 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
-import { Observable, of, Subject, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { AUTORIZACION_DATA_KEY } from './autorizacion-data.resolver';
 import { AutorizacionCertificadosFragment } from './autorizacion-formulario/autorizacion-certificados/autorizacion-certificados.fragment';
-import { AutorizacionDatosGeneralesFragment, IAutorizacionDatosGeneralesData } from './autorizacion-formulario/autorizacion-datos-generales/autorizacion-datos-generales.fragment'; import { AutorizacionHistoricoEstadosFragment } from './autorizacion-formulario/autorizacion-historico-estados/autorizacion-historico-estados.fragment';
+import { AutorizacionDatosGeneralesFragment, IAutorizacionDatosGeneralesData } from './autorizacion-formulario/autorizacion-datos-generales/autorizacion-datos-generales.fragment';
+import { AutorizacionHistoricoEstadosFragment } from './autorizacion-formulario/autorizacion-historico-estados/autorizacion-historico-estados.fragment';
 import { AUTORIZACION_ROUTE_PARAMS } from './autorizacion-route-params';
 import { AutorizacionCambioEstadoModalComponentData, CambioEstadoModalComponent } from './cambio-estado-modal/cambio-estado-modal.component';
 
@@ -30,6 +32,7 @@ const MSG_CAMBIO_ESTADO_SUCCESS = marker('msg.csp.cambio-estado.success');
 export interface IAutorizacionData {
   presentable: boolean;
   isInvestigador: boolean;
+  canEdit: boolean;
   autorizacion: IAutorizacion;
 }
 
@@ -64,7 +67,15 @@ export class AutorizacionActionService extends
   }
 
   get isInvestigador(): boolean {
-    return this.data.isInvestigador;
+    return this.data?.isInvestigador ?? (this.isModuleINV() && this.hasAnyAuthorityInv());
+  }
+
+  get isVisor(): boolean {
+    return !this.canEdit && !this.isInvestigador;
+  }
+
+  get canEdit(): boolean {
+    return this.data?.canEdit ?? false;
   }
 
   get presentable(): boolean {
@@ -73,7 +84,7 @@ export class AutorizacionActionService extends
 
   constructor(
     logger: NGXLogger,
-    route: ActivatedRoute,
+    private route: ActivatedRoute,
     private autorizacionService: AutorizacionService,
     certificadoAutorizacionService: CertificadoAutorizacionService,
     personaService: PersonaService,
@@ -96,9 +107,24 @@ export class AutorizacionActionService extends
 
     this.dialogService = dialogService;
     this.datosGenerales = new AutorizacionDatosGeneralesFragment(
-      logger, this.id, autorizacionService, personaService, empresaService, estadoAutorizacionService, convocatoriaService, authService);
+      logger,
+      this.id,
+      autorizacionService,
+      personaService,
+      empresaService,
+      estadoAutorizacionService,
+      convocatoriaService,
+      this.isInvestigador,
+      this.isVisor
+    );
     this.historicoEstados = new AutorizacionHistoricoEstadosFragment(this.id, autorizacionService, false);
-    this.certificados = new AutorizacionCertificadosFragment(this.id, certificadoAutorizacionService, autorizacionService, estadoAutorizacionService, documentoService)
+    this.certificados = new AutorizacionCertificadosFragment(
+      this.id,
+      certificadoAutorizacionService,
+      autorizacionService,
+      estadoAutorizacionService,
+      documentoService
+    );
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);
     this.addFragment(this.FRAGMENT.HISTORICO_ESTADOS, this.historicoEstados);
@@ -174,4 +200,13 @@ export class AutorizacionActionService extends
       }
     );
   }
+
+  private isModuleINV(): boolean {
+    return this.route.snapshot.data.module === Module.INV;
+  }
+
+  private hasAnyAuthorityInv(): boolean {
+    return this.authService.hasAnyAuthority(['CSP-AUT-INV-C', 'CSP-AUT-INV-ER', 'CSP-AUT-INV-BR']);
+  }
+
 }

@@ -68,9 +68,10 @@ public class SgiWebSecurityConfig extends WebSecurityConfigurerAdapter {
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
       .and()
-        // Require authentication for all requests except for error, health checks and login
+        // Require authentication for all requests except for error, health checks and public endpoints
         .authorizeRequests()
         .antMatchers("/error", "/actuator/health/liveness", "/actuator/health/readiness").permitAll()
+        .antMatchers("/public/**", "/config/time-zone").permitAll()
         .antMatchers("/**").authenticated()
       .and()
         // Validate tokens through configured OpenID Provider

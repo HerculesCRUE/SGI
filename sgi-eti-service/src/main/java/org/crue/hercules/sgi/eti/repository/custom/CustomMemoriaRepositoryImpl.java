@@ -216,7 +216,8 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
 
     Expression<Instant> defaultDate = cb.nullLiteral(Instant.class);
 
-    cq.multiselect(root.get(Memoria_.id), root.get(Memoria_.personaRef), root.get(Memoria_.numReferencia), root.get(Memoria_.titulo),
+    cq.multiselect(root.get(Memoria_.id), root.get(Memoria_.personaRef), root.get(Memoria_.numReferencia),
+        root.get(Memoria_.titulo),
         root.get(Memoria_.comite), root.get(Memoria_.estadoActual), defaultDate, defaultDate,
         cb.selectCase().when(cb.isNotNull(isResponsable(root, cb, cq, personaRefConsulta)), true).otherwise(false)
             .alias("isResponsable"),
@@ -264,9 +265,9 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
 
     if (personaRefConsulta != null) {
       Predicate predicateMemoria = cb.in(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id))
-          .value(getIdsPeticionEvaluacionMemoria(root, cb, cq, specs, personaRefConsulta));
+          .value(getIdsPeticionEvaluacionMemoria(cb, cq, personaRefConsulta));
       Predicate predicateMemoriaCount = cb.in(rootCount.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id))
-          .value(getIdsPeticionEvaluacionMemoria(rootCount, cb, cq, specs, personaRefConsulta));
+          .value(getIdsPeticionEvaluacionMemoria(cb, cq, personaRefConsulta));
 
       Predicate predicatePersonaRefPeticion = cb
           .equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.personaRef), personaRefConsulta);
@@ -311,7 +312,7 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
     Long count = entityManager.createQuery(countQuery).getSingleResult();
 
     TypedQuery<MemoriaPeticionEvaluacion> typedQuery = entityManager.createQuery(cq);
-    if (pageable != null && pageable.isPaged()) {
+    if (pageable.isPaged()) {
       typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
       typedQuery.setMaxResults(pageable.getPageSize());
     }
@@ -368,6 +369,8 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
         memoriaPredicateBuilder.filterWithLastVersion(cb, root, memoria.getId(), cq);
         prepareCriteriaWithConvocatoriaReunionLinked(cb, cq, root, memoriaPredicateBuilder, memoria.getId());
         break;
+      case Constantes.ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_FINAL:
+      case Constantes.ESTADO_MEMORIA_EN_SECRETARIA_SEGUIMIENTO_FINAL:
       case Constantes.ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_ANUAL:
       case Constantes.ESTADO_MEMORIA_EN_SECRETARIA_SEGUIMIENTO_ANUAL:
         this.resolveNextEvaluationPredicatesWhereConvocatoriaReunionIsOfTypeSeguimiento(memoria, cb,
@@ -380,12 +383,6 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
         resolveNextEvaluationPredicatesForAnyConvocatoriaReunionType(memoria, cb, root, memoriaPredicateBuilder,
             Constantes.TIPO_EVALUACION_SEGUIMIENTO_ANUAL, cq);
         prepareCriteriaWithConvocatoriaReunionLinked(cb, cq, root, memoriaPredicateBuilder, memoria.getId());
-        break;
-      case Constantes.ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_FINAL:
-      case Constantes.ESTADO_MEMORIA_EN_SECRETARIA_SEGUIMIENTO_FINAL:
-        this.resolveNextEvaluationPredicatesWhereConvocatoriaReunionIsOfTypeSeguimiento(memoria, cb,
-            rootConvocatoriaReunion, memoriaPredicateBuilder, cq);
-        prepareCriteriaWithConvocatoriaReunionUnlinked(cb, cq, rootConvocatoriaReunion, memoriaPredicateBuilder);
         break;
       case Constantes.ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_FINAL:
       case Constantes.ESTADO_MEMORIA_EN_SECRETARIA_SEGUIMIENTO_FINAL_ACLARACIONES:
@@ -457,8 +454,8 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
    * @param personaRef
    * @return
    */
-  private Subquery<Long> getIdsPeticionEvaluacionMemoria(Root<Memoria> root, CriteriaBuilder cb,
-      CriteriaQuery<MemoriaPeticionEvaluacion> cq, Specification<Memoria> specsMem, String personaRef) {
+  private Subquery<Long> getIdsPeticionEvaluacionMemoria(CriteriaBuilder cb,
+      CriteriaQuery<MemoriaPeticionEvaluacion> cq, String personaRef) {
 
     log.debug(
         "getActaConvocatoria(Root<ConvocatoriaReunion> root, CriteriaBuilder cb, CriteriaQuery<ConvocatoriaReunionDatosGenerales> cq, Long idConvocatoria) - start");

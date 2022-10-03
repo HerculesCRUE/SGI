@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IObraArtistica } from '@core/models/prc/obra-artistica';
 import { environment } from '@env';
-import { FindAllCtor, mixinFindAll, SgiRestBaseService } from '@sgi/framework/http';
+import { FindAllCtor, mixinFindAll, SgiRestBaseService, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
+import { Observable } from 'rxjs';
 import { IObraArtisticaResponse } from './obra-artistica-response';
 import { OBRA_ARTISTICA_RESPONSE_CONVERTER } from './obra-artistica-response.converter';
 
@@ -27,4 +28,18 @@ export class ObraArtisticaService extends _ObraArtisticaMixinBase {
       http,
     );
   }
+
+  /**
+   * Muestra las obras artisticas a los que pertenece el investigador actual
+   *
+   * @param options opciones de búsqueda.
+   */
+  findObrasArtisticasInvestigador(options?: SgiRestFindOptions): Observable<SgiRestListResult<IObraArtistica>> {
+    return this.find<IObraArtisticaResponse, IObraArtistica>(
+      `${this.endpointUrl}/investigador`,
+      options,
+      OBRA_ARTISTICA_RESPONSE_CONVERTER
+    );
+  }
+
 }

@@ -86,7 +86,6 @@ public class Respuesta extends BaseEntity {
   @JsonProperty(value = "valor")
   public void setEsquemaRaw(JsonNode jsonNode) throws IOException {
     // this leads to non-standard json:
-    // setJson(jsonNode.toString());
 
     if (jsonNode.isNull()) {
       setValor(null);

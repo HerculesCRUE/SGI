@@ -19,6 +19,7 @@ import { ConvocatoriaEnlaceListadoExportService } from './convocatoria-enlace-li
 import { ConvocatoriaEntidadConvocanteListadoExportService } from './convocatoria-entidad-convocante-listado-export.service';
 import { ConvocatoriaEntidadFinanciadoraListadoExportService } from './convocatoria-entidad-financiadora-listado-export.service';
 import { ConvocatoriaFaseListadoExportService } from './convocatoria-fase-listado-export.service';
+import { ConvocatoriaFooterListadoExportService } from './convocatoria-footer-listado-export.service';
 import { ConvocatoriaConceptoGastoComponent } from './convocatoria-formulario/convocatoria-concepto-gasto/convocatoria-concepto-gasto.component';
 import { ConvocatoriaConfiguracionSolicitudesComponent } from './convocatoria-formulario/convocatoria-configuracion-solicitudes/convocatoria-configuracion-solicitudes.component';
 import { ConvocatoriaDatosGeneralesComponent } from './convocatoria-formulario/convocatoria-datos-generales/convocatoria-datos-generales.component';
@@ -34,6 +35,7 @@ import { ConvocatoriaRequisitosEquipoComponent } from './convocatoria-formulario
 import { ConvocatoriaRequisitosIPComponent } from './convocatoria-formulario/convocatoria-requisitos-ip/convocatoria-requisitos-ip.component';
 import { ConvocatoriaSeguimientoCientificoComponent } from './convocatoria-formulario/convocatoria-seguimiento-cientifico/convocatoria-seguimiento-cientifico.component';
 import { ConvocatoriaGeneralListadoExportService } from './convocatoria-general-listado-export.service';
+import { ConvocatoriaHeaderListadoExportService } from './convocatoria-header-listado-export.service';
 import { ConvocatoriaHitoListadoExportService } from './convocatoria-hito-listado-export.service';
 import { ConvocatoriaListadoExportService } from './convocatoria-listado-export.service';
 import { ConvocatoriaListadoComponent } from './convocatoria-listado/convocatoria-listado.component';
@@ -115,7 +117,9 @@ import { NivelAcademicoModalComponent } from './modals/nivel-academico-modal/niv
     ConvocatoriaRequisitoEquipoListadoExportService,
     ConvocatoriaConceptoGastoListadoExportService,
     ConvocatoriaPartidaPresupuestariaListadoExportService,
-    ConvocatoriaConfiguracionSolicitudListadoExportService
+    ConvocatoriaConfiguracionSolicitudListadoExportService,
+    ConvocatoriaFooterListadoExportService,
+    ConvocatoriaHeaderListadoExportService
   ]
 })
 export class ConvocatoriaModule { }

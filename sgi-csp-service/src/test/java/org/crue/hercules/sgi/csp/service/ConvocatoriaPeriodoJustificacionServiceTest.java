@@ -27,6 +27,7 @@ import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaPeriodoJustificacionServiceImpl;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
@@ -56,6 +57,8 @@ class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest {
   private ConvocatoriaService convocatoriaService;
   @MockBean
   private ConfiguracionSolicitudRepository configuracionSolicitudRepository;
+  @MockBean
+  private ConvocatoriaAuthorityHelper authorityHelper;
 
   // This bean must be created by Spring so validations can be applied
   @Autowired

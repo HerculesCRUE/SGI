@@ -3,7 +3,6 @@ package org.crue.hercules.sgi.prc.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -13,7 +12,9 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.prc.exceptions.ValorCampoNotFoundException;
 import org.crue.hercules.sgi.prc.model.ValorCampo;
+import org.crue.hercules.sgi.prc.repository.CampoProduccionCientificaRepository;
 import org.crue.hercules.sgi.prc.repository.ValorCampoRepository;
+import org.crue.hercules.sgi.prc.util.ProduccionCientificaAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -51,6 +52,12 @@ class ValorCampoServiceTest extends BaseServiceTest {
 
   @MockBean
   private PersistenceUnitUtil persistenceUnitUtil;
+
+  @MockBean
+  private CampoProduccionCientificaRepository campoProduccionCientificaRepository;
+
+  @MockBean
+  private ProduccionCientificaAuthorityHelper authorityHelper;
 
   // This bean must be created by Spring so validations can be applied
   @Autowired
@@ -135,45 +142,6 @@ class ValorCampoServiceTest extends BaseServiceTest {
     // then: Lanza un ValorCampoNotFoundException
     Assertions.assertThatThrownBy(() -> service.findById(idBuscado))
         .isInstanceOf(ValorCampoNotFoundException.class);
-  }
-
-  @Test
-  void findAllByCampoProduccionCientificaId_ReturnsList() {
-    // given: Una lista con 7 ValorCampo y un produccionCientificaId
-    Long campoProduccionCientificaId = 1L;
-    List<ValorCampo> valores = new ArrayList<>();
-    for (long i = 1; i <= 7; i++) {
-      if (i % 2 == 0) {
-        valores.add(generarMockValorCampo(i, campoProduccionCientificaId, String.format("%03d", i)));
-      } else {
-        valores.add(generarMockValorCampo(i, 2L, String.format("%03d", i)));
-      }
-    }
-
-    // when: Buscamos ValorCampo con produccionCientificaId
-    BDDMockito.given(
-        repository.findAllByCampoProduccionCientificaId(ArgumentMatchers.<Long>any()))
-        .willAnswer((InvocationOnMock invocation) -> {
-          Long indiceImpactoIdToFind = invocation.getArgument(0);
-          return valores.stream()
-              .filter(valor -> indiceImpactoIdToFind.equals(valor.getCampoProduccionCientificaId()))
-              .collect(Collectors.toList());
-        });
-    List<ValorCampo> valoresBuscados = service.findAllByCampoProduccionCientificaId(campoProduccionCientificaId);
-    // then: Cada ValorCampo tiene produccionCientificaId buscado
-    int numElements = valoresBuscados.size();
-    Assertions.assertThat(numElements).as("valoresBuscados.size()").isEqualTo(3);
-    valoresBuscados.stream().forEach(valorBuscado -> {
-      Assertions.assertThat(valorBuscado.getCampoProduccionCientificaId()).as("getProduccionCientificaId")
-          .isEqualTo(campoProduccionCientificaId);
-    });
-  }
-
-  private ValorCampo generarMockValorCampo(
-      Long id, Long campoProduccionCientificaId, String valorId) {
-    return generarMockValorCampo(
-        id, campoProduccionCientificaId,
-        DEFAULT_DATA_ORDEN, VALOR_PREFIX + valorId);
   }
 
   private ValorCampo generarMockValorCampo(

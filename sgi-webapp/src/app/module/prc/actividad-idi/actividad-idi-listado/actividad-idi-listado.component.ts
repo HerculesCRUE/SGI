@@ -5,6 +5,8 @@ import { AbstractTablePaginationComponent } from '@core/component/abstract-table
 import { IActividad, MODO_PARTICIPACION_MAP } from '@core/models/prc/actividad';
 import { TipoEstadoProduccion, TIPO_ESTADO_PRODUCCION_MAP } from '@core/models/prc/estado-produccion-cientifica';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { Module } from '@core/module';
+import { LayoutService } from '@core/services/layout.service';
 import { ActividadService } from '@core/services/prc/actividad/actividad.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -42,10 +44,15 @@ export class ActividadIdiListadoComponent extends AbstractTablePaginationCompone
     return this.authService.authStatus$.asObservable();
   }
 
+  get isModuleINV(): boolean {
+    return this.layoutService.activeModule$.value === Module.INV;
+  }
+
   constructor(
     protected readonly snackBarService: SnackBarService,
     private readonly authService: SgiAuthService,
-    private readonly actividadService: ActividadService
+    private readonly actividadService: ActividadService,
+    private readonly layoutService: LayoutService
   ) {
     super(snackBarService, MSG_ERROR);
     this.TIPO_ESTADO_PRODUCCION_LIST = Object.values(TipoEstadoProduccion);
@@ -70,7 +77,9 @@ export class ActividadIdiListadoComponent extends AbstractTablePaginationCompone
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IActividad>> {
-    return this.actividadService.findAll(this.getFindOptions(reset));
+    return this.isModuleINV
+      ? this.actividadService.findActividadesInvestigador(this.getFindOptions(reset))
+      : this.actividadService.findAll(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {

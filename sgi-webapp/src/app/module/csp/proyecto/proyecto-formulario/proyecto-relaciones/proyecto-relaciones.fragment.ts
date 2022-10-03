@@ -90,8 +90,11 @@ export class ProyectoRelacionFragment extends Fragment {
         tipoRelacion: null
       };
     }
-    this.fillCodigosSge(this.getEntidadRelacionadaId(relacion), data);
-    this.fillEntidadConvocanteRef(relacion, data);
+
+    if (this.isEntidadRelacionadaProyecto(relacion)) {
+      this.fillCodigosSge(this.getEntidadRelacionadaId(relacion), data);
+      this.fillEntidadConvocanteRef(relacion, data);
+    }
 
     return data;
   }
@@ -101,13 +104,16 @@ export class ProyectoRelacionFragment extends Fragment {
   }
 
   private isEntidadRelacionadaProyecto(relacion: IRelacion): boolean {
-    return relacion.entidadOrigen.id === this.getKey() ? relacion.tipoEntidadDestino === TipoEntidad.PROYECTO : relacion.tipoEntidadOrigen === TipoEntidad.PROYECTO;
+    return relacion.entidadOrigen.id === this.getKey()
+      ? relacion.tipoEntidadDestino === TipoEntidad.PROYECTO
+      : relacion.tipoEntidadOrigen === TipoEntidad.PROYECTO;
   }
 
   private fillEntidadConvocanteRef(relacion: IRelacion, data: IProyectoRelacionTableData): void {
-    if (this.isEntidadRelacionadaProyecto(relacion)) {
-      this.proyectoService.findById(this.getEntidadRelacionadaId(relacion)).subscribe(proyecto => data.entidadConvocanteRef = proyecto.codigoExterno);
-    }
+    this.subscriptions.push(
+      this.proyectoService.findById(this.getEntidadRelacionadaId(relacion))
+        .subscribe(proyecto => data.entidadConvocanteRef = proyecto.codigoExterno)
+    );
   }
 
   private isEntidadOrigenProyectoRelatedEntity(relacion: IRelacion, proyectoId: number): boolean {
@@ -154,7 +160,7 @@ export class ProyectoRelacionFragment extends Fragment {
           catchError(() => of(wrapper))
         );
       default:
-        return of(wrapper)
+        return of(wrapper);
     }
   }
 
@@ -220,7 +226,7 @@ export class ProyectoRelacionFragment extends Fragment {
       if (!wrapper.created) {
         this.proyectoRelacionesTableDataToDelete.push(current[index]);
       }
-      this.removeDeletedRelacionFromArray(index, current)
+      this.removeDeletedRelacionFromArray(index, current);
     }
   }
 
@@ -277,7 +283,7 @@ export class ProyectoRelacionFragment extends Fragment {
       mergeMap((wrapper => {
         return this.relacionService.update(wrapper.value.id, this.createRelacionFromProyectoRelacion(wrapper.value)).pipe(
           map((relacionResponse) => this.refreshProyectoRelacionesTableData(relacionResponse, wrapper, current)),
-        )
+        );
       }))
     );
   }
@@ -288,7 +294,7 @@ export class ProyectoRelacionFragment extends Fragment {
       mergeMap((wrapper => {
         return this.relacionService.create(this.createRelacionFromProyectoRelacion(wrapper.value)).pipe(
           map((relacionResponse) => this.refreshProyectoRelacionesTableData(relacionResponse, wrapper, current)),
-        )
+        );
       }))
     );
   }

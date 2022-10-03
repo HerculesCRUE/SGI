@@ -39,6 +39,7 @@ import { ProyectoEntidadConvocanteListadoExportService } from './proyecto-entida
 import { ProyectoEntidadFinanciadoraListadoExportService } from './proyecto-entidad-financiadora-listado-export.service';
 import { ProyectoEntidadGestoraListadoExportService } from './proyecto-entidad-gestora-listado-export.service';
 import { ProyectoEquipoListadoExportService } from './proyecto-equipo-listado-export.service';
+import { ProyectoFooterListadoExportService } from './proyecto-footer-listado-export.service';
 import { ProyectoAgrupacionesGastoComponent } from './proyecto-formulario/proyecto-agrupaciones-gasto/proyecto-agrupaciones-gasto.component';
 import { ProyectoAmortizacionFondosComponent } from './proyecto-formulario/proyecto-amortizacion-fondos/proyecto-amortizacion-fondos.component';
 import { ProyectoAreaConocimientoComponent } from './proyecto-formulario/proyecto-area-conocimiento/proyecto-area-conocimiento.component';
@@ -69,6 +70,7 @@ import { ProyectoRelacionesComponent } from './proyecto-formulario/proyecto-rela
 import { ProyectoResponsableEconomicoComponent } from './proyecto-formulario/proyecto-responsable-economico/proyecto-responsable-economico.component';
 import { ProyectoSociosComponent } from './proyecto-formulario/proyecto-socios/proyecto-socios.component';
 import { ProyectoGeneralListadoExportService } from './proyecto-general-listado-export.service';
+import { ProyectoHeaderListadoExportService } from './proyecto-header-listado-export.service';
 import { ProyectoListadoExportService } from './proyecto-listado-export.service';
 import { ProyectoListadoComponent } from './proyecto-listado/proyecto-listado.component';
 import { ProyectoPartidaPresupuestariaListadoExportService } from './proyecto-partida-presupuestaria-listado-export.service';
@@ -171,7 +173,9 @@ import { ProyectoSolicitudListadoExportService } from './proyecto-solicitud-list
     ProyectoPartidaPresupuestariaListadoExportService,
     ProyectoPresupuestoListadoExportService,
     ProyectoCalendarioFacturacionListadoExportService,
-    ProyectoCalendarioJustificacionListadoExportService
+    ProyectoCalendarioJustificacionListadoExportService,
+    ProyectoHeaderListadoExportService,
+    ProyectoFooterListadoExportService
   ]
 })
 export class ProyectoModule { }

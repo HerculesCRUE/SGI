@@ -14,6 +14,7 @@ import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContext
 import org.crue.hercules.sgi.prc.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.prc.model.Proyecto;
 import org.crue.hercules.sgi.prc.repository.ProyectoRepository;
+import org.crue.hercules.sgi.prc.util.ProduccionCientificaAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -49,6 +50,9 @@ class ProyectoServiceTest extends BaseServiceTest {
 
   @MockBean
   private PersistenceUnitUtil persistenceUnitUtil;
+
+  @MockBean
+  private ProduccionCientificaAuthorityHelper authorityHelper;
 
   // This bean must be created by Spring so validations can be applied
   @Autowired
@@ -91,7 +95,7 @@ class ProyectoServiceTest extends BaseServiceTest {
     Page<Proyecto> page = service.findAll(null, paging);
 
     // then: Devuelve la pagina 3 con los Proyecto del 31 al 37
-    Assertions.assertThat(page.getContent().size()).as("getContent().size()").isEqualTo(7);
+    Assertions.assertThat(page.getContent()).as("getContent().hasSize()").hasSize(7);
     Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
     Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
@@ -156,7 +160,7 @@ class ProyectoServiceTest extends BaseServiceTest {
         });
     List<Proyecto> proyectosBuscados = service.findAllByProduccionCientificaId(produccionCientificaId);
     // then: Cada Proyecto tiene produccionCientificaId buscado
-    Assertions.assertThat(proyectosBuscados.size()).as("size()").isEqualTo(3);
+    Assertions.assertThat(proyectosBuscados).as("hasSize()").hasSize(3);
     proyectosBuscados.stream().forEach(proyectoBuscado -> {
       Assertions.assertThat(proyectoBuscado.getProduccionCientificaId()).as("getProduccionCientificaId")
           .isEqualTo(produccionCientificaId);

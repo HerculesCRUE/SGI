@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.RequisitoEquipo;
 import org.crue.hercules.sgi.csp.model.RequisitoEquipoCategoriaProfesional;
 import org.crue.hercules.sgi.csp.repository.RequisitoEquipoCategoriaProfesionalRepository;
 import org.crue.hercules.sgi.csp.repository.specification.RequisitoEquipoCategoriaProfesionalSpecifications;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,9 +30,13 @@ import lombok.extern.slf4j.Slf4j;
 public class RequisitoEquipoCategoriaProfesionalService {
 
   private final RequisitoEquipoCategoriaProfesionalRepository repository;
+  private final ConvocatoriaAuthorityHelper authorityHelper;
 
-  public RequisitoEquipoCategoriaProfesionalService(RequisitoEquipoCategoriaProfesionalRepository repository) {
+  public RequisitoEquipoCategoriaProfesionalService(
+      RequisitoEquipoCategoriaProfesionalRepository repository,
+      ConvocatoriaAuthorityHelper authorityHelper) {
     this.repository = repository;
+    this.authorityHelper = authorityHelper;
   }
 
   /**
@@ -49,6 +55,25 @@ public class RequisitoEquipoCategoriaProfesionalService {
 
     List<RequisitoEquipoCategoriaProfesional> returnValue = repository.findAll(specs);
     log.debug("findByRequisitoEquipo(Long requisitoEquipoId, String query, Pageable paging) - end");
+    return returnValue;
+  }
+
+  /**
+   * Obtiene los {@link RequisitoEquipoCategoriaProfesional} para una
+   * {@link Convocatoria}.
+   *
+   * @param convocatoriaId el id de la {@link Convocatoria}.
+   * @return la lista de {@link RequisitoEquipoCategoriaProfesional} de la
+   *         {@link Convocatoria}.
+   */
+  public List<RequisitoEquipoCategoriaProfesional> findByConvocatoria(Long convocatoriaId) {
+    log.debug("findByConvocatoria(Long convocatoriaId) - start");
+
+    authorityHelper.checkUserHasAuthorityViewConvocatoria(convocatoriaId);
+
+    // El id de la convocatoria y del requisito equipo son el mismo
+    List<RequisitoEquipoCategoriaProfesional> returnValue = findByRequisitoEquipo(convocatoriaId);
+    log.debug("findByConvocatoria(Long convocatoriaId) - end");
     return returnValue;
   }
 

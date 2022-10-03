@@ -55,11 +55,11 @@ public class ModeloEjecucion extends BaseEntity {
   private Boolean activo;
 
   /** Externo */
-  @Column(name = "externo", columnDefinition = "boolean default false", nullable = true)
+  @Column(name = "externo", columnDefinition = "boolean default false", nullable = false)
   private Boolean externo;
 
   /** Contrato */
-  @Column(name = "contrato", columnDefinition = "boolean default false", nullable = true)
+  @Column(name = "contrato", columnDefinition = "boolean default false", nullable = false)
   private Boolean contrato;
 
 }

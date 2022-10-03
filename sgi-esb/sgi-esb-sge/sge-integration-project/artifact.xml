@@ -12,4 +12,7 @@
   <artifact name="sge-api" groupId="org.crue.hercules.sgi.esb.sge.api" version="${revision}" type="synapse/api" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/api/sge-api.xml</file>
   </artifact>
+  <artifact name="sge-public-api" groupId="org.crue.hercules.sgi.esb.sge.api" version="${revision}" type="synapse/api" serverRole="EnterpriseServiceBus">
+    <file>src/main/synapse-config/api/sge-public-api.xml</file>
+  </artifact>
 </artifacts>

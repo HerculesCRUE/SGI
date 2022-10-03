@@ -16,11 +16,7 @@ public class ValidateEstadoValidator
       return false;
     }
 
-    if (value.getEntidadRef() == null && value.getEstado() == EstadoEmpresa.ACTIVA) {
-      return false;
-    } else {
-      return true;
-    }
+    return !(value.getEntidadRef() == null && value.getEstado() == EstadoEmpresa.ACTIVA);
 
   }
 

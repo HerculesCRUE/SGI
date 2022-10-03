@@ -5,7 +5,6 @@ import { GrupoLineaInvestigacionService } from '@core/services/csp/grupo-linea-i
 import { GrupoLineaInvestigadorService } from '@core/services/csp/grupo-linea-investigador/grupo-linea-investigador.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
@@ -24,8 +23,7 @@ export class GrupoLineaInvestigadorFragment extends Fragment {
     private readonly grupoLineaInvestigacionService: GrupoLineaInvestigacionService,
     private readonly grupoLineaInvestigadorService: GrupoLineaInvestigadorService,
     private readonly personaService: PersonaService,
-    private sgiAuthService: SgiAuthService,
-    private readonly: boolean,
+    public readonly readonly: boolean,
   ) {
     super(key);
     this.setComplete(true);
@@ -42,11 +40,7 @@ export class GrupoLineaInvestigadorFragment extends Fragment {
                 return this.personaService.findById(element.persona.id).pipe(
                   map(persona => {
                     element.persona = persona;
-                    if (persona.id === this.sgiAuthService.authStatus$?.getValue()?.userRefId) {
-                      // Es persona autorizada
-                      this.readonly = false;
-                    }
-                    return element as IGrupoLineaInvestigador;
+                    return element;
                   })
                 );
               }),
@@ -56,7 +50,7 @@ export class GrupoLineaInvestigadorFragment extends Fragment {
           map(miembrosLineaInvestigador => {
             return miembrosLineaInvestigador.items.map(miembroLineaInvestigador => {
               miembroLineaInvestigador.grupoLineaInvestigacion = { id: this.getKey() } as IGrupoLineaInvestigacion;
-              return new StatusWrapper<IGrupoLineaInvestigador>(miembroLineaInvestigador as IGrupoLineaInvestigador);
+              return new StatusWrapper<IGrupoLineaInvestigador>(miembroLineaInvestigador);
             });
           })
         ).subscribe(
@@ -122,7 +116,7 @@ export class GrupoLineaInvestigadorFragment extends Fragment {
         map(miembrosLineaInvestigador => {
           return miembrosLineaInvestigador.map(miembroLineaInvestigador => {
             miembroLineaInvestigador.grupoLineaInvestigacion = { id: this.getKey() } as IGrupoLineaInvestigacion;
-            return new StatusWrapper<IGrupoLineaInvestigador>(miembroLineaInvestigador as IGrupoLineaInvestigador);
+            return new StatusWrapper<IGrupoLineaInvestigador>(miembroLineaInvestigador);
           });
         }),
         takeLast(1),

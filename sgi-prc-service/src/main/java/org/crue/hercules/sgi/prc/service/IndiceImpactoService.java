@@ -13,6 +13,7 @@ import org.crue.hercules.sgi.prc.model.IndiceImpacto;
 import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
 import org.crue.hercules.sgi.prc.repository.IndiceImpactoRepository;
 import org.crue.hercules.sgi.prc.repository.specification.IndiceImpactoSpecifications;
+import org.crue.hercules.sgi.prc.util.ProduccionCientificaAuthorityHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -39,10 +40,13 @@ public class IndiceImpactoService {
   private static final String MESSAGE_KEY_NAME = "name";
 
   private final IndiceImpactoRepository repository;
+  private final ProduccionCientificaAuthorityHelper authorityHelper;
 
   public IndiceImpactoService(
-      IndiceImpactoRepository indiceImpactoRepository) {
+      IndiceImpactoRepository indiceImpactoRepository,
+      ProduccionCientificaAuthorityHelper authorityHelper) {
     this.repository = indiceImpactoRepository;
+    this.authorityHelper = authorityHelper;
   }
 
   /**
@@ -189,6 +193,7 @@ public class IndiceImpactoService {
       Pageable pageable) {
     log.debug(
         "findAllByProduccionCientificaId(Long produccionCientificaId, String query, Pageable pageable) - start");
+    authorityHelper.checkUserHasAuthorityViewProduccionCientifica(produccionCientificaId);
     Specification<IndiceImpacto> specs = IndiceImpactoSpecifications.byProduccionCientificaId(
         produccionCientificaId)
         .and(SgiRSQLJPASupport.toSpecification(query));

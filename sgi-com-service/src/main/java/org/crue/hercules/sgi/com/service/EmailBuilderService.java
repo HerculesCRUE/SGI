@@ -210,7 +210,7 @@ public class EmailBuilderService extends BaseService {
       try {
         return new InternetAddress(recipient.getAddress(), recipient.getName());
       } catch (UnsupportedEncodingException e) {
-        e.printStackTrace();
+        log.error(e.getMessage(), e);
       }
     }
     try {
@@ -226,7 +226,7 @@ public class EmailBuilderService extends BaseService {
       try {
         return new InternetAddress(recipient.getAddress(), recipient.getName());
       } catch (UnsupportedEncodingException e) {
-        e.printStackTrace();
+        log.error(e.getMessage(), e);
       }
     }
     try {

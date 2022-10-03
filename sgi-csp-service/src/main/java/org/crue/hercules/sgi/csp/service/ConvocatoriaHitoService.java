@@ -11,19 +11,14 @@ import org.crue.hercules.sgi.csp.dto.ConvocatoriaHitoAvisoInput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaHitoInput;
 import org.crue.hercules.sgi.csp.dto.com.Recipient;
 import org.crue.hercules.sgi.csp.dto.tp.SgiApiInstantTaskOutput;
-import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaHitoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
-import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
-import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
-import org.crue.hercules.sgi.csp.model.Convocatoria.Estado;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHitoAviso;
 import org.crue.hercules.sgi.csp.model.ModeloTipoHito;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.Solicitud;
-import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaHitoAvisoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaHitoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
@@ -35,8 +30,8 @@ import org.crue.hercules.sgi.csp.repository.specification.ProyectoEquipoSpecific
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiTpService;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
-import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -60,33 +55,33 @@ public class ConvocatoriaHitoService {
   private final ConvocatoriaHitoRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
   private final ModeloTipoHitoRepository modeloTipoHitoRepository;
-  private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
   private final ConvocatoriaHitoAvisoRepository convocatoriaHitoAvisoRepository;
   private final SolicitudRepository solicitudRepository;
   private final ProyectoEquipoRepository proyectoEquipoRepository;
   private final SgiApiComService emailService;
   private final SgiApiTpService sgiApiTaskService;
   private final SgiApiSgpService personaService;
+  private final ConvocatoriaAuthorityHelper authorityHelper;
 
   public ConvocatoriaHitoService(ConvocatoriaHitoRepository convocatoriaHitoRepository,
       ConvocatoriaRepository convocatoriaRepository, ModeloTipoHitoRepository modeloTipoHitoRepository,
-      ConfiguracionSolicitudRepository configuracionSolicitudRepository,
       ConvocatoriaHitoAvisoRepository convocatoriaHitoAvisoRepository,
       SolicitudRepository solicitudRespository,
       ProyectoEquipoRepository proyectoEquipoRepository,
       SgiApiComService emailService,
       SgiApiTpService sgiApiTaskService,
-      SgiApiSgpService personaService) {
+      SgiApiSgpService personaService,
+      ConvocatoriaAuthorityHelper authorityHelper) {
     this.repository = convocatoriaHitoRepository;
     this.convocatoriaRepository = convocatoriaRepository;
     this.modeloTipoHitoRepository = modeloTipoHitoRepository;
-    this.configuracionSolicitudRepository = configuracionSolicitudRepository;
     this.convocatoriaHitoAvisoRepository = convocatoriaHitoAvisoRepository;
     this.solicitudRepository = solicitudRespository;
     this.proyectoEquipoRepository = proyectoEquipoRepository;
     this.emailService = emailService;
     this.sgiApiTaskService = sgiApiTaskService;
     this.personaService = personaService;
+    this.authorityHelper = authorityHelper;
   }
 
   /**
@@ -347,17 +342,7 @@ public class ConvocatoriaHitoService {
   public Page<ConvocatoriaHito> findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) {
     log.debug("findAllByConvocatoria(Long idConvocatoria, String query, Pageable pageable) - start");
 
-    Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaId)
-        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaId));
-    if (hasAuthorityViewInvestigador()) {
-      ConfiguracionSolicitud configuracionSolicitud = configuracionSolicitudRepository
-          .findByConvocatoriaId(convocatoriaId)
-          .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(convocatoriaId));
-      if (!convocatoria.getEstado().equals(Estado.REGISTRADA)
-          || Boolean.FALSE.equals(configuracionSolicitud.getTramitacionSGI())) {
-        throw new UserNotAuthorizedToAccessConvocatoriaException();
-      }
-    }
+    authorityHelper.checkUserHasAuthorityViewConvocatoria(convocatoriaId);
 
     Specification<ConvocatoriaHito> specs = ConvocatoriaHitoSpecifications.byConvocatoriaId(convocatoriaId)
         .and(SgiRSQLJPASupport.toSpecification(query));
@@ -402,7 +387,4 @@ public class ConvocatoriaHitoService {
     return repository.existsByConvocatoriaId(convocatoriaId);
   }
 
-  private boolean hasAuthorityViewInvestigador() {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
-  }
 }

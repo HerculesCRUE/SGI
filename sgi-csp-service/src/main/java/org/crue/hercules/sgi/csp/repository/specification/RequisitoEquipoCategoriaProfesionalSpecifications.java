@@ -5,6 +5,10 @@ import org.crue.hercules.sgi.csp.model.RequisitoEquipoCategoriaProfesional;
 import org.crue.hercules.sgi.csp.model.RequisitoEquipoCategoriaProfesional_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RequisitoEquipoCategoriaProfesionalSpecifications {
 
   /**
@@ -17,9 +21,7 @@ public class RequisitoEquipoCategoriaProfesionalSpecifications {
    *         {@link RequisitoEquipo} con el id indicado.
    */
   public static Specification<RequisitoEquipoCategoriaProfesional> byRequisitoEquipoId(Long id) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(RequisitoEquipoCategoriaProfesional_.requisitoEquipoId), id);
-    };
+    return (root, query, cb) -> cb.equal(root.get(RequisitoEquipoCategoriaProfesional_.requisitoEquipoId), id);
   }
 
 }

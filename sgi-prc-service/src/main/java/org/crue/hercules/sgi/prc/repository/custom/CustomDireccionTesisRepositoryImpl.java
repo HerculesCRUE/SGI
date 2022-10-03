@@ -2,24 +2,18 @@ package org.crue.hercules.sgi.prc.repository.custom;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.prc.dto.DireccionTesisResumen;
 import org.crue.hercules.sgi.prc.enums.CodigoCVN;
 import org.crue.hercules.sgi.prc.enums.EpigrafeCVN;
@@ -32,14 +26,12 @@ import org.crue.hercules.sgi.prc.model.ProduccionCientifica_;
 import org.crue.hercules.sgi.prc.model.ValorCampo;
 import org.crue.hercules.sgi.prc.model.ValorCampo_;
 import org.crue.hercules.sgi.prc.repository.predicate.DireccionTesisPredicateResolver;
+import org.crue.hercules.sgi.prc.util.CriteriaQueryUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -55,10 +47,10 @@ public class CustomDireccionTesisRepositoryImpl implements CustomDireccionTesisR
   private EntityManager entityManager;
 
   @Override
-  public Page<DireccionTesisResumen> findAllDireccionesTesis(Specification<ProduccionCientifica> specIsInvestigador,
-      String query, Pageable pageable) {
+  public Page<DireccionTesisResumen> findAllDireccionesTesis(Specification<ProduccionCientifica> specs,
+      Pageable pageable) {
     log.debug(
-        "findAllDireccionesTesis(Specification<ProduccionCientifica> specIsInvestigador, String query, Pageable pageable) - start");
+        "findAllDireccionesTesis(Specification<ProduccionCientifica> specs, Pageable pageable) - start");
 
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<DireccionTesisResumen> cq = cb.createQuery(DireccionTesisResumen.class);
@@ -113,16 +105,9 @@ public class CustomDireccionTesisRepositoryImpl implements CustomDireccionTesisR
         cb.equal(joinCamposFechaDefensaCount.get(CampoProduccionCientifica_.codigoCVN),
             CodigoCVN.E030_040_000_140)));
 
-    if (StringUtils.hasText(query)) {
-      Specification<ProduccionCientifica> spec = SgiRSQLJPASupport.toSpecification(query,
-          DireccionTesisPredicateResolver.getInstance());
-      listPredicates.add(spec.toPredicate(root, cq, cb));
-      listPredicatesCount.add(spec.toPredicate(rootCount, countQuery, cb));
-    }
-
-    if (specIsInvestigador != null) {
-      listPredicates.add(specIsInvestigador.toPredicate(root, cq, cb));
-      listPredicatesCount.add(specIsInvestigador.toPredicate(rootCount, countQuery, cb));
+    if (specs != null) {
+      listPredicates.add(specs.toPredicate(root, cq, cb));
+      listPredicatesCount.add(specs.toPredicate(rootCount, countQuery, cb));
     }
 
     Path<Long> pathProduccionCientificaId = root.get(ProduccionCientifica_.id);
@@ -141,13 +126,7 @@ public class CustomDireccionTesisRepositoryImpl implements CustomDireccionTesisR
         DireccionTesisPredicateResolver.Property.TITULO_TRABAJO.getCode(),
         DireccionTesisPredicateResolver.Property.FECHA_DEFENSA.getCode() };
 
-    Optional<Integer> selectionIndex = getIndexOrderBySelectionName(selectionNames, pageable.getSort(), cq);
-    if (selectionIndex.isPresent()) {
-      cq.orderBy(toOrdersByPosition(selectionIndex.get() + 1, pageable.getSort(), cb));
-    } else {
-      List<Order> orders = QueryUtils.toOrders(pageable.getSort(), root, cb);
-      cq.orderBy(orders);
-    }
+    cq.orderBy(CriteriaQueryUtils.toOrders(pageable.getSort(), root, cb, cq, selectionNames));
 
     countQuery.where(listPredicatesCount.toArray(new Predicate[] {}));
     Long count = entityManager.createQuery(countQuery).getSingleResult();
@@ -162,40 +141,9 @@ public class CustomDireccionTesisRepositoryImpl implements CustomDireccionTesisR
     Page<DireccionTesisResumen> returnValue = new PageImpl<>(result, pageable, count);
 
     log.debug(
-        "findAllDireccionesTesis(Specification<ProduccionCientifica> specIsInvestigador, String query, Pageable pageable) - end");
+        "findAllDireccionesTesis(Specification<ProduccionCientifica> specs, Pageable pageable) - end");
 
     return returnValue;
   }
 
-  private List<Order> toOrdersByPosition(int position, Sort sort, CriteriaBuilder cb) {
-    List<Order> orders = new ArrayList<>();
-    if (sort.isUnsorted()) {
-      return orders;
-    }
-
-    sort.forEach(order -> {
-      Expression<Integer> orderByLiteral = cb.literal(position);
-      Order orderByPosition = cb.desc(orderByLiteral);
-      if (order.isAscending()) {
-        orderByPosition = cb.asc(orderByLiteral);
-      }
-      orders.add(orderByPosition);
-    });
-
-    return orders;
-  }
-
-  private Optional<Integer> getIndexOrderBySelectionName(String[] selectionNames, Sort sort,
-      CriteriaQuery<?> cq) {
-    return Stream.of(selectionNames)
-        .filter(
-            selectionName -> !sort.filter(order -> order.getProperty().equals(selectionName)).isEmpty())
-        .findFirst()
-        .map(
-            selectionName -> IntStream.range(0, cq.getSelection().getCompoundSelectionItems().size())
-                .filter(
-                    index -> cq.getSelection().getCompoundSelectionItems().get(index).getAlias().equals(selectionName))
-                .findFirst()
-                .getAsInt());
-  }
 }

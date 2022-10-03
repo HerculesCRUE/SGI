@@ -4,6 +4,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentGuard } from '@core/guards/detail-form.guard';
 import { ActionGuard } from '@core/guards/master-form.guard';
 import { MSG_PARAMS } from '@core/i18n';
+import { Module } from '@core/module';
 import { SgiRoutes } from '@core/route';
 import { ROUTE_NAMES } from '@core/route.names';
 import { SgiAuthGuard } from '@sgi/framework/auth';
@@ -28,7 +29,8 @@ const routes: SgiRoutes = [
     data: {
       title: PETICION_EVALUACION_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-      hasAuthorityForAnyUO: 'ETI-PEV-INV-VR'
+      hasAuthorityForAnyUO: 'ETI-PEV-INV-VR',
+      module: Module.INV
     },
 
   },
@@ -42,7 +44,8 @@ const routes: SgiRoutes = [
       titleParams: {
         entity: PETICION_EVALUACION_KEY, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR
       },
-      hasAnyAuthorityForAnyUO: ['ETI-PEV-INV-C']
+      hasAnyAuthorityForAnyUO: ['ETI-PEV-INV-C'],
+      module: Module.INV
     },
     children: [
       {
@@ -72,7 +75,8 @@ const routes: SgiRoutes = [
     data: {
       title: PETICION_EVALUACION_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
-      hasAuthorityForAnyUO: 'ETI-PEV-INV-ER'
+      hasAuthorityForAnyUO: 'ETI-PEV-INV-ER',
+      module: Module.INV
     },
     children: [
       {

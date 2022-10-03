@@ -17,10 +17,9 @@ public interface EstadoMemoriaRepository
 
   // EstadoMemoria findByMemoriaIdAndIdNotInByOrderByFechaEstadoDescLimitedTo(Long
   // idMemoria, Long idEstadoMemoria,
-  // int limit);
 
   List<EstadoMemoria> findAllByMemoriaIdOrderByFechaEstadoDesc(Long idMemoria);
-  
+
   EstadoMemoria findTopByMemoriaIdOrderByFechaEstadoDesc(Long idMemoria);
 
 }

@@ -6,6 +6,9 @@
   <artifact name="sgemp-api" groupId="org.crue.hercules.sgi.esb.sgemp.api" version="${revision}" type="synapse/api" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/api/sgemp-api.xml</file>
   </artifact>
+  <artifact name="sgemp-public-api" groupId="org.crue.hercules.sgi.esb.sgemp.api" version="${revision}" type="synapse/api" serverRole="EnterpriseServiceBus">
+    <file>src/main/synapse-config/api/sgemp-public-api.xml</file>
+  </artifact>
   <artifact name="sgemp-endpoint" groupId="org.crue.hercules.sgi.esb.sgemp.endpoint" version="${revision}" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/endpoints/sgemp-endpoint.xml</file>
   </artifact>

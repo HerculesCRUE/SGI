@@ -161,7 +161,7 @@ public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEqui
       repository.deleteAll(solicitudProyectoEquipoEliminar);
     }
     if (solicitudProyectoEquipos.isEmpty()) {
-      return new ArrayList<>();
+      throw new MissingInvestigadorPrincipalInSolicitudProyectoEquipoException();
     }
 
     // SolicitudProyectoEquipo NO encontrados

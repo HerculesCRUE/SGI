@@ -13,6 +13,7 @@ import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica;
 import org.crue.hercules.sgi.prc.model.ProduccionCientifica;
 import org.crue.hercules.sgi.prc.repository.CampoProduccionCientificaRepository;
 import org.crue.hercules.sgi.prc.repository.specification.CampoProduccionCientificaSpecifications;
+import org.crue.hercules.sgi.prc.util.ProduccionCientificaAuthorityHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -39,10 +40,13 @@ public class CampoProduccionCientificaService {
   private static final String MESSAGE_KEY_NAME = "name";
 
   private final CampoProduccionCientificaRepository repository;
+  private final ProduccionCientificaAuthorityHelper authorityHelper;
 
   public CampoProduccionCientificaService(
-      CampoProduccionCientificaRepository campoProduccionCientificaRepository) {
+      CampoProduccionCientificaRepository campoProduccionCientificaRepository,
+      ProduccionCientificaAuthorityHelper authorityHelper) {
     this.repository = campoProduccionCientificaRepository;
+    this.authorityHelper = authorityHelper;
   }
 
   /**
@@ -216,6 +220,7 @@ public class CampoProduccionCientificaService {
       Pageable pageable) {
     log.debug(
         "findAllByProduccionCientificaId(Long prodduccionCientificaId, String query, Pageable pageable) - start");
+    authorityHelper.checkUserHasAuthorityViewProduccionCientifica(produccionCientificaId);
     Specification<CampoProduccionCientifica> specs = CampoProduccionCientificaSpecifications.byProduccionCientificaId(
         produccionCientificaId)
         .and(SgiRSQLJPASupport.toSpecification(query));

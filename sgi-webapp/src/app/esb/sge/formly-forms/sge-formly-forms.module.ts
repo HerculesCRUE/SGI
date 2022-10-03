@@ -24,7 +24,6 @@ import { ProyectoEconomicoFormlyModalComponent } from './proyecto-economico-form
     ReactiveFormsModule,
     FormlyMatDatepickerModule,
     FormlyMaterialModule,
-    SharedFormlyFormsModule,
     FormlyFormsModule
   ],
   exports: [

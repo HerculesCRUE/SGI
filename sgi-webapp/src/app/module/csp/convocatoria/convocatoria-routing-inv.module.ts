@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentGuard } from '@core/guards/detail-form.guard';
 import { ActionGuard } from '@core/guards/master-form.guard';
+import { Module } from '@core/module';
 import { SgiRoutes } from '@core/route';
 import { SgiAuthGuard } from '@sgi/framework/auth';
 import { ConvocatoriaDataResolver, CONVOCATORIA_DATA_KEY } from './convocatoria-data.resolver';
@@ -37,6 +38,7 @@ const routes: SgiRoutes = [
     data: {
       title: MSG_CONVOCATORIAS_TITLE,
       hasAuthorityForAnyUO: 'CSP-CON-INV-V',
+      module: Module.INV
     }
   },
   {
@@ -50,6 +52,7 @@ const routes: SgiRoutes = [
     data: {
       title: MSG_CONVOCATORIAS_VER_TITLE,
       hasAuthorityForAnyUO: 'CSP-CON-INV-V',
+      module: Module.INV
     },
     children: [
       {
@@ -140,6 +143,7 @@ const routes: SgiRoutes = [
     data: {
       title: MSG_CONVOCATORIAS_VER_TITLE,
       hasAuthorityForAnyUO: 'CSP-CON-INV-V',
+      module: Module.INV
     },
     resolve: {
       [CONVOCATORIA_DATA_KEY]: ConvocatoriaDataResolver
@@ -154,7 +158,8 @@ const routes: SgiRoutes = [
         canActivate: [SgiAuthGuard],
         data: {
           title: CONVOCATORIA_ELEGIBILIDAD_KEY,
-          permitido: true
+          permitido: true,
+          module: Module.INV
         }
       },
       {
@@ -166,7 +171,8 @@ const routes: SgiRoutes = [
         canActivate: [SgiAuthGuard],
         data: {
           title: CONVOCATORIA_ELEGIBILIDAD_KEY,
-          permitido: false
+          permitido: false,
+          module: Module.INV
         }
       }
     ]

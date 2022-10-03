@@ -12,6 +12,7 @@ import javax.validation.constraints.NotEmpty;
 
 import org.crue.hercules.sgi.prc.exceptions.ConvocatoriaBaremacionNotFoundException;
 import org.crue.hercules.sgi.prc.exceptions.RangoGapBetweenRangesRangeException;
+import org.crue.hercules.sgi.prc.exceptions.RangoInicialNotExistsException;
 import org.crue.hercules.sgi.prc.exceptions.RangoMultiplesNullDesdeException;
 import org.crue.hercules.sgi.prc.exceptions.RangoMultiplesNullHastaException;
 import org.crue.hercules.sgi.prc.exceptions.RangoMultiplesTemporalidadFinalException;
@@ -143,6 +144,17 @@ public class RangoService {
 
     if (hasMultiplesTemporalidadInicial) {
       throw new RangoMultiplesTemporalidadInicialException();
+    }
+
+    boolean hasTemporalidadInicial = rangos.stream()
+        .anyMatch(rango -> rango.getTipoTemporalidad().equals(TipoTemporalidad.INICIAL));
+
+    if (!hasTemporalidadInicial) {
+      boolean hasTemporalidadIntermedio = rangos.stream()
+          .anyMatch(rango -> rango.getTipoTemporalidad().equals(TipoTemporalidad.INTERMEDIO));
+      if (hasTemporalidadIntermedio) {
+        throw new RangoInicialNotExistsException();
+      }
     }
 
     boolean hasMultiplesTemporalidadFinal = rangos.stream()

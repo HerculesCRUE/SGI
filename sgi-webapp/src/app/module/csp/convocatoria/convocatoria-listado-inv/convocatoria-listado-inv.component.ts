@@ -130,7 +130,7 @@ export class ConvocatoriaListadoInvComponent extends AbstractTablePaginationComp
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IConvocatoriaListado>> {
-    const observable$ = this.getDatosPersona().pipe(
+    return this.getDatosPersona().pipe(
       switchMap(() => {
         return this.convocatoriaService.findAllInvestigador(this.getFindOptions(reset)).pipe(
           map(result => {
@@ -222,8 +222,6 @@ export class ConvocatoriaListadoInvComponent extends AbstractTablePaginationComp
         );
       })
     );
-
-    return observable$;
   }
 
   protected initColumns(): void {

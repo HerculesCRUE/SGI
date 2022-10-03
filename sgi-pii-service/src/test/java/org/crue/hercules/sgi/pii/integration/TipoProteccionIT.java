@@ -8,7 +8,10 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.pii.controller.TipoProteccionController;
 import org.crue.hercules.sgi.pii.dto.TipoProteccionInput;
 import org.crue.hercules.sgi.pii.dto.TipoProteccionOutput;
+import org.crue.hercules.sgi.pii.enums.TipoPropiedad;
+import org.crue.hercules.sgi.pii.repository.TipoProteccionRepository;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -32,6 +35,9 @@ class TipoProteccionIT extends BaseIT {
   private static final String PATH_SUBTIPOS = "/subtipos";
   private static final String PATH_ACTIVAR = "/activar";
   private static final String PATH_DESACTIVAR = "/desactivar";
+
+  @Autowired
+  private TipoProteccionRepository tipoProteccionRepository;
 
   private HttpEntity<TipoProteccionInput> buildRequest(HttpHeaders headers,
       TipoProteccionInput entity, String... roles) throws Exception {
@@ -287,6 +293,61 @@ class TipoProteccionIT extends BaseIT {
     Assertions.assertThat(tipoProteccionOutput.getNombre()).as("nombre")
         .isEqualTo("nombre-tipo-proteccion-001");
 
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+  "classpath:scripts/tipo_proteccion.sql",
+    // @formatter:off
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void create_ReturnsNewTipoProteccionOutput() throws Exception {
+    String[] roles = {"PII-TPR-C"};   
+    TipoProteccionInput input = this.buildMockTipoProteccionInput();
+
+    final ResponseEntity<TipoProteccionOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH, HttpMethod.POST,
+        buildRequest(null, input, roles), TipoProteccionOutput.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    Assertions.assertThat(response.getBody()).isNotNull();
+
+    TipoProteccionOutput tipoProteccionOutput = response.getBody();
+    Assertions.assertThat(tipoProteccionOutput.getId()).isEqualTo(this.tipoProteccionRepository.count());
+    Assertions.assertThat(tipoProteccionOutput.getNombre()).isEqualTo(input.getNombre());
+    Assertions.assertThat(tipoProteccionOutput.getTipoPropiedad()).isEqualTo(input.getTipoPropiedad());
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/tipo_proteccion.sql",
+    // @formatter:off
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void update_ReturnsModifiedTipoProteccionOutput() throws Exception {
+    String[] roles = {"PII-TPR-E"};   
+    Long toUpdateId = 1L;
+    TipoProteccionInput input = this.buildMockTipoProteccionInput();
+
+    final ResponseEntity<TipoProteccionOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.PUT,
+        buildRequest(null, input, roles), TipoProteccionOutput.class, toUpdateId);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody()).isNotNull();
+
+    TipoProteccionOutput tipoProteccionOutput = response.getBody();
+    Assertions.assertThat(tipoProteccionOutput.getId()).isEqualTo(toUpdateId);
+    Assertions.assertThat(tipoProteccionOutput.getNombre()).isEqualTo(input.getNombre());
+    Assertions.assertThat(tipoProteccionOutput.getTipoPropiedad()).isEqualTo(input.getTipoPropiedad());
+  }
+
+  private TipoProteccionInput buildMockTipoProteccionInput() {
+    return TipoProteccionInput.builder()
+    .nombre("Testing tipo Proteccion")
+    .descripcion("Testing tipo Proteccion")
+    .tipoPropiedad(TipoPropiedad.INTELECTUAL)
+    .build();
   }
 
 }

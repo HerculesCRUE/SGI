@@ -1,0 +1,62 @@
+<sgi-action [actionService]="actionService">
+  <ng-container menu>
+    <sgi-action-fragment-menu-item [route]="[CONVOCATORIA_ROUTE_NAMES.DATOS_GENERALES]"
+      [title]="'label.datos-generales' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[CONVOCATORIA_ROUTE_NAMES.ENTIDADES_CONVOCANTES]"
+      [title]="'csp.convocatoria-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.ENTIDADES_CONVOCANTES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[CONVOCATORIA_ROUTE_NAMES.ENTIDADES_FINANCIADORAS]"
+      [title]="'csp.convocatoria-entidad-financiadora' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.ENTIDADES_FINANCIADORAS)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[CONVOCATORIA_ROUTE_NAMES.ENLACES]"
+      [title]="'csp.convocatoria-enlace' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.ENLACES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[CONVOCATORIA_ROUTE_NAMES.FASES]"
+      [title]="'csp.convocatoria-fase' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.FASES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[CONVOCATORIA_ROUTE_NAMES.PERIODO_JUSTIFICACION]"
+      [title]="'csp.convocatoria-periodo-justificacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.PERIODO_JUSTIFICACION)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[CONVOCATORIA_ROUTE_NAMES.SEGUIMIENTO_CIENTIFICO]"
+      [title]="'csp.convocatoria-seguimiento-cientifico' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.SEGUIMIENTO_CIENTIFICO)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[CONVOCATORIA_ROUTE_NAMES.HITOS]"
+      [title]="'csp.hito' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.HITOS)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[CONVOCATORIA_ROUTE_NAMES.DOCUMENTOS]"
+      [title]="'csp.documentos' | translate" [fragment]="actionService.getFragment(actionService.FRAGMENT.DOCUMENTOS)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[CONVOCATORIA_ROUTE_NAMES.REQUISITOS_IP]"
+      [title]="'csp.convocatoria-requisito-ip' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.REQUISITOS_IP)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[CONVOCATORIA_ROUTE_NAMES.REQUISITOS_EQUIPO]"
+      [title]="'csp.convocatoria-requisito-equipo' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.REQUISITOS_EQUIPO)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[CONVOCATORIA_ROUTE_NAMES.ELEGIBILIDAD]"
+      [title]="'csp.convocatoria-elegibilidad' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.ELEGIBILIDAD)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[CONVOCATORIA_ROUTE_NAMES.PARTIDAS_PRESUPUESTARIAS]"
+      [title]="'csp.convocatoria-partida-presupuestaria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.PARTIDAS_PRESUPUESTARIAS)">
+    </sgi-action-fragment-menu-item>
+  </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="textoEditar" [actionService]="actionService">
+      <sgi-action-footer-button color="primary" action="registrar" [text]="textoRegistrar"
+        [disabled]="disableRegistrar$ | async" icon="move_to_inbox">
+      </sgi-action-footer-button>
+    </sgi-action-footer>
+  </ng-container>
+</sgi-action>

@@ -1,0 +1,203 @@
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
+  <form [formGroup]="formGroup" fxLayout="column">
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px" *ngIf="formPart.isEdit()">
+      <!-- Estado actual nuevo -->
+      <mat-form-field fxFlex="25%">
+        <mat-label>{{'csp.proyecto.estado' | translate}}</mat-label>
+        <mat-select formControlName="estado" placeholder="{{'csp.solicitud.cambio-estado.actual' | translate}}">
+          <mat-option *ngFor="let estado of ESTADO_MAP | keyvalue" [value]="estado.key">
+            {{ estado.value | translate}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Titulo -->
+      <mat-form-field fxFlex="60%">
+        <mat-label>{{'csp.convocatoria.titulo' | translate}}</mat-label>
+        <input matInput formControlName="titulo" type="text" id="titulo"
+          placeholder="{{'csp.convocatoria.titulo' | translate}}" required>
+      </mat-form-field>
+
+      <!-- Tipo forumlario-->
+      <mat-form-field fxFlex="40%">
+        <mat-label>{{'csp.convocatoria.tipo-formulario' | translate}}</mat-label>
+        <mat-select matNativeControl formControlName="formularioSolicitud" required>
+          <mat-option *ngFor="let formularioSolicitud of FORMULARIO_SOLICITUD_MAP | keyvalue"
+            [value]="formularioSolicitud.key">
+            {{ formularioSolicitud.value | translate}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Unidad de gestión -->
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.convocatoria.unidad-gestion' | translate}}
+        </mat-label>
+        <input matInput formControlName="unidadGestion" placeholder="{{'csp.convocatoria.unidad-gestion' | translate}}">
+      </mat-form-field>
+
+      <!-- Modelo de ejecución -->
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.convocatoria.modelo-ejecucion' | translate}}</mat-label>
+        <input matInput formControlName="modeloEjecucion"
+          placeholder="{{'csp.convocatoria.modelo-ejecucion' | translate}}">
+      </mat-form-field>
+
+      <!-- Finalidades -->
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.convocatoria.finalidad' | translate}}</mat-label>
+        <input matInput formControlName="finalidad" placeholder="{{'csp.convocatoria.finalidad' | translate}}">
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Código de referencia -->
+      <mat-form-field fxFlex="60%">
+        <mat-label>{{'csp.convocatoria.codigo-referencia' | translate}}</mat-label>
+        <input matInput formControlName="codigo" type="text" id="codigo"
+          placeholder="{{'csp.convocatoria.codigo-referencia' | translate}}">
+      </mat-form-field>
+
+      <!-- Entidad gestora -->
+      <mat-form-field fxFlex="40%">
+        <mat-label>{{'csp.convocatoria.entidad-gestora' | translate}}</mat-label>
+        <sgi-select-empresa placeholder="{{'csp.convocatoria.entidad-gestora' | translate}}"
+          formControlName="entidadGestora">
+        </sgi-select-empresa>
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Fecha Publicación -->
+      <mat-form-field color="primary" fxFlex="33%">
+        <mat-label>{{'csp.convocatoria.fecha-publicacion'| translate}}</mat-label>
+        <input matInput [matDatepicker]="pickerFechaPublicacion" formControlName="fechaPublicacion">
+        <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaPublicacion"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaPublicacion>
+        </mat-datepicker>
+      </mat-form-field>
+
+      <!-- Fecha Provisional -->
+      <mat-form-field color="primary" fxFlex="33%">
+        <mat-label>{{'csp.convocatoria.fecha-provisional'| translate}}</mat-label>
+        <input matInput [matDatepicker]="pickerFechaProvisional" formControlName="fechaProvisional">
+        <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaProvisional"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaProvisional>
+        </mat-datepicker>
+      </mat-form-field>
+
+      <!-- Fecha Concesión -->
+      <mat-form-field color="primary" fxFlex="33%">
+        <mat-label>{{'csp.convocatoria.fecha-concesion'| translate}}</mat-label>
+        <input matInput [matDatepicker]="pickerFechaConcesion" formControlName="fechaConcesion">
+        <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaConcesion"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaConcesion>
+        </mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Duración meses -->
+      <mat-form-field fxFlex="50%">
+        <mat-label>{{'csp.convocatoria.duracion' | translate}}</mat-label>
+        <input matInput formControlName="duracion" type="number" id="duracion" step="1" min="1"
+          placeholder="{{'csp.convocatoria.duracion' | translate}}">
+      </mat-form-field>
+
+      <!-- Convocatoria de Excelencia -->
+      <mat-form-field fxFlex="50%">
+        <mat-label>{{'csp.convocatoria.excelencia' | translate}}</mat-label>
+        <sgi-select-boolean formControlName="excelencia"></sgi-select-boolean>
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+
+      <!-- Tipo de ámbito geográfico -->
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.convocatoria.ambito-geografico' | translate}}</mat-label>
+        <input matInput formControlName="ambitoGeografico"
+          placeholder="{{'csp.convocatoria.ambito-geografico' | translate}}">
+      </mat-form-field>
+
+
+      <!-- Tipo de régimen de concurrencia-->
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.convocatoria.regimen-concurrencia' | translate}}</mat-label>
+        <input matInput formControlName="regimenConcurrencia"
+          placeholder="{{'csp.convocatoria.regimen-concurrencia' | translate}}">
+      </mat-form-field>
+
+      <!-- Clasificación producción -->
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.convocatoria.clasificacion-produccion-cientifica' | translate}}
+        </mat-label>
+        <sgi-select-enum formControlName="clasificacionCVN" [enumMap]="CLASIFICACION_CVN_MAP">
+        </sgi-select-enum>
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Palabras Clave -->
+      <mat-form-field fxFlex="100%">
+        <mat-label>{{'csp.convocatoria.palabras-clave' | translate}}</mat-label>
+        <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
+          placeholder="{{'csp.convocatoria.palabras-clave' | translate}}"></sgi-palabra-clave>
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Objeto -->
+      <mat-form-field fxFlex="100%">
+        <mat-label>{{'csp.convocatoria.descripcion' | translate}}</mat-label>
+        <textarea matInput formControlName="objeto" type="text" id="objeto"
+          placeholder="{{'csp.convocatoria.descripcion' | translate}}">
+        </textarea>
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Observaciones -->
+      <mat-form-field fxFlex="100%">
+        <mat-label>{{'csp.convocatoria.observaciones' | translate}}</mat-label>
+        <textarea matInput formControlName="observaciones" type="text" id="observaciones"
+          placeholder="{{'csp.convocatoria.observaciones' | translate}}">
+        </textarea>
+      </mat-form-field>
+    </div>
+  </form>
+
+  <div class="separation-button">
+    <h3>{{'list.entity' | translate:msgParamAreaTematicaEntities}}</h3>
+    <div class="mat-elevation-z4">
+      <table class="areas-tematicas" mat-table [dataSource]="convocatoriaAreaTematicas" matSort matSortActive="id"
+        matSortDirection="asc" matSortDisableClear>
+        <ng-container matColumnDef="padre">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'list.entity' | translate:msgParamAreaEntities}}
+          </th>
+          <td mat-cell *matCellDef="let data">{{data.padre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'csp.area-tematica.nombre' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let data" matTooltip="{{data.areasTematicas}}">
+            {{data.areasTematicas}}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}} </th>
+          <td mat-cell *matCellDef="let data">
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+      </table>
+    </div>
+  </div>
+</sgi-fragment>

@@ -541,60 +541,6 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
-  void findAll_WithPaging_ReturnsConvocatoriaSubList() throws Exception {
-    // given: One hundred Convocatoria
-    List<Convocatoria> convocatorias = new ArrayList<>();
-    for (int i = 1; i <= 100; i++) {
-
-      if (i % 2 == 0) {
-        convocatorias.add(generarMockConvocatoria(Long.valueOf(i), 1L, 1L, 1L, 1L, 1L, Boolean.TRUE));
-      }
-    }
-
-    BDDMockito.given(service.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<Convocatoria>>() {
-          @Override
-          public Page<Convocatoria> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            List<Convocatoria> content = convocatorias.subList(fromIndex, toIndex);
-            Page<Convocatoria> page = new PageImpl<>(content, pageable, convocatorias.size());
-            return page;
-          }
-        });
-
-    // when: get page=3 with pagesize=10
-    MvcResult requestResult = mockMvc
-        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH).with(SecurityMockMvcRequestPostProcessors.csrf())
-            .header("X-Page", "3").header("X-Page-Size", "10").accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: the asked Convocatoria are returned with the right page information in
-        // headers
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page", "3"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page-Size", "10"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Total-Count", "50"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(10))).andReturn();
-
-    // this uses a TypeReference to inform Jackson about the Lists's generic type
-    List<Convocatoria> actual = mapper.readValue(requestResult.getResponse().getContentAsString(),
-        new TypeReference<List<Convocatoria>>() {
-        });
-
-    // containing Codigo='codigo-62' to 'codigo-80'
-    for (int i = 0, j = 62; i < 10; i++, j += 2) {
-      Convocatoria item = actual.get(i);
-      Assertions.assertThat(item.getCodigo()).isEqualTo("codigo-" + String.format("%03d", j));
-      Assertions.assertThat(item.getActivo()).isEqualTo(Boolean.TRUE);
-    }
-  }
-
-  @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
   void findAllTodosRestringidos_WithPaging_ReturnsConvocatoriaSubList() throws Exception {
     // given: One hundred Convocatoria
@@ -645,28 +591,6 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
       Assertions.assertThat(item.getCodigo()).isEqualTo("codigo-" + String.format("%03d", j));
       Assertions.assertThat(item.getActivo()).isEqualTo((j % 2 == 0 ? Boolean.TRUE : Boolean.FALSE));
     }
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
-  void findAll_EmptyList_Returns204() throws Exception {
-    // given: no data Convocatoria
-    BDDMockito.given(service.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<Convocatoria>>() {
-          @Override
-          public Page<Convocatoria> answer(InvocationOnMock invocation) throws Throwable {
-            Page<Convocatoria> page = new PageImpl<>(Collections.emptyList());
-            return page;
-          }
-        });
-
-    // when: get page=3 with pagesize=10
-    mockMvc
-        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH).with(SecurityMockMvcRequestPostProcessors.csrf())
-            .header("X-Page", "3").header("X-Page-Size", "10").accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: returns 204
-        .andExpect(MockMvcResultMatchers.status().isNoContent());
   }
 
   @Test

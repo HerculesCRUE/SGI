@@ -7,13 +7,15 @@ import javax.persistence.criteria.Root;
 
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLPredicateResolver;
 import org.crue.hercules.sgi.rel.model.Relacion;
-import org.crue.hercules.sgi.rel.model.Relacion_;
 import org.crue.hercules.sgi.rel.model.Relacion.TipoEntidad;
+import org.crue.hercules.sgi.rel.model.Relacion_;
 
 import cz.jirutka.rsql.parser.ast.ComparisonNode;
 import cz.jirutka.rsql.parser.ast.ComparisonOperator;
 import io.github.perplexhub.rsql.RSQLOperators;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class RelacionPredicateResolver implements SgiRSQLPredicateResolver<Relacion> {
 
   private enum Property {
@@ -51,7 +53,7 @@ public class RelacionPredicateResolver implements SgiRSQLPredicateResolver<Relac
     return property != null;
   }
 
-  private Predicate buildByEntidadRef(ComparisonNode node, Root<Relacion> root, CriteriaQuery<?> query,
+  private Predicate buildByEntidadRef(ComparisonNode node, Root<Relacion> root,
       CriteriaBuilder cb, TipoEntidad tipoEntidad) {
     ComparisonOperator operator = node.getOperator();
     if (!operator.equals(RSQLOperators.EQUAL)) {
@@ -75,14 +77,28 @@ public class RelacionPredicateResolver implements SgiRSQLPredicateResolver<Relac
   @Override
   public Predicate toPredicate(ComparisonNode node, Root<Relacion> root, CriteriaQuery<?> query,
       CriteriaBuilder criteriaBuilder) {
-    switch (Property.fromCode(node.getSelector())) {
-    case PROYECTO_REF:
-      return buildByEntidadRef(node, root, query, criteriaBuilder, TipoEntidad.PROYECTO);
-    case INVENCION_REF:
-      return buildByEntidadRef(node, root, query, criteriaBuilder, TipoEntidad.INVENCION);
-    default:
+
+    Predicate predicate = null;
+    Property property = null;
+    if (Property.fromCode(node.getSelector()) != null) {
+      property = Property.fromCode(node.getSelector());
+    }
+
+    if (property == null) {
       return null;
     }
+    switch (property) {
+      case PROYECTO_REF:
+        predicate = buildByEntidadRef(node, root, criteriaBuilder, TipoEntidad.PROYECTO);
+        break;
+      case INVENCION_REF:
+        predicate = buildByEntidadRef(node, root, criteriaBuilder, TipoEntidad.INVENCION);
+        break;
+      default:
+        log.warn("Propiedad no encontrada, no es ni INVENCION_REF ni PROYECTO_REF");
+        break;
+    }
+    return predicate;
   }
 
 }

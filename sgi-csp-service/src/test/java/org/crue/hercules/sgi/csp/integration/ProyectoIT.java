@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.controller.ProyectoController;
 import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAgrupacionGastoOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadResumen;
@@ -23,6 +24,7 @@ import org.crue.hercules.sgi.csp.dto.ProyectoPalabraClaveInput;
 import org.crue.hercules.sgi.csp.dto.ProyectoPalabraClaveOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
 import org.crue.hercules.sgi.csp.dto.ProyectoResponsableEconomicoOutput;
+import org.crue.hercules.sgi.csp.dto.RequerimientoJustificacionOutput;
 import org.crue.hercules.sgi.csp.model.AnualidadGasto;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
@@ -110,6 +112,7 @@ class ProyectoIT extends BaseIT {
   private static final String PATH_ANUALIDAD_GASTOS = PATH_PARAMETER_ID + "/anualidad-gastos";
   private static final String PATH_ANUALIDAD_INGRESOS = PATH_PARAMETER_ID + "/anualidad-ingresos";
   private static final String PATH_GASTOS_PROYECTO = PATH_PARAMETER_ID + "/gastos-proyecto";
+  private static final String PATH_REQUERIMIENTOS_JUSTIFICACION = ProyectoController.PATH_REQUERIMIENTOS_JUSTIFICACION;
 
   private HttpEntity<Object> buildRequest(HttpHeaders headers, Object entity, String... roles) throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());
@@ -773,7 +776,7 @@ class ProyectoIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void hasAnyProyectoSocio_Returns200() throws Exception {
-    String[] roles = { "CSP-SOL-E", "CSP-SOL-V" };
+    String[] roles = { "CSP-PRO-E", "CSP-SOL-E", "CSP-SOL-V" };
 
     Long proyectoId = 1L;
 
@@ -803,7 +806,7 @@ class ProyectoIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void hasAnyProyectoSocio_ReturnsEmptyProyectoSocio() throws Exception {
-    String[] roles = { "CSP-SOL-E", "CSP-SOL-V" };
+    String[] roles = { "CSP-PRO-E", "CSP-SOL-E", "CSP-SOL-V" };
 
     Long proyectoId = 2L;
 
@@ -833,7 +836,7 @@ class ProyectoIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void hasAnyProyectoSocioWithRolCoordinador_Returns200() throws Exception {
-    String[] roles = { "CSP-SOL-E", "CSP-SOL-V" };
+    String[] roles = { "CSP-PRO-E", "CSP-SOL-E", "CSP-SOL-V" };
 
     Long proyectoId = 1L;
 
@@ -864,7 +867,7 @@ class ProyectoIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void hasAnyProyectoSocioWithRolCoordinador_ReturnsEmptyProyectoSocioWithRolCoordinador() throws Exception {
-    String[] roles = { "CSP-SOL-E", "CSP-SOL-V" };
+    String[] roles = { "CSP-PRO-E", "CSP-SOL-E", "CSP-SOL-V" };
 
     Long proyectoId = 2L;
 
@@ -896,7 +899,7 @@ class ProyectoIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void existsProyectoSocioPeriodoPagoByProyectoSocioId_Returns200() throws Exception {
-    String[] roles = { "CSP-SOL-E", "CSP-SOL-V" };
+    String[] roles = { "CSP-PRO-E", "CSP-SOL-E", "CSP-SOL-V" };
 
     Long proyectoId = 1L;
 
@@ -928,7 +931,7 @@ class ProyectoIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void existsProyectoSocioPeriodoPagoByProyectoSocioId_ReturnsEmptyProyectoSocioPeriodoPago() throws Exception {
-    String[] roles = { "CSP-SOL-E", "CSP-SOL-V" };
+    String[] roles = { "CSP-PRO-E", "CSP-SOL-E", "CSP-SOL-V" };
 
     Long proyectoId = 2L;
 
@@ -960,7 +963,7 @@ class ProyectoIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void existsProyectoSocioPeriodoJustificacionByProyectoSocioId_Returns200() throws Exception {
-    String[] roles = { "CSP-SOL-E", "CSP-SOL-V" };
+    String[] roles = { "CSP-PRO-E", "CSP-SOL-E", "CSP-SOL-V" };
 
     Long proyectoId = 1L;
 
@@ -993,7 +996,7 @@ class ProyectoIT extends BaseIT {
   @Test
   void existsProyectoSocioPeriodoJustificacionByProyectoSocioId_ReturnsEmptyProyectoSocioPeriodoJustificacion()
       throws Exception {
-    String[] roles = { "CSP-SOL-E", "CSP-SOL-V" };
+    String[] roles = { "CSP-PRO-E", "CSP-SOL-E", "CSP-SOL-V" };
 
     Long proyectoId = 2L;
 
@@ -3290,4 +3293,55 @@ class ProyectoIT extends BaseIT {
     Assertions.assertThat(numPersonasEquipo).isEqualTo(5);
   }
 
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/proyecto_proyecto_sge.sql",
+    "classpath:scripts/proyecto_periodo_justificacion.sql",
+    "classpath:scripts/tipo_requerimiento.sql",
+    "classpath:scripts/requerimiento_justificacion.sql",
+      // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findRequerimientosJustificacion_WithPagingSorting_ReturnsRequerimientoJustificacionOutputSubList()
+      throws Exception {
+    String roles = "CSP-SJUS-E";
+    // given: data for RequerimientoJustificacionOutput and a proyectoId
+    Long proyectoId = 1L;
+    // first page, 3 elements per page sorted by nombre desc
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "3");
+    String sort = "observaciones,desc";
+
+    // when: find RequerimientoJustificacionOutput
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_REQUERIMIENTOS_JUSTIFICACION)
+        .queryParam("s", sort).buildAndExpand(proyectoId).toUri();
+    final ResponseEntity<List<RequerimientoJustificacionOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        buildRequest(headers, null, roles),
+        new ParameterizedTypeReference<List<RequerimientoJustificacionOutput>>() {
+        });
+
+    // given: RequerimientoJustificacionOutput data filtered and sorted
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    final List<RequerimientoJustificacionOutput> responseData = response.getBody();
+    Assertions.assertThat(responseData).hasSize(2);
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("2");
+
+    Assertions.assertThat(responseData.get(0).getObservaciones()).as("get(0).getObservaciones())")
+        .isEqualTo("obs-002");
+    Assertions.assertThat(responseData.get(1).getObservaciones()).as("get(1).getObservaciones())")
+        .isEqualTo("obs-001");
+  }
 }

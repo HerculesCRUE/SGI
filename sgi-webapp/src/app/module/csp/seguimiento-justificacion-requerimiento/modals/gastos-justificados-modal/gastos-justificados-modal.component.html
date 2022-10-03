@@ -1,0 +1,168 @@
+<sgi-dialog-header
+  title="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.anadir' | translate}}">
+</sgi-dialog-header>
+<sgi-dialog-content>
+  <!-- Buscador -->
+  <form [formGroup]="formGroup" fxLayout="column" class="formulario">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- ID Justificacion -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.id-justificacion' | translate}}
+        </mat-label>
+        <mat-select matNativeControl formControlName="identificadoresJustificacion" multiple>
+          <mat-option *ngFor="let periodoJustificacion of periodosJustificacionByProyectoSgi$ | async"
+            [value]="periodoJustificacion.identificadorJustificacion">
+            {{ periodoJustificacion.identificadorJustificacion }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Numero registro proveedor -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.num-registro-proveedor' |
+          translate}}
+        </mat-label>
+        <input matInput type="text"
+          placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.num-registro-proveedor' | translate}}"
+          formControlName="numRegistroProveedor">
+      </mat-form-field>
+
+      <!--Importe presentado justificacion-->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.importe-presentado' | translate}}
+        </mat-label>
+        <input matInput type="text"
+          placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.importe-presentado' | translate}}"
+          formControlName="importeJustificado">
+      </mat-form-field>
+
+    </div>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Fecha de devengo desde -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.fecha-devengo-desde' | translate}}
+        </mat-label>
+        <input matInput formControlName="fechaDevengoDesde" [matDatepicker]="fechaDevengoDesde">
+        <mat-datepicker-toggle matSuffix [for]="fechaDevengoDesde"></mat-datepicker-toggle>
+        <mat-datepicker #fechaDevengoDesde></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Fecha de devengo hasta -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.fecha-devengo-hasta' | translate}}
+        </mat-label>
+        <input matInput formControlName="fechaDevengoHasta" [matDatepicker]="fechaDevengoHasta">
+        <mat-datepicker-toggle matSuffix [for]="fechaDevengoHasta"></mat-datepicker-toggle>
+        <mat-datepicker #fechaDevengoHasta></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Fecha de pago desde -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.fecha-pago-desde' | translate}}
+        </mat-label>
+        <input matInput formControlName="fechaPagoDesde" [matDatepicker]="fechaPagoDesde">
+        <mat-datepicker-toggle matSuffix [for]="fechaPagoDesde"></mat-datepicker-toggle>
+        <mat-datepicker #fechaPagoDesde></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Fecha de pago hasta -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.fecha-pago-hasta' | translate}}
+        </mat-label>
+        <input matInput formControlName="fechaPagoHasta" [matDatepicker]="fechaPagoHasta">
+        <mat-datepicker-toggle matSuffix [for]="fechaPagoHasta"></mat-datepicker-toggle>
+        <mat-datepicker #fechaPagoHasta></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <!-- Acciones -->
+    <div class="buttons-final">
+      <div class="col filter-button">
+        <button color="primary" mat-raised-button (click)="search()">
+          <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+        </button>
+        <button color="warn" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+          translate}}
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <div class="mat-elevation-z4" *ngIf="displayColumns$ | async as displayColumns">
+    <mat-table [dataSource]="dataSource" matSort matSortActive="justificacionId" matSortDirection="asc">
+
+      <!-- Checkbox Column -->
+      <ng-container matColumnDef="select">
+        <mat-header-cell mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? masterToggleGastosJustificados() : null"
+            [checked]="gastosJustificadosSelection.hasValue() && isAllGastosSelectedJustificados()"
+            [indeterminate]="gastosJustificadosSelection.hasValue() && !isAllGastosSelectedJustificados()">
+          </mat-checkbox>
+        </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let row">
+          <mat-checkbox (click)="$event.stopPropagation()"
+            (change)="$event ? gastosJustificadosSelection.toggle(row) : null"
+            [checked]="gastosJustificadosSelection.isSelected(row)">
+          </mat-checkbox>
+        </mat-cell>
+      </ng-container>
+
+      <!-- ID Justificación Column -->
+      <ng-container matColumnDef="justificacionId">
+        <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.id-justificacion' | translate}}
+        </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let value">
+          {{value.justificacionId}}
+        </mat-cell>
+      </ng-container>
+
+      <!-- Columnas dinamicas -->
+      <ng-container *ngFor="let column of columns" [matColumnDef]="column.id">
+        <mat-header-cell *matHeaderCellDef [class.computed]="column.compute" mat-sort-header>
+          {{column.name}}
+        </mat-header-cell>
+        <mat-cell *matCellDef="let value" [class.computed]="column.compute">
+          <ng-container *ngIf="column.compute">
+            {{value.columnas[column.id] | number: '1.2-2'}}
+          </ng-container>
+          <ng-container *ngIf="!column.compute">
+            {{value.columnas[column.id]}}
+          </ng-container>
+        </mat-cell>
+      </ng-container>
+
+      <!-- Acciones Column -->
+      <ng-container matColumnDef="acciones">
+        <mat-header-cell mat-header-cell *matHeaderCellDef>
+          {{ 'label.actions' | translate }}
+        </mat-header-cell>
+        <mat-cell mat-cell *matCellDef="let value">
+          <ng-container *sgiHasAuthorityForAnyUO="'CSP-SJUS-E'">
+            <button mat-button matTooltip="{{'btn.view' | translate}}" (click)="openModalDetalle(value)">
+              <mat-icon color="primary">visibility</mat-icon>
+            </button>
+          </ng-container>
+        </mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayColumns;"></mat-row>
+    </mat-table>
+    <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons></mat-paginator>
+  </div>
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="close(gastosJustificadosSelection.selected)"
+    [disabled]="gastosJustificadosSelection.isEmpty()" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{ 'btn.add' | translate }}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

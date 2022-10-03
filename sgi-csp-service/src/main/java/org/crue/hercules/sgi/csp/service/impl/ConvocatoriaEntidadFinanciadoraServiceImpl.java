@@ -3,17 +3,12 @@ package org.crue.hercules.sgi.csp.service.impl;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaEntidadFinanciadoraNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.FuenteFinanciacionNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.TipoFinanciacionNotFoundException;
-import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatoriaException;
-import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
-import org.crue.hercules.sgi.csp.model.Convocatoria.Estado;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
-import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadFinanciadoraRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.FuenteFinanciacionRepository;
@@ -21,8 +16,8 @@ import org.crue.hercules.sgi.csp.repository.TipoFinanciacionRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaEntidadFinanciadoraSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaEntidadFinanciadoraService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
+import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
-import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -43,22 +38,22 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
 
   private final ConvocatoriaEntidadFinanciadoraRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
-  private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
   private final FuenteFinanciacionRepository fuenteFinanciacionRepository;
   private final TipoFinanciacionRepository tipoFinanciacionRepository;
   private final ConvocatoriaService convocatoriaService;
+  private final ConvocatoriaAuthorityHelper authorityHelper;
 
   public ConvocatoriaEntidadFinanciadoraServiceImpl(
       ConvocatoriaEntidadFinanciadoraRepository convocatoriaEntidadFinanciadoraRepository,
       ConvocatoriaRepository convocatoriaRepository, FuenteFinanciacionRepository fuenteFinanciacionRepository,
       TipoFinanciacionRepository tipoFinanciacionRepository, ConvocatoriaService convocatoriaService,
-      ConfiguracionSolicitudRepository configuracionSolicitudRepository) {
+      ConvocatoriaAuthorityHelper authorityHelper) {
     this.repository = convocatoriaEntidadFinanciadoraRepository;
     this.convocatoriaRepository = convocatoriaRepository;
     this.fuenteFinanciacionRepository = fuenteFinanciacionRepository;
     this.tipoFinanciacionRepository = tipoFinanciacionRepository;
     this.convocatoriaService = convocatoriaService;
-    this.configuracionSolicitudRepository = configuracionSolicitudRepository;
+    this.authorityHelper = authorityHelper;
   }
 
   /**
@@ -91,7 +86,10 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
     // comprobar si convocatoria es modificable
     Assert.isTrue(
         convocatoriaService.isRegistradaConSolicitudesOProyectos(convocatoriaEntidadFinanciadora.getConvocatoriaId(),
-            convocatoria.getUnidadGestionRef(), new String[] { "CSP-CON-C", "CSP-CON-E" }),
+            convocatoria.getUnidadGestionRef(), new String[] {
+                ConvocatoriaAuthorityHelper.CSP_CON_C,
+                ConvocatoriaAuthorityHelper.CSP_CON_E
+            }),
         "No se puede crear ConvocatoriaEntidadFinanciadora. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
 
     if (convocatoriaEntidadFinanciadora.getFuenteFinanciacion() != null) {
@@ -193,7 +191,8 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
           // comprobar si convocatoria es modificable
           Assert.isTrue(
               convocatoriaService.isRegistradaConSolicitudesOProyectos(
-                  convocatoriaEntidadFinanciadora.getConvocatoriaId(), null, new String[] { "CSP-CON-E" }),
+                  convocatoriaEntidadFinanciadora.getConvocatoriaId(), null,
+                  new String[] { ConvocatoriaAuthorityHelper.CSP_CON_E }),
               "No se puede modificar ConvocatoriaEntidadFinanciadora. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
 
           convocatoriaEntidadFinanciadora
@@ -230,7 +229,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
       // comprobar si convocatoria es modificable
       Assert.isTrue(
           convocatoriaService.isRegistradaConSolicitudesOProyectos(entidadFinanciadora.get().getConvocatoriaId(),
-              null, new String[] { "CSP-CON-E" }),
+              null, new String[] { ConvocatoriaAuthorityHelper.CSP_CON_E }),
           "No se puede eliminar ConvocatoriaEntidadFinanciadora. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
     } else {
       throw new ConvocatoriaEntidadFinanciadoraNotFoundException(id);
@@ -259,38 +258,24 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
    * Obtiene las {@link ConvocatoriaEntidadFinanciadora} para una
    * {@link Convocatoria}.
    *
-   * @param idConvocatoria el id de la {@link Convocatoria}.
+   * @param convocatoriaId el id de la {@link Convocatoria}.
    * @param query          la información del filtro.
    * @param pageable       la información de la paginación.
    * @return la lista de entidades {@link ConvocatoriaEntidadFinanciadora} de la
    *         {@link Convocatoria} paginadas.
    */
-  public Page<ConvocatoriaEntidadFinanciadora> findAllByConvocatoria(Long idConvocatoria, String query,
+  public Page<ConvocatoriaEntidadFinanciadora> findAllByConvocatoria(Long convocatoriaId, String query,
       Pageable pageable) {
-    log.debug("findAllByConvocatoria(Long idConvocatoria, String query, Pageable pageable) - start");
+    log.debug("findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) - start");
 
-    Convocatoria convocatoria = convocatoriaRepository.findById(idConvocatoria)
-        .orElseThrow(() -> new ConvocatoriaNotFoundException(idConvocatoria));
+    authorityHelper.checkUserHasAuthorityViewConvocatoria(convocatoriaId);
 
-    if (hasAuthorityViewInvestigador()) {
-      ConfiguracionSolicitud configuracionSolicitud = configuracionSolicitudRepository
-          .findByConvocatoriaId(idConvocatoria)
-          .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(idConvocatoria));
-      if (!convocatoria.getEstado().equals(Estado.REGISTRADA)
-          || Boolean.FALSE.equals(configuracionSolicitud.getTramitacionSGI())) {
-        throw new UserNotAuthorizedToAccessConvocatoriaException();
-      }
-    }
     Specification<ConvocatoriaEntidadFinanciadora> specs = ConvocatoriaEntidadFinanciadoraSpecifications
-        .byConvocatoriaId(idConvocatoria).and(SgiRSQLJPASupport.toSpecification(query));
+        .byConvocatoriaId(convocatoriaId).and(SgiRSQLJPASupport.toSpecification(query));
 
     Page<ConvocatoriaEntidadFinanciadora> returnValue = repository.findAll(specs, pageable);
-    log.debug("findAllByConvocatoria(Long idConvocatoria, String query, Pageable pageable) - end");
+    log.debug("findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) - end");
     return returnValue;
-  }
-
-  private boolean hasAuthorityViewInvestigador() {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-CON-INV-V");
   }
 
 }

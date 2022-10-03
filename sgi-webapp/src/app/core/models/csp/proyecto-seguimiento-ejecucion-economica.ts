@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 
 export interface IProyectoSeguimientoEjecucionEconomica {
+  /** ProyectoProyectoSgeId */
   id: number;
   proyectoId: number;
   proyectoSgeRef: string;

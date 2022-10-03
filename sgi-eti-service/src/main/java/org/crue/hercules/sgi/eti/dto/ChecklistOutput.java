@@ -54,7 +54,6 @@ public class ChecklistOutput implements Serializable {
   @JsonProperty(value = "respuesta")
   public void setRespuestaRaw(JsonNode jsonNode) throws IOException {
     // this leads to non-standard json:
-    // setJson(jsonNode.toString());
 
     if (jsonNode.isNull()) {
       setRespuesta(null);
@@ -73,7 +72,7 @@ public class ChecklistOutput implements Serializable {
   @NoArgsConstructor
   @AllArgsConstructor
   @Builder
-  public static class Formly {
+  public static class Formly implements Serializable {
     private Long id;
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
@@ -91,7 +90,6 @@ public class ChecklistOutput implements Serializable {
     @JsonProperty(value = "esquema")
     public void setEsquemaRaw(JsonNode jsonNode) throws IOException {
       // this leads to non-standard json:
-      // setJson(jsonNode.toString());
 
       if (jsonNode.isNull()) {
         setEsquema(null);

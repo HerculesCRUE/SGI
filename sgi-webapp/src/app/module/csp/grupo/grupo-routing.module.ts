@@ -20,6 +20,7 @@ import { GrupoPersonaAutorizadaComponent } from './grupo-formulario/grupo-person
 import { GrupoResponsableEconomicoComponent } from './grupo-formulario/grupo-responsable-economico/grupo-responsable-economico.component';
 import { GrupoListadoComponent } from './grupo-listado/grupo-listado.component';
 import { GRUPO_ROUTE_NAMES } from './grupo-route-names';
+import { Module } from '@core/module';
 
 const GRUPO_TITLE_KEY = marker('csp.grupo');
 const GRUPO_LINEA_INVESTIGACION_KEY = marker('csp.grupo-linea-investigacion');
@@ -33,7 +34,8 @@ const routes: SgiRoutes = [
     data: {
       title: GRUPO_TITLE_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-      hasAnyAuthorityForAnyUO: ['CSP-GIN-E', 'CSP-GIN-B', 'CSP-GIN-R', 'CSP-GIN-V']
+      hasAnyAuthorityForAnyUO: ['CSP-GIN-E', 'CSP-GIN-B', 'CSP-GIN-R', 'CSP-GIN-V'],
+      module: Module.CSP
     }
   },
   {
@@ -46,7 +48,8 @@ const routes: SgiRoutes = [
       titleParams: {
         entity: GRUPO_TITLE_KEY, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR,
       },
-      hasAuthorityForAnyUO: 'CSP-GIN-C'
+      hasAuthorityForAnyUO: 'CSP-GIN-C',
+      module: Module.CSP
     },
     children: [
       {
@@ -72,7 +75,8 @@ const routes: SgiRoutes = [
     data: {
       title: GRUPO_TITLE_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
-      hasAnyAuthorityForAnyUO: ['CSP-GIN-E', 'CSP-GIN-V']
+      hasAnyAuthorityForAnyUO: ['CSP-GIN-E', 'CSP-GIN-V'],
+      module: Module.CSP
     },
     children: [
       {
@@ -123,7 +127,8 @@ const routes: SgiRoutes = [
     data: {
       title: GRUPO_TITLE_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
-      hasAnyAuthorityForAnyUO: ['CSP-GIN-E', 'CSP-GIN-V']
+      hasAnyAuthorityForAnyUO: ['CSP-GIN-E', 'CSP-GIN-V'],
+      module: Module.CSP
     },
     resolve: {
       [GRUPO_DATA_KEY]: GrupoDataResolver
@@ -138,7 +143,8 @@ const routes: SgiRoutes = [
         canActivate: [SgiAuthGuard],
         data: {
           title: GRUPO_LINEA_INVESTIGACION_KEY,
-          hasAnyAuthorityForAnyUO: ['CSP-GIN-E', 'CSP-GIN-V']
+          hasAnyAuthorityForAnyUO: ['CSP-GIN-E', 'CSP-GIN-V'],
+          module: Module.CSP
         }
       },
     ]

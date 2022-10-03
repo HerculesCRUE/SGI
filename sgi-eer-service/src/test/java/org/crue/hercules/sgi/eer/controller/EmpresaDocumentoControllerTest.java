@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  */
 
 @WebMvcTest(EmpresaDocumentoController.class)
-public class EmpresaDocumentoControllerTest extends BaseControllerTest {
+class EmpresaDocumentoControllerTest extends BaseControllerTest {
   private static final String REQUEST_MAPPING = EmpresaDocumentoController.REQUEST_MAPPING;
   private static final String PATH_ID = EmpresaDocumentoController.PATH_ID;
 
@@ -38,7 +38,7 @@ public class EmpresaDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-E" })
-  public void create_ReturnsEmpresaDocumento() throws Exception {
+  void create_ReturnsEmpresaDocumento() throws Exception {
     // given: new EmpresaDocumento
     EmpresaDocumentoInput input = generateEmpresaDocumentoInputMock();
     EmpresaDocumentoOutput output = generateEmpresaDocumentoOutputMock(1L);
@@ -75,7 +75,7 @@ public class EmpresaDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-E" })
-  public void update_ReturnsEmpresaDocumento() throws Exception {
+  void update_ReturnsEmpresaDocumento() throws Exception {
     // given: existing EmpresaDocumento
     Long empresaDocumentoId = 1L;
     EmpresaDocumentoInput input = generateEmpresaDocumentoInputMock();
@@ -117,7 +117,7 @@ public class EmpresaDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-E" })
-  public void delete_Returns204() throws Exception {
+  void delete_Returns204() throws Exception {
     // given: existing EmpresaDocumento
     Long empresaDocumentoId = 1L;
 
@@ -132,7 +132,7 @@ public class EmpresaDocumentoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "EER-EER-V" })
-  public void findById_ReturnsEmpresaDocumento() throws Exception {
+  void findById_ReturnsEmpresaDocumento() throws Exception {
     // given: existing id
     Long empresaDocumentoId = 1L;
     BDDMockito.given(converter.convert(

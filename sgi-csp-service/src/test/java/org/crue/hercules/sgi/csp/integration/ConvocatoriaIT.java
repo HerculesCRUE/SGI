@@ -406,45 +406,6 @@ class ConvocatoriaIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  void findAll_WithPagingSortingAndFiltering_ReturnsConvocatoriaSubList() throws Exception {
-
-    // given: data for Convocatoria
-
-    // first page, 3 elements per page sorted by nombre desc
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CON-V")));
-    headers.add("X-Page", "0");
-    headers.add("X-Page-Size", "3");
-    String sort = "codigo,desc";
-    String filter = "titulo=ke=00";
-
-    // when: find Convocatoria
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
-        .build(false).toUri();
-    final ResponseEntity<List<Convocatoria>> response = restTemplate.exchange(uri, HttpMethod.GET,
-        buildRequest(headers, null), new ParameterizedTypeReference<List<Convocatoria>>() {
-        });
-
-    // given: Convocatoria data filtered and sorted
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    final List<Convocatoria> responseData = response.getBody();
-    Assertions.assertThat(responseData).hasSize(3);
-    HttpHeaders responseHeaders = response.getHeaders();
-    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
-    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
-    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
-
-    Assertions.assertThat(responseData.get(0).getCodigo()).as("get(0).getCodigo())")
-        .isEqualTo("codigo-" + String.format("%03d", 3));
-    Assertions.assertThat(responseData.get(1).getCodigo()).as("get(1).getCodigo())")
-        .isEqualTo("codigo-" + String.format("%03d", 2));
-    Assertions.assertThat(responseData.get(2).getCodigo()).as("get(2).getCodigo())")
-        .isEqualTo("codigo-" + String.format("%03d", 1));
-  }
-
-  @Sql
-  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @Test
   void findAllRestringidos_WithPagingSortingAndFiltering_ReturnsConvocatoriaSubList() throws Exception {
 
     // given: data for Convocatoria
@@ -835,7 +796,7 @@ class ConvocatoriaIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ConvocatoriaFaseOutput> convocatoriasFases = response.getBody();
-    Assertions.assertThat(convocatoriasFases.size()).isEqualTo(3);
+    Assertions.assertThat(convocatoriasFases).hasSize(3);
     Assertions.assertThat(convocatoriasFases.get(0).getObservaciones()).as("get(0).getObservaciones()")
         .isEqualTo("observaciones-" + String.format("%03d", 3));
     Assertions.assertThat(convocatoriasFases.get(1).getObservaciones()).as("get(1).getObservaciones())")
@@ -1327,7 +1288,7 @@ class ConvocatoriaIT extends BaseIT {
   void findAllConvocatoriaGastosCodigoEcPermitidos_WithPagingSortingAndFiltering_ReturnsConvocatoriaConceptoGastoCodigoEcSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
-    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CGAS-V")));
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CON-V", "CSP-SOL-V")));
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,asc";
@@ -1340,7 +1301,7 @@ class ConvocatoriaIT extends BaseIT {
         .queryParam("s", sort).queryParam("q", filter).buildAndExpand(convocatoriaId).toUri();
 
     final ResponseEntity<List<ConvocatoriaConceptoGastoCodigoEc>> response = restTemplate.exchange(uri, HttpMethod.GET,
-        buildGenericRequest(headers, null, "CSP-SOL-V"),
+        buildGenericRequest(headers, null, "CSP-CON-V", "CSP-SOL-V"),
         new ParameterizedTypeReference<List<ConvocatoriaConceptoGastoCodigoEc>>() {
         });
 
@@ -1379,7 +1340,7 @@ class ConvocatoriaIT extends BaseIT {
   void findAllConvocatoriaGastosCodigoEcNoPermitidos_WithPagingSortingAndFiltering_ReturnsConvocatoriaConceptoGastoCodigoEcSubList()
       throws Exception {
     HttpHeaders headers = new HttpHeaders();
-    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CGAS-V")));
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CON-V", "CSP-SOL-V")));
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,asc";
@@ -1393,7 +1354,7 @@ class ConvocatoriaIT extends BaseIT {
         .queryParam("s", sort).queryParam("q", filter).buildAndExpand(convocatoriaId).toUri();
 
     final ResponseEntity<List<ConvocatoriaConceptoGastoCodigoEc>> response = restTemplate.exchange(uri, HttpMethod.GET,
-        buildGenericRequest(headers, null, "CSP-SOL-V"),
+        buildGenericRequest(headers, null, "CSP-CON-V", "CSP-SOL-V"),
         new ParameterizedTypeReference<List<ConvocatoriaConceptoGastoCodigoEc>>() {
         });
 
@@ -1519,7 +1480,7 @@ class ConvocatoriaIT extends BaseIT {
         .buildAndExpand(convocatoriaId).toUri();
 
     final ResponseEntity<List<RequisitoIPNivelAcademicoOutput>> response = restTemplate.exchange(uri, HttpMethod.GET,
-        buildGenericRequest(null, null, "CSP-SOL-INV-C"),
+        buildGenericRequest(null, null, "CSP-CON-V", "CSP-SOL-INV-C"),
         new ParameterizedTypeReference<List<RequisitoIPNivelAcademicoOutput>>() {
         });
 
@@ -1551,7 +1512,7 @@ class ConvocatoriaIT extends BaseIT {
 
     final ResponseEntity<List<RequisitoEquipoNivelAcademicoOutput>> response = restTemplate.exchange(uri,
         HttpMethod.GET,
-        buildGenericRequest(null, null, "CSP-SOL-INV-C"),
+        buildGenericRequest(null, null, "CSP-CON-V", "CSP-SOL-INV-C"),
         new ParameterizedTypeReference<List<RequisitoEquipoNivelAcademicoOutput>>() {
         });
 
@@ -1583,7 +1544,7 @@ class ConvocatoriaIT extends BaseIT {
 
     final ResponseEntity<List<RequisitoIPCategoriaProfesionalOutput>> response = restTemplate.exchange(uri,
         HttpMethod.GET,
-        buildGenericRequest(null, null, "CSP-SOL-INV-C"),
+        buildGenericRequest(null, null, "CSP-CON-V", "CSP-SOL-INV-C"),
         new ParameterizedTypeReference<List<RequisitoIPCategoriaProfesionalOutput>>() {
         });
 
@@ -1615,7 +1576,7 @@ class ConvocatoriaIT extends BaseIT {
 
     final ResponseEntity<List<RequisitoEquipoCategoriaProfesionalOutput>> response = restTemplate.exchange(uri,
         HttpMethod.GET,
-        buildGenericRequest(null, null, "CSP-CON-INV-V"),
+        buildGenericRequest(null, null, "CSP-CON-V", "CSP-CON-INV-V"),
         new ParameterizedTypeReference<List<RequisitoEquipoCategoriaProfesionalOutput>>() {
         });
 

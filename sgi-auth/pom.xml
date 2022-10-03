@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.crue.hercules.sgi.auth</groupId>
+  <artifactId>sgi-auth</artifactId>
+  <packaging>pom</packaging>
+  <version>0.0.11</version>
+  <name>sgi-auth</name>
+  <description>SGI Auth Plugins</description>
+  <url>https://github.com/HerculesCRUE/SGI</url>
+
+  <licenses>
+    <license>
+      <name>GNU General Public License, Version 3</name>
+      <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Treelogic</name>
+      <email>info@treelogic.com</email>
+      <organization>Tree Technology</organization>
+      <organizationUrl>https://www.treelogic.com</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+    <url>https://github.com/HerculesCRUE/SGI</url>
+  </scm>
+
+  <properties>
+    <!-- Distribution Management URL's -->
+    <dist.repo.rel.url>http://nexus.treelogic.local/content/repositories/releases/</dist.repo.rel.url>
+    <dist.repo.snap.url>http://nexus.treelogic.local/content/repositories/snapshots/</dist.repo.snap.url>
+
+    <java.version>1.8</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <docker-maven-plugin.version>0.33.0</docker-maven-plugin.version>
+    <maven-help-plugin.version>3.2.0</maven-help-plugin.version>
+
+    <!-- Keycloak Version (must match deployed version) -->
+    <org.keycloak.version>11.0.0</org.keycloak.version>
+
+    <!-- Plugin versions (only those that are not defined in `spring-boot-starter-parent`) -->
+    <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
+    <maven-project-info-reports-plugin.version>3.0.0</maven-project-info-reports-plugin.version>
+    <maven-jxr-plugin.version>3.0.0</maven-jxr-plugin.version>
+    <jdepend-maven-plugin.version>2.0</jdepend-maven-plugin.version>
+    <maven-pmd-plugin.version>3.11.0</maven-pmd-plugin.version>
+    <findbugs-maven-plugin.version>3.0.5</findbugs-maven-plugin.version>
+    <taglist-maven-plugin.version>2.4</taglist-maven-plugin.version>
+    <site-maven-plugin.version>0.12</site-maven-plugin.version>
+    <heroku-maven-plugin.verion>2.0.16</heroku-maven-plugin.verion>
+    <liquibase-maven-plugin.version>3.8.8</liquibase-maven-plugin.version>
+    <versions-maven-plugin.version>2.11.0</versions-maven-plugin.version>
+    <maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
+  </properties>
+
+  <modules>
+    <module>broker-saml-mappers</module>
+  </modules>
+
+  <distributionManagement>
+    <repository>
+      <id>releases</id>
+      <url>${dist.repo.rel.url}</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <url>${dist.repo.snap.url}</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <profiles>
+    <profile>
+      <!-- dev profile. This is the default profile -->
+      <id>dev</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+  </profiles>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <artifactId>keycloak-parent</artifactId>
+        <groupId>org.keycloak</groupId>
+        <version>${org.keycloak.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!-- 
+      Maven Help Plugin - Display active profile in compile phase 
+      https://github.com/apache/maven-help-plugin
+      -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-help-plugin</artifactId>
+          <version>${maven-help-plugin.version}</version>
+          <executions>
+            <execution>
+              <id>show-profiles</id>
+              <phase>compile</phase>
+              <goals>
+                <goal>active-profiles</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco-maven-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>${maven-project-info-reports-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jxr-plugin</artifactId>
+          <version>${maven-jxr-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>jdepend-maven-plugin</artifactId>
+          <version>${jdepend-maven-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-pmd-plugin</artifactId>
+          <version>${maven-pmd-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>findbugs-maven-plugin</artifactId>
+          <version>${findbugs-maven-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>taglist-maven-plugin</artifactId>
+          <version>${taglist-maven-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>com.github.github</groupId>
+          <artifactId>site-maven-plugin</artifactId>
+          <version>${site-maven-plugin.version}</version>
+        </plugin>
+        <!--
+      Maven Javadoc Plugin - Generates Javadoc.
+      https://maven.apache.org/plugins/maven-javadoc-plugin/
+      -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>attach-javadocs</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <!--
+          Shuts off non-error and non-warning messages, leaving only the warnings and errors
+          appear, making them easier to view.
+          -->
+            <quiet>true</quiet>
+          </configuration>
+        </plugin>
+        <!--
+      Maven Source Plugin - Generates source JAR file.
+      https://maven.apache.org/plugins/maven-source-plugin/
+      -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>com.heroku.sdk</groupId>
+          <artifactId>heroku-maven-plugin</artifactId>
+          <version>${heroku-maven-plugin.verion}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+        </plugin>
+        <plugin>
+          <groupId>io.fabric8</groupId>
+          <artifactId>docker-maven-plugin</artifactId>
+          <version>${docker-maven-plugin.version}</version>
+        </plugin>
+        <!--
+      Maven Compiler Plugin - Compile the sources of the project.
+      https://maven.apache.org/plugins/maven-compiler-plugin/
+      -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>${java.version}</source>
+            <target>${java.version}</target>
+            <showDeprecation>true</showDeprecation>
+            <showWarnings>true</showWarnings>
+            <encoding>${project.build.sourceEncoding}</encoding>
+          </configuration>
+        </plugin>
+        <!--
+      Maven Site Plugin - Generates site.
+      http://maven.apache.org/plugins/maven-site-plugin/
+      -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <configuration>
+            <relativizeDecorationLinks>false</relativizeDecorationLinks>
+          </configuration>
+          <executions>
+            <!--
+          In Maven 3, site:attach-descriptor has been removed from the built-in lifecycle bindings,
+          so need to explicitly define `attach-descriptor` goal to pick up src/site/site.xml.
+          -->
+            <execution>
+              <id>attach-descriptor</id>
+              <goals>
+                <goal>attach-descriptor</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <!--
+      Maven Enforcer Plugin - Bans certain dependencies and ensure minimum Maven version is used.
+      http://maven.apache.org/enforcer/maven-enforcer-plugin/
+      -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>${maven-enforcer-plugin.version}</version>
+          <executions>
+            <!--
+          If these banned dependencies exist, fail the build right away.
+          Xalan, Xerces and Xml-APIs - Known to cause problem when deployed to server. Use the ones
+          provided by server.
+          See http://stackoverflow.com/questions/11677572/dealing-with-xerces-hell-in-java-maven
+          -->
+            <execution>
+              <id>enforce-banned-dependencies</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <fail>true</fail>
+                <rules>
+                  <bannedDependencies>
+                    <excludes>
+                      <exclude>xalan</exclude>
+                      <exclude>xerces</exclude>
+                      <exclude>xml-apis</exclude>
+                    </excludes>
+                  </bannedDependencies>
+                </rules>
+              </configuration>
+            </execution>
+            <!--
+          Ensures everyone is using at least the specified Maven version or later.
+          -->
+            <execution>
+              <id>enforce-maven</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <requireMavenVersion>
+                    <version>${maven.version}</version>
+                  </requireMavenVersion>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <!--
+      Versions Maven Plugin - Makes it easier to upgrade plugins and dependencies
+      http://www.mojohaus.org/versions-maven-plugin/
+      -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>${versions-maven-plugin.version}</version>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

@@ -159,21 +159,29 @@ export class GrupoEquipoInstrumentalComponent extends FragmentComponent implemen
    * Eliminar grupo equipo
    */
   deleteEquipo(wrapper: StatusWrapper<IGrupoEquipoInstrumental>) {
-    this.grupoEquipoService.existsGrupoEquipoInstrumentalInGrupoLineaEquipoInstrumental(wrapper.value.id).subscribe(res => {
+    if (!wrapper.value.id) {
+      this.showConfirmDeleteGrupoEquipoInstrumental(wrapper);
+      return;
+    }
+    this.grupoEquipoService.existsGrupoEquipoInstrumentalInGrupoLineaEquipoInstrumental(wrapper.value.id || -1).subscribe(res => {
       if (res) {
         this.subscriptions.push(this.dialogService.showConfirmation(this.textoNoDelete).subscribe());
       } else {
-        this.subscriptions.push(
-          this.dialogService.showConfirmation(this.textoDelete).subscribe(
-            (aceptado) => {
-              if (aceptado) {
-                this.formPart.deleteGrupoEquipoInstrumental(wrapper);
-              }
-            }
-          )
-        );
+        this.showConfirmDeleteGrupoEquipoInstrumental(wrapper);
       }
     });
+  }
+
+  private showConfirmDeleteGrupoEquipoInstrumental(wrapper: StatusWrapper<IGrupoEquipoInstrumental>) {
+    this.subscriptions.push(
+      this.dialogService.showConfirmation(this.textoDelete).subscribe(
+        (aceptado) => {
+          if (aceptado) {
+            this.formPart.deleteGrupoEquipoInstrumental(wrapper);
+          }
+        }
+      )
+    );
   }
 
 }

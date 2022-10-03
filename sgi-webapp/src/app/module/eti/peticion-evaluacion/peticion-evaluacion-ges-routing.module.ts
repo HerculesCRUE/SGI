@@ -4,6 +4,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentGuard } from '@core/guards/detail-form.guard';
 import { ActionGuard } from '@core/guards/master-form.guard';
 import { MSG_PARAMS } from '@core/i18n';
+import { Module } from '@core/module';
 import { SgiRoutes } from '@core/route';
 import { SgiAuthGuard } from '@sgi/framework/auth';
 import { PeticionEvaluacionEditarComponent } from './peticion-evaluacion-editar/peticion-evaluacion-editar.component';
@@ -25,7 +26,8 @@ const routes: SgiRoutes = [
     data: {
       title: PETICION_EVALUACION_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-      hasAnyAuthorityForAnyUO: ['ETI-PEV-V', 'ETI-MEM-EDOC']
+      hasAnyAuthorityForAnyUO: ['ETI-PEV-V', 'ETI-MEM-EDOC'],
+      module: Module.ETI
     }
   },
   {
@@ -40,7 +42,8 @@ const routes: SgiRoutes = [
       title: PETICION_EVALUACION_KEY,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
       hasAnyAuthorityForAnyUO: ['ETI-PEV-V', 'ETI-MEM-EDOC'],
-      readonly: true
+      readonly: true,
+      module: Module.ETI
     },
     children: [
       {

@@ -122,7 +122,7 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
         response.items.forEach(solicitud => {
           requestsModificable.push(
             forkJoin({
-              modificable: this.solicitudService.modificable(solicitud.id),
+              modificable: this.solicitudService.modificableByInvestigador(solicitud.id),
               estadoAndDocumentosReadonly: this.solicitudService.modificableEstadoAndDocumentosByInvestigador(solicitud.id)
             }).pipe(
               map(({ modificable, estadoAndDocumentosReadonly }) => {
@@ -209,7 +209,7 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
       switchMap((value) => {
         return this.translate.get(
           MSG_DEACTIVATE,
-          { entity: value }
+          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
         );
       })
     ).subscribe((value) => this.textoDesactivar = value);

@@ -94,6 +94,7 @@ import { ProyectoRelacionFragment } from './proyecto-formulario/proyecto-relacio
 import { ProyectoResponsableEconomicoFragment } from './proyecto-formulario/proyecto-responsable-economico/proyecto-responsable-economico.fragment';
 import { ProyectoSociosFragment } from './proyecto-formulario/proyecto-socios/proyecto-socios.fragment';
 import { PROYECTO_ROUTE_PARAMS } from './proyecto-route-params';
+import { Module } from '@core/module';
 
 const MSG_SOLICITUDES = marker('csp.solicitud');
 const MSG_CONVOCATORIAS = marker('csp.convocatoria');
@@ -172,7 +173,6 @@ export class ProyectoActionService extends ActionService {
 
   private readonly data: IProyectoData;
 
-  public readonly isInvestigador: boolean;
   public readonly showPaquetesTrabajo$: Subject<boolean> = new BehaviorSubject(false);
   public readonly disableAddSocios$ = new BehaviorSubject<boolean>(false);
   private readonly hasFases$ = new BehaviorSubject<boolean>(false);
@@ -234,10 +234,14 @@ export class ProyectoActionService extends ActionService {
     return this.fichaGeneral.getValue().titulo;
   }
 
+  get isInvestigador(): boolean {
+    return this.data?.isInvestigador ?? (this.isModuleINV() && this.hasAnyAuthorityInv());
+  }
+
   constructor(
     fb: FormBuilder,
     logger: NGXLogger,
-    route: ActivatedRoute,
+    private route: ActivatedRoute,
     protected proyectoService: ProyectoService,
     empresaService: EmpresaService,
     proyectoSocioService: ProyectoSocioService,
@@ -281,7 +285,7 @@ export class ProyectoActionService extends ActionService {
     datosPersonalesService: DatosPersonalesService,
     relacionService: RelacionService,
     invencionService: InvencionService,
-    sgiAuthService: SgiAuthService,
+    private readonly sgiAuthService: SgiAuthService,
     proyectoFacturacionService: ProyectoFacturacionService,
     facturaPrevistaEmitidaService: FacturaPrevistaEmitidaService,
     palabraClaveService: PalabraClaveService,
@@ -490,11 +494,12 @@ export class ProyectoActionService extends ActionService {
               this.hasDocumentos$
             ).subscribe(
               () => {
-                this.fichaGeneral.vinculacionesModeloEjecucion$.next(
-                  this.hasFases$.value
-                  || this.hasHitos$.value
-                  || this.hasDocumentos$.value
-                );
+                const current = this.fichaGeneral.vinculacionesModeloEjecucion$.value;
+                const newValue = this.hasFases$.value || this.hasHitos$.value || this.hasDocumentos$.value;
+                if (current !== newValue) {
+                  this.fichaGeneral.vinculacionesModeloEjecucion$.next(newValue);
+                }
+
               }
             )
           );
@@ -660,4 +665,13 @@ export class ProyectoActionService extends ActionService {
     }
     this.hasAnyProyectoSocioWithRolCoordinador$.next(!needShow);
   }
+
+  private isModuleINV(): boolean {
+    return this.route.snapshot.data.module === Module.INV;
+  }
+
+  private hasAnyAuthorityInv(): boolean {
+    return this.sgiAuthService.hasAuthority('CSP-PRO-INV-VR');
+  }
+
 }

@@ -25,6 +25,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -471,6 +472,56 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
+  void updateFechaPresentacionDocumentacion_WithIdNull_ThrowsIllegalArgumentException() {
+    // given: a proyectoPeriodoSeguimientoId null
+    Long proyectoPeriodoSeguimientoId = null;
+
+    Assertions.assertThatThrownBy(
+        // when: updateFechaPresentacionDocumentacion ProyectoPeriodoSeguimiento
+        () -> service.updateFechaPresentacionDocumentacion(proyectoPeriodoSeguimientoId, null))
+        // then: throw exception WithIdNull
+        .isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  void updateFechaPresentacionDocumentacion_WithNotExistingId_ThrowsIllegalArgumentException() {
+    // given: a not existing proyectoPeriodoSeguimientoId
+    Long proyectoPeriodoSeguimientoId = 999L;
+
+    BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
+
+    Assertions.assertThatThrownBy(
+        // when: updateFechaPresentacionDocumentacion ProyectoPeriodoSeguimiento
+        () -> service.updateFechaPresentacionDocumentacion(proyectoPeriodoSeguimientoId, null))
+        // then: throw exception ProyectoPeriodoSeguimientoNotFoundException
+        .isInstanceOf(ProyectoPeriodoSeguimientoNotFoundException.class);
+  }
+
+  @Test
+  void updateFechaPresentacionDocumentacion_ReturnsProyectoPeriodoSeguimiento() {
+    // given: a existing proyectoPeriodoSeguimientoId
+    Long proyectoPeriodoSeguimientoId = 1L;
+    Instant fechaPresentacionDocumentacionToUpdate = Instant.parse("2020-10-10T23:59:59Z");
+
+    BDDMockito.given(repository.findById(ArgumentMatchers.anyLong()))
+        .willReturn(Optional.of(generarMockProyectoPeriodoSeguimiento(proyectoPeriodoSeguimientoId)));
+    BDDMockito.given(repository.save(ArgumentMatchers.<ProyectoPeriodoSeguimiento>any()))
+        .will((InvocationOnMock invocation) -> {
+          ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoUpdated = invocation.getArgument(0,
+              ProyectoPeriodoSeguimiento.class);
+          return proyectoPeriodoSeguimientoUpdated;
+        });
+
+    // when: updateFechaPresentacionDocumentacion ProyectoPeriodoSeguimiento
+    ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoUpdated = service
+        .updateFechaPresentacionDocumentacion(proyectoPeriodoSeguimientoId, fechaPresentacionDocumentacionToUpdate);
+    // then: ProyectoPeriodoSeguimiento fechaPresentacionDocumentacion updated
+    Assertions.assertThat(proyectoPeriodoSeguimientoUpdated).isNotNull();
+    Assertions.assertThat(proyectoPeriodoSeguimientoUpdated.getFechaPresentacionDocumentacion())
+        .as("getFechaPresentacionDocumentacion()").isEqualTo(fechaPresentacionDocumentacionToUpdate);
+  }
+
+  @Test
   void delete_WithExistingId_NoReturnsAnyException() {
     // given: existing ProyectoPeriodoSeguimiento
     Long id = 1L;
@@ -594,6 +645,48 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
       ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = page.getContent()
           .get(i - (page.getSize() * page.getNumber()) - 1);
       Assertions.assertThat(proyectoPeriodoSeguimiento.getId()).isEqualTo(Long.valueOf(i));
+    }
+  }
+
+  @Test
+  void findAllByProyectoSgeRef_ReturnsPage() {
+    // given: Una lista con 37 ProyectoPeriodoSeguimiento
+    String proyectosSgeRef = "1";
+    List<ProyectoPeriodoSeguimiento> periodosJustificacion = new ArrayList<>();
+    for (long i = 1; i <= 37; i++) {
+      periodosJustificacion.add(generarMockProyectoPeriodoSeguimiento(i));
+    }
+
+    BDDMockito
+        .given(repository.findAll(ArgumentMatchers.<Specification<ProyectoPeriodoSeguimiento>>any(),
+            ArgumentMatchers.<Pageable>any()))
+        .willAnswer(new Answer<Page<ProyectoPeriodoSeguimiento>>() {
+          @Override
+          public Page<ProyectoPeriodoSeguimiento> answer(InvocationOnMock invocation) throws Throwable {
+            Pageable pageable = invocation.getArgument(1, Pageable.class);
+            int size = pageable.getPageSize();
+            int index = pageable.getPageNumber();
+            int fromIndex = size * index;
+            int toIndex = fromIndex + size;
+            toIndex = toIndex > periodosJustificacion.size() ? periodosJustificacion.size() : toIndex;
+            List<ProyectoPeriodoSeguimiento> content = periodosJustificacion.subList(fromIndex, toIndex);
+            Page<ProyectoPeriodoSeguimiento> page = new PageImpl<>(content, pageable, periodosJustificacion.size());
+            return page;
+          }
+        });
+
+    // when: Get page=3 with pagesize=10
+    Pageable paging = PageRequest.of(3, 10);
+    Page<ProyectoPeriodoSeguimiento> page = service.findAllByProyectoSgeRef(proyectosSgeRef, null, paging);
+
+    // then: Devuelve la pagina 3 con los Programa del 31 al 37
+    Assertions.assertThat(page.getContent()).as("getContent().hasSize()").hasSize(7);
+    Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
+    Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
+    Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
+    for (int i = 31; i <= 37; i++) {
+      ProyectoPeriodoSeguimiento proyecto = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
+      Assertions.assertThat(proyecto.getObservaciones()).isEqualTo("obs-" + String.format("%03d", i));
     }
   }
 

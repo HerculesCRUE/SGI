@@ -14,11 +14,9 @@ public interface CustomPublicacionRepository {
    * Recupera todas las {@link PublicacionResumen} con su
    * título, fecha y tipo de producción
    * 
-   * @param specIsInvestigador filtro para investigadores.
-   * @param query              la información del filtro.
-   * @param pageable           la información de la paginación.
+   * @param specs    Specification para filtrar.
+   * @param pageable la información de la paginación.
    * @return Listado paginado de {@link PublicacionResumen}
    */
-  Page<PublicacionResumen> findAllPublicaciones(Specification<ProduccionCientifica> specIsInvestigador, String query,
-      Pageable pageable);
+  Page<PublicacionResumen> findAllPublicaciones(Specification<ProduccionCientifica> specs, Pageable pageable);
 }

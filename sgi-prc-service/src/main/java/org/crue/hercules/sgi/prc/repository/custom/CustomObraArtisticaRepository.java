@@ -10,11 +10,10 @@ public interface CustomObraArtisticaRepository {
   /**
    * Recupera todas los {@link ObraArtisticaResumen} paginadas y/o filtradas
    * 
-   * @param specIsInvestigador Specification para filtrar para el investigador
-   * @param query              la información del filtro.
-   * @param pageable           la información de la paginación.
+   * @param specs    Specification para filtrar
+   * @param pageable la información de la paginación.
    * @return Listado paginado y/o filtrado de {@link ObraArtisticaResumen}
    */
-  public Page<ObraArtisticaResumen> findAllObrasArtisticas(Specification<ProduccionCientifica> specIsInvestigador,
-      String query, Pageable pageable);
+  public Page<ObraArtisticaResumen> findAllObrasArtisticas(Specification<ProduccionCientifica> specs,
+      Pageable pageable);
 }
