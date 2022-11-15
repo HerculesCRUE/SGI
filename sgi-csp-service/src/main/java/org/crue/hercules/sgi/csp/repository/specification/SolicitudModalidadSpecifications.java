@@ -6,6 +6,10 @@ import org.crue.hercules.sgi.csp.model.SolicitudModalidad_;
 import org.crue.hercules.sgi.csp.model.Solicitud_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SolicitudModalidadSpecifications {
 
   /**

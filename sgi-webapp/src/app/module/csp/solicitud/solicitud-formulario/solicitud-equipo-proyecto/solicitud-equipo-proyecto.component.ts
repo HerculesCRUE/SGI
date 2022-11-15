@@ -101,7 +101,8 @@ export class SolicitudEquipoProyectoComponent extends FragmentComponent implemen
       (proyectoEquipos) => {
         if (proyectoEquipos.length === 0 ||
           proyectoEquipos.filter(equipo =>
-            equipo.value.solicitudProyectoEquipo.persona?.id === this.actionService.solicitante?.id).length > 0) {
+            equipo.value.solicitudProyectoEquipo.persona?.id === this.actionService.solicitante?.id
+            && equipo.value.solicitudProyectoEquipo.rolProyecto?.rolPrincipal).length > 0) {
           this.formPart.setErrors(false);
         } else {
           this.formPart.setErrors(true);
@@ -188,8 +189,8 @@ export class SolicitudEquipoProyectoComponent extends FragmentComponent implemen
       this.dialogService.showConfirmation(this.textoDelete).subscribe(
         (aceptado) => {
           if (aceptado) {
-            this.checkAvisoSolicitante();
             this.formPart.deleteProyectoEquipo(wrapper);
+            this.checkAvisoSolicitante();
           }
         }
       )
@@ -198,8 +199,8 @@ export class SolicitudEquipoProyectoComponent extends FragmentComponent implemen
 
   private checkAvisoSolicitante() {
     const solicitudProyectoEquipos = this.formPart.proyectoEquipos$.value.map(wp => wp.value.solicitudProyectoEquipo);
-    const existsSolicitante = solicitudProyectoEquipos.some(
-      solicitudProyectoEquipo => solicitudProyectoEquipo.persona?.id === this.actionService.solicitante?.id);
+    const existsSolicitante = solicitudProyectoEquipos.some(solicitudProyectoEquipo =>
+      solicitudProyectoEquipo.persona?.id === this.actionService.solicitante?.id && solicitudProyectoEquipo.rolProyecto?.rolPrincipal);
     if (!existsSolicitante) {
       this.formPart.setErrors(true);
     } else {

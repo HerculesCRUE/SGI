@@ -84,13 +84,22 @@ export class ProyectoConceptoGastoDataResolver extends SgiResolverResolver<IProy
         };
       }),
       switchMap(data => {
-        const proyectoConceptosGasto$ = data.permitido
-          ? this.proyectoService.findAllProyectoConceptosGastoPermitidos(proyectoId)
-          : this.proyectoService.findAllProyectoConceptosGastoNoPermitidos(proyectoId);
-        return proyectoConceptosGasto$.pipe(
-          map(conceptosGasto => {
-            data.selectedProyectoConceptosGasto = conceptosGasto.items
-              .filter(concepto => concepto.id !== proyectoConceptoGastoId);
+        return this.proyectoService.findAllProyectoConceptosGastoPermitidos(proyectoId).pipe(
+          map(conceptosGastoPermitido => {
+            conceptosGastoPermitido.items
+              .filter(concepto => concepto.id !== proyectoConceptoGastoId).forEach(
+                conceptoGastoPermitido => data.selectedProyectoConceptosGasto.push(conceptoGastoPermitido)
+              );
+            return data;
+          })
+        );
+      }),
+      switchMap(data => {
+        return this.proyectoService.findAllProyectoConceptosGastoNoPermitidos(proyectoId).pipe(
+          map(conceptosGastoNoPermitido => {
+            conceptosGastoNoPermitido.items
+              .filter(concepto => concepto.id !== proyectoConceptoGastoId).forEach(
+                conceptoGastoNoPermitido => data.selectedProyectoConceptosGasto.push(conceptoGastoNoPermitido));
             return data;
           })
         );

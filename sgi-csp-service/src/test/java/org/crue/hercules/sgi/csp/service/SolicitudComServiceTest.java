@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
+import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudCambioEstadoAlegacionesData;
 import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudCambioEstadoDefinitivoData;
 import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudCambioEstadoProvisionalData;
@@ -37,6 +38,8 @@ class SolicitudComServiceTest {
   private SolicitanteDataService solicitanteDataService;
   @Mock
   private SgiApiCnfService configService;
+  @Mock
+  private SgiConfigProperties sgiConfigProperties;
 
   private SolicitudComService solicitudComService;
 
@@ -45,7 +48,8 @@ class SolicitudComServiceTest {
     solicitudComService = new SolicitudComService(
         emailService,
         configService,
-        solicitanteDataService);
+        solicitanteDataService,
+        sgiConfigProperties);
   }
 
   @Test

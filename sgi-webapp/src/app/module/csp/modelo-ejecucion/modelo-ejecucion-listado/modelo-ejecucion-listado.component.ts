@@ -191,8 +191,11 @@ export class ModeloEjecucionListadoComponent extends AbstractTablePaginationComp
 
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
-    return new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.nombre.value)
-      .and('activo', SgiRestFilterOperator.EQUALS, controls.activo.value?.toString());
+    const filter = new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.nombre.value);
+    if (controls.activo.value !== 'todos') {
+      filter.and('activo', SgiRestFilterOperator.EQUALS, controls.activo.value?.toString());
+    }
+    return filter;
   }
 
   /**

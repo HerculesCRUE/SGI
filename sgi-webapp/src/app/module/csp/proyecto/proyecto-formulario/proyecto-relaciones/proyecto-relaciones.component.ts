@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { IProyectoRelacionModalData, ProyectoRelacionModalComponent } from '../../modals/proyecto-relacion-modal/proyecto-relacion-modal.component';
 import { ProyectoActionService } from '../../proyecto.action.service';
-import { ProyectoRelacionFragment, IProyectoRelacionTableData } from './proyecto-relaciones.fragment';
+import { IProyectoRelacionTableData, ProyectoRelacionFragment } from './proyecto-relaciones.fragment';
 
 const MSG_DELETE = marker('msg.delete.entity');
 const PROYECTO_RELACION_KEY = marker('csp.proyecto-relacion');
@@ -116,7 +116,11 @@ export class ProyectoRelacionesComponent extends FragmentComponent implements On
       relacion: wrapper ? wrapper.value : {} as IProyectoRelacionTableData,
       readonly: !this.formPart.hasEditPerm(),
       entitiesAlreadyRelated: wrapper ? [] : [...this.getAlreadyRelatedEntities(wrapper), this.formPart.getCurrentProyectoAsSelfRelated()],
-      miembrosEquipoProyecto: this.formPart.miembrosEquipoProyecto
+      miembrosEquipoProyecto: [
+        ...this.formPart.miembrosEquipoProyecto
+          .reduce((miembrosEquipo, persona) => miembrosEquipo.set(persona.id, persona), new Map())
+          .values()
+      ]
     };
 
     const config: MatDialogConfig = {

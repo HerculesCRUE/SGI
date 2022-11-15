@@ -1,15 +1,14 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import javax.validation.Valid;
+
 import org.crue.hercules.sgi.csp.model.SolicitudDocumento;
 import org.crue.hercules.sgi.csp.service.SolicitudDocumentoService;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -72,21 +71,6 @@ public class SolicitudDocumentoController {
     solicitudDocumento.setId(id);
     SolicitudDocumento returnValue = service.update(solicitudDocumento);
     log.debug("update(SolicitudDocumento solicitudDocumento, Long id) - end");
-    return returnValue;
-  }
-
-  /**
-   * Devuelve el {@link SolicitudDocumento} con el id indicado.
-   * 
-   * @param id Identificador de {@link SolicitudDocumento}.
-   * @return SolicitudDocumento {@link SolicitudDocumento} correspondiente al id
-   */
-  @GetMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  public SolicitudDocumento findById(@PathVariable Long id) {
-    log.debug("SolicitudDocumento findById(Long id) - start");
-    SolicitudDocumento returnValue = service.findById(id);
-    log.debug("SolicitudDocumento findById(Long id) - end");
     return returnValue;
   }
 

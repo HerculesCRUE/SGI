@@ -25,7 +25,6 @@ import { ConvocatoriaConfiguracionSolicitudesFragment } from './convocatoria-con
 const MSG_DELETE = marker('msg.delete.entity');
 const CONVOCATORIA_CONFIGURACION_SOLICITUD_DOCUMENTO_REQUERIDO_KEY = marker('csp.convocatoria-configuracion-solicitud-documento-requerido');
 const CONVOCATORIA_CONFIGURACION_SOLICITUD_FASE_PRESENTACION_KEY = marker('csp.convocatoria-configuracion-solicitud.fase-presentacion');
-const CONVOCATORIA_CONFIGURACION_SOLICITUD_KEY = marker('csp.convocatoria-configuracion-solicitud');
 
 @Component({
   selector: 'sgi-convocatoria-configuracion-solicitudes',
@@ -136,13 +135,13 @@ export class ConvocatoriaConfiguracionSolicitudesComponent
     ).subscribe((value) => this.msgParamFasePresentacionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
-      CONVOCATORIA_CONFIGURACION_SOLICITUD_KEY,
+      CONVOCATORIA_CONFIGURACION_SOLICITUD_DOCUMENTO_REQUERIDO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).pipe(
       switchMap((value) => {
         return this.translate.get(
           MSG_DELETE,
-          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
     ).subscribe((value) => this.textoDelete = value);

@@ -22,6 +22,7 @@ import javax.persistence.criteria.Subquery;
 import com.nimbusds.oauth2.sdk.util.CollectionUtils;
 
 import org.crue.hercules.sgi.csp.dto.AnualidadResumen;
+import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadGastosTotales;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadNotificacionSge;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadResumen;
 import org.crue.hercules.sgi.csp.enums.TipoPartida;
@@ -559,4 +560,51 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     return returnValue;
   }
 
+  @Override
+  public ProyectoAnualidadGastosTotales getTotalImportesProyectoAnualidad(Long id) {
+    log.debug("getTotalImportesProyectoAnualidad(Long id) - start");
+
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<ProyectoAnualidadGastosTotales> cq = cb.createQuery(ProyectoAnualidadGastosTotales.class);
+
+    Root<ProyectoAnualidad> root = cq.from(ProyectoAnualidad.class);
+
+    // Total Gasto Concedido Costes Directos
+    Subquery<BigDecimal> queryCostesDirectos = cq.subquery(BigDecimal.class);
+    Root<AnualidadGasto> subqRootCostesDirectos = queryCostesDirectos.from(AnualidadGasto.class);
+    Join<AnualidadGasto, ConceptoGasto> joinCostesDirectosAnualidadConcepto = subqRootCostesDirectos
+        .join(AnualidadGasto_.conceptoGasto);
+    queryCostesDirectos.select(cb.sum(subqRootCostesDirectos.get(AnualidadGasto_.importeConcedido)))
+        .where(cb.and(
+            cb.equal(subqRootCostesDirectos.get(AnualidadGasto_.proyectoAnualidadId), root.get(ProyectoAnualidad_.id)),
+            cb.isFalse(joinCostesDirectosAnualidadConcepto.get(ConceptoGasto_.costesIndirectos))));
+
+    // Total Gasto Concedido Costes Indirectos
+    Subquery<BigDecimal> queryCostesIndirectos = cq.subquery(BigDecimal.class);
+    Root<AnualidadGasto> subqRootCostesIndirectos = queryCostesIndirectos.from(AnualidadGasto.class);
+    Join<AnualidadGasto, ConceptoGasto> joinCostesIndirectosAnualidadConcepto = subqRootCostesIndirectos
+        .join(AnualidadGasto_.conceptoGasto);
+    queryCostesIndirectos.select(cb.sum(subqRootCostesIndirectos.get(AnualidadGasto_.importeConcedido)))
+        .where(cb.and(
+            cb.equal(subqRootCostesIndirectos.get(AnualidadGasto_.proyectoAnualidadId),
+                root.get(ProyectoAnualidad_.id)),
+            cb.isTrue(joinCostesIndirectosAnualidadConcepto.get(ConceptoGasto_.costesIndirectos))));
+
+    cq.multiselect(
+        cb.coalesce(queryCostesDirectos.getSelection(), new BigDecimal(0))
+            .alias(
+                ProyectoAnualidadGastosTotales.ALIAS_IMPORTE_CONCEDIDO_ANUALIDAD_COSTES_DIRECTOS),
+        cb.coalesce(queryCostesIndirectos.getSelection(), new BigDecimal(0))
+            .alias(
+                ProyectoAnualidadGastosTotales.ALIAS_IMPORTE_CONCEDIDO_ANUALIDAD_COSTES_INDIRECTOS))
+        .where(cb.equal(root.get(ProyectoAnualidad_.id), id));
+
+    final TypedQuery<ProyectoAnualidadGastosTotales> q = entityManager.createQuery(cq);
+
+    final ProyectoAnualidadGastosTotales result = q.getSingleResult();
+
+    log.debug("getTotalImportesProyectoAnualidad(Long id) - end");
+
+    return result;
+  }
 }

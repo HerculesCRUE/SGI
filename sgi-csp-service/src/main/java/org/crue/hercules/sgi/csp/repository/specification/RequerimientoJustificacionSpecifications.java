@@ -5,6 +5,7 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
 import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge_;
 import org.crue.hercules.sgi.csp.model.RequerimientoJustificacion;
@@ -96,6 +97,22 @@ public class RequerimientoJustificacionSpecifications {
     return (root, query, cb) -> {
       query.orderBy(cb.asc(root.get(RequerimientoJustificacion_.fechaNotificacion)));
       return cb.isTrue(cb.literal(true));
+    };
+  }
+
+  /**
+   * {@link RequerimientoJustificacion} con {@link ProyectoPeriodoJustificacion}.
+   * 
+   * @param proyectoPeriodoJustificacionId id de la entidad
+   *                                       {@link ProyectoPeriodoJustificacion}.
+   * @return specification para obtener los {@link RequerimientoJustificacion} con
+   *         {@link ProyectoPeriodoJustificacion}.
+   */
+  public static Specification<RequerimientoJustificacion> byProyectoPeriodoJustificacionId(
+      Long proyectoPeriodoJustificacionId) {
+    return (root, query, cb) -> {
+      return cb.equal(root.get(RequerimientoJustificacion_.proyectoPeriodoJustificacionId),
+          proyectoPeriodoJustificacionId);
     };
   }
 }

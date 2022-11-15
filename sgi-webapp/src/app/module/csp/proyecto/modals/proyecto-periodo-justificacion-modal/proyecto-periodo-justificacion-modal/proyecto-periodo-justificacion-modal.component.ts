@@ -190,7 +190,9 @@ export class ProyectoPeriodoJustificacionModalComponent extends DialogFormCompon
       validators: [
         this.isFinalUltimoPeriodo(ultimoPeriodoJustificacionNoFinal?.fechaFin),
         this.notOverlapsPeriodoJustificacion('fechaInicio', 'fechaFin', 'numPeriodo'),
-        DateValidator.isAfter('fechaInicio', 'fechaFin')]
+        DateValidator.isAfter('fechaInicio', 'fechaFin'),
+        DateValidator.isAfter('fechaInicioPresentacion', 'fechaFinPresentacion')
+      ]
     });
 
     // Si ya existe un periodo final tiene que ser el ultimo y solo puede haber 1

@@ -126,4 +126,11 @@ export class ProyectoPeriodoJustificacionService extends _ProyectoPeriodoJstific
         map((response) => PROYECTO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER.toTarget(response))
       );
   }
+
+  checkDeleteable(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/deleteable`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(x => x.status === 200)
+    );
+  }
 }

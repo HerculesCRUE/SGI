@@ -1,6 +1,5 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -203,7 +202,8 @@ public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEqui
                 .parameter("field", ApplicationContextSupport.getMessage("solicitudProyectoEquipo.personaRef"))
                 .parameter("entity", ApplicationContextSupport.getMessage(SolicitudProyectoEquipo.class)).build());
 
-        if (solicitudProyectoEquipo.getPersonaRef().equals(solicitud.getSolicitanteRef())) {
+        if (solicitudProyectoEquipo.getPersonaRef().equals(solicitud.getSolicitanteRef())
+            && Boolean.TRUE.equals(solicitudProyectoEquipo.getRolProyecto().getRolPrincipal())) {
           hasSolicitanteInvestigadorPrincipal = true;
         }
 

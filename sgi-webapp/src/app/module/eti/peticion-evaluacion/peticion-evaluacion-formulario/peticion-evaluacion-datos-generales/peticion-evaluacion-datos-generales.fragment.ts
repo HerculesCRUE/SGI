@@ -216,16 +216,14 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
 
   private addValorSocialValidations(value: string) {
     const form = this.getFormGroup().controls;
-    if (!this.readonly) {
-      if (value === TipoValorSocial.OTRA_FINALIDAD) {
-        this.mostrarCampoEspecificarValorSocial$.next(true);
-        form.otroValorSocial.setValidators([Validators.required]);
-      } else {
-        this.mostrarCampoEspecificarValorSocial$.next(false);
-        form.otroValorSocial.clearValidators();
-      }
-      form.otroValorSocial.updateValueAndValidity();
+    if (value === TipoValorSocial.OTRA_FINALIDAD) {
+      this.mostrarCampoEspecificarValorSocial$.next(true);
+      form.otroValorSocial.setValidators([Validators.required]);
+    } else {
+      this.mostrarCampoEspecificarValorSocial$.next(false);
+      form.otroValorSocial.clearValidators();
     }
+    form.otroValorSocial.updateValueAndValidity();
   }
 
   private addTieneFondosPropiosValidations(value: string) {

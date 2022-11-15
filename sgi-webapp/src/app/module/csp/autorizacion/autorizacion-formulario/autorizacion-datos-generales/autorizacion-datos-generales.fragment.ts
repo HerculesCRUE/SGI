@@ -1,6 +1,6 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { IAutorizacion } from '@core/models/csp/autorizacion';
-import { Estado } from '@core/models/csp/estado-autorizacion';
+import { Estado, ESTADO_MAP } from '@core/models/csp/estado-autorizacion';
 import { FormFragment } from '@core/services/action-service';
 import { AutorizacionService } from '@core/services/csp/autorizacion/autorizacion.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
@@ -43,7 +43,7 @@ export class AutorizacionDatosGeneralesFragment extends FormFragment<IAutorizaci
 
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
-      estado: new FormControl({ value: null, disabled: true }, Validators.required),
+      estado: new FormControl({ value: this.isEdit() ? null : Estado.BORRADOR, disabled: true }, Validators.required),
       fechaSolicitud: new FormControl({ value: null, disabled: true }),
       solicitante: new FormControl({ value: null, disabled: true }),
       tituloProyecto: new FormControl(null, [Validators.maxLength(250), Validators.required]),

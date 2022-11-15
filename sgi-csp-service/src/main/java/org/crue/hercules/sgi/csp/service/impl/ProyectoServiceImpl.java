@@ -53,6 +53,7 @@ import org.crue.hercules.sgi.csp.model.ProyectoPartida;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
+import org.crue.hercules.sgi.csp.model.ProyectoProrroga.Tipo;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
 import org.crue.hercules.sgi.csp.model.ProyectoResponsableEconomico;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
@@ -792,7 +793,8 @@ public class ProyectoServiceImpl implements ProyectoService {
     Optional<ProyectoProrroga> prorroga = proyectoProrrogaRepository
         .findFirstByProyectoIdOrderByFechaConcesionDesc(proyecto.getId());
 
-    if (prorroga.isPresent() && proyecto.getFechaFinDefinitiva() != null) {
+    if (prorroga.isPresent() && !Tipo.IMPORTE.equals(prorroga.get().getTipo())
+        && proyecto.getFechaFinDefinitiva() != null && prorroga.get().getFechaFin() != null) {
       Assert.isTrue(
           proyecto.getFechaFinDefinitiva().isAfter(prorroga.get().getFechaFin())
               || proyecto.getFechaFinDefinitiva().equals(prorroga.get().getFechaFin()),
@@ -1758,13 +1760,10 @@ public class ProyectoServiceImpl implements ProyectoService {
    */
   @Override
   public boolean modificable(Long proyectoId) {
-    List<String> unidadesGestion = SgiSecurityContextHolder.getUOsForAuthority(ProyectoHelper.CSP_PRO_E);
-
-    if (!CollectionUtils.isEmpty(unidadesGestion)) {
-      return repository.existsByIdAndUnidadGestionRefInAndActivoIsTrue(proyectoId, unidadesGestion);
-    } else {
-      return true;
-    }
+    log.debug("modificable(Long proyectoId) - start");
+    boolean isModificable = proyectoHelper.hasUserAuthorityModifyProyecto(proyectoId);
+    log.debug("modificable(Long proyectoId) - start");
+    return isModificable;
   }
 
   /**

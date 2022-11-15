@@ -25,6 +25,7 @@ import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
 import { EMPTY, forkJoin, from, Observable, of, Subscription } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
+import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 
 const MSG_BUTTON_ADD = marker('btn.add.entity');
@@ -69,6 +70,10 @@ export class AutorizacionListadoComponent extends AbstractTablePaginationCompone
 
   msgParamNotificacionEntity = {};
   msgParamProyectoEntity = {};
+
+  get TIPO_COLECTIVO() {
+    return TipoColectivo;
+  }
 
   get ESTADO_MAP() {
     return ESTADO_MAP;

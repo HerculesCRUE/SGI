@@ -10,6 +10,7 @@ import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoJustificacionOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoSeguimientoEjecucionEconomica;
 import org.crue.hercules.sgi.csp.dto.ProyectoSeguimientoJustificacionOutput;
 import org.crue.hercules.sgi.csp.dto.RequerimientoJustificacionOutput;
+import org.crue.hercules.sgi.csp.dto.SeguimientoJustificacionAnualidad;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -33,6 +34,7 @@ class SeguimientoEjecucionEconomicaIT extends BaseIT {
   private static final String PATH_PERIODO_SEGUIMIENTO = SeguimientoEjecucionEconomicaController.PATH_PERIODO_SEGUIMIENTO;
   private static final String PATH_REQUERIMIENTO_JUSTIFICACION = SeguimientoEjecucionEconomicaController.PATH_REQUERIMIENTO_JUSTIFICACION;
   private static final String PATH_SEGUIMIENTO_JUSTIFICACION = SeguimientoEjecucionEconomicaController.PATH_SEGUIMIENTO_JUSTIFICACION;
+  private static final String PATH_SEGUIMIENTO_JUSTIFICACION_ANUALIDAD = SeguimientoEjecucionEconomicaController.PATH_SEGUIMIENTO_JUSTIFICACION_ANUALIDAD;
 
   private static final String[] DEFAULT_ROLES = { "CSP-SJUS-E", "CSP-SJUS-V" };
 
@@ -296,5 +298,45 @@ class SeguimientoEjecucionEconomicaIT extends BaseIT {
 
     Assertions.assertThat(responseData.get(0).getJustificanteReintegro()).as("get(0).getJustificanteReintegro())")
         .isEqualTo("justificante-reintegro-001");
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/contexto_proyecto.sql",
+    "classpath:scripts/estado_proyecto.sql",
+    "classpath:scripts/proyecto_anualidad.sql",
+    "classpath:scripts/proyecto_periodo_justificacion.sql",
+    "classpath:scripts/proyecto_proyecto_sge.sql",
+    "classpath:scripts/tipo_requerimiento.sql",
+    "classpath:scripts/requerimiento_justificacion.sql",
+    "classpath:scripts/proyecto_periodo_justificacion_seguimiento.sql",
+      // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findSeguimientosJustificacionAnualidad_ReturnsSeguimientoJustificacionAnualidadList()
+      throws Exception {
+    String proyectoSgeRef = "proyecto-sge-ref-001";
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_SEGUIMIENTO_JUSTIFICACION_ANUALIDAD)
+        .buildAndExpand(proyectoSgeRef).toUri();
+    final ResponseEntity<List<SeguimientoJustificacionAnualidad>> response = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        buildRequest(null, null, DEFAULT_ROLES),
+        new ParameterizedTypeReference<List<SeguimientoJustificacionAnualidad>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    final List<SeguimientoJustificacionAnualidad> responseData = response.getBody();
+    Assertions.assertThat(responseData).hasSize(1);
+    Assertions.assertThat(responseData.get(0).getIdentificadorJustificacion()).as("get(0).getJustificanteReintegro())")
+        .isEqualTo("11/1111");
   }
 }

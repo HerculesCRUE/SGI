@@ -4,6 +4,7 @@ import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
 import { IAnualidadIngreso } from '@core/models/csp/anualidad-ingreso';
 import { IAnualidadResumen } from '@core/models/csp/anualidad-resumen';
 import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
+import { IProyectoAnualidadGastosTotales } from '@core/models/csp/proyecto-anualidad-gastos-totales';
 import { IProyectoAnualidadNotificacionSge } from '@core/models/csp/proyecto-anualidad-notificacion-sge';
 import { environment } from '@env';
 import {
@@ -142,4 +143,7 @@ export class ProyectoAnualidadService extends _ProyectoAnualidadServiceMixinBase
     return this.http.patch<void>(`${this.endpointUrl}/${id}/notificarsge`, undefined);
   }
 
+  getTotalImportesProyectoAnualidad(id: number): Observable<IProyectoAnualidadGastosTotales> {
+    return this.http.get<IProyectoAnualidadGastosTotales>(`${this.endpointUrl}/${id}/gastos-totales`);
+  }
 }

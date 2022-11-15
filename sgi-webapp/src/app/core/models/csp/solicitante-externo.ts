@@ -23,4 +23,5 @@ export interface ISolicitanteExterno {
   provincia: IProvincia;
   ciudad: string;
   codigoPostal: string;
+  solicitudUUID?: string;
 }

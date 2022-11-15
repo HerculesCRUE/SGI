@@ -48,8 +48,7 @@ import { ConvocatoriaPublicRoutingModule } from './convocatoria-public-routing.m
     MaterialDesignModule,
     ReactiveFormsModule,
     TranslateModule,
-    FormsModule,
-    SgempSharedModule
+    FormsModule
   ],
   providers: [
     ConvocatoriaPublicDataResolver

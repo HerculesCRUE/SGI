@@ -163,9 +163,16 @@ public class ConvocatoriaDocumentoServiceImpl implements ConvocatoriaDocumentoSe
 
     authorityHelper.checkUserHasAuthorityViewConvocatoria(convocatoriaId);
 
+    Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaId)
+        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaId));
+
     Specification<ConvocatoriaDocumento> specs = ConvocatoriaDocumentoSpecifications.byConvocatoriaId(
         convocatoriaId)
         .and(SgiRSQLJPASupport.toSpecification(query));
+
+    if (!authorityHelper.hasAuthorityViewUnidadGestion(convocatoria)) {
+      specs = specs.and(ConvocatoriaDocumentoSpecifications.onlyPublicos());
+    }
 
     Page<ConvocatoriaDocumento> returnValue = repository.findAll(specs, paging);
     log.debug("findAllByConvocatoria(Long convocatoriaId, String query, Pageable pageable) - end");

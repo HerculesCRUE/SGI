@@ -125,6 +125,10 @@ class RequerimientoJustificacionIT extends BaseIT {
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/proyecto_proyecto_sge.sql",
     "classpath:scripts/proyecto_periodo_justificacion.sql",
+    "classpath:scripts/contexto_proyecto.sql",
+    "classpath:scripts/estado_proyecto.sql",
+    "classpath:scripts/proyecto_anualidad.sql",
+    "classpath:scripts/proyecto_periodo_justificacion_seguimiento.sql",
     "classpath:scripts/tipo_requerimiento.sql",
     "classpath:scripts/requerimiento_justificacion.sql",
       // @formatter:on
@@ -155,6 +159,10 @@ class RequerimientoJustificacionIT extends BaseIT {
     "classpath:scripts/proyecto.sql",
     "classpath:scripts/proyecto_proyecto_sge.sql",
     "classpath:scripts/proyecto_periodo_justificacion.sql",
+    "classpath:scripts/contexto_proyecto.sql",
+    "classpath:scripts/estado_proyecto.sql",
+    "classpath:scripts/proyecto_anualidad.sql",
+    "classpath:scripts/proyecto_periodo_justificacion_seguimiento.sql",
     "classpath:scripts/tipo_requerimiento.sql",
     "classpath:scripts/requerimiento_justificacion.sql",
       // @formatter:on
@@ -163,6 +171,40 @@ class RequerimientoJustificacionIT extends BaseIT {
   @Test
   void deleteById_Returns204() throws Exception {
     Long requerimientoJustificacionId = 2L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_ID)
+        .queryParam("s").buildAndExpand(requerimientoJustificacionId).toUri();
+    final ResponseEntity<Void> response = restTemplate.exchange(uri,
+        HttpMethod.DELETE,
+        buildRequest(null, null, DEFAULT_ROLES),
+        Void.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/proyecto_proyecto_sge.sql",
+    "classpath:scripts/proyecto_periodo_justificacion.sql",
+    "classpath:scripts/contexto_proyecto.sql",
+    "classpath:scripts/estado_proyecto.sql",
+    "classpath:scripts/proyecto_anualidad.sql",
+    "classpath:scripts/proyecto_periodo_justificacion_seguimiento.sql",
+    "classpath:scripts/tipo_requerimiento.sql",
+    "classpath:scripts/requerimiento_justificacion.sql",
+      // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void deleteById_alsoDeletesRelatedProyectoPeriodoSeguimientoJustificacion_Returns204() throws Exception {
+    Long requerimientoJustificacionId = 3L;
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_ID)
         .queryParam("s").buildAndExpand(requerimientoJustificacionId).toUri();

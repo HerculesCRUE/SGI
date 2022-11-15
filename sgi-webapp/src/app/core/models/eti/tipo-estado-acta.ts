@@ -24,5 +24,5 @@ export class TipoEstadoActa {
 
 export const ESTADO_ACTA_MAP: Map<ESTADO_ACTA, string> = new Map([
   [ESTADO_ACTA.EN_ELABORACION, marker(`eti.estado-acta.EN_ELABORACION`)],
-  [ESTADO_ACTA.FINALIZADA, marker(`eti.estado-acta.COMPLETADA`)]
+  [ESTADO_ACTA.FINALIZADA, marker(`eti.estado-acta.FINALIZADA`)]
 ]);

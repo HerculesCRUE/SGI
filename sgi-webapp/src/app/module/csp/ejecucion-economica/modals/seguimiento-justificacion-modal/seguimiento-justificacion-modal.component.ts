@@ -11,7 +11,7 @@ import { combineLatest } from 'rxjs';
 import { startWith } from 'rxjs/operators';
 import { IProyectoSeguimientoJustificacionWithFechaJustificacion } from '../../ejecucion-economica-formulario/seguimiento-justificacion-resumen/seguimiento-justificacion-resumen.fragment';
 
-const JUSTIFICANTE_REINTEGRO_KEY = marker('csp.seguimiento-justificacion.justificante-reintegro');
+const JUSTIFICANTE_REINTEGRO_KEY = marker('csp.seguimiento-justificacion.num-justificante-ultimo-reintegro');
 
 export interface ISeguimientoJustificacionModalData {
   proyecto: IProyectoSeguimientoEjecucionEconomica;
@@ -117,7 +117,7 @@ export class SeguimientoJustificacionModalComponent extends
   }
 
   private calculateSubstraction(a: number, b: number): number | null {
-    if (!a && !b) {
+    if (typeof a !== 'number' && typeof b !== 'number') {
       return null;
     }
 

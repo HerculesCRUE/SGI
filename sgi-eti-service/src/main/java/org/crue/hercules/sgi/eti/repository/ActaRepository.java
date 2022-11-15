@@ -24,7 +24,7 @@ public interface ActaRepository
    * @param convocatoriaReunionId Id de {@link ConvocatoriaReunion}.
    * @return si hay acta asociado a la convocatoria de reunión
    */
-  boolean existsByConvocatoriaReunionId(Long convocatoriaReunionId);
+  boolean existsByConvocatoriaReunionIdAndActivoIsTrue(Long convocatoriaReunionId);
 
   /**
    * Indica si existe o no el {@link Acta} asignada a la

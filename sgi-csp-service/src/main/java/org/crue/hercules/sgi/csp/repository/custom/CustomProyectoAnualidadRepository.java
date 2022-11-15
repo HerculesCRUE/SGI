@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.crue.hercules.sgi.csp.dto.AnualidadResumen;
+import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadGastosTotales;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadNotificacionSge;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadResumen;
 import org.crue.hercules.sgi.csp.model.AnualidadGasto;
@@ -81,4 +82,14 @@ public interface CustomProyectoAnualidadRepository {
    */
   int deleteByIdCascade(Long id);
 
+  /**
+   * Obtiene las sumas de importe concedido costes indirectos y de costes directos
+   * (por separado) de una entidad {@link ProyectoAnualidad}.
+   * 
+   * @param id el identificador de la entidad {@link ProyectoAnualidad}
+   * @return suma de importes concedidos de costes directos y suma de importes
+   *         concedidos de costes indirectos
+   *         {@link ProyectoAnualidadGastosTotales}
+   */
+  public ProyectoAnualidadGastosTotales getTotalImportesProyectoAnualidad(Long id);
 }

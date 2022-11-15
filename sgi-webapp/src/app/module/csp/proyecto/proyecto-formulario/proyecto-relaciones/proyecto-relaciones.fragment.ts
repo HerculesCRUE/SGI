@@ -13,7 +13,8 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
-import { catchError, map, mergeMap, takeLast, tap } from 'rxjs/operators';
+import { catchError, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
+import { IProyectoListadoData } from '../../proyecto-listado/proyecto-listado.component';
 
 export interface IProyectoRelacionTableData {
   id: number;
@@ -58,8 +59,8 @@ export class ProyectoRelacionFragment extends Fragment {
         map((relaciones: IRelacion[]) => relaciones.map(
           relacion => new StatusWrapper(this.createProyectoRelacionTableDataFromRelacion(relacion))
         )),
-        tap(relacionesWrapped => this.proyectoRelacionesTableData$.next(relacionesWrapped)),
-        mergeMap(relacionesWrapped => this.fillAdditionalData$(relacionesWrapped))
+        switchMap(relacionesWrapped => this.fillAdditionalData$(relacionesWrapped)),
+        tap(relacionesWrapped => this.proyectoRelacionesTableData$.next(relacionesWrapped))
       );
     }
   }
@@ -122,9 +123,11 @@ export class ProyectoRelacionFragment extends Fragment {
   }
 
   private fillAdditionalData$(
-    wrapperList: StatusWrapper<IProyectoRelacionTableData>[]): Observable<StatusWrapper<IProyectoRelacionTableData>> {
+    wrapperList: StatusWrapper<IProyectoRelacionTableData>[]
+  ): Observable<StatusWrapper<IProyectoRelacionTableData>[]> {
     return from(wrapperList).pipe(
-      mergeMap(wrapper => this.fillEntidadRelacionada$(wrapper))
+      mergeMap(wrapper => this.fillEntidadRelacionada$(wrapper)),
+      toArray()
     );
   }
 
@@ -194,6 +197,10 @@ export class ProyectoRelacionFragment extends Fragment {
   addRelacion(relacion: IProyectoRelacionTableData): void {
     const wrapped = new StatusWrapper<IProyectoRelacionTableData>(relacion);
     this.updateWrapperEntidadRelacionadaHref(wrapped);
+    if (relacion.tipoEntidadRelacionada === TipoEntidad.PROYECTO) {
+      wrapped.value.codigosSge = (relacion.entidadRelacionada as IProyectoListadoData)?.proyectosSGE;
+      wrapped.value.entidadConvocanteRef = (relacion.entidadRelacionada as IProyecto).codigoExterno;
+    }
     wrapped.setCreated();
     const current = this.proyectoRelacionesTableData$.value;
     current.push(wrapped);

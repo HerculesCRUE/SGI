@@ -14,7 +14,7 @@
       </mat-form-field>
 
 
-      <mat-form-field fxFlex="25%" *ngIf="formPart.comentarioEstadoCancelado">
+      <mat-form-field fxFlex="74%" *ngIf="formGroup.controls.comentario.value">
         <mat-label>{{'csp.proyecto.estado.comentario' | translate}}</mat-label>
         <textarea matInput formControlName="comentario" id="comentario"
           placeholder="{{'csp.proyecto.estado.comentario' | translate}}"></textarea>

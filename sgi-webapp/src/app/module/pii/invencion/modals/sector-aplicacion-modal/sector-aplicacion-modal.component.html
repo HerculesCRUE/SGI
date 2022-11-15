@@ -8,6 +8,9 @@
         </mat-label>
         <sgi-select-sector-aplicacion formControlName="sectorAplicacion" [excluded]="data.selectedEntidades" required>
         </sgi-select-sector-aplicacion>
+        <mat-error *ngIf="formGroup.controls.sectorAplicacion.errors?.required">
+          {{'error.required.entity' | translate:msgParamSectorAplicacionEntity}}
+        </mat-error>
       </mat-form-field>
     </div>
   </form>

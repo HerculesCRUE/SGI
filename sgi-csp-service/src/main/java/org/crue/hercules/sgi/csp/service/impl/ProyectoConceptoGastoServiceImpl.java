@@ -377,12 +377,10 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
         .byRangoFechasSolapados(proyectoConceptoGasto.getFechaInicio(), proyectoConceptoGasto.getFechaFin());
     Specification<ProyectoConceptoGasto> specByIdNotEqual = ProyectoConceptoGastoSpecifications
         .byIdNotEqual(proyectoConceptoGasto.getId());
-    Specification<ProyectoConceptoGasto> specByPermitido = ProyectoConceptoGastoSpecifications
-        .byPermitido(proyectoConceptoGasto.getPermitido());
 
     Specification<ProyectoConceptoGasto> specs = Specification.where(specByProyecto)
         .and(specByConceptoGastoProyectoActiva).and(specByConceptoGasto).and(specByRangoMesesSolapados)
-        .and(specByIdNotEqual).and(specByPermitido);
+        .and(specByIdNotEqual);
 
     Page<ProyectoConceptoGasto> proyectoConceptoGastos = repository.findAll(specs, Pageable.unpaged());
 

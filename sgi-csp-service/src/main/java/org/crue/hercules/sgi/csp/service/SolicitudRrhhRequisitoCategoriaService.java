@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.RequiredArgsConstructor;
@@ -92,7 +93,7 @@ public class SolicitudRrhhRequisitoCategoriaService {
    *         paginadas y/o filtradas.
    */
   public Page<SolicitudRrhhRequisitoCategoria> findAllBySolicitud(Long solicitudId, String query, Pageable paging) {
-    log.debug("findAll(Long solicitudId, String query, Pageable paging) - start");
+    log.debug("findAllBySolicitud(Long solicitudId, String query, Pageable paging) - start");
     AssertHelper.idNotNull(solicitudId, Solicitud.class);
     authorityHelper.checkUserHasAuthorityViewSolicitud(solicitudId);
 
@@ -101,8 +102,80 @@ public class SolicitudRrhhRequisitoCategoriaService {
         .and(SgiRSQLJPASupport.toSpecification(query));
 
     Page<SolicitudRrhhRequisitoCategoria> returnValue = repository.findAll(specs, paging);
-    log.debug("findAll(Long solicitudId, String query, Pageable paging) - end");
+    log.debug("findAllBySolicitud(Long solicitudId, String query, Pageable paging) - end");
     return returnValue;
+  }
+
+  /**
+   * Obtener todas las entidades {@link SolicitudRrhhRequisitoCategoria} paginadas
+   * y/o filtradas de la {@link SolicitudRrhh}.
+   *
+   * @param solicitudPublicId Identificador de la entidad {@link SolicitudRrhh}.
+   * @param paging            la información de la paginación.
+   * @param query             la información del filtro.
+   * @return la lista de entidades {@link SolicitudRrhhRequisitoCategoria}
+   *         paginadas y/o filtradas.
+   */
+  public Page<SolicitudRrhhRequisitoCategoria> findAllBySolicitudPublicId(String solicitudPublicId, String query,
+      Pageable paging) {
+    log.debug("findAllBySolicitudPublicId(String solicitudPublicId, String query, Pageable paging) - start");
+    Assert.notNull(solicitudPublicId, "Solicitud Id null");
+    Long solicitudId = authorityHelper.getSolicitudIdByPublicId(solicitudPublicId);
+    Specification<SolicitudRrhhRequisitoCategoria> specs = SolicitudRrhhRequisitoCategoriaSpecifications
+        .bySolicitudRrhhId(solicitudId)
+        .and(SgiRSQLJPASupport.toSpecification(query));
+
+    Page<SolicitudRrhhRequisitoCategoria> returnValue = repository.findAll(specs, paging);
+    log.debug("findAllBySolicitudPublicId(String solicitudPublicId, String query, Pageable paging) - end");
+    return returnValue;
+  }
+
+  /**
+   * Guarda la entidad {@link SolicitudRrhhRequisitoCategoria}.
+   * 
+   * @param solicitudPublicId  el id de la {@link Solicitud}.
+   * @param requisitoCategoria la entidad {@link SolicitudRrhhRequisitoCategoria}
+   *                           a guardar.
+   * @return la entidad {@link SolicitudRrhhRequisitoCategoria} persistida.
+   */
+  @Transactional
+  @Validated({ BaseEntity.Create.class })
+  public SolicitudRrhhRequisitoCategoria createByExternalUser(String solicitudPublicId,
+      @Valid SolicitudRrhhRequisitoCategoria requisitoCategoria) {
+    log.debug(
+        "createByExternalUser(String solicitudPublicId, SolicitudRrhhRequisitoCategoria requisitoCategoria) - start");
+
+    Solicitud solicitud = authorityHelper.getSolicitudByPublicId(solicitudPublicId);
+    authorityHelper.checkExternalUserHasAuthorityModifySolicitud(solicitud);
+    requisitoCategoria.setSolicitudRrhhId(solicitud.getId());
+
+    SolicitudRrhhRequisitoCategoria returnValue = repository.save(requisitoCategoria);
+
+    log.debug(
+        "createByExternalUser(String solicitudPublicId, SolicitudRrhhRequisitoCategoria requisitoCategoria) - end");
+    return returnValue;
+  }
+
+  /**
+   * Elimina el {@link SolicitudRrhhRequisitoCategoria}.
+   *
+   * @param solicitudPublicId el id de la {@link Solicitud}.
+   * @param id                Id del {@link SolicitudRrhhRequisitoCategoria}.
+   */
+  @Transactional
+  public void deleteByExternalUser(String solicitudPublicId, Long id) {
+    log.debug("deleteByExternalUser(String solicitudPublicId, Long id) - start");
+
+    Solicitud solicitud = authorityHelper.getSolicitudByPublicId(solicitudPublicId);
+    authorityHelper.checkExternalUserHasAuthorityModifySolicitud(solicitud);
+
+    AssertHelper.idNotNull(id, SolicitudRrhhRequisitoCategoria.class);
+    if (!repository.existsById(id)) {
+      throw new SolicitudRrhhRequisitoCategoriaNotFoundException(id);
+    }
+
+    repository.deleteById(id);
+    log.debug("deleteByExternalUser(String solicitudPublicId, Long id) - end");
   }
 
 }

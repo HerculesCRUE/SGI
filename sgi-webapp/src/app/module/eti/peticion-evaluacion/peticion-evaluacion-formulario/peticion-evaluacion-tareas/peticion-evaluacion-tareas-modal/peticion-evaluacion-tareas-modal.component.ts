@@ -327,7 +327,7 @@ export class PeticionEvaluacionTareasModalComponent
     this.data.tarea.memoria = this.formGroup.controls.memoria.value;
     this.data.tarea.equipoTrabajo = {} as IEquipoTrabajo;
     this.data.equiposTrabajo.filter(equipo => equipo.persona.id === this.formGroup.controls.equipoTrabajo.value.id)
-      .map(equipoTrabajo => this.data.tarea.equipoTrabajo = equipoTrabajo);
+      .forEach(equipoTrabajo => this.data.tarea.equipoTrabajo = equipoTrabajo);
     this.data.tarea.equipoTrabajo.persona = this.formGroup.controls.equipoTrabajo.value;
 
     return this.data;

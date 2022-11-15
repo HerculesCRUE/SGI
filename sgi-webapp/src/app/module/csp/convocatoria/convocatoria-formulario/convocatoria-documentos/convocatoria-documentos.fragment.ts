@@ -116,12 +116,7 @@ export class ConvocatoriaDocumentosFragment extends Fragment {
     if (this.getKey()) {
       this.convocatoriaService.findDocumentos(this.getKey() as number).pipe(
         map(response => {
-          // TODO este filtro debería hacerse en el back
-          let items = response.items;
-          if (this.readonly) {
-            items = items.filter(documento => documento.publico);
-          }
-          return this.buildTree(items);
+          return this.buildTree(response.items);
         })
       ).subscribe(
         (documento) => {

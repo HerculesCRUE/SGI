@@ -36,7 +36,7 @@
           <mat-form-field>
             <mat-label>{{'csp.autorizacion.solicitante' | translate}}</mat-label>
             <sgi-select-persona placeholder="{{'csp.autorizacion.solicitante' | translate}}"
-              formControlName="solicitante"></sgi-select-persona>
+              formControlName="solicitante" [tipoColectivo]="TIPO_COLECTIVO.SOLICITANTE_CSP"></sgi-select-persona>
           </mat-form-field>
         </div>
 

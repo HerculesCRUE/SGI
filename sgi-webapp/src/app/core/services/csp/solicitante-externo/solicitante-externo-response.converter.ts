@@ -31,7 +31,8 @@ class SolicitanteExternoResponseConverter
       comunidad: value.comunidadRef ? { id: value.comunidadRef } as IComunidadAutonoma : null,
       provincia: value.provinciaRef ? { id: value.provinciaRef } as IProvincia : null,
       ciudad: value.ciudad,
-      codigoPostal: value.codigoPostal
+      codigoPostal: value.codigoPostal,
+      solicitudUUID: value.solicitudUUID
     };
   }
 
@@ -56,7 +57,8 @@ class SolicitanteExternoResponseConverter
       comunidadRef: value.comunidad?.id,
       provinciaRef: value.provincia?.id,
       ciudad: value.ciudad,
-      codigoPostal: value.codigoPostal
+      codigoPostal: value.codigoPostal,
+      solicitudUUID: value.solicitudUUID
     };
   }
 }

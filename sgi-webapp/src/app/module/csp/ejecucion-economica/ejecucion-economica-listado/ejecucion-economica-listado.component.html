@@ -107,6 +107,25 @@
         </mat-form-field>
       </div>
 
+      <div fxFlex fxLayout="row" fxLayoutGap="10px"
+        *ngIf="formGroup.controls.tipoEntidad.value === TipoEntidad.PROYECTO">
+        <!-- Entidad convocante -->
+        <mat-form-field fxFlex="0 1 calc((100% - (10px * 1)) / 2)">
+          <mat-label>{{'csp.ejecucion-economica.entidad-convocante' | translate}}</mat-label>
+          <sgi-select-empresa placeholder="{{'csp.ejecucion-economica.entidad-convocante' | translate}}"
+            formControlName="entidadConvocante">
+          </sgi-select-empresa>
+        </mat-form-field>
+
+        <!-- Entidad financiadora -->
+        <mat-form-field fxFlex="0 1 calc((100% - (10px * 1)) / 2)">
+          <mat-label>{{'csp.ejecucion-economica.entidad-financiadora' | translate}}</mat-label>
+          <sgi-select-empresa placeholder="{{'csp.ejecucion-economica.entidad-financiadora' | translate}}"
+            formControlName="entidadFinanciadora">
+          </sgi-select-empresa>
+        </mat-form-field>
+      </div>
+
       <!-- Acciones -->
       <div class="buttons-final">
         <div class="col filter-button">
@@ -206,7 +225,13 @@
       <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
     </table>
 
-    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
-    </mat-paginator>
+    <div class="paginator-export">
+      <button mat-button color="primary" matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()"
+        [disabled]="totalElementos<=0" *ngIf="formGroup.controls.tipoEntidad.value === TipoEntidad.PROYECTO">
+        <mat-icon>insert_chart_outlined</mat-icon>
+      </button>
+      <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+      </mat-paginator>
+    </div>
   </div>
 </sgi-menu-content>

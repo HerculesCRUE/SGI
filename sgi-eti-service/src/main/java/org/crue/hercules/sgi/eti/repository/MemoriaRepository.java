@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
+import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoMemoria;
 import org.crue.hercules.sgi.eti.repository.custom.CustomMemoriaRepository;
 import org.springframework.data.domain.Page;
@@ -63,5 +64,15 @@ public interface MemoriaRepository
    */
   Page<Memoria> findByComiteIdAndPeticionEvaluacionIdAndActivoTrueAndComiteActivoTrue(Long idComite,
       Long idPeticionEvaluacion, Pageable paging);
+
+  /**
+   * Devuelve un listado de {@link Memoria} para una determinada petición de
+   * evaluación en dos posibles estados
+   * 
+   * @param idPeticionEvaluacion Identificador {@link PeticionEvaluacion}.
+   * @param tipoEstadoMemoria    identificador del {@link TipoEstadoMemoria}
+   * @return listado de memorias
+   */
+  List<Memoria> findAllByPeticionEvaluacionIdAndEstadoActualId(Long idPeticionEvaluacion, Long tipoEstadoMemoria);
 
 }

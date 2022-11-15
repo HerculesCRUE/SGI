@@ -17,6 +17,7 @@ import javax.validation.Validator;
 import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.enums.TipoJustificacion;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoJustificacionNotDeleteableException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoJustificacionOverlappedFechasException;
 import org.crue.hercules.sgi.csp.exceptions.TipoFinalException;
@@ -47,13 +48,16 @@ public class ProyectoPeriodoJustificacionService {
 
   private final ProyectoPeriodoJustificacionRepository repository;
   private final ProyectoRepository proyectoRepository;
+  private final RequerimientoJustificacionService requerimientoJustificacionService;
 
   public ProyectoPeriodoJustificacionService(Validator validator,
       ProyectoPeriodoJustificacionRepository proyectoPeriodoJustificacionRepository,
-      ProyectoRepository proyectoRepository) {
+      ProyectoRepository proyectoRepository,
+      RequerimientoJustificacionService requerimientoJustificacionService) {
     this.validator = validator;
     this.repository = proyectoPeriodoJustificacionRepository;
     this.proyectoRepository = proyectoRepository;
+    this.requerimientoJustificacionService = requerimientoJustificacionService;
   }
 
   @Transactional
@@ -163,6 +167,10 @@ public class ProyectoPeriodoJustificacionService {
         "ProyectoPeriodoJustificacion id no puede ser null para eliminar un ProyectoPeriodoJustificacion");
     if (!repository.existsById(id)) {
       throw new ProyectoPeriodoJustificacionNotFoundException(id);
+    }
+
+    if (!checkDeleteable(id)) {
+      throw new ProyectoPeriodoJustificacionNotDeleteableException();
     }
 
     repository.deleteById(id);
@@ -282,5 +290,23 @@ public class ProyectoPeriodoJustificacionService {
 
     log.debug("findByIdentificadorJustificacion(String identificadorJustificacion) - end");
     return returnValue;
+  }
+
+  /**
+   * Comprueba si una entidad {@link ProyectoPeriodoJustificacion} se puede
+   * eliminar.
+   * 
+   * @param id Identificador de la entidad {@link ProyectoPeriodoJustificacion}.
+   * @return true/false
+   */
+  public boolean checkDeleteable(Long id) {
+    log.debug("checkDeleteable(Long id) - start");
+
+    AssertHelper.idNotNull(id, ProyectoPeriodoJustificacion.class);
+
+    boolean isDeleteable = !requerimientoJustificacionService.existsAnyByProyectoPeriodoJustificacionId(id);
+
+    log.debug("checkDeleteable(Long id) - end");
+    return isDeleteable;
   }
 }

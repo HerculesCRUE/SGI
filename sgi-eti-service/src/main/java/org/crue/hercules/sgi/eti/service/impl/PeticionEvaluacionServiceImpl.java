@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.eti.service.impl;
 
 import java.time.Instant;
 import java.time.temporal.ChronoField;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
@@ -10,10 +11,13 @@ import org.crue.hercules.sgi.eti.exceptions.PeticionEvaluacionNotFoundException;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion.TipoValorSocial;
+import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
+import org.crue.hercules.sgi.eti.repository.MemoriaRepository;
 import org.crue.hercules.sgi.eti.repository.PeticionEvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.predicate.PeticionEvaluacionPredicateResolver;
 import org.crue.hercules.sgi.eti.repository.specification.MemoriaSpecifications;
 import org.crue.hercules.sgi.eti.repository.specification.PeticionEvaluacionSpecifications;
+import org.crue.hercules.sgi.eti.service.MemoriaService;
 import org.crue.hercules.sgi.eti.service.PeticionEvaluacionService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
@@ -35,11 +39,13 @@ import lombok.extern.slf4j.Slf4j;
 public class PeticionEvaluacionServiceImpl implements PeticionEvaluacionService {
   private final SgiConfigProperties sgiConfigProperties;
   private final PeticionEvaluacionRepository peticionEvaluacionRepository;
+  private final MemoriaService memoriaService;
 
   public PeticionEvaluacionServiceImpl(SgiConfigProperties sgiConfigProperties,
-      PeticionEvaluacionRepository peticionEvaluacionRepository) {
+      PeticionEvaluacionRepository peticionEvaluacionRepository, MemoriaService memoriaService) {
     this.sgiConfigProperties = sgiConfigProperties;
     this.peticionEvaluacionRepository = peticionEvaluacionRepository;
+    this.memoriaService = memoriaService;
   }
 
   /**
@@ -143,11 +149,40 @@ public class PeticionEvaluacionServiceImpl implements PeticionEvaluacionService 
   @Transactional
   public void delete(Long id) throws PeticionEvaluacionNotFoundException {
     log.debug("Petición a delete PeticionEvaluacion : {}  - start", id);
+
     Assert.notNull(id, "El id de PeticionEvaluacion no puede ser null.");
     if (!peticionEvaluacionRepository.existsById(id)) {
       throw new PeticionEvaluacionNotFoundException(id);
     }
-    peticionEvaluacionRepository.deleteById(id);
+
+    // Si la petición de evaluación tiene memorias en estado "en elaboración" o
+    // "completadas" se desactivan
+    List<Memoria> memoriasElaboracionDesactivar = this.memoriaService
+        .findAllByPeticionEvaluacionIdAndEstadoActualId(id,
+            TipoEstadoMemoria.Tipo.EN_ELABORACION.getId());
+    List<Memoria> memoriasCompletadasDesactivar = this.memoriaService
+        .findAllByPeticionEvaluacionIdAndEstadoActualId(id,
+            TipoEstadoMemoria.Tipo.COMPLETADA.getId());
+
+    if (!memoriasElaboracionDesactivar.isEmpty()) {
+      memoriasElaboracionDesactivar.stream().forEach(memoria -> {
+        memoriaService.desactivar(memoria.getId());
+      });
+    }
+
+    if (!memoriasCompletadasDesactivar.isEmpty()) {
+      memoriasCompletadasDesactivar.stream().forEach(memoria -> {
+        memoriaService.desactivar(memoria.getId());
+      });
+    }
+
+    peticionEvaluacionRepository.findById(id).map(peticionEvaluacion -> {
+      peticionEvaluacion.setActivo(Boolean.FALSE);
+      PeticionEvaluacion returnValue = peticionEvaluacionRepository.save(peticionEvaluacion);
+      log.debug("update(PeticionEvaluacion peticionEvaluacionActualizar) - end");
+      return returnValue;
+    }).orElseThrow(() -> new PeticionEvaluacionNotFoundException(id));
+
     log.debug("Petición a delete PeticionEvaluacion : {}  - end", id);
   }
 

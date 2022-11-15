@@ -116,7 +116,7 @@ export class ConvocatoriaDatosGeneralesPublicFragment extends FormFragment<IConv
               this.convocatoriaEntidadGestora = convocatoriasEntidadGestoras[0];
               return this.empresaService.findById(this.convocatoriaEntidadGestora.empresa.id).pipe(
                 map((empresa) => {
-                  this.getFormGroup().get('entidadGestora').setValue(empresa);
+                  this.getFormGroup().get('entidadGestora').setValue(empresa?.nombre ?? '');
                   return convocatoria;
                 })
               );

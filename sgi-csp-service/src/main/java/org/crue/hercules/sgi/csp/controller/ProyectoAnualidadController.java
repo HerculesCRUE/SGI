@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.crue.hercules.sgi.csp.dto.AnualidadGastoOutput;
 import org.crue.hercules.sgi.csp.dto.AnualidadIngresoOutput;
 import org.crue.hercules.sgi.csp.dto.AnualidadResumen;
+import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadGastosTotales;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadInput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadNotificacionSge;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadOutput;
@@ -46,6 +47,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ProyectoAnualidadController {
   public static final String MAPPING = "/proyectosanualidad";
+  public static final String PATH_GASTOS_TOTALES = "/{id}/gastos-totales";
 
   private ModelMapper modelMapper;
 
@@ -243,6 +245,25 @@ public class ProyectoAnualidadController {
     log.debug("notificarSge(Long id) - start");
     ProyectoAnualidad returnValue = service.notificarSge(id);
     log.debug("notificarSge(Long id) - end");
+    return returnValue;
+  }
+
+  /**
+   * Obtiene las sumas de importe concedido costes indirectos y de costes directos
+   * (por separado) de una entidad {@link ProyectoAnualidad}.
+   * 
+   * @param id el identificador de la entidad {@link ProyectoAnualidad}
+   * @return suma de importes concedidos de costes directos y suma de importes
+   *         concedidos de costes indirectos
+   *         {@link ProyectoAnualidadGastosTotales}
+   */
+  @GetMapping(PATH_GASTOS_TOTALES)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SJUS-V', 'CSP-SJUS-E')")
+  public ProyectoAnualidadGastosTotales getTotalImportesProyectoAnualidad(@PathVariable Long id) {
+    log.debug("ProyectoAnualidadGastosTotales getTotalImportesProyectoAnualidad(Long id) - start");
+
+    ProyectoAnualidadGastosTotales returnValue = service.getTotalImportesProyectoAnualidad(id);
+    log.debug("ProyectoAnualidadGastosTotales getTotalImportesProyectoAnualidad(Long id) - end");
     return returnValue;
   }
 

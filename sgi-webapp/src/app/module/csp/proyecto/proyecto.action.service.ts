@@ -57,7 +57,7 @@ import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
 import { DatosPersonalesService } from '@core/services/sgp/datos-personales.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { VinculacionService } from '@core/services/sgp/vinculacion.service';
+import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
@@ -323,7 +323,7 @@ export class ProyectoActionService extends ActionService {
 
     if (this.data?.isInvestigador) {
       this.proyectoCalendarioFacturacion = new ProyectoCalendarioFacturacionFragment(this.data?.proyecto?.id, this.data?.proyecto,
-        proyectoService, proyectoFacturacionService, facturaPrevistaEmitidaService);
+        proyectoService, proyectoFacturacionService, facturaPrevistaEmitidaService, this.isInvestigador);
       this.proyectosSge = new ProyectoProyectosSgeFragment(id, proyectoProyectoSgeService, proyectoService,
         proyectoSgeService, this.readonly, this.data?.isVisor);
 
@@ -396,7 +396,7 @@ export class ProyectoActionService extends ActionService {
         this.proyectoAgrupacionGasto = new ProyectoAgrupacionGastoFragment(this.data?.proyecto?.id, proyectoService,
           proyectoAgrupacionGastoService, this.readonly, this.data?.isVisor);
         this.proyectoCalendarioJustificacion = new ProyectoCalendarioJustificacionFragment(this.data?.proyecto?.id, this.data?.proyecto,
-          proyectoService, proyectoPeriodoJustificacionService, convocatoriaService);
+          this.readonly, proyectoService, proyectoPeriodoJustificacionService, convocatoriaService);
         this.amortizacionFondos = new ProyectoAmortizacionFondosFragment(this.data?.proyecto?.id, this.data?.proyecto?.anualidades,
           this.data.proyecto?.solicitudId, proyectoPeriodoAmortizacionService, proyectoEntidadFinanciadoraService, empresaService,
           proyectoAnualidadService, periodoAmortizacionService);
@@ -404,7 +404,7 @@ export class ProyectoActionService extends ActionService {
         this.relaciones = new ProyectoRelacionFragment(
           id, this.data.proyecto, this.readonly, relacionService, convocatoriaService, invencionService, proyectoService, sgiAuthService);
         this.proyectoCalendarioFacturacion = new ProyectoCalendarioFacturacionFragment(this.data?.proyecto?.id, this.data?.proyecto,
-          proyectoService, proyectoFacturacionService, facturaPrevistaEmitidaService);
+          proyectoService, proyectoFacturacionService, facturaPrevistaEmitidaService, this.isInvestigador);
 
         this.addFragment(this.FRAGMENT.ENTIDADES_FINANCIADORAS, this.entidadesFinanciadoras);
         this.addFragment(this.FRAGMENT.SOCIOS, this.socios);
@@ -543,6 +543,9 @@ export class ProyectoActionService extends ActionService {
 
         this.subscribeToMiembrosProyectoEquipoChangeList();
 
+        //Escucha cambios en la tabla de relaciones del componente relaciones y los emite al componente fichaGeneral
+        this.subscribeToRelacionesChangeList();
+
       }
     }
 
@@ -558,6 +561,18 @@ export class ProyectoActionService extends ActionService {
       this.subscriptions.push(
         this.proyectoEquipo.equipos$.subscribe(personas =>
           this.relaciones.miembrosEquipoProyecto = personas.map(personaListado => personaListado.value.proyectoEquipo.persona))
+      );
+    }
+  }
+
+  private subscribeToRelacionesChangeList(): void {
+    if (this.relaciones) {
+      this.subscriptions.push(
+        this.relaciones.getRelacionesProyectoTableData$()
+          .pipe(
+            map(relaciones => this.fichaGeneral.proyectoRelaciones$.next(relaciones.map(relacion => relacion.value)))
+          )
+          .subscribe()
       );
     }
   }

@@ -18,6 +18,8 @@ import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud_;
 import org.crue.hercules.sgi.csp.model.Grupo;
 import org.crue.hercules.sgi.csp.model.Grupo_;
+import org.crue.hercules.sgi.csp.model.SolicitanteExterno;
+import org.crue.hercules.sgi.csp.model.SolicitanteExterno_;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudRrhh;
 import org.crue.hercules.sgi.csp.model.SolicitudRrhh_;
@@ -31,6 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
 public class SolicitudSpecifications {
+
+  public static final String PUBLIC_ID_SPLIT_DELIMITER = "@";
 
   /**
    * {@link Solicitud} con Activo a True
@@ -134,6 +138,31 @@ public class SolicitudSpecifications {
    */
   public static Specification<Solicitud> bySolicitanteOrTutor(String personaRef) {
     return bySolicitante(personaRef).or(byTutor(personaRef));
+  }
+
+  /**
+   * {@link Solicitud} por id
+   * 
+   * @param publicId identificador de la {@link Solicitud}
+   * @return specification para obtener las {@link Solicitud} por id.
+   */
+  public static Specification<Solicitud> byPublicId(String publicId) {
+    String[] publicIdArray = publicId.split(PUBLIC_ID_SPLIT_DELIMITER);
+    String codigoRegistroInterno = publicIdArray[0];
+    String numeroDocumentoSolicitante = publicIdArray[1];
+
+    return (root, query, cb) -> {
+            Subquery<Long> querySolicitanteExterno = query.subquery(Long.class);
+      Root<SolicitanteExterno> querySolicitanteExternoRoot = querySolicitanteExterno.from(SolicitanteExterno.class);
+      querySolicitanteExterno.select(querySolicitanteExternoRoot.get(SolicitanteExterno_.solicitudId))
+          .where(cb.equal(querySolicitanteExternoRoot.get(SolicitanteExterno_.numeroDocumento), 
+              numeroDocumentoSolicitante));
+
+      return cb.and(
+        root.get(Solicitud_.id).in(querySolicitanteExterno),
+        cb.equal(root.get(Solicitud_.codigoRegistroInterno), codigoRegistroInterno)
+      );
+    };
   }
 
   @SuppressWarnings("unchecked")

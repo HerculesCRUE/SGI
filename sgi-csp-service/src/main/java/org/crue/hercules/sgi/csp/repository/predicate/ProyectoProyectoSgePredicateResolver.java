@@ -16,6 +16,10 @@ import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.Convocatoria_;
 import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.ProyectoEntidadConvocante;
+import org.crue.hercules.sgi.csp.model.ProyectoEntidadConvocante_;
+import org.crue.hercules.sgi.csp.model.ProyectoEntidadFinanciadora;
+import org.crue.hercules.sgi.csp.model.ProyectoEntidadFinanciadora_;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo_;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
@@ -49,7 +53,11 @@ public class ProyectoProyectoSgePredicateResolver implements SgiRSQLPredicateRes
     /* Importe concedido costes directos */
     IMPORTE_CONCEDIDO("importeConcedido"),
     /* Importe concedido costes indirectos */
-    IMPORTE_CONCEDIDO_COSTES_INDIRECTOS("importeConcedidoCostesIndirectos");
+    IMPORTE_CONCEDIDO_COSTES_INDIRECTOS("importeConcedidoCostesIndirectos"),
+    /* Entidad convocante */
+    ENTIDAD_CONVOCANTE("entidadConvocante"),
+    /* Entidad financiadora */
+    ENTIDAD_FINANCIADORA("entidadFinanciadora");
 
     private String code;
 
@@ -112,6 +120,10 @@ public class ProyectoProyectoSgePredicateResolver implements SgiRSQLPredicateRes
         return buildByImporteConcedido(node, root, criteriaBuilder);
       case IMPORTE_CONCEDIDO_COSTES_INDIRECTOS:
         return buildByImporteConcedidoCostesIndirectos(node, root, criteriaBuilder);
+      case ENTIDAD_CONVOCANTE:
+        return buildByEntidadConvocante(node, root, criteriaBuilder);
+      case ENTIDAD_FINANCIADORA:
+        return buildByEntidadFinanciadora(node, root, criteriaBuilder);
       default:
         return null;
     }
@@ -240,5 +252,33 @@ public class ProyectoProyectoSgePredicateResolver implements SgiRSQLPredicateRes
     Join<ProyectoProyectoSge, Proyecto> joinProyecto = root.join(ProyectoProyectoSge_.proyecto, JoinType.INNER);
 
     return cb.equal(joinProyecto.get(Proyecto_.importeConcedidoCostesIndirectos), importeConcedidoCostesIndirectos);
+  }
+
+  private Predicate buildByEntidadConvocante(ComparisonNode node, Root<ProyectoProyectoSge> root,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    String entidadConvocanteRef = node.getArguments().get(0);
+
+    Join<ProyectoProyectoSge, Proyecto> joinProyecto = root.join(ProyectoProyectoSge_.proyecto, JoinType.INNER);
+    Join<Proyecto, ProyectoEntidadConvocante> joinEntidadConvocante = joinProyecto.join(Proyecto_.entidadesConvocantes,
+        JoinType.INNER);
+
+    return cb.equal(joinEntidadConvocante.get(ProyectoEntidadConvocante_.entidadRef), entidadConvocanteRef);
+  }
+
+  private Predicate buildByEntidadFinanciadora(ComparisonNode node, Root<ProyectoProyectoSge> root,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    String entidadFinanciadoraRef = node.getArguments().get(0);
+
+    Join<ProyectoProyectoSge, Proyecto> joinProyecto = root.join(ProyectoProyectoSge_.proyecto, JoinType.INNER);
+    Join<Proyecto, ProyectoEntidadFinanciadora> joinEntidadFinanciadora = joinProyecto.join(
+        Proyecto_.entidadesFinanciadoras, JoinType.INNER);
+
+    return cb.equal(joinEntidadFinanciadora.get(ProyectoEntidadFinanciadora_.entidadRef), entidadFinanciadoraRef);
   }
 }

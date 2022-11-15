@@ -65,39 +65,6 @@ class ConvocatoriaAreaTematicaRepositoryTest extends BaseRepositoryTest {
     Assertions.assertThat(dataFound).isEqualTo(Optional.empty());
   }
 
-  @Test
-  void findByConvocatoriaId_ReturnsConvocatoriaAreaTematica() throws Exception {
-
-    // given: data ConvocatoriaAreaTematica to find by Convocatoria and
-    // AreaTematicaId
-    ConvocatoriaAreaTematica convocatoriaAreaTematica1 = generarConvocatoriaAreaTematica("-001");
-    generarConvocatoriaAreaTematica("-002");
-
-    Long convocatoriaIdBuscado = convocatoriaAreaTematica1.getConvocatoriaId();
-
-    // when: find by Convocatoria and AreaTematicaId
-    ConvocatoriaAreaTematica dataFound = repository.findByConvocatoriaId(convocatoriaIdBuscado).get();
-
-    // then: ConvocatoriaAreaTematica is found
-    Assertions.assertThat(dataFound).isNotNull();
-    Assertions.assertThat(dataFound.getId()).isEqualTo(convocatoriaAreaTematica1.getId());
-    Assertions.assertThat(dataFound.getConvocatoriaId()).isEqualTo(convocatoriaAreaTematica1.getConvocatoriaId());
-    Assertions.assertThat(dataFound.getAreaTematica().getId())
-        .isEqualTo(convocatoriaAreaTematica1.getAreaTematica().getId());
-  }
-
-  @Test
-  void findByConvocatoriaId_ReturnsNull() throws Exception {
-    // given: data ConvocatoriaAreaTematica to find by Convocatoria and
-    // AreaTematicaId
-
-    // when: find by by Convocatoria and AreaTematicaId
-    Optional<ConvocatoriaAreaTematica> dataFound = repository.findByConvocatoriaId(5L);
-
-    // then: ConvocatoriaAreaTematica is not found
-    Assertions.assertThat(dataFound).isEqualTo(Optional.empty());
-  }
-
   /**
    * Función que genera ConvocatoriaEntidadGestora
    * 

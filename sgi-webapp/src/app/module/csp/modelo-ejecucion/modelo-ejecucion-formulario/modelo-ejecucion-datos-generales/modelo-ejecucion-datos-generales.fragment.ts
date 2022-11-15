@@ -8,7 +8,7 @@ import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 export class ModeloEjecucionDatosGeneralesFragment extends FormFragment<IModeloEjecucion> {
   modeloEjecucion: IModeloEjecucion;
-  hasProyectosAsociados: Boolean;
+  hasProyectosAsociados: boolean;
 
   constructor(
     private readonly logger: NGXLogger,
@@ -71,11 +71,12 @@ export class ModeloEjecucionDatosGeneralesFragment extends FormFragment<IModeloE
 
   getValue(): IModeloEjecucion {
     const form = this.getFormGroup().value;
+    const formRaw = this.getFormGroup().getRawValue();
     const modeloEjecucion = this.modeloEjecucion;
     modeloEjecucion.nombre = form.nombre;
     modeloEjecucion.descripcion = form.descripcion;
-    modeloEjecucion.externo = form.externo;
-    modeloEjecucion.contrato = form.contrato;
+    modeloEjecucion.externo = typeof form.externo === 'boolean' ? form.externo : formRaw.externo;
+    modeloEjecucion.contrato = typeof form.contrato === 'boolean' ? form.contrato : formRaw.contrato;
     return modeloEjecucion;
   }
 

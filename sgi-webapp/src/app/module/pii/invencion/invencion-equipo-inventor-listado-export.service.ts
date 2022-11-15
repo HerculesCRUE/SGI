@@ -6,7 +6,7 @@ import { InvencionService } from '@core/services/pii/invencion/invencion.service
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { VinculacionService } from '@core/services/sgp/vinculacion.service';
+import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';

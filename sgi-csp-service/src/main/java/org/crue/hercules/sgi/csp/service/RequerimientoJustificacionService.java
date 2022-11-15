@@ -13,6 +13,7 @@ import org.crue.hercules.sgi.csp.exceptions.RequerimientoJustificacionNotDeletea
 import org.crue.hercules.sgi.csp.exceptions.RequerimientoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
 import org.crue.hercules.sgi.csp.model.RequerimientoJustificacion;
 import org.crue.hercules.sgi.csp.model.RequerimientoJustificacion_;
@@ -49,6 +50,7 @@ public class RequerimientoJustificacionService {
   private final IncidenciaDocumentacionRequerimientoService incidenciaDocumentacionRequerimientoService;
   private final GastoRequerimientoJustificacionService gastoRequerimientoJustificacionService;
   private final AlegacionRequerimientoService alegacionRequerimientoService;
+  private final ProyectoPeriodoJustificacionSeguimientoService proyectoPeriodoJustificacionSeguimientoService;
 
   /**
    * Obtener todas las entidades {@link RequerimientoJustificacion} pertenecientes
@@ -112,6 +114,16 @@ public class RequerimientoJustificacionService {
     repository.delete(requerimientoJustificacionToDelete);
 
     recalcularNumRequerimiento(requerimientoJustificacionToDelete.getProyectoProyectoSgeId());
+
+    // Si al borrar el requerimiento, este estaba relacionado con un periodo de
+    // justificacion, y no quedan mas relacionados con dicho periodo de
+    // justificacion: borramos el seguimiento asociado a dicho periodo
+    if (requerimientoJustificacionToDelete.getProyectoPeriodoJustificacionId() != null &&
+        !existsAnyByProyectoPeriodoJustificacionId(
+            requerimientoJustificacionToDelete.getProyectoPeriodoJustificacionId())) {
+      proyectoPeriodoJustificacionSeguimientoService.deleteByProyectoPeriodoJustificacionId(
+          requerimientoJustificacionToDelete.getProyectoPeriodoJustificacionId());
+    }
 
     log.debug("deleteById(Long id) - end");
   }
@@ -255,5 +267,21 @@ public class RequerimientoJustificacionService {
     Page<RequerimientoJustificacion> returnValue = repository.findAll(specs, pageable);
     log.debug("findAllByProyectoId(Long proyectoId, String query, Pageable pageable) - end");
     return returnValue;
+  }
+
+  /**
+   * Comprueba si existe algun {@link RequerimientoJustificacion} vinculado a la
+   * entidad {@link ProyectoPeriodoJustificacion}.
+   * 
+   * @param proyectoPeriodoJustificacionId id de la entidad
+   *                                       {@link ProyectoPeriodoJustificacion}.
+   * @return true si existe una o mas / false en caso contrario.
+   */
+  public boolean existsAnyByProyectoPeriodoJustificacionId(Long proyectoPeriodoJustificacionId) {
+    log.debug("existAnyByProyectoPeriodoJustificacionId(Long proyectoPeriodoJustificacionId) - start");
+    boolean existAny = repository.count(
+        RequerimientoJustificacionSpecifications.byProyectoPeriodoJustificacionId(proyectoPeriodoJustificacionId)) > 0;
+    log.debug("existAnyByProyectoPeriodoJustificacionId(Long proyectoPeriodoJustificacionId) - end");
+    return existAny;
   }
 }

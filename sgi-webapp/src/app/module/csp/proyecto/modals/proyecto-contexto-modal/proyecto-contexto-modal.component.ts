@@ -207,7 +207,7 @@ export class ProyectoContextoModalComponent extends DialogFormComponent<Proyecto
           if (this.data.areaTematicaProyecto?.id === result.areaTematica.value.id) {
             this.checkedNode = result;
           } else {
-            result.childs.map(node => {
+            result.childs.forEach(node => {
               if (this.data.areaTematicaProyecto?.id === node.areaTematica.value.id) {
                 this.checkedNode = node;
               }
@@ -222,7 +222,7 @@ export class ProyectoContextoModalComponent extends DialogFormComponent<Proyecto
               result.disabled = true;
               this.disableChilds(result);
 
-              result.childs.map(node => {
+              result.childs.forEach(node => {
                 if (this.data.areasTematicasConvocatoria?.map(area => area.id)
                   .includes(node.areaTematica.value.id)) {
                   node.disabled = false;

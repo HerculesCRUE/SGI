@@ -238,10 +238,11 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
   }
 
   openModal(): void {
-    const selected = this.formPart.areasTematicas$.value.map(element => element.convocatoriaAreaTematica.value.areaTematica);
+    const areasTematicas = this.formPart.areasTematicas$.value.map(element => element.convocatoriaAreaTematica.value.areaTematica);
+    const padre = this.formPart.areasTematicas$.value[0]?.padre;
     const newData: AreaTematicaModalData = {
-      padre: undefined,
-      areasTematicas: selected,
+      padre,
+      areasTematicas,
     };
     const config = {
       data: newData

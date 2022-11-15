@@ -28,7 +28,9 @@ export class SpinnerService {
           this.overlayRef = this.overlay.create(this.overlayConfing);
         }
         const spinner = new ComponentPortal(SpinnerComponent);
-        this.overlayRef.attach(spinner);
+        if (!this.overlayRef.hasAttached()) {
+          this.overlayRef.attach(spinner);
+        }
       });
     }
     this.shows++;

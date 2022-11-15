@@ -215,7 +215,9 @@
         <mat-form-field fxFlex="50%">
           <mat-label>{{'csp.autorizacion.investigador-principal' | translate}}</mat-label>
           <sgi-select-persona placeholder="{{'csp.autorizacion.investigador-principal' | translate}}"
-            formControlName="investigadorPrincipalProyecto" [required]="this.formPart.investigadorRequired">
+            formControlName="investigadorPrincipalProyecto"
+            [tipoColectivo]="TIPO_COLECTIVO.RESPONSABLE_PROYECTO_EXTERNO"
+            [required]="this.formPart.investigadorRequired">
           </sgi-select-persona>
           <mat-error *ngIf="formGroup.controls.investigadorPrincipalProyecto.errors?.required">
             {{'error.required.entity' | translate:msgParamInvestigadorPrincipalEntity}}

@@ -968,7 +968,7 @@ public class SolicitudController {
    *         correspondiente al id
    */
   @GetMapping("/{id}/solicitudproyectoresponsableseconomicos")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-V', 'CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public ResponseEntity<Page<SolicitudProyectoResponsableEconomicoOutput>> findAllResponsablesEconomicosBySolicitud(
       @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {

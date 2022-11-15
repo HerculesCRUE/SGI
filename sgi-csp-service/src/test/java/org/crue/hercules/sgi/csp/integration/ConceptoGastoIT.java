@@ -37,7 +37,7 @@ class ConceptoGastoIT extends BaseIT {
     headers.set("Authorization",
         String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CON-E", "CSP-CON-V", "CSP-CON-INV-V",
             "CSP-SOL-E", "CSP-SOL-V", "CSP-TGTO-V", "CSP-TGTO-C", "CSP-TGTO-E", "CSP-TGTO-B", "CSP-TGTO-R", "CSP-PRO-E",
-            "AUTH")));
+            "CSP-SJUS-E")));
 
     HttpEntity<ConceptoGasto> request = new HttpEntity<>(entity, headers);
     return request;

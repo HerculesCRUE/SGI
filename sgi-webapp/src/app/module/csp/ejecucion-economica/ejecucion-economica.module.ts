@@ -60,7 +60,14 @@ import { SeguimientoJustificacionRequerimientosComponent } from './ejecucion-eco
 import { RequerimientoJustificacionNombrePipe } from './pipes/requerimiento-justificacion-nombre.pipe';
 import { PresentacionDocumentacionModalComponent } from './modals/presentacion-documentacion-modal/presentacion-documentacion-modal.component';
 import { SeguimientoJustificacionModalComponent } from './modals/seguimiento-justificacion-modal/seguimiento-justificacion-modal.component';
-
+import { SeguimientoJustificacionAnualidadModalComponent } from './modals/seguimiento-justificacion-anualidad-modal/seguimiento-justificacion-anualidad-modal.component';
+import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
+import { SeguimientoGastosJustificadosResumenExportModalComponent } from './modals/seguimiento-gastos-justificados-resumen-export-modal/seguimiento-gastos-justificados-resumen-export-modal.component';
+import { SeguimientoGastosJustificadosResumenListadoExportService } from './seguimiento-gastos-justificados-listado-export.service';
+import { SeguimientoGastosJustificadosResumenListadoGeneralExportService } from './seguimiento-gastos-justificados-listado-general-export.service';
+import { RequerimientoJustificacionListadoExportModalComponent } from './modals/requerimiento-justificacion-listado-export-modal/requerimiento-justificacion-listado-export-modal.component';
+import { RequerimientoJustificacionListadoExportService } from './requerimiento-justificacion-listado-export.service';
+import { RequerimientoJustificacionGeneralListadoExportService } from './requerimiento-justificacion-general-listado-export.service';
 @NgModule({
   declarations: [
     EjecucionEconomicaListadoComponent,
@@ -101,7 +108,10 @@ import { SeguimientoJustificacionModalComponent } from './modals/seguimiento-jus
     SeguimientoJustificacionRequerimientosComponent,
     RequerimientoJustificacionNombrePipe,
     PresentacionDocumentacionModalComponent,
-    SeguimientoJustificacionModalComponent
+    SeguimientoJustificacionModalComponent,
+    RequerimientoJustificacionListadoExportModalComponent,
+    SeguimientoJustificacionAnualidadModalComponent,
+    SeguimientoGastosJustificadosResumenExportModalComponent
   ],
   imports: [
     CommonModule,
@@ -116,6 +126,7 @@ import { SeguimientoJustificacionModalComponent } from './modals/seguimiento-jus
     SgoSharedModule,
     FormlyFormsModule,
     SgpSharedModule,
+    SgempSharedModule
   ],
   providers: [
     EjecucionEconomicaDataResolver,
@@ -128,7 +139,11 @@ import { SeguimientoJustificacionModalComponent } from './modals/seguimiento-jus
     FacturasGastosExportService,
     PersonalContratadoExportService,
     ViajesDietasExportService,
-    LuxonDatePipe
+    LuxonDatePipe,
+    SeguimientoGastosJustificadosResumenListadoExportService,
+    SeguimientoGastosJustificadosResumenListadoGeneralExportService,
+    RequerimientoJustificacionListadoExportService,
+    RequerimientoJustificacionGeneralListadoExportService
   ]
 })
 export class EjecucionEconomicaModule { }

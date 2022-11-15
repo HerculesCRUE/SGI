@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.integration;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Collections;
+import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.GastoRequerimientoJustificacionController;
@@ -10,6 +11,7 @@ import org.crue.hercules.sgi.csp.dto.GastoRequerimientoJustificacionInput;
 import org.crue.hercules.sgi.csp.dto.GastoRequerimientoJustificacionOutput;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -147,6 +149,55 @@ public class GastoRequerimientoJustificacionIT extends BaseIT {
         Void.class);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/proyecto_proyecto_sge.sql",
+    "classpath:scripts/proyecto_periodo_justificacion.sql",
+    "classpath:scripts/tipo_requerimiento.sql",
+    "classpath:scripts/requerimiento_justificacion.sql",
+    "classpath:scripts/gasto_requerimiento_justificacion.sql",
+      // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAll_WithPagingSorting_ReturnsGastoRequerimientoJustificacionOutputSubList()
+      throws Exception {
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "3");
+    String sort = "gastoRef,desc";
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH)
+        .queryParam("s", sort).build().toUri();
+    final ResponseEntity<List<GastoRequerimientoJustificacionOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        buildRequest(headers, null, DEFAULT_ROLES),
+        new ParameterizedTypeReference<List<GastoRequerimientoJustificacionOutput>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    final List<GastoRequerimientoJustificacionOutput> responseData = response.getBody();
+    Assertions.assertThat(responseData).hasSize(3);
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("5");
+
+    Assertions.assertThat(responseData.get(0).getGastoRef()).as("get(0).getGastoRef())")
+        .isEqualTo("gasto-ref-005");
+    Assertions.assertThat(responseData.get(1).getGastoRef()).as("get(0).getGastoRef())")
+        .isEqualTo("gasto-ref-004");
+    Assertions.assertThat(responseData.get(2).getGastoRef()).as("get(1).getGastoRef())")
+        .isEqualTo("gasto-ref-003");
   }
 
   private GastoRequerimientoJustificacionInput generarMockGastoRequerimientoJustificacionInput(

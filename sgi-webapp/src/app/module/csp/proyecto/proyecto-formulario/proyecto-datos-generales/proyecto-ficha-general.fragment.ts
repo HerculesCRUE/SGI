@@ -30,6 +30,7 @@ import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindO
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, from, merge, Observable, of, Subject, Subscription } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
+import { IProyectoRelacionTableData } from '../proyecto-relaciones/proyecto-relaciones.fragment';
 
 interface IProyectoDatosGenerales extends IProyecto {
   convocatoria: IConvocatoria;
@@ -46,7 +47,6 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
   readonly ultimaProrroga$: Subject<IProyectoProrroga> = new BehaviorSubject<IProyectoProrroga>(null);
 
   abiertoRequired: boolean;
-  comentarioEstadoCancelado: boolean;
   mostrarSolicitud = false;
   mostrarCausaExencion = false;
   solicitudProyecto: ISolicitudProyecto;
@@ -78,6 +78,11 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
   readonly vinculacionesProyectosSge$: Subject<boolean> = new BehaviorSubject<boolean>(false);
 
   readonly iva$: BehaviorSubject<number> = new BehaviorSubject<number>(null);
+  private _proyectoRelaciones$: BehaviorSubject<IProyectoRelacionTableData[]> = new BehaviorSubject<IProyectoRelacionTableData[]>([]);
+
+  public get proyectoRelaciones$() {
+    return this._proyectoRelaciones$;
+  }
 
   constructor(
     private logger: NGXLogger,
@@ -413,6 +418,15 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
 
     if (this.authService.hasAnyAuthorityForAnyUO(['REL-V', 'REL-E'])) {
       this.subscriptions.push(
+        this._proyectoRelaciones$.pipe(
+          tap(relaciones => {
+            const codigos = relaciones.filter(relacion => relacion.tipoEntidadRelacionada === TipoEntidad.PROYECTO).map(relacion => (relacion.entidadRelacionada as IProyecto).codigoExterno).join(', ');
+            form.controls?.proyectosRelacionados.setValue(codigos);
+          })
+        )
+          .subscribe()
+      );
+      this.subscriptions.push(
         this.getCodigosExternosProyectosRelacionados().subscribe(codigos => {
           form.controls?.proyectosRelacionados.setValue(codigos.map(codigo => codigo).join(', '));
         }));
@@ -657,12 +671,10 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       formgroup.get('permitePaquetesTrabajo').setValidators([
         Validators.required]);
       this.abiertoRequired = true;
-      this.comentarioEstadoCancelado = false;
     } else if (proyecto.estado.estado === Estado.RENUNCIADO || proyecto.estado.estado === Estado.RESCINDIDO) {
       formgroup.get('finalidad').setValidators(IsEntityValidator.isValid());
       formgroup.get('ambitoGeografico').setValidators(IsEntityValidator.isValid());
       this.abiertoRequired = false;
-      this.comentarioEstadoCancelado = false;
     }
     formgroup.updateValueAndValidity();
   }

@@ -667,7 +667,7 @@
                 {
                   "nombre": "aseguramientoDanoRadio",
                   "tipo": "radio",
-                  "content": "<p>¿Cuenta con el seguir correspondiente para realizar dicha actividad?: </p><br/>\n"
+                  "content": "<p>¿Cuenta con el seguro correspondiente para realizar dicha actividad?: </p><br/>\n"
                 },
                 {
                   "nombre": "numPoliza",

@@ -35,6 +35,7 @@ DELETE FROM test.solicitud_proyecto_equipo;
 DELETE FROM test.anualidad_gasto;
 DELETE FROM test.anualidad_ingreso;
 DELETE FROM test.proyecto_periodo_amortizacion;
+DELETE FROM test.proyecto_periodo_justificacion_seguimiento;
 DELETE FROM test.proyecto_anualidad;
 DELETE FROM test.solicitud_proyecto_clasificacion;
 DELETE FROM test.solicitud_proyecto_responsable_economico;

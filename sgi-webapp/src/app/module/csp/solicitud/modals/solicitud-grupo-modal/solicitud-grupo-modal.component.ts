@@ -10,7 +10,7 @@ import { ISolicitudGrupo } from '@core/models/csp/solicitud-grupo';
 import { Module } from '@core/module';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
-import { VinculacionService } from '@core/services/sgp/vinculacion.service';
+import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';

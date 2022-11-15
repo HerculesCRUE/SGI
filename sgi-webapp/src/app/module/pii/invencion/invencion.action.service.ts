@@ -1,3 +1,4 @@
+import { T } from '@angular/cdk/keycodes';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TipoPropiedad } from '@core/enums/tipo-propiedad';
@@ -23,7 +24,7 @@ import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { NGXLogger } from 'ngx-logger';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { InvencionContratosFragment } from './invencion-formulario/invencion-contratos/invencion-contratos.fragment';
 import { InvencionDatosGeneralesFragment } from './invencion-formulario/invencion-datos-generales/invencion-datos-generales.fragment';
 import { InvencionDocumentoFragment } from './invencion-formulario/invencion-documento/invencion-documento.fragment';
@@ -147,6 +148,28 @@ export class InvencionActionService extends ActionService {
       this.repartos = new InvencionRepartosFragment(
         this.id, this.canEdit, invencionService);
       this.addFragment(this.FRAGMENT.REPARTOS, this.repartos);
+
+      this.subscriptions.push(
+        // datosGenerales needs solicitudesProteccion to be initialized
+        this.datosGenerales.initialized$
+          .pipe(
+            filter(isInitialized => isInitialized)
+          ).subscribe(() => {
+            if (!this.solicitudesProteccion.isInitialized()) {
+              this.solicitudesProteccion.initialize();
+            }
+          })
+      );
+      this.subscriptions.push(
+        // If Invencion has any SolicitudProteccion can't change to a TipoProteccion with diff TipoPropiedad
+        this.solicitudesProteccion.getSolicitudesProteccion$()
+          .pipe(
+            map(solicitudesProteccion => {
+              const [firstElement] = solicitudesProteccion;
+              return firstElement?.viaProteccion?.tipoPropiedad ?? null;
+            })
+          ).subscribe(tipoPropiedad => this.datosGenerales.selectInvencionTipoPropiedad(tipoPropiedad))
+      );
     }
     this.passInventoresFromInventoresFragmentToDatosGeneralesFragmentOnChangesSubscription();
   }

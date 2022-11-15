@@ -36,12 +36,7 @@ public class AssertHelper {
    * @param clazz clase para la que se comprueba el id
    */
   public static void idNotNull(Long id, Class<?> clazz) {
-    Assert.notNull(id,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
-            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_ID))
-            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(clazz))
-            .build());
+    fieldNotNull(id, clazz, MESSAGE_KEY_ID);
   }
 
   /**

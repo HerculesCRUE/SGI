@@ -1,0 +1,38 @@
+<sgi-action [actionService]="actionService">
+  <ng-container menu>
+    <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.DATOS_GENERALES]"
+      [title]="'label.datos-generales' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-group [title]="'menu.csp.solicitud.solicitud-rrhh' | translate">
+      <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.TUTOR]"
+        [title]="'menu.csp.solicitud.solicitud-rrhh.tutor' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.TUTOR)">
+      </sgi-action-fragment-menu-item>
+      <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.REQUISITOS_CONVOCATORIA]"
+        [title]="'menu.csp.solicitud.solicitud-rrhh.requisitos-convocatoria' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.REQUISITOS_CONVOCATORIA)">
+      </sgi-action-fragment-menu-item>
+      <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.MEMORIA]"
+        [title]="'menu.csp.solicitud.solicitud-rrhh.memoria' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.MEMORIA)">
+      </sgi-action-fragment-menu-item>
+    </sgi-action-fragment-menu-group>
+    <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.DOCUMENTOS]" [title]="'csp.documentos' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DOCUMENTOS)">
+    </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[SOLICITUD_ROUTE_NAMES.HISTORICO_ESTADOS]"
+      [title]="'menu.csp.solicitudes.historicos-estados' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.HISTORICO_ESTADOS)">
+    </sgi-action-fragment-menu-item>
+  </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="textoCrear" [actionService]="actionService">
+      <!-- Cambio estado-->
+      <sgi-action-footer-button color="primary" [text]="textoCambioEstado" action="cambiar-estado"
+        matTooltip="{{'msg.estado-actual' | translate}} {{ESTADO_MAP.get(estadoActual) | translate}}"
+        [disabled]="disableCambioEstado">
+      </sgi-action-footer-button>
+    </sgi-action-footer>
+  </ng-container>
+</sgi-action>

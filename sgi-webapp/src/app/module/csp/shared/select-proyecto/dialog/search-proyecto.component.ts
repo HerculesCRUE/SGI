@@ -149,7 +149,7 @@ export class SearchProyectoModalComponent extends DialogCommonComponent implemen
             this.totalElementos = response.total;
             return response.items;
           }), switchMap(items => {
-            items.map(item => this.resolveProyectosSgeSubscription(item));
+            items.forEach(item => this.resolveProyectosSgeSubscription(item));
             const proyectos: number[] = [];
             return of(items.filter(proyecto => {
               if (!proyectos.includes(proyecto.id)) {

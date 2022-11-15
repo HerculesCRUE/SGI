@@ -5,7 +5,7 @@ import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, from, Observable, of, Subject } from 'rxjs';
-import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { concatMap, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export class ProyectoProrrogasFragment extends Fragment {
   prorrogas$ = new BehaviorSubject<StatusWrapper<IProyectoProrroga>[]>([]);
@@ -66,7 +66,7 @@ export class ProyectoProrrogasFragment extends Fragment {
       return of(void 0);
     }
     return from(this.prorrogasEliminados).pipe(
-      mergeMap((wrapped) => {
+      concatMap((wrapped) => {
         return this.proyectoProrrogaService.findDocumentos(wrapped.value.id).pipe(
           switchMap((documentos) => {
             return this.proyectoProrrogaService.deleteById(wrapped.value.id)

@@ -32,4 +32,5 @@ public class SolicitanteExternoOutput implements Serializable {
   private String provinciaRef;
   private String ciudad;
   private String codigoPostal;
+  private String solicitudUUID;
 }

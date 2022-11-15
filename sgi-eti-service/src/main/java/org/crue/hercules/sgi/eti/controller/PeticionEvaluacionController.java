@@ -166,9 +166,7 @@ public class PeticionEvaluacionController {
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-BR')")
   public void delete(@PathVariable Long id) {
     log.debug("delete(Long id) - start");
-    PeticionEvaluacion peticionEvaluacion = this.one(id);
-    peticionEvaluacion.setActivo(Boolean.FALSE);
-    service.update(peticionEvaluacion);
+    service.delete(id);
     log.debug("delete(Long id) - end");
   }
 
@@ -227,7 +225,7 @@ public class PeticionEvaluacionController {
    * @return la lista de entidades {@link Tarea} paginadas.
    */
   @GetMapping("/{id}/tareas-equipo-trabajo")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR', 'ETI-EVC-EVALR')")
   public Page<Tarea> findTareasEquipoTrabajo(@PathVariable Long id, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findTareasEquipoTrabajo(Long id, Pageable paging) - start");
     Page<Tarea> result = tareaService.findAllByEquipoTrabajoPeticionEvaluacionId(id, paging);

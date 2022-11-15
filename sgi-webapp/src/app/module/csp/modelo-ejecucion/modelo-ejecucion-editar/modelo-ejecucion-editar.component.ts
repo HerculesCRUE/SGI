@@ -13,8 +13,8 @@ import { MODELO_EJECUCION_ROUTE_NAMES } from '../modelo-ejecucion-route-names';
 import { ModeloEjecucionActionService } from '../modelo-ejecucion.action.service';
 
 const MSG_BUTTON_SAVE = marker('btn.save.entity');
-const MSG_SUCCESS = marker('msg.save.entity.success');
-const MSG_ERROR = marker('error.save.entity');
+const MSG_SUCCESS = marker('msg.update.entity.success');
+const MSG_ERROR = marker('error.update.entity');
 const MODELO_EJECUCION_KEY = marker('csp.modelo-ejecucion');
 
 @Component({

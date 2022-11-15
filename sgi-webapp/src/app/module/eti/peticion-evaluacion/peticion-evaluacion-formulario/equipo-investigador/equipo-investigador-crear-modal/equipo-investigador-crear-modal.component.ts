@@ -7,7 +7,7 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IEquipoTrabajo } from '@core/models/eti/equipo-trabajo';
 import { IPersona } from '@core/models/sgp/persona';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
-import { VinculacionService } from '@core/services/sgp/vinculacion.service';
+import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { TranslateService } from '@ngx-translate/core';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 

@@ -6,7 +6,7 @@ import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacio
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { VinculacionService } from '@core/services/sgp/vinculacion.service';
+import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { forkJoin, from, Observable, of } from 'rxjs';

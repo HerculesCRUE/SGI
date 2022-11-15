@@ -143,7 +143,7 @@ public class ConvocatoriaAuthorityHelper extends AuthorityHelper {
         && Boolean.TRUE.equals(configuracionSolicitud.getTramitacionSGI());
   }
 
-  private boolean hasAuthorityViewUnidadGestion(Convocatoria convocatoria) {
+  public boolean hasAuthorityViewUnidadGestion(Convocatoria convocatoria) {
     return SgiSecurityContextHolder.hasAuthorityForUO(CSP_CON_E, convocatoria.getUnidadGestionRef())
         || SgiSecurityContextHolder.hasAuthorityForUO(CSP_CON_V, convocatoria.getUnidadGestionRef());
   }

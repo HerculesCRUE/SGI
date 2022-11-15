@@ -329,8 +329,8 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     }
 
     return !(convocatoriaFaseEliminada.tipoFase.id === fasePresentacionSolicitudes?.tipoFase?.id
-      && convocatoriaFaseEliminada.fechaInicio.toMillis === fasePresentacionSolicitudes?.fechaInicio?.toMillis
-      && convocatoriaFaseEliminada.fechaFin.toMillis === fasePresentacionSolicitudes?.fechaFin?.toMillis
+      && convocatoriaFaseEliminada.fechaInicio.toMillis() === fasePresentacionSolicitudes?.fechaInicio?.toMillis()
+      && convocatoriaFaseEliminada.fechaFin.toMillis() === fasePresentacionSolicitudes?.fechaFin?.toMillis()
       && convocatoriaFaseEliminada.observaciones === fasePresentacionSolicitudes?.observaciones);
   }
 

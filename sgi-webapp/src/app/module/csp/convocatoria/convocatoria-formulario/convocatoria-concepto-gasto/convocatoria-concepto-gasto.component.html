@@ -90,10 +90,14 @@
   </div>
   <div class="separation-button" *ngIf="formPart.canEdit">
     <button color="three" aria-label="Center Align" mat-raised-button
-      [routerLink]="['../', CONVOCATORIA_ROUTE_NAMES.CONCEPTO_GATO_PERMITIDO, ROUTE_NAMES.NEW]">
+      [routerLink]="['../', CONVOCATORIA_ROUTE_NAMES.CONCEPTO_GATO_PERMITIDO, ROUTE_NAMES.NEW]"
+      [disabled]="!this.formPart.getKey()">
       <mat-icon color="accent">add_circle</mat-icon>
       {{ 'btn.add.entity' | translate:msgParamEntityPermitido }}
     </button>
+    <sgi-field-info matSuffix class="mat-icon-button" [visible]="!this.formPart.getKey()"
+      message="{{'csp.convocatoria-concepto-gasto.msg' | translate}}">
+    </sgi-field-info>
   </div>
 
   <mat-divider></mat-divider>
@@ -180,9 +184,13 @@
   </div>
   <div class="separation-button" *ngIf="formPart.canEdit">
     <button color="three" aria-label="Center Align" mat-raised-button
-      [routerLink]="['../', CONVOCATORIA_ROUTE_NAMES.CONCEPTO_GATO_NO_PERMITIDO, ROUTE_NAMES.NEW]">
+      [routerLink]="['../', CONVOCATORIA_ROUTE_NAMES.CONCEPTO_GATO_NO_PERMITIDO, ROUTE_NAMES.NEW]"
+      [disabled]="!this.formPart.getKey()">
       <mat-icon color="accent">add_circle</mat-icon>
       {{ 'btn.add.entity' | translate:msgParamEntityNoPermitido }}
     </button>
+    <sgi-field-info matSuffix class="mat-icon-button" [visible]="!this.formPart.getKey()"
+      message="{{'csp.convocatoria-concepto-gasto.msg' | translate}}">
+    </sgi-field-info>
   </div>
 </sgi-fragment>

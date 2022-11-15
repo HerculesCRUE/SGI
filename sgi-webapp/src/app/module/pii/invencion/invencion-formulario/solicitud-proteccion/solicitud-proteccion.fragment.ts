@@ -133,4 +133,11 @@ export class SolicitudProteccionFragment extends Fragment {
     ).subscribe(result => this.solicitudesProteccion$.next(result)));
   }
 
+  getSolicitudesProteccion$(): Observable<ISolicitudProteccion[]> {
+    return this.solicitudesProteccion$.asObservable().pipe(
+      map(solicitudesProteccion => solicitudesProteccion.map(wrapper => wrapper.value)
+      )
+    );
+  }
+
 }

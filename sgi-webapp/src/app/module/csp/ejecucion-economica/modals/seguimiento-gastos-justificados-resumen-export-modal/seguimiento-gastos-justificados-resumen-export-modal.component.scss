@@ -1,0 +1,24 @@
+@import "colors.scss";
+@import "vars.scss";
+
+$border-color: map-get($sgi-custom-colors, divider);
+
+:host {
+  .row-visibility-header {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px $border-color solid;
+    padding-bottom: 0.2rem;
+  }
+
+  .row-visibility {
+    padding-top: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+
+    .columns-visibility {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}

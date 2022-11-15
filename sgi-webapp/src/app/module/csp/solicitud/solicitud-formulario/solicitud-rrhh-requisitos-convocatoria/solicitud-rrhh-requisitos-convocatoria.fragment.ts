@@ -21,7 +21,7 @@ import { SolicitudRrhhService } from '@core/services/csp/solicitud-rrhh/solicitu
 import { CategoriaProfesionalService } from '@core/services/sgp/categoria-profesional.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
 import { NivelAcademicosService } from '@core/services/sgp/nivel-academico.service';
-import { VinculacionService } from '@core/services/sgp/vinculacion.service';
+import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, forkJoin, from, merge, Observable, of, zip } from 'rxjs';

@@ -1,6 +1,5 @@
 package org.crue.hercules.sgi.csp.service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -110,21 +109,21 @@ public class ProyectoSeguimientoJustificacionServiceTest extends BaseServiceTest
   @Test
   void create_idNotNull_ThrowsIllegalArgumentException() {
     // given: Un ProyectoSeguimientoJustificacion con un id no null
-    ProyectoSeguimientoJustificacion ProyectoSeguimientoJustificacionToCreate = generarMockProyectoSeguimientoJustificacion(
+    ProyectoSeguimientoJustificacion proyectoSeguimientoJustificacionToCreate = generarMockProyectoSeguimientoJustificacion(
         1234L, 1L);
 
     // when: Creamos un ProyectoSeguimientoJustificacion con id no null
     // then: Lanza IllegalArgumentException porque el id debe ser null
     Assertions
         .assertThatThrownBy(
-            () -> proyectoSeguimientoJustificacionService.create(ProyectoSeguimientoJustificacionToCreate))
+            () -> proyectoSeguimientoJustificacionService.create(proyectoSeguimientoJustificacionToCreate))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   void create_ProyectoProyectoSgeNull_ThrowsIllegalArgumentException() {
     // given: Un ProyectoSeguimientoJustificacion con ProyectoProyectoSge null
-    ProyectoSeguimientoJustificacion ProyectoSeguimientoJustificacionToCreate = generarMockProyectoSeguimientoJustificacion(
+    ProyectoSeguimientoJustificacion proyectoSeguimientoJustificacionToCreate = generarMockProyectoSeguimientoJustificacion(
         null, null, null);
 
     // when: Creamos un ProyectoSeguimientoJustificacion con ProyectoProyectoSge
@@ -133,14 +132,14 @@ public class ProyectoSeguimientoJustificacionServiceTest extends BaseServiceTest
     // ser null
     Assertions
         .assertThatThrownBy(
-            () -> proyectoSeguimientoJustificacionService.create(ProyectoSeguimientoJustificacionToCreate))
+            () -> proyectoSeguimientoJustificacionService.create(proyectoSeguimientoJustificacionToCreate))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   void create_proyectoProyectoSgeIdNull_ThrowsIllegalArgumentException() {
     // given: Un ProyectoSeguimientoJustificacion con un proyectoProyectoSgeId null
-    ProyectoSeguimientoJustificacion ProyectoSeguimientoJustificacionToCreate = generarMockProyectoSeguimientoJustificacion(
+    ProyectoSeguimientoJustificacion proyectoSeguimientoJustificacionToCreate = generarMockProyectoSeguimientoJustificacion(
         1234L, null);
 
     // when: Creamos un ProyectoSeguimientoJustificacion con proyectoProyectoSgeId
@@ -149,7 +148,7 @@ public class ProyectoSeguimientoJustificacionServiceTest extends BaseServiceTest
     // ser null
     Assertions
         .assertThatThrownBy(
-            () -> proyectoSeguimientoJustificacionService.create(ProyectoSeguimientoJustificacionToCreate))
+            () -> proyectoSeguimientoJustificacionService.create(proyectoSeguimientoJustificacionToCreate))
         .isInstanceOf(IllegalArgumentException.class);
   }
 

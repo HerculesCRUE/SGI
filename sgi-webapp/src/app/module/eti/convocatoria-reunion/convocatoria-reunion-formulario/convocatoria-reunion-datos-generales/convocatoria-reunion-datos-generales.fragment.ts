@@ -44,8 +44,8 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
       tipoConvocatoriaReunion: [null, new NullIdValidador().isValid()],
       horaInicio: [null, Validators.required],
       horaInicioSegunda: [null],
-      lugar: ['', Validators.required],
-      ordenDia: ['', Validators.required],
+      lugar: ['', [Validators.maxLength(250), Validators.required]],
+      ordenDia: ['', [Validators.maxLength(2000), Validators.required]],
       convocantes: ['', Validators.required],
     },
       {

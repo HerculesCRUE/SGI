@@ -141,7 +141,7 @@ export class MemoriaDocumentacionFragment extends Fragment {
         return this.getCreateService(tipoDocumentacion, wrappedDocumentacion.value).pipe(
           map((savedDocumentacion) => {
             const index = data$.value.findIndex((currentDocumentacion) => currentDocumentacion === wrappedDocumentacion);
-            data$.value.map((currentDocumentacion) => {
+            data$.value.forEach((currentDocumentacion) => {
               if (currentDocumentacion === wrappedDocumentacion) {
                 currentDocumentacion.setEdited();
                 currentDocumentacion.value.id = savedDocumentacion.id;

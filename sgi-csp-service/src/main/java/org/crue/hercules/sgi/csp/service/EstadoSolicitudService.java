@@ -28,4 +28,14 @@ public interface EstadoSolicitudService {
    */
   Page<EstadoSolicitud> findAllBySolicitud(Long idSolicitud, Pageable pageable);
 
+  /**
+   * Obtiene las {@link EstadoSolicitud} para una {@link Solicitud}.
+   *
+   * @param solicitudPublicId el id de la {@link Solicitud}.
+   * @param paging            la información de la paginación.
+   * @return la lista de entidades {@link EstadoSolicitud} de la {@link Solicitud}
+   *         paginadas.
+   */
+  Page<EstadoSolicitud> findAllBySolicitudPublicId(String solicitudPublicId, Pageable paging);
+
 }

@@ -10,6 +10,7 @@ import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudDocumento;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.repository.SolicitudDocumentoRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudExternaRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.impl.SolicitudDocumentoServiceImpl;
 import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
@@ -42,13 +43,16 @@ class SolicitudDocumentoServiceTest extends BaseServiceTest {
   @Mock
   private SolicitudRepository solicitudRepository;
 
+  @Mock
+  private SolicitudExternaRepository solicitudExternaRepository;
+
   private SolicitudAuthorityHelper authorityHelper;
 
   private SolicitudDocumentoService service;
 
   @BeforeEach
   void setUp() throws Exception {
-    authorityHelper = new SolicitudAuthorityHelper(solicitudRepository);
+    authorityHelper = new SolicitudAuthorityHelper(solicitudRepository, solicitudExternaRepository);
     service = new SolicitudDocumentoServiceImpl(solicitudDocumentoRepository, solicitudService, authorityHelper);
   }
 

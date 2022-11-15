@@ -11,7 +11,7 @@ import { GrupoEquipoService } from '@core/services/csp/grupo-equipo/grupo-equipo
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
 import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
-import { VinculacionService } from '@core/services/sgp/vinculacion.service';
+import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';

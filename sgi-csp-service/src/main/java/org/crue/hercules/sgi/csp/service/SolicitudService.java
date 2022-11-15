@@ -85,6 +85,7 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 public class SolicitudService {
 
+  private static final String MESSAGE_KEY_CONVOCATORIA = "org.crue.hercules.sgi.csp.model.Convocatoria.message";
   public static final String MESSAGE_UNIDAD_GESTION_NO_PERTENECE_AL_USUARIO = "La Solicitud pertenece a una Unidad de Gestión no gestionable por el usuario";
 
   private final SgiConfigProperties sgiConfigProperties;
@@ -204,6 +205,37 @@ public class SolicitudService {
   }
 
   /**
+   * Guarda la entidad {@link Solicitud}.
+   * 
+   * @param solicitud la entidad {@link Solicitud} a guardar.
+   * @return solicitud la entidad {@link Solicitud} persistida.
+   */
+  @Transactional
+  public Solicitud createByExternalUser(Solicitud solicitud) {
+    log.debug("createByExternalUser(Solicitud solicitud) - start");
+
+    AssertHelper.idIsNull(solicitud.getId(), Solicitud.class);
+    AssertHelper.fieldNotNull(solicitud.getConvocatoriaId(), Solicitud.class, MESSAGE_KEY_CONVOCATORIA);
+
+    solicitud.setActivo(Boolean.TRUE);
+
+    // Crea la solicitud
+    repository.save(solicitud);
+
+    // Crea el estado inicial de la solicitud
+    EstadoSolicitud estadoSolicitud = addEstadoSolicitud(solicitud, EstadoSolicitud.Estado.BORRADOR, null);
+
+    // Actualiza la el estado actual de la solicitud con el nuevo estado
+    solicitud.setEstado(estadoSolicitud);
+    solicitud.setCodigoRegistroInterno(generateCodigoRegistroInterno(solicitud.getId()));
+    solicitud.setFormularioSolicitud(FormularioSolicitud.RRHH);
+    Solicitud returnValue = repository.save(solicitud);
+
+    log.debug("createByExternalUser(Solicitud solicitud) - end");
+    return returnValue;
+  }
+
+  /**
    * Actualiza los datos del {@link Solicitud}.
    * 
    * @param solicitud solicitudActualizar {@link Solicitud} con los datos
@@ -254,6 +286,32 @@ public class SolicitudService {
       log.debug("update(Solicitud solicitud) - end");
       return returnValue;
     }).orElseThrow(() -> new SolicitudNotFoundException(solicitud.getId()));
+  }
+
+  /**
+   * Actualiza los datos del {@link Solicitud}.
+   * 
+   * @param solicitudPublicId el id de la {@link Solicitud}.
+   * @param solicitud         solicitudActualizar {@link Solicitud} con los datos
+   *                          actualizados.
+   * 
+   * @return {@link Solicitud} actualizado.
+   */
+  @Transactional
+  public Solicitud updateByExternalUser(String solicitudPublicId, Solicitud solicitud) {
+    log.debug("updateByExternalUser(String solicitudPublicId, Solicitud solicitud) - start");
+
+    AssertHelper.idNotNull(solicitud.getId(), Solicitud.class);
+    AssertHelper.fieldNotNull(solicitud.getConvocatoriaId(), Solicitud.class, MESSAGE_KEY_CONVOCATORIA);
+
+    Solicitud data = solicitudAuthorityHelper.getSolicitudByPublicId(solicitudPublicId);
+    solicitudAuthorityHelper.checkExternalUserHasAuthorityModifySolicitud(data);
+    data.setCodigoExterno(solicitud.getCodigoExterno());
+    data.setObservaciones(solicitud.getObservaciones());
+
+    Solicitud returnValue = repository.save(data);
+    log.debug("updateByExternalUser(String solicitudPublicId, Solicitud solicitud) - end");
+    return returnValue;
   }
 
   /**
@@ -340,6 +398,19 @@ public class SolicitudService {
     solicitudAuthorityHelper.checkUserHasAuthorityViewSolicitud(returnValue);
 
     log.debug("findById(Long id) - end");
+    return returnValue;
+  }
+
+  /**
+   * Obtiene una entidad {@link Solicitud} por id.
+   * 
+   * @param publicId Identificador de la entidad {@link Solicitud}.
+   * @return Solicitud la entidad {@link Solicitud}.
+   */
+  public Solicitud findByPublicId(String publicId) {
+    log.debug("findByPublicId(String publicId) - start");
+    final Solicitud returnValue = solicitudAuthorityHelper.getSolicitudByPublicId(publicId);
+    log.debug("findByPublicId(String publicId) - end");
     return returnValue;
   }
 
@@ -455,7 +526,7 @@ public class SolicitudService {
   }
 
   /**
-   * Se hace el cambio de estado de "Borrador" a "Presentada".
+   * Se hace el cambio de estado
    * 
    * @param id              Identificador de {@link Solicitud}.
    * @param estadoSolicitud {@link EstadoSolicitud}
@@ -467,12 +538,49 @@ public class SolicitudService {
 
     Solicitud solicitud = repository.findById(id).orElseThrow(() -> new SolicitudNotFoundException(id));
 
+    // Permisos
+    solicitudAuthorityHelper.checkUserHasAuthorityModifyEstadoSolicitud(solicitud, estadoSolicitud);
+
+    Solicitud returnValue = cambiarEstado(solicitud, estadoSolicitud);
+    log.debug("cambiarEstado(Long id, EstadoSolicitud estadoSolicitud) - end");
+    return returnValue;
+  }
+
+  /**
+   * Se hace el cambio de estado
+   * 
+   * @param solicitudPublicId Identificador de {@link Solicitud}.
+   * @param estadoSolicitud   {@link EstadoSolicitud}
+   * @return {@link Solicitud} actualizado.
+   */
+  @Transactional
+  public Solicitud cambiarEstado(String solicitudPublicId, @Valid EstadoSolicitud estadoSolicitud) {
+    log.debug("cambiarEstado(Long solicitudPublicId, EstadoSolicitud estadoSolicitud) - start");
+
+    Solicitud solicitud = solicitudAuthorityHelper.getSolicitudByPublicId(solicitudPublicId);
+
+    // Permisos
+    solicitudAuthorityHelper.checkExternalUserHasAuthorityModifyEstadoSolicitud(solicitud, estadoSolicitud);
+
+    Solicitud returnValue = cambiarEstado(solicitud, estadoSolicitud);
+    log.debug("cambiarEstado(Long solicitudPublicId, EstadoSolicitud estadoSolicitud) - end");
+    return returnValue;
+  }
+
+  /**
+   * Se hace el cambio de estado
+   * 
+   * @param solicitud       {@link Solicitud}.
+   * @param estadoSolicitud {@link EstadoSolicitud}
+   * @return {@link Solicitud} actualizado.
+   */
+  @Transactional
+  public Solicitud cambiarEstado(Solicitud solicitud, @Valid EstadoSolicitud estadoSolicitud) {
+    log.debug("cambiarEstado(Solicitud solicitud, EstadoSolicitud estadoSolicitud) - start");
+
     estadoSolicitud.setSolicitudId(solicitud.getId());
 
     // VALIDACIONES
-
-    // Permisos
-    solicitudAuthorityHelper.checkUserHasAuthorityModifyEstadoSolicitud(solicitud, estadoSolicitud);
 
     // El nuevo estado es diferente al estado actual de la solicitud
     if (estadoSolicitud.getEstado().equals(solicitud.getEstado().getEstado())) {
@@ -619,7 +727,7 @@ public class SolicitudService {
     }
     Solicitud returnValue = repository.save(solicitud);
     enviarComunicadosCambioEstado(solicitud, estadoSolicitud);
-    log.debug("cambiarEstado(Long id, EstadoSolicitud estadoSolicitud) - end");
+    log.debug("cambiarEstado(Solicitud solicitud, EstadoSolicitud estadoSolicitud) - end");
     return returnValue;
   }
 
@@ -857,6 +965,26 @@ public class SolicitudService {
 
   /**
    * Hace las comprobaciones necesarias para determinar si la {@link Solicitud}
+   * puede ser modificada por un usuario investigador.
+   * No es modificable cuando el estado de la {@link Solicitud} es distinto de
+   * {@link EstadoSolicitud.Estado#BORRADOR} o
+   * {@link EstadoSolicitud.Estado#RECHAZADA}
+   *
+   * @param solicitudPublicId Id del {@link Solicitud}.
+   * @return true si puede ser modificada / false si no puede ser modificada
+   */
+  public boolean modificableByUsuarioExterno(String solicitudPublicId) {
+
+    Solicitud solicitud = solicitudAuthorityHelper.getSolicitudByPublicId(solicitudPublicId);
+
+    boolean estadoModificable = solicitud.getEstado().getEstado().equals(Estado.BORRADOR)
+        || solicitud.getEstado().getEstado().equals(Estado.RECHAZADA);
+
+    return estadoModificable && solicitud.getCreadorRef() == null && solicitud.getActivo().equals(Boolean.TRUE);
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si la {@link Solicitud}
    * puede ser modificada por un usuario de la unidad de gestion.
    * No es modificable cuando no esta activa ni cuando tiene
    * {@link Proyecto} asociados.
@@ -907,6 +1035,28 @@ public class SolicitudService {
   public boolean modificableEstadoAndDocumentosByInvestigador(Long id) {
     return modificableEstadoAndDocumentosByInvestigador(
         repository.findById(id).orElseThrow(() -> new SolicitudNotFoundException(id)));
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si la {@link Solicitud}
+   * puede ser modificada para cambiar el estado y añadir
+   * nuevos documentos.
+   *
+   * @param solicitudPublicId Id del {@link Solicitud}.
+   * @return true si puede ser modificada / false si no puede ser modificada
+   */
+  public boolean modificableEstadoAndDocumentosByUsuarioExterno(String solicitudPublicId) {
+    Solicitud solicitud = solicitudAuthorityHelper.getSolicitudByPublicId(solicitudPublicId);
+
+    boolean estadoModificable = Arrays.asList(
+        Estado.BORRADOR,
+        Estado.SUBSANACION,
+        Estado.EXCLUIDA_PROVISIONAL,
+        Estado.EXCLUIDA_DEFINITIVA,
+        Estado.DENEGADA_PROVISIONAL,
+        Estado.DENEGADA).contains(solicitud.getEstado().getEstado());
+
+    return estadoModificable && solicitud.getCreadorRef() == null && solicitud.getActivo().equals(Boolean.TRUE);
   }
 
   /**
@@ -1283,9 +1433,7 @@ public class SolicitudService {
       }
       log.debug("enviarComunicadosCambioEstado(Solicitud solicitud, EstadoSolicitud estadoSolicitud) - end");
     } catch (Exception e) {
-      log.debug(
-          "Error enviarComunicadoSolicitudCambioEstadoAlegaciones(Solicitud solicitud, EstadoSolicitud estadoSolicitud",
-          e);
+      log.error("enviarComunicadosCambioEstado(Solicitud solicitud, EstadoSolicitud estadoSolicitud)", e);
     }
   }
 

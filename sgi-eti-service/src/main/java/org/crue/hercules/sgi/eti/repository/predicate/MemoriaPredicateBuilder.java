@@ -151,6 +151,12 @@ public class MemoriaPredicateBuilder {
     return this;
   }
 
+  public MemoriaPredicateBuilder filterWithConvocatoriaReunionActiva(final CriteriaBuilder cb,
+      final Root<ConvocatoriaReunion> root) {
+    this.predicates.add(cb.equal(root.get(ConvocatoriaReunion_.activo), Boolean.TRUE));
+    return this;
+  }
+
   public MemoriaPredicateBuilder addCustomPredicate(final Predicate predicate) {
 
     this.predicates.add(predicate);

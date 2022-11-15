@@ -8,9 +8,9 @@ import { SharedModule } from '@shared/shared.module';
 import { SgpFormlyFormsModule } from '../formly-forms/sgp-formly-forms.module';
 import { PersonaEmailPipe } from './pipes/persona-email.pipe';
 import { PersonaEntidadPipe } from './pipes/persona-entidad.pipe';
+import { PersonaNombreCompletoPipe } from './pipes/persona-nombre-completo.pipe';
 import { SearchPersonaModalComponent } from './select-persona/dialog/search-persona.component';
 import { SelectPersonaComponent } from './select-persona/select-persona.component';
-import { PersonaNombreCompletoPipe } from './pipes/persona-nombre-completo.pipe';
 import { SelectSexoComponent } from './select-sexo/select-sexo.component';
 import { SelectTipoDocumentoComponent } from './select-tipo-documento/select-tipo-documento.component';
 

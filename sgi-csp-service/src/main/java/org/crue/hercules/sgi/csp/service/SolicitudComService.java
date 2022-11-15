@@ -5,11 +5,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudCambioEstadoAlegacionesData;
 import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudCambioEstadoDefinitivoData;
 import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudCambioEstadoProvisionalData;
 import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudCambioEstadoSolicitadaData;
 import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudPeticionEvaluacionData;
+import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudUsuarioExternoData;
 import org.crue.hercules.sgi.csp.dto.com.EmailOutput;
 import org.crue.hercules.sgi.csp.dto.com.Enlace;
 import org.crue.hercules.sgi.csp.dto.com.Recipient;
@@ -34,6 +36,7 @@ public class SolicitudComService {
   private final SgiApiComService emailService;
   private final SgiApiCnfService configService;
   private final SolicitanteDataService solicitanteDataService;
+  private final SgiConfigProperties sgiConfigProperties;
 
   public void enviarComunicadoSolicitudCambioEstadoSolicitada(Long solicitudId, String solicitanteRef,
       String unidadGestionRef, String tituloConvocatoria, Instant fechaPublicacionConvocatoria,
@@ -237,6 +240,28 @@ public class SolicitudComService {
           "enviarComunicadoSolicitudAltaPeticionEvaluacionEti() - No se puede enviar el comunicado, no existe ninguna persona asociada");
     }
     log.debug("enviarComunicadoSolicitudAltaPeticionEvaluacionEti() - end");
+  }
+
+  public void enviarComunicadoSolicitudUsuarioExterno(Long solicitudId, String tituloConvocatoria, String uuid)
+      throws JsonProcessingException {
+    log.debug(
+        "enviarComunicadoSolicitudUsuarioExterno(Long solicitudId, String tituloConvocatoria, String uuid) - start");
+    List<Recipient> recipients = this.solicitanteDataService.getSolicitanteRecipients(solicitudId, null);
+    if (!recipients.isEmpty()) {
+      EmailOutput emailOutput = emailService.createComunicadoSolicitudUsuarioExterno(
+          CspComSolicitudUsuarioExternoData.builder()
+              .tituloConvocatoria(tituloConvocatoria)
+              .enlaceAplicacion(sgiConfigProperties.getWebUrl())
+              .uuid(uuid)
+              .build(),
+          recipients);
+      emailService.sendEmail(emailOutput.getId());
+    } else {
+      log.debug(
+          "enviarComunicadoSolicitudUsuarioExterno(Long solicitudId, String tituloConvocatoria, String uuid) - No se puede enviar el comunicado, no existe ninguna persona asociada");
+    }
+    log.debug(
+        "enviarComunicadoSolicitudUsuarioExterno(Long solicitudId, String tituloConvocatoria, String uuid) - end");
   }
 
   private List<Enlace> getListadoEnlacesComunicados(List<ConvocatoriaEnlace> convocatoriaEnlaces) {

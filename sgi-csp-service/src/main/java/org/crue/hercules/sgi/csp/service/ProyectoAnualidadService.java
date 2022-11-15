@@ -9,6 +9,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import org.crue.hercules.sgi.csp.dto.AnualidadResumen;
+import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadGastosTotales;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadNotificacionSge;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadResumen;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoAnualidadAnioUniqueException;
@@ -250,6 +251,25 @@ public class ProyectoAnualidadService {
     log.debug("getTotalImporteConcedidoAnualidadGastoCostesIndirectos(Long proyectoId) - start");
 
     return repository.getTotalImporteConcedidoAnualidadGastoCostesIndirectos(proyectoId);
+  }
+
+  /**
+   * Obtiene las sumas de importe concedido costes indirectos y de costes directos
+   * (por separado) de una entidad {@link ProyectoAnualidad}.
+   * 
+   * @param id el identificador de la entidad {@link ProyectoAnualidad}
+   * @return suma de importes concedidos de costes directos y suma de importes
+   *         concedidos de costes indirectos
+   *         {@link ProyectoAnualidadGastosTotales}
+   */
+  public ProyectoAnualidadGastosTotales getTotalImportesProyectoAnualidad(Long id) {
+    log.debug("getTotalImportesProyectoAnualidad(Long id) - start");
+    AssertHelper.idNotNull(id, ProyectoAnualidad.class);
+
+    ProyectoAnualidadGastosTotales returnValue = repository.getTotalImportesProyectoAnualidad(id);
+    log.debug("getTotalImportesProyectoAnualidad(Long id) - end");
+
+    return returnValue;
   }
 
 }

@@ -253,8 +253,8 @@ export class TableType extends FieldArrayType implements OnInit, OnDestroy {
     ) {
       // Remove
       if (this.field.templateOptions.removeLabelFields) {
-        this.field.fieldGroup.map(el => {
-          el.fieldGroup.map(elFieldGroup => {
+        this.field.fieldGroup.forEach(el => {
+          el.fieldGroup.forEach(elFieldGroup => {
             elFieldGroup.templateOptions.label = null;
           });
           return el;
@@ -274,15 +274,15 @@ export class TableType extends FieldArrayType implements OnInit, OnDestroy {
       // total lines (formgroups)
       const controlCountsNumberLines = this.field.fieldGroup ? this.field.fieldGroup.length : 1;
       // map in the available fields per line
-      this.field.fieldArray.fieldGroup.map((fgroup, index) => {
+      this.field.fieldArray.fieldGroup.forEach((fgroup, index) => {
         // creates the key to use as a counting control
         countControlTrue[fgroup.key.toString()] = 0;
         // map on lines
-        this.field.fieldGroup.map((fGroupItem, indexGroupItem) => {
+        this.field.fieldGroup.forEach((fGroupItem, indexGroupItem) => {
           // get temporary model based on the line to be analyzed
           const _tempModel = fGroupItem.formControl.value;
           // map in the fields
-          fGroupItem.fieldGroup.map((fGroupItemItem, indexGroupItemItem) => {
+          fGroupItem.fieldGroup.forEach((fGroupItemItem, indexGroupItemItem) => {
             // check if the column key field is the same as the field key
             if (fgroup.key === fGroupItemItem.key) {
               // checks if the hideExpression field exists and is a function
@@ -318,9 +318,9 @@ export class TableType extends FieldArrayType implements OnInit, OnDestroy {
     if (this.field.fieldGroup) {
       const _countRows = this.field.fieldGroup.length;
       let _countFieldsTrue = {};
-      this.field.fieldGroup.map((field, index) => {
+      this.field.fieldGroup.forEach((field, index) => {
         if (field.fieldGroup) {
-          field.fieldGroup.map(item => {
+          field.fieldGroup.forEach(item => {
             if (item.key === key) {
               if (!item['hide']) {
                 _result = false;

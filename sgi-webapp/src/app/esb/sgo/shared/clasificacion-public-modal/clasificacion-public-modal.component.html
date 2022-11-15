@@ -1,0 +1,67 @@
+<sgi-dialog-header title="{{'sgo.clasificacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}"></sgi-dialog-header>
+<sgi-dialog-content>
+  <form class="form-inline" [formGroup]="formGroup">
+    <!-- Clasificacion -->
+    <div>
+      <mat-form-field>
+        <mat-label>{{'sgo.clasificacion' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+        <sgi-select-entity formControlName="clasificacion" [options]="clasificaciones$ | async" required>
+        </sgi-select-entity>
+      </mat-form-field>
+    </div>
+    <!-- Arbol clasificaciones -->
+    <div class="programa">
+      <div class="arbol">
+        <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
+          <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
+            <li class="mat-tree-node">
+              <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.clasificacion.nombre"
+                [disabled]="node.childsLoaded && node.childs.length === 0" (click)="onToggleNode(node)">
+                <mat-icon color="primary" class="mat-icon-rtl-mirror">
+                  {{node.childsLoaded && node.childs.length === 0 ? '' : (treeControl.isExpanded(node) ? 'expand_more' :
+                  'chevron_right')}}
+                </mat-icon>
+              </button>
+
+              <mat-checkbox class="checkbox" color="primary" [checked]="node.checked" (click)="$event.stopPropagation()"
+                (change)="onCheckNode(node, $event)" [disabled]="node.disabled">
+                {{node.clasificacion.nombre}}
+              </mat-checkbox>
+            </li>
+          </mat-tree-node>
+          <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+            <li>
+              <div class="mat-tree-node">
+                <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.clasificacion.nombre"
+                  (click)="onToggleNode(node)">
+                  <mat-icon color="primary" class="mat-icon-rtl-mirror">
+                    {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                  </mat-icon>
+                </button>
+
+                <mat-checkbox class="checkbox" color="primary" [checked]="node.checked"
+                  (change)="onCheckNode(node, $event)" [disabled]="node.disabled">
+                  {{node.clasificacion.nombre}}
+                </mat-checkbox>
+              </div>
+              <ul [class.arbol-invisible]="!treeControl.isExpanded(node)">
+                <ng-container matTreeNodeOutlet></ng-container>
+              </ul>
+            </li>
+          </mat-tree-node>
+        </mat-tree>
+      </div>
+    </div>
+  </form>
+
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled || selectedClasificaciones.length === 0"
+    mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>
+    {{'btn.ok' | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

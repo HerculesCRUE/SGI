@@ -8,6 +8,7 @@ import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
+import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -251,4 +252,23 @@ public interface MemoriaService {
    * 
    */
   void sendComunicadoInformeSeguimientoFinalPendiente();
+
+  /**
+   * Devuelve un listado de {@link Memoria} para una determinada petición de
+   * evaluación en dos posibles estados
+   * 
+   * @param idPeticionEvaluacion Identificador {@link PeticionEvaluacion}.
+   * @param tipoEstadoMemoria    identificador del {@link TipoEstadoMemoria}
+   * @return listado de memorias
+   */
+  List<Memoria> findAllByPeticionEvaluacionIdAndEstadoActualId(
+      Long idPeticionEvaluacion, Long tipoEstadoMemoria);
+
+  /**
+   * Desactiva la {@link Memoria}.
+   *
+   * @param id Id de la {@link Memoria}.
+   * @return Entidad {@link Memoria} persistida desactivada.
+   */
+  Memoria desactivar(Long id);
 }

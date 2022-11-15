@@ -1,17 +1,21 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.time.Instant;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -116,6 +120,16 @@ public class ProyectoPeriodoJustificacion extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final Proyecto proyecto = null;
+
+  @OneToOne(fetch = FetchType.LAZY, mappedBy = "proyectoPeriodoJustificacion")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final ProyectoPeriodoJustificacionSeguimiento proyectoPeriodoJustificacionSeguimiento = null;
+
+  @OneToMany(mappedBy = "proyectoPeriodoJustificacion")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<RequerimientoJustificacion> requerimientosJustificacion = null;
 
   /**
    * Interfaz para marcar validaciones en la actualizacion de la entidad.

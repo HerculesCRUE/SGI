@@ -8,6 +8,7 @@ import { PUB_ROUTE_NAMES } from './pub-route-names';
 
 const MSG_ROOT_TITLE = marker('inv.root.title');
 const MSG_CONVOCATORIAS_TITLE = marker('menu.principal.inv.convocatorias');
+const MSG_SOLICITUDES_TITLE = marker('menu.principal.inv.solicitudes');
 
 const routes: SgiRoutes = [
   {
@@ -33,6 +34,16 @@ const routes: SgiRoutes = [
           ),
         data: {
           title: MSG_CONVOCATORIAS_TITLE
+        }
+      },
+      {
+        path: PUB_ROUTE_NAMES.SOLICITUDES,
+        loadChildren: () =>
+          import('../pub/solicitud/solicitud-public.module').then(
+            (m) => m.SolicitudPublicModule
+          ),
+        data: {
+          title: MSG_SOLICITUDES_TITLE
         }
       },
       { path: '**', component: null }

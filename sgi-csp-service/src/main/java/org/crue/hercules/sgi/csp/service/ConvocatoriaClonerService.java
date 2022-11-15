@@ -100,14 +100,11 @@ public class ConvocatoriaClonerService {
    * @param cloned         {@link Convocatoria} clonada
    */
   public void cloneConvocatoriaAreasTematicas(Long convocatoriaId, Convocatoria cloned) {
-    Optional<ConvocatoriaAreaTematica> area = convocatoriaAreaTematicaRepository.findByConvocatoriaId(convocatoriaId);
-
-    if (!area.isPresent()) {
-      return;
-    }
-    this.convocatoriaAreaTematicaRepository
-        .save(ConvocatoriaAreaTematica.builder().areaTematica(area.get().getAreaTematica())
-            .convocatoriaId(cloned.getId()).observaciones(cloned.getObservaciones()).build());
+    convocatoriaAreaTematicaRepository
+        .findByConvocatoriaId(convocatoriaId).stream()
+        .forEach(convocatoriaAreaTematica -> this.convocatoriaAreaTematicaRepository
+            .save(ConvocatoriaAreaTematica.builder().areaTematica(convocatoriaAreaTematica.getAreaTematica())
+                .convocatoriaId(cloned.getId()).observaciones(cloned.getObservaciones()).build()));
   }
 
   /**

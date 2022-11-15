@@ -14,7 +14,7 @@ import { LineaInvestigacionService } from '@core/services/csp/linea-investigacio
 import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
 import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { VinculacionService } from '@core/services/sgp/vinculacion.service';
+import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
 import { GRUPO_DATA_KEY } from './grupo-data.resolver';

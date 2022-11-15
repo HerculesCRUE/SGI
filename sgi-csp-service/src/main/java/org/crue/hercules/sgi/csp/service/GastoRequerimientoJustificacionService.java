@@ -148,4 +148,18 @@ public class GastoRequerimientoJustificacionService {
     repository.deleteInBulkByRequerimientoJustificacionId(requerimientoJustificacionId);
     log.debug("deleteByRequerimientoJustificacionId(Long requerimientoJustificacionId) - end");
   }
+
+  /**
+   * Busca todos los objetos de tipo {@link GastoRequerimientoJustificacion}
+   * 
+   * @param query  filtro
+   * @param paging ordenación y página
+   * @return lista de objetos de tipo {@link GastoRequerimientoJustificacion}
+   */
+  public Page<GastoRequerimientoJustificacion> findAll(String query,
+      Pageable paging) {
+    Specification<GastoRequerimientoJustificacion> specs = SgiRSQLJPASupport.toSpecification(query);
+
+    return repository.findAll(specs, paging);
+  }
 }

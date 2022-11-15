@@ -88,7 +88,7 @@ public class ProyectoSeguimientoJustificacionService {
     return repository.findById(proyectoSeguimientoJustificacion.getId())
         .map(proyectoSeguimientoJustificacionExistente -> {
 
-          // // Establecemos los campos actualizables con los recibidos
+          // Establecemos los campos actualizables con los recibidos
           proyectoSeguimientoJustificacionExistente
               .setFechaReintegro(proyectoSeguimientoJustificacion.getFechaReintegro());
           proyectoSeguimientoJustificacionExistente

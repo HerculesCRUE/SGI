@@ -4,7 +4,7 @@ import { Fragment } from '@core/services/action-service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { VinculacionService } from '@core/services/sgp/vinculacion.service';
+import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
@@ -93,7 +93,16 @@ export class EquipoInvestigadorListadoFragment extends Fragment {
                       catchError(() => of(element))
                     );
                   }),
-                  catchError(() => of(element))
+                  switchMap(() => {
+                    return this.peticionEvaluacionService.findById(this.selectedIdPeticionEvaluacion).pipe(
+                      map((peticionEvaluacion) => {
+                        if (peticionEvaluacion.solicitante.id === element.value.persona.id) {
+                          element.value.eliminable = false;
+                        }
+                      }),
+                      catchError(() => of(element))
+                    );
+                  })
                 );
               }),
               mergeAll(),

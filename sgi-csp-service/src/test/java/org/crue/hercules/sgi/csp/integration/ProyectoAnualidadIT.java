@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.integration;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
@@ -10,6 +11,7 @@ import org.crue.hercules.sgi.csp.controller.ProyectoAnualidadController;
 import org.crue.hercules.sgi.csp.dto.AnualidadGastoOutput;
 import org.crue.hercules.sgi.csp.dto.AnualidadIngresoOutput;
 import org.crue.hercules.sgi.csp.dto.AnualidadResumen;
+import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadGastosTotales;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadInput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadNotificacionSge;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadOutput;
@@ -36,6 +38,7 @@ class ProyectoAnualidadIT extends BaseIT {
   private static final String PATH_NOTIFICA_SGE = "/notificarsge";
   private static final String PATH_ANUALIDAD_GASTOS = "/anualidadgastos";
   private static final String PATH_ANUALIDAD_INGRESOS = "/anualidadingresos";
+  private static final String PATH_GASTOS_TOTALES = ProyectoAnualidadController.PATH_GASTOS_TOTALES;
 
   private HttpEntity<ProyectoAnualidadInput> buildRequest(HttpHeaders headers,
       ProyectoAnualidadInput entity, String... roles) throws Exception {
@@ -440,6 +443,44 @@ class ProyectoAnualidadIT extends BaseIT {
     Assertions.assertThat(response.getBody()).isNotNull();
     Assertions.assertThat(response.getBody().getId()).isEqualTo(proyectoAnualidadId);
     Assertions.assertThat(response.getBody().getEnviadoSge()).isTrue();
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off    
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/concepto_gasto.sql",
+    "classpath:scripts/proyecto_partida.sql",
+    "classpath:scripts/proyecto_anualidad.sql",
+    "classpath:scripts/anualidad_gasto.sql",
+    // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void getTotalImportesProyectoAnualidad_ReturnsProyectoAnualidadGastosTotales() throws Exception {
+    String roles = "CSP-SJUS-E";
+
+    Long proyectoAnualidadId = 1L;
+    BigDecimal importeConcendidoAnualidadCostesDirectos = new BigDecimal("6000.00");
+    BigDecimal importeConcendidoAnualidadCostesIndirectos = new BigDecimal("12000.00");
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_GASTOS_TOTALES)
+        .buildAndExpand(proyectoAnualidadId).toUri();
+
+    final ResponseEntity<ProyectoAnualidadGastosTotales> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(null, null, roles), ProyectoAnualidadGastosTotales.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    Assertions.assertThat(response.getBody()).isNotNull();
+    Assertions.assertThat(response.getBody().getImporteConcendidoAnualidadCostesDirectos()).isEqualTo(
+        importeConcendidoAnualidadCostesDirectos);
+    Assertions.assertThat(response.getBody().getImporteConcendidoAnualidadCostesIndirectos()).isEqualTo(
+        importeConcendidoAnualidadCostesIndirectos);
   }
 
   ProyectoAnualidadInput buildMockProyectoAnualidadInput() {

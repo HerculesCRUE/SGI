@@ -4,7 +4,7 @@ import { Module } from '@core/module';
 import { Observable } from 'rxjs';
 import { PUB_ROUTE_NAMES } from '../../pub-route-names';
 
-export const CONVOCATORIA_ID_KEY = 'idConvocatoria';
+export const CONVOCATORIA_PUBLIC_ID_KEY = 'idConvocatoria';
 
 @Injectable()
 export class SolicitudPublicCrearGuard implements CanActivate {
@@ -15,7 +15,7 @@ export class SolicitudPublicCrearGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-    const idConvocatoria = this.router.getCurrentNavigation()?.extras?.state?.[CONVOCATORIA_ID_KEY];
+    const idConvocatoria = this.router.getCurrentNavigation()?.extras?.state?.[CONVOCATORIA_PUBLIC_ID_KEY];
     if (idConvocatoria) {
       return true;
     }

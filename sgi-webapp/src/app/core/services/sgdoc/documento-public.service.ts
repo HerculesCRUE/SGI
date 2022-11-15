@@ -1,11 +1,20 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { DOCUMENTO_CONVERTER } from '@core/converters/sgdoc/documento.converter';
 import { IDocumentoBackend } from '@core/models/sgdoc/backend/documento-backend';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { environment } from '@env';
 import { FindByIdCtor, mixinFindById, SgiRestBaseService } from '@sgi/framework/http/';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map, takeLast } from 'rxjs/operators';
+
+
+export interface FileModel {
+  file: File;
+  progress: number;
+  status: 'attached' | 'uploading' | 'complete' | 'error';
+  document?: IDocumento;
+}
 
 export function triggerDownloadToUser(file: Blob, fileName: string) {
   const downloadLink = document.createElement('a');
@@ -38,6 +47,40 @@ export class DocumentoPublicService extends _DocumentoMixinBase {
       `${environment.serviceServers.sgdoc}${DocumentoPublicService.PUBLIC_PREFIX}${DocumentoPublicService.MAPPING}`,
       http
     );
+  }
+
+  /**
+   * Crea el fichero en sgdoc.
+   * @param fichero Fichero a crear.
+   */
+  uploadFichero(fileModel: FileModel): Observable<IDocumento> {
+    return this.uploadFicheroWithStatus(fileModel.file).pipe(
+      map((event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.Sent:
+            fileModel.status = 'uploading';
+            break;
+          case HttpEventType.UploadProgress:
+            fileModel.progress = Math.round(100 * event.loaded / event.total);
+            break;
+          case HttpEventType.Response:
+            fileModel.status = 'complete';
+            return DOCUMENTO_CONVERTER.toTarget(event.body);
+        }
+      }),
+      takeLast(1),
+      catchError((err) => {
+        fileModel.status = 'error';
+        return throwError(err);
+      })
+    );
+  }
+
+  uploadFicheroWithStatus(file: File): Observable<HttpEvent<any>> {
+    const formData = new FormData();
+    formData.append('archivo', file);
+
+    return this.http.post(`${this.endpointUrl}`, formData, { observe: 'events', reportProgress: true });
   }
 
   /**

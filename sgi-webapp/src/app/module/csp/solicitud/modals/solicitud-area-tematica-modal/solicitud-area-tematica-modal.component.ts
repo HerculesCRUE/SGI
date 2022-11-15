@@ -176,7 +176,7 @@ export class SolicitudAreaTematicaModalComponent extends DialogFormComponent<Are
           if (this.data.areaTematicaSolicitud?.id === result.areaTematica.value.id) {
             this.checkedNode = result;
           } else {
-            result.childs.map(node => {
+            result.childs.forEach(node => {
               if (this.data.areaTematicaSolicitud?.id === node.areaTematica.value.id) {
                 this.checkedNode = node;
               }
@@ -191,7 +191,7 @@ export class SolicitudAreaTematicaModalComponent extends DialogFormComponent<Are
               result.disabled = true;
               this.disableChilds(result);
 
-              result.childs.map(node => {
+              result.childs.forEach(node => {
                 if (this.data.areasTematicasConvocatoria?.map(area => area.id)
                   .includes(node.areaTematica.value.id)) {
                   node.disabled = false;

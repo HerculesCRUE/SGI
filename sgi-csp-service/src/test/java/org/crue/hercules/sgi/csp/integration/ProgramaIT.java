@@ -37,7 +37,7 @@ class ProgramaIT extends BaseIT {
         String.format("bearer %s",
             tokenBuilder.buildToken("user", "CSP-PRG-C", "CSP-CON-C", "CSP-CON-E", "CSP-CON-V", "CSP-CON-INV-V",
                 "CSP-SOL-V", "CSP-SOL-C", "CSP-SOL-E", "CSP-SOL-B", "CSP-SOL-R", "CSP-PRO-C", "CSP-PRO-V", "CSP-PRO-E",
-                "CSP-PRO-B", "CSP-PRO-R", "CSP-PRG-R", "CSP-PRG-E", "CSP-PRG-B", "AUTH")));
+                "CSP-PRO-B", "CSP-PRO-R", "CSP-PRG-R", "CSP-PRG-E", "CSP-PRG-B")));
 
     HttpEntity<Programa> request = new HttpEntity<>(entity, headers);
     return request;
@@ -137,40 +137,6 @@ class ProgramaIT extends BaseIT {
     Assertions.assertThat(programa.getNombre()).as("getNombre()").isEqualTo("nombre-001");
     Assertions.assertThat(programa.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-001");
     Assertions.assertThat(programa.getActivo()).as("getActivo()").isTrue();
-  }
-
-  @Sql
-  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @Test
-  void findAll_WithPagingSortingAndFiltering_ReturnsProgramaSubList() throws Exception {
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CON-V")));
-    headers.add("X-Page", "0");
-    headers.add("X-Page-Size", "10");
-    String sort = "nombre,desc";
-    String filter = "descripcion=ke=00";
-
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
-        .build(false).toUri();
-
-    final ResponseEntity<List<Programa>> response = restTemplate.exchange(uri, HttpMethod.GET,
-        buildRequest(headers, null), new ParameterizedTypeReference<List<Programa>>() {
-        });
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    final List<Programa> programas = response.getBody();
-    Assertions.assertThat(programas).hasSize(3);
-    HttpHeaders responseHeaders = response.getHeaders();
-    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
-    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
-    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
-
-    Assertions.assertThat(programas.get(0).getNombre()).as("get(0).getNombre())")
-        .isEqualTo("nombre-" + String.format("%03d", 3));
-    Assertions.assertThat(programas.get(1).getNombre()).as("get(1).getNombre())")
-        .isEqualTo("nombre-" + String.format("%03d", 2));
-    Assertions.assertThat(programas.get(2).getNombre()).as("get(2).getNombre())")
-        .isEqualTo("nombre-" + String.format("%03d", 1));
   }
 
   @Sql

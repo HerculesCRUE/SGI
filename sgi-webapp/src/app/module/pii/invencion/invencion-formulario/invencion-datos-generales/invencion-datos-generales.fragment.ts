@@ -1,4 +1,5 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { TipoPropiedad } from '@core/enums/tipo-propiedad';
 import { IInvencion } from '@core/models/pii/invencion';
 import { IInvencionAreaConocimiento } from '@core/models/pii/invencion-area-conocimiento';
 import { IInvencionDocumento } from '@core/models/pii/invencion-documento';
@@ -54,6 +55,7 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
   private invencion: IInvencion;
   private fragmentStatus: IInvencionDatosGeneralesFragmentStatus;
   public inventores: IInvencionInventor[];
+  invencionTipoPropiedad: TipoPropiedad;
 
   constructor(
     private readonly logger: NGXLogger,
@@ -233,6 +235,10 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
 
   getDocumentos$(): Observable<StatusWrapper<IInvencionDocumento>[]> {
     return this.documentos$.asObservable();
+  }
+
+  selectInvencionTipoPropiedad(tipoPropiedad: TipoPropiedad) {
+    this.invencionTipoPropiedad = tipoPropiedad;
   }
 
   saveOrUpdate(): Observable<string | number | void> {

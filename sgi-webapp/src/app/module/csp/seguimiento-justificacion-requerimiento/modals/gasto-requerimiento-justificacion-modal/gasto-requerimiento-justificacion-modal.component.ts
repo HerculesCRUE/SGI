@@ -59,8 +59,8 @@ export class GastoRequerimientoJustificacionModalComponent
           } as IGastoJustificadoDetalleWithProyectoSgiId)
           )
         );
-    // Setting aceptado to true enables ok button
-    if (typeof this.formGroup.controls.aceptado !== 'boolean') {
+    // Si aceptado no ha sido inicializado por defecto lo marcamos a true para activar el boton ok
+    if (typeof this.formGroup.controls.aceptado.value !== 'boolean') {
       this.formGroup.controls.aceptado.setValue(true);
     }
   }

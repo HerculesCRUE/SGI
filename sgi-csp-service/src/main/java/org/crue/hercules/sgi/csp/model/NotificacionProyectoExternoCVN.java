@@ -26,7 +26,6 @@ import org.crue.hercules.sgi.csp.model.NotificacionProyectoExternoCVN.AsociarPro
 import org.crue.hercules.sgi.csp.validation.NotificacionProyectoExternoCvnAutorizacionState;
 import org.crue.hercules.sgi.csp.validation.SameSolicitanteNotificacionCvnAutorizacion;
 import org.crue.hercules.sgi.csp.validation.UniqueRelationNotificacionCvnAutorizacion;
-import org.crue.hercules.sgi.csp.validation.UniqueRelationNotificacionCvnProyecto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -80,7 +79,6 @@ public class NotificacionProyectoExternoCVN extends BaseEntity {
 
   /** Proyecto */
   @Column(name = "proyecto_id", nullable = true)
-  @UniqueRelationNotificacionCvnProyecto(groups = { Create.class, AsociarProyecto.class })
   private Long proyectoId;
 
   /** Ambito Geogrñafico */

@@ -40,6 +40,7 @@ import { SelectProyectoProyectoSgeComponent } from './select-proyecto-proyecto-s
 import { SelectProyectoPeriodoJustificacionComponent } from './select-proyecto-periodo-justificacion/select-proyecto-periodo-justificacion.component';
 import { SelectTipoRequerimientoComponent } from './select-tipo-requerimiento/select-tipo-requerimiento.component';
 import { SelectRequerimientoJustificacionComponent } from './select-requerimiento-justificacion/select-requerimiento-justificacion.component';
+import { SelectProyectoAnualidadComponent } from './select-proyecto-anualidad/select-proyecto-anualidad.component';
 
 @NgModule({
   declarations: [
@@ -74,6 +75,7 @@ import { SelectRequerimientoJustificacionComponent } from './select-requerimient
     SelectProyectoPeriodoJustificacionComponent,
     SelectTipoRequerimientoComponent,
     SelectRequerimientoJustificacionComponent,
+    SelectProyectoAnualidadComponent,
     EntidadFinanciadoraEmpresaNombrePipe,
   ],
   imports: [
@@ -116,6 +118,7 @@ import { SelectRequerimientoJustificacionComponent } from './select-requerimient
     SelectProyectoPeriodoJustificacionComponent,
     SelectTipoRequerimientoComponent,
     SelectRequerimientoJustificacionComponent,
+    SelectProyectoAnualidadComponent,
     EntidadFinanciadoraEmpresaNombrePipe,
   ]
 })

@@ -147,9 +147,13 @@ export class SolicitudRrhhSolitanteFragment extends FormFragment<ISolicitudSolic
   }
 
   buildPatch(solicitudSolicitanteRrhh: ISolicitudSolicitanteRrhh): { [key: string]: any } {
+    const universidadText = this.isInvestigador
+      ? solicitudSolicitanteRrhh?.universidad?.nombre ?? solicitudSolicitanteRrhh?.universidadDatos
+      : solicitudSolicitanteRrhh?.universidadDatos;
+
     let formValues: { [key: string]: any } = {
       universidadSelect: solicitudSolicitanteRrhh?.universidad,
-      universidadText: solicitudSolicitanteRrhh?.universidadDatos,
+      universidadText,
       areaAnep: solicitudSolicitanteRrhh?.areaAnep
     };
 

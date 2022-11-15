@@ -108,21 +108,6 @@ class SolicitudDocumentoIT extends BaseIT {
 
   }
 
-  @Sql
-  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @Test
-  void findById_ReturnsSolicitudDocumento() throws Exception {
-    Long id = 1L;
-
-    final ResponseEntity<SolicitudDocumento> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
-        HttpMethod.GET, buildRequest(null, null), SolicitudDocumento.class, id);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    SolicitudDocumento responseData = response.getBody();
-    Assertions.assertThat(responseData.getId()).as("getId()").isEqualTo(id);
-    Assertions.assertThat(responseData.getSolicitudId()).as("getSolicitudId()").isEqualTo(1L);
-  }
-
   /**
    * Función que devuelve un objeto SolicitudDocumento
    * 

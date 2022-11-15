@@ -93,6 +93,19 @@ export class ProyectoSocioEquipoFragment extends Fragment {
       .pipe(
         takeLast(1),
         map((results) => {
+          return results.map(
+            (value: IProyectoSocioEquipo) => {
+              const socio = values.find(
+                equipo => equipo.persona.id === value.persona.id
+                  && equipo.fechaInicio?.toMillis() === value.fechaInicio?.toMillis()
+                  && equipo.fechaFin?.toMillis() === value.fechaFin?.toMillis()
+              );
+              value.persona = socio.persona;
+              return value;
+            });
+        }),
+        takeLast(1),
+        map((results) => {
           this.proyectoSocioEquipos$.next(
             results.map(value => new StatusWrapper<IProyectoSocioEquipo>(value)));
         }),

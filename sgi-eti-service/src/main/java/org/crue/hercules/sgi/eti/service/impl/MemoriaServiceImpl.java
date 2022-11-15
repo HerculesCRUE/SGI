@@ -60,7 +60,9 @@ import org.crue.hercules.sgi.eti.service.MemoriaService;
 import org.crue.hercules.sgi.eti.service.SgdocService;
 import org.crue.hercules.sgi.eti.service.sgi.SgiApiRepService;
 import org.crue.hercules.sgi.eti.util.Constantes;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
@@ -86,6 +88,9 @@ public class MemoriaServiceImpl implements MemoriaService {
   private static final String TITULO_INFORME_RETROSPECTIVA = "informeRetrospectivaPdf";
   private static final String TITULO_INFORME_SA = "informeSAPdf";
   private static final String TITULO_INFORME_SF = "informeSFPdf";
+  private static final String PROBLEM_MESSAGE_PARAMETER_FIELD = "field";
+  private static final String PROBLEM_MESSAGE_PARAMETER_ENTITY = "entity";
+  private static final String PROBLEM_MESSAGE_NOTNULL = "notNull";
 
   /** Propiedades de configuración de la aplicación */
   private final SgiConfigProperties sgiConfigProperties;
@@ -1281,6 +1286,47 @@ public class MemoriaServiceImpl implements MemoriaService {
   private ZonedDateTime getLastInstantOfDay() {
     return Instant.now().atZone(this.sgiConfigProperties.getTimeZone().toZoneId())
         .with(LocalTime.MAX).withNano(0);
+  }
+
+  /**
+   * Devuelve un listado de {@link Memoria} para una determinada petición de
+   * evaluación en dos posibles estados
+   * 
+   * @param idPeticionEvaluacion Identificador {@link PeticionEvaluacion}.
+   * @param tipoEstadoMemoria    identificador del {@link TipoEstadoMemoria}
+   * @return listado de memorias
+   */
+  public List<Memoria> findAllByPeticionEvaluacionIdAndEstadoActualId(Long idPeticionEvaluacion,
+      Long tipoEstadoMemoria) {
+    return memoriaRepository.findAllByPeticionEvaluacionIdAndEstadoActualId(
+        idPeticionEvaluacion, tipoEstadoMemoria);
+  }
+
+  /**
+   * Desactiva la {@link Memoria}.
+   *
+   * @param id Id de la {@link Memoria}.
+   * @return Entidad {@link Memoria} persistida desactivada.
+   */
+  @Transactional
+  @Override
+  public Memoria desactivar(Long id) {
+    Assert.notNull(id,
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
+            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
+                ApplicationContextSupport.getMessage(Memoria.class))
+            .build());
+
+    return this.memoriaRepository.findById(id).map(memoria -> {
+
+      if (Boolean.FALSE.equals(memoria.getActivo())) {
+        return memoria;
+      }
+      memoria.setActivo(Boolean.FALSE);
+
+      return this.memoriaRepository.save(memoria);
+    }).orElseThrow(() -> new MemoriaNotFoundException(id));
   }
 
 }

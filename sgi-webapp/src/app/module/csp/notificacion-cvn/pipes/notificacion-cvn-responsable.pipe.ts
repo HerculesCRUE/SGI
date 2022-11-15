@@ -7,7 +7,7 @@ import { INotificacionProyectoExternoCVN } from '@core/models/csp/notificacion-p
 export class NotificacionCvnResponsablePipe implements PipeTransform {
 
   transform(notificacion: INotificacionProyectoExternoCVN): string {
-    if (notificacion?.responsable?.id) {
+    if (notificacion?.responsable?.id && notificacion?.responsable?.nombre) {
       return `${notificacion.responsable.nombre} ${notificacion.responsable.apellidos}`;
     }
     return notificacion.datosResponsable ?? '';

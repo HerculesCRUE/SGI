@@ -15,7 +15,7 @@ import { SgiRestFilter, SgiRestListResult } from '@sgi/framework/http/';
 import { from, Observable, of } from 'rxjs';
 import { map, mergeAll, mergeMap, switchMap } from 'rxjs/operators';
 import { PUB_ROUTE_NAMES } from '../../pub-route-names';
-import { CONVOCATORIA_ID_KEY } from '../../solicitud/solicitud-crear/solicitud-public-crear.guard';
+import { CONVOCATORIA_PUBLIC_ID_KEY } from '../../solicitud/solicitud-crear/solicitud-public-crear.guard';
 
 const MSG_ERROR = marker('error.load');
 
@@ -171,7 +171,7 @@ export class ConvocatoriaPublicListadoComponent
   }
 
   getSolicitudState(idConvocatoria: number) {
-    return { [CONVOCATORIA_ID_KEY]: idConvocatoria };
+    return { [CONVOCATORIA_PUBLIC_ID_KEY]: idConvocatoria };
   }
 
 }

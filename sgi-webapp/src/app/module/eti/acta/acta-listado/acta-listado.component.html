@@ -139,7 +139,7 @@
               <mat-icon color="primary">picture_as_pdf</mat-icon>
             </button>
           </ng-container>
-          <ng-container *sgiHasAnyAuthorityForAnyUO="['ETI-ACT-FIN','ETI-ACT-DESR']">
+          <ng-container *sgiHasAuthorityForAnyUO="'ETI-ACT-FIN'">
             <button *ngIf="hasFinalizarActa(acta)" mat-button (click)="finishActa(acta.id)"
               matTooltip="{{'eti.acta.finalizar' | translate}}">
               <mat-icon color="primary">https</mat-icon>

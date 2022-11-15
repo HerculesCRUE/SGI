@@ -181,7 +181,7 @@ export class ProyectoProrrogaDatosGeneralesFragment extends FormFragment<IProyec
 
   private buildValidatorFechaFin(fechaFinProyecto: DateTime, definitiva: boolean): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (control.value && fechaFinProyecto >= control.value) {
+      if (control.dirty && control.value && fechaFinProyecto >= control.value) {
         return definitiva ? { afterDefinitiva: true } : { after: true };
       }
       return null;

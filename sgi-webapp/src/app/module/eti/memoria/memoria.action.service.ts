@@ -18,7 +18,7 @@ import { RespuestaService } from '@core/services/eti/respuesta.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { VinculacionService } from '@core/services/sgp/vinculacion.service';
+import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { FormlyConfig, FormlyFormBuilder } from '@ngx-formly/core';
 import { NGXLogger } from 'ngx-logger';
 import { from, Observable } from 'rxjs';

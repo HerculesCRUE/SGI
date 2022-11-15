@@ -2,12 +2,16 @@ import { IConfiguracion } from '@core/models/csp/configuracion';
 import { IEntidadFinanciadora } from '@core/models/csp/entidad-financiadora';
 import { IProyectoEntidadFinanciadora } from '@core/models/csp/proyecto-entidad-financiadora';
 import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
+import { IProyectoPeriodoJustificacionSeguimiento } from '@core/models/csp/proyecto-periodo-justificacion-seguimiento';
 import { IProyectoPeriodoSeguimiento } from '@core/models/csp/proyecto-periodo-seguimiento';
 import { IProyectoSeguimientoEjecucionEconomica } from '@core/models/csp/proyecto-seguimiento-ejecucion-economica';
 import { IProyectoSeguimientoJustificacion } from '@core/models/csp/proyecto-seguimiento-justificacion';
+import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-justificacion';
+import { ISeguimientoJustificacionAnualidad } from '@core/models/csp/seguimiento-justificacion-anualidad';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { IPersona } from '@core/models/sgp/persona';
 import { Fragment } from '@core/services/action-service';
+import { ProyectoPeriodoJustificacionSeguimientoService } from '@core/services/csp/proyecto-periodo-justificacion-seguimiento/proyecto-periodo-justificacion-seguimiento.service';
 import { ProyectoPeriodoJustificacionService } from '@core/services/csp/proyecto-periodo-justificacion/proyecto-periodo-justificacion.service';
 import { ProyectoPeriodoSeguimientoService } from '@core/services/csp/proyecto-periodo-seguimiento.service';
 import { ProyectoSeguimientoEjecucionEconomicaService } from '@core/services/csp/proyecto-seguimiento-ejecucion-economica/proyecto-seguimiento-ejecucion-economica.service';
@@ -42,11 +46,17 @@ export class SeguimientoJustificacionResumenFragment extends Fragment {
   private proyectoTituloMap: Map<number, string>;
   private proyectosSGI$ = new BehaviorSubject<IProyectoSeguimientoEjecucionEconomicaData[]>([]);
   private seguimientosJustificacion$ = new BehaviorSubject<StatusWrapper<IProyectoSeguimientoJustificacionWithFechaJustificacion>[]>([]);
+  private seguimientosJustificacionAnualidad$ = new BehaviorSubject<StatusWrapper<ISeguimientoJustificacionAnualidad>[]>([]);
   private periodosJustificacion$ = new BehaviorSubject<StatusWrapper<IProyectoPeriodoJustificacionWithTituloProyecto>[]>([]);
+  private periodoJustificacionChanged$ = new BehaviorSubject<IProyectoPeriodoJustificacion>(null);
   private periodosSeguimiento$ = new BehaviorSubject<StatusWrapper<IProyectoPeriodoSeguimientoWithTituloProyecto>[]>([]);
 
   get configuracion(): IConfiguracion {
     return this._configuracion;
+  }
+
+  get proyectoSgeRef(): string {
+    return this.proyectoSge.id;
   }
 
   constructor(
@@ -60,7 +70,8 @@ export class SeguimientoJustificacionResumenFragment extends Fragment {
     private readonly empresaService: EmpresaService,
     private readonly proyectoPeriodoJustificacionService: ProyectoPeriodoJustificacionService,
     private readonly proyectoPeriodoSeguimientoService: ProyectoPeriodoSeguimientoService,
-    private readonly proyectoSeguimientoJustificacionService: ProyectoSeguimientoJustificacionService
+    private readonly proyectoSeguimientoJustificacionService: ProyectoSeguimientoJustificacionService,
+    private readonly proyectoPeriodoJustificacionSeguimientoService: ProyectoPeriodoJustificacionSeguimientoService
   ) {
     super(key);
     this.responsablesMap = new Map(
@@ -72,33 +83,36 @@ export class SeguimientoJustificacionResumenFragment extends Fragment {
   }
 
   protected onInitialize(): void | Observable<any> {
-    forkJoin({
+    return forkJoin({
       proyectosSGI: this.findProyectosSGI(this.proyectoSge),
       seguimientosJustificacion: this.findSeguimientosJustificacion(this.proyectoSge),
+      seguimientosJustificacionAnualidad: this.findSeguimientosJustificacionAnualidad(this.proyectoSge),
       periodosJustificacion: this.findPeriodosJustificacion(this.proyectoSge),
       periodosSeguimiento: this.findPeriodosSeguimiento(this.proyectoSge),
     }).pipe(
       map(data => ({
         ...data,
-        seguimientosJustificacion: this.calculateFechaJustificacion(
+        seguimientosJustificacion: this.refreshSeguimientosJustificacionUltimaFechaJustificacion(
           // Puede que en la BBDD no exista Seguimiento Justificacion para alguno o todos los proyectosSGI
           this.createSeguimientosJustificacionIfNotExists(data.proyectosSGI, data.seguimientosJustificacion),
           data.periodosJustificacion
         )
-      }))
-    ).subscribe(data => {
-      this.proyectosSGI$.next(data.proyectosSGI);
-      this.seguimientosJustificacion$.next(data.seguimientosJustificacion);
-      this.periodosJustificacion$.next(data.periodosJustificacion);
-      this.periodosSeguimiento$.next(data.periodosSeguimiento);
-    });
+      })),
+      tap(data => {
+        this.proyectosSGI$.next(data.proyectosSGI);
+        this.seguimientosJustificacion$.next(data.seguimientosJustificacion);
+        this.seguimientosJustificacionAnualidad$.next(data.seguimientosJustificacionAnualidad);
+        this.periodosJustificacion$.next(data.periodosJustificacion);
+        this.periodosSeguimiento$.next(data.periodosSeguimiento);
+      })
+    );
   }
 
   private findProyectosSGI(proyectoSge: IProyectoSge): Observable<IProyectoSeguimientoEjecucionEconomicaData[]> {
     return this.proyectoSeguimientoEjecucionEconomicaService.findProyectosSeguimientoEjecucionEconomica(proyectoSge.id)
       .pipe(
         map(({ items }) => this.transformToProyectoSeguimientoEjecucionEconomicaData(items)),
-        concatMap(proyectos => this.fillRelatedEntities(proyectos))
+        concatMap(proyectos => this.fillProyectoSeguimientoEjecucionEconomicaDataRelatedEntities(proyectos))
       );
   }
 
@@ -113,7 +127,7 @@ export class SeguimientoJustificacionResumenFragment extends Fragment {
     );
   }
 
-  private fillRelatedEntities(proyectos: IProyectoSeguimientoEjecucionEconomicaData[]):
+  private fillProyectoSeguimientoEjecucionEconomicaDataRelatedEntities(proyectos: IProyectoSeguimientoEjecucionEconomicaData[]):
     Observable<IProyectoSeguimientoEjecucionEconomicaData[]> {
     return from(proyectos).pipe(
       concatMap(proyecto => this.fillEntidadesFinanciadoras(proyecto)),
@@ -171,6 +185,43 @@ export class SeguimientoJustificacionResumenFragment extends Fragment {
       );
   }
 
+  private findSeguimientosJustificacionAnualidad(proyectoSge: IProyectoSge):
+    Observable<StatusWrapper<ISeguimientoJustificacionAnualidad>[]> {
+    return this.proyectoSeguimientoEjecucionEconomicaService.findSeguimientosJustificacionAnualidad(proyectoSge.id)
+      .pipe(
+        concatMap(seguimientosJustificacionAnualidad =>
+          this.fillSeguimientoJustificacionAnualidadRelatedEntities(seguimientosJustificacionAnualidad)
+        ),
+        map(seguimientosJustificacionAnualidad =>
+          seguimientosJustificacionAnualidad.map(seguimientoJustificacionAnualidad => new StatusWrapper(seguimientoJustificacionAnualidad))
+        )
+      );
+  }
+
+  private fillSeguimientoJustificacionAnualidadRelatedEntities(seguimientosJustificacionAnualidad: ISeguimientoJustificacionAnualidad[]):
+    Observable<ISeguimientoJustificacionAnualidad[]> {
+    return from(seguimientosJustificacionAnualidad).pipe(
+      concatMap(proyecto => this.fillProyectoPeriodoJustificacionSeguimiento(proyecto)),
+      toArray()
+    );
+  }
+
+  private fillProyectoPeriodoJustificacionSeguimiento(seguimientoJustificacionAnualidad: ISeguimientoJustificacionAnualidad):
+    Observable<ISeguimientoJustificacionAnualidad> {
+    if (!seguimientoJustificacionAnualidad?.proyectoPeriodoJustificacionSeguimiento?.id) {
+      return of(seguimientoJustificacionAnualidad);
+    }
+
+    return this.proyectoPeriodoJustificacionSeguimientoService.findById(
+      seguimientoJustificacionAnualidad.proyectoPeriodoJustificacionSeguimiento.id
+    ).pipe(
+      map(proyectoPeriodoJustificacionSeguimiento => {
+        seguimientoJustificacionAnualidad.proyectoPeriodoJustificacionSeguimiento = proyectoPeriodoJustificacionSeguimiento;
+        return seguimientoJustificacionAnualidad;
+      })
+    );
+  }
+
   private createSeguimientosJustificacionIfNotExists(
     proyectosSGI: IProyectoSeguimientoEjecucionEconomica[],
     seguimientosJustificacion: IProyectoSeguimientoJustificacion[]
@@ -200,7 +251,7 @@ export class SeguimientoJustificacionResumenFragment extends Fragment {
     } as IProyectoSeguimientoJustificacion;
   }
 
-  private calculateFechaJustificacion(
+  private refreshSeguimientosJustificacionUltimaFechaJustificacion(
     seguimientosJustificacion: StatusWrapper<IProyectoSeguimientoJustificacionWithFechaJustificacion>[],
     periodosJustificacion: StatusWrapper<IProyectoPeriodoJustificacionWithTituloProyecto>[]):
     StatusWrapper<IProyectoSeguimientoJustificacionWithFechaJustificacion>[] {
@@ -209,7 +260,7 @@ export class SeguimientoJustificacionResumenFragment extends Fragment {
         periodosJustificacion.filter(periodoJustificacion =>
           periodoJustificacion.value.proyecto.id === seguimientoJustificacion.value.proyectoProyectoSge.proyecto.id
         )
-      )
+      );
       return seguimientoJustificacion;
     });
   }
@@ -259,8 +310,16 @@ export class SeguimientoJustificacionResumenFragment extends Fragment {
     return this.seguimientosJustificacion$.asObservable();
   }
 
+  getSeguimientosJustificacionAnualidad$(): Observable<StatusWrapper<ISeguimientoJustificacionAnualidad>[]> {
+    return this.seguimientosJustificacionAnualidad$.asObservable();
+  }
+
   getPeriodosJustificacion$(): Observable<StatusWrapper<IProyectoPeriodoJustificacionWithTituloProyecto>[]> {
     return this.periodosJustificacion$.asObservable();
+  }
+
+  getPeriodoJustificacionChanged$(): Observable<IProyectoPeriodoJustificacion> {
+    return this.periodoJustificacionChanged$.asObservable();
   }
 
   getPeriodosSeguimiento$(): Observable<StatusWrapper<IProyectoPeriodoSeguimientoWithTituloProyecto>[]> {
@@ -279,12 +338,54 @@ export class SeguimientoJustificacionResumenFragment extends Fragment {
     }
   }
 
+  createSeguimientoJustificacionAnualidad(seguimientoJustificacionAnualidad: StatusWrapper<ISeguimientoJustificacionAnualidad>): void {
+    seguimientoJustificacionAnualidad.setCreated();
+    this.setChanges(true);
+  }
+
+  updateSeguimientoJustificacionAnualidad(seguimientoJustificacionAnualidad: StatusWrapper<ISeguimientoJustificacionAnualidad>): void {
+    if (!seguimientoJustificacionAnualidad.created) {
+      seguimientoJustificacionAnualidad.setEdited();
+      this.setChanges(true);
+    }
+  }
+
+  onRequerimientosJustificacionChanged(currentRequerimientosJustificacion: IRequerimientoJustificacion[]): void {
+    // Si se elimina un Requerimiento de Justificacion y no hay otro asociado al mismo Periodo de Justificacion
+    // desaparece el Seguimiento de Justificacion de Anualidad asociado a dicho Periodo de Justificacion
+    this.seguimientosJustificacionAnualidad$.next(
+      this.seguimientosJustificacionAnualidad$.value.filter(seguimientoJustificacionAnualidad =>
+        currentRequerimientosJustificacion.some(requerimientoJustificacion =>
+          requerimientoJustificacion?.proyectoPeriodoJustificacion?.identificadorJustificacion ===
+          seguimientoJustificacionAnualidad.value.identificadorJustificacion))
+    );
+    this.setChanges(this.hasFragmentChangesPending());
+  }
+
   updatePeriodoJustificacion(periodoJustificacion: StatusWrapper<IProyectoPeriodoJustificacionWithTituloProyecto>): void {
     periodoJustificacion.setEdited();
     this.seguimientosJustificacion$.next(
-      this.calculateFechaJustificacion(this.seguimientosJustificacion$.value, this.periodosJustificacion$.value)
+      this.refreshSeguimientosJustificacionUltimaFechaJustificacion(
+        this.seguimientosJustificacion$.value, this.periodosJustificacion$.value
+      )
     );
+    this.seguimientosJustificacionAnualidad$.next(
+      this.refreshSeguimientosJustificacionIdentificadorJustificacion(this.seguimientosJustificacionAnualidad$.value, periodoJustificacion)
+    );
+    this.periodoJustificacionChanged$.next(this.getProyectoPeriodoJustificacion(periodoJustificacion.value));
     this.setChanges(true);
+  }
+
+  private refreshSeguimientosJustificacionIdentificadorJustificacion(
+    seguimientosJustificacionAnualidad: StatusWrapper<ISeguimientoJustificacionAnualidad>[],
+    periodoJustificacion: StatusWrapper<IProyectoPeriodoJustificacionWithTituloProyecto>
+  ): StatusWrapper<ISeguimientoJustificacionAnualidad>[] {
+    return seguimientosJustificacionAnualidad.map(seguimientoJustificacionAnualidad => {
+      if (seguimientoJustificacionAnualidad.value.proyectoPeriodoJustificacionId === periodoJustificacion.value.id) {
+        seguimientoJustificacionAnualidad.value.identificadorJustificacion = periodoJustificacion.value.identificadorJustificacion;
+      }
+      return seguimientoJustificacionAnualidad;
+    });
   }
 
   updatePeriodoSeguimiento(periodoSeguimiento: StatusWrapper<IProyectoPeriodoSeguimientoWithTituloProyecto>): void {
@@ -297,7 +398,9 @@ export class SeguimientoJustificacionResumenFragment extends Fragment {
       this.updatePeriodosJustificacion(),
       this.updatePeriodosSeguimiento(),
       this.createSeguimientosJustificacion(),
-      this.updateSeguimientosJustificacion()
+      this.updateSeguimientosJustificacion(),
+      this.createSeguimientosJustificacionAnualidad(),
+      this.updateSeguimientosJustificacionAnualidad()
     ).pipe(
       tap(() => {
         this.setChanges(this.hasFragmentChangesPending());
@@ -308,7 +411,8 @@ export class SeguimientoJustificacionResumenFragment extends Fragment {
   private hasFragmentChangesPending(): boolean {
     return this.periodosJustificacion$.value.some(wrapper => wrapper.edited)
       || this.periodosSeguimiento$.value.some(wrapper => wrapper.edited)
-      || this.seguimientosJustificacion$.value.some(wrapper => wrapper.edited || wrapper.created);
+      || this.seguimientosJustificacion$.value.some(wrapper => wrapper.edited || wrapper.created)
+      || this.seguimientosJustificacionAnualidad$.value.some(wrapper => wrapper.edited || wrapper.created);
   }
 
   private createSeguimientosJustificacion(): Observable<void> {
@@ -370,6 +474,64 @@ export class SeguimientoJustificacionResumenFragment extends Fragment {
     target: IProyectoSeguimientoJustificacionWithFechaJustificacion
   ): void {
     target.fechaUltimaJustificacion = source.fechaUltimaJustificacion;
+  }
+
+  private createSeguimientosJustificacionAnualidad(): Observable<void> {
+    const current = this.seguimientosJustificacionAnualidad$.value;
+    return from(current.filter(wrapper => wrapper.created)).pipe(
+      mergeMap((wrapper) =>
+        this.proyectoPeriodoJustificacionSeguimientoService.create(
+          wrapper.value.proyectoPeriodoJustificacionSeguimiento)
+          .pipe(
+            map((proyectoPeriodoJustificacionSeguimientoResponse) =>
+              this.refreshSeguimientosJustificacionAnualidadTableData(proyectoPeriodoJustificacionSeguimientoResponse, wrapper, current)
+            ),
+          )
+      )
+    );
+  }
+
+  private updateSeguimientosJustificacionAnualidad(): Observable<void> {
+    const current = this.seguimientosJustificacionAnualidad$.value;
+    return from(current.filter(wrapper => wrapper.edited)).pipe(
+      mergeMap((wrapper) =>
+        this.proyectoPeriodoJustificacionSeguimientoService.update(
+          wrapper.value.proyectoPeriodoJustificacionSeguimiento.id,
+          wrapper.value.proyectoPeriodoJustificacionSeguimiento)
+          .pipe(
+            map((proyectoPeriodoJustificacionSeguimientoResponse) =>
+              this.refreshSeguimientosJustificacionAnualidadTableData(proyectoPeriodoJustificacionSeguimientoResponse, wrapper, current)
+            ),
+          )
+      )
+    );
+  }
+
+  private refreshSeguimientosJustificacionAnualidadTableData(
+    proyectoPeriodoJustificacionSeguimientoResponse: IProyectoPeriodoJustificacionSeguimiento,
+    wrapper: StatusWrapper<ISeguimientoJustificacionAnualidad>,
+    current: StatusWrapper<ISeguimientoJustificacionAnualidad>[]
+  ): void {
+    const seguimientoJustificacionToCreate: ISeguimientoJustificacionAnualidad = {
+      proyectoPeriodoJustificacionSeguimiento: proyectoPeriodoJustificacionSeguimientoResponse
+    } as ISeguimientoJustificacionAnualidad;
+    this.copySeguimientoJustificacionAnualidadRelatedAttributes(
+      wrapper.value, seguimientoJustificacionToCreate
+    );
+    current[current.findIndex(c => c === wrapper)] = new StatusWrapper<ISeguimientoJustificacionAnualidad>(
+      seguimientoJustificacionToCreate);
+    this.seguimientosJustificacionAnualidad$.next(current);
+  }
+
+  private copySeguimientoJustificacionAnualidadRelatedAttributes(
+    source: ISeguimientoJustificacionAnualidad,
+    target: ISeguimientoJustificacionAnualidad
+  ): void {
+    target.proyectoPeriodoJustificacionSeguimiento.proyectoAnualidad = source.proyectoPeriodoJustificacionSeguimiento.proyectoAnualidad;
+    target.fechaPresentacionJustificacion = source.fechaPresentacionJustificacion;
+    target.identificadorJustificacion = source.identificadorJustificacion;
+    target.proyectoId = source.proyectoId;
+    target.proyectoPeriodoJustificacionId = source.proyectoPeriodoJustificacionId;
   }
 
   private updatePeriodosJustificacion(): Observable<void> {

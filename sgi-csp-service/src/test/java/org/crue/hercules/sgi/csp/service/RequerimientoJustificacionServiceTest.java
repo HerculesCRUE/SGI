@@ -54,6 +54,9 @@ class RequerimientoJustificacionServiceTest extends BaseServiceTest {
   private AlegacionRequerimientoService alegacionRequerimientoService;
 
   @MockBean
+  private ProyectoPeriodoJustificacionSeguimientoService proyectoPeriodoJustificacionSeguimientoService;
+
+  @MockBean
   private EntityManager entityManager;
 
   @MockBean
@@ -355,6 +358,42 @@ class RequerimientoJustificacionServiceTest extends BaseServiceTest {
       Assertions.assertThat(tipoRequerimiento.getObservaciones())
           .isEqualTo("RequerimientoJustificacion-" + String.format("%03d", j));
     }
+  }
+
+  @Test
+  void existsAnyByProyectoPeriodoJustificacionId_ReturnsTrue() {
+    // given: Un proyectoPeriodoJustificacionId
+    Long proyectoPeriodoJustificacionId = 123L;
+
+    // when: Existe un RequerimientoJustificacion asociado al
+    // proyectoPeriodoJustificacionId
+    BDDMockito
+        .given(requerimientoJustificacionRepository
+            .count(ArgumentMatchers.<Specification<RequerimientoJustificacion>>any()))
+        .willReturn(1L);
+
+    // then: Devuelve true
+    boolean existsAny = requerimientoJustificacionService
+        .existsAnyByProyectoPeriodoJustificacionId(proyectoPeriodoJustificacionId);
+    Assertions.assertThat(existsAny).isTrue();
+  }
+
+  @Test
+  void existsAnyByProyectoPeriodoJustificacionId_ReturnsFalse() {
+    // given: Un proyectoPeriodoJustificacionId
+    Long proyectoPeriodoJustificacionId = 124L;
+
+    // when: Existe un RequerimientoJustificacion asociado al
+    // proyectoPeriodoJustificacionId
+    BDDMockito
+        .given(requerimientoJustificacionRepository
+            .count(ArgumentMatchers.<Specification<RequerimientoJustificacion>>any()))
+        .willReturn(0L);
+
+    // then: Devuelve true
+    boolean existsAny = requerimientoJustificacionService
+        .existsAnyByProyectoPeriodoJustificacionId(proyectoPeriodoJustificacionId);
+    Assertions.assertThat(existsAny).isFalse();
   }
 
   private RequerimientoJustificacion generarMockRequerimientoJustificacion(Long id) {

@@ -5,9 +5,11 @@ import { IProyectoPeriodoSeguimiento } from '@core/models/csp/proyecto-periodo-s
 import { IProyectoSeguimientoEjecucionEconomica } from '@core/models/csp/proyecto-seguimiento-ejecucion-economica';
 import { IProyectoSeguimientoJustificacion } from '@core/models/csp/proyecto-seguimiento-justificacion';
 import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-justificacion';
+import { ISeguimientoJustificacionAnualidad } from '@core/models/csp/seguimiento-justificacion-anualidad';
 import { environment } from '@env';
 import { SgiRestBaseService, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { IProyectoPeriodoJustificacionResponse } from '../proyecto-periodo-justificacion/proyecto-periodo-justificacion-response';
 import { PROYECTO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER } from '../proyecto-periodo-justificacion/proyecto-periodo-justificacion-response.converter';
 import { IProyectoPeriodoSeguimientoResponse } from '../proyecto-periodo-seguimiento/proyecto-periodo-seguimiento-response';
@@ -16,6 +18,8 @@ import { IProyectoSeguimientoJustificacionResponse } from '../proyecto-seguimien
 import { PROYECTO_SEGUIMIENTO_JUSTIFICACION_RESPONSE_CONVERTER } from '../proyecto-seguimiento-justificacion/proyecto-seguimiento-justificacion-response.converter';
 import { IRequerimientoJustificacionResponse } from '../requerimiento-justificacion/requerimiento-justificacion-response';
 import { REQUERIMIENTO_JUSTIFICACION_RESPONSE_CONVERTER } from '../requerimiento-justificacion/requerimiento-justificacion-response.converter';
+import { ISeguimientoJustificacionAnualidadResponse } from '../seguimiento-justificacion-anualidad/seguimiento-justificacion-anualidad-response';
+import { SEGUIMIENTO_JUSTIFICACION_ANUALIDAD_RESPONSE_CONVERTER } from '../seguimiento-justificacion-anualidad/seguimiento-justificacion-anualidad-response.converter';
 import { IProyectoSeguimientoEjecucionEconomicaResponse } from './proyecto-seguimiento-ejecucion-economica-response';
 import { PROYECTO_SEGUIMIENTO_EJECUCION_ECONOMICA_RESPONSE_CONVERTER } from './proyecto-seguimiento-ejecucion-economica-response.converter';
 
@@ -79,6 +83,17 @@ export class ProyectoSeguimientoEjecucionEconomicaService extends SgiRestBaseSer
       `${this.endpointUrl}/${proyectoSgeRef}/seguimientos-justificacion`,
       options,
       PROYECTO_SEGUIMIENTO_JUSTIFICACION_RESPONSE_CONVERTER
+    );
+  }
+
+  findSeguimientosJustificacionAnualidad(
+    proyectoSgeRef: string): Observable<ISeguimientoJustificacionAnualidad[]> {
+    return this.find<ISeguimientoJustificacionAnualidadResponse, ISeguimientoJustificacionAnualidad>(
+      `${this.endpointUrl}/${proyectoSgeRef}/seguimientos-justificacion-anualidad`,
+      null,
+      SEGUIMIENTO_JUSTIFICACION_ANUALIDAD_RESPONSE_CONVERTER
+    ).pipe(
+      map(response => response.items)
     );
   }
 }

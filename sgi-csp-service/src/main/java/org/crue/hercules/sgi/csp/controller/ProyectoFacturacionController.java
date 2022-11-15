@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -57,12 +58,30 @@ public class ProyectoFacturacionController {
    * @return objeto de tipo {@link ProyectoFacturacionOutput} con la copia del
    *         objeto que se ha actualizado
    */
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E','CSP-PRO-INV-VR')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E')")
   @PutMapping("/{id}")
   public ResponseEntity<ProyectoFacturacionOutput> update(@PathVariable(required = true) Long id,
       @Valid @RequestBody ProyectoFacturacionInput toUpdate) {
     toUpdate.setId(id);
     return ResponseEntity.ok(this.convert(this.proyectoFacturacionService.update(this.convert(toUpdate))));
+  }
+
+  /**
+   * Actualiza un objeto de tipo {@link ProyectoFacturacion} con la informacion de
+   * validacion
+   * 
+   * @param id       {@link Long} id del objeto a actualizar
+   * @param toUpdate objeto de tipo {@link ProyectoFacturacionInput} con la
+   *                 información a actualizar
+   * @return objeto de tipo {@link ProyectoFacturacionOutput} con la copia del
+   *         objeto que se ha actualizado
+   */
+  @PreAuthorize("hasAuthority('CSP-PRO-INV-VR')")
+  @PatchMapping("/{id}/validacion-ip")
+  public ResponseEntity<ProyectoFacturacionOutput> updateValidacionIP(@PathVariable(required = true) Long id,
+      @Valid @RequestBody ProyectoFacturacionInput toUpdate) {
+    toUpdate.setId(id);
+    return ResponseEntity.ok(this.convert(this.proyectoFacturacionService.updateValidacionIP(this.convert(toUpdate))));
   }
 
   /**

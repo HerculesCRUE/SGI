@@ -124,29 +124,6 @@ public class ProgramaController {
   }
 
   /**
-   * Devuelve todas las entidades {@link Programa} activos paginadas
-   *
-   * @param query  la información del filtro.
-   * @param paging la información de la paginación.
-   * @return la lista de entidades {@link Programa} paginadas
-   */
-  @GetMapping()
-  @PreAuthorize("hasAuthorityForAnyUO ('AUTH')")
-  public ResponseEntity<Page<Programa>> findAll(@RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging) {
-    log.debug("findAll(String query, Pageable paging) - start");
-    Page<Programa> page = service.findAll(query, paging);
-
-    if (page.isEmpty()) {
-      log.debug("findAll(String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    log.debug("findAll(String query, Pageable paging) - end");
-    return new ResponseEntity<>(page, HttpStatus.OK);
-  }
-
-  /**
    * Devuelve todas las entidades {@link Programa} activos con padre null (los
    * planes) paginadas
    *

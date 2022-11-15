@@ -11,11 +11,13 @@ import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoSeguimientoOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoSeguimientoEjecucionEconomica;
 import org.crue.hercules.sgi.csp.dto.ProyectoSeguimientoJustificacionOutput;
 import org.crue.hercules.sgi.csp.dto.RequerimientoJustificacionOutput;
+import org.crue.hercules.sgi.csp.dto.SeguimientoJustificacionAnualidad;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoSeguimientoJustificacion;
 import org.crue.hercules.sgi.csp.model.RequerimientoJustificacion;
+import org.crue.hercules.sgi.csp.service.ProyectoPeriodoJustificacionSeguimientoService;
 import org.crue.hercules.sgi.csp.service.ProyectoPeriodoJustificacionService;
 import org.crue.hercules.sgi.csp.service.ProyectoPeriodoSeguimientoService;
 import org.crue.hercules.sgi.csp.service.ProyectoSeguimientoJustificacionService;
@@ -58,6 +60,8 @@ public class SeguimientoEjecucionEconomicaController {
       + "requerimientos-justificacion";
   public static final String PATH_SEGUIMIENTO_JUSTIFICACION = PATH_DELIMITER + PATH_ID + PATH_DELIMITER
       + "seguimientos-justificacion";
+  public static final String PATH_SEGUIMIENTO_JUSTIFICACION_ANUALIDAD = PATH_DELIMITER + PATH_ID + PATH_DELIMITER
+      + "seguimientos-justificacion-anualidad";
 
   private final ModelMapper modelMapper;
   private final ProyectoService proyectoService;
@@ -68,6 +72,7 @@ public class SeguimientoEjecucionEconomicaController {
   private final RequerimientoJustificacionConverter requerimientoJustificacionConverter;
   private final ProyectoSeguimientoJustificacionService proyectoSeguimientoJustificacionService;
   private final ProyectoSeguimientoJustificacionConverter proyectoSeguimientoJustificacionConverter;
+  private final ProyectoPeriodoJustificacionSeguimientoService proyectoPeriodoJustificacionSeguimientoService;
 
   /**
    * Devuelve una lista paginada y filtrada
@@ -216,5 +221,29 @@ public class SeguimientoEjecucionEconomicaController {
 
     log.debug("findSeguimientosJustificacion(String id, String query, Pageable paging) - end");
     return new ResponseEntity<>(proyectoSeguimientoJustificacionConverter.convert(page), HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista de todos los {@link SeguimientoJustificacionAnualidad}
+   * asociados a un ProyectoSGE.
+   * 
+   * @param id identificador del proyectoSGE
+   * @return el listado de entidades {@link SeguimientoJustificacionAnualidad}.
+   */
+  @GetMapping(PATH_SEGUIMIENTO_JUSTIFICACION_ANUALIDAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SJUS-V', 'CSP-SJUS-E')")
+  public ResponseEntity<List<SeguimientoJustificacionAnualidad>> findSeguimientosJustificacionAnualidad(
+      @PathVariable String id) {
+    log.debug("findSeguimientosJustificacionAnualidad(String id) - start");
+    List<SeguimientoJustificacionAnualidad> list = proyectoPeriodoJustificacionSeguimientoService
+        .findSeguimientosJustificacionAnualidadByProyectoSgeRef(id);
+
+    if (list.isEmpty()) {
+      log.debug("findSeguimientosJustificacionAnualidad(String id) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findSeguimientosJustificacionAnualidad(String id) - end");
+    return new ResponseEntity<>(list, HttpStatus.OK);
   }
 }

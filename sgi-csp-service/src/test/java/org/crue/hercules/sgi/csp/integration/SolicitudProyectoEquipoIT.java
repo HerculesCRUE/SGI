@@ -81,9 +81,9 @@ class SolicitudProyectoEquipoIT extends BaseIT {
     Long solicitudProyectoId = 1L;
 
     List<SolicitudProyectoEquipo> toUpdateList = Arrays.asList(
-        this.buildMockSolicitudProyectoEquipo(1L, 1L, 1, 20, "01889311", 2L),
-        this.buildMockSolicitudProyectoEquipo(2L, 1L, 1, 22, "01925489", 2L),
-        this.buildMockSolicitudProyectoEquipo(3L, 1L, 1, 21, "usr-002", 1L));
+        this.buildMockSolicitudProyectoEquipo(1L, 1L, 1, 20, "01889311", 2L, false),
+        this.buildMockSolicitudProyectoEquipo(2L, 1L, 1, 22, "01925489", 2L, false),
+        this.buildMockSolicitudProyectoEquipo(3L, 1L, 1, 21, "usr-002", 1L, true));
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_SOLICITUD_PROYECTO_ID)
         .buildAndExpand(solicitudProyectoId).toUri();
@@ -113,7 +113,7 @@ class SolicitudProyectoEquipoIT extends BaseIT {
   }
 
   private SolicitudProyectoEquipo buildMockSolicitudProyectoEquipo(Long id, Long solicitudProyectoId, int mesInicio,
-      int mesFin, String personaRef, Long idRol) {
+      int mesFin, String personaRef, Long idRol, Boolean rolPrincipal) {
     return SolicitudProyectoEquipo.builder()
         .id(id)
         .solicitudProyectoId(solicitudProyectoId)
@@ -122,6 +122,7 @@ class SolicitudProyectoEquipoIT extends BaseIT {
         .personaRef(personaRef)
         .rolProyecto(RolProyecto.builder()
             .id(idRol)
+            .rolPrincipal(rolPrincipal)
             .build())
         .build();
   }

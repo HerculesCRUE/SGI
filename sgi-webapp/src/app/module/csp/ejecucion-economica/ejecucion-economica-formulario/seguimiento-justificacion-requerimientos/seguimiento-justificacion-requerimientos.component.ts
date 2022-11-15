@@ -50,7 +50,7 @@ export class SeguimientoJustificacionRequerimientosComponent extends FragmentCom
   }
 
   constructor(
-    public actionService: EjecucionEconomicaActionService,
+    private readonly actionService: EjecucionEconomicaActionService,
     private dialogService: DialogService,
     private readonly translate: TranslateService
   ) {

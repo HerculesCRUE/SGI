@@ -10,6 +10,7 @@ import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.repository.EstadoSolicitudRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudExternaRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.impl.EstadoSolicitudServiceImpl;
 import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
@@ -35,6 +36,8 @@ class EstadoSolicitudServiceTest extends BaseServiceTest {
   private EstadoSolicitudRepository repository;
   @Mock
   private SolicitudRepository solicitudRepository;
+  @Mock
+  private SolicitudExternaRepository solicitudExternaRepository;
 
   private SolicitudAuthorityHelper authorityHelper;
 
@@ -42,7 +45,7 @@ class EstadoSolicitudServiceTest extends BaseServiceTest {
 
   @BeforeEach
   void setUp() throws Exception {
-    authorityHelper = new SolicitudAuthorityHelper(solicitudRepository);
+    authorityHelper = new SolicitudAuthorityHelper(solicitudRepository, solicitudExternaRepository);
     service = new EstadoSolicitudServiceImpl(repository, authorityHelper);
   }
 

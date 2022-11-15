@@ -170,7 +170,7 @@ export class EquipoInvestigadorListadoComponent extends FragmentComponent implem
         memoria.estadoActual.id === ESTADO_MEMORIA.NO_PROCEDE_EVALUAR;
     });
     return (this.sgiAuthService.authStatus$?.getValue()?.userRefId !== personaRef)
-      && ((memorias.length === this.listadoFragment.memorias.length));
+      && (memorias.length === this.listadoFragment.memorias.length);
   }
 
 }

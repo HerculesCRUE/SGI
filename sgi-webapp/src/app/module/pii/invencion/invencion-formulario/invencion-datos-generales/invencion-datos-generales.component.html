@@ -71,7 +71,8 @@
         [fxFlex.gt-md]="fxFlexProperties33.gtMd" [fxFlexOrder]="fxFlexProperties33.order">
         <mat-form-field fxFill>
           <mat-label>{{'pii.invencion.tipo-proteccion' | translate}}</mat-label>
-          <sgi-select-tipo-proteccion #tipoProteccion formControlName="tipoProteccion" required>
+          <sgi-select-tipo-proteccion [tipoPropiedad]="formPart.invencionTipoPropiedad" #tipoProteccion
+            formControlName="tipoProteccion" required>
           </sgi-select-tipo-proteccion>
           <mat-error *ngIf="formGroup.controls.tipoProteccion.errors?.required">
             {{'error.required.entity' | translate:msgParamTipoProteccionEntity}}

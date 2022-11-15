@@ -23,6 +23,7 @@ import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudCambioEstadoDefinitivoDa
 import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudCambioEstadoProvisionalData;
 import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudCambioEstadoSolicitadaData;
 import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudPeticionEvaluacionData;
+import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudUsuarioExternoData;
 import org.crue.hercules.sgi.csp.dto.com.CspComVencimientoPeriodoPagoSocioData;
 import org.crue.hercules.sgi.csp.dto.com.EmailInput;
 import org.crue.hercules.sgi.csp.dto.com.EmailInput.Deferrable;
@@ -90,6 +91,10 @@ public class SgiApiComService extends SgiApiBaseService {
 
   private static final String TEMPLATE_CSP_COM_SOL_CAMB_EST_DEN_PROV = "CSP_COM_SOL_CAMB_EST_DEN_PROV";
   private static final String TEMPLATE_CSP_COM_SOL_CAMB_EST_DEN_PROV_PARAM = TEMPLATE_CSP_COM_SOL_CAMB_EST_DEN_PROV
+      + DATA;
+
+  private static final String TEMPLATE_CSP_COM_SOL_USUARIO_EXTERNO = "CSP_COM_SOL_USUARIO_EXTERNO";
+  private static final String TEMPLATE_CSP_COM_SOL_USUARIO_EXTERNO_PARAM = TEMPLATE_CSP_COM_SOL_USUARIO_EXTERNO
       + DATA;
 
   private static final String TEMPLATE_CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO = "CSP_COM_INICIO_PRESENTACION_SEGUIMIENTO_CIENTIFICO";
@@ -825,6 +830,14 @@ public class SgiApiComService extends SgiApiBaseService {
         .getId();
     log.debug("createProyectoFaseEmail({}, {}, {}, {}) - end", proyectoFaseId, subject, content, recipients);
     return id;
+  }
+
+  public EmailOutput createComunicadoSolicitudUsuarioExterno(
+      CspComSolicitudUsuarioExternoData data, List<Recipient> recipients)
+      throws JsonProcessingException {
+    return this.createComunicado(data, recipients,
+        TEMPLATE_CSP_COM_SOL_USUARIO_EXTERNO,
+        TEMPLATE_CSP_COM_SOL_USUARIO_EXTERNO_PARAM);
   }
 
   private <T> EmailOutput createComunicado(T data, List<Recipient> recipients, String template, String templateParam)

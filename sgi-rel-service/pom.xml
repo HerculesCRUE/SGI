@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.crue.hercules.sgi</groupId>
     <artifactId>sgi-starter-parent</artifactId>
-    <version>0.0.11</version>
+    <version>0.0.12</version>
   </parent>
 
   <groupId>org.crue.hercules.sgi</groupId>

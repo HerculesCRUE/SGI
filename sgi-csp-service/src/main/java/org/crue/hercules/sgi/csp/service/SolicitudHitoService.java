@@ -271,6 +271,13 @@ public class SolicitudHitoService {
       throw new SolicitudHitoNotFoundException(id);
     }
 
+    Optional<SolicitudHitoAviso> aviso = solicitudHitoAvisoRepository.findBySolicitudHitoId(id);
+    if (aviso.isPresent()) {
+      this.sgiApiTaskService.deleteTask(Long.parseLong(aviso.get().getTareaProgramadaRef()));
+      this.emailService.deleteEmail(Long.parseLong(aviso.get().getComunicadoRef()));
+      this.solicitudHitoAvisoRepository.delete(aviso.get());
+    }
+
     repository.deleteById(id);
     log.debug("delete(Long id) - end");
 

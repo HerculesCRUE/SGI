@@ -1,3 +1,4 @@
+import { T } from '@angular/cdk/keycodes';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -49,7 +50,7 @@ import { DatosContactoService } from '@core/services/sgp/datos-contacto/datos-co
 import { DatosPersonalesService } from '@core/services/sgp/datos-personales.service';
 import { NivelAcademicosService } from '@core/services/sgp/nivel-academico.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { VinculacionService } from '@core/services/sgp/vinculacion.service';
+import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
@@ -279,7 +280,7 @@ export class SolicitudActionService extends ActionService {
       this.data = route.snapshot.data[SOLICITUD_DATA_KEY];
       this.enableEdit();
       this.datosProyectoComplete$.next(this.data.hasSolicitudProyecto);
-      if (this.data.solicitud.convocatoriaId) {
+      if (this.data.solicitud.convocatoriaId && !this.isInvestigador) {
         this.addConvocatoriaLink(this.data.solicitud.convocatoriaId);
       }
     }
@@ -529,15 +530,38 @@ export class SolicitudActionService extends ActionService {
             if (value) {
               this.equipoProyecto.initialize();
               this.documentos.initialize();
+              this.subscriptions.push(this.datosGenerales.getFormGroup().controls.solicitante.valueChanges.subscribe(
+                (solicitante) => {
+                  if (this.equipoProyecto.proyectoEquipos$.value.length === 0 ||
+                    this.equipoProyecto.proyectoEquipos$.value.filter(equipo =>
+                      equipo.value.solicitudProyectoEquipo.persona?.id === solicitante?.id
+                      && equipo.value.solicitudProyectoEquipo.rolProyecto?.rolPrincipal).length > 0) {
+                    this.equipoProyecto.setErrors(false);
+                  } else {
+                    this.equipoProyecto.setErrors(true);
+                  }
+                }
+              ));
             }
           }
         ));
 
         this.subscriptions.push(
           this.equipoProyecto.proyectoEquipos$.subscribe(
-            proyectoEquipo => this._isSolicitanteInSolicitudEquipo = proyectoEquipo.some(miembroEquipo =>
-              miembroEquipo.value.solicitudProyectoEquipo.persona.id === this.solicitud.solicitante.id))
-        );
+            (proyectoEquipo) => {
+              this._isSolicitanteInSolicitudEquipo = proyectoEquipo.some(miembroEquipo =>
+                miembroEquipo.value.solicitudProyectoEquipo.persona.id === this.solicitud.solicitante.id);
+
+              if (proyectoEquipo.length === 0 ||
+                proyectoEquipo.filter(equipo =>
+                  equipo.value.solicitudProyectoEquipo.persona?.id === this.solicitante?.id
+                  && equipo.value.solicitudProyectoEquipo.rolProyecto?.rolPrincipal).length > 0) {
+                this.equipoProyecto.setErrors(false);
+              } else {
+                this.equipoProyecto.setErrors(true);
+              }
+            }
+          ));
 
       } else if (this.isFormularioSolicitudRrhh()) {
         this.solicitanteRrhh.initialize();

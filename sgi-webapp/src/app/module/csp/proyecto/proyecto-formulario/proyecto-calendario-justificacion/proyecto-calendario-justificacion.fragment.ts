@@ -9,8 +9,8 @@ import { ProyectoPeriodoJustificacionService } from '@core/services/csp/proyecto
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateTime } from 'luxon';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { concatMap, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { comparePeriodoJustificacion, getFechaFinPeriodoSeguimiento, getFechaInicioPeriodoSeguimiento } from '../../../proyecto-periodo-seguimiento/proyecto-periodo-seguimiento.utils';
 
 const PROYECTO_PERIODO_JUSTIFICACION_NO_COINCIDE_KEY = marker('info.csp.proyecto-periodo-justificacion.no-coincide-convocatoria');
@@ -38,6 +38,7 @@ export interface IPeriodoJustificacionListado {
   fechaFinPresentacion: DateTime;
   tipoJustificacion: TipoJustificacion;
   observaciones: string;
+  isProyectoPeriodoJustificacionDeleteable: boolean;
 }
 
 export class ProyectoCalendarioJustificacionFragment extends Fragment {
@@ -46,9 +47,10 @@ export class ProyectoCalendarioJustificacionFragment extends Fragment {
   constructor(
     key: number,
     public proyecto: IProyecto,
+    public readonly: boolean,
     private proyectoService: ProyectoService,
     private proyectoPeriodoJustifiacionService: ProyectoPeriodoJustificacionService,
-    private convocatoriaService: ConvocatoriaService
+    private convocatoriaService: ConvocatoriaService,
   ) {
     super(key);
     this.setComplete(true);
@@ -65,6 +67,24 @@ export class ProyectoCalendarioJustificacionFragment extends Fragment {
           } as IPeriodoJustificacionListado;
           return periodoJustificacionListado;
         })),
+        concatMap(periodosJustificacionListado => {
+          if (this.readonly) {
+            return of(periodosJustificacionListado);
+          }
+          return from(periodosJustificacionListado)
+            .pipe(
+              mergeMap(periodoJustificacionListado =>
+                this.proyectoPeriodoJustifiacionService.checkDeleteable(periodoJustificacionListado.proyectoPeriodoJustificacion.value.id)
+                  .pipe(
+                    map(isDeleteable => {
+                      periodoJustificacionListado.isProyectoPeriodoJustificacionDeleteable = isDeleteable;
+                      return periodoJustificacionListado;
+                    })
+                  )
+              ),
+              toArray()
+            );
+        }),
         switchMap(periodosJustificacionListado => {
           let requestConvocatoriaPeriodosJustificacion: Observable<IPeriodoJustificacionListado[]>;
 
@@ -117,7 +137,8 @@ export class ProyectoCalendarioJustificacionFragment extends Fragment {
     wrapped.setCreated();
 
     const periodoJustificacionListado: IPeriodoJustificacionListado = {
-      proyectoPeriodoJustificacion: wrapped
+      proyectoPeriodoJustificacion: wrapped,
+      isProyectoPeriodoJustificacionDeleteable: true
     } as IPeriodoJustificacionListado;
 
     const current = this.periodoJustificaciones$.value;
@@ -211,11 +232,7 @@ export class ProyectoCalendarioJustificacionFragment extends Fragment {
                 a.convocatoriaPeriodoJustificacion.mesInicial))) ? -1 : 0));
 
     this.periodoJustificaciones$?.value.forEach(c => {
-      if (c?.proyectoPeriodoJustificacion) {
-        c.numPeriodo = numPeriodo++;
-      } else {
-        c.numPeriodo = numPeriodo++;
-      }
+      c.numPeriodo = numPeriodo++;
     });
 
     this.periodoJustificaciones$?.next(this.periodoJustificaciones$?.value);

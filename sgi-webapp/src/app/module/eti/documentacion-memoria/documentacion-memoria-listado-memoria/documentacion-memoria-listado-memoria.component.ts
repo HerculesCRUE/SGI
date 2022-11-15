@@ -64,7 +64,7 @@ export class DocumentacionMemoriaListadoMemoriaComponent extends
                 } as IDocumentacionMemoriaWithInformeAndFichaEvaluador;
                 documentacionMemoria.push(documentoFichaEvaluador);
               }
-              response.items.map(documentoMemoria =>
+              response.items.forEach(documentoMemoria =>
                 documentacionMemoria.push(documentoMemoria as IDocumentacionMemoriaWithInformeAndFichaEvaluador));
               return of({
                 items: documentacionMemoria,

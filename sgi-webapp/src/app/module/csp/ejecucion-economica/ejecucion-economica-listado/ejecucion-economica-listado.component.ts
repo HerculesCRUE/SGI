@@ -18,6 +18,8 @@ import { EMPTY, from, Observable, Subscription } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { EJECUCION_ECONOMICA_ROUTE_NAMES } from '../ejecucion-economica-route-names';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../ejecucion-economica.action.service';
+import { MatDialog } from '@angular/material/dialog';
+import { IRequerimientoJustificacionListadoModalData, RequerimientoJustificacionListadoExportModalComponent } from '../modals/requerimiento-justificacion-listado-export-modal/requerimiento-justificacion-listado-export-modal.component';
 
 const MSG_ERROR = marker('error.load');
 
@@ -39,6 +41,8 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
   colectivosResponsable: string[];
   tipoEntidadSelected: TipoEntidad;
 
+  private idsProyectoSge: string[];
+
   get TIPO_ENTIDAD_MAP() {
     return TIPO_ENTIDAD_MAP;
   }
@@ -59,6 +63,7 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
     private personaService: PersonaService,
     private relacionEjecucionEconomicaService: RelacionEjecucionEconomicaService,
     private grupoService: GrupoService,
+    private readonly matDialog: MatDialog
   ) {
     super(snackBarService, MSG_ERROR);
   }
@@ -86,11 +91,14 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
         throw Error(`Invalid tipoEntidad "${this.tipoEntidadSelected}"`);
     }
 
+    this.idsProyectoSge = [];
+
     return relaciones$.pipe(
       map(result => result as SgiRestListResult<IRelacionEjecucionEconomicaWithResponsables>),
       switchMap(response =>
         from(response.items).pipe(
           mergeMap(relacion => {
+            this.idsProyectoSge.push(relacion.proyectoSge?.id);
             return serviceGetResponsables.findPersonaRefInvestigadoresPrincipales(relacion.id).pipe(
               filter(personaRefs => !!personaRefs),
               switchMap(personaRefs => this.personaService.findAllByIdIn(personaRefs).pipe(
@@ -150,7 +158,11 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
     if (this.busquedaAvanzada) {
       if (this.tipoEntidadSelected === TipoEntidad.PROYECTO) {
         restFilter
-          .and('proyecto.convocatoria.id', SgiRestFilterOperator.EQUALS, controls.convocatoria.value?.id?.toString())
+          .and('proyecto.convocatoria.id', SgiRestFilterOperator.EQUALS, controls.convocatoria.value?.id?.toString());
+        restFilter
+          .and('entidadConvocante', SgiRestFilterOperator.EQUALS, controls.entidadConvocante.value?.id?.toString());
+        restFilter
+          .and('entidadFinanciadora', SgiRestFilterOperator.EQUALS, controls.entidadFinanciadora.value?.id?.toString());
       }
 
       restFilter
@@ -183,6 +195,8 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
       fechaFinDesde: new FormControl(null),
       fechaFinHasta: new FormControl(null),
       convocatoria: new FormControl(null),
+      entidadConvocante: new FormControl(null),
+      entidadFinanciadora: new FormControl(null),
       responsable: new FormControl({ value: null, disabled: true })
     });
 
@@ -229,6 +243,18 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
         }
       )
     );
+  }
+
+  openExportModal(): void {
+    const data: IRequerimientoJustificacionListadoModalData = {
+      findOptions: this.findOptions,
+      idsProyectoSge: this.idsProyectoSge
+    };
+
+    const config = {
+      data
+    };
+    this.matDialog.open(RequerimientoJustificacionListadoExportModalComponent, config);
   }
 
 }

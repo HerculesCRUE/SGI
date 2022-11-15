@@ -158,7 +158,7 @@ public class EtiReportController {
    * @return Resource
    */
   @GetMapping("/informe-favorable-memoria/{idEvaluacion}")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR', 'ETI-EVC-EVALR')")
   public ResponseEntity<Resource> getInformeFavorableMemoria(@PathVariable Long idEvaluacion) {
 
     log.debug("getInformeFavorableMemoria(idEvaluacion) - start");

@@ -17,7 +17,7 @@ import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
 import { DatosPersonalesService } from '@core/services/sgp/datos-personales.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { VinculacionService } from '@core/services/sgp/vinculacion.service';
+import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
@@ -595,7 +595,7 @@ export class ProyectoEquipoFragment extends Fragment {
     if (requisitosConvocatoria.requisitosIp?.numMaximoIP) {
       const numIps = miembrosEquipoPrincipales.length;
 
-      if (numIps < requisitosConvocatoria.requisitosIp?.numMaximoIP) {
+      if (numIps > requisitosConvocatoria.requisitosIp?.numMaximoIP) {
         return of(ValidacionRequisitosEquipoIp.NUM_MAX_IP);
       }
     }

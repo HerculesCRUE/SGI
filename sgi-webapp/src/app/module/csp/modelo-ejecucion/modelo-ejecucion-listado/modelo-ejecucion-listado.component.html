@@ -18,7 +18,11 @@
         <div class="col">
           <mat-form-field>
             <mat-label>{{'label.activo' | translate}}</mat-label>
-            <sgi-select-boolean formControlName="activo"></sgi-select-boolean>
+            <mat-select matNativeControl formControlName="activo">
+              <mat-option value="todos">{{'label.todos' | translate}}</mat-option>
+              <mat-option value="true">{{'label.si' | translate}}</mat-option>
+              <mat-option value="false">{{'label.no' | translate}}</mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
       </ng-container>

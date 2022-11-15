@@ -32,6 +32,7 @@ class ProyectoPeriodoJustificacionIT extends BaseIT {
   private static final String CONTROLLER_BASE_PATH = ProyectoPeriodoJustificacionController.REQUEST_MAPPING;
   private static final String PATH_PROYECTO_PERIODO_JUSTIFICACION = "/proyectoperiodojustificacion";
   private static final String PATH_IDENTIFICADOR_JUSTIFICACION = ProyectoPeriodoJustificacionController.PATH_IDENTIFICADOR_JUSTIFICACION;
+  private static final String PATH_DELETEABLE = ProyectoPeriodoJustificacionController.PATH_DELETEABLE;
 
   private HttpEntity<Object> buildRequest(HttpHeaders headers, Object entity, String... roles) throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());
@@ -278,6 +279,78 @@ class ProyectoPeriodoJustificacionIT extends BaseIT {
     ProyectoPeriodoJustificacionOutput proyectoPeriodoJustificacionFound = response.getBody();
     Assertions.assertThat(proyectoPeriodoJustificacionFound.getIdentificadorJustificacion())
         .as("getIdentificadorJustificacion()").isEqualTo(identificadorJustificacion);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off    
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/proyecto_proyecto_sge.sql",
+    "classpath:scripts/proyecto_periodo_justificacion.sql",
+    "classpath:scripts/contexto_proyecto.sql",
+    "classpath:scripts/estado_proyecto.sql",
+    "classpath:scripts/tipo_requerimiento.sql",
+    "classpath:scripts/requerimiento_justificacion.sql",
+    // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void checkDeleteable_Returns200() throws Exception {
+    String roles = "CSP-PRO-E";
+    Long id = 3L;
+
+    // when: find Convocatoria
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_DELETEABLE)
+        .buildAndExpand(id).toUri();
+
+    final ResponseEntity<ProyectoPeriodoJustificacionOutput> response = restTemplate.exchange(
+        uri, HttpMethod.HEAD,
+        buildRequest(null, null, roles),
+        ProyectoPeriodoJustificacionOutput.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off    
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/modelo_unidad.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/proyecto.sql",
+    "classpath:scripts/proyecto_proyecto_sge.sql",
+    "classpath:scripts/proyecto_periodo_justificacion.sql",
+    "classpath:scripts/contexto_proyecto.sql",
+    "classpath:scripts/estado_proyecto.sql",
+    "classpath:scripts/tipo_requerimiento.sql",
+    "classpath:scripts/requerimiento_justificacion.sql",
+    // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void checkDeleteable_Returns204() throws Exception {
+    String roles = "CSP-PRO-E";
+    Long id = 1L;
+
+    // when: find Convocatoria
+    URI uri = UriComponentsBuilder
+        .fromUriString(CONTROLLER_BASE_PATH + PATH_DELETEABLE)
+        .buildAndExpand(id).toUri();
+
+    final ResponseEntity<ProyectoPeriodoJustificacionOutput> response = restTemplate.exchange(
+        uri, HttpMethod.HEAD,
+        buildRequest(null, null, roles),
+        ProyectoPeriodoJustificacionOutput.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
   private ProyectoPeriodoJustificacionInput buildMockProyectoPeriodoJusitificacionInput(Long id) {

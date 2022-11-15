@@ -69,7 +69,7 @@ export class MemoriaDocumentacionMemoriaModalComponent extends DialogFormCompone
           resolveFormularioByTipoEvaluacionAndComite(this.data.tipoEvaluacion, this.data.comite)
         ).subscribe(
           (docs) => {
-            docs.filter(doc => doc.formulario.id === 1 ? doc.id === 11 : (doc.formulario.id === 2 ? doc.id === 16 : (doc.formulario.id === 3 ? doc.id === 21 : doc))).map(doc => this.formGroup.controls.tipoDocumento.setValue(doc));
+            docs.filter(doc => doc.formulario.id === 1 ? doc.id === 11 : (doc.formulario.id === 2 ? doc.id === 16 : (doc.formulario.id === 3 ? doc.id === 21 : doc))).forEach(doc => this.formGroup.controls.tipoDocumento.setValue(doc));
           }
         ));
       }

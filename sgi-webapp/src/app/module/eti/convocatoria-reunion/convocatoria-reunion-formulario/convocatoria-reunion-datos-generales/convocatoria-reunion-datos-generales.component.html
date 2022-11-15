@@ -115,6 +115,9 @@
         <mat-error *ngIf="formGroup.controls.lugar.errors?.required">
           {{'error.required.entity' | translate:msgParamLugarEntity}}
         </mat-error>
+        <mat-error *ngIf="formGroup.controls.lugar.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamLugarEntity}}
+        </mat-error>
       </mat-form-field>
     </div>
 
@@ -143,6 +146,9 @@
           placeholder="{{'eti.convocatoria-reunion.orden-dia' | translate}}" required></textarea>
         <mat-error *ngIf="formGroup.controls.ordenDia.errors?.required">
           {{'error.required.entity' | translate:msgParamOrdenDiaEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.ordenDia.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamOrdenDiaEntity}}
         </mat-error>
       </mat-form-field>
     </div>

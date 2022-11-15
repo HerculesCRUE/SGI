@@ -31,6 +31,7 @@ class ProyectoPeriodoJustificacionControllerTest extends BaseControllerTest {
   private static final String CONTROLLER_BASE_PATH = ProyectoPeriodoJustificacionController.REQUEST_MAPPING;
   private static final String PATH_PARAMETER_ID = ProyectoPeriodoJustificacionController.PATH_PARAMETER_ID;
   private static final String PATH_IDENTIFICADOR_JUSTIFICACION = ProyectoPeriodoJustificacionController.PATH_IDENTIFICADOR_JUSTIFICACION;
+  private static final String PATH_DELETEABLE = ProyectoPeriodoJustificacionController.PATH_DELETEABLE;
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SJUS-E" })
@@ -93,6 +94,46 @@ class ProyectoPeriodoJustificacionControllerTest extends BaseControllerTest {
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: ProyectoPeriodoJustificacion is updated
         .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
+  void checkDeleteable_Returns204() throws Exception {
+    // given: Existing ProyectoPeriodoJustificacion
+    Long id = 1L;
+
+    // when: ProyectoPeriodoJustificacion is not deleteable
+    BDDMockito.given(service.checkDeleteable(ArgumentMatchers.anyLong()))
+        .willReturn(Boolean.FALSE);
+
+    mockMvc
+        .perform(MockMvcRequestBuilders
+            .head(CONTROLLER_BASE_PATH + PATH_DELETEABLE, id)
+            .with(SecurityMockMvcRequestPostProcessors.csrf())
+            .accept(MediaType.APPLICATION_JSON))
+        .andDo(SgiMockMvcResultHandlers.printOnError())
+        // then: Response 204
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
+  void checkDeleteable_Returns200() throws Exception {
+    // given: Existing ProyectoPeriodoJustificacion
+    Long id = 1L;
+
+    // when: ProyectoPeriodoJustificacion is deleteable
+    BDDMockito.given(service.checkDeleteable(ArgumentMatchers.anyLong()))
+        .willReturn(Boolean.TRUE);
+
+    mockMvc
+        .perform(MockMvcRequestBuilders
+            .head(CONTROLLER_BASE_PATH + PATH_DELETEABLE, id)
+            .with(SecurityMockMvcRequestPostProcessors.csrf())
+            .accept(MediaType.APPLICATION_JSON))
+        .andDo(SgiMockMvcResultHandlers.printOnError())
+        // then: Response 200
+        .andExpect(MockMvcResultMatchers.status().isOk());
   }
 
   ProyectoPeriodoJustificacionIdentificadorJustificacionInput generarMockProyectoPeriodoJustificacionIdentificadorJustificacionInput() {

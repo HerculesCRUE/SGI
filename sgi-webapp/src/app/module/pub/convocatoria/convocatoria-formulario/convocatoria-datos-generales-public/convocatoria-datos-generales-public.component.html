@@ -66,9 +66,8 @@
       <!-- Entidad gestora -->
       <mat-form-field fxFlex="40%">
         <mat-label>{{'csp.convocatoria.entidad-gestora' | translate}}</mat-label>
-        <sgi-select-empresa placeholder="{{'csp.convocatoria.entidad-gestora' | translate}}"
-          formControlName="entidadGestora">
-        </sgi-select-empresa>
+        <input matInput formControlName="entidadGestora" type="text"
+          placeholder="{{'csp.convocatoria.entidad-gestora' | translate}}">
       </mat-form-field>
     </div>
 

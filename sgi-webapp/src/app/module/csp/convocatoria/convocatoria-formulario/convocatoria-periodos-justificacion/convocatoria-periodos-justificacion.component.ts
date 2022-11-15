@@ -5,6 +5,7 @@ import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
+import { TIPO_JUSTIFICACION_MAP } from '@core/enums/tipo-justificacion';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaPeriodoJustificacion } from '@core/models/csp/convocatoria-periodo-justificacion';
 import { DialogService } from '@core/services/dialog.service';
@@ -37,6 +38,11 @@ export class ConvocatoriaPeriodosJustificacionComponent extends FragmentComponen
 
   msgParamEntity = {};
   textoDelete: string;
+
+  get TIPO_JUSTIFICACION_MAP() {
+    return TIPO_JUSTIFICACION_MAP;
+  }
+
 
   constructor(
     private dialogService: DialogService,

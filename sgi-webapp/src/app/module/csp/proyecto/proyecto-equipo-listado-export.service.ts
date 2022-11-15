@@ -191,7 +191,7 @@ export class ProyectoEquipoListadoExportService extends AbstractTableExportFillS
       miembroEquipoTable += '\n';
       miembroEquipoTable += this.getEmailPrincipal(miembroEquipo?.persona) ?? '';
       miembroEquipoTable += '\n';
-      miembroEquipoTable += miembroEquipo?.rolProyecto?.nombre ?? '';
+      miembroEquipoTable += this.sanitizeText(miembroEquipo?.rolProyecto?.nombre ?? '');
       miembroEquipoTable += '\n';
       miembroEquipoTable += this.luxonDatePipe.transform(LuxonUtils.toBackend(miembroEquipo?.fechaInicio, true), 'shortDate') ?? '';
       miembroEquipoTable += '\n';
@@ -226,6 +226,10 @@ export class ProyectoEquipoListadoExportService extends AbstractTableExportFillS
       elementsRow.push('');
       elementsRow.push('');
     }
+  }
+
+  private sanitizeText(text: string): string {
+    return text.replace('–', '-');
   }
 
   private getEmailPrincipal(persona: IPersona): string {

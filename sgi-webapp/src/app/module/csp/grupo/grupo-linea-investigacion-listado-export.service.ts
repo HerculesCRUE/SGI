@@ -129,7 +129,7 @@ export class GrupoLineaInvestigacionListadoExportService extends AbstractTableEx
     return this.grupoLineaInvestigacionService.findLineasInvestigadores(grupoLineaInvestigacion.id).pipe(
       map((responseLineaInvestigador) => {
         grupoData.lineasInvestigador.push(...responseLineaInvestigador.items);
-        grupoData.lineasInvestigador.map(lineaInvestigador => {
+        grupoData.lineasInvestigador.forEach(lineaInvestigador => {
           if (!lineaInvestigador.grupoLineaInvestigacion) {
             lineaInvestigador.grupoLineaInvestigacion = grupoLineaInvestigacion;
           }
@@ -173,7 +173,7 @@ export class GrupoLineaInvestigacionListadoExportService extends AbstractTableEx
 
             return this.clasificacionService.findById(grupoLineaClasificacion.nivelSeleccionado.id).pipe(
               map((clasificacion) => {
-                grupoData.clasificaciones.filter(c => c.id === grupoLineaClasificacion.id).map(gc => {
+                grupoData.clasificaciones.filter(c => c.id === grupoLineaClasificacion.id).forEach(gc => {
                   gc.nivelSeleccionado = clasificacion;
                   gc.niveles = [clasificacion];
                 });
@@ -186,7 +186,7 @@ export class GrupoLineaInvestigacionListadoExportService extends AbstractTableEx
             );
           }),
           map((grupoLineaClasificacion) => {
-            grupoData.clasificaciones.filter(c => c.id === grupoLineaClasificacion.id).map(gc => {
+            grupoData.clasificaciones.filter(c => c.id === grupoLineaClasificacion.id).forEach(gc => {
               gc.clasificacion = grupoLineaClasificacion.niveles[grupoLineaClasificacion.niveles.length - 1];
               gc.nivelesTexto = grupoLineaClasificacion.niveles
                 .slice(0, grupoLineaClasificacion.niveles.length)
@@ -205,7 +205,7 @@ export class GrupoLineaInvestigacionListadoExportService extends AbstractTableEx
     return this.grupoLineaInvestigacionService.findLineasEquiposInstrumentales(grupoLineaInvestigacion.id).pipe(
       map((responseLineaEquipoInstrumental) => {
         grupoData.lineasEquiposInstrumentales.push(...responseLineaEquipoInstrumental.items);
-        grupoData.lineasEquiposInstrumentales.map(lineaEquipoInstrumental => {
+        grupoData.lineasEquiposInstrumentales.forEach(lineaEquipoInstrumental => {
           if (!lineaEquipoInstrumental.grupoLineaInvestigacion) {
             lineaEquipoInstrumental.grupoLineaInvestigacion = grupoLineaInvestigacion;
           }

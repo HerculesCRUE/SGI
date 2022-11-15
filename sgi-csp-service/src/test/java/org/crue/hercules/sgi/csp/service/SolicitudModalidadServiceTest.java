@@ -17,6 +17,7 @@ import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudModalidadRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.impl.SolicitudModalidadServiceImpl;
+import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -50,12 +51,15 @@ class SolicitudModalidadServiceTest extends BaseServiceTest {
   @Mock
   private SolicitudService solicitudService;
 
+  @Mock
+  private SolicitudAuthorityHelper authorityHelper;
+
   private SolicitudModalidadService service;
 
   @BeforeEach
   void setUp() throws Exception {
     service = new SolicitudModalidadServiceImpl(repository, solicitudRepository, programaRepository,
-        convocatoriaEntidadConvocanteRepository, solicitudService);
+        convocatoriaEntidadConvocanteRepository, solicitudService, authorityHelper);
   }
 
   @Test

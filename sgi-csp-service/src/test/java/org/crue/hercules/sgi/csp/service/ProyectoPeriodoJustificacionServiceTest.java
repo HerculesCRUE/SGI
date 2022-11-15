@@ -10,6 +10,8 @@ import javax.persistence.PersistenceUnitUtil;
 import javax.validation.ValidationException;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoJustificacionNotDeleteableException;
+import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.Configuracion;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.repository.ProyectoPeriodoJustificacionRepository;
@@ -42,6 +44,8 @@ class ProyectoPeriodoJustificacionServiceTest extends BaseServiceTest {
   private ProyectoRepository proyectoRepository;
   @MockBean
   private ConfiguracionService configuracionService;
+  @MockBean
+  private RequerimientoJustificacionService requerimientoJustificacionService;
   @MockBean
   private EntityManager entityManager;
   @MockBean
@@ -102,7 +106,46 @@ class ProyectoPeriodoJustificacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void updateIdentificadorJustificacion_WithIdNull_ThrowsIllegalArgumentException() {
+  void deleteById_WithIdNull_ThrowsIllegalArgumentException() {
+    // given: id null
+    Long id = null;
+    // when: Eliminamos por id null
+    // then: Lanza IllegalArgumentException porque el id no puede ser null
+    Assertions.assertThatThrownBy(() -> service.delete(id))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  void delete_WithIdNotExisting_ThrowsProyectoPeriodoJustificacionNotFoundException() {
+    // given: id not existing
+    Long id = 123L;
+    // when: ProyectoPeriodoJustificacion can not be deleted
+    BDDMockito
+        .given(requerimientoJustificacionService.existsAnyByProyectoPeriodoJustificacionId(ArgumentMatchers.anyLong()))
+        .willReturn(Boolean.TRUE);
+    // then: Lanza IllegalArgumentException porque el id no puede ser null
+    Assertions.assertThatThrownBy(() -> service.delete(id))
+        .isInstanceOf(ProyectoPeriodoJustificacionNotFoundException.class);
+  }
+
+  @Test
+  void delete_WithIdNotDeleteable_ThrowsProyectoPeriodoJustificacionNotDeleteableException() {
+    // given: id not deleteable
+    Long id = 123L;
+    // when: ProyectoPeriodoJustificacion with id exists but can not be deleted
+    BDDMockito
+        .given(repository.existsById(ArgumentMatchers.anyLong()))
+        .willReturn(Boolean.TRUE);
+    BDDMockito
+        .given(requerimientoJustificacionService.existsAnyByProyectoPeriodoJustificacionId(ArgumentMatchers.anyLong()))
+        .willReturn(Boolean.TRUE);
+    // then: Lanza IllegalArgumentException porque el id no puede ser null
+    Assertions.assertThatThrownBy(() -> service.delete(id))
+        .isInstanceOf(ProyectoPeriodoJustificacionNotDeleteableException.class);
+  }
+
+  @Test
+  void updateIdentificadorJustificacion_WithIdNull_ThrowsIllegalArgumentException() {
     // given: Un ProyectoPeriodoJustificacion con id null
     Long idPeriodoJustificacion = null;
     ProyectoPeriodoJustificacion periodoJustificacion = generarMockProyectoPeriodoJustificacion(idPeriodoJustificacion);
@@ -111,7 +154,7 @@ class ProyectoPeriodoJustificacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void updateIdentificadorJustificacion_WithRepeatedIdentificadorJustificacion_ThrowsValidationException() {
+  void updateIdentificadorJustificacion_WithRepeatedIdentificadorJustificacion_ThrowsValidationException() {
     // given: Dos ProyectoPeriodoJustificacion sin identificadorJustificacion
     // repetido
     Long idPeriodoJustificacion = 1L;
@@ -141,7 +184,7 @@ class ProyectoPeriodoJustificacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void updateIdentificadorJustificacion_WithIdentificadorJustificacionFormatNotValid_ThrowsValidationException() {
+  void updateIdentificadorJustificacion_WithIdentificadorJustificacionFormatNotValid_ThrowsValidationException() {
     // given: un ProyectoPeriodoJustificacion
     Long idPeriodoJustificacion = 1L;
     String newIdJustificacionNotValidFormat = "221965";
@@ -164,7 +207,7 @@ class ProyectoPeriodoJustificacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void updateIdentificadorJustificacion_ReturnsProyectoPeriodoJustificacion() {
+  void updateIdentificadorJustificacion_ReturnsProyectoPeriodoJustificacion() {
     // given: Un ProyectoPeriodoJustificacion
     Long idPeriodoJustificacion = 1L;
     String newIdJustificacion = "22/1965";

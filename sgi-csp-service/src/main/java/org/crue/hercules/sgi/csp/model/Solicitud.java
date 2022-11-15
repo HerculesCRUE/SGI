@@ -83,7 +83,7 @@ public class Solicitud extends BaseEntity {
   private EstadoSolicitud estado;
 
   /** CreadorRef */
-  @Column(name = "creador_ref", length = 50, nullable = false)
+  @Column(name = "creador_ref", length = 50, nullable = true)
   @Size(max = 50)
   private String creadorRef;
 

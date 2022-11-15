@@ -53,4 +53,42 @@ public interface SolicitudModalidadService {
    */
   Page<SolicitudModalidad> findAllBySolicitud(Long solicitudId, String query, Pageable pageable);
 
+  /**
+   * Guarda la entidad {@link SolicitudModalidad}.
+   * 
+   * @param solicitudPublicId  el id de la {@link Solicitud}.
+   * @param solicitudModalidad la entidad {@link SolicitudModalidad} a guardar.
+   * @return solicitudModalidad la entidad {@link SolicitudModalidad} persistida.
+   */
+  SolicitudModalidad createByExternalUser(String solicitudPublicId, SolicitudModalidad solicitudModalidad);
+
+  /**
+   * Actualiza los datos del {@link SolicitudModalidad}.
+   * 
+   * @param solicitudPublicId  el id de la {@link Solicitud}.
+   * @param solicitudModalidad {@link SolicitudModalidad} con los datos
+   *                           actualizados.
+   * @return solicitudModalidad {@link SolicitudModalidad} actualizado.
+   */
+  SolicitudModalidad updateByExternalUser(String solicitudPublicId, final SolicitudModalidad solicitudModalidad);
+
+  /**
+   * Elimina el {@link SolicitudModalidad}.
+   *
+   * @param solicitudPublicId el id de la {@link Solicitud}.
+   * @param id                Id del {@link SolicitudModalidad}.
+   */
+  void deleteByExternalUser(String solicitudPublicId, Long id);
+
+  /**
+   * Obtiene las {@link SolicitudModalidad} para una {@link Solicitud}.
+   *
+   * @param solicitudPublicId el id de la {@link Solicitud}.
+   * @param query             la información del filtro.
+   * @param paging            la información de la paginación.
+   * @return la lista de entidades {@link SolicitudModalidad} de la
+   *         {@link Solicitud} paginadas.
+   */
+  Page<SolicitudModalidad> findAllBySolicitudPublicId(String solicitudPublicId, String query, Pageable paging);
+
 }

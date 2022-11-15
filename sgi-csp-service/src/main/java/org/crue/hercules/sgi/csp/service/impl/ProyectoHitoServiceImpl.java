@@ -145,6 +145,13 @@ public class ProyectoHitoServiceImpl implements ProyectoHitoService {
       throw new ProyectoHitoNotFoundException(id);
     }
 
+    Optional<ProyectoHitoAviso> aviso = proyectoHitoAvisoRepository.findByProyectoHitoId(id);
+    if (aviso.isPresent()) {
+      this.sgiApiTaskService.deleteTask(Long.parseLong(aviso.get().getTareaProgramadaRef()));
+      this.emailService.deleteEmail(Long.parseLong(aviso.get().getComunicadoRef()));
+      this.proyectoHitoAvisoRepository.delete(aviso.get());
+    }
+
     repository.deleteById(id);
     log.debug("delete(Long id) - end");
 

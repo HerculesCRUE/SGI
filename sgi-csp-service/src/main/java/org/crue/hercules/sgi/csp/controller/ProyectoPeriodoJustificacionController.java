@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,6 +46,7 @@ public class ProyectoPeriodoJustificacionController {
   public static final String REQUEST_MAPPING = "/proyectoperiodosjustificacion";
   public static final String PATH_PARAMETER_ID = "/{id}";
   public static final String PATH_IDENTIFICADOR_JUSTIFICACION = "/identificadorjustificacion";
+  public static final String PATH_DELETEABLE = PATH_PARAMETER_ID + "/deleteable";
 
   ModelMapper modelMapper;
 
@@ -182,6 +184,22 @@ public class ProyectoPeriodoJustificacionController {
 
     log.debug("findByIdentificadorJustificacion(String identificadorJustificacion) - end");
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Comprueba si la entidad {@link ProyectoPeriodoJustificacion} se puede
+   * eliminar.
+   * 
+   * @param id Identificador de {@link ProyectoPeriodoJustificacion}.
+   * @return true/false.
+   */
+  @RequestMapping(method = RequestMethod.HEAD, path = PATH_DELETEABLE)
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  public ResponseEntity<Void> checkDeleteable(@PathVariable Long id) {
+    log.debug("checkDeleteable(Long id) - start");
+    boolean isDeleteable = service.checkDeleteable(id);
+    log.debug("checkDeleteable(Long id) - end");
+    return isDeleteable ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   private ProyectoPeriodoJustificacionOutput convert(ProyectoPeriodoJustificacion proyectoPeriodoJustificacion) {

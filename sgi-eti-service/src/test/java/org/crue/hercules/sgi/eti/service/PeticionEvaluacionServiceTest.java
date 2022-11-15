@@ -1,6 +1,8 @@
 package org.crue.hercules.sgi.eti.service;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -9,10 +11,17 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.dto.PeticionEvaluacionWithIsEliminable;
 import org.crue.hercules.sgi.eti.exceptions.PeticionEvaluacionNotFoundException;
+import org.crue.hercules.sgi.eti.model.Comite;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
+import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva;
+import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion.TipoValorSocial;
+import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.TipoActividad;
+import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
+import org.crue.hercules.sgi.eti.model.TipoMemoria;
 import org.crue.hercules.sgi.eti.repository.PeticionEvaluacionRepository;
 import org.crue.hercules.sgi.eti.service.impl.PeticionEvaluacionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +46,9 @@ public class PeticionEvaluacionServiceTest extends BaseServiceTest {
   @Mock
   private PeticionEvaluacionRepository peticionEvaluacionRepository;
 
+  @Mock
+  private MemoriaService memoriaService;
+
   @Autowired
   private SgiConfigProperties sgiConfigProperties;
 
@@ -44,7 +56,8 @@ public class PeticionEvaluacionServiceTest extends BaseServiceTest {
 
   @BeforeEach
   public void setUp() throws Exception {
-    peticionEvaluacionService = new PeticionEvaluacionServiceImpl(sgiConfigProperties, peticionEvaluacionRepository);
+    peticionEvaluacionService = new PeticionEvaluacionServiceImpl(sgiConfigProperties, peticionEvaluacionRepository,
+        memoriaService);
   }
 
   @Test
@@ -165,13 +178,23 @@ public class PeticionEvaluacionServiceTest extends BaseServiceTest {
 
   @Test
   public void delete_WithExistingId_DeletesPeticionEvaluacion() {
+    PeticionEvaluacion peticionEvaluacionServicioActualizado = generarMockPeticionEvaluacion(1L,
+        "PeticionEvaluacion1 actualizada");
+    List<Memoria> memorias = new ArrayList<>();
     // given: Id existente
     BDDMockito.given(peticionEvaluacionRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
-    BDDMockito.doNothing().when(peticionEvaluacionRepository).deleteById(ArgumentMatchers.anyLong());
+    BDDMockito.given(memoriaService.findAllByPeticionEvaluacionIdAndEstadoActualId(ArgumentMatchers.anyLong(),
+        ArgumentMatchers.anyLong())).willReturn(memorias);
+    PeticionEvaluacion peticionEvaluacion = generarMockPeticionEvaluacion(1L, "PeticionEvaluacion1");
+
+    BDDMockito.given(peticionEvaluacionRepository.findById(1L)).willReturn(Optional.of(peticionEvaluacion));
+    BDDMockito.given(peticionEvaluacionRepository.save(peticionEvaluacion))
+        .willReturn(peticionEvaluacionServicioActualizado);
 
     Assertions.assertThatCode(
-        // when: Delete con id existente
-        () -> peticionEvaluacionService.delete(1L))
+        // when: Delete all
+        () -> peticionEvaluacionService.delete(
+            1L))
         // then: No se lanza ninguna excepción
         .doesNotThrowAnyException();
   }
@@ -356,5 +379,97 @@ public class PeticionEvaluacionServiceTest extends BaseServiceTest {
 
   public PeticionEvaluacionWithIsEliminable generarMockPeticionEvaluacionWithIsEliminable(Long id, String titulo) {
     return new PeticionEvaluacionWithIsEliminable(generarMockPeticionEvaluacion(id, titulo), true);
+  }
+
+  /**
+   * Función que devuelve un objeto Memoria.
+   * 
+   * @param id            id del memoria.
+   * @param numReferencia número de la referencia de la memoria.
+   * @param titulo        titulo de la memoria.
+   * @param version       version de la memoria.
+   * @return el objeto Memoria
+   */
+
+  private Memoria generarMockMemoria(Long id, String numReferencia, String titulo, Integer version,
+      Long idTipoEstadoMemoria) {
+
+    return new Memoria(id, numReferencia, generarMockPeticionEvaluacion(id, titulo + " PeticionEvaluacion" + id),
+        generarMockComite(id, "comite" + id, true), titulo, "user-00" + id,
+        generarMockTipoMemoria(1L, "TipoMemoria1", true),
+        generarMockTipoEstadoMemoria(idTipoEstadoMemoria, "Estado", Boolean.TRUE), Instant.now(), Boolean.TRUE,
+        generarMockRetrospectiva(1L), version, "CodOrganoCompetente", Boolean.TRUE, null);
+  }
+
+  /**
+   * Función que devuelve un objeto comité.
+   * 
+   * @param id     identificador del comité.
+   * @param comite comité.
+   * @param activo indicador de activo.
+   */
+  private Comite generarMockComite(Long id, String comite, Boolean activo) {
+    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
+    return new Comite(id, comite, "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto", "articulo",
+        formulario, activo);
+
+  }
+
+  /**
+   * Función que devuelve un objeto tipo memoria.
+   * 
+   * @param id     identificador del tipo memoria.
+   * @param nombre nobmre.
+   * @param activo indicador de activo.
+   */
+  private TipoMemoria generarMockTipoMemoria(Long id, String nombre, Boolean activo) {
+    return new TipoMemoria(id, nombre, activo);
+
+  }
+
+  /**
+   * Función que devuelve un objeto TipoEstadoMemoria.
+   * 
+   * @param id     identificador del TipoEstadoMemoria.
+   * @param nombre nombre.
+   * @param activo indicador de activo.
+   */
+  private TipoEstadoMemoria generarMockTipoEstadoMemoria(Long id, String nombre, Boolean activo) {
+    return new TipoEstadoMemoria(id, nombre, activo);
+
+  }
+
+  /**
+   * Genera un objeto {@link Retrospectiva}
+   * 
+   * @param id
+   * @return Retrospectiva
+   */
+  private Retrospectiva generarMockRetrospectiva(Long id) {
+
+    final Retrospectiva data = new Retrospectiva();
+    data.setId(id);
+    data.setEstadoRetrospectiva(generarMockDataEstadoRetrospectiva((id % 2 == 0) ? 2L : 1L));
+    data.setFechaRetrospectiva(LocalDate.of(2020, 7, id.intValue()).atStartOfDay(ZoneOffset.UTC).toInstant());
+
+    return data;
+  }
+
+  /**
+   * Genera un objeto {@link EstadoRetrospectiva}
+   * 
+   * @param id
+   * @return EstadoRetrospectiva
+   */
+  private EstadoRetrospectiva generarMockDataEstadoRetrospectiva(Long id) {
+
+    String txt = (id % 2 == 0) ? String.valueOf(id) : "0" + String.valueOf(id);
+
+    final EstadoRetrospectiva data = new EstadoRetrospectiva();
+    data.setId(id);
+    data.setNombre("NombreEstadoRetrospectiva" + txt);
+    data.setActivo(Boolean.TRUE);
+
+    return data;
   }
 }

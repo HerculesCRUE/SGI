@@ -66,4 +66,15 @@ export class ConvocatoriaRequisitoEquipoPublicService extends _ConvocatoriaRequi
       );
   }
 
+  /**
+   * Recupera el Requisito del equipo asociado a la convocatoria.
+   *
+   * @param id Id de la convocatoria
+   */
+  findByConvocatoriaId(id: number): Observable<IConvocatoriaRequisitoEquipo> {
+    return this.http.get<IConvocatoriaRequisitoEquipoBackend>(`${this.endpointUrl}/${id}`).pipe(
+      map(response => CONVOCATORIA_REQUISITO_EQUIPO_CONVERTER.toTarget(response))
+    );
+  }
+
 }

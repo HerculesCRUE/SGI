@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IConfiguracion } from '@core/models/csp/configuracion';
+import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
 import { IRelacionEjecucionEconomica, TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
+import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-justificacion';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { IPersona } from '@core/models/sgp/persona';
 import { ActionService } from '@core/services/action-service';
@@ -9,6 +11,7 @@ import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-pr
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
 import { ProyectoConceptoGastoCodigoEcService } from '@core/services/csp/proyecto-concepto-gasto-codigo-ec.service';
 import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
+import { ProyectoPeriodoJustificacionSeguimientoService } from '@core/services/csp/proyecto-periodo-justificacion-seguimiento/proyecto-periodo-justificacion-seguimiento.service';
 import { ProyectoPeriodoJustificacionService } from '@core/services/csp/proyecto-periodo-justificacion/proyecto-periodo-justificacion.service';
 import { ProyectoPeriodoSeguimientoService } from '@core/services/csp/proyecto-periodo-seguimiento.service';
 import { ProyectoProyectoSgeService } from '@core/services/csp/proyecto-proyecto-sge.service';
@@ -20,6 +23,7 @@ import { CalendarioFacturacionService } from '@core/services/sge/calendario-fact
 import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economica.service';
 import { GastoService } from '@core/services/sge/gasto/gasto.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
+import { filter } from 'rxjs/operators';
 import { EJECUCION_ECONOMICA_DATA_KEY } from './ejecucion-economica-data.resolver';
 import { DetalleOperacionesGastosFragment } from './ejecucion-economica-formulario/detalle-operaciones-gastos/detalle-operaciones-gastos.fragment';
 import { DetalleOperacionesIngresosFragment } from './ejecucion-economica-formulario/detalle-operaciones-ingresos/detalle-operaciones-ingresos.fragment';
@@ -101,7 +105,8 @@ export class EjecucionEconomicaActionService extends ActionService {
     requerimientoJustificacionService: RequerimientoJustificacionService,
     proyectoProyectoSgeService: ProyectoProyectoSgeService,
     proyectoPeriodoSeguimientoService: ProyectoPeriodoSeguimientoService,
-    proyectoSeguimientoJustificacionService: ProyectoSeguimientoJustificacionService
+    proyectoSeguimientoJustificacionService: ProyectoSeguimientoJustificacionService,
+    proyectoPeriodoJustificacionSeguimientoService: ProyectoPeriodoJustificacionSeguimientoService
   ) {
     super();
 
@@ -162,12 +167,51 @@ export class EjecucionEconomicaActionService extends ActionService {
     this.seguimientoJustificacionResumen = new SeguimientoJustificacionResumenFragment(
       id, this.data.proyectoSge, this.data.relaciones.filter(relacion => relacion.tipoEntidad === TipoEntidad.PROYECTO),
       this.data.configuracion, proyectoService, proyectoSeguimientoEjecucionEconomicaService, empresaService,
-      proyectoPeriodoJustificacionService, proyectoPeriodoSeguimientoService, proyectoSeguimientoJustificacionService
+      proyectoPeriodoJustificacionService, proyectoPeriodoSeguimientoService, proyectoSeguimientoJustificacionService,
+      proyectoPeriodoJustificacionSeguimientoService
     );
 
     this.seguimientoJustificacionRequerimientos = new SeguimientoJustificacionRequerimientosFragment(
       id, proyectoSeguimientoEjecucionEconomicaService, requerimientoJustificacionService,
       proyectoProyectoSgeService, proyectoPeriodoJustificacionService
+    );
+
+    this.subscriptions.push(
+      this.seguimientoJustificacionResumen.initialized$
+        .pipe(
+          filter(initialized => initialized)
+        )
+        .subscribe(() => {
+          if (this.seguimientoJustificacionRequerimientos.isInitialized()) {
+            // Si se inicializa el Resumen y se paso antes por Requerimientos se pasa al Resumen
+            // el estado actual de los requerimientos para el seguimiento por anualidad.
+            this.seguimientoJustificacionResumen.onRequerimientosJustificacionChanged(
+              this.seguimientoJustificacionRequerimientos.getCurrentRequerimientosJustificacion()
+            );
+          } else {
+            // Si se inicializa el Resumen y aun no se inicializo Requerimientos, se inicializa Requerimientos
+            // para sincronizar el identificador de justificacion de los requerimientos.
+            this.seguimientoJustificacionRequerimientos.initialize();
+          }
+        })
+    );
+
+    this.subscriptions.push(
+      this.seguimientoJustificacionRequerimientos.getRequerimientoJustificacionAfterDeletion$()
+        .pipe(
+          filter(() => this.seguimientoJustificacionResumen.isInitialized())
+        )
+        .subscribe(requerimientosJustificacion =>
+          this.seguimientoJustificacionResumen.onRequerimientosJustificacionChanged(requerimientosJustificacion)
+        )
+    );
+
+    this.subscriptions.push(
+      this.seguimientoJustificacionResumen.getPeriodoJustificacionChanged$()
+        .pipe(
+          filter(() => this.seguimientoJustificacionRequerimientos.isInitialized())
+        )
+        .subscribe(periodoJustificacion => this.seguimientoJustificacionRequerimientos.onPeriodoJustificacionChanged(periodoJustificacion))
     );
 
     this.addFragment(this.FRAGMENT.PROYECTOS, this.proyectos);
@@ -185,5 +229,4 @@ export class EjecucionEconomicaActionService extends ActionService {
     this.addFragment(this.FRAGMENT.SEGUIMIENTO_JUSTIFICACION_RESUMEN, this.seguimientoJustificacionResumen);
     this.addFragment(this.FRAGMENT.SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS, this.seguimientoJustificacionRequerimientos);
   }
-
 }

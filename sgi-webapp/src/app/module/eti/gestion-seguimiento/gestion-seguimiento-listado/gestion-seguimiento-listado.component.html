@@ -31,7 +31,8 @@
         <div class="col">
           <mat-form-field>
             <mat-label>{{'eti.gestion-seguimiento.tipo-evaluacion' | translate}}</mat-label>
-            <sgi-select-tipo-evaluacion formControlName="tipoEvaluacion"></sgi-select-tipo-evaluacion>
+            <sgi-select-tipo-evaluacion formControlName="tipoEvaluacion" [isTipoEvaluacion]="false">
+            </sgi-select-tipo-evaluacion>
           </mat-form-field>
         </div>
 

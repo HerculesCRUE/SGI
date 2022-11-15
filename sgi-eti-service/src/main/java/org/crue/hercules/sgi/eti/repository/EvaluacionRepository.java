@@ -77,5 +77,5 @@ public interface EvaluacionRepository
    * @param convocatoriaReunionId Id de {@link ConvocatoriaReunion}.
    * @return si hay acta asociado a la convocatoria de reunión
    */
-  boolean existsByConvocatoriaReunionId(Long convocatoriaReunionId);
+  boolean existsByConvocatoriaReunionIdAndActivoIsTrue(Long convocatoriaReunionId);
 }

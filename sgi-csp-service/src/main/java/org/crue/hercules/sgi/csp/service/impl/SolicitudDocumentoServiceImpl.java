@@ -7,6 +7,7 @@ import org.crue.hercules.sgi.csp.repository.SolicitudDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudDocumentoSpecifications;
 import org.crue.hercules.sgi.csp.service.SolicitudDocumentoService;
 import org.crue.hercules.sgi.csp.service.SolicitudService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
@@ -50,8 +51,7 @@ public class SolicitudDocumentoServiceImpl implements SolicitudDocumentoService 
 
     Assert.isNull(solicitudDocumento.getId(), "Id tiene que ser null para crear la SolicitudDocumento");
 
-    Assert.notNull(solicitudDocumento.getSolicitudId(),
-        "Solicitud id no puede ser null para crear una SolicitudModalidad");
+    AssertHelper.idNotNull(solicitudDocumento.getSolicitudId(), SolicitudDocumento.class);
 
     Assert.notNull(solicitudDocumento.getNombre(),
         "Nombre documento no puede ser null para crear la SolicitudDocumento");
@@ -163,6 +163,118 @@ public class SolicitudDocumentoServiceImpl implements SolicitudDocumentoService 
 
     Page<SolicitudDocumento> returnValue = repository.findAll(specs, paging);
     log.debug("findAllBySolicitud(Long solicitudId, String query, Pageable paging) - end");
+    return returnValue;
+  }
+
+  /**
+   * Guarda la entidad {@link SolicitudDocumento}.
+   * 
+   * @param solicitudPublicId  el id de la {@link Solicitud}.
+   * @param solicitudDocumento la entidad {@link SolicitudDocumento} a guardar.
+   * @return la entidad {@link SolicitudDocumento} persistida.
+   */
+  @Override
+  @Transactional
+  public SolicitudDocumento createByExternalUser(String solicitudPublicId, SolicitudDocumento solicitudDocumento) {
+    log.debug("createByExternalUser(String solicitudPublicId, SolicitudDocumento solicitudDocumento) - start");
+
+    Solicitud solicitud = authorityHelper.getSolicitudByPublicId(solicitudPublicId);
+    authorityHelper.checkExternalUserHasAuthorityModifySolicitud(solicitud);
+    solicitudDocumento.setSolicitudId(solicitud.getId());
+
+    Assert.isNull(solicitudDocumento.getId(), "Id tiene que ser null para crear la SolicitudDocumento");
+    AssertHelper.idNotNull(solicitudDocumento.getSolicitudId(), SolicitudDocumento.class);
+    Assert.notNull(solicitudDocumento.getNombre(),
+        "Nombre documento no puede ser null para crear la SolicitudDocumento");
+    Assert.notNull(solicitudDocumento.getDocumentoRef(),
+        "La referencia del documento no puede ser null para crear la SolicitudDocumento");
+
+    SolicitudDocumento returnValue = repository.save(solicitudDocumento);
+
+    log.debug("createByExternalUser(String solicitudPublicId, SolicitudDocumento solicitudDocumento) - end");
+    return returnValue;
+  }
+
+  /**
+   * Actualiza los datos del {@link SolicitudDocumento}.
+   * 
+   * @param solicitudPublicId  el id de la {@link Solicitud}.
+   * @param solicitudDocumento {@link SolicitudDocumento} con los datos
+   *                           actualizados.
+   * @return {@link SolicitudDocumento} actualizado.
+   */
+  @Override
+  @Transactional
+  public SolicitudDocumento updateByExternalUser(String solicitudPublicId, SolicitudDocumento solicitudDocumento) {
+    log.debug("updateByExternalUser(String solicitudPublicId, SolicitudModalidad solicitudDocumento) - start");
+
+    Assert.notNull(solicitudDocumento.getId(), "Id no puede ser null para actualizar SolicitudDocumento");
+
+    Assert.notNull(solicitudDocumento.getNombre(),
+        "Nombre documento no puede ser null para actualizar la SolicitudDocumento");
+    Assert.notNull(solicitudDocumento.getDocumentoRef(),
+        "La referencia del documento no puede ser null para actualizar la SolicitudDocumento");
+
+    return repository.findById(solicitudDocumento.getId()).map(solicitudDocumentoExistente -> {
+
+      Solicitud solicitud = authorityHelper.getSolicitudByPublicId(solicitudPublicId);
+      authorityHelper.checkExternalUserHasAuthorityModifySolicitud(solicitud);
+      Assert.isTrue(solicitud.getId().equals(solicitudDocumentoExistente.getSolicitudId()),
+          "No coincide el id de la solicitud");
+
+      solicitudDocumentoExistente.setComentario(solicitudDocumento.getComentario());
+      solicitudDocumentoExistente.setDocumentoRef(solicitudDocumento.getDocumentoRef());
+      solicitudDocumentoExistente.setTipoDocumento(solicitudDocumento.getTipoDocumento());
+      solicitudDocumentoExistente.setNombre(solicitudDocumento.getNombre());
+
+      SolicitudDocumento returnValue = repository.save(solicitudDocumentoExistente);
+
+      log.debug("updateByExternalUser(String solicitudPublicId, SolicitudDocumento solicitudDocumento) - end");
+      return returnValue;
+    }).orElseThrow(() -> new SolicitudDocumentoNotFoundException(solicitudDocumento.getId()));
+  }
+
+  /**
+   * Elimina el {@link SolicitudDocumento}.
+   *
+   * @param solicitudPublicId el id de la {@link Solicitud}.
+   * @param id                Id del {@link SolicitudDocumento}.
+   */
+  @Override
+  @Transactional
+  public void deleteByExternalUser(String solicitudPublicId, Long id) {
+    log.debug("deleteByExternalUser(String solicitudPublicId, Long id) - start");
+
+    Solicitud solicitud = authorityHelper.getSolicitudByPublicId(solicitudPublicId);
+    authorityHelper.checkExternalUserHasAuthorityModifySolicitud(solicitud);
+
+    AssertHelper.idNotNull(id, SolicitudDocumento.class);
+    if (!repository.existsById(id)) {
+      throw new SolicitudDocumentoNotFoundException(id);
+    }
+
+    repository.deleteById(id);
+    log.debug("deleteByExternalUser(String solicitudPublicId, Long id) - end");
+  }
+
+  /**
+   * Obtiene las {@link SolicitudDocumento} para una {@link Solicitud}.
+   *
+   * @param solicitudPublicId el id de la {@link Solicitud}.
+   * @param query             la información del filtro.
+   * @param paging            la información de la paginación.
+   * @return la lista de entidades {@link SolicitudDocumento} de la
+   *         {@link Solicitud} paginadas.
+   */
+  @Override
+  public Page<SolicitudDocumento> findAllBySolicitudPublicId(String solicitudPublicId, String query, Pageable paging) {
+    log.debug("findAllBySolicitudPublicId(String solicitudPublicId, String query, Pageable paging) - start");
+    Long solicitudId = authorityHelper.getSolicitudIdByPublicId(solicitudPublicId);
+    Specification<SolicitudDocumento> specs = SolicitudDocumentoSpecifications.bySolicitudId(solicitudId)
+        .and(SgiRSQLJPASupport.toSpecification(query));
+
+    Page<SolicitudDocumento> returnValue = repository.findAll(specs, paging);
+    log.debug("findAllBySolicitudPublicId(String solicitudPublicId, String query, Pageable paging) - end");
     return returnValue;
   }
 

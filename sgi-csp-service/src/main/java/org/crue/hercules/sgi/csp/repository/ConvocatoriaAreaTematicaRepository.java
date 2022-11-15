@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.model.AreaTematica;
@@ -22,11 +23,12 @@ public interface ConvocatoriaAreaTematicaRepository
   Optional<ConvocatoriaAreaTematica> findByConvocatoriaIdAndAreaTematicaId(Long convocatoriaId, Long areaTematicaId);
 
   /**
-   * Obtiene la {@link ConvocatoriaAreaTematica} para una {@link Convocatoria}.
+   * Obtiene las {@link ConvocatoriaAreaTematica} para una {@link Convocatoria}.
    *
    * @param convocatoriaId el id de la {@link Convocatoria}.
    * @return la entidad {@link ConvocatoriaAreaTematica} de la
    *         {@link Convocatoria}.
    */
-  Optional<ConvocatoriaAreaTematica> findByConvocatoriaId(Long convocatoriaId);
+  List<ConvocatoriaAreaTematica> findByConvocatoriaId(Long convocatoriaId);
+
 }

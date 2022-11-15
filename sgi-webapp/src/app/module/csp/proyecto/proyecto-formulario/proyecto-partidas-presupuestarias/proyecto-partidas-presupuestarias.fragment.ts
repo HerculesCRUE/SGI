@@ -122,8 +122,8 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
             return of(partidasPresupuestarias);
           })
         ).subscribe((response) => {
-          response.forEach(element => this.fillListadoFields(element));
-          response.map(partida => {
+          response.forEach(partida => {
+            this.fillListadoFields(partida)
             this.checkCanEditPartida(partida);
           });
           this.partidasPresupuestarias$.next(response);

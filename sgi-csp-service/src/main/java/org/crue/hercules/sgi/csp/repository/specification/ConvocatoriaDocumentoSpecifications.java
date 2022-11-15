@@ -21,4 +21,15 @@ public class ConvocatoriaDocumentoSpecifications {
     };
   }
 
+  /**
+   * {@link ConvocatoriaDocumento} publicos.
+   * 
+   * @return specification para obtener los {@link ConvocatoriaDocumento}
+   *         publicos.
+   */
+  public static Specification<ConvocatoriaDocumento> onlyPublicos() {
+    return (root, query, cb) -> {
+      return cb.equal(root.get(ConvocatoriaDocumento_.publico), Boolean.TRUE);
+    };
+  }
 }

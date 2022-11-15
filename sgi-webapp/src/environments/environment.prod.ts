@@ -45,7 +45,7 @@ export const environment = {
       /\/api\/sgp(?!\/public\/).*/i,
       /\/api\/sgemp(?!\/public\/).*/i,
       /\/api\/sgepii.*/i,
-      /\/api\/sgo.*/i,
+      /\/api\/sgo(?!\/public\/).*/i,
       /\/api\/sge\/(?!public\/).*/i,
       /\/api\/pii(?!\/config\/time-zone$).*/i,
       /\/api\/sgdoc(?!\/public\/).*/i,

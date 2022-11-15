@@ -75,7 +75,9 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               {{'csp.area-tematica.nombre.convocatoria' | translate}}
             </th>
-            <td mat-cell *matCellDef="let data"> {{data.areasTematicasConvocatoria}} </td>
+            <td mat-cell *matCellDef="let data" matTooltip="{{data.areasTematicasConvocatoria}}">
+              {{data.areasTematicasConvocatoria}}
+            </td>
           </ng-container>
           <ng-container matColumnDef="areaTematicaProyecto">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>

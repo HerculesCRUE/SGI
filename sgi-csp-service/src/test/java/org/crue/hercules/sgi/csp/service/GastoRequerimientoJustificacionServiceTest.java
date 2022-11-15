@@ -194,6 +194,55 @@ public class GastoRequerimientoJustificacionServiceTest extends BaseServiceTest 
         .isInstanceOf(IllegalArgumentException.class);
   }
 
+  @Test
+  void findAll_WithPaging_ReturnsPage() {
+    // given: One hundred GastoRequerimientoJustificacion
+    Long requerimientoJustificacionId = 1234L;
+    List<GastoRequerimientoJustificacion> gastoRequerimientoJustificacionList = new ArrayList<>();
+    for (long i = 1; i <= 100; i++) {
+      gastoRequerimientoJustificacionList
+          .add(generarMockGastoRequerimientoJustificacion(i, requerimientoJustificacionId));
+    }
+
+    BDDMockito.given(
+        gastoRequerimientoJustificacionRepository.findAll(
+            ArgumentMatchers.<Specification<GastoRequerimientoJustificacion>>any(),
+            ArgumentMatchers.<Pageable>any()))
+        .willAnswer(new Answer<Page<GastoRequerimientoJustificacion>>() {
+          @Override
+          public Page<GastoRequerimientoJustificacion> answer(InvocationOnMock invocation) throws Throwable {
+            Pageable pageable = invocation.getArgument(1, Pageable.class);
+            int size = pageable.getPageSize();
+            int index = pageable.getPageNumber();
+            int fromIndex = size * index;
+            int toIndex = fromIndex + size;
+            List<GastoRequerimientoJustificacion> content = gastoRequerimientoJustificacionList
+                .subList(fromIndex, toIndex);
+            Page<GastoRequerimientoJustificacion> page = new PageImpl<>(content, pageable,
+                gastoRequerimientoJustificacionList.size());
+            return page;
+          }
+        });
+
+    // when: Get page=3 with pagesize=10
+    Pageable paging = PageRequest.of(3, 10);
+    Page<GastoRequerimientoJustificacion> page = gastoRequerimientoJustificacionService
+        .findAll(null, paging);
+
+    // then: A Page with ten GastoRequerimientoJustificacion are returned
+    // containing incidencia='Incidencia-031' to
+    // 'Incidencia-040'
+    Assertions.assertThat(page.getContent()).hasSize(10);
+    Assertions.assertThat(page.getNumber()).isEqualTo(3);
+    Assertions.assertThat(page.getSize()).isEqualTo(10);
+    Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
+    for (int i = 0, j = 31; i < 10; i++, j++) {
+      GastoRequerimientoJustificacion gastoRequerimientoJustificacion = page.getContent().get(i);
+      Assertions.assertThat(gastoRequerimientoJustificacion.getIncidencia())
+          .isEqualTo("Incidencia-" + String.format("%03d", j));
+    }
+  }
+
   private GastoRequerimientoJustificacion generarMockGastoRequerimientoJustificacion(Long id,
       Long requerimientoJustificacionId) {
     String suffix = id != null ? String.format("%03d", id) : String.format("%03d", 1);

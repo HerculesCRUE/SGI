@@ -87,7 +87,7 @@ public class ProyectoHelper extends AuthorityHelper {
     }
   }
 
-  protected boolean hasUserAuthorityModifyProyecto(Long proyectoId) {
+  public boolean hasUserAuthorityModifyProyecto(Long proyectoId) {
     return hasUserAuthorityModifyProyecto(
         repository.findById(proyectoId).orElseThrow(() -> new ProyectoNotFoundException(proyectoId)));
   }

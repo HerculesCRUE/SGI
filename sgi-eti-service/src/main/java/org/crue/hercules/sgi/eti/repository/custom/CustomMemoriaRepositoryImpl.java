@@ -351,6 +351,7 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
           return new FechasMemoria();
         }
         cq.orderBy(cb.asc(rootConvocatoriaReunion.get(ConvocatoriaReunion_.fechaEvaluacion)));
+        memoriaPredicateBuilder.filterWithConvocatoriaReunionActiva(cb, rootConvocatoriaReunion);
         memoriaPredicateBuilder.filterWithTipoConvocatoriaReunionOrdinarioOrExtraordinario(cb, rootConvocatoriaReunion);
         memoriaPredicateBuilder.filterWithComiteConvocatoriaReunion(rootConvocatoriaReunion, cb, memoria.getComite());
         memoriaPredicateBuilder.filterWithFechaLimiteConvocatoriaReunionGreatestThanNowConvocatoriaReunion(cb,

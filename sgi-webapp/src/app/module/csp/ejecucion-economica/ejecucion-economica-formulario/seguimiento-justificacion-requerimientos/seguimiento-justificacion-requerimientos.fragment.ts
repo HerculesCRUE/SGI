@@ -1,3 +1,4 @@
+import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
 import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-justificacion';
 import { Fragment } from '@core/services/action-service';
 import { ProyectoPeriodoJustificacionService } from '@core/services/csp/proyecto-periodo-justificacion/proyecto-periodo-justificacion.service';
@@ -11,6 +12,7 @@ import { concatMap, map, mergeMap, takeLast, tap, toArray } from 'rxjs/operators
 
 export class SeguimientoJustificacionRequerimientosFragment extends Fragment {
   private requerimientosJustificacion$ = new BehaviorSubject<StatusWrapper<IRequerimientoJustificacion>[]>([]);
+  private requerimientoJustificacionAfterDeletion$ = new BehaviorSubject<IRequerimientoJustificacion[]>([]);
   private requerimientosJustificacionEliminados: StatusWrapper<IRequerimientoJustificacion>[] = [];
 
   constructor(
@@ -83,11 +85,32 @@ export class SeguimientoJustificacionRequerimientosFragment extends Fragment {
     }
   }
 
+  getCurrentRequerimientosJustificacion(): IRequerimientoJustificacion[] {
+    return this.requerimientosJustificacion$.value.map(wrapper => wrapper.value);
+  }
+
+  getRequerimientoJustificacionAfterDeletion$(): Observable<IRequerimientoJustificacion[]> {
+    return this.requerimientoJustificacionAfterDeletion$.asObservable();
+  }
+
   getRequerimientosJustificacion$(): Observable<StatusWrapper<IRequerimientoJustificacion>[]> {
     return this.requerimientosJustificacion$.asObservable();
   }
 
-  public deleteRequerimiento(wrapper: StatusWrapper<IRequerimientoJustificacion>) {
+  onPeriodoJustificacionChanged(proyectoPeriodoJustificacion: IProyectoPeriodoJustificacion): void {
+    this.requerimientosJustificacion$.next(
+      this.requerimientosJustificacion$.value.map(requerimientoJustificacion => {
+        if (requerimientoJustificacion.value?.proyectoPeriodoJustificacion?.id === proyectoPeriodoJustificacion.id) {
+          requerimientoJustificacion.value.
+            proyectoPeriodoJustificacion.identificadorJustificacion = proyectoPeriodoJustificacion.identificadorJustificacion;
+          requerimientoJustificacion.value.
+            proyectoPeriodoJustificacion.fechaPresentacionJustificacion = proyectoPeriodoJustificacion.fechaPresentacionJustificacion;
+        }
+        return requerimientoJustificacion;
+      }));
+  }
+
+  public deleteRequerimiento(wrapper: StatusWrapper<IRequerimientoJustificacion>): void {
     const current = this.requerimientosJustificacion$.value;
     const index = current.findIndex(
       (value) => value === wrapper
@@ -100,6 +123,7 @@ export class SeguimientoJustificacionRequerimientosFragment extends Fragment {
       this.recalcularNumRequerimientos(current);
       this.requerimientosJustificacion$.next(current);
       this.setChanges(true);
+      this.requerimientoJustificacionAfterDeletion$.next(current.map(requerimientoJustificacion => requerimientoJustificacion.value));
     }
   }
 

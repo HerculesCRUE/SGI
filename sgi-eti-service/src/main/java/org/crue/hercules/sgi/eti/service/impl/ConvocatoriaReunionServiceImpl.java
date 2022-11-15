@@ -249,9 +249,10 @@ public class ConvocatoriaReunionServiceImpl implements ConvocatoriaReunionServic
    */
   @Override
   public Boolean eliminable(Long id) {
-    return !actaRepository.existsByConvocatoriaReunionId(id) && !evaluacionRepository.existsByConvocatoriaReunionId(id)
-        ? true
-        : false;
+    return !actaRepository.existsByConvocatoriaReunionIdAndActivoIsTrue(id)
+        && !evaluacionRepository.existsByConvocatoriaReunionIdAndActivoIsTrue(id)
+            ? true
+            : false;
   }
 
   /**

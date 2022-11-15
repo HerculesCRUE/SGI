@@ -7,15 +7,20 @@ import org.crue.hercules.sgi.csp.dto.GastoRequerimientoJustificacionInput;
 import org.crue.hercules.sgi.csp.dto.GastoRequerimientoJustificacionOutput;
 import org.crue.hercules.sgi.csp.model.GastoRequerimientoJustificacion;
 import org.crue.hercules.sgi.csp.service.GastoRequerimientoJustificacionService;
+import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -91,5 +96,17 @@ public class GastoRequerimientoJustificacionController {
     log.debug("deleteById(Long id) - start");
     service.deleteById(id);
     log.debug("deleteById(Long id) - end");
+  }
+
+  @GetMapping
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SJUS-E', 'CSP-SJUS-V')")
+  public ResponseEntity<Page<GastoRequerimientoJustificacionOutput>> findAll(
+      @RequestParam(name = "q", required = false) String query,
+      @RequestPageable(sort = "s") Pageable paging) {
+
+    Page<GastoRequerimientoJustificacion> page = service.findAll(query, paging);
+
+    return !page.isEmpty() ? ResponseEntity.ok().body(converter.convert(page))
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 }

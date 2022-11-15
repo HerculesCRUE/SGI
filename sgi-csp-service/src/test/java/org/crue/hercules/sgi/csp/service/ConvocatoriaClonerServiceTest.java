@@ -113,7 +113,8 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
 
     ConvocatoriaAreaTematica area = buildMockConvocatoriaAreaTematica(convocatoriaId);
 
-    BDDMockito.given(convocatoriaAreaTematicaRepository.findByConvocatoriaId(anyLong())).willReturn(Optional.of(area));
+    BDDMockito.given(convocatoriaAreaTematicaRepository.findByConvocatoriaId(anyLong()))
+        .willReturn(Arrays.asList(area));
 
     ConvocatoriaAreaTematica clonedArea = ConvocatoriaAreaTematica.builder().areaTematica(area.getAreaTematica())
         .convocatoriaId(area.getId()).observaciones(area.getObservaciones()).build();

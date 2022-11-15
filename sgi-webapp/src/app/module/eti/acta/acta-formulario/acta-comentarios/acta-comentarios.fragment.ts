@@ -45,6 +45,7 @@ export class ActaComentariosFragment extends Fragment {
         map((response) => response.items),
         switchMap((evaluaciones) => {
           const evaluacionesComentario: IEvaluacion[] = [];
+          const current = [];
           return from(evaluaciones).pipe(
             mergeMap(evaluacion => {
               if (evaluacion.dictamen?.activo) {
@@ -53,8 +54,7 @@ export class ActaComentariosFragment extends Fragment {
                 return this.service.getComentariosActa(evaluacion.id).pipe(
                   map((comentarios) => {
                     if (comentarios.items.length > 0) {
-                      const current = [];
-                      this.comentarios$.value.map(comentario => {
+                      this.comentarios$.value.forEach(comentario => {
                         if (!evaluacionesComentario.some(ev => ev.id === comentario.value.evaluacion.id)) {
                           evaluacionesComentario.push(comentario.value.evaluacion);
                           this.idsEvaluacion.push(comentario.value.evaluacion.id);
@@ -160,7 +160,7 @@ export class ActaComentariosFragment extends Fragment {
             wrappedComentario.value.id = savedComentario.id;
             this.comentarios$.value[index] = new StatusWrapper<IComentario>(wrappedComentario.value);
             this.comentarios$.next(this.comentarios$.value);
-            this.comentarios$.value.map((currentComentario) => {
+            this.comentarios$.value.forEach((currentComentario) => {
               if (currentComentario === wrappedComentario) {
                 currentComentario.setEdited();
                 currentComentario.value.id = savedComentario.id;

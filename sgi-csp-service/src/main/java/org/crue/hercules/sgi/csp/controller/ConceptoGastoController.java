@@ -100,7 +100,7 @@ public class ConceptoGastoController {
    * @return {@link ConceptoGasto} correspondiente al id.
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SJUS-E', 'CSP-SJUS-V')")
   public ConceptoGasto findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ConceptoGasto returnValue = service.findById(id);

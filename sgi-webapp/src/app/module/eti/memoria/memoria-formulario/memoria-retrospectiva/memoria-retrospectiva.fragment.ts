@@ -10,7 +10,7 @@ import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacio
 import { RespuestaService } from '@core/services/eti/respuesta.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { VinculacionService } from '@core/services/sgp/vinculacion.service';
+import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
 import { MemoriaFormlyFormFragment } from '../../memoria-formly-form.fragment';

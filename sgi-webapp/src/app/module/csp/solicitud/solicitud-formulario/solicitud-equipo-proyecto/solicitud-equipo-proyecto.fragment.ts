@@ -18,7 +18,7 @@ import { SolicitudProyectoEquipoService } from '@core/services/csp/solicitud-pro
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
 import { DatosPersonalesService } from '@core/services/sgp/datos-personales.service';
-import { VinculacionService } from '@core/services/sgp/vinculacion.service';
+import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, forkJoin, from, Observable, of } from 'rxjs';
@@ -685,7 +685,7 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
     if (requisitosConvocatoria.requisitosIp?.numMaximoIP) {
       const numIps = miembrosEquipoPrincipales.length;
 
-      if (numIps < requisitosConvocatoria.requisitosIp?.numMaximoIP) {
+      if (numIps > requisitosConvocatoria.requisitosIp?.numMaximoIP) {
         return of(ValidacionRequisitosEquipoIp.NUM_MAX_IP);
       }
     }

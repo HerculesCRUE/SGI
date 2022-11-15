@@ -5,7 +5,8 @@ import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { SgiError } from '@core/errors/sgi-error';
 import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
 import { IDocumento } from '@core/models/sge/documento';
-import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
+import { triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
+import { DocumentoService } from '@core/services/sge/documento.service';
 
 const MSG_DOWNLOAD_ERROR = marker('error.file.download');
 

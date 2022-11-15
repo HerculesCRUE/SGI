@@ -31,11 +31,10 @@ public class ProyectoFacturacionAuthorityHelper extends ProyectoHelper {
    *                                                        modificar
    *                                                        la {@link Solicitud}
    */
-  public void checkUserHasAuthorityModifyProyectoFacturacion(Long proyectoId)
+  public void checkUserHasAuthorityValidateIPProyectoFacturacion(Long proyectoId)
       throws UserNotAuthorizedToModifyProyectoException {
-    if (!hasUserAuthorityModifyProyecto(proyectoId) || (hasUserAuthorityViewInvestigador()
-        && !checkUserPresentInEquipos(proyectoId)
-        && !checkUserIsResponsableEconomico(proyectoId))) {
+    if (!hasUserAuthorityViewInvestigador()
+        || !(checkUserPresentInEquipos(proyectoId) || checkUserIsResponsableEconomico(proyectoId))) {
       throw new UserNotAuthorizedToModifyProyectoException();
     }
 

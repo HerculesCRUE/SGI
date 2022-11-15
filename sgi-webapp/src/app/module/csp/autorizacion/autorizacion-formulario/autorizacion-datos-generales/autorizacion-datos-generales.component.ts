@@ -9,6 +9,7 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { Observable } from 'rxjs';
+import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { AutorizacionActionService } from '../../autorizacion.action.service';
 import { AutorizacionDatosGeneralesFragment, IAutorizacionDatosGeneralesData } from './autorizacion-datos-generales.fragment';
 
@@ -50,6 +51,10 @@ export class AutorizacionDatosGeneralesComponent extends FormFragmentComponent<I
   msgParamConvocatoriaEntity = {};
   msgParamEstadoEntity = {};
   msgParamEntidadParticipaEntity = {};
+
+  get TIPO_COLECTIVO() {
+    return TipoColectivo;
+  }
 
   get ESTADO_MAP() {
     return ESTADO_MAP;

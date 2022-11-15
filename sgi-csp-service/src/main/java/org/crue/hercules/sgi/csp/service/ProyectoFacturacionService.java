@@ -1,5 +1,8 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.time.Instant;
+
+import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoFacturacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.EstadoValidacionIP;
 import org.crue.hercules.sgi.csp.model.EstadoValidacionIP.TipoEstadoValidacion;
@@ -33,6 +36,7 @@ public class ProyectoFacturacionService {
   private final TipoFacturacionRepository tipoFacturacionRepository;
   private final ProyectoFacturacionAuthorityHelper authorityHelper;
   private final ProyectoFacturacionComService proyectoFacturacionComService;
+  private final SgiConfigProperties sgiConfigProperties;
 
   /**
    * Busca todos los objetos de tipo {@link ProyectoFacturacion} cuyo proyectoId
@@ -93,10 +97,52 @@ public class ProyectoFacturacionService {
 
     if (toUpdate.getEstadoValidacionIP().getEstado() != beforeUpdate.getEstadoValidacionIP().getEstado()) {
       beforeUpdate.setEstadoValidacionIP(persistEstadoValidacionIP(toUpdate.getEstadoValidacionIP(), toUpdate.getId()));
+
+      if (toUpdate.getEstadoValidacionIP().getEstado().equals(TipoEstadoValidacion.VALIDADA)) {
+        Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
+        beforeUpdate.setFechaConformidad(fechaActual);
+      }
+
       if (this.checkIfCanSendComunicado(beforeUpdate)) {
         try {
           beforeUpdate.setTipoFacturacion(beforeUpdate.getTipoFacturacion() == null ? null
               : this.tipoFacturacionRepository.findById(beforeUpdate.getTipoFacturacion().getId()).orElse(null));
+          this.proyectoFacturacionComService.enviarComunicado(beforeUpdate);
+        } catch (Exception e) {
+          log.error(e.getMessage(), e);
+        }
+      }
+    }
+
+    return this.proyectoFacturacionRepository.save(beforeUpdate);
+  }
+
+  /**
+   * Actualiza un objeto de tipo {@link ProyectoFacturacion} con la informacion de
+   * validacion
+   * 
+   * @param toUpdate objeto de tipo {@link ProyectoFacturacion} con la información
+   *                 a actualizar
+   * @return objeto de tipo {@link ProyectoFacturacion}
+   */
+  @Transactional
+  public ProyectoFacturacion updateValidacionIP(ProyectoFacturacion toUpdate) {
+
+    authorityHelper.checkUserHasAuthorityValidateIPProyectoFacturacion(toUpdate.getProyectoId());
+
+    ProyectoFacturacion beforeUpdate = this.proyectoFacturacionRepository.findById(toUpdate.getId())
+        .orElseThrow(() -> new ProyectoFacturacionNotFoundException(toUpdate.getId()));
+
+    if (toUpdate.getEstadoValidacionIP().getEstado() != beforeUpdate.getEstadoValidacionIP().getEstado()) {
+      beforeUpdate.setEstadoValidacionIP(persistEstadoValidacionIP(toUpdate.getEstadoValidacionIP(), toUpdate.getId()));
+
+      if (toUpdate.getEstadoValidacionIP().getEstado().equals(TipoEstadoValidacion.VALIDADA)) {
+        Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
+        beforeUpdate.setFechaConformidad(fechaActual);
+      }
+
+      if (this.checkIfCanSendComunicado(beforeUpdate)) {
+        try {
           this.proyectoFacturacionComService.enviarComunicado(beforeUpdate);
         } catch (Exception e) {
           log.error(e.getMessage(), e);

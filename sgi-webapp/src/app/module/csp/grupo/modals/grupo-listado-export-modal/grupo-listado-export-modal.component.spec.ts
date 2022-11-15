@@ -16,7 +16,9 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { GrupoEnlaceListadoExportService } from '../../grupo-enlace-listado-export.service';
 import { GrupoEquipoInstrumentalListadoExportService } from '../../grupo-equipo-instrumental-listado-export.service';
 import { GrupoEquipoListadoExportService } from '../../grupo-equipo-listado-export.service';
+import { GrupoFooterListadoExportService } from '../../grupo-footer-listado-export.service';
 import { GrupoGeneralListadoExportService } from '../../grupo-general-listado-export.service';
+import { GrupoHeaderListadoExportService } from '../../grupo-header-listado-export.service';
 import { GrupoLineaInvestigacionListadoExportService } from '../../grupo-linea-investigacion-listado-export.service';
 import { GrupoListadoExportService } from '../../grupo-listado-export.service';
 import { GrupoPersonaAutorizadaListadoExportService } from '../../grupo-persona-autorizada-listado-export.service';
@@ -62,6 +64,8 @@ describe('GrupoListadoExportModalComponent', () => {
         LuxonDatePipe,
         DecimalPipe,
         PercentPipe,
+        GrupoHeaderListadoExportService,
+        GrupoFooterListadoExportService
       ]
     })
       .compileComponents();

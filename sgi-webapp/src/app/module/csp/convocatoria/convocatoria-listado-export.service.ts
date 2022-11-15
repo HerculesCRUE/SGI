@@ -362,7 +362,7 @@ export class ConvocatoriaListadoExportService extends AbstractTableExportService
     convocatoriaData: IConvocatoriaReportData,
     reportOptions: IConvocatoriaReportOptions
   ): Observable<IConvocatoriaReportData> {
-    if (reportOptions?.showRequisitosIP) {
+    if (reportOptions?.showRequisitosEquipo) {
       return this.convocatoriaRequisitoEquipoListadoExportService.getData(convocatoriaData)
         .pipe(tap({ error: (err) => this.logger.error(err) }));
     } else {

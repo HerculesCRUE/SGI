@@ -8,8 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.nimbusds.oauth2.sdk.util.CollectionUtils;
-
+import org.apache.commons.collections4.CollectionUtils;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoProrrogaNotFoundException;
 import org.crue.hercules.sgi.csp.model.Proyecto;
@@ -148,14 +147,15 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
 
     Assert.notNull(id, "ProyectoProrroga id no puede ser null para eliminar un ProyectoProrroga");
 
-    ProyectoProrroga returnValue = repository.findById(id).map(proyectoProrroga -> {
+    ProyectoProrroga proyectoProrrogaToDelete = repository.findById(id).map(proyectoProrroga -> {
 
       // Se recupera el ProyectoProrroga con la última fecha de concesión
       Optional<ProyectoProrroga> ultimoProyectoProrroga = repository
           .findFirstByProyectoIdOrderByFechaConcesionDesc(proyectoProrroga.getProyectoId());
 
       // Solamente se puede modificar la última prórroga
-      if (ultimoProyectoProrroga.isPresent()) {
+      if (ultimoProyectoProrroga.isPresent()
+          && !ultimoProyectoProrroga.get().getId().equals(proyectoProrroga.getId())) {
         Assert.isTrue(Objects.equals(proyectoProrroga.getId(), ultimoProyectoProrroga.get().getId()),
             "Sólo se permite eliminar la última prórroga");
       }
@@ -169,7 +169,7 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
 
     // Se recalcula el número de prórroga en función de la ordenación de la fecha de
     // concesión
-    this.recalcularNumProrroga(returnValue.getProyectoId());
+    this.recalcularNumProrroga(proyectoProrrogaToDelete.getProyectoId());
 
     log.debug("delete(Long id) - end");
 
@@ -308,11 +308,19 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
     Instant fechaFinProyecto = proyecto.getFechaFinDefinitiva() != null ? proyecto.getFechaFinDefinitiva()
         : proyecto.getFechaFin();
 
-    Assert.isTrue(
-        datosProyectoProrroga.getFechaFin() == null || (datosProyectoProrroga.getFechaFin() != null
-            && datosProyectoProrroga.getFechaFin().isAfter(fechaFinProyecto)),
-        "Fecha de fin debe ser posterior a la fecha de fin del proyecto");
-
+    Optional<ProyectoProrroga> dbProyectoProrroga = datosProyectoProrroga.getId() == null ? Optional.empty()
+        : this.repository.findById(datosProyectoProrroga.getId());
+    // Si es una prorroga ya existente se comprueba que la fechaFin se ha
+    // modificado para validarla en caso de ser distinta o si es una
+    // prórroga nueva, también se valida la fecha de fin
+    if ((dbProyectoProrroga.isPresent()
+        && dbProyectoProrroga.get().getFechaFin().compareTo(datosProyectoProrroga.getFechaFin()) != 0)
+        || !dbProyectoProrroga.isPresent()) {
+      Assert.isTrue(
+          datosProyectoProrroga.getFechaFin() == null || (datosProyectoProrroga.getFechaFin() != null
+              && datosProyectoProrroga.getFechaFin().isAfter(fechaFinProyecto)),
+          "Fecha de fin debe ser posterior a la fecha de fin del proyecto");
+    }
     // Se recupera el ProyectoProrroga con la última fecha de concesión
     Optional<ProyectoProrroga> ultimoProyectoProrroga = repository
         .findFirstByProyectoIdOrderByFechaConcesionDesc(proyectoId);

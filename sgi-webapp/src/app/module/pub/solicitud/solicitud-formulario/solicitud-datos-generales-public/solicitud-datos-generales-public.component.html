@@ -1,0 +1,359 @@
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
+
+  <form [formGroup]="formGroup" fxLayout="column">
+
+    <h3>{{'label.datos-generales' | translate}} - {{'pub.solicitud.datos-generales.solicitante' | translate}}</h3>
+
+    <section fxLayout="column">
+      <ng-container formGroupName="solicitanteExterno">
+        <div fxFlex fxLayout="row" fxLayoutGap="10px">
+          <!-- Nombre -->
+          <mat-form-field fxFlex="0 1 calc((100% - (10px * 2)) / 3)">
+            <mat-label>{{'csp.solicitud.solicitud-rrhh.nombre' | translate}}</mat-label>
+            <input matInput type="text" placeholder="{{'csp.solicitud.solicitud-rrhh.nombre' | translate}}"
+              formControlName="nombre" required>
+            <mat-error *ngIf="formGroup.hasError('required','solicitanteExterno.nombre')">
+              {{ 'error.required.entity' | translate:msgParamNombreEntity }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Apellidos -->
+          <mat-form-field fxFlex="0 1 calc((100% - (10px * 2)) / 3 * 2 + 10px)">
+            <mat-label>{{'csp.solicitud.solicitud-rrhh.apellidos' | translate}}</mat-label>
+            <input matInput type="text" placeholder="{{'csp.solicitud.solicitud-rrhh.apellidos' | translate}}"
+              formControlName="apellidos" required>
+            <mat-error *ngIf="formGroup.hasError('required','solicitanteExterno.apellidos')">
+              {{ 'error.required.entity' | translate:msgParamApellidosEntity }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div fxFlex fxLayout="row" fxLayoutGap="10px">
+          <!-- Tipo documento -->
+          <mat-form-field>
+            <mat-label>{{'csp.solicitud.solicitud-rrhh.tipo-documento' | translate}}</mat-label>
+            <sgi-sgp-select-tipo-documento-public formControlName="tipoDocumento" required>
+            </sgi-sgp-select-tipo-documento-public>
+            <mat-error *ngIf="formGroup.hasError('required','solicitanteExterno.tipoDocumento')">
+              {{ 'error.required.entity' | translate:msgParamTipoDocumentoEntity }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Numero documento -->
+          <mat-form-field>
+            <mat-label>{{'csp.solicitud.solicitud-rrhh.numero-documento' | translate}}</mat-label>
+            <input matInput type="text" placeholder="{{'csp.solicitud.solicitud-rrhh.numero-documento' | translate}}"
+              formControlName="numeroDocumento" required>
+            <mat-error *ngIf="formGroup.hasError('required','solicitanteExterno.numeroDocumento')">
+              {{ 'error.required.entity' | translate:msgParamNumeroDocumentoEntity }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Sexo -->
+          <mat-form-field>
+            <mat-label>{{'csp.solicitud.solicitud-rrhh.sexo' | translate}}</mat-label>
+            <sgi-select-sexo-public formControlName="sexo">
+            </sgi-select-sexo-public>
+          </mat-form-field>
+        </div>
+
+        <div fxFlex fxLayout="row" fxLayoutGap="10px">
+          <!-- Fecha nacimiento -->
+          <mat-form-field fxFlex="0 1 calc((100% - (10px * 2)) / 3)">
+            <mat-label>{{'csp.solicitud.solicitud-rrhh.fecha-nacimiento' | translate}}</mat-label>
+            <input matInput formControlName="fechaNacimiento" [matDatepicker]="pickerNacimiento" />
+            <mat-datepicker-toggle matSuffix [for]="pickerNacimiento"></mat-datepicker-toggle>
+            <mat-datepicker #pickerNacimiento></mat-datepicker>
+          </mat-form-field>
+
+          <!-- Pais nacimiento -->
+          <mat-form-field fxFlex="0 1 calc((100% - (10px * 2)) / 3)">
+            <mat-label>{{'csp.solicitud.solicitud-rrhh.pais-nacimiento' | translate}}</mat-label>
+            <sgi-select-pais-public formControlName="paisNacimiento">
+            </sgi-select-pais-public>
+          </mat-form-field>
+        </div>
+
+        <div fxFlex fxLayout="row" fxLayoutGap="10px">
+          <!-- Telefono -->
+          <mat-form-field fxFlex="0 1 calc((100% - (10px * 2)) / 3)">
+            <mat-label>{{'csp.solicitud.solicitud-rrhh.telefono' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+            </mat-label>
+            <input matInput type="text"
+              placeholder="{{'csp.solicitud.solicitud-rrhh.telefono' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"
+              formControlName="telefono" required>
+            <mat-error *ngIf="formGroup.hasError('required','solicitanteExterno.telefono')">
+              {{ 'error.required.entity' | translate:msgParamTelefonoEntity }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Email -->
+          <mat-form-field fxFlex="0 1 calc((100% - (10px * 2)) / 3 * 2 + 10px)">
+            <mat-label>{{'csp.solicitud.solicitud-rrhh.email' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+            <input matInput type="text"
+              placeholder="{{'csp.solicitud.solicitud-rrhh.email' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"
+              formControlName="email" required>
+            <mat-error *ngIf="formGroup.hasError('required','solicitanteExterno.email')">
+              {{ 'error.required.entity' | translate:msgParamEmailEntity }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Direccion contacto -->
+        <fieldset fxFlex fxLayout="column" class="margin-fieldset">
+          <legend>{{'csp.solicitud.solicitud-rrhh.direccion-contacto' | translate}}</legend>
+
+          <div fxFlex fxLayout="row" fxLayoutGap="10px">
+            <!-- Direccion -->
+            <mat-form-field>
+              <mat-label>{{'csp.solicitud.solicitud-rrhh.direccion' | translate}}</mat-label>
+              <input matInput type="text" placeholder="{{'csp.solicitud.solicitud-rrhh.direccion' | translate}}"
+                formControlName="direccionContacto">
+            </mat-form-field>
+          </div>
+
+          <div fxFlex fxLayout="row" fxLayoutGap="10px">
+            <!-- Pais -->
+            <mat-form-field fxFlex>
+              <mat-label>{{'csp.solicitud.solicitud-rrhh.pais' | translate}}</mat-label>
+              <sgi-select-pais-public formControlName="paisContacto">
+              </sgi-select-pais-public>
+            </mat-form-field>
+
+            <!-- Comunidad autonoma -->
+            <mat-form-field fxFlex>
+              <mat-label>{{'csp.solicitud.solicitud-rrhh.comunidad-autonoma' | translate}}</mat-label>
+              <sgi-select-comunidad-autonoma-public formControlName="comunidadAutonomaContacto"
+                [paisRef]="formGroup.get('solicitanteExterno.paisContacto').value?.id">
+              </sgi-select-comunidad-autonoma-public>
+            </mat-form-field>
+
+            <!-- Provincia -->
+            <mat-form-field fxFlex>
+              <mat-label>{{'csp.solicitud.solicitud-rrhh.provincia' | translate}}</mat-label>
+              <sgi-select-provincia-public formControlName="provinciaContacto"
+                [comunidadAutonomaRef]="formGroup.get('solicitanteExterno.comunidadAutonomaContacto').value?.id">
+              </sgi-select-provincia-public>
+            </mat-form-field>
+          </div>
+
+          <div fxFlex fxLayout="row" fxLayoutGap="10px">
+            <!-- Localidad -->
+            <mat-form-field fxFlex="0 1 calc((100% - (10px * 2)) / 3)">
+              <mat-label>{{'csp.solicitud.solicitud-rrhh.localidad' | translate}}</mat-label>
+              <input matInput type="text" placeholder="{{'csp.solicitud.solicitud-rrhh.localidad' | translate}}"
+                formControlName="localidadContacto">
+            </mat-form-field>
+
+            <!-- Codigo postal -->
+            <mat-form-field fxFlex="0 1 calc((100% - (10px * 2)) / 3)">
+              <mat-label>{{'csp.solicitud.solicitud-rrhh.codigo-postal' | translate}}</mat-label>
+              <input matInput type="text" placeholder="{{'csp.solicitud.solicitud-rrhh.codigo-postal' | translate}}"
+                formControlName="codigoPostalContacto">
+            </mat-form-field>
+          </div>
+        </fieldset>
+      </ng-container>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Universidad text -->
+        <mat-form-field fxFlex="0 1 calc((100% - (10px * 2)) / 3)">
+          <mat-label>{{'csp.solicitud.solicitud-rrhh.universidad-text' | translate}}</mat-label>
+          <input matInput type="text" placeholder="{{'csp.solicitud.solicitud-rrhh.universidad-text' | translate}}"
+            formControlName="universidadText">
+        </mat-form-field>
+      </div>
+
+      <div fxLayout="column" class="separation-button">
+        <h3>{{'csp.solicitud.solicitud-rrhh.area-anep' | translate}}</h3>
+        <div class="mat-elevation-z4">
+          <table mat-table [dataSource]="areasAnep" matSort matSortActive="nombre" matSortDirection="asc"
+            matSortDisableClear *ngIf="areasAnep.data.length > 0">
+            <!-- Niveles Column -->
+            <ng-container matColumnDef="niveles">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'csp.solicitud.solicitud-rrhh.area-anep-niveles' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let data" matTooltip="{{data.nivelesTexto}}">
+                {{data.nivelesTexto}}
+              </td>
+            </ng-container>
+
+            <!-- Nivel seleccionado Column-->
+            <ng-container matColumnDef="areaAnep">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'csp.solicitud.solicitud-rrhh.area-anep' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let data">
+                {{data.nivelSeleccionado.nombre}}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let data">
+                <button *ngIf="!this.formPart.readonly && !!data" mat-icon-button color="primary"
+                  matTooltip="{{'csp.solicitud.solicitud-rrhh.selecionar-area-anep' | translate}}"
+                  (click)="openModal()">
+                  <mat-icon>border_color</mat-icon>
+                </button>
+                <button *ngIf="!this.formPart.readonly && !!data" mat-icon-button color="warn"
+                  matTooltip="{{'btn.delete' | translate}}" (click)="deleteAreaAnep()">
+                  <mat-icon>highlight_off</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columnsAreasAnep"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnsAreasAnep;"></tr>
+          </table>
+        </div>
+
+        <button fxFlexAlign="start" color="three" *ngIf="!this.formPart.readonly && areasAnep.data.length === 0"
+          mat-raised-button (click)="openModal()">
+          <mat-icon color="accent">add_circle</mat-icon>
+          {{ 'btn.add.entity' | translate:msgParamAreaAnepEntity }}
+        </button>
+      </div>
+    </section>
+
+
+    <h3>{{'label.datos-generales' | translate}} - {{'pub.solicitud.datos-generales.otros' | translate}}</h3>
+    <!-- Estado de la solicitud -->
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
+        <mat-label>{{'csp.solicitud.estado-solicitud' | translate}}</mat-label>
+        <mat-select formControlName="estado" placeholder="{{'csp.solicitud.cambio-estado.actual' | translate}}">
+          <mat-option *ngFor="let estado of ESTADO_MAP | keyvalue" [value]="estado.key">
+            {{ estado.value | translate}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Comentarios del estado -->
+      <mat-form-field *ngIf="(formPart.showComentariosEstado$ | async)"
+        fxFlex="0 1 calc((100% - (10px * 3)) / 4*3 + 20px)">
+        <mat-label>{{'csp.solicitud.estado-solicitud.comentario' | translate}}</mat-label>
+        <textarea matInput formControlName="comentariosEstado" type="text" id="comentariosEstado"
+          placeholder="{{'csp.solicitud.estado-solicitud.comentario' | translate}}" cdkTextareaAutosize
+          #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="3"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Titulo convocatoria -->
+      <mat-form-field *ngIf="fragment.isEdit()" fxFlex>
+        <mat-label>{{'pub.solicitud.datos-generales.titulo' | translate}}</mat-label>
+        <input matInput formControlName="tituloConvocatoria" type="text"
+          placeholder="{{'pub.solicitud.datos-generales.titulo' | translate}}">
+      </mat-form-field>
+
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Codigo de registro -->
+      <mat-form-field *ngIf="fragment.isEdit()" fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
+        <mat-label>{{'csp.solicitud.codigo-registro' | translate}}</mat-label>
+        <input matInput formControlName="codigoRegistro" type="text" id="codigoRegistro"
+          placeholder="{{'csp.solicitud.codigo-registro' | translate}}">
+      </mat-form-field>
+
+      <!-- Codigo de registro en entidad convocante -->
+      <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
+        <mat-label>{{'csp.solicitud.codigo-externo' | translate}}</mat-label>
+        <input matInput formControlName="codigoExterno" type="text" id="codigoExterno"
+          placeholder="{{'csp.solicitud.codigo-externo' | translate}}">
+        <mat-error *ngIf="formGroup.controls.codigoExterno.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamCodigoExternoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Tabla entidades convocantes de la convocatoria -->
+    <ng-container>
+      <div fxFlex fxLayout="column" fxLayoutGap="10px" class="margin-bottom">
+        <h3 fxFlex="100%">{{'list.entity' | translate:msgParamEntidadConvocanteEntity}}</h3>
+        <div class="mat-elevation-z4" fxFlex="100%">
+          <table mat-table [dataSource]="dataSourceEntidadesConvocantes" matSort>
+
+            <!-- Entidad convocante -->
+            <ng-container matColumnDef="entidadConvocante">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'csp.solicitud-entidad-convocante' | translate: MSG_PARAMS.CARDINALIRY.SINGULAR}}
+              </th>
+              <td mat-cell *matCellDef="let entidadConvocanteModalidad">
+                {{ entidadConvocanteModalidad.entidadConvocante.entidad?.nombre }}
+              </td>
+            </ng-container>
+
+            <!-- Plan de la convocatoria -->
+            <ng-container matColumnDef="plan">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'csp.solicitud-entidad-convocante.plan' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let entidadConvocanteModalidad">
+                {{ entidadConvocanteModalidad.plan?.nombre }}
+              </td>
+            </ng-container>
+
+            <!-- Programa/subprograma de la convocatoria Column -->
+            <ng-container matColumnDef="programaConvocatoria">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'csp.solicitud-entidad-convocante.programa' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let entidadConvocanteModalidad">
+                {{ entidadConvocanteModalidad.entidadConvocante.programa?.nombre }}
+              </td>
+            </ng-container>
+
+            <!-- Modalidad solicitada Column -->
+            <ng-container matColumnDef="modalidadSolicitud">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                {{'csp.solicitud-entidad-convocante.modalidad' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let entidadConvocanteModalidad">
+                {{ entidadConvocanteModalidad.modalidad?.value.programa?.nombre }}
+              </td>
+            </ng-container>
+
+            <!-- Acciones Column -->
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}}
+              </th>
+              <td mat-cell *matCellDef="let entidadConvocanteModalidad; let i=index;">
+                <ng-container>
+                  <button mat-icon-button color="primary" matTooltip="{{'btn.view' | translate}}"
+                    (click)="openModalSelectModalidad(entidadConvocanteModalidad)">
+                    <mat-icon>{{this.formPart.readonly ? 'visibility' : 'border_color'}}</mat-icon>
+                  </button>
+                </ng-container>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          </table>
+
+          <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+          </mat-paginator>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Observaciones -->
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="100%">
+        <mat-label>{{'csp.solicitud.observaciones' | translate}}</mat-label>
+        <textarea matInput formControlName="observaciones" type="text" id="observaciones"
+          placeholder="{{'csp.solicitud.observaciones' | translate}}" cdkTextareaAutosize
+          #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5">
+        </textarea>
+        <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamObservacionesEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+  </form>
+
+</sgi-fragment>

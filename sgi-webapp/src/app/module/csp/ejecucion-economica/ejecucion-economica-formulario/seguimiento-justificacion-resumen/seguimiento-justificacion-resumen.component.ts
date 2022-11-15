@@ -6,12 +6,16 @@ import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { TIPO_JUSTIFICACION_MAP } from '@core/enums/tipo-justificacion';
 import { TIPO_SEGUIMIENTO_MAP } from '@core/enums/tipo-seguimiento';
+import { ISeguimientoJustificacionAnualidad } from '@core/models/csp/seguimiento-justificacion-anualidad';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { SgiRestFindOptions } from '@sgi/framework/http';
 import { Subscription } from 'rxjs';
 import { CSP_ROUTE_NAMES } from '../../../csp-route-names';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
 import { IdentificadorJustificacionModalComponent, IdentificadorJustificacionModalData } from '../../modals/identificador-justificacion-modal/identificador-justificacion-modal.component';
 import { PresentacionDocumentacionModalComponent } from '../../modals/presentacion-documentacion-modal/presentacion-documentacion-modal.component';
+import { ISeguimientoGastosJustificadosResumenExportModalData, SeguimientoGastosJustificadosResumenExportModalComponent } from '../../modals/seguimiento-gastos-justificados-resumen-export-modal/seguimiento-gastos-justificados-resumen-export-modal.component';
+import { ISeguimientoJustificacionAnualidadModalData, SeguimientoJustificacionAnualidadModalComponent } from '../../modals/seguimiento-justificacion-anualidad-modal/seguimiento-justificacion-anualidad-modal.component';
 import { ISeguimientoJustificacionModalData, SeguimientoJustificacionModalComponent } from '../../modals/seguimiento-justificacion-modal/seguimiento-justificacion-modal.component';
 import {
   IProyectoPeriodoJustificacionWithTituloProyecto, IProyectoPeriodoSeguimientoWithTituloProyecto,
@@ -60,6 +64,24 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
     'acciones',
   ];
 
+  seguimientosJustificacionAnualidadElementosPagina = [5, 10, 25, 100];
+  seguimientosJustificacionAnualidadDisplayedColumns = [
+    'proyectoId',
+    'identificadorJustificacion',
+    'fechaPresentacionJustificacion',
+    'anio',
+    'importeJustificado',
+    'importeAceptado',
+    'importeRechazado',
+    'importeAlegado',
+    'importeNoEjecutado',
+    'importeReintegrar',
+    'importeReintegrado',
+    'interesesReintegrar',
+    'interesesReintegrados',
+    'acciones',
+  ];
+
   calendarioJustificacionElementosPagina = [5, 10, 25, 100];
   calendarioJustificacionDisplayedColumns = [
     'proyecto.id',
@@ -92,12 +114,17 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
   proyectosSGIDataSource = new MatTableDataSource<IProyectoSeguimientoEjecucionEconomicaData>();
   seguimientosJustificacionDataSource = new
     MatTableDataSource<StatusWrapper<IProyectoSeguimientoJustificacionWithFechaJustificacion>>();
+  seguimientosJustificacionAnualidadDataSource = new
+    MatTableDataSource<StatusWrapper<ISeguimientoJustificacionAnualidad>>();
   calendarioJustificacionDataSource = new MatTableDataSource<StatusWrapper<IProyectoPeriodoJustificacionWithTituloProyecto>>();
   calendarioSeguimientoDataSource = new MatTableDataSource<StatusWrapper<IProyectoPeriodoSeguimientoWithTituloProyecto>>();
   @ViewChild('proyectosSGIPaginator', { static: true }) proyectosSGIPaginator: MatPaginator;
   @ViewChild('proyectosSGISort', { static: true }) proyectosSGISort: MatSort;
   @ViewChild('seguimientosJustificacionPaginator', { static: true })
   seguimientosJustificacionPaginator: MatPaginator;
+  @ViewChild('seguimientosJustificacionAnualidadSort', { static: true }) seguimientosJustificacionAnualidadSort: MatSort;
+  @ViewChild('seguimientosJustificacionAnualidadPaginator', { static: true })
+  seguimientosJustificacionAnualidadPaginator: MatPaginator;
   @ViewChild('seguimientosJustificacionSort', { static: true }) seguimientosJustificacionSort: MatSort;
   @ViewChild('calendarioJustificacionPaginator', { static: true }) calendarioJustificacionPaginator: MatPaginator;
   @ViewChild('calendarioJustificacionSort', { static: true }) calendarioJustificacionSort: MatSort;
@@ -117,7 +144,7 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
   }
 
   constructor(
-    actionService: EjecucionEconomicaActionService,
+    private readonly actionService: EjecucionEconomicaActionService,
     private matDialog: MatDialog) {
     super(actionService.FRAGMENT.SEGUIMIENTO_JUSTIFICACION_RESUMEN, actionService);
     this.formPart = this.fragment as SeguimientoJustificacionResumenFragment;
@@ -127,6 +154,7 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
     super.ngOnInit();
     this.initProyectosSGITable();
     this.initSeguimientoJustificacionTable();
+    this.initSeguimientoJustificacionAnualidadTable();
     this.initCalendarioJustificacionTable();
     this.initCalendarioSeguimientoTable();
   }
@@ -153,6 +181,24 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
     this.seguimientosJustificacionDataSource.sort = this.seguimientosJustificacionSort;
     this.subscriptions.push(this.formPart.getSeguimientosJustificacion$().subscribe(elements => {
       this.seguimientosJustificacionDataSource.data = elements;
+    }));
+  }
+
+  private initSeguimientoJustificacionAnualidadTable(): void {
+    this.seguimientosJustificacionAnualidadDataSource.paginator = this.seguimientosJustificacionAnualidadPaginator;
+    this.seguimientosJustificacionAnualidadDataSource.sortingDataAccessor =
+      (wrapper: StatusWrapper<ISeguimientoJustificacionAnualidad>, property: string) => {
+        switch (property) {
+          case 'anio':
+            return wrapper.value.proyectoPeriodoJustificacionSeguimiento?.proyectoAnualidad?.anio ?? wrapper.value[property];
+          default:
+            return wrapper.value[property] ??
+              (wrapper.value.proyectoPeriodoJustificacionSeguimiento && wrapper.value.proyectoPeriodoJustificacionSeguimiento[property]);
+        }
+      };
+    this.seguimientosJustificacionAnualidadDataSource.sort = this.seguimientosJustificacionAnualidadSort;
+    this.subscriptions.push(this.formPart.getSeguimientosJustificacionAnualidad$().subscribe(elements => {
+      this.seguimientosJustificacionAnualidadDataSource.data = elements;
     }));
   }
 
@@ -196,6 +242,11 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
+  getSeguimientoJustificacionAnualidadAnio(seguimientoJustificacionAnualidad: StatusWrapper<ISeguimientoJustificacionAnualidad>): number {
+    return seguimientoJustificacionAnualidad.value.proyectoPeriodoJustificacionSeguimiento?.proyectoAnualidad?.anio
+      ?? seguimientoJustificacionAnualidad.value.anio;
+  }
+
   openModalSeguimientoJustificacion(
     seguimientoJustificacion: StatusWrapper<IProyectoSeguimientoJustificacionWithFechaJustificacion>): void {
     const data: ISeguimientoJustificacionModalData = {
@@ -223,6 +274,33 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
     );
   }
 
+  openModalSeguimientoJustificacionAnualidad(
+    seguimientoJustificacionAnualidad: StatusWrapper<ISeguimientoJustificacionAnualidad>): void {
+    const data: ISeguimientoJustificacionAnualidadModalData = {
+      tituloProyecto: this.proyectosSGIDataSource.data.find(
+        proyectoSGI => proyectoSGI.id === seguimientoJustificacionAnualidad.value.proyectoId
+      )?.nombre,
+      seguimientoJustificacionAnualidad
+    };
+
+    const config: MatDialogConfig<ISeguimientoJustificacionAnualidadModalData> = {
+      data
+    };
+
+    const dialogRef = this.matDialog.open(SeguimientoJustificacionAnualidadModalComponent, config);
+    dialogRef.afterClosed().subscribe(
+      (modalData: StatusWrapper<ISeguimientoJustificacionAnualidad>) => {
+        if (modalData) {
+          if (modalData.value?.proyectoPeriodoJustificacionSeguimiento?.id) {
+            this.formPart.updateSeguimientoJustificacionAnualidad(modalData);
+          } else {
+            this.formPart.createSeguimientoJustificacionAnualidad(modalData);
+          }
+        }
+      }
+    );
+  }
+
   openModalPeriodoJustificacion(periodoJustificacion: StatusWrapper<IProyectoPeriodoJustificacionWithTituloProyecto>): void {
     const data: IdentificadorJustificacionModalData = {
       configuracion: this.formPart.configuracion,
@@ -239,6 +317,7 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
     dialogRef.afterClosed().subscribe(
       (modalData: StatusWrapper<IProyectoPeriodoJustificacionWithTituloProyecto>) => {
         if (modalData) {
+          const { tituloProyecto, ...proyectoPeriodoJustificacion } = modalData.value;
           this.formPart.updatePeriodoJustificacion(modalData);
         }
       }
@@ -258,5 +337,17 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
         }
       }
     );
+  }
+
+  public openExportModal(): void {
+    const data: ISeguimientoGastosJustificadosResumenExportModalData = {
+      findOptions: {},
+      proyectoSgeRef: this.formPart.proyectoSgeRef
+    };
+
+    const config = {
+      data
+    };
+    this.matDialog.open(SeguimientoGastosJustificadosResumenExportModalComponent, config);
   }
 }

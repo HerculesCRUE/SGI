@@ -108,7 +108,7 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
    * Carga los datos de los solicitantes de las evaluaciones
    */
   private loadSolicitantes(): void {
-    this.evaluaciones.map((evaluacion) => {
+    this.evaluaciones.forEach((evaluacion) => {
       const personaId = evaluacion.memoria?.peticionEvaluacion?.solicitante?.id;
       if (personaId) {
         this.suscripciones.push(

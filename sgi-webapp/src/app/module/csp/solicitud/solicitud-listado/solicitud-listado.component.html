@@ -165,7 +165,7 @@
       </div>
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <!-- fechaPublicacionConvocatoriaDesde-->
-        <mat-form-field fxFlex="16%">
+        <mat-form-field fxFlex="19%">
           <mat-label>{{'csp.solicitud.fecha-publicacion-convocatoria-desde' | translate}}</mat-label>
           <input matInput formControlName="fechaPublicacionConvocatoriaDesde"
             [matDatepicker]="pickerFechaPublicacionConvocatoriaDesde"
@@ -176,7 +176,7 @@
         </mat-form-field>
 
         <!-- fechaPublicacionConvocatoriaHasta-->
-        <mat-form-field sgiEndDate fxFlex="16%">
+        <mat-form-field sgiEndDate fxFlex="19%">
           <mat-label>{{'csp.solicitud.fecha-publicacion-convocatoria-hasta' | translate}}</mat-label>
           <input matInput formControlName="fechaPublicacionConvocatoriaHasta"
             [matDatepicker]="pickerFechaPublicacionConvocatoriaHasta"
@@ -185,6 +185,18 @@
           <mat-datepicker #pickerFechaPublicacionConvocatoriaHasta>
           </mat-datepicker>
         </mat-form-field>
+      </div>
+
+      <!-- Palabras clave -->
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <mat-form-field fxFlex="100%">
+          <mat-label>{{'csp.solicitud.palabras-clave' | translate}}</mat-label>
+          <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
+            placeholder="{{'csp.solicitud.palabras-clave' | translate}}"></sgi-palabra-clave>
+        </mat-form-field>
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <!-- activo -->
         <ng-container *sgiHasAuthorityForAnyUO="'CSP-SOL-R'">
           <mat-form-field fxFlex="6%">
@@ -196,15 +208,6 @@
             </mat-select>
           </mat-form-field>
         </ng-container>
-      </div>
-
-      <!-- Palabras clave -->
-      <div fxFlex fxLayout="row" fxLayoutGap="10px">
-        <mat-form-field fxFlex="100%">
-          <mat-label>{{'csp.solicitud.palabras-clave' | translate}}</mat-label>
-          <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
-            placeholder="{{'csp.solicitud.palabras-clave' | translate}}"></sgi-palabra-clave>
-        </mat-form-field>
       </div>
 
       <!-- Acciones -->

@@ -120,7 +120,7 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
 
       current
         .filter(value => value.partidaGasto.value.conceptoGasto.id === wrapper.partidaGasto.value.conceptoGasto.id)
-        .map(value => {
+        .forEach(value => {
           value.importeTotalSolicitadoConceptoGasto = solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotalSolicitado;
           value.importeTotalPresupuestadoConceptoGasto = solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotalPresupuestado;
         });
@@ -174,7 +174,7 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
 
     current
       .filter(value => value.partidaGasto.value.conceptoGasto.id === partidaGasto.conceptoGasto.id)
-      .map(value => {
+      .forEach(value => {
         value.importeTotalSolicitadoConceptoGasto = solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotalSolicitado;
         value.importeTotalPresupuestadoConceptoGasto = solicitudProyectoPresupuestoTotalesConceptoGasto?.importeTotalPresupuestado;
       });
@@ -216,7 +216,7 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
         .filter(value =>
           value.partidaGasto.value.conceptoGasto.id === solicitudProyectoPresupuestoListado.partidaGasto.value.conceptoGasto.id
         )
-        .map(value => {
+        .forEach(value => {
           value.importeTotalSolicitadoConceptoGasto = importeTotalSolicitadoConceptoGasto;
           value.importeTotalPresupuestadoConceptoGasto = importeTotalPresupuestadoConceptoGasto;
         });
@@ -258,7 +258,7 @@ export class SolicitudProyectoPresupuestoPartidasGastoFragment extends Fragment 
       // Actualiza el importe total de todos las partidas de gasto con el mismo concepto de gasto
       current
         .filter(value => value.partidaGasto.value.conceptoGasto.id === wrapper.value.conceptoGasto.id)
-        .map(value => {
+        .forEach(value => {
           value.importeTotalSolicitadoConceptoGasto = importeTotalSolicitadoConceptoGasto;
           value.importeTotalPresupuestadoConceptoGasto = importeTotalPresupuestadoConceptoGasto;
         });

@@ -92,7 +92,7 @@
           <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
           <ngx-mat-datetime-picker #picker2 showSeconds="true" [defaultTime]="[23,59,59]"></ngx-mat-datetime-picker>
           <mat-error *ngIf="formGroup.controls.fechaFinPresentacion.errors?.after">
-            {{'error.after.param' | translate:msgParamFechaInicioEntity}}
+            {{'error.after.param' | translate:msgParamFechaInicioPresentacionEntity}}
           </mat-error>
         </mat-form-field>
       </div>

@@ -12,12 +12,13 @@ import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { NGXLogger } from 'ngx-logger';
-import { EMPTY, from, Observable } from 'rxjs';
+import { EMPTY, from, Observable, of, throwError } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { EJECUCION_ECONOMICA_ROUTE_PARAMS } from './ejecucion-economica-route-params';
 import { IEjecucionEconomicaData } from './ejecucion-economica.action.service';
 
 const MSG_NOT_FOUND = marker('error.load');
+const MSG_PROYECTO_SGE_NOT_FOUND = marker('error.sge.proyecto.not-found');
 
 export const EJECUCION_ECONOMICA_DATA_KEY = 'ejecucionEconomicaData';
 
@@ -50,9 +51,13 @@ export class EjecucionEconomicaDataResolver extends SgiResolverResolver<IEjecuci
       }),
       switchMap(data => {
         return this.proyectoSgeService.findById(data.proyectoSge.id).pipe(
-          map(proyectoSge => {
+          switchMap(proyectoSge => {
+            if (!proyectoSge) {
+              return throwError(MSG_PROYECTO_SGE_NOT_FOUND);
+            }
+
             data.proyectoSge = proyectoSge;
-            return data;
+            return of(data);
           })
         );
       }),

@@ -17,4 +17,5 @@ export interface ISolicitanteExternoResponse {
   provinciaRef: string;
   ciudad: string;
   codigoPostal: string;
+  solicitudUUID?: string;
 }

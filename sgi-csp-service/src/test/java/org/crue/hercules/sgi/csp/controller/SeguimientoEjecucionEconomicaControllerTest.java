@@ -14,6 +14,7 @@ import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoSeguimientoOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoSeguimientoEjecucionEconomica;
 import org.crue.hercules.sgi.csp.dto.ProyectoSeguimientoJustificacionOutput;
 import org.crue.hercules.sgi.csp.dto.RequerimientoJustificacionOutput;
+import org.crue.hercules.sgi.csp.dto.SeguimientoJustificacionAnualidad;
 import org.crue.hercules.sgi.csp.dto.ProyectoSeguimientoJustificacionOutput.ProyectoProyectoSgeOutput;
 import org.crue.hercules.sgi.csp.enums.TipoSeguimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
@@ -21,6 +22,7 @@ import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
 import org.crue.hercules.sgi.csp.model.ProyectoSeguimientoJustificacion;
 import org.crue.hercules.sgi.csp.model.RequerimientoJustificacion;
+import org.crue.hercules.sgi.csp.service.ProyectoPeriodoJustificacionSeguimientoService;
 import org.crue.hercules.sgi.csp.service.ProyectoPeriodoJustificacionService;
 import org.crue.hercules.sgi.csp.service.ProyectoPeriodoSeguimientoService;
 import org.crue.hercules.sgi.csp.service.ProyectoSeguimientoJustificacionService;
@@ -69,6 +71,8 @@ class SeguimientoEjecucionEconomicaControllerTest extends BaseControllerTest {
   private ProyectoSeguimientoJustificacionService proyectoSeguimientoJustificacionService;
   @MockBean
   private ProyectoSeguimientoJustificacionConverter proyectoSeguimientoJustificacionConverter;
+  @MockBean
+  private ProyectoPeriodoJustificacionSeguimientoService proyectoPeriodoJustificacionSeguimientoService;
 
   private static final String CONTROLLER_BASE_PATH = SeguimientoEjecucionEconomicaController.REQUEST_MAPPING;
   private static final String PATH_PROYECTOS = SeguimientoEjecucionEconomicaController.PATH_PROYECTOS;
@@ -76,6 +80,7 @@ class SeguimientoEjecucionEconomicaControllerTest extends BaseControllerTest {
   private static final String PATH_PERIODO_SEGUIMIENTO = SeguimientoEjecucionEconomicaController.PATH_PERIODO_SEGUIMIENTO;
   private static final String PATH_REQUERIMIENTO_JUSTIFICACION = SeguimientoEjecucionEconomicaController.PATH_REQUERIMIENTO_JUSTIFICACION;
   private static final String PATH_SEGUIMIENTO_JUSTIFICACION = SeguimientoEjecucionEconomicaController.PATH_SEGUIMIENTO_JUSTIFICACION;
+  private static final String PATH_SEGUIMIENTO_JUSTIFICACION_ANUALIDAD = SeguimientoEjecucionEconomicaController.PATH_SEGUIMIENTO_JUSTIFICACION_ANUALIDAD;
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SJUS-V" })
@@ -593,6 +598,71 @@ class SeguimientoEjecucionEconomicaControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.status().isNoContent());
   }
 
+  @Test
+  @WithMockUser(username = "user", authorities = { "CSP-SJUS-V" })
+  public void findSeguimientosJustificacionAnualidad_ReturnsList() throws Exception {
+    // given: Una lista con 20 SeguimientoJustificacionAnualidad
+    String proyectoSgeRef = "1";
+    List<SeguimientoJustificacionAnualidad> seguimientosJustificacionAnualidad = new ArrayList<>();
+    for (long i = 1; i <= 20; i++) {
+      seguimientosJustificacionAnualidad.add(generarMockSeguimientoJustificacionAnualidad(i));
+    }
+    BDDMockito
+        .given(proyectoPeriodoJustificacionSeguimientoService
+            .findSeguimientosJustificacionAnualidadByProyectoSgeRef(ArgumentMatchers.<String>any()))
+        .willAnswer((InvocationOnMock invocation) -> {
+          List<SeguimientoJustificacionAnualidad> listResponse = seguimientosJustificacionAnualidad;
+          return listResponse;
+        });
+
+    // when: Get SeguimientoJustificacionAnualidad para proyectoSgeRef
+    MvcResult requestResult = mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH + PATH_SEGUIMIENTO_JUSTIFICACION_ANUALIDAD, proyectoSgeRef)
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                .accept(MediaType.APPLICATION_JSON))
+        .andDo(SgiMockMvcResultHandlers.printOnError())
+        // then: Devuelve la lista con los SeguimientoJustificacionAnualidad
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(20))).andReturn();
+    List<SeguimientoJustificacionAnualidad> response = mapper.readValue(
+        requestResult.getResponse().getContentAsString(),
+        new TypeReference<List<SeguimientoJustificacionAnualidad>>() {
+        });
+    for (int i = 0; i < 20; i++) {
+      SeguimientoJustificacionAnualidad seguimientoJustificacionAnualidad = response.get(i);
+      Assertions.assertThat(seguimientoJustificacionAnualidad.getIdentificadorJustificacion())
+          .isEqualTo("identificador-justificacion-" + String.format("%03d", i + 1));
+    }
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "CSP-SJUS-E" })
+  public void findSeguimientosJustificacionAnualidad_EmptyList_Returns204() throws Exception {
+    // given: no data SeguimientoJustificacionAnualidad
+    String proyectoSgeRef = "1";
+    BDDMockito
+        .given(proyectoPeriodoJustificacionSeguimientoService
+            .findSeguimientosJustificacionAnualidadByProyectoSgeRef(ArgumentMatchers.anyString()))
+        .willAnswer(new Answer<List<SeguimientoJustificacionAnualidad>>() {
+          @Override
+          public List<SeguimientoJustificacionAnualidad> answer(InvocationOnMock invocation) throws Throwable {
+            List<SeguimientoJustificacionAnualidad> list = Collections.emptyList();
+            return list;
+          }
+        });
+    // when: get SeguimientoJustificacionAnualidad para proyectoSgeRef
+    mockMvc
+        .perform(MockMvcRequestBuilders.get(
+            CONTROLLER_BASE_PATH + PATH_SEGUIMIENTO_JUSTIFICACION_ANUALIDAD, proyectoSgeRef)
+            .with(SecurityMockMvcRequestPostProcessors.csrf())
+            .accept(MediaType.APPLICATION_JSON))
+        .andDo(SgiMockMvcResultHandlers.printOnError())
+        // then: returns 204
+        .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
   private RequerimientoJustificacion generarMockRequerimientoJustificacion(Long id) {
     String observacionSuffix = id != null ? String.format("%03d", id) : String.format("%03d", 1);
     return generarMockRequerimientoJustificacion(id, "RequerimientoJustificacion-" + observacionSuffix,
@@ -666,5 +736,22 @@ class SeguimientoEjecucionEconomicaControllerTest extends BaseControllerTest {
 
   private ProyectoProyectoSgeOutput generarMockProyectoProyectoSgeOutput(Long id, String proyectoSgeRef) {
     return ProyectoProyectoSgeOutput.builder().id(id).proyectoSgeRef(proyectoSgeRef).build();
+  }
+
+  private SeguimientoJustificacionAnualidad generarMockSeguimientoJustificacionAnualidad(Long index) {
+    String justificanteReintegroSuffix = index != null ? String.format("%03d", index) : String.format("%03d", 1);
+    return generarMockSeguimientoJustificacionAnualidad(1L, 1L, 1L,
+        "identificador-justificacion-" + justificanteReintegroSuffix);
+  }
+
+  private SeguimientoJustificacionAnualidad generarMockSeguimientoJustificacionAnualidad(
+      Long proyectoId, Long proyectoPeriodoJustificacionId, Long proyectoPeriodoJustificacionSeguimientoId,
+      String identificadorJustificacion) {
+    return SeguimientoJustificacionAnualidad.builder()
+        .proyectoId(proyectoId)
+        .proyectoPeriodoJustificacionId(proyectoPeriodoJustificacionId)
+        .proyectoPeriodoJustificacionSeguimientoId(proyectoPeriodoJustificacionSeguimientoId)
+        .identificadorJustificacion(identificadorJustificacion)
+        .build();
   }
 }

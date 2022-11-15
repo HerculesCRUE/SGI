@@ -1,0 +1,434 @@
+<sgi-dialog-header title="{{'csp.seguimiento-justificacion-anualidad.title' | translate}}">
+</sgi-dialog-header>
+<sgi-dialog-content>
+  <form [formGroup]="formGroup" fxLayout="column">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Proyecto SGI: ID interno -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.proyecto-sgi.id-interno'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.proyecto-sgi.id-interno' | translate}}"
+          formControlName="proyectoId">
+      </mat-form-field>
+
+      <!-- Proyecto SGI: Título -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.proyecto-sgi.titulo'
+          | translate}}
+        </mat-label>
+        <input matInput type="text"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.proyecto-sgi.titulo' | translate}}"
+          formControlName="tituloProyecto">
+      </mat-form-field>
+
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Identificador justificación -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.identificador-justificacion'
+          | translate}}
+        </mat-label>
+        <input matInput type="text"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.identificador-justificacion' | translate}}"
+          formControlName="identificadorJustificacion">
+      </mat-form-field>
+
+      <!-- Fecha presentación justificación -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.fecha-presentacion-justificacion'
+          | translate}}
+        </mat-label>
+        <input matInput formControlName="fechaPresentacionJustificacion"
+          [ngxMatDatetimePicker]="pickerFechaPresentacionJustificacion">
+        <mat-datepicker-toggle matSuffix [for]="pickerFechaPresentacionJustificacion"></mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #pickerFechaPresentacionJustificacion showSeconds="true" [defaultTime]="[0,0,0]">
+        </ngx-mat-datetime-picker>
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Anualidad presupuesto -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.anualidad-presupuesto'
+          | translate}}
+        </mat-label>
+        <sgi-select-proyecto-anualidad formControlName="proyectoAnualidad"
+          [proyectoId]="formGroup.controls.proyectoId?.value" required>
+        </sgi-select-proyecto-anualidad>
+        <mat-error *ngIf="formGroup.controls.proyectoAnualidad.errors?.required">
+          {{'error.required.entity' | translate:msgParamAnualidadPresupuestoEntity}}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Importe concedido anualidad: costes directos -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-concedido-anualidad-cd'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-concedido-anualidad-cd' | translate}}"
+          formControlName="importeConcedidoAnualidadCD">
+      </mat-form-field>
+
+      <!-- Importe concedido anualidad: costes indirectos -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-concedido-anualidad-ci'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-concedido-anualidad-ci' | translate}}"
+          formControlName="importeConcedidoAnualidadCI">
+      </mat-form-field>
+
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Importe justificado -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-justificado'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-justificado' | translate}}"
+          formControlName="importeJustificado">
+      </mat-form-field>
+
+      <!-- Importe justificado: costes directos -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-justificado-cd'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-justificado-cd' | translate}}"
+          formControlName="importeJustificadoCD">
+      </mat-form-field>
+
+      <!-- Importe justificado: costes indirectos -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-justificado-ci'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-justificado-ci' | translate}}"
+          formControlName="importeJustificadoCI">
+      </mat-form-field>
+
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Importe aceptado -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-aceptado'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-aceptado' | translate}}"
+          formControlName="importeAceptado">
+      </mat-form-field>
+
+      <!-- Importe aceptado: costes directos -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-aceptado-cd'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-aceptado-cd' | translate}}"
+          formControlName="importeAceptadoCD">
+      </mat-form-field>
+
+      <!-- Importe aceptado: costes indirectos -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-aceptado-ci'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-aceptado-ci' | translate}}"
+          formControlName="importeAceptadoCI">
+      </mat-form-field>
+
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Importe rechazado -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-rechazado'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-rechazado' | translate}}"
+          formControlName="importeRechazado">
+      </mat-form-field>
+
+      <!-- Importe rechazado  - costes directos -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-rechazado.cd'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-rechazado.cd' | translate}}"
+          formControlName="importeRechazadoCD">
+      </mat-form-field>
+
+      <!-- Importe rechazado - costes indirectos -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-rechazado.ci'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-rechazado.ci' | translate}}"
+          formControlName="importeRechazadoCI">
+      </mat-form-field>
+
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Importe alegado -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-alegado'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-alegado' | translate}}"
+          formControlName="importeAlegado">
+      </mat-form-field>
+
+      <!-- Importe alegado: coste directos -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-alegado-cd'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-alegado-cd' | translate}}"
+          formControlName="importeAlegadoCD">
+      </mat-form-field>
+
+      <!-- Importe alegado: coste indirectos -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-alegado-ci'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-alegado-ci' | translate}}"
+          formControlName="importeAlegadoCI">
+      </mat-form-field>
+
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Importe no ejecutado -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-no-ejecutado'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-no-ejecutado' | translate}}"
+          formControlName="importeNoEjecutado">
+      </mat-form-field>
+
+      <!-- Importe no ejecutado: costes directos -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-no-ejecutado-cd'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-no-ejecutado-cd' | translate}}"
+          formControlName="importeNoEjecutadoCD">
+      </mat-form-field>
+
+      <!-- Importe no ejecutado: costes indirectos -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-no-ejecutado-ci'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-no-ejecutado-ci' | translate}}"
+          formControlName="importeNoEjecutadoCI">
+      </mat-form-field>
+
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Importe a reintegrar -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-reintegrar'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-reintegrar' | translate}}"
+          formControlName="importeReintegrar">
+      </mat-form-field>
+
+      <!-- Importe a reintegrar: costes directos -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-reintegrar-cd'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-reintegrar-cd' | translate}}"
+          formControlName="importeReintegrarCD">
+      </mat-form-field>
+
+      <!-- Importe a reintegrar: costes indirectos -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.importe-reintegrar-ci'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.importe-reintegrar-ci' | translate}}"
+          formControlName="importeReintegrarCI">
+      </mat-form-field>
+
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Reintegro realizado -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.reintegro-realizado'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.reintegro-realizado' | translate}}"
+          formControlName="importeReintegrado">
+      </mat-form-field>
+
+      <!-- Reintegro realizado: costes directos -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.reintegro-realizado-cd'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.reintegro-realizado-cd' | translate}}"
+          formControlName="importeReintegradoCD">
+      </mat-form-field>
+
+      <!-- Reintegro realizado: costes indirectos -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.reintegro-realizado-ci'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.reintegro-realizado-ci' | translate}}"
+          formControlName="importeReintegradoCI">
+      </mat-form-field>
+
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Intereses a reintegrar -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.intereses-reintegrar'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.intereses-reintegrar' | translate}}"
+          formControlName="interesesReintegrar">
+      </mat-form-field>
+
+      <!-- Intereses reintegrados -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.intereses-reintegrados'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.intereses-reintegrados' | translate}}"
+          formControlName="interesesReintegrados">
+      </mat-form-field>
+
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Fecha último reintegro -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.fecha-reintegro'
+          | translate}}
+        </mat-label>
+        <input matInput formControlName="fechaReintegro" [matDatepicker]="fechaReintegro">
+        <mat-datepicker-toggle matSuffix [for]="fechaReintegro"></mat-datepicker-toggle>
+        <mat-datepicker #fechaReintegro></mat-datepicker>
+      </mat-form-field>
+
+      <!-- Núm. justificante último reintegro -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.num-justificante-ultimo-reintegro'
+          | translate}}
+        </mat-label>
+        <input matInput type="text"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.num-justificante-ultimo-reintegro' | translate}}"
+          formControlName="justificanteReintegro">
+        <mat-error *ngIf="formGroup.controls.justificanteReintegro.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamJustificanteReintegroEntity}}
+        </mat-error>
+      </mat-form-field>
+
+    </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Reintegro pendiente -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.reintegro-pendiente'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.reintegro-pendiente' | translate}}"
+          formControlName="reintegroPendiente">
+      </mat-form-field>
+
+      <!-- Intereses pendientes de reintegrar -->
+      <mat-form-field>
+        <mat-label>
+          {{'csp.seguimiento-justificacion-anualidad.intereses-pendientes-reintegrar'
+          | translate}}
+        </mat-label>
+        <input matInput type="number"
+          placeholder="{{'csp.seguimiento-justificacion-anualidad.intereses-pendientes-reintegrar' | translate}}"
+          formControlName="interesesPendientes">
+      </mat-form-field>
+
+    </div>
+  </form>
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>
+    {{ 'btn.ok' | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>
