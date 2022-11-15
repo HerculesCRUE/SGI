@@ -86,7 +86,8 @@ public class SolicitudModalidadServiceImpl implements SolicitudModalidadService 
     // Comprobar que la modalidad seleccionada esta en el arbol que tiene como nodo
     // raiz el programa seleccionado en la ConvocatoriaEntidadConvocante
     Optional<ConvocatoriaEntidadConvocante> convocatoriaEntidadConvocante = convocatoriaEntidadConvocanteRepository
-        .findByConvocatoriaIdAndEntidadRef(solicitud.getConvocatoriaId(), solicitudModalidad.getEntidadRef());
+        .findByConvocatoriaIdAndEntidadRefAndProgramaId(solicitud.getConvocatoriaId(),
+            solicitudModalidad.getEntidadRef(), solicitudModalidad.getProgramaConvocatoriaId());
 
     Assert.isTrue(convocatoriaEntidadConvocante.isPresent(),
         "No existe ninguna ConvocatoriaEntidadConvocante con el entidadRef para la convocatoria seleccionada");
@@ -135,7 +136,8 @@ public class SolicitudModalidadServiceImpl implements SolicitudModalidadService 
       // Comprobar que la modalidad seleccionada esta en el arbol que tiene como nodo
       // raiz el programa seleccionado en la ConvocatoriaEntidadConvocante
       Optional<ConvocatoriaEntidadConvocante> convocatoriaEntidadConvocante = convocatoriaEntidadConvocanteRepository
-          .findByConvocatoriaIdAndEntidadRef(solicitud.getConvocatoriaId(), data.getEntidadRef());
+          .findByConvocatoriaIdAndEntidadRefAndProgramaId(solicitud.getConvocatoriaId(),
+              data.getEntidadRef(), solicitudModalidad.getProgramaConvocatoriaId());
 
       // Comprobar que la modalidad seleccionada no es el nodo raiz del arbol
       Assert.isTrue(
@@ -237,7 +239,8 @@ public class SolicitudModalidadServiceImpl implements SolicitudModalidadService 
     // Comprobar que la modalidad seleccionada esta en el arbol que tiene como nodo
     // raiz el programa seleccionado en la ConvocatoriaEntidadConvocante
     Optional<ConvocatoriaEntidadConvocante> convocatoriaEntidadConvocante = convocatoriaEntidadConvocanteRepository
-        .findByConvocatoriaIdAndEntidadRef(solicitud.getConvocatoriaId(), solicitudModalidad.getEntidadRef());
+        .findByConvocatoriaIdAndEntidadRefAndProgramaId(solicitud.getConvocatoriaId(),
+            solicitudModalidad.getEntidadRef(), solicitudModalidad.getProgramaConvocatoriaId());
 
     Assert.isTrue(convocatoriaEntidadConvocante.isPresent(),
         "No existe ninguna ConvocatoriaEntidadConvocante con el entidadRef para la convocatoria seleccionada");
@@ -288,7 +291,8 @@ public class SolicitudModalidadServiceImpl implements SolicitudModalidadService 
       // Comprobar que la modalidad seleccionada esta en el arbol que tiene como nodo
       // raiz el programa seleccionado en la ConvocatoriaEntidadConvocante
       Optional<ConvocatoriaEntidadConvocante> convocatoriaEntidadConvocante = convocatoriaEntidadConvocanteRepository
-          .findByConvocatoriaIdAndEntidadRef(solicitud.getConvocatoriaId(), data.getEntidadRef());
+          .findByConvocatoriaIdAndEntidadRefAndProgramaId(solicitud.getConvocatoriaId(),
+              data.getEntidadRef(), solicitudModalidad.getProgramaConvocatoriaId());
 
       // Comprobar que la modalidad seleccionada no es el nodo raiz del arbol
       Assert.isTrue(

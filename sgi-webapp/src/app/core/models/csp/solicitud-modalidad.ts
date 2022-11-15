@@ -10,4 +10,6 @@ export interface ISolicitudModalidad {
   entidad: IEmpresa;
   /** Programa */
   programa: IPrograma;
+  /** Programa de la convocatoria */
+  programaConvocatoriaId: number;
 }

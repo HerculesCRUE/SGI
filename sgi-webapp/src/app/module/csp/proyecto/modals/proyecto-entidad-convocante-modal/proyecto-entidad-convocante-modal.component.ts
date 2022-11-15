@@ -1,6 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
@@ -9,7 +9,6 @@ import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IPrograma } from '@core/models/csp/programa';
 import { IProyectoEntidadConvocante } from '@core/models/csp/proyecto-entidad-convocante';
-import { IEmpresa } from '@core/models/sgemp/empresa';
 import { ProgramaService } from '@core/services/csp/programa.service';
 import { DialogService } from '@core/services/dialog.service';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
@@ -26,7 +25,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
 
 export interface ProyectoEntidadConvocanteModalData {
   proyectoEntidadConvocante: IProyectoEntidadConvocante;
-  selectedEmpresas: IEmpresa[];
+  selectedEntidadesConvocantes: IProyectoEntidadConvocante[];
   readonly: boolean;
 }
 
@@ -166,12 +165,13 @@ export class ProyectoEntidadConvocanteModalComponent extends DialogFormComponent
     this.updateProgramas([]);
     this.nodeMap.clear();
 
-    if (this.data.proyectoEntidadConvocante.programaConvocatoria) {
+    if (this.data.proyectoEntidadConvocante.programaConvocatoria
+      && this.data.proyectoEntidadConvocante.programaConvocatoria?.padre?.id) {
       const node = new NodePrograma(this.data.proyectoEntidadConvocante.programaConvocatoria);
       this.nodeMap.set(node.programa.id, node);
       const subscription = this.getChilds(node).pipe(map(() => node)).pipe(
         tap(() => {
-          this.checkedNode = this.nodeMap.get(this.formGroup.get('programa').value);
+          this.checkedNode = this.nodeMap.get(this.formGroup.get('programa').value?.id);
           if (this.checkedNode) {
             this.expandNodes(this.checkedNode);
           }
@@ -181,7 +181,7 @@ export class ProyectoEntidadConvocanteModalComponent extends DialogFormComponent
       });
       this.subscriptions.push(subscription);
     } else {
-      const id = this.formGroup.get('plan').value?.id;
+      const id = this.data.proyectoEntidadConvocante.programaConvocatoria?.padre?.id ?? this.formGroup.get('plan').value?.id;
       if (id && !isNaN(id)) {
         this.checkedNode = undefined;
         const subscription = this.programaService.findAllHijosPrograma(id).pipe(
@@ -208,7 +208,7 @@ export class ProyectoEntidadConvocanteModalComponent extends DialogFormComponent
             this.logger.error(error);
           },
           () => {
-            this.checkedNode = this.nodeMap.get(this.formGroup.get('programa').value);
+            this.checkedNode = this.nodeMap.get(this.formGroup.get('programa').value?.id);
             if (this.checkedNode) {
               this.expandNodes(this.checkedNode);
             }
@@ -272,7 +272,11 @@ export class ProyectoEntidadConvocanteModalComponent extends DialogFormComponent
           value: this.getPlan(this.data.proyectoEntidadConvocante),
           disabled: !(this.create || this.data.proyectoEntidadConvocante.programaConvocatoria == null)
         }, IsEntityValidator.isValid()),
-      programa: new FormControl(this.data.proyectoEntidadConvocante.programa?.id)
+      programa: new FormControl(this.data.proyectoEntidadConvocante.programa)
+    }, {
+      validators: [
+        this.notDuplicatedEntidadAndPrograma(this.data.selectedEntidadesConvocantes)
+      ]
     });
 
     if (this.data.readonly) {
@@ -312,7 +316,7 @@ export class ProyectoEntidadConvocanteModalComponent extends DialogFormComponent
 
   onCheckNode(node: NodePrograma, $event: MatCheckboxChange): void {
     this.checkedNode = $event.checked ? node : undefined;
-    this.formGroup.get('programa').setValue(this.checkedNode?.programa?.id);
+    this.formGroup.get('programa').setValue(this.checkedNode?.programa);
   }
 
   doAction(): void {
@@ -353,7 +357,7 @@ export class ProyectoEntidadConvocanteModalComponent extends DialogFormComponent
   }
 
   private getTopLevel(programa: IPrograma): IPrograma {
-    if (programa.padre == null) {
+    if (!!!programa || !!!programa.padre) {
       return programa;
     }
     return this.getTopLevel(programa.padre);
@@ -361,6 +365,58 @@ export class ProyectoEntidadConvocanteModalComponent extends DialogFormComponent
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
+  }
+
+  private notDuplicatedEntidadAndPrograma(entidadesConvocantesProyecto: IProyectoEntidadConvocante[]): ValidatorFn {
+    return (formGroup: FormGroup): ValidationErrors | null => {
+      const entidadControl = formGroup.controls.entidad;
+      const planControl = formGroup.controls.plan;
+      const programaControl = formGroup.controls.programa;
+
+      if (entidadControl.errors && !entidadControl.errors.duplicated) {
+        return null;
+      }
+
+      const programaFormValue = programaControl.value
+        ?? (this.data.proyectoEntidadConvocante.programaConvocatoria ?? planControl.value);
+
+      if (entidadesConvocantesProyecto
+        .some(entidad =>
+          entidad.entidad.id === entidadControl.value?.id
+          && (!!!this.getTopLevel(entidad.programa ?? entidad.programaConvocatoria)?.id
+            || !!!planControl.value?.id
+            || this.getTopLevel(entidad.programa ?? entidad.programaConvocatoria)?.id === planControl.value?.id)
+          && (
+            (!!!this.getTopLevel(entidad.programa ?? entidad.programaConvocatoria)?.id || !!!planControl.value?.id)
+            || this.getProgramaParentsIds(entidad.programa ?? entidad.programaConvocatoria).includes(programaFormValue?.id)
+            || this.getProgramaParentsIds(programaFormValue).includes(entidad.programa?.id ?? entidad.programaConvocatoria?.id)
+          )
+        )
+      ) {
+        entidadControl.setErrors({ duplicated: true });
+        entidadControl.markAsTouched({ onlySelf: true });
+      } else if (entidadControl.errors) {
+        delete entidadControl.errors.duplicated;
+        if (!entidadControl.errors?.length) {
+          entidadControl.setErrors(null);
+        }
+        entidadControl.updateValueAndValidity({ onlySelf: true });
+      }
+    };
+  }
+
+  private getProgramaParentsIds(programa: IPrograma, tree: number[] = []): number[] {
+    if (!!!programa) {
+      return tree;
+    }
+
+    tree.push(programa.id);
+
+    if (!!programa?.padre?.id) {
+      this.getProgramaParentsIds(programa.padre, tree);
+    }
+
+    return tree;
   }
 
 }

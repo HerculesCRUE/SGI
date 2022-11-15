@@ -74,7 +74,8 @@ class SolicitudModalidadServiceTest extends BaseServiceTest {
     BDDMockito.given(programaRepository.findById(1L))
         .willReturn(Optional.of(solicitudModalidad.getPrograma().getPadre()));
     BDDMockito.given(convocatoriaEntidadConvocanteRepository
-        .findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        .findByConvocatoriaIdAndEntidadRefAndProgramaId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.anyString(), ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(generarMockConvocatoriaEntidadConvocante(1L)));
 
     BDDMockito.given(repository.save(ArgumentMatchers.<SolicitudModalidad>any()))
@@ -177,7 +178,8 @@ class SolicitudModalidadServiceTest extends BaseServiceTest {
     BDDMockito.given(programaRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(solicitudModalidad.getPrograma()));
     BDDMockito.given(convocatoriaEntidadConvocanteRepository
-        .findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        .findByConvocatoriaIdAndEntidadRefAndProgramaId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.anyString(), ArgumentMatchers.<Long>any()))
         .willReturn(Optional.empty());
 
     // when: Creamos el SolicitudModalidad
@@ -202,7 +204,8 @@ class SolicitudModalidadServiceTest extends BaseServiceTest {
     BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(solicitud));
     BDDMockito.given(programaRepository.findById(2L)).willReturn(Optional.of(solicitudModalidad.getPrograma()));
     BDDMockito.given(convocatoriaEntidadConvocanteRepository
-        .findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        .findByConvocatoriaIdAndEntidadRefAndProgramaId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.anyString(), ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(generarMockConvocatoriaEntidadConvocante(4L)));
 
     // when: Creamos el SolicitudModalidad
@@ -227,7 +230,8 @@ class SolicitudModalidadServiceTest extends BaseServiceTest {
         .willReturn(Optional.of(solicitudModalidadProgramaActualizado.getPrograma().getPadre()));
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(solicitudModalidad));
     BDDMockito.given(convocatoriaEntidadConvocanteRepository
-        .findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        .findByConvocatoriaIdAndEntidadRefAndProgramaId(ArgumentMatchers.<Long>any(),
+            ArgumentMatchers.anyString(), ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(generarMockConvocatoriaEntidadConvocante(1L)));
 
     BDDMockito.given(repository.save(ArgumentMatchers.<SolicitudModalidad>any()))
@@ -293,7 +297,8 @@ class SolicitudModalidadServiceTest extends BaseServiceTest {
     BDDMockito.given(programaRepository.findById(2L)).willReturn(Optional.of(solicitudModalidad.getPrograma()));
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(solicitudModalidad));
     BDDMockito.given(convocatoriaEntidadConvocanteRepository
-        .findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        .findByConvocatoriaIdAndEntidadRefAndProgramaId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.anyString(), ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(generarMockConvocatoriaEntidadConvocante(4L)));
     BDDMockito.given(solicitudService.modificable(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
 
@@ -316,7 +321,8 @@ class SolicitudModalidadServiceTest extends BaseServiceTest {
     BDDMockito.given(programaRepository.findById(1L)).willReturn(Optional.of(solicitudModalidad.getPrograma()));
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(solicitudModalidad));
     BDDMockito.given(convocatoriaEntidadConvocanteRepository
-        .findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        .findByConvocatoriaIdAndEntidadRefAndProgramaId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.anyString(), ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(generarMockConvocatoriaEntidadConvocante(1L)));
     BDDMockito.given(solicitudService.modificable(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
 

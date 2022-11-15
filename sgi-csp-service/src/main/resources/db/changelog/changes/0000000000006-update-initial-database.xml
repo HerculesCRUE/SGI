@@ -48,6 +48,8 @@
     <addForeignKeyConstraint baseColumnNames="solicitud_hito_aviso_id" baseTableName="solicitud_hito" constraintName="FK_SOLICITUDHITO_SOLICITUDHITOAVISO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="solicitud_hito_aviso" validate="true" />
   </changeSet>
   <changeSet author="user (generated)" id="0000000000006-9">
+    <validCheckSum>8:d90472c45cb0cf7fdaadd8b7d7ccc9c9</validCheckSum>
+    <dropDefaultValue columnDataType="boolean" columnName="genera_aviso" tableName="solicitud_hito" />
     <dropColumn columnName="genera_aviso" tableName="solicitud_hito" />
   </changeSet>
 

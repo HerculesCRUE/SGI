@@ -7,6 +7,7 @@ import { Fragment } from '@core/services/action-service';
 import { ConfiguracionSolicitudService } from '@core/services/csp/configuracion-solicitud.service';
 import { SolicitudDocumentoService } from '@core/services/csp/solicitud-documento.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
+import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
@@ -86,6 +87,7 @@ function sortByTitle(nodes: NodeDocumentoSolicitud[]): NodeDocumentoSolicitud[] 
 export class SolicitudDocumentosFragment extends Fragment {
   documentos$ = new BehaviorSubject<NodeDocumentoSolicitud[]>([]);
   private documentosEliminados: ISolicitudDocumento[] = [];
+  private documentosRefUnrelated: string[] = [];
 
   private nodeLookup = new Map<string, NodeDocumentoSolicitud>();
 
@@ -103,6 +105,7 @@ export class SolicitudDocumentosFragment extends Fragment {
     private configuracionSolicitudService: ConfiguracionSolicitudService,
     private solicitudService: SolicitudService,
     private solicitudDocumentoService: SolicitudDocumentoService,
+    private documentoService: DocumentoService,
     public readonly: boolean,
     public addDocumentosDisabled: boolean
   ) {
@@ -194,49 +197,77 @@ export class SolicitudDocumentosFragment extends Fragment {
     return nodeDocumento;
   }
 
-  public updateNode(node: NodeDocumentoSolicitud) {
+  /**
+   * Actualiza el documento y si se modifica el documento asociado lo anade a la lista de documentos a eliminar
+   * y si no esta persistido aun se elimina directamente.
+   */
+  public updateNode(node: NodeDocumentoSolicitud, previousDocumentoRef: string): void {
     if (!node.documento.created) {
       node.documento.setEdited();
     }
     node.documento.value.documentoRef = node.fichero?.documentoRef;
-    const keyTipoDocumento = `${node.documento.value.tipoDocumento ? node.documento.value.tipoDocumento.id : 0}`;
-    let nodeTipoDoc = this.nodeLookup.get(keyTipoDocumento);
-    if (!nodeTipoDoc) {
-      nodeTipoDoc = new NodeDocumentoSolicitud(keyTipoDocumento, node.documento.value.tipoDocumento?.nombre, 1, false);
-      this.nodeLookup.set(keyTipoDocumento, nodeTipoDoc);
+
+    let deleteDocumento$ = of(void 0);
+    if (!!previousDocumentoRef && node.documento.value.documentoRef !== previousDocumentoRef) {
+      if (node.documento.created) {
+        deleteDocumento$ = this.documentoService.eliminarFichero(previousDocumentoRef);
+      } else {
+        this.documentosRefUnrelated.push(previousDocumentoRef);
+      }
     }
-    // Si el padre ha cambiado limpiamos la rama y establecemos el nuevo padre
-    if (nodeTipoDoc !== node.parent) {
-      node.parent.removeChild(node);
-      nodeTipoDoc.addChild(node);
-    }
-    else {
-      // Ordenamos los hijos, porque puede haber cambiado el nombre
-      node.parent.sortChildsByTitle();
-    }
-    const current = this.documentos$.value;
-    this.publishNodes(current);
-    this.setChanges(true);
+
+    deleteDocumento$.subscribe(() => {
+      const keyTipoDocumento = `${node.documento.value.tipoDocumento ? node.documento.value.tipoDocumento.id : 0}`;
+      let nodeTipoDoc = this.nodeLookup.get(keyTipoDocumento);
+      if (!nodeTipoDoc) {
+        nodeTipoDoc = new NodeDocumentoSolicitud(keyTipoDocumento, node.documento.value.tipoDocumento?.nombre, 1, false);
+        this.nodeLookup.set(keyTipoDocumento, nodeTipoDoc);
+      }
+      // Si el padre ha cambiado limpiamos la rama y establecemos el nuevo padre
+      if (nodeTipoDoc !== node.parent) {
+        node.parent.removeChild(node);
+        nodeTipoDoc.addChild(node);
+      }
+      else {
+        // Ordenamos los hijos, porque puede haber cambiado el nombre
+        node.parent.sortChildsByTitle();
+      }
+      const current = this.documentos$.value;
+      this.publishNodes(current);
+      this.setChanges(true);
+    });
   }
 
-  deleteNode(node: NodeDocumentoSolicitud) {
-    if (!node.documento.created) {
+  /**
+   * Si el documento ya esta creado lo anade a la lista de elementos a eliminar
+   * y si no esta persistido aun se elimina directamente el documento asociado.
+   */
+  deleteNode(node: NodeDocumentoSolicitud): void {
+    let deleteDocumento$ = of(void 0);
+
+    if (node.documento.created) {
+      deleteDocumento$ = this.documentoService.eliminarFichero(node.documento.value.documentoRef);
+    } else {
       this.documentosEliminados.push(node.documento.value);
     }
-    node.parent.removeChild(node);
-    let current = this.documentos$.value;
-    if (node) {
-      current = current.filter((n) => n !== node);
-    }
-    this.publishNodes(current);
-    this.setChanges(true);
+
+    deleteDocumento$.subscribe(() => {
+      node.parent.removeChild(node);
+      let current = this.documentos$.value;
+      if (node) {
+        current = current.filter((n) => n !== node);
+      }
+      this.publishNodes(current);
+      this.setChanges(true);
+    });
   }
 
   saveOrUpdate(): Observable<void> {
     return merge(
       this.deleteDocumentos(),
       this.updateDocumentos(this.getUpdated(this.documentos$.value)),
-      this.createDocumentos(this.getCreated(this.documentos$.value))
+      this.createDocumentos(this.getCreated(this.documentos$.value)),
+      this.deleteDocumentosUnrelated()
     ).pipe(
       takeLast(1),
       tap(() => {
@@ -256,11 +287,31 @@ export class SolicitudDocumentosFragment extends Fragment {
         return this.solicitudDocumentoService.deleteById(documento.id)
           .pipe(
             tap(() => {
-              this.documentosEliminados = this.documentosEliminados.filter(deleted =>
-                deleted.id !== documento.id);
-            })
+              this.documentosEliminados = this.documentosEliminados
+                .filter(deleted => deleted.id !== documento.id);
+            }),
+            switchMap(() => this.documentoService.eliminarFichero(documento.documentoRef))
           );
       })
+    );
+  }
+
+  private deleteDocumentosUnrelated(): Observable<void> {
+    if (this.documentosRefUnrelated.length === 0) {
+      return of(void 0);
+    }
+
+    return from(this.documentosRefUnrelated).pipe(
+      mergeMap(documentoRef =>
+        this.documentoService.eliminarFichero(documentoRef)
+          .pipe(
+            tap(() =>
+              this.documentosRefUnrelated = this.documentosRefUnrelated
+                .filter(documentoRefEliminado => documentoRefEliminado !== documentoRef)
+            )
+          )
+      ),
+      takeLast(1)
     );
   }
 

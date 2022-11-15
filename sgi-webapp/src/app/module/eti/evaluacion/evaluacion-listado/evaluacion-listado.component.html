@@ -106,9 +106,18 @@
       <!-- Tipo de evaluación Column-->
       <ng-container matColumnDef="tipoEvaluacion">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{'eti.evaluacion.tipo' | translate}}
+          {{'eti.evaluacion.tipo-evaluacion' | translate}}
         </th>
         <td mat-cell *matCellDef="let evaluacion">{{evaluacion.tipoEvaluacion.nombre | translate}}
+        </td>
+      </ng-container>
+
+      <!-- Tipo de memoria Column-->
+      <ng-container matColumnDef="memoria.tipoMemoria.nombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'eti.evaluacion.tipo-memoria' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let evaluacion">{{evaluacion?.memoria?.tipoMemoria?.nombre | translate}}
         </td>
       </ng-container>
 

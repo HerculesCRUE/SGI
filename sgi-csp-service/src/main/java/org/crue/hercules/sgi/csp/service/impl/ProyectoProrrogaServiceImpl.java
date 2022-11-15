@@ -308,19 +308,14 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
     Instant fechaFinProyecto = proyecto.getFechaFinDefinitiva() != null ? proyecto.getFechaFinDefinitiva()
         : proyecto.getFechaFin();
 
-    Optional<ProyectoProrroga> dbProyectoProrroga = datosProyectoProrroga.getId() == null ? Optional.empty()
-        : this.repository.findById(datosProyectoProrroga.getId());
-    // Si es una prorroga ya existente se comprueba que la fechaFin se ha
-    // modificado para validarla en caso de ser distinta o si es una
-    // prórroga nueva, también se valida la fecha de fin
-    if ((dbProyectoProrroga.isPresent()
-        && dbProyectoProrroga.get().getFechaFin().compareTo(datosProyectoProrroga.getFechaFin()) != 0)
-        || !dbProyectoProrroga.isPresent()) {
-      Assert.isTrue(
-          datosProyectoProrroga.getFechaFin() == null || (datosProyectoProrroga.getFechaFin() != null
-              && datosProyectoProrroga.getFechaFin().isAfter(fechaFinProyecto)),
+    // Si es una nueva prorroga con fecha o ha cambiado la fecha de la prorroga se
+    // valida que sea posterior a la fecha de fin del proyecto
+    if (datosProyectoProrroga.getFechaFin() != null
+        && (datosOriginales == null || !datosProyectoProrroga.getFechaFin().equals(datosOriginales.getFechaFin()))) {
+      Assert.isTrue(datosProyectoProrroga.getFechaFin().isAfter(fechaFinProyecto),
           "Fecha de fin debe ser posterior a la fecha de fin del proyecto");
     }
+
     // Se recupera el ProyectoProrroga con la última fecha de concesión
     Optional<ProyectoProrroga> ultimoProyectoProrroga = repository
         .findFirstByProyectoIdOrderByFechaConcesionDesc(proyectoId);

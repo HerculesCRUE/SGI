@@ -1,6 +1,7 @@
 import { IEquipoTrabajo } from '@core/models/eti/equipo-trabajo';
 import { IMemoriaPeticionEvaluacion } from '@core/models/eti/memoria-peticion-evaluacion';
 import { ITareaWithIsEliminable } from '@core/models/eti/tarea-with-is-eliminable';
+import { IPersona } from '@core/models/sgp/persona';
 import { Fragment } from '@core/services/action-service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { TareaService } from '@core/services/eti/tarea.service';
@@ -18,6 +19,7 @@ export class PeticionEvaluacionTareasFragment extends Fragment {
   private deletedTareas: StatusWrapper<ITareaWithIsEliminable>[] = [];
   equiposTrabajo: IEquipoTrabajo[] = [];
   memorias: IMemoriaPeticionEvaluacion[] = [];
+  solicitantePeticionEvaluacion: IPersona;
 
   constructor(
     key: number,

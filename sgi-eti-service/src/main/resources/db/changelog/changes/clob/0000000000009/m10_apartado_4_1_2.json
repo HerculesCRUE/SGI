@@ -1,0 +1,49 @@
+[
+  {
+    "key": "ap4_1_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.1.2 Valoración de los riesgos o molestias"
+    },
+    "hideExpression": "formState.mainModel.ap4_1.ap4_1_1 && formState.mainModel.ap4_1.ap4_1_1.tipoRiesgosOMolestiasCheck && formState.mainModel.ap4_1.ap4_1_1.tipoRiesgosOMolestiasCheck.find((c) => c === 'sinRiesgoPorTratarseDeDatos')",
+    "fieldGroup": [
+      {
+        "template": "<p>Teniendo en cuenta las intervenciones y pruebas que se van a realizar a los sujetos de investigación descritas en el apartado 3.4.3 ¿cómo valoraría los riesgos o molestias posibles según la siguiente definición?</p>"
+      },
+      {
+        "key": "valoracionRiesgosMolestiasCheck",
+        "type": "multicheckbox",
+        "templateOptions": {
+          "label": "Opciones:",
+          "type": "array",
+          "options": [
+            {
+              "value": "riegosMinimo",
+              "label": "Riesgo mínimo: aquel que no supera en probabilidad o magnitud al que cabría esperar en la actividad cotidiana, incluyendo exámenes físicos o psicológicos rutinarios"
+            },
+            {
+              "value": "riesgoSuperior",
+              "label": "Riesgo superior al mínimo: aquel que se produce cuando la posibilidad de daño físico, psicológico o relacionado con la invasión de la privacidad o confidencialidad es mayor que el esperado en la actitud cotididana"
+            }
+          ]
+        }
+      },
+      {
+        "key": "riesgoSuperiorTexto",
+        "type": "textarea",
+        "hideExpression": "!model.valoracionRiesgosMolestiasCheck || !model.valoracionRiesgosMolestiasCheck.find((c) => c === 'riesgoSuperior')",
+        "templateOptions": {
+          "label": "Justificar la pertinencia del estudio así como la no existencia o la no utilización de alternativas de eficacia comparable",
+          "placeholder": "Justificar la pertinencia del estudio así como la no existencia o la no utilización de alternativas de eficacia comparable",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

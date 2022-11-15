@@ -74,7 +74,7 @@ export class EjecucionEconomicaEditarComponent extends ActionComponent implement
       switchMap((value) => {
         return this.translate.get(
           MSG_SUCCESS,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
         );
       })
     ).subscribe((value) => this.textoEditarSuccess = value);

@@ -15,7 +15,6 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ITramoRepartoModalData, TramoRepartoModalComponent } from '../tramo-reparto-modal/tramo-reparto-modal.component';
 
-const MSG_ERROR = marker('error.load');
 const MSG_SAVE_SUCCESS = marker('msg.save.entity.success');
 const MSG_UPDATE_SUCCESS = marker('msg.update.entity.success');
 const MSG_DELETE = marker('msg.delete.entity');
@@ -53,7 +52,7 @@ export class TramoRepartoListadoComponent extends AbstractTablePaginationCompone
     private readonly dialogService: DialogService,
     private readonly matDialog: MatDialog,
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
   }
 
   ngOnInit(): void {
@@ -62,8 +61,7 @@ export class TramoRepartoListadoComponent extends AbstractTablePaginationCompone
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<ITramoReparto>> {
-    const observable$ = this.tramoRepartoService.findAll(this.getFindOptions(reset));
-    return observable$;
+    return this.tramoRepartoService.findAll(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {

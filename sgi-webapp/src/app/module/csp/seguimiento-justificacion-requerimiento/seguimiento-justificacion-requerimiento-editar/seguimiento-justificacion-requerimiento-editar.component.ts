@@ -12,10 +12,11 @@ import { switchMap } from 'rxjs/operators';
 import { SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTO_ROUTE_NAMES } from '../seguimiento-justificacion-requerimiento-route-names';
 import { SeguimientoJustificacionRequerimientoActionService } from '../seguimiento-justificacion-requerimiento.action.service';
 
-const MSG_BUTTON_SAVE = marker('btn.save');
+const MSG_BUTTON_EDIT = marker('btn.save.entity');
 const MSG_SUCCESS = marker('msg.update.entity.success');
 const MSG_ERROR = marker('error.update.entity');
 const REQUERIMIENTO_JUSTIFICACION_KEY = marker('csp.requerimiento-justificacion');
+const REQUERIMIENTO_KEY = marker('csp.ejecucion-economica.seguimiento-justificacion.requerimiento');
 
 @Component({
   selector: 'sgi-seguimiento-justificacion-requerimiento-editar',
@@ -26,7 +27,7 @@ const REQUERIMIENTO_JUSTIFICACION_KEY = marker('csp.requerimiento-justificacion'
   ]
 })
 export class SeguimientoJustificacionRequerimientoEditarComponent extends ActionComponent implements OnInit {
-  textoActualizar = MSG_BUTTON_SAVE;
+  textoActualizar: string;
   textoActualizarSuccess: string;
   textoActualizarError: string;
 
@@ -56,6 +57,18 @@ export class SeguimientoJustificacionRequerimientoEditarComponent extends Action
   }
 
   private setupI18N(): void {
+    this.translate.get(
+      REQUERIMIENTO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_BUTTON_EDIT,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.textoActualizar = value);
+
     this.translate.get(
       REQUERIMIENTO_JUSTIFICACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

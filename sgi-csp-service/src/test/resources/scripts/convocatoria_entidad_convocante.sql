@@ -21,3 +21,5 @@ VALUES
 (3, 1, 'G0021150', 3),
 (4, 1, 'G0021150', 4),
 (5, 2, 'G0021150', 4);
+
+ALTER SEQUENCE test.convocatoria_entidad_convocante_seq restart with 6;

@@ -4,23 +4,28 @@
 mat-drawer-container {
   min-height: calc(100vh - #{$headerHeight} - #{$breadcrumHeight});
   max-height: calc(100vh - #{$headerHeight} - #{$breadcrumHeight});
+
   mat-drawer {
     background-color: map-get($sgi-custom-colors, bg);
     border-right-width: 0;
     min-width: 227px;
+
     mat-list {
       padding: 0px;
+
       &.links {
+        margin-top: 1em;
         padding-left: 1em;
         padding-right: 1em;
         padding-top: 0.5em;
-        padding-bottom: 0.5em;
+        padding-bottom: 3.5em;
         border-top-style: solid;
         border-top-width: 1px;
-        border-top-color: map-get($sgi-custom-colors, divider);
+        border-top-color: $dark-dividers;
       }
     }
   }
+
   mat-drawer-content {
     div {
       max-height: calc(100vh - #{$headerHeight} - #{$breadcrumHeight} - #{$footerHeight});

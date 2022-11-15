@@ -100,4 +100,10 @@ export class SeguimientoEvaluacionFragment extends FormFragment<IMemoria> {
   setComentarios(comentarios: BehaviorSubject<StatusWrapper<IComentario>[]>) {
     this.comentarios$ = comentarios;
   }
+
+  handleErrors(errors: Error[]): void {
+    this.clearProblems();
+    errors.forEach(this.processError);
+  }
+
 }

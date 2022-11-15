@@ -1,6 +1,6 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
@@ -9,7 +9,6 @@ import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaEntidadConvocante } from '@core/models/csp/convocatoria-entidad-convocante';
 import { IPrograma } from '@core/models/csp/programa';
-import { IEmpresa } from '@core/models/sgemp/empresa';
 import { ProgramaService } from '@core/services/csp/programa.service';
 import { DialogService } from '@core/services/dialog.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
@@ -29,7 +28,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
 
 export interface ConvocatoriaEntidadConvocanteModalData {
   entidadConvocanteData: ConvocatoriaEntidadConvocanteData;
-  selectedEmpresas: IEmpresa[];
+  selectedEntidadesConvocantes: ConvocatoriaEntidadConvocanteData[];
   readonly: boolean;
 }
 
@@ -181,10 +180,9 @@ export class ConvocatoriaEntidadConvocanteModalComponent
       this.checkedNode = undefined;
       const subscription = this.programaService.findAllHijosPrograma(programaId).pipe(
         switchMap(response => {
-          if (response.items.length === 0) {
-            this.programaTree$.next([]);
-            this.nodeMap.clear();
-          }
+          this.programaTree$.next([]);
+          this.nodeMap.clear();
+
           return from(response.items).pipe(
             mergeMap((programa) => {
               const node = new NodePrograma(new StatusWrapper<IPrograma>(programa));
@@ -263,7 +261,12 @@ export class ConvocatoriaEntidadConvocanteModalComponent
       empresa: new FormControl(this.data.entidadConvocanteData.empresa, Validators.required),
       plan: new FormControl(this.data.entidadConvocanteData.plan),
       programa: new FormControl(this.data.entidadConvocanteData.entidadConvocante.value.programa?.id)
+    }, {
+      validators: [
+        this.notDuplicatedEntidadAndPrograma(this.data.selectedEntidadesConvocantes)
+      ]
     });
+
     if (this.data.readonly) {
       formGroup.disable();
     }
@@ -286,7 +289,7 @@ export class ConvocatoriaEntidadConvocanteModalComponent
 
   onCheckNode(node: NodePrograma, $event: MatCheckboxChange): void {
     this.checkedNode = $event.checked ? node : undefined;
-    this.formGroup.get('programa').setValue(this.checkedNode?.programa?.value?.id);
+    this.formGroup.get('programa').setValue(this.checkedNode?.programa?.value);
   }
 
   doAction(): void {
@@ -314,6 +317,52 @@ export class ConvocatoriaEntidadConvocanteModalComponent
         }
       )
     );
+  }
+
+  private notDuplicatedEntidadAndPrograma(entidadesConvocantesConvocatoria: ConvocatoriaEntidadConvocanteData[]): ValidatorFn {
+    return (formGroup: FormGroup): ValidationErrors | null => {
+      const entidadControl = formGroup.controls.empresa;
+      const planControl = formGroup.controls.plan;
+      const programaControl = formGroup.controls.programa;
+
+      if (entidadControl.errors && !entidadControl.errors.duplicated) {
+        return null;
+      }
+
+      const programaFormValue = programaControl.value ?? planControl.value;
+
+      if (entidadesConvocantesConvocatoria
+        .some(entidad =>
+          entidad.empresa.id === entidadControl.value?.id
+          && (!!!entidad.plan?.id || !!!planControl.value?.id || entidad.plan?.id === planControl.value?.id)
+          && (
+            (!!!entidad.plan?.id || !!!planControl.value?.id)
+            || this.getProgramaParentsIds(entidad.programa).includes(programaFormValue?.id)
+            || this.getProgramaParentsIds(programaFormValue).includes(entidad.entidadConvocante.value.programa?.id)
+          )
+        )
+      ) {
+        entidadControl.setErrors({ duplicated: true });
+        entidadControl.markAsTouched({ onlySelf: true });
+      } else if (entidadControl.errors) {
+        delete entidadControl.errors.duplicated;
+        entidadControl.updateValueAndValidity({ onlySelf: true });
+      }
+    };
+  }
+
+  private getProgramaParentsIds(programa: IPrograma, tree: number[] = []): number[] {
+    if (!!!programa) {
+      return tree;
+    }
+
+    tree.push(programa.id);
+
+    if (!!programa?.padre?.id) {
+      this.getProgramaParentsIds(programa.padre, tree);
+    }
+
+    return tree;
   }
 
 }

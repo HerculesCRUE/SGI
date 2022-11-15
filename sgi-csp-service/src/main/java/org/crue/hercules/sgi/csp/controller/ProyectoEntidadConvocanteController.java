@@ -88,6 +88,29 @@ public class ProyectoEntidadConvocanteController {
   }
 
   /**
+   * Actualiza el listado de {@link ProyectoEntidadConvocante} del
+   * {@link Proyecto} con el listado entidadesConvocantes
+   * creando, editando o eliminando los elementos segun proceda.
+   *
+   * @param id                   Id del {@link Proyecto}.
+   * @param entidadesConvocantes lista con los nuevos
+   *                             {@link ProyectoEntidadConvocante} a guardar.
+   * @return la lista de entidades {@link ProyectoEntidadConvocante} persistida.
+   */
+  @PatchMapping
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  public ResponseEntity<List<ProyectoEntidadConvocanteDto>> updateEntidadesConvocantesProyecto(@PathVariable Long id,
+      @RequestBody List<ProyectoEntidadConvocanteDto> entidadesConvocantes) {
+    log.debug(
+        "updateEntidadesConvocantesProyecto(Long id, List<ProyectoEntidadConvocanteDto> entidadesConvocantes) - start");
+    List<ProyectoEntidadConvocanteDto> list = convert(
+        service.updateEntidadesConvocantesProyecto(id, convert(id, entidadesConvocantes)));
+    log.debug(
+        "updateEntidadesConvocantesProyecto(Long id, List<ProyectoEntidadConvocanteDto> entidadesConvocantes) - end");
+    return new ResponseEntity<>(list, HttpStatus.OK);
+  }
+
+  /**
    * Crea nuevo {@link ProyectoEntidadConvocante}.
    * 
    * @param id                identificador del {@link Proyecto} al que se añade
@@ -156,8 +179,17 @@ public class ProyectoEntidadConvocanteController {
 
   private Page<ProyectoEntidadConvocanteDto> convert(Page<ProyectoEntidadConvocante> page) {
     List<ProyectoEntidadConvocanteDto> content = page.getContent().stream()
-        .map(proyectoEntidadConvocante -> convert(proyectoEntidadConvocante)).collect(Collectors.toList());
+        .map(this::convert).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
+
+  private List<ProyectoEntidadConvocanteDto> convert(List<ProyectoEntidadConvocante> list) {
+    return list.stream().map(this::convert).collect(Collectors.toList());
+  }
+
+  private List<ProyectoEntidadConvocante> convert(Long idProyecto, List<ProyectoEntidadConvocanteDto> list) {
+    return list.stream().map(entidad -> convert(idProyecto, entidad)).collect(Collectors.toList());
+  }
+
 }

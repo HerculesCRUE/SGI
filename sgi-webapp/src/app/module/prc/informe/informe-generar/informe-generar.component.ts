@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { AbstractMenuContentComponent } from '@core/component/abstract-menu-content.component';
 import { SelectValue } from '@core/component/select-common/select-common.component';
-import { SgiError, SgiProblem } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IGrupo } from '@core/models/csp/grupo';
 import { IPersona } from '@core/models/sgp/persona';
@@ -13,12 +13,11 @@ import { ConvocatoriaBaremacionService } from '@core/services/prc/convocatoria-b
 import { PrcReportService } from '@core/services/prc/report/prc-report.service';
 import { triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { IAuthStatus, SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, Observable, Subscription, throwError } from 'rxjs';
-import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
+import { EMPTY, Observable, Subscription } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { PersonaNombreCompletoPipe } from 'src/app/esb/sgp/shared/pipes/persona-nombre-completo.pipe';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 
@@ -38,22 +37,13 @@ const CONVOCATORIA_KEY = marker('prc.convocatoria');
 const INVESTIGADOR_KEY = marker('prc.informe.investigador');
 const GRUPO_KEY = marker('prc.informe.grupo');
 
-const MSG_GENERIC_ERROR_TITLE = marker('error.generic.title');
-const MSG_GENERIC_ERROR_CONTENT = marker('error.generic.message');
-const MSG_ERROR_GENERAR_INFORME = marker('error.prc.informe.generar');
-
 @Component({
   selector: 'sgi-informe-generar',
   templateUrl: './informe-generar.component.html',
   styleUrls: ['./informe-generar.component.scss']
 })
-export class InformeGenerarComponent implements OnInit, OnDestroy {
+export class InformeGenerarComponent extends AbstractMenuContentComponent implements OnInit, OnDestroy {
   protected subscriptions: Subscription[] = [];
-
-  readonly problems$: BehaviorSubject<SgiProblem[]>;
-  get problems(): SgiProblem[] {
-    return this.problems$?.value;
-  }
 
   ROUTE_NAMES = ROUTE_NAMES;
   TIPO_COLECTIVO = TipoColectivo;
@@ -94,7 +84,6 @@ export class InformeGenerarComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly logger: NGXLogger,
-    protected readonly snackBarService: SnackBarService,
     private readonly convocatoriaBaremacionService: ConvocatoriaBaremacionService,
     private readonly prcReportService: PrcReportService,
     private readonly translate: TranslateService,
@@ -104,7 +93,7 @@ export class InformeGenerarComponent implements OnInit, OnDestroy {
     private readonly personaService: PersonaService,
     private readonly personaNombreCompletoPipe: PersonaNombreCompletoPipe
   ) {
-    this.problems$ = new BehaviorSubject<SgiProblem[]>([]);
+    super();
   }
 
   ngOnInit(): void {
@@ -153,11 +142,8 @@ export class InformeGenerarComponent implements OnInit, OnDestroy {
       ),
       catchError(error => {
         this.logger.error(error);
-
-        const sgiError = new SgiError(MSG_ERROR_GENERAR_INFORME);
-        this.processError(sgiError);
-
-        return throwError(sgiError);
+        this.processError(error);
+        return EMPTY;
       }),
     ).subscribe(response => {
       triggerDownloadToUser(response, nombreInforme);
@@ -268,35 +254,6 @@ export class InformeGenerarComponent implements OnInit, OnDestroy {
       ...MSG_PARAMS.CARDINALIRY.SINGULAR
     });
 
-  }
-
-  private processError: (error: Error) => void = (error: Error) => {
-    if (error instanceof SgiError) {
-      if (!error.managed) {
-        error.managed = true;
-        this.pushProblems(error);
-      }
-    }
-    else {
-      // Error incontrolado
-      const sgiError = new SgiError(MSG_GENERIC_ERROR_TITLE, MSG_GENERIC_ERROR_CONTENT);
-      sgiError.managed = true;
-      this.pushProblems(sgiError);
-    }
-  }
-
-  private pushProblems(problem: SgiProblem | SgiProblem[]): void {
-    const current = this.problems$.value;
-    if (Array.isArray(problem)) {
-      this.problems$.next([...current, ...problem]);
-    }
-    else if (problem) {
-      this.problems$.next([...current, problem]);
-    }
-  }
-
-  private clearProblems(): void {
-    this.problems$.next([]);
   }
 
 }

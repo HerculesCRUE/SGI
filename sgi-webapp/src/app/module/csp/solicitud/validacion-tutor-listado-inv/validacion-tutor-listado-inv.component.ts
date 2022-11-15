@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { Estado, ESTADO_MAP } from '@core/models/csp/estado-solicitud';
@@ -11,12 +10,9 @@ import { ROUTE_NAMES } from '@core/route.names';
 import { SolicitudRrhhService } from '@core/services/csp/solicitud-rrhh/solicitud-rrhh.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { from, merge, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
-
-const MSG_ERROR = marker('error.load');
 
 interface SolicitudListado extends ISolicitud {
   tituloConvocatoria: string;
@@ -49,12 +45,11 @@ export class ValidacionTutorListadoInvComponent extends AbstractTablePaginationC
   }
 
   constructor(
-    protected snackBarService: SnackBarService,
     private solicitudService: SolicitudService,
     private solicitudRrhhService: SolicitudRrhhService,
     private personaService: PersonaService
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -123,7 +118,10 @@ export class ValidacionTutorListadoInvComponent extends AbstractTablePaginationC
             });
             return response;
           }),
-          catchError(() => of(response))
+          catchError((error) => {
+            this.processError(error);
+            return of(response);
+          })
         );
 
       }),
@@ -189,10 +187,9 @@ export class ValidacionTutorListadoInvComponent extends AbstractTablePaginationC
     return new RSQLSgiRestFilter('pendiente', SgiRestFilterOperator.EQUALS, controls.pendientes.value?.toString());
   }
 
-  onClearFilters() {
+  protected resetFilters(): void {
     this.formGroup.reset();
     this.formGroup.controls.pendientes.setValue(true);
-    this.onSearch();
   }
 
 }

@@ -45,9 +45,9 @@ export class SolicitudRrhhMemoriaPublicFragment extends FormFragment<ISolicitudR
 
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      tituloTrabajo: new FormControl(null, [Validators.required, Validators.maxLength(250)]),
-      resumen: new FormControl(null, [Validators.required, Validators.maxLength(2000)]),
-      observaciones: new FormControl(null, Validators.maxLength(2000))
+      tituloTrabajo: new FormControl(null, [Validators.required, Validators.maxLength(1000)]),
+      resumen: new FormControl(null, [Validators.required, Validators.maxLength(4000)]),
+      observaciones: new FormControl(null, Validators.maxLength(4000))
     });
 
     if (this.readonly) {

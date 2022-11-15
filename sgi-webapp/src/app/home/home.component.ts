@@ -10,7 +10,17 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
 
-  modules: Module[] = Module.values;
+  get mainModules(): Module[] {
+    return Module.mainModules;
+  }
+
+  get invModule(): Module {
+    return Module.INV;
+  }
+
+  get modules(): Module[] {
+    return Module.values;
+  }
 
   constructor(private authService: SgiAuthService, private router: Router) { }
 
@@ -22,5 +32,4 @@ export class HomeComponent implements OnInit {
       this.router.navigate([module.path]);
     }
   }
-
 }

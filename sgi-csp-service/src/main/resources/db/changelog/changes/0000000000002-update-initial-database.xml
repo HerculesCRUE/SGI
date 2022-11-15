@@ -6,6 +6,8 @@
   </changeSet>
   <!-- Eliminación de columna de contexto_proyecto que ya no es necesaria -->
   <changeSet author="user (generated)" id="0000000000002-2">
+    <validCheckSum>8:4eb03b5d339d69355d800870596c58fa</validCheckSum>
+    <dropForeignKeyConstraint baseTableName="contexto_proyecto" constraintName="FK_CONTEXTOPROYECTO_AREATEMATICACONVOCATORIA" />
     <dropColumn columnName="area_tematica_convocatoria_id" tableName="contexto_proyecto" />
   </changeSet>
 

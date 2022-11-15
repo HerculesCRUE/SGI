@@ -1,7 +1,12 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaEnlaceNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
@@ -71,10 +76,6 @@ public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService 
     Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaEnlace.getConvocatoriaId())
         .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaEnlace.getConvocatoriaId()));
 
-    Assert.isTrue(!repository
-        .findByConvocatoriaIdAndUrl(convocatoriaEnlace.getConvocatoriaId(), convocatoriaEnlace.getUrl()).isPresent(),
-        "Ya existe esa url para esta Convocatoria");
-
     // Se recupera el Id de ModeloEjecucion para las siguientes validaciones
     Long modeloEjecucionId = (convocatoria.getModeloEjecucion() != null
         && convocatoria.getModeloEjecucion().getId() != null) ? convocatoria.getModeloEjecucion().getId() : null;
@@ -140,14 +141,6 @@ public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService 
         "ConvocatoriaEnlace url no puede ser null para actualizar un nuevo ConvocatoriaEnlace");
 
     return repository.findById(convocatoriaEnlaceActualizar.getId()).map(convocatoriaEnlace -> {
-      Long convocatoriaId = convocatoriaEnlace.getConvocatoriaId();
-      String url = convocatoriaEnlaceActualizar.getUrl();
-      Optional<ConvocatoriaEnlace> optional = repository.findByConvocatoriaIdAndUrl(convocatoriaId, url);
-      if (optional.isPresent()) {
-        Assert.isTrue(Objects.equals(optional.get().getId(), convocatoriaEnlaceActualizar.getId()),
-            "Ya existe esa url para esta Convocatoria");
-      }
-
       Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaEnlace.getConvocatoriaId())
           .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaEnlace.getConvocatoriaId()));
       // Se recupera el Id de ModeloEjecucion para las siguientes validaciones
@@ -264,6 +257,48 @@ public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService 
   @Override
   public boolean existsByConvocatoriaId(Long convocatoriaId) {
     return repository.existsByConvocatoriaId(convocatoriaId);
+  }
+
+  @Override
+  @Transactional
+  public List<ConvocatoriaEnlace> update(Long convocatoriaId, List<ConvocatoriaEnlace> convocatoriaEnlaces) {
+    log.debug("update(Long convocatoriaId, List<ConvocatoriaEnlace> convocatoriaEnlaces) - start");
+
+    Set<String> nonRepeatedUrls = new HashSet<>();
+    convocatoriaEnlaces.stream()
+        .forEach(convocatoriaEnlace -> nonRepeatedUrls.add(convocatoriaEnlace.getUrl()));
+    Assert.isTrue(convocatoriaEnlaces.size() == nonRepeatedUrls.size(),
+        "Hay una url repetida para esta Convocatoria");
+
+    Specification<ConvocatoriaEnlace> specs = ConvocatoriaEnlaceSpecifications.byConvocatoriaId(
+        convocatoriaId);
+    List<ConvocatoriaEnlace> convocatoriaEnlacesBD = repository.findAll(specs);
+
+    // Enlaces eliminados
+    List<ConvocatoriaEnlace> convocatoriaEnlacesEliminar = convocatoriaEnlacesBD.stream()
+        .filter(convocatoriaEnlace -> convocatoriaEnlaces.stream().map(ConvocatoriaEnlace::getId)
+            .noneMatch(id -> Objects.equals(id, convocatoriaEnlace.getId())))
+        .collect(Collectors.toList());
+
+    if (!convocatoriaEnlacesEliminar.isEmpty()) {
+      repository.deleteAll(convocatoriaEnlacesEliminar);
+    }
+
+    if (convocatoriaEnlaces.isEmpty()) {
+      return new ArrayList<>();
+    }
+
+    List<ConvocatoriaEnlace> convocatoriaEnlacesUpdated = convocatoriaEnlaces.stream().map(convocatoriaEnlace -> {
+      convocatoriaEnlace.setConvocatoriaId(convocatoriaId);
+      if (convocatoriaEnlace.getId() == null) {
+        return create(convocatoriaEnlace);
+      } else {
+        return update(convocatoriaEnlace);
+      }
+    }).collect(Collectors.toList());
+
+    log.debug("update(Long convocatoriaId, List<ConvocatoriaEnlace> convocatoriaEnlaces) - end");
+    return convocatoriaEnlacesUpdated;
   }
 
 }

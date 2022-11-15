@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.crue.hercules.sgi.auth</groupId>
     <artifactId>sgi-auth</artifactId>
-    <version>0.0.12</version>
+    <version>0.0.13</version>
   </parent>
 
   <artifactId>broker-saml-mappers</artifactId>

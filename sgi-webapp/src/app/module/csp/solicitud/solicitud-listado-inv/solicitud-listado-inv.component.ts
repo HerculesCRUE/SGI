@@ -20,7 +20,6 @@ import { NGXLogger } from 'ngx-logger';
 import { forkJoin, merge, Observable, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 
-const MSG_ERROR = marker('error.load');
 const MSG_DEACTIVATE = marker('msg.deactivate.entity');
 const MSG_SUCCESS_DEACTIVATE = marker('msg.csp.deactivate.success');
 const MSG_ERROR_DEACTIVATE = marker('error.csp.deactivate.entity');
@@ -69,7 +68,7 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
     private readonly translate: TranslateService,
     private sgiAuthService: SgiAuthService
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -191,10 +190,10 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
       (error) => {
         this.logger.error(error);
         if (error instanceof SgiError) {
-          this.snackBarService.showError(error);
+          this.processError(error);
         }
         else {
-          this.snackBarService.showError(this.textoErrorDesactivar);
+          this.processError(new SgiError(this.textoErrorDesactivar));
         }
       }
     );

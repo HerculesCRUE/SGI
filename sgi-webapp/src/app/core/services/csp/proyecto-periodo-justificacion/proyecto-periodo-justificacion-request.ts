@@ -1,4 +1,5 @@
 import { TipoJustificacion } from '@core/enums/tipo-justificacion';
+import { Estado } from '@core/models/csp/estado-proyecto-periodo-justificacion';
 
 export interface IProyectoPeriodoJustificacionRequest {
   id: number;
@@ -11,4 +12,9 @@ export interface IProyectoPeriodoJustificacionRequest {
   tipoJustificacion: TipoJustificacion;
   observaciones: string;
   convocatoriaPeriodoJustificacionId: number;
+  estado: {
+    id: number;
+    estado: Estado;
+    comentario: string;
+  };
 }

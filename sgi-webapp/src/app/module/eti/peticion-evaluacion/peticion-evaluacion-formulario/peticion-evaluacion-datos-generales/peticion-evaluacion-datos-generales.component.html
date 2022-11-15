@@ -22,15 +22,19 @@
       </div>
     </ng-container>
     <!-- Título-->
-    <mat-form-field class="input-form">
+    <mat-form-field class="input-form m-bottom-10">
       <mat-label>{{'eti.peticion-evaluacion.titulo' | translate}}</mat-label>
-      <input matInput formControlName="titulo" type="text" required maxlength="100">
+      <textarea #titulo matInput formControlName="titulo" required></textarea>
+      <mat-hint>{{titulo.value?.length}} / 1000</mat-hint>
       <mat-error *ngIf="formGroup.controls.titulo.errors?.required">
         {{'error.required.entity' | translate:msgParamTituloEntity}}
       </mat-error>
+      <mat-error *ngIf="formGroup.controls.titulo.errors?.maxlength">
+        {{ 'error.maxlength.entity' | translate:msgParamTituloEntity }}
+      </mat-error>
     </mat-form-field>
     <!-- Tipo de actividad-->
-    <mat-form-field class="input-form">
+    <mat-form-field>
       <mat-label>{{'eti.peticion-evaluacion.tipo-actividad' | translate}}</mat-label>
       <sgi-select-entity formControlName="tipoActividad" [options]="tipoActividades$ | async" required>
       </sgi-select-entity>
@@ -59,51 +63,49 @@
         {{'error.required.entity' | translate:msgParamExisteFinanciacionEntity}}
       </mat-error>
     </mat-form-field>
-    <ng-container *ngIf="peticionEvaluacionFragment.mostrarCamposFinanciacion$ | async">
-      <!-- Órgano financiador-->
-      <mat-form-field>
-        <mat-label>{{'eti.peticion-evaluacion.organo-financiador' | translate}}</mat-label>
-        <input #nombre matInput formControlName="financiacion" type="text"
-          [required]="FormGroupUtil.hasValidator(this.formGroup,'financiacion','required')" maxlength="100">
-        <mat-error *ngIf="formGroup.controls.financiacion.errors?.required">
-          {{'error.required.entity' | translate:msgParamFinanciacionEntity}}
-        </mat-error>
-      </mat-form-field>
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-        [fxLayoutGap]="fxLayoutProperties.gap">
-        <div>
-          <!-- Estado financiación -->
-          <mat-form-field>
-            <mat-label>{{'eti.peticion-evaluacion.estado-financiacion' | translate}}</mat-label>
-            <sgi-select-enum formControlName="estadoFinanciacion" [enumMap]="ESTADO_FINANCIACION_MAP"
-              [required]="FormGroupUtil.hasValidator(this.formGroup,'estadoFinanciacion','required')"></sgi-select-enum>
-            <mat-error
-              *ngIf="FormGroupUtil.hasValidator(this.formGroup,'estadoFinanciacion','required') && formGroup.controls.estadoFinanciacion.errors?.required">
-              {{'error.required.entity' | translate:msgParamEstadoFinanciacionEntity}}
-            </mat-error>
-          </mat-form-field>
-        </div>
-        <div>
-          <!-- Importe financiación-->
-          <mat-form-field>
-            <mat-label>{{'eti.peticion-evaluacion.importe-financiacion' | translate}}</mat-label>
-            <input matInput formControlName="importeFinanciacion" type="number"
-              [required]="FormGroupUtil.hasValidator(this.formGroup,'importeFinanciacion','required')" min="0">
-            <mat-error
-              *ngIf="FormGroupUtil.hasValidator(this.formGroup,'importeFinanciacion','required') && formGroup.controls.importeFinanciacion.errors?.required">
-              {{'error.required.entity' | translate:msgParamImporteFinanciacionEntity}}
-            </mat-error>
-            <mat-error *ngIf="formGroup.controls.importeFinanciacion.errors?.min">
-              {{'error.min.digit' | translate}}
-            </mat-error>
-            <mat-error *ngIf="formGroup.controls.importeFinanciacion.errors?.max">
-              {{'error.max.digit' | translate}}
-            </mat-error>
-          </mat-form-field>
-        </div>
+    <!-- Órgano financiador-->
+    <mat-form-field>
+      <mat-label>{{'eti.peticion-evaluacion.organo-financiador' | translate}}</mat-label>
+      <input #nombre matInput formControlName="financiacion" type="text"
+        [required]="FormGroupUtil.hasValidator(this.formGroup,'financiacion','required')" maxlength="100">
+      <mat-error *ngIf="formGroup.controls.financiacion.errors?.required">
+        {{'error.required.entity' | translate:msgParamFinanciacionEntity}}
+      </mat-error>
+    </mat-form-field>
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+      [fxLayoutGap]="fxLayoutProperties.gap">
+      <div>
+        <!-- Estado financiación -->
+        <mat-form-field>
+          <mat-label>{{'eti.peticion-evaluacion.estado-financiacion' | translate}}</mat-label>
+          <sgi-select-enum formControlName="estadoFinanciacion" [enumMap]="ESTADO_FINANCIACION_MAP"
+            [required]="FormGroupUtil.hasValidator(this.formGroup,'estadoFinanciacion','required')"></sgi-select-enum>
+          <mat-error
+            *ngIf="FormGroupUtil.hasValidator(this.formGroup,'estadoFinanciacion','required') && formGroup.controls.estadoFinanciacion.errors?.required">
+            {{'error.required.entity' | translate:msgParamEstadoFinanciacionEntity}}
+          </mat-error>
+        </mat-form-field>
       </div>
-    </ng-container>
+      <div>
+        <!-- Importe financiación-->
+        <mat-form-field>
+          <mat-label>{{'eti.peticion-evaluacion.importe-financiacion' | translate}}</mat-label>
+          <input matInput formControlName="importeFinanciacion" type="number"
+            [required]="FormGroupUtil.hasValidator(this.formGroup,'importeFinanciacion','required')" min="0">
+          <mat-error
+            *ngIf="FormGroupUtil.hasValidator(this.formGroup,'importeFinanciacion','required') && formGroup.controls.importeFinanciacion.errors?.required">
+            {{'error.required.entity' | translate:msgParamImporteFinanciacionEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.importeFinanciacion.errors?.min">
+            {{'error.min.digit' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.importeFinanciacion.errors?.max">
+            {{'error.max.digit' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
     <!--Tiene fondos propios -->
     <mat-form-field *ngIf="formGroup.controls.solicitudConvocatoriaRef.value">
       <mat-label>{{'eti.peticion-evaluacion.tiene-fondos-propios' | translate}}</mat-label>
@@ -145,38 +147,50 @@
       </div>
     </div>
     <!-- Resumen-->
-    <mat-form-field>
+    <mat-form-field class="m-bottom-10">
       <mat-label>{{'eti.peticion-evaluacion.resumen' | translate}}</mat-label>
-      <textarea #resumen matInput formControlName="resumen" type="text" maxlength="4000" required></textarea>
-      <mat-hint>{{resumen.value.length}} / 4000</mat-hint>
+      <textarea #resumen matInput formControlName="resumen" required></textarea>
+      <mat-hint>{{resumen.value?.length}} / 4000</mat-hint>
       <mat-error *ngIf="formGroup.controls.resumen.errors?.required">
         {{'error.required.entity' | translate:msgParamResumenEntity}}
+      </mat-error>
+      <mat-error *ngIf="formGroup.controls.resumen.errors?.maxlength">
+        {{ 'error.maxlength.entity' | translate:msgParamResumenEntity }}
       </mat-error>
     </mat-form-field>
     <!-- Valor social -->
     <mat-form-field>
       <mat-label>{{'eti.peticion-evaluacion.valor-social' | translate}}</mat-label>
-      <sgi-select-enum formControlName="valorSocial" [enumMap]="TIPO_VALOR_SOCIAL_MAP" required></sgi-select-enum>
+      <mat-select #valorSocial formControlName="valorSocial"
+        matTooltip="{{TIPO_VALOR_SOCIAL_MAP.get(valorSocial.value) | translate}}">
+        <mat-option *ngFor="let item of TIPO_VALOR_SOCIAL_MAP | keyvalue"
+          matTooltip="{{TIPO_VALOR_SOCIAL_MAP.get(item?.key) | translate}}" [value]="item?.key">
+          {{TIPO_VALOR_SOCIAL_MAP.get(item?.key) | translate}}</mat-option>
+      </mat-select>
       <mat-error *ngIf="formGroup.controls.valorSocial.errors?.required">
         {{'error.required.entity' | translate:msgParamValorSocialEntity}}
       </mat-error>
     </mat-form-field>
     <!-- Otro valor social -->
     <ng-container *ngIf="peticionEvaluacionFragment.mostrarCampoEspecificarValorSocial$.getValue()">
-      <mat-form-field>
+      <mat-form-field class="m-bottom-10">
         <mat-label>{{'eti.peticion-evaluacion.otro-valor-social' | translate}}</mat-label>
-        <textarea #resumen matInput formControlName="otroValorSocial" type="text" maxlength="2000" required></textarea>
-        <mat-hint>{{resumen.value.length}} / 2000</mat-hint>
+        <textarea #otroValorSocial matInput formControlName="otroValorSocial" required></textarea>
+        <mat-hint>{{otroValorSocial.value?.length}} / 2000</mat-hint>
         <mat-error *ngIf="formGroup.controls.otroValorSocial.errors?.required">
           {{'error.required.entity' | translate:msgParamOtroValorSocialEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.otroValorSocial.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamOtroValorSocialEntity}}
         </mat-error>
       </mat-form-field>
     </ng-container>
     <!-- Objetivos científicos -->
-    <mat-form-field>
+    <mat-form-field class="m-bottom-10">
       <mat-label>{{'eti.peticion-evaluacion.objetivo-cientifico' | translate:msgParamObjetivoCientificoEntity}}
       </mat-label>
-      <textarea matInput formControlName="objetivosCientificos" type="text" required></textarea>
+      <textarea matInput #objetivosCientificos formControlName="objetivosCientificos" required></textarea>
+      <mat-hint>{{objetivosCientificos.value?.length}} / 4000</mat-hint>
       <mat-error *ngIf="formGroup.controls.objetivosCientificos.errors?.required">
         {{'error.required.entity' | translate:msgParamObjetivoCientificoEntity}}
       </mat-error>
@@ -185,9 +199,10 @@
       </mat-error>
     </mat-form-field>
     <!-- Diseño metodológico -->
-    <mat-form-field>
+    <mat-form-field class="m-bottom-10">
       <mat-label>{{'eti.peticion-evaluacion.disenio-metodologico' | translate}}</mat-label>
-      <textarea matInput formControlName="disenioMetodologico" type="text" required></textarea>
+      <textarea matInput #disenioMetodologico formControlName="disenioMetodologico" required></textarea>
+      <mat-hint>{{disenioMetodologico.value?.length}} / 4000</mat-hint>
       <mat-error *ngIf="formGroup.controls.disenioMetodologico.errors?.required">
         {{'error.required.entity' | translate:msgParamDisenioMetodologicoEntity}}
       </mat-error>

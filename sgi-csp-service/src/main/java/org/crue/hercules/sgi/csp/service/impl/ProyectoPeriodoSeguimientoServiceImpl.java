@@ -1,6 +1,12 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.crue.hercules.sgi.csp.enums.TipoSeguimiento;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoSeguimientoNotFoundException;
@@ -22,13 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Service Implementation para la gestión de {@link ProyectoPeriodoSeguimiento}.
@@ -263,43 +263,40 @@ public class ProyectoPeriodoSeguimientoServiceImpl implements ProyectoPeriodoSeg
 
     this.validarRequeridosProyectoPeriodoSeguimiento(datosProyectoPeriodoSeguimiento, datosOriginales);
 
-    if (datosProyectoPeriodoSeguimiento.getFechaInicio() != null
-        && datosProyectoPeriodoSeguimiento.getFechaFin() != null) {
+    Assert.isTrue(
+        datosProyectoPeriodoSeguimiento.getFechaFin().isAfter(datosProyectoPeriodoSeguimiento.getFechaInicio()),
+        "La fecha de fin debe ser posterior a la fecha de inicio");
 
-      Assert.isTrue(
-          datosProyectoPeriodoSeguimiento.getFechaFin().isAfter(datosProyectoPeriodoSeguimiento.getFechaInicio()),
-          "La fecha de fin debe ser posterior a la fecha de inicio");
+    Proyecto proyecto = proyectoRepository.findById(datosProyectoPeriodoSeguimiento.getProyectoId())
+        .orElseThrow(() -> new ProyectoNotFoundException(datosProyectoPeriodoSeguimiento.getProyectoId()));
 
-      Proyecto proyecto = proyectoRepository.findById(datosProyectoPeriodoSeguimiento.getProyectoId())
-          .orElseThrow(() -> new ProyectoNotFoundException(datosProyectoPeriodoSeguimiento.getProyectoId()));
+    Assert.isTrue(
+        proyecto.getFechaInicio().isBefore(datosProyectoPeriodoSeguimiento.getFechaInicio())
+            || proyecto.getFechaInicio().equals(datosProyectoPeriodoSeguimiento.getFechaInicio()),
+        "La fecha de inicio del proyecto debe ser anterior o igual a la fecha de inicio del periodo de seguimiento");
 
-      Assert.isTrue(
-          proyecto.getFechaInicio().isBefore(datosProyectoPeriodoSeguimiento.getFechaInicio())
-              || proyecto.getFechaInicio().equals(datosProyectoPeriodoSeguimiento.getFechaInicio()),
-          "La fecha de inicio del proyecto debe ser anterior o igual a la fecha de inicio del periodo de seguimiento");
+    Instant fechaFinProyecto = proyecto.getFechaFinDefinitiva() != null ? proyecto.getFechaFinDefinitiva()
+        : proyecto.getFechaFin();
 
-      Assert.isTrue(
-          proyecto.getFechaFin().isAfter(datosProyectoPeriodoSeguimiento.getFechaFin())
-              || proyecto.getFechaFin().equals(datosProyectoPeriodoSeguimiento.getFechaFin()),
-          "La fecha de fin del proyecto debe ser posterior o igual a la fecha de fin del periodo de seguimiento");
+    Assert.isTrue(!fechaFinProyecto.isBefore(datosProyectoPeriodoSeguimiento.getFechaFin()),
+        "La fecha de fin del proyecto debe ser posterior o igual a la fecha de fin del periodo de seguimiento");
 
-      List<ProyectoPeriodoSeguimiento> listaPeriodosSeguimiento = repository
-          .findByProyectoIdOrderByFechaInicio(proyecto.getId());
+    List<ProyectoPeriodoSeguimiento> listaPeriodosSeguimiento = repository
+        .findByProyectoIdOrderByFechaInicio(proyecto.getId());
 
-      if (!CollectionUtils.isEmpty(listaPeriodosSeguimiento)
-          && datosProyectoPeriodoSeguimiento.getTipoSeguimiento() == TipoSeguimiento.FINAL) {
+    if (!CollectionUtils.isEmpty(listaPeriodosSeguimiento)
+        && datosProyectoPeriodoSeguimiento.getTipoSeguimiento() == TipoSeguimiento.FINAL) {
 
-        if (listaPeriodosSeguimiento.stream().anyMatch(
-            proyectoPeriodoSeguimiento -> proyectoPeriodoSeguimiento.getTipoSeguimiento().equals(TipoSeguimiento.FINAL)
-                && !Objects.equals(proyectoPeriodoSeguimiento.getId(), datosProyectoPeriodoSeguimiento.getId()))) {
-          throw new IllegalArgumentException("Solo puede haber un periodo 'final'");
-        }
-        if (listaPeriodosSeguimiento.get(listaPeriodosSeguimiento.size() - 1).getFechaInicio()
-            .isAfter(datosProyectoPeriodoSeguimiento.getFechaInicio())) {
-          throw new IllegalArgumentException("El periodo 'final' ha de ser el último");
-        }
-
+      if (listaPeriodosSeguimiento.stream().anyMatch(
+          proyectoPeriodoSeguimiento -> proyectoPeriodoSeguimiento.getTipoSeguimiento().equals(TipoSeguimiento.FINAL)
+              && !Objects.equals(proyectoPeriodoSeguimiento.getId(), datosProyectoPeriodoSeguimiento.getId()))) {
+        throw new IllegalArgumentException("Solo puede haber un periodo 'final'");
       }
+      if (listaPeriodosSeguimiento.get(listaPeriodosSeguimiento.size() - 1).getFechaInicio()
+          .isAfter(datosProyectoPeriodoSeguimiento.getFechaInicio())) {
+        throw new IllegalArgumentException("El periodo 'final' ha de ser el último");
+      }
+
     }
 
     if (datosProyectoPeriodoSeguimiento.getFechaInicioPresentacion() != null
@@ -344,9 +341,7 @@ public class ProyectoPeriodoSeguimientoServiceImpl implements ProyectoPeriodoSeg
     Specification<ProyectoPeriodoSeguimiento> specs = Specification.where(specByProyecto).and(specExcluidos);
 
     Page<ProyectoPeriodoSeguimiento> results = repository.findAll(specs, Pageable.unpaged());
-    List<ProyectoPeriodoSeguimiento> listaPeriodosSeguimiento = (results == null)
-        ? new ArrayList<>()
-        : results.getContent();
+    List<ProyectoPeriodoSeguimiento> listaPeriodosSeguimiento = results.getContent();
 
     boolean returnValue = Boolean.TRUE;
     // Si fechaIni y fechaFin están vacíos siempre habrá solapamiento.

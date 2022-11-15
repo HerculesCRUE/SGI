@@ -126,7 +126,7 @@ export class SolicitudRrhhSolitanteFragment extends FormFragment<ISolicitudSolic
         fechaNacimiento: new FormControl(null),
         paisNacimiento: new FormControl(null),
         telefono: new FormControl(null, Validators.required),
-        email: new FormControl(null, Validators.required),
+        email: new FormControl(null, [Validators.required, Validators.email]),
         direccionContacto: new FormControl(null),
         paisContacto: new FormControl(null),
         comunidadAutonomaContacto: new FormControl(null),

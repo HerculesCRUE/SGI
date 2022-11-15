@@ -78,4 +78,13 @@ public interface ProyectoSocioPeriodoJustificacionService {
    */
   Page<ProyectoSocioPeriodoJustificacion> findAllByProyectoSocio(Long idProyectoSocio, String query, Pageable pageable);
 
+  /**
+   * Comprueba la existencia de documentos relacionados al
+   * {@link ProyectoSocioPeriodoJustificacion} por id.
+   *
+   * @param id el id de la entidad {@link ProyectoSocioPeriodoJustificacion}.
+   * @return true si existe y false en caso contrario.
+   */
+  boolean existsDocumentosById(Long id);
+
 }

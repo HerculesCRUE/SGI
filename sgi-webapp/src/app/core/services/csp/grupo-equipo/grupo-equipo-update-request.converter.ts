@@ -4,11 +4,11 @@ import { IRolProyecto } from '@core/models/csp/rol-proyecto';
 import { IPersona } from '@core/models/sgp/persona';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';
-import { IGrupoEquipoRequest } from './grupo-equipo-request';
+import { IGrupoEquipoUpdateRequest } from './grupo-equipo-update-request';
 
-class GrupoEquipoRequestConverter
-  extends SgiBaseConverter<IGrupoEquipoRequest, IGrupoEquipo> {
-  toTarget(value: IGrupoEquipoRequest): IGrupoEquipo {
+class GrupoEquipoUpdateRequestConverter
+  extends SgiBaseConverter<IGrupoEquipoUpdateRequest, IGrupoEquipo> {
+  toTarget(value: IGrupoEquipoUpdateRequest): IGrupoEquipo {
     if (!value) {
       return value as unknown as IGrupoEquipo;
     }
@@ -24,9 +24,9 @@ class GrupoEquipoRequestConverter
     };
   }
 
-  fromTarget(value: IGrupoEquipo): IGrupoEquipoRequest {
+  fromTarget(value: IGrupoEquipo): IGrupoEquipoUpdateRequest {
     if (!value) {
-      return value as unknown as IGrupoEquipoRequest;
+      return value as unknown as IGrupoEquipoUpdateRequest;
     }
     return {
       id: value.id,
@@ -41,4 +41,4 @@ class GrupoEquipoRequestConverter
   }
 }
 
-export const GRUPO_EQUIPO_REQUEST_CONVERTER = new GrupoEquipoRequestConverter();
+export const GRUPO_EQUIPO_UPDATE_REQUEST_CONVERTER = new GrupoEquipoUpdateRequestConverter();

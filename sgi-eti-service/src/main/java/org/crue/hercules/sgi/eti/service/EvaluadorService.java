@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.eti.service;
 
+import java.time.Instant;
 import java.util.List;
 
 import org.crue.hercules.sgi.eti.exceptions.EvaluadorNotFoundException;
@@ -71,5 +72,14 @@ public interface EvaluadorService {
    * @return lista de evaluadores
    */
   List<Evaluador> findAllByComite(String comite);
+
+  /**
+   * Busca un secretario {@link Evaluador} activo dentro de la fecha indicada
+   *
+   * @param fecha  la fecha de actividad del secretario.
+   * @param comite el nombre del {@link Comite} al que pertenece
+   * @return el secretario {@link Evaluador}
+   */
+  Evaluador findSecretarioInFechaAndComite(Instant fecha, String comite);
 
 }

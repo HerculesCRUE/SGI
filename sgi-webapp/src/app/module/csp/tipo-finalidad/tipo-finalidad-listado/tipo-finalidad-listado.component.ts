@@ -19,7 +19,6 @@ import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { TipoFinalidadModalComponent } from '../tipo-finalidad-modal/tipo-finalidad-modal.component';
 
-const MSG_ERROR = marker('error.load');
 const MSG_SAVE_SUCCESS = marker('msg.save.entity.success');
 const MSG_UPDATE_SUCCESS = marker('msg.update.entity.success');
 const MSG_DEACTIVATE = marker('msg.deactivate.entity');
@@ -61,7 +60,7 @@ export class TipoFinalidadListadoComponent extends AbstractTablePaginationCompon
     private readonly translate: TranslateService,
     private authService: SgiAuthService
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -191,8 +190,7 @@ export class TipoFinalidadListadoComponent extends AbstractTablePaginationCompon
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<ITipoFinalidad>> {
-    const observable$ = this.tipoFinalidadService.findTodos(this.getFindOptions(reset));
-    return observable$;
+    return this.tipoFinalidadService.findTodos(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {
@@ -217,10 +215,9 @@ export class TipoFinalidadListadoComponent extends AbstractTablePaginationCompon
     return filter;
   }
 
-  onClearFilters() {
+  protected resetFilters(): void {
     this.formGroup.controls.activo.setValue('true');
     this.formGroup.controls.nombre.setValue('');
-    this.onSearch();
   }
 
   /**
@@ -263,10 +260,10 @@ export class TipoFinalidadListadoComponent extends AbstractTablePaginationCompon
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorDesactivar);
+            this.processError(new SgiError(this.textoErrorDesactivar));
           }
         }
       );
@@ -295,10 +292,10 @@ export class TipoFinalidadListadoComponent extends AbstractTablePaginationCompon
           this.logger.error(error);
           tipoFinalidad.activo = false;
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorReactivar);
+            this.processError(new SgiError(this.textoErrorReactivar));
           }
         }
       );

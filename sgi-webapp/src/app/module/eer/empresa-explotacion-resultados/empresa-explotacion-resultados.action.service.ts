@@ -7,6 +7,7 @@ import { EmpresaComposicionSociedadService } from '@core/services/eer/empresa-co
 import { EmpresaDocumentoService } from '@core/services/eer/empresa-documento/empresa-documento.service';
 import { EmpresaEquipoEmprendedorService } from '@core/services/eer/empresa-equipo-emprendedor/empresa-equipo-emprendedor.service';
 import { EmpresaExplotacionResultadosService } from '@core/services/eer/empresa-explotacion-resultados/empresa-explotacion-resultados.service';
+import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
@@ -70,7 +71,8 @@ export class EmpresaExplotacionResultadosActionService extends ActionService imp
     empresaAdministracionSociedadService: EmpresaAdministracionSociedadService,
     vinculacionService: VinculacionService,
     sgiAuthService: SgiAuthService,
-    empresaDocumentoService: EmpresaDocumentoService
+    empresaDocumentoService: EmpresaDocumentoService,
+    documentoService: DocumentoService
   ) {
     super();
     this.id = Number(route.snapshot.paramMap.get(EMPRESA_EXPLOTACION_RESULTADOS_ROUTE_PARAMS.ID));
@@ -94,7 +96,8 @@ export class EmpresaExplotacionResultadosActionService extends ActionService imp
         this.id,
         this.readonly,
         empresaExplotacionResultadosService,
-        empresaDocumentoService
+        empresaDocumentoService,
+        documentoService
       );
 
       this.equipoEmprendedor = new EmpresaEquipoEmprendedorFragment(

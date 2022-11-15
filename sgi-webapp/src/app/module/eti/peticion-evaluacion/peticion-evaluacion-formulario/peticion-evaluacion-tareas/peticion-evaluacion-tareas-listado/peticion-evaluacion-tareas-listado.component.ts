@@ -10,6 +10,7 @@ import { IEquipoTrabajo } from '@core/models/eti/equipo-trabajo';
 import { IMemoriaPeticionEvaluacion } from '@core/models/eti/memoria-peticion-evaluacion';
 import { ITarea } from '@core/models/eti/tarea';
 import { ITareaWithIsEliminable } from '@core/models/eti/tarea-with-is-eliminable';
+import { ESTADO_MEMORIA } from '@core/models/eti/tipo-estado-memoria';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
@@ -193,6 +194,16 @@ export class PeticionEvaluacionTareasListadoComponent extends FragmentComponent 
 
   ngOnDestroy(): void {
     this.subscriptions?.forEach(x => x.unsubscribe());
+  }
+
+  showDeleteTarea(tarea: ITarea): boolean {
+    return [
+      ESTADO_MEMORIA.EN_ELABORACION,
+      ESTADO_MEMORIA.COMPLETADA,
+      ESTADO_MEMORIA.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS,
+      ESTADO_MEMORIA.PENDIENTE_CORRECCIONES,
+      ESTADO_MEMORIA.NO_PROCEDE_EVALUAR
+    ].includes(tarea.memoria.estadoActual.id);
   }
 
 }

@@ -11,6 +11,7 @@ import org.crue.hercules.sgi.csp.config.RestApiProperties;
 import org.crue.hercules.sgi.csp.dto.DocumentoOutput;
 import org.crue.hercules.sgi.csp.exceptions.rep.MicroserviceCallException;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
@@ -86,6 +87,37 @@ public class SgdocService {
     }
 
     return documento;
+  }
+
+  public void delete(String documentRef) {
+    log.debug("delete(String documentRef) - start");
+    String relativeUrl = "/documentos/{documentRef}";
+    HttpMethod httpMethod = HttpMethod.DELETE;
+
+    try {
+      HttpHeaders headers = new HttpHeaders();
+      headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+      headers
+          .setAcceptLanguage(Arrays.asList(new Locale.LanguageRange(LocaleContextHolder.getLocale().toLanguageTag())));
+
+      HttpServletRequest httpServletRequest = Optional.ofNullable(RequestContextHolder.getRequestAttributes())
+          .filter(ServletRequestAttributes.class::isInstance).map(ServletRequestAttributes.class::cast)
+          .map(ServletRequestAttributes::getRequest).orElseThrow(MicroserviceCallException::new);
+      String authorization = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
+      headers.set(HttpHeaders.AUTHORIZATION, authorization);
+
+      HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(null, headers);
+
+      String mergedURL = new StringBuilder(restApiProperties.getSgdocUrl()).append(relativeUrl).toString();
+
+      restTemplate.exchange(mergedURL, httpMethod,
+          requestEntity,
+          new ParameterizedTypeReference<Void>() {
+          }, documentRef).getBody();
+    } catch (Exception e) {
+      log.error("delete(String documentRef) - error" + e.getMessage(), e);
+    }
+
   }
 
   @Data

@@ -431,7 +431,7 @@ export class ProyectoAnualidadGastoModalComponent extends DialogFormComponent<Pr
       this.proyectoConceptoGastoCodigoEcService.findAll(queryOptionsConceptoGastoCodigoEcPermitidos).pipe(
         switchMap((codigosEconomicos) => {
           if (codigosEconomicos.items.length === 0) {
-            return of([]);
+            return this.buildProyectoConceptoGastoWithoutCodigoEconomico(conceptoGasto, true);
           }
           const codigosEconomicosObservable = codigosEconomicos.items.
             map(codigoEconomico => {
@@ -477,7 +477,7 @@ export class ProyectoAnualidadGastoModalComponent extends DialogFormComponent<Pr
       this.proyectoConceptoGastoCodigoEcService.findAll(queryOptionsConceptoGastoCodigoEcNoPermitidos).pipe(
         switchMap((codigosEconomicos) => {
           if (codigosEconomicos.items.length === 0) {
-            return of([]);
+            return this.buildProyectoConceptoGastoWithoutCodigoEconomico(conceptoGasto, false);
           }
           const codigosEconomicosObservable = codigosEconomicos.items.
             map(codogoEconomico => {
@@ -507,6 +507,35 @@ export class ProyectoAnualidadGastoModalComponent extends DialogFormComponent<Pr
       ));
   }
 
+  /**
+   * Crea IProyectoConceptoGastoCodigoEc con los datos obtenidos de los IProyectoConceptoGasto asociados al
+   * conceptoGasto y sin informacion de CodigoEconomico
+   *
+   * @param conceptoGasto El concepto de gasto para el que se cargan los codigos economicos
+   * @param permitido true para los IProyectoConceptoGasto permitidos y false para los no permitidos
+   * @returns IProyectoConceptoGastoCodigoEc creados
+   */
+  private buildProyectoConceptoGastoWithoutCodigoEconomico(
+    conceptoGasto: IConceptoGasto,
+    permitido: boolean
+  ): Observable<IProyectoConceptoGastoCodigoEc[]> {
+    return this.proyectoConceptoGastoService.findByConceptoGastoId(conceptoGasto.id, permitido).pipe(
+      map(proyectoConceptosGasto =>
+        proyectoConceptosGasto.items.map(proyectoConceptoGasto => {
+          return {
+            codigoEconomico: null,
+            convocatoriaConceptoGastoCodigoEcId: null,
+            fechaFin: proyectoConceptoGasto.fechaFin,
+            fechaInicio: proyectoConceptoGasto.fechaInicio,
+            id: null,
+            observaciones: null,
+            proyectoConceptoGasto
+          };
+        })
+      )
+    );
+  }
+
   private buildFilterCodigosEconomicos(conceptoGastoId: number, permitido: boolean): SgiRestFilter {
     const filter = new RSQLSgiRestFilter('proyectoConceptoGasto.permitido', SgiRestFilterOperator.EQUALS, permitido.toString())
       .and('proyectoConceptoGasto.conceptoGasto.id', SgiRestFilterOperator.EQUALS, conceptoGastoId.toString())
@@ -532,8 +561,9 @@ export class ProyectoAnualidadGastoModalComponent extends DialogFormComponent<Pr
 
     if ((codigoEconomicoTipo ?? this.formGroup?.controls.codigoEconomicoFiltro.value) === CodigoEconomicoTipo.PERMITIDO) {
       codigosEconomicos$ = of(this.conceptosGastoCodigoEcPermitidos.data
-        .map(proyectoConceptoGastoCodigoEcs =>
-          proyectoConceptoGastoCodigoEcs.codigoEconomico
+        .filter(proyectoConceptoGastoCodigoEc => proyectoConceptoGastoCodigoEc.id)
+        .map(proyectoConceptoGastoCodigoEc =>
+          proyectoConceptoGastoCodigoEc.codigoEconomico
         ));
     } else {
       if (!this.codigosEconomicosTodos) {

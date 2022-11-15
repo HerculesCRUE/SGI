@@ -9,4 +9,6 @@ export interface ISolicitudModalidadBackend {
   entidadRef: string;
   /** Programa */
   programa: IPrograma;
+  /** Programa de la convocatoria */
+  programaConvocatoriaId: number;
 }

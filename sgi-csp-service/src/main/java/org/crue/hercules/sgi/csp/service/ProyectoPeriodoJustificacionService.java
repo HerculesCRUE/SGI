@@ -20,9 +20,12 @@ import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoJustificacionNotDeleteableException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoJustificacionOverlappedFechasException;
+import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoJustificacionProjectRangeException;
 import org.crue.hercules.sgi.csp.exceptions.TipoFinalException;
+import org.crue.hercules.sgi.csp.model.EstadoProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.repository.EstadoProyectoPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoPeriodoJustificacionSpecifications;
@@ -50,14 +53,18 @@ public class ProyectoPeriodoJustificacionService {
   private final ProyectoRepository proyectoRepository;
   private final RequerimientoJustificacionService requerimientoJustificacionService;
 
+  private final EstadoProyectoPeriodoJustificacionRepository estadoProyectoPeriodoJustificacionRepository;
+
   public ProyectoPeriodoJustificacionService(Validator validator,
       ProyectoPeriodoJustificacionRepository proyectoPeriodoJustificacionRepository,
       ProyectoRepository proyectoRepository,
-      RequerimientoJustificacionService requerimientoJustificacionService) {
+      RequerimientoJustificacionService requerimientoJustificacionService,
+      EstadoProyectoPeriodoJustificacionRepository estadoProyectoPeriodoJustificacionRepository) {
     this.validator = validator;
     this.repository = proyectoPeriodoJustificacionRepository;
     this.proyectoRepository = proyectoRepository;
     this.requerimientoJustificacionService = requerimientoJustificacionService;
+    this.estadoProyectoPeriodoJustificacionRepository = estadoProyectoPeriodoJustificacionRepository;
   }
 
   @Transactional
@@ -80,7 +87,7 @@ public class ProyectoPeriodoJustificacionService {
         .collect(Collectors.toList());
 
     if (!proyectoPeriodoJustificacionsEliminar.isEmpty()) {
-      repository.deleteAll(proyectoPeriodoJustificacionsEliminar);
+      this.deleteAll(proyectoPeriodoJustificacionsEliminar);
     }
 
     // Ordena los proyecto Periodo Justificacion por fecha de inicio
@@ -93,8 +100,15 @@ public class ProyectoPeriodoJustificacionService {
     AtomicInteger numPeriodo = new AtomicInteger(0);
 
     // Validaciones
+    Proyecto proyecto = proyectoRepository.findById(proyectoId)
+        .orElseThrow(() -> new ProyectoNotFoundException(proyectoId));
+    Instant fechaInicioProyecto = proyecto.getFechaInicio();
+    Instant fechaFinProyecto = proyecto.getFechaFinDefinitiva() != null ? proyecto.getFechaFinDefinitiva()
+        : proyecto.getFechaFin();
+
     List<ProyectoPeriodoJustificacion> returnValue = new ArrayList<>();
     int index = 0;
+    ProyectoPeriodoJustificacion periodoJustificacionAnterior = null;
     for (ProyectoPeriodoJustificacion periodoJustificacion : proyectoPeriodoJustificaciones) {
 
       Optional<ProyectoPeriodoJustificacion> periodoJustificacionBD = proyectoPeriodoJustificacionsBD.stream().filter(
@@ -112,23 +126,27 @@ public class ProyectoPeriodoJustificacionService {
             .setFechaPresentacionJustificacion(periodoJustificacionBD.get().getFechaPresentacionJustificacion());
       }
 
-      // Obtiene los rangos no permitidos
-      List<Instant[]> rangos = new ArrayList<>();
-      proyectoPeriodoJustificaciones.stream().filter(periodo -> periodo != periodoJustificacion).forEach(periodo -> {
-        Instant[] rango = { periodo.getFechaInicio(), periodo.getFechaFin() };
-        rangos.add(rango);
-      });
-
       // actualizando
       if (periodoJustificacion.getId() != null && proyectoPeriodoJustificacionsBD.stream()
           .noneMatch(periodo -> Objects.equals(periodo.getId(), periodoJustificacion.getId()))) {
         throw new ProyectoPeriodoJustificacionNotFoundException(periodoJustificacion.getId());
       }
 
+      if (fechaInicioProyecto.isAfter(periodoJustificacion.getFechaInicio())
+          || fechaFinProyecto.isBefore(periodoJustificacion.getFechaFin())) {
+        throw new ProyectoPeriodoJustificacionProjectRangeException(fechaInicioProyecto, fechaFinProyecto);
+      }
+
+      if (periodoJustificacionAnterior != null
+          && !(periodoJustificacionAnterior.getFechaFin() != null
+              && periodoJustificacionAnterior.getFechaFin().isBefore(periodoJustificacion.getFechaInicio()))) {
+        throw new ProyectoPeriodoJustificacionOverlappedFechasException();
+      }
+
       // Solo puede haber un tipo de justificacion 'final' y ha de ser el último"
-      if ((periodoFinal != null && (!Objects.equals(periodoFinal.getId(), periodoJustificacion.getId())))
-          && periodoJustificacion.getTipoJustificacion().equals(TipoJustificacion.FINAL)
-          || (index > proyectoPeriodoJustificaciones.size() - 1)) {
+      if (periodoFinal != null
+          && !Objects.equals(periodoFinal.getId(), periodoJustificacion.getId())
+          && index >= (proyectoPeriodoJustificaciones.size() - 1)) {
         throw new TipoFinalException();
       }
 
@@ -138,20 +156,41 @@ public class ProyectoPeriodoJustificacionService {
       if (!result.isEmpty()) {
         throw new ConstraintViolationException(result);
       }
-      // solapamiento de fechas
-      rangos.stream().forEach(rango -> {
-        if (!((periodoJustificacion.getFechaInicio().isBefore(rango[0])
-            && periodoJustificacion.getFechaFin().isBefore(rango[1]))
-            || (periodoJustificacion.getFechaInicio().isAfter(rango[0])
-                && periodoJustificacion.getFechaFin().isAfter(rango[1])))) {
-          throw new ProyectoPeriodoJustificacionOverlappedFechasException();
-        }
-      });
-      returnValue.add(repository.save(periodoJustificacion));
+
+      if (Objects.isNull(periodoJustificacion.getId())) {
+        // creación
+        ProyectoPeriodoJustificacion proyectoPeriodoJustificacionCreado = repository.save(periodoJustificacion);
+        periodoJustificacion
+            .setEstado(this.createEstadoProyectoPeriodoJustificacionPendiente(
+                proyectoPeriodoJustificacionCreado.getId()));
+        returnValue.add(proyectoPeriodoJustificacionCreado);
+      } else {
+        returnValue.add(repository.save(periodoJustificacion));
+      }
+
+      periodoJustificacionAnterior = periodoJustificacion;
+      index++;
     }
+
     log.debug(
         "update(Long proyectoPeriodoJustificacionId, List<ProyectoPeriodoJustificacion> proyectoPeriodoJustificaciones) - end");
     return returnValue;
+  }
+
+  private EstadoProyectoPeriodoJustificacion createEstadoProyectoPeriodoJustificacionPendiente(
+      Long idPeriodoJustificacion) {
+    return this.estadoProyectoPeriodoJustificacionRepository.save(EstadoProyectoPeriodoJustificacion.builder()
+        .estado(EstadoProyectoPeriodoJustificacion.TipoEstadoPeriodoJustificacion.PENDIENTE)
+        .fechaEstado(Instant.now())
+        .proyectoPeriodoJustificacionId(idPeriodoJustificacion)
+        .build());
+  }
+
+  @Transactional
+  public void deleteAll(List<ProyectoPeriodoJustificacion> proyectoPeriodoJustificacionesEliminar) {
+    for (ProyectoPeriodoJustificacion periodoJustificacionEliminar : proyectoPeriodoJustificacionesEliminar) {
+      this.delete(periodoJustificacionEliminar.getId());
+    }
   }
 
   /**
@@ -173,7 +212,14 @@ public class ProyectoPeriodoJustificacionService {
       throw new ProyectoPeriodoJustificacionNotDeleteableException();
     }
 
+    ProyectoPeriodoJustificacion proyectoPeriodoJustificacion = this.findById(id);
+    proyectoPeriodoJustificacion.setEstado(null);
+
+    repository.save(proyectoPeriodoJustificacion);
+
+    this.estadoProyectoPeriodoJustificacionRepository.deleteAllByProyectoPeriodoJustificacionId(id);
     repository.deleteById(id);
+
     log.debug("delete(Long id) - end");
 
   }

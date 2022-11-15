@@ -7,6 +7,7 @@ import { VALIDACION_REQUISITOS_EQUIPO_IP_MAP } from '@core/enums/validaciones-re
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { Estado, IEstadoSolicitud } from '@core/models/csp/estado-solicitud';
+import { IProyecto } from '@core/models/csp/proyecto';
 import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudProyecto, TipoPresupuesto } from '@core/models/csp/solicitud-proyecto';
 import { ISolicitudProyectoSocio } from '@core/models/csp/solicitud-proyecto-socio';
@@ -40,6 +41,7 @@ import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service'
 import { DialogService } from '@core/services/dialog.service';
 import { ChecklistService } from '@core/services/eti/checklist/checklist.service';
 import { FormlyService } from '@core/services/eti/formly/formly.service';
+import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { AreaConocimientoService } from '@core/services/sgo/area-conocimiento.service';
 import { ClasificacionService } from '@core/services/sgo/clasificacion.service';
@@ -265,7 +267,7 @@ export class SolicitudActionService extends ActionService {
     datosPersonalesService: DatosPersonalesService,
     palabraClaveService: PalabraClaveService,
     solicitudGrupoService: SolicitudGrupoService,
-    proyectoService: ProyectoService,
+    private readonly proyectoService: ProyectoService,
     solicitudRrhhService: SolicitudRrhhService,
     solicitanteExternoService: SolicitanteExternoService,
     datosContactoService: DatosContactoService,
@@ -273,6 +275,7 @@ export class SolicitudActionService extends ActionService {
     categoriasProfesionalesService: CategoriaProfesionalService,
     solicitudRrhhRequisitoCategoriaService: SolicitudRrhhRequisitoCategoriaService,
     solicitudRrhhRequisitoNivelAcademicoService: SolicitudRrhhRequisitoNivelAcademicoService,
+    documentoService: DocumentoService
   ) {
     super();
 
@@ -308,8 +311,18 @@ export class SolicitudActionService extends ActionService {
       this.loadConvocatoria(idConvocatoria);
     }
 
-    this.documentos = new SolicitudDocumentosFragment(logger, this.data?.solicitud?.id, this.data?.solicitud?.convocatoriaId,
-      configuracionSolicitudService, solicitudService, solicitudDocumentoService, this.readonly, this.estadoAndDocumentosReadonly);
+    this.documentos = new SolicitudDocumentosFragment(
+      logger,
+      this.data?.solicitud?.id,
+      this.data?.solicitud?.convocatoriaId,
+      configuracionSolicitudService,
+      solicitudService,
+      solicitudDocumentoService,
+      documentoService,
+      this.readonly,
+      this.estadoAndDocumentosReadonly
+    );
+
     this.areaConocimiento = new SolicitudProyectoAreaConocimientoFragment(this.data?.solicitud?.id,
       solicitudProyectoAreaConocimiento, solicitudService, areaConocimientoService, this.readonly);
     this.hitos = new SolicitudHitosFragment(this.data?.solicitud?.id, solicitudHitoService, solicitudService, this.readonly);
@@ -379,6 +392,7 @@ export class SolicitudActionService extends ActionService {
       categoriasProfesionalesService,
       datosAcademicosService,
       vinculacionService,
+      documentoService,
       this.readonly
     );
 
@@ -527,7 +541,7 @@ export class SolicitudActionService extends ActionService {
 
         this.subscriptions.push(this.datosGenerales.initialized$.subscribe(
           (value) => {
-            if (value) {
+            if (value && !!this.datosGenerales.getFormGroup().controls.solicitante) {
               this.equipoProyecto.initialize();
               this.documentos.initialize();
               this.subscriptions.push(this.datosGenerales.getFormGroup().controls.solicitante.valueChanges.subscribe(
@@ -827,20 +841,30 @@ export class SolicitudActionService extends ActionService {
     }
 
     const proyectoId = this.data.proyectosIds.length > 1 ? null : this.data.proyectosIds[0];
-    const routerLink: string[] = proyectoId ?
+    const routerLink: string[] = !!proyectoId ?
       ['../..', CSP_ROUTE_NAMES.PROYECTO, proyectoId.toString(), PROYECTO_ROUTE_NAMES.FICHA_GENERAL] :
       ['../..', CSP_ROUTE_NAMES.PROYECTO];
-
     const queryParams = !proyectoId ? { [SOLICITUD_ACTION_LINK_KEY]: this.data.solicitud.id } : {};
-
     const actionLinkOptions = {
       title: MSG_PROYECTOS,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
       routerLink,
       queryParams
     };
-
-    this.addActionLink(actionLinkOptions);
+    if (proyectoId !== null) {
+      this.subscriptions.push(
+        this.proyectoService.findById(proyectoId).pipe(
+          tap(proyecto => {
+            if (!!!proyecto.activo) {
+              return;
+            }
+            this.addActionLink(actionLinkOptions);
+          })
+        ).subscribe());
+    } else {
+      actionLinkOptions.titleParams = MSG_PARAMS.CARDINALIRY.PLURAL;
+      this.addActionLink(actionLinkOptions);
+    }
   }
 
   private isFormularioSolicitudProyecto(): boolean {
@@ -859,4 +883,8 @@ export class SolicitudActionService extends ActionService {
     return this.authService.hasAnyAuthority(['CSP-SOL-INV-BR', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER']);
   }
 
+  showSolicitudRRHHToValidateInfoMessage(): boolean {
+    const solicitud = this.datosGenerales.getValue();
+    return solicitud.formularioSolicitud === FormularioSolicitud.RRHH && solicitud.estado.estado === Estado.BORRADOR;
+  }
 }

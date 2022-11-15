@@ -8,14 +8,12 @@ import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { Estado, ESTADO_MAP } from '@core/models/csp/estado-proyecto';
-import { IFuenteFinanciacion } from '@core/models/csp/fuente-financiacion';
 import { IPrograma } from '@core/models/csp/programa';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IRolProyecto } from '@core/models/csp/rol-proyecto';
 import { ITipoAmbitoGeografico } from '@core/models/csp/tipo-ambito-geografico';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ProgramaService } from '@core/services/csp/programa.service';
@@ -117,7 +115,7 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
     private matDialog: MatDialog,
     route: ActivatedRoute,
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -152,7 +150,7 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
         }),
         catchError((err) => {
           this.logger.error(err);
-          this.snackBarService.showError(this.msgError);
+          this.processError(err);
           return of({} as IConvocatoria);
         })
       ).subscribe();
@@ -263,7 +261,7 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
       switchMap((value) => {
         return this.translate.get(
           MSG_SUCCESS_REACTIVE,
-          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
     ).subscribe((value) => this.textoSuccessReactivar = value);
@@ -275,20 +273,19 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
       switchMap((value) => {
         return this.translate.get(
           MSG_ERROR_REACTIVE,
-          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
     ).subscribe((value) => this.textoErrorReactivar = value);
   }
 
-  onClearFilters() {
-    super.onClearFilters();
+  protected resetFilters(): void {
+    super.resetFilters();
     this.formGroup.controls.activo.setValue('true');
     this.formGroup.controls.fechaInicioDesde.setValue(null);
     this.formGroup.controls.fechaInicioHasta.setValue(null);
     this.formGroup.controls.fechaFinDesde.setValue(null);
     this.formGroup.controls.fechaFinHasta.setValue(null);
-    this.onSearch();
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IProyectoListadoData>> {
@@ -366,10 +363,14 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
       .and('unidadGestionRef', SgiRestFilterOperator.EQUALS, controls.unidadGestion.value?.id?.toString())
       .and('fechaInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioDesde.value))
       .and('fechaInicio', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioHasta.value))
-      .and('fechaFin', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinDesde.value))
-      .or('fechaFinDefinitiva', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinDesde.value))
-      .and('fechaFin', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinHasta.value))
-      .or('fechaFinDefinitiva', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinHasta.value))
+      .and(
+        new RSQLSgiRestFilter('fechaFin', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinDesde.value))
+          .or('fechaFinDefinitiva', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinDesde.value))
+      )
+      .and(
+        new RSQLSgiRestFilter('fechaFin', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinHasta.value))
+          .or('fechaFinDefinitiva', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinHasta.value))
+      )
       .and('ambitoGeografico.id', SgiRestFilterOperator.EQUALS, controls.ambitoGeografico.value?.id?.toString())
       .and('identificadoresSge.proyectoSgeRef', SgiRestFilterOperator.EQUALS, controls.codigoSge.value?.toString())
       .and('responsableProyecto', SgiRestFilterOperator.EQUALS, controls.responsableProyecto.value?.id)
@@ -424,10 +425,10 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorDesactivar);
+            this.processError(new SgiError(this.textoErrorDesactivar));
           }
         }
       );
@@ -449,17 +450,17 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
         }
       })).subscribe(
         () => {
-          this.snackBarService.showSuccess(this.textoSuccessDesactivar);
+          this.snackBarService.showSuccess(this.textoSuccessReactivar);
           this.loadTable();
         },
         (error) => {
           this.logger.error(error);
           proyecto.activo = false;
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorDesactivar);
+            this.processError(new SgiError(this.textoErrorReactivar));
           }
         }
       );
@@ -474,52 +475,13 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
   }
 
   /**
-   * Devuelve el nombre de una unidad de gestión.
-   * @param unidadGestion unidad de gestión
-   * @returns nombre de una unidad de gestión
-   */
-  getUnidadGestion(unidadGestion?: IUnidadGestion): string | undefined {
-    return typeof unidadGestion === 'string' ? unidadGestion : unidadGestion?.nombre;
-  }
-
-  /**
-   * Devuelve el nombre de una fuente de financiacion.
-   * @param fuente de financiacion fuente de financiacion.
-   * @returns nombre de una fuente de financiacion
-   */
-  getFuenteFinanciacion(fuente?: IFuenteFinanciacion): string | undefined {
-    return typeof fuente === 'string' ? fuente : fuente?.nombre;
-  }
-
-  /**
-   * Devuelve el nombre de un tipo de ámbito geográfico.
-   * @param ambito de un ámbito geográfico
-   * @returns nombre de un ámbito geográfico
-   */
-  getAmbitoGeografico(ambito?: ITipoAmbitoGeografico): string | undefined {
-    return typeof ambito === 'string' ? ambito : ambito?.nombre;
-  }
-
-  /**
-   * Devuelve el nombre de un plan de investigación.
-   * @param plan de un plan de investigación.
-   * @returns nombre de de un plan de investigación
-   */
-  getPlanInvestigacion(plan?: IFuenteFinanciacion): string | undefined {
-    return typeof plan === 'string' ? plan : plan?.nombre;
-  }
-
-  /**
    * Cargar planes de investigación
    */
   private loadPlanInvestigacion() {
     this.suscripciones.push(
       this.programaService.findAllPlan().subscribe(
         (res) => this.planInvestigacion$.next(res.items),
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR);
-        }
+        (error) => this.logger.error(error)
       )
     );
   }
@@ -531,10 +493,7 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
     this.suscripciones.push(
       this.tipoAmbitoGeograficoService.findAll().subscribe(
         (res) => this.ambitoGeografico$.next(res.items),
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR);
-        }
+        (error) => this.logger.error(error)
       )
     );
   }
@@ -557,10 +516,7 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
           );
         });
       },
-      (error) => {
-        this.logger.error(error);
-        this.snackBarService.showError(MSG_ERROR);
-      }
+      (error) => this.logger.error(error)
     ));
 
     const queryOptionsResponsable: SgiRestFindOptions = {};

@@ -56,10 +56,11 @@ export class ProyectoAnualidadDataResolver extends SgiResolverResolver<IProyecto
     };
     return this.proyectoService.findAllProyectoAnualidades(proyectoData.proyecto.id, options).pipe(
       map(anualidades => {
+        const proyectoAnualidad = proyectoAnualiadId ? anualidades.items.find(anualidad => anualidad.id === proyectoAnualiadId) : null;
         return {
           proyecto: proyectoData.proyecto,
           proyectoAnualidadResumen: anualidades.items,
-          readonly: proyectoData.readonly
+          readonly: proyectoAnualidad?.enviadoSge ?? proyectoData.readonly
         };
       })
     );

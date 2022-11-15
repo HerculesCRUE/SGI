@@ -2,11 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { IComite } from '@core/models/eti/comite';
 import { IMemoria } from '@core/models/eti/memoria';
 import { ITipoMemoria } from '@core/models/eti/tipo-memoria';
 import { IPersona } from '@core/models/sgp/persona';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ComiteService } from '@core/services/eti/comite.service';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
@@ -28,11 +27,6 @@ const INFO_TITLE_DESCRIPTIVO = marker('eti.memoria.info.titulo-descriptivo');
   styleUrls: ['./memoria-datos-generales.component.scss']
 })
 export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemoria> implements OnInit, OnDestroy {
-
-  fxFlexProperties: FxFlexProperties;
-  fxFlexPropertiesInline: FxFlexProperties;
-  fxLayoutProperties: FxLayoutProperties;
-  fxFlexPropertiesTextarea: FxFlexProperties;
 
   tiposMemoria$: Subject<ITipoMemoria[]> = new BehaviorSubject<ITipoMemoria[]>([]);
   memorias$: Subject<IMemoria[]> = new BehaviorSubject<IMemoria[]>([]);
@@ -57,23 +51,6 @@ export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemor
   ) {
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
     this.datosGeneralesFragment = this.fragment as MemoriaDatosGeneralesFragment;
-
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(100%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(50%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(22%-10px)';
-    this.fxFlexProperties.order = '1';
-
-    this.fxFlexPropertiesTextarea = new FxFlexProperties();
-    this.fxFlexPropertiesTextarea.sm = '0 1 calc(100%-10px)';
-    this.fxFlexPropertiesTextarea.md = '0 1 calc(50%-10px)';
-    this.fxFlexPropertiesTextarea.gtMd = '0 1 calc(44%-10px)';
-    this.fxFlexPropertiesTextarea.order = '1';
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
   }
 
   ngOnInit(): void {
@@ -120,7 +97,11 @@ export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemor
     this.translate.get(
       MEMORIA_TIPO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamTipoMemoriaEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamTipoMemoriaEntity = {
+        entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR
+      }
+    );
 
     this.translate.get(
       MEMORIA_ORIGINAL_KEY,
@@ -135,7 +116,11 @@ export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemor
     this.translate.get(
       MEMORIA_TITULO_DESCRIPTIVO,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamTituloDescriptivoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamTituloDescriptivoEntity = {
+        entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR
+      }
+    );
 
     this.translate.get(
       INFO_TITLE_DESCRIPTIVO,
@@ -160,5 +145,9 @@ export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemor
 
   displayerMemoria(memoria: IMemoria): string {
     return memoria?.numReferencia;
+  }
+
+  displayerComite(comite: IComite): string {
+    return comite?.nombreInvestigacion;
   }
 }

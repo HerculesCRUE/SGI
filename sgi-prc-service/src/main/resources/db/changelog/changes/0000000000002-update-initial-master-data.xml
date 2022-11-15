@@ -54,8 +54,10 @@
   </changeSet>
 
   <changeSet context="!test" author="master" id="0000000000002-configuracion_baremo-configuracion_baremo_padre_id">
+    <validCheckSum>8:897674f39deb94abf51bdbf98d19a15d</validCheckSum>
+    <validCheckSum>8:c954a4861abd3f45d2253907123b61bd</validCheckSum>
     <update tableName="configuracion_baremo">
-      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where tipo_baremo='DIRECCION_TESIS' FETCH FIRST 1 ROW only)" />
+      <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where tipo_baremo='DIRECCION_TESIS' order by id asc OFFSET 0 ROWS FETCH FIRST 1 ROW only)" />
       <where>tipo_baremo in ('DIRECCION_TESIS_TESIS', 'DIRECCION_TESIS_TESINA_O_DEA_O_TFM', 
         'DIRECCION_TESIS_MENCION_INDUSTRIAL', 'DIRECCION_TESIS_MENCION_INTERNACIONAL')
       </where>

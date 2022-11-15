@@ -1,4 +1,4 @@
-import { Dedicacion } from "@core/models/csp/grupo-equipo";
+import { Dedicacion } from '@core/models/csp/grupo-equipo';
 
 export interface IGrupoEquipoResponse {
   id: number;

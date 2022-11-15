@@ -34,7 +34,7 @@ describe('ConvocatoriaEntidadConvocanteModalComponent', () => {
       programa: undefined,
       modalidad: undefined,
     },
-    selectedEmpresas: [],
+    selectedEntidadesConvocantes: [],
     readonly: false
   };
 

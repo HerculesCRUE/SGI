@@ -446,6 +446,21 @@ export abstract class FormFragment<T> implements IFormFragment<T> {
   private key: number | string;
   private edit: boolean;
 
+  public readonly processError: (error: Error) => void = (error: Error) => {
+    if (error instanceof SgiError) {
+      if (!error.managed) {
+        error.managed = true;
+        this.pushProblems(error);
+      }
+    }
+    else {
+      // Error incontrolado
+      const sgiError = new SgiError(MSG_GENERIC_ERROR_TITLE, MSG_GENERIC_ERROR_CONTENT);
+      sgiError.managed = true;
+      this.pushProblems(sgiError);
+    }
+  }
+
   get formGroupStatus$(): BehaviorSubject<GroupStatus> {
     return this.group.status$;
   }

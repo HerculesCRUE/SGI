@@ -52,12 +52,12 @@ export class ConvocatoriaListadoExportModalComponent extends BaseExportModalComp
   }
 
   protected buildFormGroup(): FormGroup {
-    return new FormGroup({
+    const formGroup = new FormGroup({
       outputType: new FormControl(this.outputType, Validators.required),
       reportTitle: new FormControl(this.reportTitle, Validators.required),
 
       hideBlocksIfNoData: new FormControl(true),
-
+      showTodos: new FormControl(true),
       showAreasTematicas: new FormControl(true),
       showEntidadesConvocantes: new FormControl(true),
       showEntidadesFinanciadoras: new FormControl(true),
@@ -72,6 +72,24 @@ export class ConvocatoriaListadoExportModalComponent extends BaseExportModalComp
       showPartidasPresupuestarias: new FormControl(true),
       showConfiguracionSolicitudes: new FormControl(true)
     });
+
+    Object.keys(formGroup.controls).forEach(key => {
+      if (key.startsWith('show')) {
+        this.subscriptions.push(formGroup.get(key).valueChanges.subscribe(() => {
+          let cont = 0;
+          Object.keys(formGroup.controls).forEach(key => {
+            if (key.startsWith('show') && !formGroup.get(key).value) {
+              formGroup.controls.showTodos.setValue(false, { emitEvent: false });
+              cont++;
+            } else if (cont === 0) {
+              formGroup.controls.showTodos.setValue(true, { emitEvent: false });
+            }
+          });
+        }))
+      }
+    });
+
+    return formGroup;
   }
 
   protected getReportOptions(): IReportConfig<IConvocatoriaReportOptions> {

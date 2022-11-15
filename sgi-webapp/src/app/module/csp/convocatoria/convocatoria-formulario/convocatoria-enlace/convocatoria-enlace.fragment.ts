@@ -1,6 +1,5 @@
 import { IConvocatoriaEnlace } from '@core/models/csp/convocatoria-enlace';
 import { Fragment } from '@core/services/action-service';
-import { ConvocatoriaEnlaceService } from '@core/services/csp/convocatoria-enlace.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
@@ -13,7 +12,6 @@ export class ConvocatoriaEnlaceFragment extends Fragment {
   constructor(
     key: number,
     private convocatoriaService: ConvocatoriaService,
-    private convocatoriaEnlaceService: ConvocatoriaEnlaceService,
     public readonly: boolean,
     public canEdit: boolean
   ) {
@@ -58,79 +56,17 @@ export class ConvocatoriaEnlaceFragment extends Fragment {
   }
 
   saveOrUpdate(): Observable<void> {
-    return merge(
-      this.deleteEnlaces(),
-      this.updateEnlaces(),
-      this.createEnlaces()
-    ).pipe(
-      takeLast(1),
-      tap(() => {
-        if (this.isSaveOrUpdateComplete()) {
-          this.setChanges(false);
-        }
-      })
-    );
+    return this.updateEnlaces()
+      .pipe(
+        map(updatedEnlaces => {
+          this.enlace$.next(updatedEnlaces.map(updatedEnlace => new StatusWrapper(updatedEnlace)));
+        }),
+        tap(() => this.setChanges(false)),
+      );
   }
 
-  private deleteEnlaces(): Observable<void> {
-    if (this.enlaceEliminados.length === 0) {
-      return of(void 0);
-    }
-    return from(this.enlaceEliminados).pipe(
-      mergeMap((wrapped) => {
-        return this.convocatoriaEnlaceService.deleteById(wrapped.value.id)
-          .pipe(
-            tap(() => {
-              this.enlaceEliminados = this.enlaceEliminados.filter(deletedEnlace =>
-                deletedEnlace.value.id !== wrapped.value.id);
-            })
-          );
-      }));
-  }
-
-  private createEnlaces(): Observable<void> {
-    const createdEnlaces = this.enlace$.value.filter((convocatoriaEnlace) => convocatoriaEnlace.created);
-    if (createdEnlaces.length === 0) {
-      return of(void 0);
-    }
-    createdEnlaces.forEach(
-      (wrapper: StatusWrapper<IConvocatoriaEnlace>) => wrapper.value.convocatoriaId = this.getKey() as number
-    );
-    return from(createdEnlaces).pipe(
-      mergeMap((wrappedEnlaces) => {
-        return this.convocatoriaEnlaceService.create(wrappedEnlaces.value).pipe(
-          map((createdEnlace) => {
-            const index = this.enlace$.value.findIndex((currentEnlaces) => currentEnlaces === wrappedEnlaces);
-            const enlaceListado = wrappedEnlaces.value;
-            enlaceListado.id = createdEnlace.id;
-            this.enlace$.value[index] = new StatusWrapper<IConvocatoriaEnlace>(enlaceListado);
-            this.enlace$.next(this.enlace$.value);
-          })
-        );
-      })
-    );
-  }
-
-  private updateEnlaces(): Observable<void> {
-    const updateEnlaces = this.enlace$.value.filter((convocatoriaEnlace) => convocatoriaEnlace.edited);
-    if (updateEnlaces.length === 0) {
-      return of(void 0);
-    }
-    return from(updateEnlaces).pipe(
-      mergeMap((wrappedEnlaces) => {
-        return this.convocatoriaEnlaceService.update(wrappedEnlaces.value.id, wrappedEnlaces.value).pipe(
-          map((updatedEnlaces) => {
-            const index = this.enlace$.value.findIndex((currentEnlaces) => currentEnlaces === wrappedEnlaces);
-            this.enlace$.value[index] = new StatusWrapper<IConvocatoriaEnlace>(updatedEnlaces);
-          })
-        );
-      })
-    );
-  }
-
-  private isSaveOrUpdateComplete(): boolean {
-    const touched: boolean = this.enlace$.value.some((wrapper) => wrapper.touched);
-    return !(this.enlaceEliminados.length > 0 || touched);
+  private updateEnlaces(): Observable<IConvocatoriaEnlace[]> {
+    return this.convocatoriaService.updateEnlaces(this.getKey() as number, this.enlace$.value.map(wrapper => wrapper.value));
   }
 
   getSelectedUrls(): string[] {

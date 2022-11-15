@@ -44,13 +44,15 @@ class ProyectoSocioPeriodoJustificacionServiceTest extends BaseServiceTest {
 
   @Mock
   private ProyectoSocioPeriodoJustificacionDocumentoRepository proyectoSocioPeriodoJustificacionDocumentoRepository;
+  @Mock
+  private SgdocService sgdocService;
 
   private ProyectoSocioPeriodoJustificacionService service;
 
   @BeforeEach
   void setUp() throws Exception {
     service = new ProyectoSocioPeriodoJustificacionServiceImpl(repository, proyectoSocioRepository,
-        proyectoSocioPeriodoJustificacionDocumentoRepository, proyectoRepository);
+        proyectoSocioPeriodoJustificacionDocumentoRepository, proyectoRepository, sgdocService);
   }
 
   @Test

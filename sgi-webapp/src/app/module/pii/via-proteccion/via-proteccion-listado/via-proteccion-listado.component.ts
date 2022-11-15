@@ -16,7 +16,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiError } from '@core/errors/sgi-error';
 import { ViaProteccionModalComponent } from '../via-proteccion-modal/via-proteccion-modal.component';
 
-const MSG_ERROR = marker('error.load');
 const MSG_CREATE = marker('btn.add.entity');
 const MSG_SAVE_SUCCESS = marker('msg.save.entity.success');
 const MSG_UPDATE_SUCCESS = marker('msg.update.entity.success');
@@ -57,7 +56,7 @@ export class ViaProteccionListadoComponent extends AbstractTablePaginationCompon
     private dialogService: DialogService,
     private translate: TranslateService
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IViaProteccion>> {
@@ -211,9 +210,9 @@ export class ViaProteccionListadoComponent extends AbstractTablePaginationCompon
         }, (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           } else {
-            this.snackBarService.showError(this.textErrorDesactivar);
+            this.processError(new SgiError(this.textErrorDesactivar));
           }
         }
         );
@@ -235,9 +234,9 @@ export class ViaProteccionListadoComponent extends AbstractTablePaginationCompon
       }, (error) => {
         this.logger.error(error);
         if (error instanceof SgiError) {
-          this.snackBarService.showError(error);
+          this.processError(error);
         } else {
-          this.snackBarService.showError(this.textErrorReactivar);
+          this.processError(new SgiError(this.textErrorReactivar));
         }
       }
       );

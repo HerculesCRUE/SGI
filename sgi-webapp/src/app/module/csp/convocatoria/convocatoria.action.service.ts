@@ -11,8 +11,6 @@ import { ConfiguracionSolicitudService } from '@core/services/csp/configuracion-
 import { ConvocatoriaAreaTematicaService } from '@core/services/csp/convocatoria-area-tematica.service';
 import { ConvocatoriaConceptoGastoService } from '@core/services/csp/convocatoria-concepto-gasto.service';
 import { ConvocatoriaDocumentoService } from '@core/services/csp/convocatoria-documento.service';
-import { ConvocatoriaEnlaceService } from '@core/services/csp/convocatoria-enlace.service';
-import { ConvocatoriaEntidadConvocanteService } from '@core/services/csp/convocatoria-entidad-convocante.service';
 import { ConvocatoriaEntidadFinanciadoraService } from '@core/services/csp/convocatoria-entidad-financiadora.service';
 import { ConvocatoriaEntidadGestoraService } from '@core/services/csp/convocatoria-entidad-gestora.service';
 import { ConvocatoriaFaseService } from '@core/services/csp/convocatoria-fase/convocatoria-fase.service';
@@ -27,6 +25,7 @@ import { DocumentoRequeridoSolicitudService } from '@core/services/csp/documento
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { DialogService } from '@core/services/dialog.service';
+import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { CategoriaProfesionalService } from '@core/services/sgp/categoria-profesional.service';
@@ -143,7 +142,6 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     route: ActivatedRoute,
     private convocatoriaService: ConvocatoriaService,
     proyectoService: ProyectoService,
-    convocatoriaEnlaceService: ConvocatoriaEnlaceService,
     empresaService: EmpresaService,
     convocatoriaEntidadFinanciadoraService: ConvocatoriaEntidadFinanciadoraService,
     convocatoriaEntidadGestoraService: ConvocatoriaEntidadGestoraService,
@@ -154,7 +152,6 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     convocatoriaHitoService: ConvocatoriaHitoService,
     convocatoriaSeguimientoCientificoService: ConvocatoriaSeguimientoCientificoService,
     convocatoriaAreaTematicaService: ConvocatoriaAreaTematicaService,
-    convocatoriaEntidadConvocanteService: ConvocatoriaEntidadConvocanteService,
     convocatoriaRequisitoEquipoService: ConvocatoriaRequisitoEquipoService,
     convocatoriaRequisitoIPService: ConvocatoriaRequisitoIPService,
     convocatoriaDocumentoService: ConvocatoriaDocumentoService,
@@ -164,7 +161,8 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     nivelAcademicoService: NivelAcademicosService,
     categoriaProfesionaService: CategoriaProfesionalService,
     dialogService: DialogService,
-    palabraClaveService: PalabraClaveService
+    palabraClaveService: PalabraClaveService,
+    documentoService: DocumentoService
   ) {
     super();
     this.id = Number(route.snapshot.paramMap.get(CONVOCATORIA_ROUTE_PARAMS.ID));
@@ -183,20 +181,26 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     this.periodoJustificacion = new ConvocatoriaPeriodosJustificacionFragment(
       this.id, convocatoriaService, convocatoriaPeriodoJustificacionService, this.canEdit);
     this.entidadesConvocantes = new ConvocatoriaEntidadesConvocantesFragment(
-      logger, this.id, convocatoriaService, convocatoriaEntidadConvocanteService,
+      logger, this.id, convocatoriaService,
       empresaService, this.readonly, this.canEdit);
     this.plazosFases = new ConvocatoriaPlazosFasesFragment(
       this.id, convocatoriaService, convocatoriaFaseService, this.readonly, this.canEdit);
     this.hitos = new ConvocatoriaHitosFragment(this.id, convocatoriaService,
       convocatoriaHitoService, this.readonly, this.canEdit);
-    this.documentos = new ConvocatoriaDocumentosFragment(logger, this.id, convocatoriaService,
-      convocatoriaDocumentoService, this.readonly, this.canEdit);
+    this.documentos = new ConvocatoriaDocumentosFragment(
+      logger,
+      this.id,
+      convocatoriaService,
+      convocatoriaDocumentoService,
+      documentoService,
+      this.readonly,
+      this.canEdit
+    );
     this.seguimientoCientifico = new ConvocatoriaSeguimientoCientificoFragment(this.id,
       convocatoriaService, convocatoriaSeguimientoCientificoService, this.canEdit);
     this.entidadesFinanciadoras = new ConvocatoriaEntidadesFinanciadorasFragment(
       this.id, convocatoriaService, convocatoriaEntidadFinanciadoraService, this.readonly, this.canEdit);
-    this.enlaces = new ConvocatoriaEnlaceFragment(this.id, convocatoriaService,
-      convocatoriaEnlaceService, this.readonly, this.canEdit);
+    this.enlaces = new ConvocatoriaEnlaceFragment(this.id, convocatoriaService, this.readonly, this.canEdit);
     this.requisitosIP = new ConvocatoriaRequisitosIPFragment(fb, this.id,
       convocatoriaRequisitoIPService, nivelAcademicoService, categoriaProfesionaService, this.canEdit);
     this.requisitosEquipo = new ConvocatoriaRequisitosEquipoFragment(fb, this.id,

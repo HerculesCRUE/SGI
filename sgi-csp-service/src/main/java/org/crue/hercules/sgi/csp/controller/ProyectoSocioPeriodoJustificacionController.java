@@ -191,4 +191,24 @@ public class ProyectoSocioPeriodoJustificacionController {
     return new ResponseEntity<>(page, HttpStatus.OK);
   }
 
+  /**
+   * Comprueba la existencia documentos relacionados al
+   * {@link ProyectoSocioPeriodoJustificacion} con el
+   * id indicado.
+   * 
+   * @param id Identificador de {@link ProyectoSocioPeriodoJustificacion}.
+   * @return HTTP 200 si existe y HTTP 204 si no.
+   */
+  @RequestMapping(path = "/{id}/documentos", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  public ResponseEntity<Void> existsDocumentos(@PathVariable Long id) {
+    log.debug("existsDocumentos(Long id) - start");
+    if (service.existsDocumentosById(id)) {
+      log.debug("existsDocumentos(Long id) - end");
+      return new ResponseEntity<>(HttpStatus.OK);
+    }
+    log.debug("existsDocumentos(Long id) - end");
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
 }

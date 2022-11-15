@@ -7,6 +7,7 @@ import { COMITE, IComite } from '@core/models/eti/comite';
 import { IMemoria } from '@core/models/eti/memoria';
 import { IRetrospectiva } from '@core/models/eti/retrospectiva';
 import { TipoEstadoMemoria } from '@core/models/eti/tipo-estado-memoria';
+import { Module } from '@core/module';
 import { ActionService } from '@core/services/action-service';
 import { ApartadoService } from '@core/services/eti/apartado.service';
 import { BloqueService } from '@core/services/eti/bloque.service';
@@ -63,6 +64,8 @@ export class MemoriaActionService extends ActionService {
 
   private formlyFormBuilder: FormlyFormBuilder;
 
+  private isInvestigador: boolean;
+
   constructor(
     logger: NGXLogger,
     fb: FormBuilder,
@@ -94,6 +97,9 @@ export class MemoriaActionService extends ActionService {
     else {
       this.loadPeticionEvaluacion(history.state.idPeticionEvaluacion);
     }
+
+    this.isInvestigador = route.snapshot.data.module === Module.INV;
+
     this.datosGenerales = new MemoriaDatosGeneralesFragment(fb, this.readonly, this.memoria?.id, service, personaService,
       peticionEvaluacionService);
     this.formularios = new MemoriaFormularioFragment(
@@ -112,7 +118,7 @@ export class MemoriaActionService extends ActionService {
       service,
       evaluacionService
     );
-    this.documentacion = new MemoriaDocumentacionFragment(this.memoria?.id, service, documentoService);
+    this.documentacion = new MemoriaDocumentacionFragment(this.memoria?.id, this.isInvestigador, service, documentoService);
     this.seguimientoAnual = new MemoriaSeguimientoAnualFragment(
       logger,
       this.readonly,

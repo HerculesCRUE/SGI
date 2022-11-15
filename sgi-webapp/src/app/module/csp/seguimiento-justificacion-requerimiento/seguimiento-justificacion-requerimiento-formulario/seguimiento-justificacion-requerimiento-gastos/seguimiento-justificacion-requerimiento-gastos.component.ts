@@ -20,7 +20,7 @@ import { SeguimientoJustificacionRequerimientoActionService } from '../../seguim
 import { IGastoRequerimientoJustificacionTableData, SeguimientoJustificacionRequerimientoGastosFragment } from './seguimiento-justificacion-requerimiento-gastos.fragment';
 
 const GASTO_KEY = marker('csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gasto');
-const MSG_DELETE = marker('msg.delete.entity');
+const MSG_DELETE = marker('msg.ejecucion-economica.seguimiento-justificacion.requerimiento.gasto.delete');
 @Component({
   selector: 'sgi-seguimiento-justificacion-requerimiento-gastos',
   templateUrl: './seguimiento-justificacion-requerimiento-gastos.component.html',
@@ -142,16 +142,9 @@ export class SeguimientoJustificacionRequerimientoGastosComponent extends Fragme
       GASTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamEntity = { entity: value });
+
     this.translate.get(
-      GASTO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_DELETE,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
-        );
-      })
+      MSG_DELETE
     ).subscribe((value) => this.textoDelete = value);
   }
 }

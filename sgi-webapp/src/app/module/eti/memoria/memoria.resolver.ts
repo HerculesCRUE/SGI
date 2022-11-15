@@ -26,18 +26,18 @@ export class MemoriaResolver extends SgiResolverResolver<IMemoria> {
   }
 
   protected resolveEntity(route: ActivatedRouteSnapshot): Observable<IMemoria> {
-    const peticion = this.service.findById(Number(route.paramMap.get('id')));
+    const memoria$ = this.service.findById(Number(route.paramMap.get('id')));
     if (this.hasViewAuthorityInv() && route.data.module === Module.INV) {
       return this.service.isResponsableOrCreador(Number(route.paramMap.get('id'))).pipe(
         switchMap(response => {
           if (response) {
-            return peticion;
+            return memoria$;
           } else {
             return throwError('NOT_FOUND');
           }
         }));
     } else {
-      return peticion;
+      return memoria$;
     }
   }
 

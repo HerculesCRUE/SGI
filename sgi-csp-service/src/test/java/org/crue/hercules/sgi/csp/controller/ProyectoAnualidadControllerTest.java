@@ -32,7 +32,7 @@ public class ProyectoAnualidadControllerTest extends BaseControllerTest {
   @MockBean
   private ProyectoAnualidadService service;
 
-  private static final String CONTROLLER_BASE_PATH = ProyectoAnualidadController.MAPPING;
+  private static final String CONTROLLER_BASE_PATH = ProyectoAnualidadController.REQUEST_MAPPING;
   private static final String PATH_GASTOS_TOTALES = ProyectoAnualidadController.PATH_GASTOS_TOTALES;
 
   @Test

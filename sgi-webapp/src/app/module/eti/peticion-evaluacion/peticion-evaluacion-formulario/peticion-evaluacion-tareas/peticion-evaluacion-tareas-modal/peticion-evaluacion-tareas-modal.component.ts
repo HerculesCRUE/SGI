@@ -216,7 +216,7 @@ export class PeticionEvaluacionTareasModalComponent
   private onChangeMemoria(memoria: IMemoria): void {
     if (memoria?.comite?.id === COMITE.CBE || memoria?.comite?.id === COMITE.CEEA) {
       this.mostrarOrganismoYanio$.next(true);
-      this.formGroup.controls.organismo.setValidators(Validators.required);
+      this.formGroup.controls.organismo.setValidators([Validators.required, Validators.maxLength(250)]);
       this.formGroup.controls.anio.setValidators(Validators.required);
     } else {
       this.mostrarOrganismoYanio$.next(false);
@@ -226,8 +226,8 @@ export class PeticionEvaluacionTareasModalComponent
 
     if (memoria?.comite?.id === COMITE.CEI || memoria?.comite?.id === COMITE.CBE) {
       this.tareaYformacionTexto$.next(true);
-      this.formGroup.controls.tarea.setValidators(Validators.required);
-      this.formGroup.controls.formacion.setValidators(Validators.required);
+      this.formGroup.controls.tarea.setValidators([Validators.required, Validators.maxLength(250)]);
+      this.formGroup.controls.formacion.setValidators([Validators.required, Validators.maxLength(250)]);
       this.formGroup.controls.tipoTarea.clearValidators();
       this.formGroup.controls.formacionEspecifica.clearValidators();
     } else {

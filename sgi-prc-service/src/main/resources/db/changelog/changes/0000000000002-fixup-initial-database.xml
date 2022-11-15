@@ -3,6 +3,8 @@
 
   <!-- Eliminar columna mostrar_puntos de la tabla configuracion_baremo -->
   <changeSet author="master" id="0000000000002-1">
+    <validCheckSum>8:764fbbd128ed674d04fee68fe7e98d97</validCheckSum>
+    <dropDefaultValue columnDataType="boolean" columnName="MOSTRAR_PUNTOS" tableName="CONFIGURACION_BAREMO" />
     <dropColumn columnName="MOSTRAR_PUNTOS" tableName="CONFIGURACION_BAREMO" />
   </changeSet>
 

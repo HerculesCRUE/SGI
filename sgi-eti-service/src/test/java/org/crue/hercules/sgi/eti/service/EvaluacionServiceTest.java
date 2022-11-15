@@ -94,11 +94,14 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   @Mock
   private SgiConfigProperties sgiConfigProperties;
 
+  @Mock
+  private EvaluadorService evaluadorService;
+
   @BeforeEach
   public void setUp() throws Exception {
     evaluacionService = new EvaluacionServiceImpl(evaluacionRepository, estadoMemoriaRepository,
         retrospectivaRepository, memoriaService, comentarioRepository, convocatoriaReunionRepository, memoriaRepository,
-        evaluacionConverter, reportService, sgdocService, comunicadosService, sgiConfigProperties);
+        evaluacionConverter, reportService, sgdocService, comunicadosService, sgiConfigProperties, evaluadorService);
   }
 
   @Test

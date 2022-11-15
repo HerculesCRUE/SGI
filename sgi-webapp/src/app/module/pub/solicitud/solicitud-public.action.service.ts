@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
-import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { Estado, IEstadoSolicitud } from '@core/models/csp/estado-solicitud';
 import { ISolicitud } from '@core/models/csp/solicitud';
@@ -20,6 +19,7 @@ import { SolicitudRrhhRequisitoCategoriaPublicService } from '@core/services/csp
 import { SolicitudRrhhRequisitoNivelAcademicoPublicService } from '@core/services/csp/solicitud-rrhh-requisito-nivel-academico/solicitud-rrhh-requisito-nivel-academico-public.service';
 import { SolicitudRrhhPublicService } from '@core/services/csp/solicitud-rrhh/solicitud-rrhh-public.service';
 import { UnidadGestionPublicService } from '@core/services/csp/unidad-gestion-public.service';
+import { DocumentoPublicService } from '@core/services/sgdoc/documento-public.service';
 import { EmpresaPublicService } from '@core/services/sgemp/empresa-public.service';
 import { ClasificacionPublicService } from '@core/services/sgo/clasificacion-public.service';
 import { CategoriaProfesionalPublicService } from '@core/services/sgp/categoria-profesional-public.service';
@@ -31,7 +31,6 @@ import { VinculacionPublicService } from '@core/services/sgp/vinculacion/vincula
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of, throwError } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
-import { PUB_ROUTE_NAMES } from '../pub-route-names';
 import { CONVOCATORIA_PUBLIC_ID_KEY } from './solicitud-crear/solicitud-public-crear.guard';
 import { SolicitudDatosGeneralesPublicFragment } from './solicitud-formulario/solicitud-datos-generales-public/solicitud-datos-generales-public.fragment';
 import { SolicitudDocumentosPublicFragment } from './solicitud-formulario/solicitud-documentos-public/solicitud-documentos-public.fragment';
@@ -150,7 +149,7 @@ export class SolicitudPublicActionService extends ActionService {
     categoriasProfesionalesService: CategoriaProfesionalPublicService,
     solicitudRrhhRequisitoCategoriaService: SolicitudRrhhRequisitoCategoriaPublicService,
     solicitudRrhhRequisitoNivelAcademicoService: SolicitudRrhhRequisitoNivelAcademicoPublicService,
-
+    documentoService: DocumentoPublicService
   ) {
     super();
 
@@ -187,6 +186,7 @@ export class SolicitudPublicActionService extends ActionService {
       configuracionSolicitudService,
       solicitudService,
       solicitudDocumentoService,
+      documentoService,
       this.readonly,
       this.estadoAndDocumentosReadonly
     );
@@ -225,6 +225,7 @@ export class SolicitudPublicActionService extends ActionService {
       categoriasProfesionalesService,
       datosAcademicosService,
       vinculacionService,
+      documentoService,
       this.readonly
     );
 
@@ -327,5 +328,8 @@ export class SolicitudPublicActionService extends ActionService {
     );
   }
 
-
+  showSolicitudRRHHToValidateInfoMessage(): boolean {
+    const solicitud = this.datosGenerales.getValue();
+    return solicitud.formularioSolicitud === FormularioSolicitud.RRHH && solicitud.estado.estado === Estado.BORRADOR;
+  }
 }

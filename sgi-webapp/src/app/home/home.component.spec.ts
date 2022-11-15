@@ -4,6 +4,7 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 
 import { HomeComponent } from './home.component';
+import TestUtils from '@core/utils/test-utils';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
@@ -15,7 +16,8 @@ describe('HomeComponent', () => {
       imports: [
         RouterTestingModule,
         LoggerTestingModule,
-        SgiAuthModule
+        SgiAuthModule,
+        TestUtils.getIdiomas(),
       ],
       providers: [
         SgiAuthService

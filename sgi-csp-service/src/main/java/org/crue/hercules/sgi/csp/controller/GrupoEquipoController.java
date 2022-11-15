@@ -5,14 +5,18 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.crue.hercules.sgi.csp.converter.GrupoEquipoConverter;
+import org.crue.hercules.sgi.csp.dto.GrupoEquipoCreateInput;
 import org.crue.hercules.sgi.csp.dto.GrupoEquipoDto;
-import org.crue.hercules.sgi.csp.dto.GrupoEquipoInput;
 import org.crue.hercules.sgi.csp.dto.GrupoEquipoOutput;
+import org.crue.hercules.sgi.csp.dto.GrupoEquipoUpdateInput;
 import org.crue.hercules.sgi.csp.model.Grupo;
 import org.crue.hercules.sgi.csp.model.GrupoEquipo;
 import org.crue.hercules.sgi.csp.model.GrupoLineaInvestigador;
 import org.crue.hercules.sgi.csp.service.GrupoEquipoService;
 import org.crue.hercules.sgi.csp.service.GrupoLineaInvestigadorService;
+import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,10 +25,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -62,27 +66,11 @@ public class GrupoEquipoController {
    */
   @PostMapping
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-GIN-C', 'CSP-GIN-E')")
-  public ResponseEntity<GrupoEquipoOutput> create(@Valid @RequestBody GrupoEquipoInput grupoEquipo) {
-    log.debug("create(GrupoEquipoInput grupoEquipo) - start");
+  public ResponseEntity<GrupoEquipoOutput> create(@Valid @RequestBody GrupoEquipoCreateInput grupoEquipo) {
+    log.debug("create(GrupoEquipoCreateInput grupoEquipo) - start");
     GrupoEquipoOutput returnValue = converter.convert(service.create(converter.convert(grupoEquipo)));
-    log.debug("create(GrupoEquipoInput grupoEquipo) - end");
+    log.debug("create(GrupoEquipoCreateInput grupoEquipo) - end");
     return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
-  }
-
-  /**
-   * Actualiza {@link GrupoEquipo}.
-   * 
-   * @param grupo {@link GrupoEquipo} a actualizar.
-   * @param id    Identificador {@link GrupoEquipo} a actualizar.
-   * @return {@link GrupoEquipo} actualizado
-   */
-  @PutMapping(PATH_ID)
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-GIN-E')")
-  public GrupoEquipoOutput update(@Valid @RequestBody GrupoEquipoInput grupo, @PathVariable Long id) {
-    log.debug("update(GrupoEquipoInput grupoEquipo, Long id) - start");
-    GrupoEquipoOutput returnValue = converter.convert(service.update(converter.convert(id, grupo)));
-    log.debug("update(GrupoEquipoInput grupoEquipo, Long id) - end");
-    return returnValue;
   }
 
   /**
@@ -187,12 +175,12 @@ public class GrupoEquipoController {
   @PatchMapping(PATH_ID)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-GIN-E', 'CSP-GIN-V')")
   public ResponseEntity<List<GrupoEquipoOutput>> update(@PathVariable Long id,
-      @RequestBody List<@Valid GrupoEquipoInput> grupoEquipos) {
-    log.debug("update(List<GrupoEquipoInput> grupoEquipos, grupoId) - start");
+      @RequestBody List<@Valid GrupoEquipoUpdateInput> grupoEquipos) {
+    log.debug("update(List<GrupoEquipoUpdateInput> grupoEquipos, grupoId) - start");
     List<GrupoEquipoOutput> returnValue = converter
         .convertGrupoEquipos(service.update(id, converter.convertGrupoEquipoInput(
             grupoEquipos)));
-    log.debug("update(List<GrupoEquipoInput> grupoEquipos, grupoId) - end");
+    log.debug("update(List<GrupoEquipoUpdateInput> grupoEquipos, grupoId) - end");
     return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
   }
 
@@ -229,4 +217,21 @@ public class GrupoEquipoController {
     return exists ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
+  /**
+   * Devuelve una lista paginada y filtrada {@link GrupoEquipo}.
+   *
+   * @param query  filtro de búsqueda.
+   * @param paging {@link Pageable}.
+   * @return el listado de entidades {@link GrupoEquipo} paginadas y
+   *         filtradas.
+   */
+  @GetMapping()
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-GIN-C', 'CSP-GIN-E')")
+  public ResponseEntity<Page<GrupoEquipoOutput>> findAll(@RequestParam(name = "q", required = false) String query,
+      @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAll(String query, Pageable paging) - start");
+    Page<GrupoEquipoOutput> page = converter.convert(service.findAll(query, paging));
+    log.debug("findAll(String query, Pageable paging) - end");
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(page, HttpStatus.OK);
+  }
 }

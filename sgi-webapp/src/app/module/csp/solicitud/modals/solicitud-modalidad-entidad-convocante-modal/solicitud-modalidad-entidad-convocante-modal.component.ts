@@ -97,13 +97,7 @@ export class SolicitudModalidadEntidadConvocanteModalComponent
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
-
-    const subscription = this.getTreePrograma(this.data.programa, this.data.modalidad?.programa)
-      .subscribe((nodePrograma) => {
-        this.dataSource.data = [nodePrograma];
-      });
-
-    this.subscriptions.push(subscription);
+    this.loadTree();
   }
 
   private setupI18N(): void {
@@ -153,9 +147,11 @@ export class SolicitudModalidadEntidadConvocanteModalComponent
    * @param rootPrograma el programa raiz del arbol.
    * @param checkedPrograma el programa seleccionado en el arbol.
    */
-  getTreePrograma(rootPrograma: IPrograma, checkedPrograma?: IPrograma): Observable<NodePrograma> {
+  getTreePrograma(rootPrograma: IPrograma, checkedPrograma?: IPrograma, isRootNode: boolean = true): Observable<NodePrograma> {
     const node = new NodePrograma(rootPrograma);
-    this.rootNode = node;
+    if (isRootNode) {
+      this.rootNode = node;
+    }
     this.nodeMap.set(node.programa.id, node);
     return this.getChilds(node).pipe(map(() => node)).pipe(
       tap(() => {
@@ -221,6 +217,31 @@ export class SolicitudModalidadEntidadConvocanteModalComponent
 
     this.treeControl.expand(node.parent);
     this.expandParentNodes(node.parent);
+  }
+
+  private loadTree() {
+    if (this.data.programa.padre?.id) {
+      this.subscriptions.push(
+        this.getTreePrograma(this.data.programa, this.data.modalidad?.programa)
+          .subscribe((nodePrograma) => {
+            this.dataSource.data = [nodePrograma];
+          })
+      );
+    } else {
+      this.subscriptions.push(
+        this.programaService.findAllHijosPrograma(this.data.plan.id).pipe(
+          switchMap(response => {
+            return from(response.items).pipe(
+              mergeMap((programa) => this.getTreePrograma(programa, this.data.modalidad?.programa, false))
+            );
+          })
+        ).subscribe(
+          (nodePrograma) => {
+            this.dataSource.data = [...this.dataSource.data, nodePrograma];
+          }
+        )
+      );
+    }
   }
 
 }

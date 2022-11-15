@@ -27,7 +27,14 @@
               {{ 'error.required.entity' | translate:msgParamTipoSeguimiento }}
             </mat-error>
             <mat-error *ngIf="formGroup.controls.tipoSeguimiento.errors?.notAllowed">
-              {{'error.csp.proyecto-periodo-seguimiento-cientifico.tipoSeguimiento.duplicate' | translate}}
+              <ng-container
+                *ngIf="formGroup.controls.tipoSeguimiento.value !== formGroup.controls.tipoSeguimientoConvocatoria.value else duplicateFromCopy">
+                {{'error.csp.proyecto-periodo-seguimiento-cientifico.tipoSeguimiento.duplicate' | translate}}
+              </ng-container>
+              <ng-template #duplicateFromCopy>
+                {{'error.csp.proyecto-periodo-seguimiento-cientifico.tipoSeguimiento.duplicate-convocatoria' |
+                translate}}
+              </ng-template>
             </mat-error>
           </mat-form-field>
         </div>
@@ -174,23 +181,22 @@
           <mat-form-field>
             <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.fecha-inicio'|
               translate}}</mat-label>
-            <input matInput [ngxMatDatetimePicker]="pickerFechaInicio" formControlName="fechaInicioConvocatoria"
-              required>
+            <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicioConvocatoria" required>
             <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #pickerFechaInicio showSeconds="true" [defaultTime]="[0,0,0]">
-            </ngx-mat-datetime-picker>
+            <mat-datepicker #pickerFechaInicio>
+            </mat-datepicker>
           </mat-form-field>
         </div>
         <!-- Fecha de fin -->
         <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
           [fxFlexOrder]="fxFlexProperties.order">
-          <mat-form-field>
+          <mat-form-field sgiEndDate>
             <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.fecha-fin' |
               translate}}</mat-label>
-            <input matInput [ngxMatDatetimePicker]="pickerFechaFin" formControlName="fechaFinConvocatoria" required>
+            <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFinConvocatoria" required>
             <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #pickerFechaFin showSeconds="true" [defaultTime]="[23,59,59]">
-            </ngx-mat-datetime-picker>
+            <mat-datepicker #pickerFechaFin>
+            </mat-datepicker>
           </mat-form-field>
         </div>
       </div>

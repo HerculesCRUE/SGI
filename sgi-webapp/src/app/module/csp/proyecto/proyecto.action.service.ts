@@ -353,7 +353,13 @@ export class ProyectoActionService extends ActionService {
         this.proyectoContexto = new ProyectoContextoFragment(id, logger, contextoProyectoService, convocatoriaService,
           this.data?.proyecto?.convocatoriaId, this.readonly, this.data?.isVisor);
         this.seguimientoCientifico = new ProyectoPeriodoSeguimientosFragment(
-          id, this.data.proyecto, proyectoService, proyectoPeriodoSeguimientoService, convocatoriaService, documentoService);
+          id,
+          this.data.proyecto,
+          proyectoService,
+          proyectoPeriodoSeguimientoService,
+          convocatoriaService,
+          documentoService
+        );
         this.proyectoEquipo = new ProyectoEquipoFragment(
           logger,
           id,
@@ -378,9 +384,20 @@ export class ProyectoActionService extends ActionService {
         this.prorrogas = new ProyectoProrrogasFragment(id, proyectoService, proyectoProrrogaService, documentoService);
         this.historicoEstados = new ProyectoHistoricoEstadosFragment(id, proyectoService);
         this.documentos = new ProyectoDocumentosFragment(
-          id, convocatoriaService, solicitudService, proyectoService, proyectoPeriodoSeguimientoService, proyectoSocioService,
-          proyectoSocioPeriodoJustificacionService, proyectoProrrogaService, proyectoDocumentoService, empresaService, translate,
-          this.data?.isVisor);
+          id,
+          convocatoriaService,
+          solicitudService,
+          proyectoService,
+          proyectoPeriodoSeguimientoService,
+          proyectoSocioService,
+          proyectoSocioPeriodoJustificacionService,
+          proyectoProrrogaService,
+          proyectoDocumentoService,
+          empresaService,
+          documentoService,
+          translate,
+          this.data?.isVisor
+        );
         this.clasificaciones = new ProyectoClasificacionesFragment(id, proyectoClasificacionService, proyectoService,
           clasificacionService, this.readonly, this.data?.isVisor);
         this.proyectosSge = new ProyectoProyectosSgeFragment(id, proyectoProyectoSgeService, proyectoService,
@@ -438,6 +455,9 @@ export class ProyectoActionService extends ActionService {
         this.subscriptions.push(this.fichaGeneral.initialized$.subscribe(value => {
           if (value) {
             this.proyectoContexto.ocultarTable = !Boolean(this.fichaGeneral.getValue()?.convocatoriaId);
+            if (this.fichaGeneral.getValue()?.permitePaquetesTrabajo && !this.paqueteTrabajo.isInitialized()) {
+              this.paqueteTrabajo.initialize();
+            }
           }
         }));
         this.subscriptions.push(this.fichaGeneral.colaborativo$.subscribe((value) => {
@@ -541,11 +561,18 @@ export class ProyectoActionService extends ActionService {
             }
           }));
 
+        this.subscriptions.push(
+          this.paqueteTrabajo.hasPaquetesTrabajo$()
+            .subscribe(hasPaquetesTrabajo =>
+              hasPaquetesTrabajo ?
+                this.fichaGeneral.disablePermitePaquetesTrabajoFormControl() : this.fichaGeneral.enablePermitePaquetesTrabajoFormControl()
+            )
+        );
+
         this.subscribeToMiembrosProyectoEquipoChangeList();
 
         //Escucha cambios en la tabla de relaciones del componente relaciones y los emite al componente fichaGeneral
         this.subscribeToRelacionesChangeList();
-
       }
     }
 
@@ -637,6 +664,11 @@ export class ProyectoActionService extends ActionService {
       if (this.proyectosSge?.hasChanges()) {
         cascade = cascade.pipe(
           switchMap(() => this.proyectosSge.saveOrUpdate().pipe(tap(() => this.proyectosSge.refreshInitialState(true))))
+        );
+      }
+      if (this.entidadesFinanciadoras?.hasChanges()) {
+        cascade = cascade.pipe(
+          switchMap(() => this.entidadesFinanciadoras.saveOrUpdate().pipe(tap(() => this.entidadesFinanciadoras.refreshInitialState(true))))
         );
       }
     } else {

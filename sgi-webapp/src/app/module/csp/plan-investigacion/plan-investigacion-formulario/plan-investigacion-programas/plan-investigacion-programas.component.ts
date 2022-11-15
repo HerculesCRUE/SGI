@@ -85,8 +85,8 @@ export class PlanInvestigacionProgramasComponent extends FragmentComponent imple
       this.dataSource.data = programas;
     });
     this.formGroup = new FormGroup({
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(50)]),
-      descripcion: new FormControl('', [Validators.maxLength(250)]),
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(200)]),
+      descripcion: new FormControl('', [Validators.maxLength(4000)]),
     });
     this.switchToNone();
   }
@@ -101,12 +101,16 @@ export class PlanInvestigacionProgramasComponent extends FragmentComponent imple
     this.translate.get(
       PLAN_INVESTIGACION_PROGRAMA_DESCRIPCION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamDescripcionEntity = { entity: value, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamDescripcionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }
+    );
 
     this.translate.get(
       PLAN_INVESTIGACION_PROGRAMA_NOMBRE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamNombreEntity = { entity: value, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamNombreEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }
+    );
 
     this.translate.get(
       PLAN_INVESTIGACION_PROGRAMA_KEY,

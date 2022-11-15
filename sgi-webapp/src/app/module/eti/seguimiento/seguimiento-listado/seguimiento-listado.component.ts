@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { IPersona } from '@core/models/sgp/persona';
@@ -9,15 +8,11 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
-import { NGXLogger } from 'ngx-logger';
 import { Observable } from 'rxjs';
 import { ISeguimientoListadoModalData, SeguimientoListadoExportModalComponent } from '../modals/seguimiento-listado-export-modal/seguimiento-listado-export-modal.component';
 import { RolPersona } from '../seguimiento-listado-export.service';
-
-const MSG_ERROR = marker('error.load');
 
 @Component({
   selector: 'sgi-seguimiento-listado',
@@ -30,13 +25,11 @@ export class SeguimientoListadoComponent extends AbstractTablePaginationComponen
   fxLayoutProperties: FxLayoutProperties;
 
   constructor(
-    private readonly logger: NGXLogger,
-    protected readonly snackBarService: SnackBarService,
     private readonly personaService: PersonaService,
     private readonly evaluadorService: EvaluadorService,
     private matDialog: MatDialog
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -61,8 +54,8 @@ export class SeguimientoListadoComponent extends AbstractTablePaginationComponen
     });
   }
 
-  onClearFilters(): void {
-    super.onClearFilters();
+  protected resetFilters(): void {
+    super.resetFilters();
     this.formGroup.controls.fechaEvaluacionInicio.setValue(null);
     this.formGroup.controls.fechaEvaluacionFin.setValue(null);
   }
@@ -73,7 +66,7 @@ export class SeguimientoListadoComponent extends AbstractTablePaginationComponen
   }
 
   protected initColumns(): void {
-    this.columnas = ['memoria.comite.comite', 'tipoEvaluacion.nombre', 'convocatoriaReunion.fechaEvaluacion',
+    this.columnas = ['memoria.comite.comite', 'tipoEvaluacion.nombre', 'memoria.tipoMemoria.nombre', 'convocatoriaReunion.fechaEvaluacion',
       'memoria.numReferencia', 'solicitante', 'version', 'acciones'];
   }
 
@@ -89,8 +82,7 @@ export class SeguimientoListadoComponent extends AbstractTablePaginationComponen
           }
         },
         (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR);
+          this.processError(error);
         })
     );
   }
@@ -104,7 +96,10 @@ export class SeguimientoListadoComponent extends AbstractTablePaginationComponen
       if (personaRef) {
         this.suscripciones.push(
           this.personaService.findById(personaRef).subscribe(
-            (persona: IPersona) => evaluacion.memoria.peticionEvaluacion.solicitante = persona
+            (persona: IPersona) => evaluacion.memoria.peticionEvaluacion.solicitante = persona,
+            (error) => {
+              this.processError(error);
+            }
           )
         );
       }

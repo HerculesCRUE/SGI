@@ -1,5 +1,6 @@
 import { TipoJustificacion } from '@core/enums/tipo-justificacion';
 import { DateTime } from 'luxon';
+import { IEstadoProyectoPeriodoJustificacion } from './estado-proyecto-periodo-justificacion';
 import { IProyecto } from './proyecto';
 
 export interface IProyectoPeriodoJustificacion {
@@ -15,4 +16,5 @@ export interface IProyectoPeriodoJustificacion {
   convocatoriaPeriodoJustificacionId: number;
   fechaPresentacionJustificacion: DateTime;
   identificadorJustificacion: string;
+  estado: IEstadoProyectoPeriodoJustificacion;
 }

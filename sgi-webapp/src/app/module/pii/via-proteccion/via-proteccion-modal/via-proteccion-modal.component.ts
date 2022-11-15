@@ -120,7 +120,7 @@ export class ViaProteccionModalComponent extends DialogActionComponent<IViaProte
         switchMap((value) => {
           return this.translate.get(
             TITLE_NEW_ENTITY,
-            { entity: value, ...MSG_PARAMS.GENDER.MALE }
+            { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
           );
         })
       ).subscribe((value) => this.title = value);

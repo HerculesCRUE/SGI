@@ -8,7 +8,6 @@ import { FormFragmentComponent } from '@core/component/fragment.component';
 import { TipoPartida } from '@core/enums/tipo-partida';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyecto } from '@core/models/csp/proyecto';
-import { IProyectoAnualidadNotificacionSge } from '@core/models/csp/proyecto-anualidad-notificacion-sge';
 import { IProyectoAnualidadResumen } from '@core/models/csp/proyecto-anualidad-resumen';
 import { IProyectoPresupuestoTotales } from '@core/models/csp/proyecto-presupuesto-totales';
 import { IProyectoAnualidadPartida } from '@core/models/sge/proyecto-anualidad-partida';
@@ -23,8 +22,8 @@ import { DialogService } from '@core/services/dialog.service';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
-import { from, Observable, of, Subscription } from 'rxjs';
-import { map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
+import { forkJoin, Observable, of, Subscription } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../../csp-route-names';
 import { SOLICITUD_ROUTE_NAMES } from '../../../solicitud/solicitud-route-names';
 import { ProyectoActionService } from '../../proyecto.action.service';
@@ -59,7 +58,6 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
   textoDeleteWithAviso: string;
   textoEnvio: string;
 
-  proyectoAnualidadEnvio: IProyectoAnualidadNotificacionSge[] = [];
 
   anualidades = new MatTableDataSource<StatusWrapper<IProyectoAnualidadResumen>>();
   valoresCalculadosData = {} as IProyectoPresupuestoTotales;
@@ -116,7 +114,7 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
     this.subscriptions.push(this.formPart.proyectoAnualidades$.subscribe(
       data => {
         this.anualidades.data = data;
-        this.checkDisabledControls(data.length);
+        this.formPart.checkDisabledControls(data.length);
 
         if (this.formGroup.controls.anualidades.value !== null) {
           this.formPart.columnAnualidades$.next(this.formGroup.controls.anualidades.value);
@@ -131,7 +129,7 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
 
     this.subscriptions.push(this.formGroup.controls.anualidades.valueChanges.subscribe(
       (value) => {
-        this.checkDisabledControls(this.anualidades.data.length);
+        this.formPart.checkDisabledControls(this.anualidades.data.length, value);
 
         this.formPart.columnAnualidades$.next(value);
         if (value) {
@@ -144,10 +142,15 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
       }
     ));
 
-    this.subscriptions.push(this.proyectoService.getProyectoPresupuestoTotales(this.formPart.getKey() as number).
-      subscribe(response => {
-        this.valoresCalculadosData = response;
-      }));
+    this.subscriptions.push(
+      this.proyectoService.getProyectoPresupuestoTotales(this.formPart.getKey() as number)
+        .subscribe(
+          response => {
+            this.valoresCalculadosData = response;
+          },
+          this.formPart.processError
+        )
+    );
 
     this.subscriptions.push(
       this.formPart.anualidadesWithPeriodoAmortizacion$.subscribe(anualidadesWithPeriodoAmortizacion => {
@@ -235,117 +238,79 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
 
   }
 
-  private checkDisabledControls(numAnualidades: number) {
-    if (this.formGroup.controls.anualidades.value === null) {
-      this.formPart.disableAddAnualidad$.next(true);
-    } else if (numAnualidades > 0) {
-      if (!this.formGroup.controls.anualidades.value) {
-        this.formPart.disableAddAnualidad$.next(true);
-      }
-      if (!this.formGroup.controls.anualidades.disabled) {
-        this.formGroup.controls.anualidades.disable();
-      }
-    } else {
-      this.formPart.disableAddAnualidad$.next(false);
-      if (this.formGroup.controls.anualidades.disabled && !this.formPart.isVisor) {
-        this.formGroup.controls.anualidades.enable();
-      }
-    }
-  }
-
   public sendSGE(data: StatusWrapper<IProyectoAnualidadResumen>) {
     this.subscriptions.push(
-      this.dialogService.showConfirmation(this.textoEnvio).subscribe(
-        (aceptado: boolean) => {
-          if (aceptado) {
-            const proyectoAnualidadesPartidas: IProyectoAnualidadPartida[] = [];
-            return this.proyectoAnualidadService.findAllAnualidadGasto(data.value.id)
-              .pipe(
-                map(anualidadesGasto => {
-                  const proyectoAnualidadPartidasGasto = anualidadesGasto.items.map(anualidadGasto => {
-                    const proyectoAnualidadPartida: IProyectoAnualidadPartida = {
-                      anualidad: data.value.anio ?? data.value.fechaInicio.year,
-                      importe: anualidadGasto.importeConcedido,
-                      tipoDatoEconomico: TipoPartida.GASTO,
-                      partidaPresupuestaria: anualidadGasto.proyectoPartida.codigo,
-                      proyecto: { id: anualidadGasto.proyectoSgeRef } as IProyectoSge
-                    };
-                    return proyectoAnualidadPartida;
-                  });
-
-                  proyectoAnualidadesPartidas.push(...proyectoAnualidadPartidasGasto);
-
-                  return data;
-                }),
-                mergeMap(() => {
-                  return this.proyectoAnualidadService.findAllAnualidadIngreso(data.value.id)
-                    .pipe(
-                      tap(anualidadesIngreso => {
-                        const proyectoAnualidadPartidasIngreso = anualidadesIngreso.items.map(anualidadGasto => {
-                          const proyectoAnualidadPartida: IProyectoAnualidadPartida = {
-                            anualidad: data.value.anio ?? data.value.fechaInicio.year,
-                            importe: anualidadGasto.importeConcedido,
-                            tipoDatoEconomico: TipoPartida.INGRESO,
-                            partidaPresupuestaria: anualidadGasto.proyectoPartida.codigo,
-                            proyecto: { id: anualidadGasto.proyectoSgeRef } as IProyectoSge
-                          };
-                          return proyectoAnualidadPartida;
-                        });
-
-                        proyectoAnualidadesPartidas.push(...proyectoAnualidadPartidasIngreso);
-                      })
-                    );
-                }),
-              ).pipe(
-                map(() => {
-                  const gastosMap = new Map<string, IProyectoAnualidadPartida>();
-                  proyectoAnualidadesPartidas
-                    .filter(element => element.tipoDatoEconomico === TipoPartida.GASTO)
-                    .forEach(element => {
-                      const key = `${element.partidaPresupuestaria}-${element.proyecto.id}-${element.anualidad}`;
-                      const existing = gastosMap.get(key);
-                      if (existing) {
-                        existing.importe += element.importe;
-                      } else {
-                        gastosMap.set(key, element);
-                      }
-                    });
-
-                  const ingresosMap = new Map<string, IProyectoAnualidadPartida>();
-                  proyectoAnualidadesPartidas
-                    .filter(element => element.tipoDatoEconomico === TipoPartida.INGRESO)
-                    .forEach(element => {
-                      const key = `${element.partidaPresupuestaria}-${element.proyecto.id}-${element.anualidad}`;
-                      const existing = ingresosMap.get(key);
-                      if (existing) {
-                        existing.importe += element.importe;
-                      } else {
-                        ingresosMap.set(key, element);
-                      }
-                    });
-
-                  return [...gastosMap.values(), ...ingresosMap.values()];
-                }),
-                switchMap((anualidadesPartidasPresupuestarias) =>
-                  this.proyectoSgeService.createProyectoAnualidadesPartidas(anualidadesPartidasPresupuestarias)
-                ),
-                switchMap(() => {
-                  return from(this.proyectoAnualidadEnvio).pipe(
-                    switchMap(proyectoAnualidad => this.proyectoAnualidadService.notificarSge(proyectoAnualidad.id))
-                  );
-                })
-              ).subscribe(() =>
-                data.value.enviadoSge = true);
-
-          }
-        }
-      )
+      this.dialogService.showConfirmation(this.textoEnvio)
+        .pipe(
+          filter(aceptado => !!aceptado),
+          switchMap(() =>
+            forkJoin({
+              proyectoAnualidadPartidasGastos: this.getProyectoAnualidadPartidasTipo(data.value, TipoPartida.GASTO),
+              proyectoAnualidadPartidasIngresos: this.getProyectoAnualidadPartidasTipo(data.value, TipoPartida.INGRESO)
+            }).pipe(
+              map(({ proyectoAnualidadPartidasGastos, proyectoAnualidadPartidasIngresos }) =>
+                [...proyectoAnualidadPartidasGastos, ...proyectoAnualidadPartidasIngresos]
+              )
+            )
+          ),
+          switchMap((anualidadesPartidasPresupuestarias) =>
+            this.proyectoSgeService.createProyectoAnualidadesPartidas(anualidadesPartidasPresupuestarias)
+          ),
+          switchMap(() => this.proyectoAnualidadService.notificarSge(data.value.id))
+        ).subscribe(
+          () => {
+            data.value.enviadoSge = true;
+          },
+          this.formPart.processError
+        )
     );
   }
 
   public showEnviarSgeButton(data: StatusWrapper<IProyectoAnualidadResumen>): Observable<boolean> {
     return of(!data.value.enviadoSge && data.value.presupuestar && data.value.hasGastosIngresos);
   }
+  public isEnviadoSGE(data: StatusWrapper<IProyectoAnualidadResumen>): Observable<boolean> {
+    return of(data.value.enviadoSge);
+  }
+
+  private getProyectoAnualidadPartidasTipo(
+    proyectoAnualidad: IProyectoAnualidadResumen,
+    tipoPartida: TipoPartida
+  ): Observable<IProyectoAnualidadPartida[]> {
+    const partidasAnualidadTipo$ = tipoPartida === TipoPartida.GASTO
+      ? this.proyectoAnualidadService.findAllAnualidadGasto(proyectoAnualidad.id)
+      : this.proyectoAnualidadService.findAllAnualidadIngreso(proyectoAnualidad.id);
+
+    return partidasAnualidadTipo$
+      .pipe(
+        map(anualidades => {
+          const proyectoAnualidadPartidas = anualidades.items.map(anualidad => {
+            const proyectoAnualidadPartida: IProyectoAnualidadPartida = {
+              anualidad: proyectoAnualidad.anio ?? proyectoAnualidad.fechaInicio.year,
+              importe: anualidad.importeConcedido,
+              tipoDatoEconomico: tipoPartida,
+              partidaPresupuestaria: anualidad.proyectoPartida.codigo,
+              proyecto: { id: anualidad.proyectoSgeRef } as IProyectoSge
+            };
+            return proyectoAnualidadPartida;
+          });
+
+          const partidaMap = new Map<string, IProyectoAnualidadPartida>();
+          proyectoAnualidadPartidas
+            .filter(element => element.tipoDatoEconomico === tipoPartida)
+            .forEach(element => {
+              const key = `${element.partidaPresupuestaria}-${element.proyecto.id}-${element.anualidad}`;
+              const existing = partidaMap.get(key);
+              if (existing) {
+                existing.importe += element.importe;
+              } else {
+                partidaMap.set(key, element);
+              }
+            });
+
+          return [...partidaMap.values()];
+        })
+      );
+  }
+
 }
-
-

@@ -41,6 +41,7 @@
       </mat-form-field>
     </div>
   </form>
-  <sgi-evaluacion-listado-anterior-memoria #evaluaciones [rol]="this.actionService.getRol()">
+  <sgi-evaluacion-listado-anterior-memoria #evaluaciones [rol]="this.actionService.getRol()"
+    (errors)="formPart.handleErrors($event)">
   </sgi-evaluacion-listado-anterior-memoria>
 </sgi-fragment>

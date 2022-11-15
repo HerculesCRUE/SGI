@@ -14,6 +14,7 @@ import { IEmpresa } from '@core/models/sgemp/empresa';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfiguracionSolicitudService } from '@core/services/csp/configuracion-solicitud.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { DialogService } from '@core/services/dialog.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
@@ -28,7 +29,6 @@ import { catchError, map, mergeAll, mergeMap, switchMap } from 'rxjs/operators';
 import { ConvocatoriaListadoExportModalComponent, IConvocatoriaListadoModalData } from '../modals/convocatoria-listado-export-modal/convocatoria-listado-export-modal.component';
 
 const MSG_BUTTON_ADD = marker('btn.add.entity');
-const MSG_ERROR_LOAD = marker('error.load');
 const MSG_REACTIVE = marker('msg.csp.reactivate');
 const MSG_SUCCESS_REACTIVE = marker('msg.reactivate.entity.success');
 const MSG_SUCCESS_CLONED = marker('msg.cloned.entity.success');
@@ -94,6 +94,7 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
     protected snackBarService: SnackBarService,
     private convocatoriaService: ConvocatoriaService,
     private empresaService: EmpresaService,
+    private readonly configuracionSolicitudService: ConfiguracionSolicitudService,
     private dialogService: DialogService,
     public authService: SgiAuthService,
     private readonly translate: TranslateService,
@@ -101,7 +102,7 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
     private matDialog: MatDialog,
     private activatedRoute: ActivatedRoute
   ) {
-    super(snackBarService, MSG_ERROR_LOAD);
+    super();
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -321,6 +322,7 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
                     }),
                     catchError((error) => {
                       this.logger.error(error);
+                      this.processError(error);
                       return EMPTY;
                     })
                   );
@@ -328,11 +330,9 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
                 return of(convocatoriaListado);
               }),
               switchMap(() => {
-                return this.convocatoriaService.findAllConvocatoriaFases(convocatoriaListado.convocatoria.id).pipe(
-                  map(convocatoriaFase => {
-                    if (convocatoriaFase.items.length > 0) {
-                      convocatoriaListado.fase = convocatoriaFase.items[0];
-                    }
+                return this.configuracionSolicitudService.findByConvocatoriaId(convocatoriaListado.convocatoria.id).pipe(
+                  map(configuracionSolicitud => {
+                    convocatoriaListado.fase = configuracionSolicitud?.fasePresentacionSolicitudes;
                     return convocatoriaListado;
                   })
                 );
@@ -360,6 +360,7 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
                         }),
                         catchError((error) => {
                           this.logger.error(error);
+                          this.processError(error);
                           return EMPTY;
                         })
                       );
@@ -415,7 +416,7 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
       .and('entidadesConvocantes.entidadRef', SgiRestFilterOperator.EQUALS, controls.entidadConvocante.value?.id)
       .and('entidadesFinanciadoras.entidadRef', SgiRestFilterOperator.EQUALS, controls.entidadFinanciadora.value?.id)
       .and('entidadesFinanciadoras.fuenteFinanciacion.id', SgiRestFilterOperator.EQUALS, controls.fuenteFinanciacion.value?.id?.toString())
-      .and('areasTematicas.areaTematica.id', SgiRestFilterOperator.EQUALS, controls.areaTematica.value?.id?.toString());
+      .and('areasTematicas.areaTematica.padre.id', SgiRestFilterOperator.EQUALS, controls.areaTematica.value?.id?.toString());
 
     const palabrasClave = controls.palabrasClave.value as string[];
     if (Array.isArray(palabrasClave) && palabrasClave.length > 0) {
@@ -437,13 +438,12 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
     return palabrasClaveFilter;
   }
 
-  onClearFilters() {
-    super.onClearFilters();
+  resetFilters() {
+    super.resetFilters();
     this.formGroup.controls.activo.setValue(true);
     this.formGroup.controls.abiertoPlazoPresentacionSolicitud.setValue(false);
     this.formGroup.controls.fechaPublicacionDesde.setValue(null);
     this.formGroup.controls.fechaPublicacionHasta.setValue(null);
-    this.onSearch();
   }
 
   /**
@@ -473,10 +473,10 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorDesactivar);
+            this.processError(new SgiError(this.textoErrorDesactivar));
           }
         }
       );
@@ -505,10 +505,10 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
           this.logger.error(error);
           convocatoria.convocatoria.activo = false;
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorReactivar);
+            this.processError(new SgiError(this.textoErrorReactivar));
           }
         }
       );
@@ -529,10 +529,10 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
         }, (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textErrorCloning);
+            this.processError(new SgiError(this.textErrorCloning));
           }
         }));
   }

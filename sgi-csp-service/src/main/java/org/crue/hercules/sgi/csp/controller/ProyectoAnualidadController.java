@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,11 +44,22 @@ import lombok.extern.slf4j.Slf4j;
  * ProyectoAnualidadController
  */
 @RestController
-@RequestMapping(ProyectoAnualidadController.MAPPING)
+@RequestMapping(ProyectoAnualidadController.REQUEST_MAPPING)
 @Slf4j
 public class ProyectoAnualidadController {
-  public static final String MAPPING = "/proyectosanualidad";
-  public static final String PATH_GASTOS_TOTALES = "/{id}/gastos-totales";
+
+  public static final String PATH_DELIMITER = "/";
+
+  public static final String REQUEST_MAPPING = PATH_DELIMITER + "proyectosanualidad";
+
+  public static final String PATH_NOTIFICACIONES_SGE = PATH_DELIMITER + "notificaciones-sge";
+
+  public static final String PATH_ID = PATH_DELIMITER + "{id}";
+  public static final String PATH_ANUALIDAD_GASTOS = PATH_ID + PATH_DELIMITER + "anualidadgastos";
+  public static final String PATH_ANUALIDAD_INGRESOS = PATH_ID + PATH_DELIMITER + "anualidadingresos";
+  public static final String PATH_GASTOS_TOTALES = PATH_ID + PATH_DELIMITER + "gastos-totales";
+  public static final String PATH_NOTIFICAR_SGE = PATH_ID + PATH_DELIMITER + "notificarsge";
+  public static final String PATH_PARTIDAS_RESUMEN = PATH_ID + PATH_DELIMITER + "partidas-resumen";
 
   private ModelMapper modelMapper;
 
@@ -92,11 +104,28 @@ public class ProyectoAnualidadController {
   }
 
   /**
+   * Actualiza un {@link ProyectoAnualidad}.
+   * 
+   * @param proyectoAnualidad {@link ProyectoAnualidad} que se quiere modificar.
+   * @param id                Identificador {@link ProyectoAnualidad}.
+   * @return Nuevo {@link ProyectoAnualidad} creado.
+   */
+  @PutMapping(PATH_ID)
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  public ResponseEntity<ProyectoAnualidadOutput> update(@Valid @RequestBody ProyectoAnualidadInput proyectoAnualidad,
+      @PathVariable Long id) {
+    log.debug("update(ProyectoAnualidad proyectoAnualidad, Long id) - start");
+    ProyectoAnualidad returnValue = service.update(convert(id, proyectoAnualidad));
+    log.debug("update(ProyectoAnualidad proyectoAnualidad, Long id) - end");
+    return new ResponseEntity<>(convert(returnValue), HttpStatus.CREATED);
+  }
+
+  /**
    * Elimina {@link ProyectoAnualidad} con id indicado.
    * 
    * @param id Identificador de {@link ProyectoAnualidad}.
    */
-  @DeleteMapping("/{id}")
+  @DeleteMapping(PATH_ID)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
   public void deleteById(@PathVariable Long id) {
@@ -115,7 +144,7 @@ public class ProyectoAnualidadController {
    * @return el listado de entidades {@link AnualidadGastoOutput}
    *         paginadas y filtradas del {@link ProyectoAnualidad}.
    */
-  @GetMapping("/{id}/anualidadgastos")
+  @GetMapping(PATH_ANUALIDAD_GASTOS)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   public ResponseEntity<Page<AnualidadGastoOutput>> findAllAnualidadGasto(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
@@ -141,7 +170,7 @@ public class ProyectoAnualidadController {
    * @return el listado de entidades {@link AnualidadIngresoOutput}
    *         paginadas y filtradas del {@link ProyectoAnualidad}.
    */
-  @GetMapping("/{id}/anualidadingresos")
+  @GetMapping(PATH_ANUALIDAD_INGRESOS)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   public ResponseEntity<Page<AnualidadIngresoOutput>> findAllAnualidadIngreso(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
@@ -187,7 +216,7 @@ public class ProyectoAnualidadController {
    * @param id Identificador de {@link ProyectoAnualidad}.
    * @return Proyecto {@link ProyectoAnualidad} correspondiente al id
    */
-  @GetMapping("/{id}")
+  @GetMapping(PATH_ID)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E')")
   public ProyectoAnualidad findById(@PathVariable Long id) {
     log.debug("ProyectoAnualidad findById(Long id) - start");
@@ -204,7 +233,7 @@ public class ProyectoAnualidadController {
    * @param id Identificador de {@link ProyectoAnualidad}.
    * @return Listado del resumen de {@link AnualidadResumen}.
    */
-  @GetMapping("/{id}/partidas-resumen")
+  @GetMapping(PATH_PARTIDAS_RESUMEN)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E')")
   public List<AnualidadResumen> getPartidasResumen(@PathVariable Long id) {
     log.debug(" Page<AnualidadResumen> getPartidasResumen(Long id) - start");
@@ -221,7 +250,7 @@ public class ProyectoAnualidadController {
    * @param query filtro de búsqueda.
    * @return Listado de {@link ProyectoAnualidadNotificacionSge}.
    */
-  @GetMapping("/notificaciones-sge")
+  @GetMapping(PATH_NOTIFICACIONES_SGE)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-EJEC-E')")
   public List<ProyectoAnualidadNotificacionSge> findAllNotificacionesSge(
       @RequestParam(name = "q", required = false) String query) {
@@ -239,8 +268,8 @@ public class ProyectoAnualidadController {
    * @param id Identificador de {@link ProyectoAnualidad}.
    * @return {@link ProyectoAnualidad} actualizado.
    */
-  @PatchMapping("/{id}/notificarsge")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-EJEC-E')")
+  @PatchMapping(PATH_NOTIFICAR_SGE)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E', 'CSP-EJEC-E')")
   public ProyectoAnualidad notificarSge(@PathVariable Long id) {
     log.debug("notificarSge(Long id) - start");
     ProyectoAnualidad returnValue = service.notificarSge(id);
@@ -282,10 +311,7 @@ public class ProyectoAnualidadController {
   }
 
   private Page<ProyectoAnualidadOutput> convert(Page<ProyectoAnualidad> page) {
-    List<ProyectoAnualidadOutput> content = page.getContent().stream()
-        .map(proyectoAnualidad -> convert(proyectoAnualidad)).collect(Collectors.toList());
-
-    return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
+    return page.map(this::convert);
   }
 
   private Page<AnualidadGastoOutput> convertPageAnualidadGasto(Page<AnualidadGasto> page) {

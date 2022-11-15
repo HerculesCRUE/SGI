@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
+import { Module } from '@core/module';
 import { SgiRoutes } from '@core/route';
 import { SgiAuthGuard } from '@sgi/framework/auth';
 import { EtiInicioComponent } from './eti-inicio/eti-inicio.component';
@@ -46,7 +47,8 @@ const routes: SgiRoutes = [
         data: {
           title: MSG_SOLICITUDES_CONVOCATORIA_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-          hasAnyAuthorityForAnyUO: ['ETI-CNV-V', 'ETI-CNV-C', 'ETI-CNV-E', 'ETI-CNV-B', 'ETI-CNV-ENV']
+          hasAnyAuthorityForAnyUO: ['ETI-CNV-V', 'ETI-CNV-C', 'ETI-CNV-E', 'ETI-CNV-B', 'ETI-CNV-ENV'],
+          module: Module.ETI
         }
       },
       {
@@ -60,7 +62,8 @@ const routes: SgiRoutes = [
           title: MSG_EVALUACIONES_EVALUADOR_TITLE,
           hasAnyAuthorityForAnyUO: [
             'ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR'
-          ]
+          ],
+          module: Module.ETI
         }
       },
       {
@@ -75,7 +78,8 @@ const routes: SgiRoutes = [
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
           hasAnyAuthorityForAnyUO: [
             'ETI-EVC-V', 'ETI-EVC-EVAL'
-          ]
+          ],
+          module: Module.ETI
         }
       },
       {
@@ -88,7 +92,8 @@ const routes: SgiRoutes = [
         data: {
           title: MSG_ACTAS_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-          hasAnyAuthorityForAnyUO: ['ETI-ACT-V', 'ETI-ACT-C', 'ETI-ACT-E', 'ETI-ACT-ER', 'ETI-ACT-DES', 'ETI-ACT-DESR', 'ETI-ACT-FIN']
+          hasAnyAuthorityForAnyUO: ['ETI-ACT-V', 'ETI-ACT-C', 'ETI-ACT-E', 'ETI-ACT-ER', 'ETI-ACT-DES', 'ETI-ACT-DESR', 'ETI-ACT-FIN'],
+          module: Module.ETI
         }
       },
       {
@@ -101,7 +106,8 @@ const routes: SgiRoutes = [
         data: {
           title: MSG_EVALUADORES_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-          hasAnyAuthorityForAnyUO: ['ETI-EVR-V', 'ETI-EVR-C', 'ETI-EVR-E', 'ETI-EVR-B']
+          hasAnyAuthorityForAnyUO: ['ETI-EVR-V', 'ETI-EVR-C', 'ETI-EVR-E', 'ETI-EVR-B'],
+          module: Module.ETI
         }
       },
       {
@@ -114,7 +120,8 @@ const routes: SgiRoutes = [
         data: {
           title: MSG_MEMORIAS_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-          hasAnyAuthorityForAnyUO: ['ETI-MEM-V', 'ETI-MEM-CEST']
+          hasAnyAuthorityForAnyUO: ['ETI-MEM-V', 'ETI-MEM-CEST'],
+          module: Module.ETI
         }
       },
       {
@@ -127,7 +134,8 @@ const routes: SgiRoutes = [
         data: {
           title: MSG_SEGUIMIENTOS_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-          hasAnyAuthorityForAnyUO: ['ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR']
+          hasAnyAuthorityForAnyUO: ['ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR'],
+          module: Module.ETI
         }
       },
       {
@@ -139,7 +147,8 @@ const routes: SgiRoutes = [
         canActivate: [SgiAuthGuard],
         data: {
           title: MSG_GESTION_SEGUIMIENTO_TITLE,
-          hasAnyAuthorityForAnyUO: ['ETI-EVC-V', 'ETI-EVC-EVAL']
+          hasAnyAuthorityForAnyUO: ['ETI-EVC-V', 'ETI-EVC-EVAL'],
+          module: Module.ETI
         }
       },
       {
@@ -152,7 +161,8 @@ const routes: SgiRoutes = [
         data: {
           title: MSG_PETICIONES_EVALUACION_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-          hasAuthorityForAnyUO: 'ETI-PEV-V'
+          hasAuthorityForAnyUO: 'ETI-PEV-V',
+          module: Module.ETI
         }
       }, {
         path: ETI_ROUTE_NAMES.CONFIGURACIONES,
@@ -164,7 +174,8 @@ const routes: SgiRoutes = [
         data: {
           title: MSG_CONFIGURACION_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-          hasAuthorityForAnyUO: 'ETI-CNF-E'
+          hasAuthorityForAnyUO: 'ETI-CNF-E',
+          module: Module.ETI
         }
       },
       { path: '**', component: null }

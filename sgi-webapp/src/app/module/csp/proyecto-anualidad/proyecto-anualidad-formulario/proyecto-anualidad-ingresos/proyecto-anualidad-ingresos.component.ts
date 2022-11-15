@@ -43,6 +43,10 @@ export class ProyectoAnualidadIngresosComponent extends FragmentComponent implem
     return MSG_PARAMS;
   }
 
+  get readonly(): boolean {
+    return this.actionService.readonly;
+  }
+
   constructor(public actionService: ProyectoAnualidadActionService,
     private dialogService: DialogService,
     private readonly translate: TranslateService,

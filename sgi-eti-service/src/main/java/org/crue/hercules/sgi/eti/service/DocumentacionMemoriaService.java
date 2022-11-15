@@ -22,11 +22,21 @@ public interface DocumentacionMemoriaService {
    * @param idMemoria            Id de la {@link Memoria}
    * @param DocumentacionMemoria la entidad {@link DocumentacionMemoria} a
    *                             guardar.
-   * @param authentication       Authentication
    * @return la entidad {@link DocumentacionMemoria} persistida.
    */
-  DocumentacionMemoria createDocumentacionInicial(Long idMemoria, DocumentacionMemoria DocumentacionMemoria,
-      Authentication authentication);
+  DocumentacionMemoria createDocumentacionInicial(Long idMemoria, DocumentacionMemoria DocumentacionMemoria);
+
+  /**
+   * Crea {@link DocumentacionMemoria} inicial de una memoria (aquella
+   * documentación que no es de seguimiento anual, final o retrospectiva).
+   * 
+   * @param idMemoria            Id de la {@link Memoria}
+   * @param DocumentacionMemoria la entidad {@link DocumentacionMemoria} a
+   *                             guardar.
+   * @return la entidad {@link DocumentacionMemoria} persistida.
+   */
+  DocumentacionMemoria createDocumentacionInicialInvestigador(Long idMemoria,
+      DocumentacionMemoria DocumentacionMemoria);
 
   /**
    * Obtiene {@link DocumentacionMemoria} por id.

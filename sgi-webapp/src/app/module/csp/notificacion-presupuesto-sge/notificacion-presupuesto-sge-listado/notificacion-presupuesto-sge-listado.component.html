@@ -114,11 +114,11 @@
 
       <div class="buttons-final">
         <div class="col filter-button">
-          <button color="primary" aria-label="Center Align" mat-raised-button (click)="search()">
+          <button color="primary" mat-raised-button (click)="onSearch()">
             <mat-icon>search</mat-icon> {{'btn.search'| translate}}
           </button>
-          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
-            translate}}
+          <button color="warn" (click)="onClearFilters()" mat-button>
+            {{'btn.clean'| translate}}
           </button>
         </div>
       </div>

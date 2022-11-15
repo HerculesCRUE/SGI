@@ -72,6 +72,15 @@ export class ProyectoSocioPeriodoJustificacionDatosGeneralesFragment extends For
       }
     );
 
+    this.subscriptions.push(form.controls.fechaInicio.valueChanges.subscribe(
+      () => {
+        if (form.controls.fechaFin.value) {
+          form.controls.fechaFin.markAsTouched();
+          form.controls.fechaFin.updateValueAndValidity();
+        }
+      }
+    ));
+
     if (this.readonly) {
       form.disable();
     }

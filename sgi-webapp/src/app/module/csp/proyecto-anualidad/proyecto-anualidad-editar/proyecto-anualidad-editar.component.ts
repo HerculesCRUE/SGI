@@ -13,8 +13,8 @@ import { PROYECTO_ANUALIDAD_ROUTE_NAMES } from '../proyecto-anualidad-route-name
 import { ProyectoAnualidadActionService } from '../proyecto-anualidad.action.service';
 
 const MSG_BUTTON_SAVE = marker('btn.save.entity');
-const MSG_SUCCESS = marker('msg.save.entity.success');
-const MSG_ERROR = marker('error.save.entity');
+const MSG_SUCCESS = marker('msg.update.entity.success');
+const MSG_ERROR = marker('error.update.entity');
 const PROYECTO_ANUALIDAD_KEY = marker('csp.proyecto-presupuesto.anualidad');
 
 @Component({

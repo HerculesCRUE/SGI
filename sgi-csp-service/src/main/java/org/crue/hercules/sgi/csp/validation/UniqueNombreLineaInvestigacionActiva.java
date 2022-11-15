@@ -14,6 +14,8 @@ import javax.validation.Payload;
 public @interface UniqueNombreLineaInvestigacionActiva {
   String message() default "{org.crue.hercules.sgi.csp.validation.UniqueNombreLineaInvestigacionActiva.message}";
 
+  String field() default "name";
+
   Class<?>[] groups() default {};
 
   Class<? extends Payload>[] payload() default {};

@@ -3,7 +3,8 @@ package org.crue.hercules.sgi.csp.converter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.crue.hercules.sgi.csp.dto.GrupoEquipoInput;
+import org.crue.hercules.sgi.csp.dto.GrupoEquipoUpdateInput;
+import org.crue.hercules.sgi.csp.dto.GrupoEquipoCreateInput;
 import org.crue.hercules.sgi.csp.dto.GrupoEquipoOutput;
 import org.crue.hercules.sgi.csp.model.GrupoEquipo;
 import org.modelmapper.ModelMapper;
@@ -18,11 +19,21 @@ public class GrupoEquipoConverter {
 
   private final ModelMapper modelMapper;
 
-  public GrupoEquipo convert(GrupoEquipoInput input) {
+  public GrupoEquipo convert(GrupoEquipoUpdateInput input) {
     return convert(input.getId(), input);
   }
 
-  public GrupoEquipo convert(Long id, GrupoEquipoInput input) {
+  public GrupoEquipo convert(GrupoEquipoCreateInput input) {
+    return convert(null, input);
+  }
+
+  public GrupoEquipo convert(Long id, GrupoEquipoUpdateInput input) {
+    GrupoEquipo grupo = modelMapper.map(input, GrupoEquipo.class);
+    grupo.setId(id);
+    return grupo;
+  }
+
+  public GrupoEquipo convert(Long id, GrupoEquipoCreateInput input) {
     GrupoEquipo grupo = modelMapper.map(input, GrupoEquipo.class);
     grupo.setId(id);
     return grupo;
@@ -46,7 +57,7 @@ public class GrupoEquipoConverter {
         .collect(Collectors.toList());
   }
 
-  public List<GrupoEquipo> convertGrupoEquipoInput(List<GrupoEquipoInput> inputList) {
+  public List<GrupoEquipo> convertGrupoEquipoInput(List<GrupoEquipoUpdateInput> inputList) {
     return inputList.stream().map(this::convert).collect(Collectors.toList());
   }
 }

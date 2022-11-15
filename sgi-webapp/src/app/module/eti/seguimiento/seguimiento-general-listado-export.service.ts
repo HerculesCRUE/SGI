@@ -12,7 +12,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { ISeguimientoReportData, ISeguimientoReportOptions } from './seguimiento-listado-export.service';
 
 const EVALUACION_COMITE_KEY = marker('eti.evaluacion.report.comite');
-const EVALUACION_TIPO_KEY = marker('eti.evaluacion.report.tipo');
+const EVALUACION_TIPO_EVALUACION_KEY = marker('eti.evaluacion.report.tipo-evaluacion');
 const EVALUACION_FECHA_EVALUACION_KEY = marker('eti.evaluacion.report.fecha-evaluacion');
 const EVALUACION_MEMORIA_KEY = marker('eti.evaluacion.report.memoria');
 const EVALUACION_SOLICITANTE_KEY = marker('eti.evaluacion.report.solicitante');
@@ -20,6 +20,7 @@ const EVALUACION_SOLICITANTE_NOMBRE_KEY = marker('eti.evaluacion.report.solicita
 const EVALUACION_SOLICITANTE_APELLIDOS_KEY = marker('eti.evaluacion.report.solicitante.apellidos');
 const EVALUACION_DICTAMEN_KEY = marker('eti.evaluacion.report.dictamen');
 const EVALUACION_VERSION_KEY = marker('eti.evaluacion.report.version');
+const EVALUACION_TIPO_MEMORIA_KEY = marker('eti.evaluacion.report.tipo-memoria');
 
 @Injectable()
 export class SeguimientoGeneralListadoExportService extends
@@ -62,8 +63,12 @@ export class SeguimientoGeneralListadoExportService extends
         name: 'comite',
         type: ColumnType.STRING,
       }, {
-        title: this.translate.instant(EVALUACION_TIPO_KEY),
-        name: 'tipo',
+        title: this.translate.instant(EVALUACION_TIPO_EVALUACION_KEY),
+        name: 'tipoEvaluacion',
+        type: ColumnType.STRING,
+      }, {
+        title: this.translate.instant(EVALUACION_TIPO_MEMORIA_KEY),
+        name: 'tipoMemoria',
         type: ColumnType.STRING,
       }, {
         title: this.translate.instant(EVALUACION_FECHA_EVALUACION_KEY),
@@ -101,6 +106,7 @@ export class SeguimientoGeneralListadoExportService extends
     return [
       seguimientoData.memoria?.comite?.comite ?? '',
       seguimientoData.tipoEvaluacion?.nombre ?? '',
+      seguimientoData.memoria?.tipoMemoria?.nombre ?? '',
       LuxonUtils.toBackend(seguimientoData.fechaDictamen) ?? '',
       seguimientoData.memoria?.numReferencia ?? '',
       seguimientoData.solicitante?.nombre ?? '',

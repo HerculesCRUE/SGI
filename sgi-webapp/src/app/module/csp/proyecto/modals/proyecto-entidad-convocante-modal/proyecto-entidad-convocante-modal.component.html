@@ -6,11 +6,13 @@
       <mat-form-field fxFlex>
         <mat-label>{{ 'csp.proyecto-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR }}</mat-label>
         <sgi-select-empresa formControlName="entidad"
-          placeholder="{{ 'csp.proyecto-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR }}"
-          [selectedEmpresas]="data.selectedEmpresas" required>
+          placeholder="{{ 'csp.proyecto-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR }}" required>
         </sgi-select-empresa>
         <mat-error *ngIf="formGroup.controls.entidad.errors?.required">
           {{ 'error.required.entity' | translate:msgParamEntity }}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.entidad.errors?.duplicated">
+          {{ 'error.csp.proyecto-entidad-convocatante.duplicated' | translate }}
         </mat-error>
       </mat-form-field>
     </div>
@@ -25,7 +27,6 @@
       </mat-form-field>
     </div>
     <!-- Programa -->
-
     <div class="programa" fxLayout="column" fxLayoutGap="10px">
       <mat-label>{{ 'csp.proyecto-entidad-convocante.programa.programa' | translate }}</mat-label>
       <div class="arbol" fxFlex>
@@ -37,8 +38,9 @@
                 {{node.programa.nombre}}
               </mat-label>
               <mat-checkbox *ngIf="node.programa.id !== data.proyectoEntidadConvocante.programaConvocatoria?.id"
-                class="checkbox" color="primary" [checked]="node === checkedNode" (change)="onCheckNode(node, $event)">
-                {{ node.programa.nombre }}
+                class="checkbox" color="primary" [checked]="node === checkedNode" (change)="onCheckNode(node, $event)"
+                matTooltip="{{node.programa.descripcion}}">
+                <span class="break-spaces">{{node.programa.nombre}}</span>
               </mat-checkbox>
             </li>
           </mat-tree-node>
@@ -50,13 +52,14 @@
                     {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                   </mat-icon>
                 </button>
-                <mat-label *ngIf="node.programa.id === data.proyectoEntidadConvocante.programaConvocatoria?.id">
+                <mat-label *ngIf="node.programa.id === data.proyectoEntidadConvocante.programaConvocatoria?.id"
+                  matTooltip="{{node.programa.descripcion}}">
                   {{node.programa.nombre}}
                 </mat-label>
                 <mat-checkbox *ngIf="node.programa.id !== data.proyectoEntidadConvocante.programaConvocatoria?.id"
-                  class="checkbox" color="primary" [checked]="node === checkedNode"
-                  (change)="onCheckNode(node, $event)">
-                  {{ node.programa.nombre }}
+                  class="checkbox" color="primary" [checked]="node === checkedNode" (change)="onCheckNode(node, $event)"
+                  matTooltip="{{node.programa.descripcion}}">
+                  <span class="break-spaces">{{node.programa.nombre}}</span>
                 </mat-checkbox>
               </div>
               <ul [class.arbol-invisible]="!treeControl.isExpanded(node)">

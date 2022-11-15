@@ -1,9 +1,9 @@
 <sgi-fragment title="{{'menu.csp.solicitudes.equipos-proyecto' | translate}}">
 
   <!-- Error no Solicitante -->
-  <div *ngIf="formPart.hasErrors()" class="info-message">
-    {{'error.csp.solicitud-equipo-proyecto.solicitante' | translate}}
-  </div>
+  <sgi-error-message *ngIf="formPart.hasErrors()"
+    [message]="'error.csp.solicitud-equipo-proyecto.solicitante' | translate">
+  </sgi-error-message>
 
   <div class="mat-elevation-z4">
     <table mat-table [dataSource]="dataSource" matSort matSortActive="persona" matSortDirection="asc"

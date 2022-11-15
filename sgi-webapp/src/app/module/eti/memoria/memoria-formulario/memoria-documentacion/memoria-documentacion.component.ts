@@ -194,7 +194,7 @@ export class MemoriaDocumentacionComponent extends FragmentComponent implements 
     const data: MemoriaDocumentacionMemoriaModalData = {
       memoriaId: this.fragment.getKey() as number,
       tipoEvaluacion,
-      showTipoDocumentos: !this.authService.hasAuthority('ETI-MEM-EDOC') && !this.actionService.readonly,
+      showTipoDocumentos: this.formPart.isInvestigador && !this.actionService.readonly,
       comite: this.actionService.getComite()
     };
     const config = {

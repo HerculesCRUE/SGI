@@ -20,14 +20,27 @@ public interface ProyectoAnualidadRepository extends JpaRepository<ProyectoAnual
     JpaSpecificationExecutor<ProyectoAnualidad>, CustomProyectoAnualidadRepository {
 
   /**
-   * Recupera el {@link ProyectoAnualidad} deu un {@link Proyecto} cuyo año sea el
-   * recibido por parámetro.
+   * Comprueba si existe algun {@link ProyectoAnualidad} del {@link Proyecto} cuyo
+   * año sea el recibido por parámetro.
    * 
    * @param anio       Año del {@link ProyectoAnualidad}.
    * @param proyectoId Identificador del {@link Proyecto}.
    * @return {@link ProyectoAnualidad}.
    */
-  Optional<ProyectoAnualidad> findByAnioAndProyectoId(Integer anio, Long proyectoId);
+  boolean existsByAnioAndProyectoId(Integer anio, Long proyectoId);
+
+  /**
+   * Comprueba si existe algun {@link ProyectoAnualidad} del {@link Proyecto} cuyo
+   * año sea el
+   * recibido por parámetro.
+   * 
+   * @param anio       Año del {@link ProyectoAnualidad}.
+   * @param proyectoId Identificador del {@link Proyecto}.
+   * @param id         Identificador del {@link ProyectoAnualidad} excluido de la
+   *                   busqueda.
+   * @return {@link ProyectoAnualidad}.
+   */
+  boolean existsByAnioAndProyectoIdAndIdNot(Integer anio, Long proyectoId, Long id);
 
   /**
    * Recupera el {@link ProyectoAnualidad} del un {@link Proyecto}

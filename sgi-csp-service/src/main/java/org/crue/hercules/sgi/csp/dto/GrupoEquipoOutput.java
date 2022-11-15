@@ -28,6 +28,7 @@ public class GrupoEquipoOutput implements Serializable {
   private Rol rol;
   private Dedicacion dedicacion;
   private BigDecimal participacion;
+  private Long grupoId;
 
   @Data
   @EqualsAndHashCode(callSuper = false)

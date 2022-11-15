@@ -21,7 +21,7 @@ import { IProyectoReportData, IProyectoReportOptions } from './proyecto-listado-
 const SOLICITUD_KEY = 'csp.solicitud';
 const SOLICITUD_TITULO_KEY = 'csp.solicitud.titulo';
 const SOLICITUD_FIELD = 'solicitud';
-const SOLICITUD_CODIGO_KEY = marker('csp.solicitud.codigo');
+const SOLICITUD_CODIGO_KEY = marker('csp.solicitud.codigo-registro');
 const SOLICITUD_CODIGO_FIELD = 'codigoSolicitud';
 const SOLICITUD_CODIGO_EXTERNO_KEY = marker('csp.proyecto.ref-codigo-externo');
 const SOLICITUD_CODIGO_EXTERNO_FIELD = 'codigoExternoSolicitud';

@@ -1,7 +1,7 @@
 package org.crue.hercules.sgi.csp.converter;
 
 import org.assertj.core.api.Assertions;
-import org.crue.hercules.sgi.csp.dto.GrupoEquipoInput;
+import org.crue.hercules.sgi.csp.dto.GrupoEquipoUpdateInput;
 import org.crue.hercules.sgi.csp.dto.GrupoEquipoOutput;
 import org.crue.hercules.sgi.csp.model.GrupoEquipo;
 import org.crue.hercules.sgi.csp.model.GrupoEquipo.Dedicacion;
@@ -38,7 +38,8 @@ class GrupoEquipoConverterTest extends BaseServiceTest {
     final String personaRef = "48999343";
     final Long rolId = 1L;
 
-    GrupoEquipoInput input = this.buildMockGrupoEquipoInput(grupoId, dedicacion, fechaInicio, fechaFin, participacion,
+    GrupoEquipoUpdateInput input = this.buildMockGrupoEquipoInput(grupoId, dedicacion, fechaInicio, fechaFin,
+        participacion,
         personaRef, rolId);
     GrupoEquipo grupoEquipo = this.buildMockGrupoEquipo(1L, grupoId, dedicacion, fechaInicio, fechaFin, participacion,
         personaRef, RolProyecto.builder().id(1L).build());
@@ -75,9 +76,9 @@ class GrupoEquipoConverterTest extends BaseServiceTest {
 
   }
 
-  private GrupoEquipoInput buildMockGrupoEquipoInput(Long grupoId, Dedicacion dedicacion, Instant fechaInicio,
+  private GrupoEquipoUpdateInput buildMockGrupoEquipoInput(Long grupoId, Dedicacion dedicacion, Instant fechaInicio,
       Instant fechaFin, BigDecimal participacion, String personaRef, Long rolId) {
-    return GrupoEquipoInput.builder()
+    return GrupoEquipoUpdateInput.builder()
         .dedicacion(dedicacion)
         .fechaInicio(fechaInicio)
         .fechaFin(fechaFin)

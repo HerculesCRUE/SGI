@@ -110,21 +110,25 @@ export class AutorizacionCertificadosComponent extends FragmentComponent impleme
   /**
    * Apertura de modal de Cetificados Autorizacion
    */
-  openModal(value?: StatusWrapper<CertificadoAutorizacionListado>): void {
-    const data = {
-      certificado: value?.value.certificado ??
+  openModal(wrapper?: StatusWrapper<CertificadoAutorizacionListado>): void {
+    const modalData = {
+      certificado: wrapper?.value.certificado ??
         {
           autorizacion: {
             id: this.formPart.getKey()
           } as IAutorizacion
         } as ICertificadoAutorizacion,
       hasSomeOtherCertificadoAutorizacionVisible: this.formPart.certificadosAutorizacion$.value.some(certificado =>
-        certificado.value.certificado.visible && !value?.value?.certificado.visible),
-      generadoAutomatico: value?.value.generadoAutomatico,
+        certificado.value.certificado.visible && !wrapper?.value?.certificado.visible),
+      generadoAutomatico: wrapper?.value.generadoAutomatico,
     } as ICertificadoAutorizacionModalData;
+
     const config = {
-      data
+      data: modalData
     };
+
+    const currentDocumentoRef = modalData.certificado?.documento?.documentoRef;
+
     const dialogRef = this.matDialog.open(AutorizacionCertificadoModalComponent, config);
     dialogRef.afterClosed().subscribe(
       (data: ICertificadoAutorizacionModalData) => {
@@ -133,10 +137,10 @@ export class AutorizacionCertificadosComponent extends FragmentComponent impleme
             certificado: data.certificado,
             generadoAutomatico: data.generadoAutomatico
           } as CertificadoAutorizacionListado;
-          if (data.certificado.id) {
-            this.formPart.updateCertificado(new StatusWrapper<CertificadoAutorizacionListado>(certificadoAutorizacionListado));
-          } else if (value) {
-            this.formPart.createCertificado(new StatusWrapper<CertificadoAutorizacionListado>(certificadoAutorizacionListado));
+          if (wrapper) {
+            wrapper.value.certificado = certificadoAutorizacionListado.certificado;
+            wrapper.value.generadoAutomatico = certificadoAutorizacionListado.generadoAutomatico;
+            this.formPart.updateCertificado(wrapper, currentDocumentoRef);
           } else {
             this.formPart.addCertificado(certificadoAutorizacionListado);
           }

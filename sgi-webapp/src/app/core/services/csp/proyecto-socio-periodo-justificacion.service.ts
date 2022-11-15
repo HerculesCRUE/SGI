@@ -62,4 +62,16 @@ export class ProyectoSocioPeriodoJustificacionService
       map(response => response.status === 200)
     );
   }
+
+  /**
+   * Comprueba si existen documentos asociados a la entidad
+   *
+   * @param id Identificador de la entidad
+   */
+  existsDocumentos(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/documentos`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
 }

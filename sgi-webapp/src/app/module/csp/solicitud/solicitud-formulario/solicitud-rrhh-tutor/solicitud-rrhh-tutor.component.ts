@@ -55,7 +55,7 @@ export class SolicitudRrhhTutorComponent extends FormFragmentComponent<ISolicitu
   }
 
   constructor(
-    protected actionService: SolicitudActionService,
+    public readonly actionService: SolicitudActionService,
     public authService: SgiAuthService,
     private readonly translate: TranslateService
   ) {

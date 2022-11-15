@@ -62,7 +62,7 @@
               <mat-icon color="primary">border_color</mat-icon>
             </button>
           </ng-container>
-          <ng-container *ngIf="wrapper.value.eliminable">
+          <ng-container *ngIf="showDeleteTarea(wrapper.value)">
             <button mat-button *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-INV-C', 'ETI-PEV-INV-ER']"
               matTooltip="{{'btn.delete' | translate}}" (click)="delete(wrapper)">
               <mat-icon color="warn">highlight_off</mat-icon>

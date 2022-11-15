@@ -4,8 +4,8 @@ import { MemoriaService } from '@core/services/eti/memoria.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { SgiRestListResult } from '@sgi/framework/http';
-import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
-import { endWith, map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
+import { BehaviorSubject, from, merge, Observable, of, throwError } from 'rxjs';
+import { catchError, endWith, map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
 
 export enum TIPO_DOCUMENTACION {
   INICIAL = 0,
@@ -25,6 +25,7 @@ export class MemoriaDocumentacionFragment extends Fragment {
 
   constructor(
     key: number,
+    readonly isInvestigador: boolean,
     private service: MemoriaService,
     private documentoService: DocumentoService
   ) {
@@ -81,7 +82,11 @@ export class MemoriaDocumentacionFragment extends Fragment {
       this.createDocumentacion(TIPO_DOCUMENTACION.RETROSPECTIVA),
       this.deleteDocumentacion(TIPO_DOCUMENTACION.RETROSPECTIVA)
     ).pipe(
-      takeLast(1)
+      takeLast(1),
+      catchError(error => {
+        this.setChanges(true);
+        return throwError(error);
+      })
     );
   }
 
@@ -120,7 +125,9 @@ export class MemoriaDocumentacionFragment extends Fragment {
     : Observable<IDocumentacionMemoria> {
     switch (tipoDocumentacion) {
       case TIPO_DOCUMENTACION.INICIAL:
-        return this.service.createDocumentacionInicial(this.getKey() as number, documentacionMemoria);
+        return this.isInvestigador
+          ? this.service.createDocumentacionInicialInvestigador(this.getKey() as number, documentacionMemoria)
+          : this.service.createDocumentacionInicial(this.getKey() as number, documentacionMemoria);
       case TIPO_DOCUMENTACION.SEGUIMIENTO_ANUAL:
         return this.service.createDocumentacionSeguimientoAnual(this.getKey() as number, documentacionMemoria);
       case TIPO_DOCUMENTACION.SEGUIMIENTO_FINAL:

@@ -1,6 +1,6 @@
-import { Dedicacion } from "@core/models/csp/grupo-equipo";
+import { Dedicacion } from '@core/models/csp/grupo-equipo';
 
-export interface IGrupoEquipoRequest {
+export interface IGrupoEquipoUpdateRequest {
   id: number;
   personaRef: string;
   grupoId: number;

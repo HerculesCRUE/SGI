@@ -118,14 +118,23 @@ export class ModeloEjecucionTipoUnidadGestionFragment extends Fragment {
       } as IModeloEjecucion
     );
     return from(createdModelos).pipe(
-      mergeMap((wrapped) => {
-        return this.modeloUnidadService.create(wrapped.value).pipe(
+      mergeMap((wrappedUnidad) => {
+        return this.modeloUnidadService.create(wrappedUnidad.value).pipe(
           map((updatedUnidad) => {
-            const index = this.modeloUnidad$.value.findIndex((currentTarea) => currentTarea === wrapped);
+            this.copyRelatedAttributes(wrappedUnidad.value, updatedUnidad);
+            const index = this.modeloUnidad$.value.findIndex((currentUnidad) => currentUnidad === wrappedUnidad);
             this.modeloUnidad$.value[index] = new StatusWrapper<IModeloUnidad>(updatedUnidad);
+            this.modeloUnidad$.next(this.modeloUnidad$.value);
           })
         );
       }));
+  }
+
+  private copyRelatedAttributes(
+    source: IModeloUnidad,
+    target: IModeloUnidad
+  ): void {
+    target.unidadGestion = source.unidadGestion;
   }
 
   private isSaveOrUpdateComplete(): boolean {

@@ -95,8 +95,8 @@ public class ProyectoAnualidadService {
               .parameter("field", ApplicationContextSupport.getMessage("anio"))
               .parameter("entity", ApplicationContextSupport.getMessage(ProyectoAnualidad.class)).build());
 
-      if (repository.findByAnioAndProyectoId(proyectoAnualidad.getAnio(), proyecto.getId()).isPresent()) {
-        throw new ProyectoAnualidadAnioUniqueException();
+      if (repository.existsByAnioAndProyectoId(proyectoAnualidad.getAnio(), proyecto.getId())) {
+        throw new ProyectoAnualidadAnioUniqueException(proyectoAnualidad.getAnio());
       }
     }
 
@@ -106,6 +106,50 @@ public class ProyectoAnualidadService {
 
     log.debug("create(ProyectoAnualidad proyectoAnualidad) - end");
     return returnValue;
+  }
+
+  /**
+   * Actualiza un {@link ProyectoAnualidad} para un {@link Proyecto}.
+   * 
+   * @param proyectoAnualidad {@link ProyectoAnualidad}
+   * @return {@link ProyectoAnualidad} creado.
+   */
+  @Transactional
+  @Validated({ ProyectoAnualidad.OnActualizar.class })
+  public ProyectoAnualidad update(ProyectoAnualidad proyectoAnualidad) {
+    log.debug("update(ProyectoAnualidad proyectoAnualidad) - start");
+
+    AssertHelper.idNotNull(proyectoAnualidad.getId(), ProyectoAnualidad.class);
+    AssertHelper.idNotNull(proyectoAnualidad.getProyectoId(), Proyecto.class);
+
+    return repository.findById(proyectoAnualidad.getId()).map(data -> {
+
+      // En caso de que el proyecto tenga anualidad genérica no se guardarán la fecha
+      // de inicio y fecha fin ya que se tendrán en cuenta las del proyecto.
+      Proyecto proyecto = proyectoRepository.findById(proyectoAnualidad.getProyectoId())
+          .orElseThrow(() -> new ProyectoNotFoundException(proyectoAnualidad.getId()));
+
+      if (Boolean.TRUE.equals(proyecto.getAnualidades())) {
+        data.setFechaInicio(proyectoAnualidad.getFechaInicio());
+        data.setFechaFin(proyectoAnualidad.getFechaFin());
+
+        AssertHelper.fieldNotNull(proyectoAnualidad, ProyectoAnualidad.class,
+            ApplicationContextSupport.getMessage("anio"));
+
+        if (repository.existsByAnioAndProyectoIdAndIdNot(proyectoAnualidad.getAnio(), proyecto.getId(),
+            proyectoAnualidad.getId())) {
+          throw new ProyectoAnualidadAnioUniqueException(proyectoAnualidad.getAnio());
+        }
+      }
+
+      data.setAnio(proyectoAnualidad.getAnio());
+      data.setPresupuestar(proyectoAnualidad.getPresupuestar());
+
+      ProyectoAnualidad returnValue = repository.save(data);
+
+      log.debug("update(ProyectoAnualidad proyectoAnualidad) - end");
+      return returnValue;
+    }).orElseThrow(() -> new ProyectoAnualidadNotFoundException(proyectoAnualidad.getId()));
   }
 
   /**

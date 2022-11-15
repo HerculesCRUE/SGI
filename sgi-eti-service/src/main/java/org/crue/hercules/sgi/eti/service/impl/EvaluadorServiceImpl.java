@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.eti.service.impl;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.eti.exceptions.EvaluadorNotFoundException;
@@ -29,6 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class EvaluadorServiceImpl implements EvaluadorService {
+  private static final String PRESIDENTE = "presidente";
+  private static final String SECRETARIO = "secretario";
   private final EvaluadorRepository evaluadorRepository;
 
   public EvaluadorServiceImpl(EvaluadorRepository evaluadorRepository) {
@@ -49,8 +52,13 @@ public class EvaluadorServiceImpl implements EvaluadorService {
 
     // Si el evaluador a crear es presidente se ha de mirar que no coincida el
     // presidente en el rango de fechas de los presidentes existentes
-    if (evaluador.getCargoComite().getNombre().equalsIgnoreCase("presidente")) {
-      Assert.isTrue(isPresidenteInFechasOk(evaluador), "Existen presidentes entre las fechas seleccionadas");
+    if (evaluador.getCargoComite().getNombre().equalsIgnoreCase(PRESIDENTE) || evaluador.getCargoComite().getNombre()
+        .equalsIgnoreCase(SECRETARIO)) {
+      Assert.isTrue(
+          isPresidenteOrSecretarioInFechasOk(evaluador),
+          evaluador.getCargoComite().getNombre().equalsIgnoreCase(PRESIDENTE)
+              ? "Existen presidentes entre las fechas seleccionadas"
+              : "Existen secretarios entre las fechas seleccionadas");
     } else {
       // Un evaluador no puede estar en el mismo comité en el mismo rango de fechas
       Assert.isTrue(isEvaluadorInFechasOk(evaluador),
@@ -67,17 +75,24 @@ public class EvaluadorServiceImpl implements EvaluadorService {
    * @param evaluador el objeto {@link Evaluador}
    * @return true or false si el presidente está en el rango de fechas correcto
    */
-  public Boolean isPresidenteInFechasOk(Evaluador evaluador) {
+  public Boolean isPresidenteOrSecretarioInFechasOk(Evaluador evaluador) {
     Specification<Evaluador> specActivos = EvaluadorSpecifications.activos();
-    Specification<Evaluador> specPresidentes = EvaluadorSpecifications.presidentes();
+    Specification<Evaluador> specPresidentesOrSecretarios = null;
+    if (evaluador.getCargoComite().getNombre().equalsIgnoreCase(PRESIDENTE)) {
+      specPresidentesOrSecretarios = EvaluadorSpecifications.presidentes();
+    } else {
+      specPresidentesOrSecretarios = EvaluadorSpecifications.secretarios();
+    }
     Specification<Evaluador> specInFechas = EvaluadorSpecifications.inFechas(evaluador.getFechaAlta(),
         evaluador.getFechaBaja());
     Specification<Evaluador> specComite = EvaluadorSpecifications.byComite(evaluador.getComite().getComite());
-    Specification<Evaluador> specs = Specification.where(specActivos).and(specPresidentes).and(specInFechas)
+    Specification<Evaluador> specs = Specification.where(specActivos).and(
+        specPresidentesOrSecretarios).and(specInFechas)
         .and(specComite);
 
     Specification<Evaluador> specFechaBajaNull = EvaluadorSpecifications.byFechaBajaNull();
-    Specification<Evaluador> specsFechaBajaNull = Specification.where(specActivos).and(specPresidentes)
+    Specification<Evaluador> specsFechaBajaNull = Specification.where(specActivos).and(
+        specPresidentesOrSecretarios)
         .and(specFechaBajaNull).and(specComite);
 
     List<Evaluador> evaluadoresFechaBajaNull = evaluadorRepository.findAll(specsFechaBajaNull).stream()
@@ -221,8 +236,15 @@ public class EvaluadorServiceImpl implements EvaluadorService {
 
     // Si el evaluador a crear es presidente se ha de mirar que no coincida el
     // presidente en el rango de fechas de los presidentes existentes
-    if (evaluadorActualizar.getCargoComite().getNombre().equalsIgnoreCase("presidente")) {
-      Assert.isTrue(isPresidenteInFechasOk(evaluadorActualizar), "Existen presidentes entre las fechas seleccionadas");
+    if (evaluadorActualizar.getCargoComite().getNombre().equalsIgnoreCase(PRESIDENTE)
+        || evaluadorActualizar.getCargoComite().getNombre()
+            .equalsIgnoreCase(SECRETARIO)) {
+      Assert.isTrue(
+          isPresidenteOrSecretarioInFechasOk(
+              evaluadorActualizar),
+          evaluadorActualizar.getCargoComite().getNombre().equalsIgnoreCase(PRESIDENTE)
+              ? "Existen presidentes entre las fechas seleccionadas"
+              : "Existen secretarios entre las fechas seleccionadas");
     } else {
       // Un evaluador no puede estar en el mismo comité en el mismo rango de fechas
       Assert.isTrue(isEvaluadorInFechasOk(evaluadorActualizar),
@@ -265,6 +287,45 @@ public class EvaluadorServiceImpl implements EvaluadorService {
     List<Evaluador> returnValue = evaluadorRepository.findAll(specs);
     log.debug("findAllByComite(String comite) - end");
     return returnValue;
+  }
+
+  /**
+   * Busca un secretario {@link Evaluador} activo dentro de la fecha indicada
+   *
+   * @param fecha  la fecha de actividad del secretario.
+   * @param comite el nombre del {@link Comite} al que pertenece
+   * @return el secretario {@link Evaluador}
+   */
+  @Override
+  public Evaluador findSecretarioInFechaAndComite(Instant fecha, String comite) {
+    log.debug("findSecretarioInFechaAndComite(Instant fecha, String comite) - start");
+    Evaluador secretario = null;
+    Specification<Evaluador> specActivos = EvaluadorSpecifications.activos();
+    Specification<Evaluador> specSecretarios = EvaluadorSpecifications.secretarios();
+    Specification<Evaluador> specFecha = EvaluadorSpecifications.between(fecha);
+    Specification<Evaluador> specFechaBajaNull = EvaluadorSpecifications.byFechaBajaNull();
+    Specification<Evaluador> specComite = EvaluadorSpecifications.byComite(comite);
+
+    Specification<Evaluador> specsFechaBajaNull = Specification.where(specActivos).and(specSecretarios)
+        .and(specFechaBajaNull).and(specComite);
+
+    Specification<Evaluador> specs = Specification.where(specActivos).and(specSecretarios).and(specFecha)
+        .and(specComite);
+
+    Optional<Evaluador> secretarioFechaBajaNull = evaluadorRepository.findAll(specsFechaBajaNull).stream()
+        .filter(
+            eval -> fecha != null ? eval.getFechaAlta().isBefore(fecha) : true)
+        .findFirst();
+
+    if (!secretarioFechaBajaNull.isPresent()) {
+      Optional<Evaluador> secretarioInFecha = evaluadorRepository.findAll(specs).stream().findFirst();
+      secretario = secretarioInFecha.isPresent() ? secretarioInFecha.get() : null;
+    } else {
+      secretario = secretarioFechaBajaNull.get();
+    }
+    log.info("fecha: " + fecha + "comite: " + comite + (secretario != null ? secretario.getPersonaRef() : null));
+    log.debug("findSecretarioInFechaAndComite(Instant fecha, String comite) - end");
+    return secretario;
   }
 
 }

@@ -28,7 +28,7 @@ export class SolicitudHistoricoEstadosComponent extends FragmentComponent implem
 
   constructor(
     protected snackBarService: SnackBarService,
-    private actionService: SolicitudActionService
+    public readonly actionService: SolicitudActionService
   ) {
     super(actionService.FRAGMENT.HISTORICO_ESTADOS, actionService);
     this.formPart = this.fragment as SolicitudHistoricoEstadosFragment;

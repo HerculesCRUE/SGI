@@ -811,6 +811,27 @@ public class ConvocatoriaController {
   }
 
   /**
+   * Crea y actualiza las entidades {@link ConvocatoriaEnlace}
+   * relacionadas con el Id de la entidad {@link Convocatoria} recibido. Elimina
+   * las que esten presentes en BBDD pero no en la lista recibida.
+   *
+   * @param id                  id de la entidad {@link Convocatoria}.
+   * @param convocatoriaEnlaces lista de entidades {@link ConvocatoriaEnlace} a
+   *                            actualizar/crear.
+   * @return lista de entidades {@link ConvocatoriaEnlace}.
+   */
+  @PatchMapping(PATH_ENLACES)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-E')")
+  public ResponseEntity<List<ConvocatoriaEnlace>> updateEnlaces(@PathVariable Long id,
+      @RequestBody List<ConvocatoriaEnlace> convocatoriaEnlaces) {
+    log.debug("updateEnlaces(Long id, List<ConvocatoriaEnlace> convocatoriaEnlaces) - start");
+    List<ConvocatoriaEnlace> list = convocatoriaEnlaceService.update(id, convocatoriaEnlaces);
+
+    log.debug("updateEnlaces(Long id, List<ConvocatoriaEnlace> convocatoriaEnlaces) - end");
+    return new ResponseEntity<>(list, HttpStatus.OK);
+  }
+
+  /**
    *
    * CONVOCATORIA ENTIDAD CONVOCANTE
    *
@@ -842,6 +863,31 @@ public class ConvocatoriaController {
 
     log.debug("findAllConvocatoriaEntidadConvocantes(Long id, String query, Pageable paging) - end");
     return new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  /**
+   * Actualiza el listado de {@link ConvocatoriaEntidadConvocante} de la
+   * {@link Proyecto} con el listado entidadesConvocantes
+   * creando, editando o eliminando los elementos segun proceda.
+   *
+   * @param id                   Id de la {@link Convocatoria}.
+   * @param entidadesConvocantes lista con los nuevos
+   *                             {@link ConvocatoriaEntidadConvocante} a guardar.
+   * @return la lista de entidades {@link ConvocatoriaEntidadConvocante}
+   *         persistida.
+   */
+  @PatchMapping(PATH_ENTIDADES_CONVOCANTES)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-E')")
+  public ResponseEntity<List<ConvocatoriaEntidadConvocante>> updateEntidadesConvocantesConvocatoria(
+      @PathVariable Long id,
+      @RequestBody List<ConvocatoriaEntidadConvocante> entidadesConvocantes) {
+    log.debug(
+        "updateEntidadesConvocantesConvocatoria(Long id, List<ConvocatoriaEntidadConvocante> entidadesConvocantes) - start");
+    List<ConvocatoriaEntidadConvocante> list = convocatoriaEntidadConvocanteService
+        .updateEntidadesConvocantesConvocatoria(id, entidadesConvocantes);
+    log.debug(
+        "updateEntidadesConvocantesConvocatoria(Long id, List<ConvocatoriaEntidadConvocante> entidadesConvocantes) - end");
+    return new ResponseEntity<>(list, HttpStatus.OK);
   }
 
   /**

@@ -79,4 +79,9 @@ export class SeguimientoDatosMemoriaFragment extends FormFragment<IMemoria> {
     return of(void 0);
   }
 
+  handleErrors(errors: Error[]): void {
+    this.clearProblems();
+    errors.forEach(this.processError);
+  }
+
 }

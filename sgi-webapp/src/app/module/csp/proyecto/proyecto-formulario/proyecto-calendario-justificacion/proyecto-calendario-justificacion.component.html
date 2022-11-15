@@ -83,18 +83,20 @@
             <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="openModal(element,i)">
               <mat-icon color="primary">border_color</mat-icon>
             </button>
-            <ng-container *ngIf="element.isProyectoPeriodoJustificacionDeleteable; else noDeleteableInfo">
-              <button mat-button matTooltip="{{'btn.delete' | translate}}"
-                *ngIf="element.proyectoPeriodoJustificacion?.value"
-                (click)="deletePeriodoJustificacion(i,element.proyectoPeriodoJustificacion)">
-                <mat-icon color="warn">highlight_off</mat-icon>
-              </button>
+            <ng-container *ngIf="element.proyectoPeriodoJustificacion?.value">
+              <ng-container *ngIf="element.isProyectoPeriodoJustificacionDeleteable; else noDeleteableInfo">
+                <button mat-button matTooltip="{{'btn.delete' | translate}}"
+                  *ngIf="element.proyectoPeriodoJustificacion?.value"
+                  (click)="deletePeriodoJustificacion(i,element.proyectoPeriodoJustificacion)">
+                  <mat-icon color="warn">highlight_off</mat-icon>
+                </button>
+              </ng-container>
+              <ng-template #noDeleteableInfo>
+                <mat-icon color="primary"
+                  matTooltip="{{ 'csp.proyecto-periodo-justificacion.no-deleteable-info'| translate}}">
+                  help</mat-icon>
+              </ng-template>
             </ng-container>
-            <ng-template #noDeleteableInfo>
-              <mat-icon color="primary"
-                matTooltip="{{ 'csp.proyecto-periodo-justificacion.no-deleteable-info'| translate}}">
-                help</mat-icon>
-            </ng-template>
           </ng-container>
         </td>
       </ng-container>

@@ -30,7 +30,6 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { IInvencionListadoModalData, InvencionListadoExportModalComponent } from '../modals/invencion-listado-export-modal/invencion-listado-export-modal.component';
 
-const MSG_ERROR = marker('error.load');
 const MSG_BUTTON_NEW = marker('btn.add.entity');
 const MSG_REACTIVE = marker('msg.reactivate.entity');
 const MSG_SUCCESS_REACTIVE = marker('msg.reactivate.entity.success');
@@ -94,7 +93,7 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
     private matDialog: MatDialog
 
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -152,12 +151,11 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IInvencion>> {
-    const observable$ = this.invencionService.findTodos(this.getFindOptions(reset));
-    return observable$;
+    return this.invencionService.findTodos(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {
-    this.columnas = ['id', 'fechaComunicacion', 'titulo', 'tipoProteccion.nombre', 'activo', 'acciones'];
+    this.columnas = ['id', 'fechaComunicacion', 'titulo', 'tipoProteccion.nombre', 'acciones'];
   }
 
   protected loadTable(reset?: boolean): void {
@@ -209,16 +207,14 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
     return palabrasClaveFilter;
   }
 
-  onClearFilters() {
-    super.onClearFilters();
+  protected resetFilters(): void {
+    super.resetFilters();
     this.formGroup.controls.fechaComunicacionDesde.setValue(null);
     this.formGroup.controls.fechaComunicacionHasta.setValue(null);
     this.formGroup.controls.solicitudInicioFechaDesde.setValue(null);
     this.formGroup.controls.solicitudInicioFechaHasta.setValue(null);
     this.formGroup.controls.solicitudFinFechaDesde.setValue(null);
     this.formGroup.controls.solicitudFinFechaHasta.setValue(null);
-
-    this.onSearch();
   }
 
   /**
@@ -249,10 +245,10 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorDesactivar);
+            this.processError(new SgiError(this.textoErrorDesactivar));
           }
         }
       );
@@ -279,10 +275,10 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorReactivar);
+            this.processError(new SgiError(this.textoErrorReactivar));
           }
         }
       );

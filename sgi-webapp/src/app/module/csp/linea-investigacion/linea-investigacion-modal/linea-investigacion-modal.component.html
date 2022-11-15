@@ -1,10 +1,10 @@
-<sgi-action-dialog [title]="title">
+<sgi-action-dialog [title]="title" class="modal-lineas-investigacion">
   <form [formGroup]="formGroup">
     <!-- Nombre -->
-    <div fxLayout="row">
+    <div fxLayout="row" fxFlex="600px" style="margin-bottom: 100px">
       <mat-form-field>
         <mat-label>{{'csp.linea-investigacion.nombre' | translate}}</mat-label>
-        <input matInput formControlName="nombre" type="text"
+        <input matInput formControlName="nombre" type="text" [matAutocomplete]="auto"
           placeholder="{{'csp.linea-investigacion.nombre' | translate}}" required>
         <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
           {{'error.required.entity' | translate:msgParamNombreEntity}}
@@ -13,6 +13,13 @@
           {{'error.maxlength.entity' | translate:msgParamNombreEntity}}
         </mat-error>
       </mat-form-field>
+      <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption="true" style="max-height: 140px"
+        class="sgi-results">
+        <mat-option *ngFor="let result of searchResult$ | async" [value]="result" [disabled]="true"
+          style="padding: 0px 10px; line-height: initial; height: auto; color: #ffacac;">
+          {{result.nombre}}
+        </mat-option>
+      </mat-autocomplete>
     </div>
   </form>
 </sgi-action-dialog>

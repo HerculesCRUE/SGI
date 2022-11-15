@@ -101,4 +101,12 @@ export class DocumentoPublicService extends _DocumentoMixinBase {
     });
   }
 
+  /**
+   * Elimina el documento.
+   * @param documentoRef referencia del documento.
+   */
+  eliminarFichero(documentoRef: string): Observable<void> {
+    return this.http.delete<void>(`${this.endpointUrl}/${documentoRef}`);
+  }
+
 }

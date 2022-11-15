@@ -75,15 +75,15 @@ public class SolicitudModalidadPublicController {
   /**
    * Elimina {@link SolicitudModalidad} con id indicado.
    * 
-   * @param publicId Identificador {@link Solicitud} a actualizar.
-   * @param id       Identificador de {@link SolicitudModalidad}.
+   * @param solicitudId Identificador {@link Solicitud} a actualizar.
+   * @param id          Identificador de {@link SolicitudModalidad}.
    */
   @DeleteMapping(PATH_ID)
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
-  public void deleteSolicitudModalidad(@PathVariable String publicId, @PathVariable Long id) {
-    log.debug("deleteSolicitudModalidad(String publicId, Long id) - start");
-    service.deleteByExternalUser(publicId, id);
-    log.debug("deleteSolicitudModalidad(String publicId, Long id) - end");
+  public void deleteSolicitudModalidad(@PathVariable String solicitudId, @PathVariable Long id) {
+    log.debug("deleteSolicitudModalidad(String solicitudId, Long id) - start");
+    service.deleteByExternalUser(solicitudId, id);
+    log.debug("deleteSolicitudModalidad(String solicitudId, Long id) - end");
   }
 
 }

@@ -86,7 +86,10 @@ export class ConvocatoriaEntidadesConvocantesComponent extends FragmentComponent
   openModal(value?: ConvocatoriaEntidadConvocanteData): void {
     const data: ConvocatoriaEntidadConvocanteModalData = {
       entidadConvocanteData: value,
-      selectedEmpresas: this.dataSource.data.map((convocanteData) => convocanteData.empresa),
+      selectedEntidadesConvocantes: this.dataSource.data
+        .filter(convocanteData =>
+          !(convocanteData?.entidadConvocante?.value?.entidad?.id === value?.entidadConvocante?.value?.entidad?.id
+            && convocanteData?.entidadConvocante?.value?.programa?.id === value?.entidadConvocante?.value?.programa?.id)),
       readonly: this.formPart.isConvocatoriaVinculada
     };
 

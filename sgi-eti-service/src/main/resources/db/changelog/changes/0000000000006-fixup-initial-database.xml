@@ -3,7 +3,9 @@
   <property name="schemaPrefix" value="" />
 
   <changeSet author="user (generated)" id="0000000000006-3">
-    <addNotNullConstraint columnName="dias_aviso_retrospectiva" tableName="configuracion" />
+    <validCheckSum>8:f16c6d8d0e17a1984a4bb8f1269cf6fd</validCheckSum>
+    <dropUniqueConstraint tableName="configuracion" constraintName="UC_CONFIGURACIONDIAS_AVISO_RETROSPECTIVA_COL" />
+    <addNotNullConstraint columnName="dias_aviso_retrospectiva" tableName="configuracion" columnDataType="bigint" />
   </changeSet>
 
 </databaseChangeLog>

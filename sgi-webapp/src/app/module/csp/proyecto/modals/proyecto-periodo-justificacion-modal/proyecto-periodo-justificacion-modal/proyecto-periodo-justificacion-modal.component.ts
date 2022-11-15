@@ -38,7 +38,9 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
   templateUrl: './proyecto-periodo-justificacion-modal.component.html',
   styleUrls: ['./proyecto-periodo-justificacion-modal.component.scss']
 })
-export class ProyectoPeriodoJustificacionModalComponent extends DialogFormComponent<IProyectoPeriodoJustificacionModalData> implements OnInit {
+export class ProyectoPeriodoJustificacionModalComponent
+  extends DialogFormComponent<IProyectoPeriodoJustificacionModalData>
+  implements OnInit {
 
   textSaveOrUpdate: string;
   title: string;
@@ -156,8 +158,20 @@ export class ProyectoPeriodoJustificacionModalComponent extends DialogFormCompon
     const formGroup = new FormGroup({
       numPeriodo: new FormControl({ value: this.data.proyectoPeriodoJustificacion?.numPeriodo, disabled: true }),
       tipoJustificacion: new FormControl(this.data.proyectoPeriodoJustificacion?.tipoJustificacion, Validators.required),
-      fechaInicio: new FormControl(this.data.proyectoPeriodoJustificacion?.fechaInicio, [Validators.required]),
-      fechaFin: new FormControl(this.data.proyectoPeriodoJustificacion?.fechaFin, [Validators.required]),
+      fechaInicio: new FormControl(
+        this.data.proyectoPeriodoJustificacion?.fechaInicio,
+        [
+          Validators.required,
+          DateValidator.minDate(this.data.proyecto?.fechaInicio)
+        ]
+      ),
+      fechaFin: new FormControl(
+        this.data.proyectoPeriodoJustificacion?.fechaFin,
+        [
+          Validators.required,
+          DateValidator.maxDate(this.data.proyecto?.fechaFinDefinitiva ?? this.data.proyecto?.fechaFin)
+        ]
+      ),
       fechaInicioPresentacion: new FormControl(this.data.proyectoPeriodoJustificacion?.fechaInicioPresentacion),
       fechaFinPresentacion: new FormControl(this.data.proyectoPeriodoJustificacion?.fechaFinPresentacion),
       observaciones: new FormControl(this.data.proyectoPeriodoJustificacion?.observaciones, Validators.maxLength(2000)),
@@ -197,9 +211,13 @@ export class ProyectoPeriodoJustificacionModalComponent extends DialogFormCompon
 
     // Si ya existe un periodo final tiene que ser el ultimo y solo puede haber 1
     if (periodoJustificacionFinal) {
-      formGroup.get('tipoJustificacion').setValidators([
+      formGroup.controls.tipoJustificacion.setValidators([
         StringValidator.notIn([TipoJustificacion.FINAL]),
-        formGroup.get('tipoJustificacion').validator
+        formGroup.controls.tipoJustificacion.validator
+      ]);
+      formGroup.controls.fechaInicio.setValidators([
+        DateValidator.maxDate(periodoJustificacionFinal.fechaInicio),
+        formGroup.controls.fechaInicio.validator
       ]);
     }
 
@@ -297,6 +315,7 @@ export class ProyectoPeriodoJustificacionModalComponent extends DialogFormCompon
       this.formGroup.get('fechaFinPresentacionConvocatoria').value);
     this.formGroup.get('observaciones').setValue(this.formGroup.get('observacionesConvocatoria').value);
     this.formGroup.get('tipoJustificacion').setValue(this.formGroup.get('tipoJustificacionConvocatoria').value);
+    this.formGroup.markAllAsTouched();
   }
 
   /**

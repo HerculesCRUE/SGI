@@ -1,13 +1,26 @@
 <sgi-dialog-header title="{{'title.modulo.select'| translate}}"></sgi-dialog-header>
 <sgi-dialog-content>
   <mat-action-list fxLayoutGap="10px" fxLayout="column">
-    <ng-container *ngFor="let modulo of modulos">
-      <div mat-list-item *sgiHasModuleAccess="modulo.code" (click)="openModulo(modulo.path)" class="seleccion" fxFlex
+    <ng-container *ngFor="let module of mainModules">
+      <div mat-list-item *sgiHasModuleAccess="module.code" (click)="openModulo(module.path)" class="seleccion" fxFlex
         fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center" tabindex="0">
         <div class="module-icon" fxFlex fxLayoutAlign="center center">
-          <mat-icon color="primary">{{modulo.icon}}</mat-icon>
+          <mat-icon color="primary">{{module.icon}}</mat-icon>
         </div>
-        <div fxFlex="grow" fxLayoutAlign="start center" class="module-name">{{modulo.name | translate}}</div>
+        <div fxFlex="grow" fxLayoutAlign="start center" class="module-name">{{module.name | translate}}</div>
+        <div class="module-link" fxFlex fxLayoutAlign="center center">
+          <mat-icon color="primary">arrow_forward</mat-icon>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *sgiHasModuleAccess="invModule.code">
+      <mat-divider></mat-divider>
+      <div mat-list-item (click)="openModulo(invModule.path)" class="seleccion inv" fxFlex fxLayout="row"
+        fxLayoutGap="10px" fxLayoutAlign="center" tabindex="0">
+        <div class="module-icon" fxFlex fxLayoutAlign="center center">
+          <mat-icon color="primary">{{invModule.icon}}</mat-icon>
+        </div>
+        <div fxFlex="grow" fxLayoutAlign="start center" class="module-name">{{invModule.name | translate}}</div>
         <div class="module-link" fxFlex fxLayoutAlign="center center">
           <mat-icon color="primary">arrow_forward</mat-icon>
         </div>

@@ -34,6 +34,9 @@ public class Programa extends BaseEntity {
    */
   private static final long serialVersionUID = 1L;
 
+  public static final int NOMBRE_LENGTH = 200;
+  public static final int DESCRIPCION_LENGTH = 4000;
+
   /** Id. */
   @Id
   @Column(name = "id", nullable = false)
@@ -42,14 +45,14 @@ public class Programa extends BaseEntity {
   private Long id;
 
   /** Nombre. */
-  @Column(name = "nombre", length = 50, nullable = false)
+  @Column(name = "nombre", length = Programa.NOMBRE_LENGTH, nullable = false)
   @NotEmpty
-  @Size(max = 50)
+  @Size(max = Programa.NOMBRE_LENGTH)
   private String nombre;
 
   /** Descripcion. */
-  @Column(name = "descripcion", length = 250, nullable = true)
-  @Size(max = 250)
+  @Column(name = "descripcion", length = Programa.DESCRIPCION_LENGTH, nullable = true)
+  @Size(max = Programa.DESCRIPCION_LENGTH)
   private String descripcion;
 
   /** Programa padre. */

@@ -39,11 +39,15 @@
       </mat-form-field>
       <mat-form-field [ngClass]="tareaYformacionTexto ? '' : 'ocultarCampo'">
         <mat-label>{{'eti.peticion-evaluacion.tarea' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
-        <input matInput formControlName="tarea" type="text"
+        <input #tarea matInput formControlName="tarea" type="text"
           [placeholder]="'eti.peticion-evaluacion.tarea' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR"
           [required]="tareaYformacionTexto" />
+        <mat-hint align="end">{{tarea.value?.length || 0}} / 250</mat-hint>
         <mat-error *ngIf="formGroup.controls.tarea.errors?.required">
           {{'error.required.entity' | translate:msgParamTareaEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.tarea.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamTareaEntity}}
         </mat-error>
       </mat-form-field>
     </div>
@@ -60,10 +64,14 @@
       </mat-form-field>
       <mat-form-field [ngClass]="tareaYformacionTexto ? '' : 'ocultarCampo'">
         <mat-label>{{textoFormacionExperiencia$ | async}}</mat-label>
-        <input matInput formControlName="formacion" type="text" [placeholder]="textoFormacionExperiencia$ | async"
-          [required]="tareaYformacionTexto" />
+        <input #formacion matInput formControlName="formacion" type="text"
+          [placeholder]="textoFormacionExperiencia$ | async" [required]="tareaYformacionTexto" />
+        <mat-hint align="end">{{formacion.value?.length || 0}} / 250</mat-hint>
         <mat-error *ngIf="formGroup.controls.formacion.errors?.required">
           {{'error.required.entity' | translate:msgParamFormacionEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.formacion.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamFormacionEntity}}
         </mat-error>
       </mat-form-field>
     </div>
@@ -82,10 +90,14 @@
     <div fxLayout="row">
       <mat-form-field [ngClass]="mostrarOrganismoYanio ? '' : 'ocultarCampo'">
         <mat-label>{{'eti.peticion-evaluacion.tarea.organismo' | translate}}</mat-label>
-        <input matInput formControlName="organismo" type="text"
+        <input #organismo matInput formControlName="organismo" type="text"
           [placeholder]="'eti.peticion-evaluacion.tarea.organismo' | translate" [required]="mostrarOrganismoYanio" />
+        <mat-hint align="end">{{organismo.value?.length || 0}} / 250</mat-hint>
         <mat-error *ngIf="formGroup.controls.organismo.errors?.required">
           {{'error.required.entity' | translate:msgParamOrganismoEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.organismo.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamTareaEntity}}
         </mat-error>
       </mat-form-field>
     </div>

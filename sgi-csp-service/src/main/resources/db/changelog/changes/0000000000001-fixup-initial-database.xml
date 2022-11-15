@@ -3,7 +3,9 @@
 
   <!-- Eliminación de columnas de solicitud_proyecto_presupuesto que ya no son necesarias -->
   <changeSet author="user (generated)" id="0000000000001-cleanup-solicitud_proyecto_presupuesto">
+    <validCheckSum>8:28a194452d993943bb5b4ed7f5c0dab5</validCheckSum>
     <dropColumn columnName="entidad_ref" tableName="solicitud_proyecto_presupuesto" />
+    <dropDefaultValue columnDataType="boolean" columnName="financiacion_ajena" tableName="solicitud_proyecto_presupuesto" />
     <dropColumn columnName="financiacion_ajena" tableName="solicitud_proyecto_presupuesto" />
   </changeSet>
 

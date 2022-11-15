@@ -11,13 +11,12 @@ import { IInvencionSectorAplicacion } from '@core/models/pii/invencion-sector-ap
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
-import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
 import { Subscription } from 'rxjs';
-import { filter, mergeMap, tap } from 'rxjs/operators';
+import { filter, switchMap, tap } from 'rxjs/operators';
 import { AreaConocimientoDataModal, AreaConocimientoModalComponent } from 'src/app/esb/sgo/shared/area-conocimiento-modal/area-conocimiento-modal.component';
 import { InvencionActionService } from '../../invencion.action.service';
 import { InvencionDocumentoModalComponent } from '../../modals/invencion-documento-modal/invencion-documento-modal.component';
@@ -90,7 +89,6 @@ export class InvencionDatosGeneralesComponent extends FormFragmentComponent<IInv
     private readonly translate: TranslateService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
-    private readonly documentoService: DocumentoService,
     private readonly snackBar: SnackBarService,
   ) {
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
@@ -103,7 +101,7 @@ export class InvencionDatosGeneralesComponent extends FormFragmentComponent<IInv
     this.setupI18N();
     this.configSectorAplicacionSort();
     this.configAreaConocimientoSort();
-    this.configDocumentoSort()
+    this.configDocumentoSort();
     this.subscribeToSectoresAplicacion();
     this.subscribeToAreasConocimiento();
     this.subscribeToDocumentos();
@@ -194,7 +192,7 @@ export class InvencionDatosGeneralesComponent extends FormFragmentComponent<IInv
 
   /**
    * Desasociar un sector de aplicación de la inveción
-   * @param wrapper 
+   * @param wrapper invencion
    */
   deleteSectorAplicacion(wrapper: StatusWrapper<IInvencionSectorAplicacion>) {
     this.subscriptions.push(
@@ -230,10 +228,10 @@ export class InvencionDatosGeneralesComponent extends FormFragmentComponent<IInv
   }
 
   /**
- * Desasociar el área de conocimiento
- *
- * @param wrapper el área
- */
+   * Desasociar el área de conocimiento
+   *
+   * @param wrapper el área
+   */
   deleteAreaConocimiento(wrapper: StatusWrapper<IInvencionAreaConocimientoListado>): void {
     this.subscriptions.push(
       this.dialogService.showConfirmation(this.textoDeleteAreaConocimiento).subscribe(
@@ -247,7 +245,7 @@ export class InvencionDatosGeneralesComponent extends FormFragmentComponent<IInv
   }
 
   /**
-   * Apertura de modal de Areas Conocimiento 
+   * Apertura de modal de Areas Conocimiento
    */
   openModalAreaConocimiento(): void {
     const data: AreaConocimientoDataModal = {
@@ -276,11 +274,9 @@ export class InvencionDatosGeneralesComponent extends FormFragmentComponent<IInv
       this.dialogService.showConfirmation(this.textoDeleteDocumento)
         .pipe(
           filter(aceptado => aceptado),
-          mergeMap(() => this.documentoService.eliminarFichero(wrapper.value.documento.documentoRef))
+          switchMap(() => this.formPart.deleteDocumento(wrapper))
         ).subscribe(
-          () => {
-            this.formPart.deleteDocumento(wrapper);
-          },
+          () => { },
           () => this.snackBar.showError(MSG_DELETE_FILE_ERROR)
         )
     );
@@ -310,17 +306,23 @@ export class InvencionDatosGeneralesComponent extends FormFragmentComponent<IInv
     this.translate.get(
       INVENCION_FECHACOMUNICACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamFechaComunicacionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamFechaComunicacionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }
+    );
 
     this.translate.get(
       INVENCION_DESCRIPCION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamDescripcionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamDescripcionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }
+    );
 
     this.translate.get(
       INVENCION_TIPOPROTECCION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamTipoProteccionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) =>
+      this.msgParamTipoProteccionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }
+    );
 
     this.translate.get(
       INVENCION_COMENTARIOS_KEY,
@@ -390,4 +392,5 @@ export class InvencionDatosGeneralesComponent extends FormFragmentComponent<IInv
     this.fxFlexProperties66.gtMd = '0 1 calc(66%-10px)';
     this.fxFlexProperties66.order = '1';
   }
+
 }

@@ -8,4 +8,6 @@ public interface EstadoProyectoPeriodoJustificacionRepository
     extends JpaRepository<EstadoProyectoPeriodoJustificacion, Long>,
     JpaSpecificationExecutor<EstadoProyectoPeriodoJustificacion> {
 
+  public void deleteAllByProyectoPeriodoJustificacionId(Long idPeriodoJustificacion);
+
 }

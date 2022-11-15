@@ -17,7 +17,7 @@ import { ProyectoActionService } from '../../proyecto.action.service';
 import { IEntidadFinanciadora, ProyectoEntidadesFinanciadorasFragment } from './proyecto-entidades-financiadoras.fragment';
 
 const MSG_NUEVO = marker('title.new.entity');
-const MSG_DELETE = marker('msg.deactivate.entity');
+const MSG_DELETE = marker('msg.delete.entity');
 const PROYECTO_ENTIDAD_FINANCIADORA_KEY = marker('csp.proyecto-entidad-financiadora');
 const PROYECTO_ENTIDAD_FINANCIADORA_AJENA_KEY = marker('csp.proyecto-entidad-financiadora-ajena');
 
@@ -40,7 +40,8 @@ export class ProyectoEntidadesFinanciadorasComponent extends FragmentComponent i
   private msgCrearAjena: string;
   private modalTitle: string;
   private modalTitleAjena: string;
-  textoDeactivate: string;
+  textoDeleteEntidadPropia: string;
+  textoDeleteEntidadAjena: string;
 
   columnsPropias = [...this.columns];
   columnsAjenas = [...this.columns];
@@ -131,10 +132,22 @@ export class ProyectoEntidadesFinanciadorasComponent extends FragmentComponent i
       switchMap((value) => {
         return this.translate.get(
           MSG_DELETE,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
         );
       })
-    ).subscribe((value) => this.textoDeactivate = value);
+    ).subscribe((value) => this.textoDeleteEntidadAjena = value);
+
+    this.translate.get(
+      PROYECTO_ENTIDAD_FINANCIADORA_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_DELETE,
+          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
+        );
+      })
+    ).subscribe((value) => this.textoDeleteEntidadPropia = value);
   }
 
   ngOnDestroy(): void {
@@ -166,8 +179,9 @@ export class ProyectoEntidadesFinanciadorasComponent extends FragmentComponent i
   }
 
   deleteEntidadFinanciadora(targetPropias: boolean, wrapper: StatusWrapper<IEntidadFinanciadora>) {
+    const msg = targetPropias ? this.textoDeleteEntidadPropia : this.textoDeleteEntidadAjena;
     this.subscriptions.push(
-      this.dialogService.showConfirmation(this.textoDeactivate).subscribe(
+      this.dialogService.showConfirmation(msg).subscribe(
         (aceptado) => {
           if (aceptado) {
             this.formPart.deleteEntidadFinanciadora(wrapper, targetPropias);

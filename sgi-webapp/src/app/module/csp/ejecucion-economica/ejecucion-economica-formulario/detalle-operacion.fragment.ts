@@ -28,7 +28,6 @@ export abstract class DetalleOperacionFragment extends DesgloseEconomicoFragment
     datosEconomicos.forEach(element => {
       const keyAnualidad = `${element.anualidad}-${element.tipo}`;
       const keyPartida = `${keyAnualidad}-${element.partidaPresupuestaria}`;
-      const keyCodigoEconomico = `${keyPartida}-${element.codigoEconomico?.id ?? null}`;
       let anualidad = mapTree.get(keyAnualidad);
       if (!anualidad) {
         anualidad = new RowTreeDesglose(
@@ -57,21 +56,7 @@ export abstract class DetalleOperacionFragment extends DesgloseEconomicoFragment
         mapTree.set(keyPartida, partida);
         anualidad.addChild(partida);
       }
-      let codigoEconomico = mapTree.get(keyCodigoEconomico);
-      if (!codigoEconomico) {
-        codigoEconomico = new RowTreeDesglose(
-          {
-            anualidad: '',
-            tipo: '',
-            partidaPresupuestaria: '',
-            codigoEconomico: element.codigoEconomico,
-            columnas: this.processColumnsValues(element.columnas, this.columns, false)
-          } as IDatoEconomico
-        );
-        mapTree.set(keyCodigoEconomico, codigoEconomico);
-        partida.addChild(codigoEconomico);
-      }
-      codigoEconomico.addChild(new RowTreeDesglose(
+      partida.addChild(new RowTreeDesglose(
         {
           anualidad: element.anualidad,
           tipo: element.tipo,

@@ -27,7 +27,6 @@ import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 import { GrupoListadoExportModalComponent, IGrupoListadoModalData } from '../modals/grupo-listado-export-modal/grupo-listado-export-modal.component';
 
 const MSG_BUTTON_ADD = marker('btn.add.entity');
-const MSG_ERROR_LOAD = marker('error.load');
 const MSG_ERROR_DELETE = marker('error.delete.entity');
 const MSG_DEACTIVATE = marker('msg.deactivate.entity');
 const MSG_SUCCESS_DEACTIVATE = marker('msg.csp.deactivate.success');
@@ -83,7 +82,7 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
     private lineaInvestigacionService: LineaInvestigacionService,
     private matDialog: MatDialog,
   ) {
-    super(snackBarService, MSG_ERROR_LOAD);
+    super();
   }
 
   ngOnInit(): void {
@@ -98,8 +97,7 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IGrupoListado>> {
-    const gruposInvestigacion$ = this.grupoService.findTodos(this.getFindOptions(reset));
-    return gruposInvestigacion$.pipe(
+    return this.grupoService.findTodos(this.getFindOptions(reset)).pipe(
       map(result => {
         return {
           page: result.page,
@@ -185,9 +183,9 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
       (error) => {
         this.logger.error(error);
         if (error instanceof SgiError) {
-          this.snackBarService.showError(error);
+          this.processError(error);
         } else {
-          this.snackBarService.showError(this.textoErrorReactivar);
+          this.processError(new SgiError(this.textoErrorReactivar));
         }
       }
     );
@@ -206,19 +204,18 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
       (error) => {
         this.logger.error(error);
         if (error instanceof SgiError) {
-          this.snackBarService.showError(error);
+          this.processError(error);
         } else {
-          this.snackBarService.showError(this.textoErrorDesactivar);
+          this.processError(new SgiError(this.textoErrorDesactivar));
         }
       }
     );
     this.suscripciones.push(subcription);
   }
 
-  onClearFilters() {
-    super.onClearFilters();
+  protected resetFilters(): void {
+    super.resetFilters();
     this.buildFormGroup();
-    this.onSearch();
   }
 
   private buildFormGroup() {
@@ -245,6 +242,7 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
       }),
       catchError((error) => {
         this.logger.error(error);
+        this.processError(error);
         return EMPTY;
       })
     );
@@ -252,9 +250,12 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
 
   private loadColectivosBusqueda(): void {
     this.suscripciones.push(
-      this.rolProyectoColectivoService.findColectivosActivos().subscribe(colectivos => {
-        this.colectivosBusqueda = colectivos;
-      })
+      this.rolProyectoColectivoService.findColectivosActivos().subscribe(
+        (colectivos) => {
+          this.colectivosBusqueda = colectivos;
+        },
+        (error) => this.logger.error(error)
+      )
     );
   }
 
@@ -369,7 +370,9 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
     const lineasInvestigacionSubscription = this.lineaInvestigacionService.findTodos().subscribe(
       (response) => {
         this.lineasInvestigacion$.next(response.items);
-      });
+      },
+      (error) => this.logger.error(error)
+    );
     this.suscripciones.push(lineasInvestigacionSubscription);
   }
 

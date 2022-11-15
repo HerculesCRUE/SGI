@@ -8,7 +8,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { TipoPartida } from '@core/enums/tipo-partida';
-import { MSG_PARAMS } from '@core/i18n';
 import { ESTADO_MAP } from '@core/models/csp/estado-proyecto';
 import { IProyectoAnualidadNotificacionSge } from '@core/models/csp/proyecto-anualidad-notificacion-sge';
 import { IProyectoAnualidadPartida } from '@core/models/sge/proyecto-anualidad-partida';
@@ -20,7 +19,6 @@ import { DialogService } from '@core/services/dialog.service';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
-import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { from, Observable, Subscription } from 'rxjs';
 import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
@@ -28,7 +26,6 @@ import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 import { PROYECTO_ANUALIDAD_ROUTE_NAMES } from '../../proyecto-anualidad/proyecto-anualidad-route-names';
 import { PROYECTO_ROUTE_NAMES } from '../../proyecto/proyecto-route-names';
 
-const MSG_ERROR = marker('error.load');
 const MSG_NOTIFICADO_SUCCESS = marker('msg.csp.notificacion-presupuesto-sge.success');
 const MSG_CONTINUE_NOTIFICACION_PRESUPUESTO_KEY = marker('msg.continue.notificacion.presupuesto');
 
@@ -67,10 +64,9 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
     private router: Router,
     private dialogService: DialogService,
     private route: ActivatedRoute,
-    private readonly translate: TranslateService,
     private readonly proyectoSgeService: ProyectoSgeService
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -124,21 +120,15 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
         }
       };
     this.dataSource.sort = this.sort;
-    this.search();
+    this.onSearch();
   }
 
-  search(): void {
-    this.filter = this.createFilter();
-    this.loadTable();
-  }
-
-  onClearFilters() {
-    super.onClearFilters();
+  protected resetFilters(): void {
+    super.resetFilters();
     this.formGroup.controls.fechaInicioDesde.setValue(null);
     this.formGroup.controls.fechaInicioHasta.setValue(null);
     this.formGroup.controls.fechaFinDesde.setValue(null);
     this.formGroup.controls.fechaFinHasta.setValue(null);
-    this.search();
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IProyectoAnualidadNotificacionSge>> {
@@ -215,7 +205,7 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
     }
   }
 
-  isCheckend(proyectoAnualidadNotificacionSge: IProyectoAnualidadNotificacionSge): Boolean {
+  isCheckend(proyectoAnualidadNotificacionSge: IProyectoAnualidadNotificacionSge): boolean {
     const proyectoAnualidadNotificacionSgeCheckeado =
       this.proyectoAnualidadEnvio.find(presupuesto => presupuesto.id === proyectoAnualidadNotificacionSge.id);
 
@@ -225,7 +215,7 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
     return false;
   }
 
-  isAllSelected(): Boolean {
+  isAllSelected(): boolean {
     const presupuestosNofificacion = this.dataSource.data.filter(presupuesto => !presupuesto.enviadoSge);
     if (this.proyectoAnualidadEnvio.length === presupuestosNofificacion.length) {
       return true;
@@ -244,7 +234,7 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
           this.enviarSges();
         }
       }
-    )
+    );
   }
 
   enviarSges() {
@@ -334,10 +324,13 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
             );
           })
         )
-        .subscribe(() => {
-          this.loadTable(true);
-          this.snackBarService.showSuccess(MSG_NOTIFICADO_SUCCESS);
-        })
+        .subscribe(
+          () => {
+            this.loadTable(true);
+            this.snackBarService.showSuccess(MSG_NOTIFICADO_SUCCESS);
+          },
+          this.processError
+        )
     );
   }
 

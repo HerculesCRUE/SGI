@@ -5,11 +5,13 @@ import java.util.List;
 
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.SgiReportDto;
 import org.crue.hercules.sgi.rep.dto.eti.ComiteDto.Genero;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
+import org.crue.hercules.sgi.rep.dto.eti.EvaluadorDto;
 import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.crue.hercules.sgi.rep.service.SgiReportService;
@@ -89,7 +91,17 @@ public abstract class InformeEvaluacionBaseReportService extends SgiReportServic
     elementsRow.add(evaluacion.getMemoria().getComite().getComite());
 
     columnsData.add("nombreSecretario");
-    elementsRow.add(evaluacion.getMemoria().getComite().getNombreSecretario());
+    try {
+      EvaluadorDto secretario = evaluacionService.findSecretarioEvaluacion(evaluacion.getId());
+      if (ObjectUtils.isNotEmpty(secretario)) {
+        PersonaDto persona = personaService.findById(secretario.getPersonaRef());
+        elementsRow.add(persona.getNombre() + " " + persona.getApellidos());
+      } else {
+        elementsRow.add(" - ");
+      }
+    } catch (Exception e) {
+      elementsRow.add(getErrorMessageToReport(e));
+    }
 
     columnsData.add("nombreInvestigacion");
     elementsRow.add(evaluacion.getMemoria().getComite().getNombreInvestigacion());

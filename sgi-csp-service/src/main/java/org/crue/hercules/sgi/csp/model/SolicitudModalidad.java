@@ -60,10 +60,22 @@ public class SolicitudModalidad extends BaseEntity {
   @NotNull
   private Programa programa;
 
+  /** Programa heredado de la Convocatoria */
+  @Column(name = "programa_convocatoria_id", nullable = false)
+  @NotNull
+  private Long programaConvocatoriaId;
+
   // Relation mappings for JPA metamodel generation only
   @ManyToOne
   @JoinColumn(name = "solicitud_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_SOLICITUDMODALIDAD_SOLICITUD"))
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final Solicitud solicitud = null;
+
+  @ManyToOne
+  @JoinColumn(name = "programa_convocatoria_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_SOLICITUDMODALIDAD_PROGRAMACONVOCATORIA"))
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final Programa programaConvocatoria = null;
+
 }

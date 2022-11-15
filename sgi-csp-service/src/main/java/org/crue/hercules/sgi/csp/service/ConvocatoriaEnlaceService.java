@@ -1,5 +1,8 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.List;
+
+import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEnlace;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -63,4 +66,16 @@ public interface ConvocatoriaEnlaceService {
    *         cualquier otro caso.
    */
   boolean existsByConvocatoriaId(Long convocatoriaId);
+
+  /**
+   * Crea y actualiza las entidades {@link ConvocatoriaEnlace}
+   * relacionadas con el Id de la entidad {@link Convocatoria} recibido. Elimina
+   * las que esten presentes en BBDD pero no en la lista recibida.
+   * 
+   * @param convocatoriaId      id de la entidad {@link Convocatoria}.
+   * @param convocatoriaEnlaces lista de entidades {@link ConvocatoriaEnlace} a
+   *                            actualizar/crear.
+   * @return lista de entidades {@link ConvocatoriaEnlace}.
+   */
+  List<ConvocatoriaEnlace> update(Long convocatoriaId, List<ConvocatoriaEnlace> convocatoriaEnlaces);
 }

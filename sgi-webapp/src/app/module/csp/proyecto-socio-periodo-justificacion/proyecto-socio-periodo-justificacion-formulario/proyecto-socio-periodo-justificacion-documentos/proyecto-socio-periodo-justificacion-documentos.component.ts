@@ -287,8 +287,9 @@ export class ProyectoSocioPeriodoJustificacionDocumentosComponent extends Fragme
         );
       }
       else if (this.viewMode === VIEW_MODE.EDIT) {
+        const currentDocumentoRef = this.viewingNode.documento.value.documentoRef;
         this.uploader.uploadSelection().subscribe(
-          () => this.updateNode(this.getDetailNode())
+          () => this.updateNode(this.getDetailNode(), currentDocumentoRef)
         );
       }
     }
@@ -317,8 +318,8 @@ export class ProyectoSocioPeriodoJustificacionDocumentosComponent extends Fragme
     this.loadDetails(undefined);
   }
 
-  private updateNode(node: NodeDocumentoProyecto): void {
-    this.formPart.updateNode(node);
+  private updateNode(node: NodeDocumentoProyecto, currentDocumentoRef: string): void {
+    this.formPart.updateNode(node, currentDocumentoRef);
     this.expandParents(node);
     this.switchToView();
   }

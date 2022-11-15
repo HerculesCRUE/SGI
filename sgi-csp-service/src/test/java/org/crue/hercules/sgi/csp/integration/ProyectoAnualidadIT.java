@@ -32,7 +32,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 class ProyectoAnualidadIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
-  private static final String CONTROLLER_BASE_PATH = ProyectoAnualidadController.MAPPING;
+  private static final String CONTROLLER_BASE_PATH = ProyectoAnualidadController.REQUEST_MAPPING;
   private static final String PATH_PARTIDAS_RESUMEN = "/partidas-resumen";
   private static final String PATH_NOTIFICACIONES_SGE = "/notificaciones-sge";
   private static final String PATH_NOTIFICA_SGE = "/notificarsge";

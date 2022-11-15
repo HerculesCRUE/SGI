@@ -2,6 +2,7 @@
 
 :host {
   display: block;
+
   div.problem {
     padding-left: 15px;
     padding-right: 15px;
@@ -15,11 +16,17 @@
       background-color: #e35138;
       color: #fff;
     }
+
     &.warning {
       background-color: rgba(map-get($sgi-custom-colors, warning), 0.1);
     }
+
     &.info {
       background-color: map-get($sgi-custom-colors, bg);
+    }
+
+    .preserve-lines {
+      white-space: pre-line;
     }
   }
 }

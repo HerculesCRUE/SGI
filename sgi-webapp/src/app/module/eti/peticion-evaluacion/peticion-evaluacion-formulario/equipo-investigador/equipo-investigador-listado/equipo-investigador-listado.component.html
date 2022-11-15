@@ -46,7 +46,7 @@
         <th mat-header-cell *matHeaderCellDef>
           {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let wrapper;let i=index;">
-          <ng-container *ngIf="showDeleteEquipoTrabajo(wrapper.value?.persona?.id) && wrapper.value?.eliminable">
+          <ng-container *ngIf="showDeleteEquipoTrabajo(wrapper.value?.persona?.id)">
             <button mat-button *sgiHasAnyAuthorityForAnyUO="['ETI-PEV-INV-C', 'ETI-PEV-INV-ER']"
               matTooltip="{{'btn.delete' | translate}}" (click)="delete(wrapper)">
               <mat-icon color="warn">highlight_off</mat-icon>

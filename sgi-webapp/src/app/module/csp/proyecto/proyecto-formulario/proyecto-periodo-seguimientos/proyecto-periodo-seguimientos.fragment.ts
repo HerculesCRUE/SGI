@@ -153,16 +153,17 @@ export class ProyectoPeriodoSeguimientosFragment extends Fragment {
           switchMap((documentos) => {
             return this.proyectoPeriodoSeguimientoService.deleteById(wrapped.value.id).pipe(
               tap(() => {
-                this.periodoSeguimientosEliminados = this.periodoSeguimientosEliminados.filter(deletedPeriodoSeguimiento =>
-                  deletedPeriodoSeguimiento.value.id !== wrapped.value.id),
-                  map(() => {
-                    return from(documentos.items).pipe(
-                      mergeMap(documento => {
-                        return this.documentoService.eliminarFichero(documento.documentoRef);
-                      })
-                    );
-                  });
+                this.periodoSeguimientosEliminados = this.periodoSeguimientosEliminados
+                  .filter(deletedPeriodoSeguimiento => deletedPeriodoSeguimiento.value.id !== wrapped.value.id);
               }),
+              switchMap(() =>
+                from(documentos.items).pipe(
+                  mergeMap(documento => {
+                    return this.documentoService.eliminarFichero(documento.documentoRef);
+                  }),
+                  takeLast(1)
+                )
+              ),
               takeLast(1)
             );
           })

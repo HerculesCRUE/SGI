@@ -65,7 +65,7 @@ export class SolicitudRrhhRequisitosConvocatoriaComponent extends FragmentCompon
   }
 
   constructor(
-    private actionService: SolicitudActionService,
+    public readonly actionService: SolicitudActionService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private readonly translate: TranslateService,

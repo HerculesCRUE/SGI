@@ -63,7 +63,7 @@ export class PartidaPresupuestariaModalComponent extends DialogFormComponent<IPa
     super.ngOnInit();
     this.loadConfiguracion();
     this.setupI18N();
-    this.textSaveOrUpdate = this.data?.partidaPresupuestaria ? MSG_ACEPTAR : MSG_ANADIR;
+    this.textSaveOrUpdate = this.data?.partidaPresupuestaria?.codigo ? MSG_ACEPTAR : MSG_ANADIR;
 
     this.checkShowDatosConvocatoriaPartidaPresupuestaria(this.data.convocatoriaPartidaPresupuestaria);
 
@@ -102,7 +102,7 @@ export class PartidaPresupuestariaModalComponent extends DialogFormComponent<IPa
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamTipoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
-    if (this.data?.partidaPresupuestaria) {
+    if (this.data?.partidaPresupuestaria?.codigo) {
       this.translate.get(
         PROYECTO_PARTIDA_PRESUPUESTARIA_KEY,
         MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -115,7 +115,7 @@ export class PartidaPresupuestariaModalComponent extends DialogFormComponent<IPa
         switchMap((value) => {
           return this.translate.get(
             TITLE_NEW_ENTITY,
-            { entity: value, ...MSG_PARAMS.GENDER.MALE }
+            { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
           );
         })
       ).subscribe((value) => this.title = value);

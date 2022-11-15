@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.converter.ConvocatoriaFaseConverter;
@@ -156,6 +159,7 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
   private static final String PATH_CONCEPTO_GASTO_PERMITIDO = "/convocatoriagastos/permitidos";
   private static final String PATH_CONCEPTO_GASTO_NO_PERMITIDO = "/convocatoriagastos/nopermitidos";
   private static final String PATH_PARAMETER_RESTRINGIDOS = "/restringidos";
+  private static final String PATH_ENLACES = ConvocatoriaController.PATH_ENLACES;
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
@@ -1183,6 +1187,77 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.status().isNoContent());
   }
 
+  @Test
+  @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
+  void updateEnlaces_Returns200() throws Exception {
+    // given: Una lista con una ConvocatoriaEnlace
+    Long convocatoriaId = 1L;
+    String url = "www.ejemplo.es";
+    ConvocatoriaEnlace enlace1 = generarMockConvocatoriaEnlace(null, null);
+    enlace1.setUrl(url);
+    List<ConvocatoriaEnlace> convocatoriaEnlacesToCreate = Arrays.asList(enlace1);
+
+    BDDMockito.given(convocatoriaEnlaceService
+        .update(ArgumentMatchers.<Long>any(), ArgumentMatchers.<List<ConvocatoriaEnlace>>any()))
+        .will((InvocationOnMock invocation) -> {
+          Long convocatoriaIdParam = invocation.getArgument(0, Long.class);
+          List<ConvocatoriaEnlace> convocatoriaEnlacesCreados = invocation.getArgument(1);
+          AtomicLong index = new AtomicLong();
+          return convocatoriaEnlacesCreados.stream().map(convocatoriaEnlaceCreado -> {
+            convocatoriaEnlaceCreado.setConvocatoriaId(convocatoriaIdParam);
+            convocatoriaEnlaceCreado.setId(index.incrementAndGet());
+
+            return convocatoriaEnlaceCreado;
+          }).collect(Collectors.toList());
+        });
+    // when: Get page=0 with pagesize=10
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.patch(CONTROLLER_BASE_PATH + PATH_ENLACES, convocatoriaId)
+                .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(convocatoriaEnlacesToCreate)))
+        // then: Devuelve un 204
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$[0].url").value(url));
+  }
+
+  /**
+   * Función que devuelve un objeto ConvocatoriaEnlace
+   * 
+   * @param id id del ConvocatoriaEnlace
+   * @return el objeto ConvocatoriaEnlace
+   */
+  private ConvocatoriaEnlace generarMockConvocatoriaEnlace(Long id, Long convocatoriaId) {
+
+    // @formatter:off
+    return ConvocatoriaEnlace.builder()
+        .id(id)
+        .convocatoriaId(convocatoriaId)
+        .descripcion("descripcion-" + id)
+        .url("www.url" + id + ".es")
+        .tipoEnlace(generarMockTipoEnlace(1L, Boolean.TRUE))
+        .build();
+    // @formatter:on
+  }
+
+  /**
+   * Función que devuelve un objeto TipoEnlace
+   * 
+   * @param id     id del TipoEnlace
+   * @param activo
+   * @return el objeto TipoEnlace
+   */
+  private TipoEnlace generarMockTipoEnlace(Long id, Boolean activo) {
+
+    TipoEnlace tipoEnlace = new TipoEnlace();
+    tipoEnlace.setId(id);
+    tipoEnlace.setNombre("nombre-" + id);
+    tipoEnlace.setDescripcion("descripcion-" + id);
+    tipoEnlace.setActivo(activo);
+
+    return tipoEnlace;
+  }
+
   /**
    * 
    * CONVOCATORIA ENTIDAD CONVOCANTE
@@ -1276,6 +1351,45 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Devuelve un 204
         .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
+  void updateConvocatoriaEntidadesConvocantes_Returns200() throws Exception {
+    // given: Una lista con una ConvocatoriaEntidadConvocante
+    Long convocatoriaId = 1L;
+    String entidadRef = "entidadRef";
+    ConvocatoriaEntidadConvocante entidadConvocante = generarMockConvocatoriaEntidadConvocante(1L);
+    entidadConvocante.setEntidadRef(entidadRef);
+    List<ConvocatoriaEntidadConvocante> convocatoriaEntidadesConvocantesToCreate = Arrays.asList(entidadConvocante);
+
+    BDDMockito.given(convocatoriaEntidadConvocanteService
+        .updateEntidadesConvocantesConvocatoria(ArgumentMatchers.<Long>any(),
+            ArgumentMatchers.<List<ConvocatoriaEntidadConvocante>>any()))
+        .will((InvocationOnMock invocation) -> {
+          Long convocatoriaIdParam = invocation.getArgument(0, Long.class);
+          List<ConvocatoriaEntidadConvocante> convocatoriaEntidadConvocantesCreados = invocation.getArgument(1);
+          AtomicLong index = new AtomicLong();
+          return convocatoriaEntidadConvocantesCreados.stream().map(convocatoriaEntidadConvocanteCreado -> {
+            convocatoriaEntidadConvocanteCreado.setConvocatoriaId(convocatoriaIdParam);
+            convocatoriaEntidadConvocanteCreado.setId(index.incrementAndGet());
+
+            return convocatoriaEntidadConvocanteCreado;
+          }).collect(Collectors.toList());
+        });
+    // when: Get page=0 with pagesize=10
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders
+                .patch(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_ENTIDAD_CONVOCANTE, convocatoriaId)
+                .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(
+                    convocatoriaEntidadesConvocantesToCreate)))
+        // then: Devuelve un 204
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$[0].entidadRef").value(entidadRef));
+    ;
   }
 
   @Test

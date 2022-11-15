@@ -3,12 +3,14 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
+import { SearchResult } from '@core/component/select-dialog/select-dialog.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ILineaInvestigacion } from '@core/models/csp/linea-investigacion';
 import { LineaInvestigacionService } from '@core/services/csp/linea-investigacion/linea-investigacion.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { catchError, debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 
 const LINEA_INVESTIGACION_KEY = marker('csp.linea-investigacion');
 const LINEA_INVESTIGACION_NOMBRE_KEY = marker('csp.linea-investigacion.nombre');
@@ -23,6 +25,8 @@ export class LineaInvestigacionModalComponent extends DialogActionComponent<ILin
   private readonly lineaInvestigacion: ILineaInvestigacion;
   title: string;
   msgParamNombreEntity = {};
+
+  readonly searchResult$: Subject<ILineaInvestigacion[]> = new BehaviorSubject<ILineaInvestigacion[]>([]);
 
   constructor(
     matDialogRef: MatDialogRef<LineaInvestigacionModalComponent>,
@@ -80,6 +84,16 @@ export class LineaInvestigacionModalComponent extends DialogActionComponent<ILin
       nombre: new FormControl(this.lineaInvestigacion?.nombre ?? '', [Validators.maxLength(1000), Validators.required]),
     });
 
+    this.subscriptions.push(formGroup.controls.nombre.valueChanges.pipe(
+      startWith(''),
+      debounceTime(200),
+      switchMap(value => this.search(value))
+    ).subscribe(
+      (response => {
+        this.searchResult$.next(response.items);
+      })
+    ));
+
     return formGroup;
   }
 
@@ -87,5 +101,35 @@ export class LineaInvestigacionModalComponent extends DialogActionComponent<ILin
     const lineaInvestigacion = this.getValue();
     return this.isEdit() ? this.lineaInvestigacionService.update(lineaInvestigacion.id, lineaInvestigacion) :
       this.lineaInvestigacionService.create(lineaInvestigacion);
+  }
+
+  private search(value: string): Observable<SearchResult<ILineaInvestigacion>> {
+    if (value?.length >= 3) {
+      const findOptions: SgiRestFindOptions = {
+        filter: new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, value),
+        sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
+      };
+      return this.lineaInvestigacionService.findAll(findOptions).pipe(
+        map(response => {
+          return {
+            items: response.items.slice(0, 5).map(lineaInvestigacion => {
+              return lineaInvestigacion;
+            }),
+            more: false
+          };
+        }),
+        catchError(() => this.buildEmptyResponse())
+      );
+    }
+    else {
+      return this.buildEmptyResponse();
+    }
+  }
+
+  private buildEmptyResponse(): Observable<SearchResult<ILineaInvestigacion>> {
+    return of({
+      items: [],
+      more: false
+    });
   }
 }

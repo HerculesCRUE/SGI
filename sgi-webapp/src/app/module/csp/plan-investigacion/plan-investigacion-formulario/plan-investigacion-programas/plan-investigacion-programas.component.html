@@ -12,17 +12,18 @@
           <li class="mat-tree-node">
             <button mat-icon-button disabled></button>
             <mat-checkbox *ngIf="viewMode === 'new'" class="checkbox" color="primary" [checked]="node === checkedNode"
-              (change)="onCheckNode(node, $event)">
-              {{node.programa.value.nombre}}
+              (change)="onCheckNode(node, $event)" matTooltip="{{node.programa.value.descripcion}}">
+              <span class="break-spaces">{{node.programa.value.nombre}}</span>
             </mat-checkbox>
-            <button mat-icon-button *ngIf="(viewMode !== 'new' && node !== viewingNode)"
-              (click)="showNodeDetails(node)">
+            <button class="break-spaces" mat-icon-button *ngIf="(viewMode !== 'new' && node !== viewingNode)"
+              (click)="showNodeDetails(node)" matTooltip="{{node.programa.value.descripcion}}">
               <mat-icon color="primary" class="mat-icon-rtl-mirror">
                 {{ 'visibility'}}
               </mat-icon>
               {{node.programa.value.nombre}}
             </button>
-            <button mat-icon-button *ngIf="(viewMode !== 'new' && node === viewingNode)" (click)="hideNodeDetails()">
+            <button class="break-spaces" mat-icon-button *ngIf="(viewMode !== 'new' && node === viewingNode)"
+              (click)="hideNodeDetails()" matTooltip="{{node.programa.value.descripcion}}">
               <mat-icon color="primary" class="mat-icon-rtl-mirror">
                 {{ 'visibility_off'}}
               </mat-icon>
@@ -39,17 +40,18 @@
                 </mat-icon>
               </button>
               <mat-checkbox *ngIf="viewMode === 'new'" class="checkbox" color="primary" [checked]="node === checkedNode"
-                (change)="onCheckNode(node, $event)">
-                {{node.programa.value.nombre}}
+                (change)="onCheckNode(node, $event)" matTooltip="{{node.programa.value.descripcion}}">
+                <span class="break-spaces">{{node.programa.value.nombre}}</span>
               </mat-checkbox>
-              <button mat-icon-button *ngIf="(viewMode !== 'new' && node !== viewingNode)"
-                (click)="showNodeDetails(node)">
+              <button class="break-spaces" mat-icon-button *ngIf="(viewMode !== 'new' && node !== viewingNode)"
+                (click)="showNodeDetails(node)" matTooltip="{{node.programa.value.descripcion}}">
                 <mat-icon color="primary" class="mat-icon-rtl-mirror">
                   {{ 'visibility'}}
                 </mat-icon>
                 {{node.programa.value.nombre}}
               </button>
-              <button mat-icon-button *ngIf="(viewMode !== 'new' && node === viewingNode)" (click)="hideNodeDetails()">
+              <button class="break-spaces" mat-icon-button *ngIf="(viewMode !== 'new' && node === viewingNode)"
+                (click)="hideNodeDetails()" matTooltip="{{node.programa.value.descripcion}}">
                 <mat-icon color="primary" class="mat-icon-rtl-mirror">
                   {{ 'visibility_off'}}
                 </mat-icon>

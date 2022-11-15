@@ -74,7 +74,8 @@ class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
     BDDMockito.given(programaRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(convocatoriaEntidadConvocante.getPrograma()));
     BDDMockito
-        .given(repository.findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        .given(repository.findByConvocatoriaIdAndEntidadRefAndProgramaId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.anyString(), ArgumentMatchers.<Long>any()))
         .willReturn(Optional.empty());
 
     BDDMockito.given(repository.save(convocatoriaEntidadConvocante)).will((InvocationOnMock invocation) -> {
@@ -155,7 +156,8 @@ class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
     BDDMockito.given(convocatoriaService.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
         ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
     BDDMockito
-        .given(repository.findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        .given(repository.findByConvocatoriaIdAndEntidadRefAndProgramaId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.anyString(), ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(convocatoriaEntidadConvocanteExistente));
 
     Assertions.assertThatThrownBy(
@@ -179,7 +181,8 @@ class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
     BDDMockito.given(convocatoriaService.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
         ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
     BDDMockito
-        .given(repository.findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        .given(repository.findByConvocatoriaIdAndEntidadRefAndProgramaId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.anyString(), ArgumentMatchers.<Long>any()))
         .willReturn(Optional.empty());
     BDDMockito.given(programaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
@@ -203,7 +206,8 @@ class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
     BDDMockito.given(convocatoriaService.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
         ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
     BDDMockito
-        .given(repository.findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        .given(repository.findByConvocatoriaIdAndEntidadRefAndProgramaId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.anyString(), ArgumentMatchers.<Long>any()))
         .willReturn(Optional.empty());
     BDDMockito.given(programaRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(convocatoriaEntidadConvocante.getPrograma()));
@@ -254,7 +258,8 @@ class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
     BDDMockito.given(convocatoriaService.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
         ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
     BDDMockito
-        .given(repository.findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        .given(repository.findByConvocatoriaIdAndEntidadRefAndProgramaId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.anyString(), ArgumentMatchers.<Long>any()))
         .willReturn(Optional.empty());
 
     BDDMockito.given(programaRepository.findById(ArgumentMatchers.anyLong()))
@@ -309,7 +314,8 @@ class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
     BDDMockito.given(convocatoriaService.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
         ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
     BDDMockito
-        .given(repository.findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        .given(repository.findByConvocatoriaIdAndEntidadRefAndProgramaId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.anyString(), ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(convocatoriaEntidadConvocanteExistente));
 
     Assertions.assertThatThrownBy(
@@ -333,7 +339,8 @@ class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
     BDDMockito.given(convocatoriaService.isRegistradaConSolicitudesOProyectos(ArgumentMatchers.<Long>any(),
         ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
     BDDMockito
-        .given(repository.findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        .given(repository.findByConvocatoriaIdAndEntidadRefAndProgramaId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.anyString(), ArgumentMatchers.<Long>any()))
         .willReturn(Optional.empty());
     BDDMockito.given(programaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
@@ -363,7 +370,8 @@ class ConvocatoriaEntidadConvocanteServiceTest extends BaseServiceTest {
         ArgumentMatchers.<String>any(), ArgumentMatchers.<String[]>any())).willReturn(Boolean.TRUE);
 
     BDDMockito
-        .given(repository.findByConvocatoriaIdAndEntidadRef(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        .given(repository.findByConvocatoriaIdAndEntidadRefAndProgramaId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.anyString(), ArgumentMatchers.<Long>any()))
         .willReturn(Optional.empty());
 
     BDDMockito.given(programaRepository.findById(ArgumentMatchers.anyLong()))

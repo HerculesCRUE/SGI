@@ -17,7 +17,6 @@ import { switchMap } from 'rxjs/operators';
 import { ResultadoInformePatentabilidadModalComponent } from '../resultado-informe-patentabilidad-modal/resultado-informe-patentabilidad-modal.component';
 
 const RESULTADO_INFORME_PATENTABILIDAD_KEY = marker('pii.resultado-informe-patentabilidad');
-const MSG_ERROR = marker('error.load');
 const MSG_SAVE_SUCCESS = marker('msg.save.entity.success');
 const MSG_UPDATE_SUCCESS = marker('msg.update.entity.success');
 const MSG_REACTIVE = marker('msg.reactivate.entity');
@@ -55,7 +54,7 @@ export class ResultadoInformePatentabilidadListadoComponent
     public authService: SgiAuthService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
   }
 
   ngOnInit(): void {
@@ -83,10 +82,10 @@ export class ResultadoInformePatentabilidadListadoComponent
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorDesactivar);
+            this.processError(new SgiError(this.textoErrorDesactivar));
           }
         }
       );
@@ -113,10 +112,10 @@ export class ResultadoInformePatentabilidadListadoComponent
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorReactivar);
+            this.processError(new SgiError(this.textoErrorReactivar));
           }
         }
       );
@@ -251,8 +250,7 @@ export class ResultadoInformePatentabilidadListadoComponent
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IResultadoInformePatentibilidad>> {
-    const observable$ = this.resultadoInformePatentabilidadService.findTodos(this.getFindOptions(reset));
-    return observable$;
+    return this.resultadoInformePatentabilidadService.findTodos(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {

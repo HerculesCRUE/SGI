@@ -12,12 +12,14 @@ import org.springframework.http.HttpStatus;
 public class ProyectoAnualidadAnioUniqueException extends ProblemException {
   public static final URI CUSTOM_PROBLEM_TYPE = URI.create("urn:problem-type:unique");
 
-  public ProyectoAnualidadAnioUniqueException() {
+  public ProyectoAnualidadAnioUniqueException(Integer anio) {
     super(Problem.builder().type(CUSTOM_PROBLEM_TYPE)
-        .title(ProblemMessage.builder().key(HttpStatus.class, "INTERNAL_SERVER_ERROR").build())
+        .title(ProblemMessage.builder().key(HttpStatus.class, HttpStatus.BAD_REQUEST.name()).build())
         .detail(ProblemMessage.builder().key(ProyectoAnualidadAnioUniqueException.class)
+            .parameter("anio", anio)
             .parameter("entity", ApplicationContextSupport.getMessage(ProyectoAnualidad.class)).build())
 
-        .status(HttpStatus.INTERNAL_SERVER_ERROR.value()).build());
+        .status(HttpStatus.BAD_REQUEST.value()).build());
   }
+
 }

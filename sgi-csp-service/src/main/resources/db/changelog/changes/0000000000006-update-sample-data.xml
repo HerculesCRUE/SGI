@@ -44,15 +44,17 @@
   </changeSet>
 
   <changeSet context="dev" author="master" id="0000000000006-grupo_update">
+    <validCheckSum>8:d89d9a6e7fd6d34861993256c25ad29b</validCheckSum>
+    <validCheckSum>8:7e73c7231ae7b21c9ae8009e57e87355</validCheckSum>
     <update tableName="grupo">
-      <column name="grupo_especial_investigacion_id" valueComputed="(select id from ${schemaPrefix}grupo_especial_investigacion where grupo_id=(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 3') order by fecha_inicio desc FETCH FIRST 1 ROW only)" />
+      <column name="grupo_especial_investigacion_id" valueComputed="(select id from ${schemaPrefix}grupo_especial_investigacion where grupo_id=(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 3') order by fecha_inicio desc OFFSET 0 ROWS FETCH FIRST 1 ROW only)" />
       <where>:name=:value</where>
       <whereParams>
         <param name="id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 3')" />
       </whereParams>
     </update>
     <update tableName="grupo">
-      <column name="grupo_especial_investigacion_id" valueComputed="(select id from ${schemaPrefix}grupo_especial_investigacion where grupo_id=(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1') order by fecha_inicio desc FETCH FIRST 1 ROW only)" />
+      <column name="grupo_especial_investigacion_id" valueComputed="(select id from ${schemaPrefix}grupo_especial_investigacion where grupo_id=(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1') order by fecha_inicio desc OFFSET 0 ROWS FETCH FIRST 1 ROW only)" />
       <where>:name=:value</where>
       <whereParams>
         <param name="id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1')" />

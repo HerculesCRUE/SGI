@@ -134,11 +134,17 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
     PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
 
     boolean finalizado = Boolean.parseBoolean(node.getArguments().get(0));
-    Instant now = Instant.now();
+    Instant now = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
+    Predicate fechaFinAlcanzada = cb.lessThan(root.get(Proyecto_.fechaFin), now);
+    Predicate fechaFinDefinitivaAlcanzada = cb.lessThan(root.get(Proyecto_.fechaFinDefinitiva), now);
+    Predicate fechaFinDefinitivaNula = cb.isNull(root.get(Proyecto_.fechaFinDefinitiva));
+    Predicate fechaFinEnElFuturo = cb.greaterThanOrEqualTo(root.get(Proyecto_.fechaFin), now);
+    Predicate fechaFinDefinitivaEnElFuturo = cb.greaterThanOrEqualTo(root.get(Proyecto_.fechaFinDefinitiva), now);
+
     if (finalizado) {
-      return cb.and(cb.lessThan(root.get(Proyecto_.fechaFin), now));
+      return cb.or(cb.and(fechaFinAlcanzada, fechaFinDefinitivaNula), fechaFinDefinitivaAlcanzada);
     } else {
-      return cb.and(cb.greaterThanOrEqualTo(root.get(Proyecto_.fechaFin), now));
+      return cb.or(cb.and(fechaFinEnElFuturo, fechaFinDefinitivaNula), fechaFinDefinitivaEnElFuturo);
     }
   }
 

@@ -1,5 +1,5 @@
-import { HttpProblemType, SgiHttpProblem, ValidationHttpError } from '@core/errors/http-problem';
 import { Level, SgiError, SgiProblem, ValidationError } from '@core/errors/sgi-error';
+import { SgiValidationError } from '@core/errors/sgi-validation-error';
 
 export class ErrorUtils {
 
@@ -13,17 +13,7 @@ export class ErrorUtils {
   }
 
   public static toValidationProblem(title: string, errors: ValidationError[]): SgiProblem {
-    const problem: SgiHttpProblem = {
-      title,
-      detail: '',
-      level: 'error',
-      type: HttpProblemType.VALIDATION,
-      status: 400,
-      instance: '',
-      managed: false,
-      errors
-    };
-    return new ValidationHttpError(problem);
+    return new SgiValidationError(title, errors)
   }
 
 }

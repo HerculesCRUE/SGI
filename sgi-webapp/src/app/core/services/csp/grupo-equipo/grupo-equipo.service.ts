@@ -2,27 +2,30 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IGrupoEquipo } from '@core/models/csp/grupo-equipo';
 import { environment } from '@env';
-import { CreateCtor, FindByIdCtor, mixinCreate, mixinFindById, mixinUpdate, SgiRestBaseService, UpdateCtor } from '@sgi/framework/http';
+import {
+  CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate,
+  mixinFindAll, mixinFindById, SgiRestBaseService
+} from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { IGrupoEquipoRequest } from './grupo-equipo-request';
+import { IGrupoEquipoUpdateRequest } from './grupo-equipo-update-request';
 import { IGrupoEquipoResponse } from './grupo-equipo-response';
 import { GRUPO_EQUIPO_RESPONSE_CONVERTER } from './grupo-equipo-response.converter';
-import { GRUPO_EQUIPO_REQUEST_CONVERTER } from './grupo-request.converter';
+import { GRUPO_EQUIPO_UPDATE_REQUEST_CONVERTER } from './grupo-equipo-update-request.converter';
+import { GRUPO_EQUIPO_CREATE_REQUEST_CONVERTER } from './grupo-equipo-create-request.converter';
 
 // tslint:disable-next-line: variable-name
 const _GrupoEquipoMixinBase:
-  CreateCtor<IGrupoEquipo, IGrupoEquipo, IGrupoEquipoRequest, IGrupoEquipoResponse> &
-  UpdateCtor<number, IGrupoEquipo, IGrupoEquipo, IGrupoEquipoRequest, IGrupoEquipoResponse> &
+  CreateCtor<IGrupoEquipo, IGrupoEquipo, IGrupoEquipoUpdateRequest, IGrupoEquipoResponse> &
   FindByIdCtor<number, IGrupoEquipo, IGrupoEquipoResponse> &
-  typeof SgiRestBaseService = mixinFindById(
-    mixinUpdate(
+  FindAllCtor<IGrupoEquipo, IGrupoEquipoResponse> &
+  typeof SgiRestBaseService = mixinFindAll(
+    mixinFindById(
       mixinCreate(
         SgiRestBaseService,
-        GRUPO_EQUIPO_REQUEST_CONVERTER,
+        GRUPO_EQUIPO_CREATE_REQUEST_CONVERTER,
         GRUPO_EQUIPO_RESPONSE_CONVERTER
       ),
-      GRUPO_EQUIPO_REQUEST_CONVERTER,
       GRUPO_EQUIPO_RESPONSE_CONVERTER
     ),
     GRUPO_EQUIPO_RESPONSE_CONVERTER
@@ -54,7 +57,7 @@ export class GrupoEquipoService extends _GrupoEquipoMixinBase {
   updateList(id: number, entities: IGrupoEquipo[]): Observable<IGrupoEquipo[]> {
     return this.http.patch<IGrupoEquipoResponse[]>(
       `${this.endpointUrl}/${id}`,
-      GRUPO_EQUIPO_REQUEST_CONVERTER.fromTargetArray(entities)
+      GRUPO_EQUIPO_UPDATE_REQUEST_CONVERTER.fromTargetArray(entities)
     ).pipe(
       map(response => GRUPO_EQUIPO_RESPONSE_CONVERTER.toTargetArray(response))
     );
@@ -78,5 +81,4 @@ export class GrupoEquipoService extends _GrupoEquipoMixinBase {
       map(response => response.status === 200)
     );
   }
-
 }

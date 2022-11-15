@@ -11,6 +11,7 @@ import org.crue.hercules.sgi.csp.controller.ProyectoPeriodoJustificacionControll
 import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoJustificacionIdentificadorJustificacionInput;
 import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoJustificacionInput;
 import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoJustificacionOutput;
+import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoJustificacionInput.EstadoProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.enums.TipoJustificacion;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -77,12 +78,12 @@ class ProyectoPeriodoJustificacionIT extends BaseIT {
     periodo2.setNumPeriodo(2L);
     periodo3.setNumPeriodo(3L);
 
-    periodo1.setFechaInicio(Instant.now());
-    periodo1.setFechaFin(Instant.now().plusSeconds(86399));
-    periodo2.setFechaInicio(Instant.now().plusSeconds(86400));
-    periodo2.setFechaFin(Instant.now().plusSeconds(86400 * 2 - 1));
-    periodo3.setFechaInicio(Instant.now().plusSeconds(86400 * 2));
-    periodo3.setFechaFin(Instant.now().plusSeconds(86400 * 3));
+    periodo1.setFechaInicio(Instant.parse("2020-01-12T00:00:00Z"));
+    periodo1.setFechaFin(Instant.parse("2020-01-13T23:59:59Z"));
+    periodo2.setFechaInicio(Instant.parse("2020-02-12T00:00:00Z"));
+    periodo2.setFechaFin(Instant.parse("2020-02-13T23:59:59Z"));
+    periodo3.setFechaInicio(Instant.parse("2020-03-12T00:00:00Z"));
+    periodo3.setFechaFin(Instant.parse("2020-03-13T23:59:59Z"));
 
     periodo3.setTipoJustificacion(TipoJustificacion.FINAL);
 
@@ -363,6 +364,12 @@ class ProyectoPeriodoJustificacionIT extends BaseIT {
         .observaciones("testing ProyectoPeriodoJusitificacion")
         .proyectoId(1L)
         .tipoJustificacion(TipoJustificacion.PERIODICO)
+        .estado(EstadoProyectoPeriodoJustificacion.builder()
+            .id(id)
+            .estado(EstadoProyectoPeriodoJustificacion.TipoEstadoPeriodoJustificacion.PENDIENTE)
+            .fechaEstado(Instant.now())
+            .proyectoPeriodoJustificacionId(id)
+            .build())
         .build();
   }
 

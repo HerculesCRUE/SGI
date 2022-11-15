@@ -408,6 +408,7 @@ export class SgiFileUploadComponent implements
               this._value = event.body;
               this.fileUpload.nativeElement.value = null;
               this.uploading = false;
+              this.selection = null;
               this.uploadEventChange.next({ status: 'end' });
               break;
           }

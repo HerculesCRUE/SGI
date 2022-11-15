@@ -1,7 +1,10 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.dto.ProyectoEntidadConvocanteDto;
 import org.crue.hercules.sgi.csp.model.Programa;
@@ -248,6 +251,45 @@ class ProyectoEntidadConvocanteControllerTest extends BaseControllerTest {
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: 204
         .andExpect(MockMvcResultMatchers.status().isNoContent());
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
+  void updateConvocatoriaEntidadesConvocantes_Returns200() throws Exception {
+    // given: Una lista con una ProyectoEntidadConvocante
+    Long proyectoId = 1L;
+    String entidadRef = "entidadRef";
+    ProyectoEntidadConvocanteDto entidadConvocante = ProyectoEntidadConvocanteDto.builder().id(1L)
+        .entidadRef(entidadRef)
+        .build();
+    List<ProyectoEntidadConvocanteDto> entidadesConvocantesToCreate = Arrays.asList(entidadConvocante);
+
+    BDDMockito.given(service
+        .updateEntidadesConvocantesProyecto(ArgumentMatchers.<Long>any(),
+            ArgumentMatchers.<List<ProyectoEntidadConvocante>>any()))
+        .will((InvocationOnMock invocation) -> {
+          Long proyectoIdParam = invocation.getArgument(0, Long.class);
+          List<ProyectoEntidadConvocante> entidadConvocantesCreados = invocation.getArgument(1);
+          AtomicLong index = new AtomicLong();
+          return entidadConvocantesCreados.stream().map(proyectoEntidadConvocanteCreado -> {
+            proyectoEntidadConvocanteCreado.setProyectoId(proyectoIdParam);
+            proyectoEntidadConvocanteCreado.setId(index.incrementAndGet());
+
+            return proyectoEntidadConvocanteCreado;
+          }).collect(Collectors.toList());
+        });
+    // when: Get page=0 with pagesize=10
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders
+                .patch(ProyectoEntidadConvocanteController.REQUEST_MAPPING, proyectoId)
+                .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(entidadesConvocantesToCreate)))
+        // then: Devuelve un 200
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)))
+        .andExpect(MockMvcResultMatchers.jsonPath("$[0].entidadRef").value(entidadRef));
   }
 
 }

@@ -1,11 +1,14 @@
 package org.crue.hercules.sgi.csp.integration;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.GrupoEquipoController;
 import org.crue.hercules.sgi.csp.dto.GrupoEquipoDto;
+import org.crue.hercules.sgi.csp.dto.GrupoEquipoOutput;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * Test de integracion de GrupoEquipo.
@@ -167,4 +171,45 @@ class GrupoEquipoIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+      // @formatter:off 
+      "classpath:scripts/rol_proyecto.sql",
+      "classpath:scripts/grupo.sql",
+      "classpath:scripts/grupo_equipo.sql", 
+      // @formatter:on  
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void findAll_WithPagingSorting_ReturnsGrupoEquipoOutputSubList()
+      throws Exception {
+    String roles = "CSP-GIN-E";
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("X-Page", "0");
+    headers.add("X-Page-Size", "3");
+    String sort = "id,desc";
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH)
+        .queryParam("s", sort).build().toUri();
+    final ResponseEntity<List<GrupoEquipoOutput>> response = restTemplate.exchange(uri,
+        HttpMethod.GET,
+        buildRequest(headers, null, roles),
+        new ParameterizedTypeReference<List<GrupoEquipoOutput>>() {
+        });
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    final List<GrupoEquipoOutput> responseData = response.getBody();
+    Assertions.assertThat(responseData).hasSize(3);
+    HttpHeaders responseHeaders = response.getHeaders();
+    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
+    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("6");
+
+    Assertions.assertThat(responseData.get(0).getPersonaRef()).as("get(0).getPersonaRef())")
+        .isEqualTo("01889311");
+    Assertions.assertThat(responseData.get(1).getPersonaRef()).as("get(1).getPersonaRef())")
+        .isEqualTo("22932567");
+    Assertions.assertThat(responseData.get(2).getPersonaRef()).as("get(2).getPersonaRef())")
+        .isEqualTo("02591317");
+  }
 }

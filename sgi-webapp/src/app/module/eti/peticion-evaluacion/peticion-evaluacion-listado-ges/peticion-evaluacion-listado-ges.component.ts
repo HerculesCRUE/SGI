@@ -8,24 +8,21 @@ import { AbstractTablePaginationComponent } from '@core/component/abstract-table
 import { MSG_PARAMS } from '@core/i18n';
 import { IMemoria } from '@core/models/eti/memoria';
 import { IPeticionEvaluacion } from '@core/models/eti/peticion-evaluacion';
-import { ESTADO_MEMORIA_MAP, TipoEstadoMemoria } from '@core/models/eti/tipo-estado-memoria';
+import { ESTADO_MEMORIA_MAP } from '@core/models/eti/tipo-estado-memoria';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
-import { TipoEstadoMemoriaService } from '@core/services/eti/tipo-estado-memoria.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
-import { catchError, map, startWith, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { IPeticionEvaluacionListadoModalData, PeticionEvaluacionListadoExportModalComponent } from '../modals/peticion-evaluacion-listado-export-modal/peticion-evaluacion-listado-export-modal.component';
 
 const MSG_BUTTON_SAVE = marker('btn.add.entity');
-const MSG_ERROR = marker('error.load');
 const PETICION_EVALUACION_KEY = marker('eti.peticion-evaluacion');
 
 @Component({
@@ -62,13 +59,11 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
   constructor(
     private readonly logger: NGXLogger,
     private readonly peticionesEvaluacionService: PeticionEvaluacionService,
-    protected readonly snackBarService: SnackBarService,
-    private readonly tipoEstadoMemoriaService: TipoEstadoMemoriaService,
     private readonly personaService: PersonaService,
     private readonly translate: TranslateService,
     private matDialog: MatDialog
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
 
     this.totalElementos = 0;
 
@@ -135,7 +130,12 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
               peticionEvaluacion.solicitante.id === persona.id);
             peticionEvaluacion.solicitante = datosPersona;
           });
-        });
+        },
+          (error) => {
+            this.logger.error(error);
+            this.processError(error);
+          }
+        );
         this.suscripciones.push(personaSubscription);
         let peticionesListado: SgiRestListResult<IPeticionEvaluacion>;
         return of(peticionesListado = {
@@ -146,7 +146,7 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
       }),
       catchError((error) => {
         this.logger.error(error);
-        this.snackBarService.showError(MSG_ERROR);
+        this.processError(error);
         return of({} as SgiRestListResult<IPeticionEvaluacion>);
       })
     );

@@ -77,24 +77,28 @@
           <ng-container matColumnDef="acciones">
             <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}} </th>
             <td mat-cell *matCellDef="let data">
-              <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-CON-E', 'CSP-CON-C']">
-                <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!formPart.readonly"
-                  [routerLink]="[data.value.id]">
-                  <mat-icon color="primary">border_color</mat-icon>
-                </button>
-              </ng-container>
-              <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-CON-E', 'CSP-CON-C']">
-                <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="!formPart.readonly"
-                  (click)="deleteAnualidad(data)">
-                  <mat-icon color="warn">highlight_off</mat-icon>
-                </button>
-              </ng-container>
-              <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-CON-E', 'CSP-CON-C']">
-                <button *ngIf="showEnviarSgeButton(data) | async" color="primary" mat-raised-button
-                  matTooltip="{{'btn.enviar-sge' | translate}}" (click)="sendSGE(data)"
-                  [disabled]="this.formPart.hasChanges()">
-                  {{'btn.enviar-sge' | translate}}
-                </button>
+              <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
+                <ng-container *ngIf="!(isEnviadoSGE(data) | async) else enviadoSge">
+                  <button mat-icon-button color="primary" matTooltip="{{'btn.edit' | translate}}"
+                    *ngIf="!formPart.readonly" [routerLink]="[data.value.id]">
+                    <mat-icon>border_color</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" matTooltip="{{'btn.delete' | translate}}"
+                    *ngIf="!formPart.readonly" (click)="deleteAnualidad(data)">
+                    <mat-icon>highlight_off</mat-icon>
+                  </button>
+                  <button *ngIf="showEnviarSgeButton(data) | async" color="primary" mat-raised-button
+                    matTooltip="{{'btn.enviar-sge' | translate}}" (click)="sendSGE(data)"
+                    [disabled]="this.formPart.hasChanges()">
+                    {{'btn.enviar-sge' | translate}}
+                  </button>
+                </ng-container>
+                <ng-template #enviadoSge>
+                  <button mat-icon-button color="primary" matTooltip="{{'btn.view' | translate}}"
+                    *ngIf="!formPart.readonly" [routerLink]="[data.value.id]">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                </ng-template>
               </ng-container>
             </td>
           </ng-container>

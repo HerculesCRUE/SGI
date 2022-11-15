@@ -13,18 +13,25 @@ import { MiembroEquipoProyectoModalComponent } from './miembro-equipo-proyecto-m
 import { MiembroEquipoSolicitudModalComponent } from './miembro-equipo-solicitud-modal/miembro-equipo-solicitud-modal.component';
 import { PartidaGastoModalComponent } from './partida-gasto-modal/partida-gasto-modal.component';
 import { PartidaPresupuestariaModalComponent } from './partida-presupuestaria-modal/partida-presupuestaria-modal.component';
+import { EntidadFinanciadoraEmpresaNombrePipe } from './pipes/entidad-financiadora-empresa-nombre.pipe';
+import { PlanProgramaPipe } from './pipes/plan-programa.pipe';
 import { SelectAreaTematicaComponent } from './select-area-tematica/select-area-tematica.component';
 import { SelectConceptoGastoComponent } from './select-concepto-gasto/select-concepto-gasto.component';
 import { SearchConvocatoriaModalComponent } from './select-convocatoria/dialog/search-convocatoria.component';
 import { SelectConvocatoriaComponent } from './select-convocatoria/select-convocatoria.component';
-import { SelectFuenteFinanciacionComponent } from './select-fuente-financiacion/select-fuente-financiacion.component';
 import { SearchGrupoModalComponent } from './select-dialog-grupo/dialog/search-grupo.component';
 import { SelectDialogGrupoComponent } from './select-dialog-grupo/select-dialog-grupo.component';
+import { SelectFuenteFinanciacionComponent } from './select-fuente-financiacion/select-fuente-financiacion.component';
 import { SelectGrupoComponent } from './select-grupo/select-grupo-component';
+import { SelectLineaInvestigacionComponent } from './select-linea-investigacion/select-linea-investigacion.component';
 import { SelectModeloEjecucionComponent } from './select-modelo-ejecucion/select-modelo-ejecucion.component';
 import { SelectProgramaComponent } from './select-programa/select-programa.component';
+import { SelectProyectoAnualidadComponent } from './select-proyecto-anualidad/select-proyecto-anualidad.component';
+import { SelectProyectoPeriodoJustificacionComponent } from './select-proyecto-periodo-justificacion/select-proyecto-periodo-justificacion.component';
+import { SelectProyectoProyectoSgeComponent } from './select-proyecto-proyecto-sge/select-proyecto-proyecto-sge.component';
 import { SearchProyectoModalComponent } from './select-proyecto/dialog/search-proyecto.component';
 import { SelectProyectoComponent } from './select-proyecto/select-proyecto.component';
+import { SelectRequerimientoJustificacionComponent } from './select-requerimiento-justificacion/select-requerimiento-justificacion.component';
 import { SelectTipoAmbitoGeograficoComponent } from './select-tipo-ambito-geografico/select-tipo-ambito-geografico.component';
 import { SelectTipoDocumentoComponent } from './select-tipo-documento/select-tipo-documento.component';
 import { SelectTipoEnlaceComponent } from './select-tipo-enlace/select-tipo-enlace.component';
@@ -32,15 +39,9 @@ import { SelectTipoFaseComponent } from './select-tipo-fase/select-tipo-fase.com
 import { SelectTipoFinalidadComponent } from './select-tipo-finalidad/select-tipo-finalidad.component';
 import { SelectTipoFinanciacionComponent } from './select-tipo-financiacion/select-tipo-financiacion.component';
 import { SelectTipoHitoComponent } from './select-tipo-hito/select-tipo-hito.component';
+import { SelectTipoRequerimientoComponent } from './select-tipo-requerimiento/select-tipo-requerimiento.component';
 import { SelectUnidadGestionComponent } from './select-unidad-gestion/select-unidad-gestion.component';
 import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-modal/solicitud-presupuesto-modal.component';
-import { SelectLineaInvestigacionComponent } from './select-linea-investigacion/select-linea-investigacion.component';
-import { EntidadFinanciadoraEmpresaNombrePipe } from './pipes/entidad-financiadora-empresa-nombre.pipe';
-import { SelectProyectoProyectoSgeComponent } from './select-proyecto-proyecto-sge/select-proyecto-proyecto-sge.component';
-import { SelectProyectoPeriodoJustificacionComponent } from './select-proyecto-periodo-justificacion/select-proyecto-periodo-justificacion.component';
-import { SelectTipoRequerimientoComponent } from './select-tipo-requerimiento/select-tipo-requerimiento.component';
-import { SelectRequerimientoJustificacionComponent } from './select-requerimiento-justificacion/select-requerimiento-justificacion.component';
-import { SelectProyectoAnualidadComponent } from './select-proyecto-anualidad/select-proyecto-anualidad.component';
 
 @NgModule({
   declarations: [
@@ -77,6 +78,7 @@ import { SelectProyectoAnualidadComponent } from './select-proyecto-anualidad/se
     SelectRequerimientoJustificacionComponent,
     SelectProyectoAnualidadComponent,
     EntidadFinanciadoraEmpresaNombrePipe,
+    PlanProgramaPipe
   ],
   imports: [
     SharedModule,
@@ -120,6 +122,7 @@ import { SelectProyectoAnualidadComponent } from './select-proyecto-anualidad/se
     SelectRequerimientoJustificacionComponent,
     SelectProyectoAnualidadComponent,
     EntidadFinanciadoraEmpresaNombrePipe,
+    PlanProgramaPipe
   ]
 })
 export class CspSharedModule { }

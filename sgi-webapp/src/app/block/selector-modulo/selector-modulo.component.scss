@@ -30,6 +30,10 @@
           outline: none;
         }
 
+        &.inv {
+          background-color: map-get($sgi-custom-colors, orange-inv);
+        }
+
         .module-icon {
           background-color: map-get($sgi-custom-colors, bg);
           border-radius: 4px 0 0 4px;

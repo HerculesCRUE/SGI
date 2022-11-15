@@ -6,6 +6,7 @@ import { IProyectoSocioPeriodoJustificacion } from '@core/models/csp/proyecto-so
 import { ActionService } from '@core/services/action-service';
 import { ProyectoSocioPeriodoJustificacionDocumentoService } from '@core/services/csp/proyecto-socio-periodo-justificacion-documento.service';
 import { ProyectoSocioPeriodoJustificacionService } from '@core/services/csp/proyecto-socio-periodo-justificacion.service';
+import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { NGXLogger } from 'ngx-logger';
 import { PROYECTO_SOCIO_PERIODO_JUSTIFICACION_DATA_KEY } from './proyecto-socio-periodo-justificacion-data.resolver';
 import { ProyectoSocioPeriodoJustificacionDatosGeneralesFragment } from './proyecto-socio-periodo-justificacion-formulario/proyecto-socio-periodo-justificacion-datos-generales/proyecto-socio-periodo-justificacion-datos-generales.fragment';
@@ -40,7 +41,8 @@ export class ProyectoSocioPeriodoJustificacionActionService extends ActionServic
     logger: NGXLogger,
     route: ActivatedRoute,
     proyectoSocioPeriodoJustificacionService: ProyectoSocioPeriodoJustificacionService,
-    proyectoSocioPeriodoJustificacionDocumentoService: ProyectoSocioPeriodoJustificacionDocumentoService
+    proyectoSocioPeriodoJustificacionDocumentoService: ProyectoSocioPeriodoJustificacionDocumentoService,
+    documentoService: DocumentoService
   ) {
     super();
 
@@ -52,10 +54,21 @@ export class ProyectoSocioPeriodoJustificacionActionService extends ActionServic
     }
 
     this.datosGenerales = new ProyectoSocioPeriodoJustificacionDatosGeneralesFragment(
-      id, proyectoSocioPeriodoJustificacionService, this.data.proyectoSocio,
-      this.data.proyecto, this.data?.proyectoSocioPeriodosJustificacion, this.data.readonly);
-    this.documentos = new ProyectoSocioPeriodoJustificacionDocumentosFragment(logger, id,
-      proyectoSocioPeriodoJustificacionService, proyectoSocioPeriodoJustificacionDocumentoService);
+      id,
+      proyectoSocioPeriodoJustificacionService,
+      this.data.proyectoSocio,
+      this.data.proyecto,
+      this.data?.proyectoSocioPeriodosJustificacion,
+      this.data.readonly
+    );
+
+    this.documentos = new ProyectoSocioPeriodoJustificacionDocumentosFragment(
+      logger,
+      id,
+      proyectoSocioPeriodoJustificacionService,
+      proyectoSocioPeriodoJustificacionDocumentoService,
+      documentoService
+    );
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);
     this.addFragment(this.FRAGMENT.DOCUMENTOS, this.documentos);

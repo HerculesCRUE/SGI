@@ -237,4 +237,12 @@ public interface EvaluacionService {
    * 
    */
   void sendComunicadoInformeSeguimientoAnualPendiente();
+
+  /**
+   * Obtiene el secretario activo de la fecha de evaluación
+   * 
+   * @param idEvaluacion id de la {@link Evaluacion}
+   * @return secretario de la evaluación
+   */
+  Evaluador findSecretarioEvaluacion(Long idEvaluacion);
 }

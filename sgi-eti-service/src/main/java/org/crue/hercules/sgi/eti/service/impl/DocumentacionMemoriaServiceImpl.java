@@ -74,8 +74,7 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
    */
   @Override
   @Transactional
-  public DocumentacionMemoria createDocumentacionInicial(Long idMemoria, DocumentacionMemoria documentacionMemoria,
-      Authentication authentication) {
+  public DocumentacionMemoria createDocumentacionInicial(Long idMemoria, DocumentacionMemoria documentacionMemoria) {
     log.debug("Petición a create DocumentacionMemoria : {} - start", documentacionMemoria);
     Assert.isNull(documentacionMemoria.getId(),
         MSG_DOCUMENTACION_MEMORIA_ID_TIENE_QUE_SER_NULL_PARA_CREAR_UN_NUEVO_DOCUMENTACION_MEMORIA);
@@ -83,23 +82,48 @@ public class DocumentacionMemoriaServiceImpl implements DocumentacionMemoriaServ
     Assert.notNull(idMemoria,
         "El identificador de la memoria no puede ser null para crear un nuevo documento asociado a esta");
 
-    Boolean isGestor = authentication.getAuthorities().stream()
-        .anyMatch(authority -> authority.getAuthority().startsWith("ETI-MEM-EDOC"));
+    return memoriaRepository.findByIdAndActivoTrue(idMemoria).map(memoria -> {
+      TipoEstadoMemoria.Tipo estado = TipoEstadoMemoria.Tipo.fromId(memoria.getEstadoActual().getId());
+
+      Assert.isTrue((estado.getId() >= TipoEstadoMemoria.Tipo.EN_EVALUACION.getId()),
+          MSG_LA_MEMORIA_NO_SE_ENCUENTRA_EN_UN_ESTADO_ADECUADO_PARA_ANADIR_DOCUMENTACION);
+
+      documentacionMemoria.setMemoria(memoria);
+      return documentacionMemoriaRepository.save(documentacionMemoria);
+    }).orElseThrow(() -> new MemoriaNotFoundException(idMemoria));
+
+  }
+
+  /**
+   * Crea {@link DocumentacionMemoria} inicial de una memoria (aquella
+   * documentación que no es de seguimiento anual, final o retrospectiva).
+   *
+   * @param idMemoria            Id de la {@link Memoria}
+   * @param documentacionMemoria la entidad {@link DocumentacionMemoria} a
+   *                             guardar.
+   * @return la entidad {@link DocumentacionMemoria} persistida.
+   */
+  @Override
+  @Transactional
+  public DocumentacionMemoria createDocumentacionInicialInvestigador(Long idMemoria,
+      DocumentacionMemoria documentacionMemoria) {
+    log.debug("createDocumentacionInicialInvestigador({}, {}) - start", idMemoria, documentacionMemoria);
+    Assert.isNull(documentacionMemoria.getId(),
+        MSG_DOCUMENTACION_MEMORIA_ID_TIENE_QUE_SER_NULL_PARA_CREAR_UN_NUEVO_DOCUMENTACION_MEMORIA);
+
+    Assert.notNull(idMemoria,
+        "El identificador de la memoria no puede ser null para crear un nuevo documento asociado a esta");
 
     return memoriaRepository.findByIdAndActivoTrue(idMemoria).map(memoria -> {
       TipoEstadoMemoria.Tipo estado = TipoEstadoMemoria.Tipo.fromId(memoria.getEstadoActual().getId());
-      if (isGestor.booleanValue()) {
-        Assert.isTrue((estado.getId() >= TipoEstadoMemoria.Tipo.EN_EVALUACION.getId()),
-            MSG_LA_MEMORIA_NO_SE_ENCUENTRA_EN_UN_ESTADO_ADECUADO_PARA_ANADIR_DOCUMENTACION);
-      } else {
-        Assert.isTrue(
-            (estado == TipoEstadoMemoria.Tipo.EN_ELABORACION || estado == TipoEstadoMemoria.Tipo.COMPLETADA
-                || estado == TipoEstadoMemoria.Tipo.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS
-                || estado == TipoEstadoMemoria.Tipo.PENDIENTE_CORRECCIONES
-                || estado == TipoEstadoMemoria.Tipo.NO_PROCEDE_EVALUAR
-                || estado.getId() >= TipoEstadoMemoria.Tipo.FIN_EVALUACION.getId()),
-            MSG_LA_MEMORIA_NO_SE_ENCUENTRA_EN_UN_ESTADO_ADECUADO_PARA_ANADIR_DOCUMENTACION);
-      }
+
+      Assert.isTrue(
+          (estado == TipoEstadoMemoria.Tipo.EN_ELABORACION || estado == TipoEstadoMemoria.Tipo.COMPLETADA
+              || estado == TipoEstadoMemoria.Tipo.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS
+              || estado == TipoEstadoMemoria.Tipo.PENDIENTE_CORRECCIONES
+              || estado == TipoEstadoMemoria.Tipo.NO_PROCEDE_EVALUAR
+              || estado.getId() >= TipoEstadoMemoria.Tipo.FIN_EVALUACION.getId()),
+          MSG_LA_MEMORIA_NO_SE_ENCUENTRA_EN_UN_ESTADO_ADECUADO_PARA_ANADIR_DOCUMENTACION);
 
       documentacionMemoria.setMemoria(memoria);
       return documentacionMemoriaRepository.save(documentacionMemoria);

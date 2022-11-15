@@ -24,7 +24,13 @@
             {{ 'error.required.entity' | translate:msgParamTipoEntity }}
           </mat-error>
           <mat-error *ngIf="formGroup.controls.tipoJustificacion.errors?.notAllowed">
-            {{'error.csp.proyecto-periodo-justificacion.tipo.duplicate' | translate}}
+            <ng-container
+              *ngIf="formGroup.controls.tipoJustificacion.value !== formGroup.controls.tipoJustificacionConvocatoria.value else duplicateFromCopy">
+              {{'error.csp.proyecto-periodo-justificacion.tipo.duplicate' | translate}}
+            </ng-container>
+            <ng-template #duplicateFromCopy>
+              {{'error.csp.proyecto-periodo-justificacion.tipo.duplicate-convocatoria' | translate}}
+            </ng-template>
           </mat-error>
           <mat-error *ngIf="formGroup.controls.tipoJustificacion.errors?.finalNotLast">
             {{'error.csp.proyecto-periodo-justificacion.tipo.last' | translate}}
@@ -51,6 +57,12 @@
           <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.overlapped">
             {{ 'error.periodo.justificacion.overlapping.range.fecha-inicio' | translate }}
           </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.minDate">
+            {{'error.csp.proyecto-calendario-facturacion.fecha-inicio.after' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.maxDate">
+            {{'error.start.period' | translate}}
+          </mat-error>
         </mat-form-field>
 
         <!-- Fecha fin -->
@@ -68,6 +80,9 @@
           </mat-error>
           <mat-error *ngIf="formGroup.controls.fechaFin.errors?.overlapped">
             {{ 'error.periodo.justificacion.overlapping.range.fecha-fin' | translate }}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.fechaFin.errors?.maxDate">
+            {{'error.csp.proyecto-calendario-facturacion.fecha-fin.before' | translate}}
           </mat-error>
         </mat-form-field>
       </div>
@@ -141,12 +156,12 @@
         <!-- Fecha inicio Convocatoria-->
         <mat-form-field>
           <mat-label>{{'csp.proyecto-periodo-justificacion.fecha-inicio' | translate}}</mat-label>
-          <input matInput [ngxMatDatetimePicker]="pickerFechaInicioConvocatoria"
-            formControlName="fechaInicioConvocatoria" required>
+          <input matInput [matDatepicker]="pickerFechaInicioConvocatoria" formControlName="fechaInicioConvocatoria"
+            required>
           <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicioConvocatoria">
           </mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #pickerFechaInicioConvocatoria showSeconds="true" [defaultTime]="[0,0,0]">
-          </ngx-mat-datetime-picker>
+          <mat-datepicker #pickerFechaInicioConvocatoria>
+          </mat-datepicker>
           <mat-error *ngIf="formGroup.controls.fechaInicioConvocatoria.errors?.required">
             {{ 'error.required.entity' | translate:msgParamFechaInicioEntity }}
           </mat-error>
@@ -156,14 +171,13 @@
         </mat-form-field>
 
         <!-- Fecha fin Convocatoria -->
-        <mat-form-field>
+        <mat-form-field sgiEndDate>
           <mat-label>{{'csp.proyecto-periodo-justificacion.fecha-fin' | translate}}</mat-label>
-          <input matInput [ngxMatDatetimePicker]="pickerFechafinConvocatoria" formControlName="fechaFinConvocatoria"
-            required>
+          <input matInput [matDatepicker]="pickerFechafinConvocatoria" formControlName="fechaFinConvocatoria" required>
           <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechafinConvocatoria">
           </mat-datepicker-toggle>
-          <ngx-mat-datetime-picker #pickerFechafinConvocatoria showSeconds="true" [defaultTime]="[23,59,59]">
-          </ngx-mat-datetime-picker>
+          <mat-datepicker #pickerFechafinConvocatoria>
+          </mat-datepicker>
           <mat-error *ngIf="formGroup.controls.fechaFinConvocatoria.errors?.required">
             {{ 'error.required.entity' | translate:msgParamFechaFinEntity }}
           </mat-error>

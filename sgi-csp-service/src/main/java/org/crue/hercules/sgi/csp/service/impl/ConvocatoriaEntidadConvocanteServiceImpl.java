@@ -1,15 +1,19 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaEntidadConvocanteNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.EntidadConvocanteDuplicatedException;
 import org.crue.hercules.sgi.csp.exceptions.ProgramaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessSolicitudException;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
+import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadConvocanteRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
@@ -19,6 +23,7 @@ import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaEntidadCon
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaEntidadConvocanteService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
@@ -63,6 +68,96 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
   }
 
   /**
+   * Actualiza el listado de {@link ConvocatoriaEntidadConvocante} de la
+   * {@link Convocatoria} con el listado entidadesConvocantes
+   * creando, editando o eliminando los elementos segun proceda.
+   *
+   * @param convocatoriaId       Id de la {@link Convocatoria}.
+   * @param entidadesConvocantes lista con los nuevos
+   *                             {@link ConvocatoriaEntidadConvocante} a guardar.
+   * @return la lista de entidades {@link ConvocatoriaEntidadConvocante}
+   *         persistida.
+   */
+  @Override
+  @Transactional
+  public List<ConvocatoriaEntidadConvocante> updateEntidadesConvocantesConvocatoria(Long convocatoriaId,
+      List<ConvocatoriaEntidadConvocante> entidadesConvocantes) {
+    log.debug(
+        "updateEntidadesConvocantesConvocatoria(Long convocatoriaId, List<ConvocatoriaEntidadConvocante> entidadesConvocantes) - start");
+
+    AssertHelper.idNotNull(convocatoriaId, Convocatoria.class);
+    List<ConvocatoriaEntidadConvocante> entidadesConvocantesUpdated = entidadesConvocantes.stream()
+        .map(entidadConvocante -> {
+          checkDuplicated(entidadConvocante, entidadesConvocantes);
+
+          if (entidadConvocante.getPrograma() == null || entidadConvocante.getPrograma().getId() == null) {
+            entidadConvocante.setPrograma(null);
+          } else {
+            entidadConvocante
+                .setPrograma(programaRepository.findById(entidadConvocante.getPrograma().getId())
+                    .orElseThrow(
+                        () -> new ProgramaNotFoundException(entidadConvocante.getPrograma().getId())));
+            Assert.isTrue(entidadConvocante.getPrograma().getActivo(), "El Programa debe estar Activo");
+          }
+
+          entidadConvocante.setConvocatoriaId(convocatoriaId);
+
+          return entidadConvocante;
+        }).collect(Collectors.toList());
+
+    Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaId)
+        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaId));
+
+    // comprobar si convocatoria es modificable
+    Assert.isTrue(
+        convocatoriaService.isRegistradaConSolicitudesOProyectos(convocatoriaId,
+            convocatoria.getUnidadGestionRef(), new String[] {
+                ConvocatoriaAuthorityHelper.CSP_CON_C,
+                ConvocatoriaAuthorityHelper.CSP_CON_E
+            }),
+        "No se puede crear ConvocatoriaEntidadConvocante. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+
+    Specification<ConvocatoriaEntidadConvocante> specs = ConvocatoriaEntidadConvocanteSpecifications
+        .byConvocatoriaId(convocatoriaId);
+    List<ConvocatoriaEntidadConvocante> entidadesConvocantesBD = repository.findAll(specs);
+
+    // Entidades Convocantes eliminados
+    List<ConvocatoriaEntidadConvocante> entiadesConvocantesEliminar = entidadesConvocantesBD.stream()
+        .filter(entidadConvocante -> entidadesConvocantesUpdated.stream().map(ConvocatoriaEntidadConvocante::getId)
+            .noneMatch(id -> Objects.equals(id, entidadConvocante.getId())))
+        .collect(Collectors.toList());
+
+    if (!entiadesConvocantesEliminar.isEmpty()) {
+      repository.deleteAll(entiadesConvocantesEliminar);
+    }
+
+    if (entidadesConvocantes.isEmpty()) {
+      return new ArrayList<>();
+    }
+
+    // Entidades Convocantes crear/actualizar
+    List<ConvocatoriaEntidadConvocante> entidadesConvocantesCreateOrUpdate = entidadesConvocantesUpdated.stream()
+        .map(entidadConvocanteUpdated -> {
+          if (entidadConvocanteUpdated.getId() == null) {
+            return entidadConvocanteUpdated;
+          }
+
+          ConvocatoriaEntidadConvocante entidadConvocanteBD = entidadesConvocantesBD.stream()
+              .filter(entidad -> entidad.getId().equals(entidadConvocanteUpdated.getId()))
+              .findFirst().get();
+
+          return copyUpdatedValues(entidadConvocanteBD, entidadConvocanteUpdated);
+        })
+        .collect(Collectors.toList());
+
+    List<ConvocatoriaEntidadConvocante> returnValue = repository.saveAll(entidadesConvocantesCreateOrUpdate);
+
+    log.debug(
+        "updateEntidadesConvocantesConvocatoria(Long convocatoriaId, List<ConvocatoriaEntidadConvocante> entidadesConvocantes) - end");
+    return returnValue;
+  }
+
+  /**
    * Guardar un nuevo {@link ConvocatoriaEntidadConvocante}.
    *
    * @param convocatoriaEntidadConvocante la entidad
@@ -94,8 +189,10 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
         "No se puede crear ConvocatoriaEntidadConvocante. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
 
     Assert.isTrue(
-        !repository.findByConvocatoriaIdAndEntidadRef(convocatoriaEntidadConvocante.getConvocatoriaId(),
-            convocatoriaEntidadConvocante.getEntidadRef()).isPresent(),
+        !repository.findByConvocatoriaIdAndEntidadRefAndProgramaId(
+            convocatoriaEntidadConvocante.getConvocatoriaId(),
+            convocatoriaEntidadConvocante.getEntidadRef(),
+            convocatoriaEntidadConvocante.getPrograma().getId()).isPresent(),
         "Ya existe una asociación activa para esa Convocatoria y Entidad");
 
     if (convocatoriaEntidadConvocante.getPrograma() != null) {
@@ -140,8 +237,10 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
           "No se puede modificar ConvocatoriaEntidadConvocante. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
 
       repository
-          .findByConvocatoriaIdAndEntidadRef(convocatoriaEntidadConvocanteActualizar.getConvocatoriaId(),
-              convocatoriaEntidadConvocanteActualizar.getEntidadRef())
+          .findByConvocatoriaIdAndEntidadRefAndProgramaId(
+              convocatoriaEntidadConvocanteActualizar.getConvocatoriaId(),
+              convocatoriaEntidadConvocanteActualizar.getEntidadRef(),
+              convocatoriaEntidadConvocanteActualizar.getPrograma().getId())
           .ifPresent(convocatoriaR -> Assert.isTrue(convocatoriaEntidadConvocante.getId().equals(convocatoriaR.getId()),
               "Ya existe una asociación activa para esa Convocatoria y Entidad"));
 
@@ -266,6 +365,73 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
     Page<ConvocatoriaEntidadConvocante> returnValue = repository.findAll(specs, pageable);
     log.debug("findAllBySolicitudAndUserIsSolicitanteOrTutor(Long solicitudId, Pageable pageable) - end");
     return returnValue;
+  }
+
+  private void checkDuplicated(ConvocatoriaEntidadConvocante entidadConvocante,
+      List<ConvocatoriaEntidadConvocante> entidadesConvocantes) {
+
+    if (entidadesConvocantes.isEmpty()) {
+      return;
+    }
+
+    List<ConvocatoriaEntidadConvocante> otherEntidadesConvocantes = entidadesConvocantes.stream()
+        .filter(entidad -> !(Objects.equals(entidad.getEntidadRef(), entidadConvocante.getEntidadRef())
+            && Objects.equals(
+                entidad.getPrograma() != null ? entidad.getPrograma().getId() : null,
+                entidadConvocante.getPrograma() != null ? entidadConvocante.getPrograma().getId() : null)))
+        .collect(Collectors.toList());
+
+    if (otherEntidadesConvocantes.size() != (entidadesConvocantes.size() - 1)) {
+      throw new EntidadConvocanteDuplicatedException();
+    }
+
+    boolean duplicated = otherEntidadesConvocantes.stream()
+        .anyMatch(entidad -> isDuplicated(entidad, entidadConvocante));
+
+    if (duplicated) {
+      throw new EntidadConvocanteDuplicatedException();
+    }
+  }
+
+  private boolean isDuplicated(
+      ConvocatoriaEntidadConvocante entidadConvocante1,
+      ConvocatoriaEntidadConvocante entidadConvocante2) {
+
+    Programa programaEntidadConvocante1 = entidadConvocante1.getPrograma();
+    Programa programaEntidadConvocante2 = entidadConvocante2.getPrograma();
+
+    boolean entidadRefEquals = entidadConvocante1.getEntidadRef().equals(entidadConvocante2.getEntidadRef());
+    boolean programaNull = programaEntidadConvocante1 == null || programaEntidadConvocante2 == null;
+
+    boolean inProgramaParentsEntidad1 = programaEntidadConvocante2 != null
+        && getProgramaParentsIds(programaEntidadConvocante1, new ArrayList<>())
+            .contains(programaEntidadConvocante2.getId());
+    boolean inProgramaParentsEntidad2 = programaEntidadConvocante1 != null
+        && getProgramaParentsIds(programaEntidadConvocante2, new ArrayList<>())
+            .contains(programaEntidadConvocante1.getId());
+
+    return entidadRefEquals && (programaNull || inProgramaParentsEntidad1 || inProgramaParentsEntidad2);
+  }
+
+  private List<Long> getProgramaParentsIds(Programa programa, List<Long> programaIds) {
+    if (programa == null) {
+      return programaIds;
+    }
+
+    programaIds.add(programa.getId());
+
+    if (programa.getPadre() != null) {
+      this.getProgramaParentsIds(programa.getPadre(), programaIds);
+    }
+
+    return programaIds;
+  }
+
+  private ConvocatoriaEntidadConvocante copyUpdatedValues(
+      ConvocatoriaEntidadConvocante entidadConvocante,
+      ConvocatoriaEntidadConvocante entidadConvocanteUpdated) {
+    entidadConvocante.setPrograma(entidadConvocanteUpdated.getPrograma());
+    return entidadConvocante;
   }
 
 }

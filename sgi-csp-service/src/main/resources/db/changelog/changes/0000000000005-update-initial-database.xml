@@ -202,6 +202,8 @@
     <addForeignKeyConstraint baseColumnNames="convocatoria_hito_aviso_id" baseTableName="convocatoria_hito" constraintName="FK_CONVOCATORIAHITO_CONVOCATORIAHITOAVISO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="convocatoria_hito_aviso" validate="true" />
   </changeSet>
   <changeSet author="user (generated)" id="0000000000005-27">
+    <validCheckSum>8:6130bc46caba499e5c4e875063aeb2b9</validCheckSum>
+    <dropDefaultValue columnDataType="boolean" columnName="genera_aviso" tableName="convocatoria_hito" />
     <dropColumn columnName="genera_aviso" tableName="convocatoria_hito" />
   </changeSet>
 

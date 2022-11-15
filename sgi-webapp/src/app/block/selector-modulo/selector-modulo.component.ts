@@ -10,8 +10,12 @@ import { Module } from '@core/module';
 })
 export class SelectorModuloComponent extends DialogCommonComponent {
 
-  get modulos() {
-    return Module.values;
+  get mainModules(): Module[] {
+    return Module.mainModules;
+  }
+
+  get invModule(): Module {
+    return Module.INV;
   }
 
   constructor(

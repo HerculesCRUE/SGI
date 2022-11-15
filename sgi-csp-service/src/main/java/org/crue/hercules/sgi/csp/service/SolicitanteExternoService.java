@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
-import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
+import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.exceptions.SolicitanteExternoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToModifySolicitudException;
@@ -240,11 +240,12 @@ public class SolicitanteExternoService {
     log.debug("enviarComunicadoSolicitudExterna(Solicitud solicitud) - start");
     try {
 
-      Convocatoria convocatoria = convocatoriaRepository
-          .findOne(ConvocatoriaSpecifications.bySolicitudId(solicitudId))
-          .orElseThrow(() -> new ConvocatoriaNotFoundException(solicitudId));
+      String tituloConvocatoria = this.convocatoriaRepository
+          .findOne(ConvocatoriaSpecifications.bySolicitudId(solicitudId)).map(Convocatoria::getTitulo)
+          .orElseGet(() -> this.solicitudRepository.findById(solicitudId).map(Solicitud::getConvocatoriaExterna)
+              .orElse(StringUtils.EMPTY));
 
-      this.solicitudComService.enviarComunicadoSolicitudUsuarioExterno(solicitudId, convocatoria.getTitulo(),
+      this.solicitudComService.enviarComunicadoSolicitudUsuarioExterno(solicitudId, tituloConvocatoria,
           uuid.toString());
 
       log.debug("enviarComunicadoSolicitudExterna(Solicitud solicitud) - end");

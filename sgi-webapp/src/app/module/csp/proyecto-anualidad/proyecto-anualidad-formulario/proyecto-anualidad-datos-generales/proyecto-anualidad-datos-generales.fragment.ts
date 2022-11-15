@@ -4,9 +4,10 @@ import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
 import { FormFragment } from '@core/services/action-service';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
 import { DateValidator } from '@core/validators/date-validator';
+import { NumberValidator } from '@core/validators/number-validator';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 export class ProyectoAnualidadDatosGeneralesFragment extends FormFragment<IProyectoAnualidad> {
   proyectoAnualidad: IProyectoAnualidad;
@@ -30,24 +31,16 @@ export class ProyectoAnualidadDatosGeneralesFragment extends FormFragment<IProye
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup(
       {
-        anualidad: new FormControl({
-          value: '',
-          disabled: this.isEdit()
-        }),
+        anualidad: new FormControl(''),
         fechaInicio: new FormControl({
           value: this.isAnualidadGenerica ? this.proyecto.fechaInicio : null,
-          disabled: this.isEdit() || this.isAnualidadGenerica
+          disabled: this.isAnualidadGenerica
         }),
         fechaFin: new FormControl({
           value: this.isAnualidadGenerica ? this.proyecto.fechaFin : null,
-          disabled: this.isEdit() || this.isAnualidadGenerica
+          disabled: this.isAnualidadGenerica
         }),
-        presupuestar: new FormControl({
-          value: null,
-          disabled: this.isEdit()
-        }, [
-          Validators.required
-        ]),
+        presupuestar: new FormControl(null, Validators.required),
       },
       {
         validators: [
@@ -57,7 +50,7 @@ export class ProyectoAnualidadDatosGeneralesFragment extends FormFragment<IProye
     );
 
     if (!this.isAnualidadGenerica) {
-      form.controls.anualidad.setValidators(Validators.required);
+      form.controls.anualidad.setValidators([Validators.required, Validators.pattern('^[1-9][0-9]{3}'), NumberValidator.isInteger()]);
     }
 
     this.subscriptions.push(
@@ -90,7 +83,9 @@ export class ProyectoAnualidadDatosGeneralesFragment extends FormFragment<IProye
   }
 
   protected initializer(key: number): Observable<IProyectoAnualidad> {
-    return this.service.findById(key);
+    return this.service.findById(key).pipe(
+      tap(proyectoAnualidad => this.proyectoAnualidad = proyectoAnualidad)
+    );
   }
 
   getValue(): IProyectoAnualidad {

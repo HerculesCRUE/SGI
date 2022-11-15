@@ -38,6 +38,7 @@ import org.crue.hercules.sgi.csp.model.EstadoProyecto.Estado;
 import org.crue.hercules.sgi.csp.model.EstadoProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
 import org.crue.hercules.sgi.csp.model.ModeloUnidad;
+import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAreaConocimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoClasificacion;
@@ -842,19 +843,15 @@ public class ProyectoServiceImpl implements ProyectoService {
         .findAll(specByConvocatoriaId);
 
     for (ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante : convocatoriaEntidadConvocantes) {
-      if (proyectoEntidadConvocanteService.existsByProyectoIdAndEntidadRef(proyectoId,
-          convocatoriaEntidadConvocante.getEntidadRef())) {
-        ProyectoEntidadConvocante proyectoEntidadConvocante = proyectoEntidadConvocanteService
-            .findByProyectoIdAndEntidadRef(proyectoId, convocatoriaEntidadConvocante.getEntidadRef());
-        proyectoEntidadConvocante.setProyectoId(proyectoId);
-        proyectoEntidadConvocante.setEntidadRef(convocatoriaEntidadConvocante.getEntidadRef());
-        proyectoEntidadConvocante.setProgramaConvocatoria(convocatoriaEntidadConvocante.getPrograma());
-        proyectoEntidadConvocanteService.update(proyectoEntidadConvocante);
-      } else {
-        ProyectoEntidadConvocante proyectoEntidadConvocante = new ProyectoEntidadConvocante();
-        proyectoEntidadConvocante.setProyectoId(proyectoId);
-        proyectoEntidadConvocante.setEntidadRef(convocatoriaEntidadConvocante.getEntidadRef());
-        proyectoEntidadConvocante.setProgramaConvocatoria(convocatoriaEntidadConvocante.getPrograma());
+      if (!proyectoEntidadConvocanteService.existsByProyectoIdAndEntidadRefAndProgramaConvocatoria(proyectoId,
+          convocatoriaEntidadConvocante.getEntidadRef(), convocatoriaEntidadConvocante.getPrograma())) {
+
+        ProyectoEntidadConvocante proyectoEntidadConvocante = ProyectoEntidadConvocante.builder()
+            .proyectoId(proyectoId)
+            .entidadRef(convocatoriaEntidadConvocante.getEntidadRef())
+            .programaConvocatoria(convocatoriaEntidadConvocante.getPrograma())
+            .build();
+
         proyectoEntidadConvocanteService.create(proyectoEntidadConvocante);
       }
     }
@@ -1119,6 +1116,8 @@ public class ProyectoServiceImpl implements ProyectoService {
       entidadProyecto.setProyectoId(proyecto.getId());
       entidadProyecto.setPrograma(entidadSolicitud.getPrograma());
       entidadProyecto.setEntidadRef(entidadSolicitud.getEntidadRef());
+      entidadProyecto.setProgramaConvocatoria(
+          Programa.builder().id(entidadSolicitud.getProgramaConvocatoriaId()).build());
 
       this.proyectoEntidadConvocanteService.create(entidadProyecto);
     });
@@ -1792,7 +1791,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
   private void copyPeriodosJustificacionFromConvocatoria(Proyecto proyecto, Long convocatoriaId) {
     // @formatter:off
-    this.proyectoPeriodoJustificacionRepository.saveAll(
+    List<ProyectoPeriodoJustificacion> proyectosPeriodosJustificacionSinEstado = this.proyectoPeriodoJustificacionRepository.saveAll(
       this.convocatoriaPeriodoJustificacionRepository.findAllByConvocatoriaId(convocatoriaId).stream()
         .filter(periodo -> checkIfFechaInicioIsInsideProyectoRange(proyecto, periodo))
         .map(periodo -> ProyectoPeriodoJustificacion.builder()
@@ -1802,7 +1801,6 @@ public class ProyectoServiceImpl implements ProyectoService {
           .fechaFinPresentacion(periodo.getFechaFinPresentacion())
           .tipoJustificacion(periodo.getTipo())
           .observaciones(periodo.getObservaciones())
-          .estado(createEstadoProyectoPeriodoJustificacionPendiente())
           .convocatoriaPeriodoJustificacionId(periodo.getId())
           .fechaInicio(PeriodDateUtil.calculateFechaInicioPeriodo(proyecto.getFechaInicio(),
               periodo.getMesInicial(), sgiConfigProperties.getTimeZone()))
@@ -1810,13 +1808,21 @@ public class ProyectoServiceImpl implements ProyectoService {
           .build()
         ).collect(Collectors.toList())
     );
+
+    if (!proyectosPeriodosJustificacionSinEstado.isEmpty()){
+      proyectosPeriodosJustificacionSinEstado.stream().forEach(periodoJustificacion ->{
+        periodoJustificacion.setEstado(this.createEstadoProyectoPeriodoJustificacionPendiente(periodoJustificacion.getId()));
+        proyectoPeriodoJustificacionRepository.save(periodoJustificacion);
+      });
+    }
     // @formatter: on
   }
 
-  private EstadoProyectoPeriodoJustificacion createEstadoProyectoPeriodoJustificacionPendiente() {
+  private EstadoProyectoPeriodoJustificacion createEstadoProyectoPeriodoJustificacionPendiente(Long idPeriodoJustificacion) {
     return this.estadoProyectoPeriodoJustificacionRepository.save(EstadoProyectoPeriodoJustificacion.builder()
       .estado(EstadoProyectoPeriodoJustificacion.TipoEstadoPeriodoJustificacion.PENDIENTE)
       .fechaEstado(Instant.now())
+      .proyectoPeriodoJustificacionId(idPeriodoJustificacion)
       .build());
   }
 

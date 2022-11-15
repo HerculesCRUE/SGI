@@ -72,16 +72,17 @@ export class ProyectoProrrogasFragment extends Fragment {
             return this.proyectoProrrogaService.deleteById(wrapped.value.id)
               .pipe(
                 tap(() => {
-                  this.prorrogasEliminados = this.prorrogasEliminados.filter(deletedProrroga =>
-                    deletedProrroga.value.id !== wrapped.value.id),
-                    map(() => {
-                      return from(documentos.items).pipe(
-                        mergeMap(documento => {
-                          return this.documentoService.eliminarFichero(documento.documentoRef);
-                        })
-                      );
-                    });
+                  this.prorrogasEliminados = this.prorrogasEliminados
+                    .filter(deletedProrroga => deletedProrroga.value.id !== wrapped.value.id);
                 }),
+                switchMap(() =>
+                  from(documentos.items).pipe(
+                    mergeMap(documento => {
+                      return this.documentoService.eliminarFichero(documento.documentoRef);
+                    }),
+                    takeLast(1)
+                  )
+                ),
                 takeLast(1)
               );
           })

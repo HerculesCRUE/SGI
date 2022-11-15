@@ -18,7 +18,7 @@ import { GrupoActionService } from '../../grupo.action.service';
 import { GrupoLineaInvestigacionFragment } from './grupo-linea-investigacion.fragment';
 
 const MSG_DELETE = marker('msg.delete.entity');
-const PROYECTO_EQUIPO_MIEMBRO_KEY = marker('csp.grupo-linea-investigacion');
+const GRUPO_LINEA_INVESTIGACION_KEY = marker('csp.grupo-linea-investigacion');
 const MODAL_TITLE_KEY = marker('csp.grupo-linea-investigacion');
 
 @Component({
@@ -82,7 +82,7 @@ export class GrupoLineaInvestigacionComponent extends FragmentComponent implemen
 
   private setupI18N(): void {
     this.translate.get(
-      PROYECTO_EQUIPO_MIEMBRO_KEY,
+      GRUPO_LINEA_INVESTIGACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamEntity = { entity: value });
 
@@ -92,13 +92,13 @@ export class GrupoLineaInvestigacionComponent extends FragmentComponent implemen
     ).subscribe((value) => this.modalTitleEntity = value);
 
     this.translate.get(
-      PROYECTO_EQUIPO_MIEMBRO_KEY,
+      GRUPO_LINEA_INVESTIGACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).pipe(
       switchMap((value) => {
         return this.translate.get(
           MSG_DELETE,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
         );
       })
     ).subscribe((value) => this.textoDelete = value);

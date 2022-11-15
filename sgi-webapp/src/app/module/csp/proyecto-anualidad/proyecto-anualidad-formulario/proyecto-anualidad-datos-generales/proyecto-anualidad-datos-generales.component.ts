@@ -1,13 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
 import { IProyectoAnualidadResumen } from '@core/models/csp/proyecto-anualidad-resumen';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { SnackBarService } from '@core/services/snack-bar.service';
+import { NumberValidator } from '@core/validators/number-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { Subscription } from 'rxjs';
@@ -25,8 +24,6 @@ export class ProyectoAnualidadDatosGeneralesComponent extends FormFragmentCompon
   implements OnInit, OnDestroy {
 
   formPart: ProyectoAnualidadDatosGeneralesFragment;
-  fxLayoutProperties: FxLayoutProperties;
-  fxFlexProperties: FxFlexProperties;
   private subscriptions: Subscription[] = [];
 
   msgParamAnualidadEntity = {};
@@ -42,17 +39,6 @@ export class ProyectoAnualidadDatosGeneralesComponent extends FormFragmentCompon
 
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
     this.formPart = this.fragment as ProyectoAnualidadDatosGeneralesFragment;
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(36%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(33%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(32%-10px)';
-    this.fxFlexProperties.order = '2';
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
-
   }
 
   /**
@@ -77,8 +63,14 @@ export class ProyectoAnualidadDatosGeneralesComponent extends FormFragmentCompon
     this.setupI18N();
 
     if (!this.formPart.isAnualidadGenerica && !this.formPart.isEdit()) {
-      this.formGroup.controls.anualidad.setValidators(ProyectoAnualidadDatosGeneralesComponent.isDuplicated(
-        this.actionService.anualidades));
+      this.formGroup.controls.anualidad.setValidators(
+        [
+          Validators.required,
+          Validators.pattern('^[1-9][0-9]{3}'),
+          NumberValidator.isInteger(),
+          ProyectoAnualidadDatosGeneralesComponent.isDuplicated(this.actionService.anualidades)
+        ]
+      );
     }
   }
 
@@ -86,7 +78,7 @@ export class ProyectoAnualidadDatosGeneralesComponent extends FormFragmentCompon
     this.translate.get(
       PROYECTO_ANUALIDAD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamAnualidadEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE });
+    ).subscribe((value) => this.msgParamAnualidadEntity = { entity: value, ...MSG_PARAMS.CARDINALIRY.SINGULAR, ...MSG_PARAMS.GENDER.FEMALE });
   }
 
   ngOnDestroy(): void {

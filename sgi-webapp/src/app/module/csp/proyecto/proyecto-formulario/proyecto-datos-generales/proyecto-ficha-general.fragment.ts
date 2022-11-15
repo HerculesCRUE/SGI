@@ -492,8 +492,8 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       excelencia: proyecto.excelencia,
       clasificacionCVN: proyecto.clasificacionCVN,
       coordinado: proyecto.coordinado,
-      colaborativo: proyecto.colaborativo,
-      coordinadorExterno: proyecto.coordinadorExterno,
+      colaborativo: proyecto.coordinado ? proyecto.colaborativo : null,
+      coordinadorExterno: proyecto.coordinado ? proyecto.coordinadorExterno : null,
       permitePaquetesTrabajo: proyecto.permitePaquetesTrabajo,
       iva: proyecto.iva?.iva ?? null,
       causaExencion: proyecto.causaExencion,
@@ -847,4 +847,13 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
     return relacion.entidadOrigen.id === this.getKey() ? relacion.entidadDestino.id : relacion.entidadOrigen.id;
   }
 
+  disablePermitePaquetesTrabajoFormControl(): void {
+    this.getFormGroup()?.controls.permitePaquetesTrabajo.disable({ emitEvent: false });
+  }
+
+  enablePermitePaquetesTrabajoFormControl(): void {
+    if (!this.readonly) {
+      this.getFormGroup()?.controls.permitePaquetesTrabajo.enable({ emitEvent: false });
+    }
+  }
 }

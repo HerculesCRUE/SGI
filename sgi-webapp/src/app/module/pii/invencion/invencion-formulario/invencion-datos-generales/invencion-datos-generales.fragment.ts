@@ -16,6 +16,7 @@ import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { InvencionDocumentoService } from '@core/services/pii/invencion/invencion-documento/invencion-documento.service';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
 import { PeriodoTitularidadService } from '@core/services/pii/invencion/periodo-titularidad/periodo-titularidad.service';
+import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { AreaConocimientoService } from '@core/services/sgo/area-conocimiento.service';
 import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
@@ -66,7 +67,8 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
     private readonly invencionDocumentoService: InvencionDocumentoService,
     private readonly isEditPerm: boolean,
     private readonly periodoTitularidadService: PeriodoTitularidadService,
-    private readonly palabraClaveService: PalabraClaveService
+    private readonly palabraClaveService: PalabraClaveService,
+    private readonly documentoService: DocumentoService
   ) {
     super(key, true);
     this.invencion = {} as IInvencion;
@@ -131,7 +133,7 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
         if (invencion.proyecto?.id) {
           return this.proyectoService.findById(invencion.proyecto.id).pipe(
             map(proyecto =>
-              ({ ...invencion, proyecto: proyecto })
+              ({ ...invencion, proyecto })
             ));
         } else {
           return of(invencion);
@@ -149,7 +151,7 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
   }
 
   private loadAreasConocimiento(invencionId: number): Observable<StatusWrapper<IInvencionAreaConocimientoListado>[]> {
-    let areasConocimientoListado: StatusWrapper<IInvencionAreaConocimientoListado>[] = [];
+    const areasConocimientoListado: StatusWrapper<IInvencionAreaConocimientoListado>[] = [];
     const areasConocimientoListado$ = new Subject<StatusWrapper<IInvencionAreaConocimientoListado>[]>();
     this.subscriptions.push(this.invencionService.findAreasConocimiento(invencionId).pipe(
       map(response => response.map(invencionAreaConocimiento => {
@@ -354,15 +356,15 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
   private buildPeriodoTitularidadAtNow(invencion: IInvencion): IPeriodoTitularidad {
     return {
       fechaInicio: DateTime.now(),
-      invencion: invencion,
+      invencion
     } as IPeriodoTitularidad;
   }
 
   private createPeriodosTitularidadTitulares(periodoTitularidad: IPeriodoTitularidad): Observable<IInvencion> {
 
     const titulares: IPeriodoTitularidadTitular[] = [];
-    for (let [key, value] of this.groupInventoresForEntities()) {
-      titulares.push(this.buildPeriodoTitularidadTitular(value, key, periodoTitularidad))
+    for (const [key, value] of this.groupInventoresForEntities()) {
+      titulares.push(this.buildPeriodoTitularidadTitular(value, key, periodoTitularidad));
     }
 
     if (titulares.length === 0) {
@@ -480,8 +482,8 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
         map((invencionAreasConocimiento) => {
           const newAreasConocimientoListado: IInvencionAreaConocimientoListado[] = [];
           invencionAreasConocimiento.forEach(invencionAreaConocimiento => {
-            const areaConocimiento = this.areasConocimiento$.value.find(areaConocimiento =>
-              areaConocimiento.value.areaConocimiento.id === invencionAreaConocimiento.areaConocimiento.id
+            const areaConocimiento = this.areasConocimiento$.value.find(wrapper =>
+              wrapper.value.areaConocimiento.id === invencionAreaConocimiento.areaConocimiento.id
             );
             if (areaConocimiento) {
               newAreasConocimientoListado.push(
@@ -573,7 +575,7 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
       const wrapped = new StatusWrapper<IInvencionAreaConocimientoListado>(invencionAreaConocimientoListado);
       wrapped.setCreated();
       return wrapped;
-    })
+    });
 
     const current = this.areasConocimiento$.value;
     current.push(...wrappedList);
@@ -607,19 +609,26 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
     this.setChangesInvencionDatosGeneralesFragment({ hasChangesDocumentos: true });
   }
 
-  deleteDocumento(wrapper: StatusWrapper<IInvencionDocumento>): void {
+  deleteDocumento(wrapper: StatusWrapper<IInvencionDocumento>): Observable<void> {
     const current = this.documentos$.value;
     const index = current.findIndex(
       (value) => value === wrapper
     );
-    if (index >= 0) {
-      current.splice(index, 1);
-      this.documentos$.next(current);
-      if (!current.length) {
-        this.checkComplete();
-      }
-      this.setChangesInvencionDatosGeneralesFragment({ hasChangesSectoresAplicacion: true });
+
+    if (index < 0) {
+      return of(void 0);
     }
+
+    return this.documentoService.eliminarFichero(wrapper.value.documento.documentoRef).pipe(
+      tap(() => {
+        current.splice(index, 1);
+        this.documentos$.next(current);
+        if (!current.length) {
+          this.checkComplete();
+        }
+        this.setChangesInvencionDatosGeneralesFragment({ hasChangesSectoresAplicacion: true });
+      })
+    );
   }
 
   private setChangesInvencionDatosGeneralesFragment(status: Partial<IInvencionDatosGeneralesFragmentStatus> = {}): void {

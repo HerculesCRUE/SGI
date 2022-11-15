@@ -22,8 +22,8 @@ export class PlanInvestigacionDatosGeneralesFragment extends FormFragment<IProgr
 
   protected buildFormGroup(): FormGroup {
     const fb = new FormGroup({
-      nombre: new FormControl('', [Validators.maxLength(50)]),
-      descripcion: new FormControl('', [Validators.maxLength(250)]),
+      nombre: new FormControl('', [Validators.maxLength(200)]),
+      descripcion: new FormControl('', [Validators.maxLength(4000)]),
     });
     return fb;
   }

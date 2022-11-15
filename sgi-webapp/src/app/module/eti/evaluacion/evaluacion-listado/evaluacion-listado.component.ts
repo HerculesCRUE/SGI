@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -21,7 +22,6 @@ import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-pers
 import { TipoComentario } from '../evaluacion-listado-export.service';
 import { EvaluacionListadoExportModalComponent, IEvaluacionListadoModalData } from '../modals/evaluacion-listado-export-modal/evaluacion-listado-export-modal.component';
 
-const MSG_ERROR = marker('error.load');
 const EVALUACION_KEY = marker('eti.evaluacion');
 const MSG_SUCCESS_ENVIADO = marker('msg.envio-comunicado.entity.success');
 const MSG_ERROR_ENVIADO = marker('msg.envio-comunicado.entity.error');
@@ -60,8 +60,7 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
     private readonly translate: TranslateService,
     private matDialog: MatDialog
   ) {
-
-    super(snackBarService, MSG_ERROR);
+    super();
 
     this.totalElementos = 0;
 
@@ -121,12 +120,11 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IEvaluacion>> {
-    const observable$ = this.evaluacionesService.findAllByMemoriaAndRetrospectivaEnEvaluacion(this.getFindOptions(reset));
-    return observable$;
+    return this.evaluacionesService.findAllByMemoriaAndRetrospectivaEnEvaluacion(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {
-    this.displayedColumns = ['memoria.comite.comite', 'tipoEvaluacion', 'fechaDictamen', 'memoria.numReferencia', 'solicitante',
+    this.displayedColumns = ['memoria.comite.comite', 'tipoEvaluacion', 'memoria.tipoMemoria.nombre', 'fechaDictamen', 'memoria.numReferencia', 'solicitante',
       'dictamen.nombre', 'version', 'acciones'];
   }
 
@@ -171,8 +169,8 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
   /**
    * Clean filters an reload the table
    */
-  onClearFilters(): void {
-    super.onClearFilters();
+  protected resetFilters(): void {
+    super.resetFilters();
     this.formGroup.controls.fechaEvaluacionInicio.setValue(null);
     this.formGroup.controls.fechaEvaluacionFin.setValue(null);
   }
@@ -190,10 +188,10 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
   }
 
   /**
- * Notificar de cambios en la memoria realizados
- * @param evaluacionId id de la evaluación modificada que se quiere notificar.
- * @param event evento lanzado.
- */
+   * Notificar de cambios en la memoria realizados
+   * @param evaluacionId id de la evaluación modificada que se quiere notificar.
+   * @param event evento lanzado.
+   */
   notificarCambiosMemoria(evaluacionId: number, $event: Event): void {
     this.evaluacionesService.enviarComunicado(evaluacionId).subscribe(
       (response) => {
@@ -201,11 +199,16 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
           this.snackBarService.showSuccess(this.textoEnviadoSuccess);
           this.loadTable();
         } else {
-          this.snackBarService.showError(this.textoEnviadoError);
+          this.processError(new SgiError(this.textoEnviadoError));
         }
       },
       (error) => {
-        this.snackBarService.showError(this.textoEnviadoError);
+        if (error instanceof SgiError) {
+          this.processError(error);
+        }
+        else {
+          this.processError(new SgiError(this.textoEnviadoError));
+        }
       }
     );
   }

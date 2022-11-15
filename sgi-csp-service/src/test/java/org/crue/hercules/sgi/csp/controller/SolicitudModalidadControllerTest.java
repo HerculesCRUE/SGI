@@ -213,6 +213,7 @@ class SolicitudModalidadControllerTest extends BaseControllerTest {
     solicitudModalidad.setEntidadRef("entidadRef");
     solicitudModalidad.setSolicitudId(1L);
     solicitudModalidad.setPrograma(programa);
+    solicitudModalidad.setProgramaConvocatoriaId(1L);
 
     return solicitudModalidad;
   }

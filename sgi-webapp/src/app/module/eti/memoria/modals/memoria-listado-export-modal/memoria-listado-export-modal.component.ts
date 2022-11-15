@@ -55,18 +55,11 @@ export class MemoriaListadoExportModalComponent extends
     this.formGroup = this.buildFormGroup();
   }
 
-  selectUnselectAll($event: MatCheckboxChange): void {
-    Object.keys(this.formGroup.controls).forEach(key => {
-      if (key.startsWith('show')) {
-        this.formGroup.get(key).patchValue($event.checked);
-      }
-    });
-  }
-
   protected buildFormGroup(): FormGroup {
     return new FormGroup({
       outputType: new FormControl(OutputReport.XLSX, Validators.required),
       hideBlocksIfNoData: new FormControl(true),
+
       showEvaluaciones: new FormControl(true),
     });
   }

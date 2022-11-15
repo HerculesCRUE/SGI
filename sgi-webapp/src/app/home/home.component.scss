@@ -1,7 +1,9 @@
 @import "colors.scss";
 
 :host {
-  .module {
+
+  .module,
+  .module-inv {
     margin: 1.5em;
     cursor: pointer;
 
@@ -20,5 +22,13 @@
       white-space: pre-wrap;
       margin: auto;
     }
+  }
+
+  .module-inv {
+    background-color: map-get($sgi-custom-colors, orange-inv);
+  }
+
+  .module-divider {
+    width: 90%;
   }
 }

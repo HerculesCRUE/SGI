@@ -15,7 +15,7 @@ import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ISolicitudReportData, ISolicitudReportOptions } from './solicitud-listado-export.service';
 
-const CODIGO_INTERNO_KEY = marker('csp.solicitud.codigo');
+const CODIGO_INTERNO_KEY = marker('csp.solicitud.codigo-registro');
 const CODIGO_EXTERNO_KEY = marker('csp.solicitud.codigo-externo');
 const REFERENCIA_KEY = marker('csp.solicitud.referencia-convocatoria.no-registrada-sgi');
 const CONVOCATORIA_SGI_KEY = marker('csp.solicitud.convocatoria-sgi');

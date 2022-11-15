@@ -54,11 +54,17 @@ import lombok.extern.slf4j.Slf4j;
  * MemoriaController
  */
 @RestController
-@RequestMapping("/memorias")
+@RequestMapping(MemoriaController.REQUEST_MAPPING)
 @Slf4j
 public class MemoriaController {
 
-  private static final String GET_INFORMES_FORMULARIO_LONG_ID_PAGEABLE_PAGEABLE_END = "getInformesFormulario(Long id, Pageable pageable) - end";
+  public static final String PATH_DELIMITER = "/";
+  public static final String REQUEST_MAPPING = PATH_DELIMITER + "memorias";
+  public static final String PATH_INVESTIGADOR = PATH_DELIMITER + "investigador";
+
+  public static final String PATH_ID = PATH_DELIMITER + "{id}";
+  public static final String PATH_DOCUMENTACION_INICIAL = PATH_ID + PATH_DELIMITER + "documentacion-inicial";
+  public static final String PATH_DOCUMENTACION_INICIAL_INVESTIGADOR = PATH_DOCUMENTACION_INICIAL + PATH_INVESTIGADOR;
 
   /** Memoria service */
   private final MemoriaService service;
@@ -474,18 +480,36 @@ public class MemoriaController {
    * @param id                   Identificador de la {@link Memoria}.
    * @param documentacionMemoria {@link DocumentacionMemoria}. que se quiere
    *                             crear.
-   * @param authentication       Authentication
    * @return Nueva {@link DocumentacionMemoria} creada.
    */
-  @PostMapping("/{id}/documentacion-inicial")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V', 'ETI-MEM-EDOC')")
+  @PostMapping(PATH_DOCUMENTACION_INICIAL)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-EDOC')")
   public ResponseEntity<DocumentacionMemoria> newDocumentacionMemoriaInicial(@PathVariable Long id,
-      @Valid @RequestBody DocumentacionMemoria documentacionMemoria, Authentication authentication) {
+      @Valid @RequestBody DocumentacionMemoria documentacionMemoria) {
     log.debug("newDocumentacionMemoriaInicial(Long id, DocumentacionMemoria documentacionMemoria) - start");
-    DocumentacionMemoria returnValue = documentacionMemoriaService.createDocumentacionInicial(id, documentacionMemoria,
-        authentication);
+    DocumentacionMemoria returnValue = documentacionMemoriaService.createDocumentacionInicial(id, documentacionMemoria);
 
     log.debug("newDocumentacionMemoriaInicial(Long id, DocumentacionMemoria documentacionMemoria) - end");
+    return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
+  }
+
+  /**
+   * Crea nueva {@link DocumentacionMemoria}.
+   * 
+   * @param id                   Identificador de la {@link Memoria}.
+   * @param documentacionMemoria {@link DocumentacionMemoria}. que se quiere
+   *                             crear.
+   * @return Nueva {@link DocumentacionMemoria} creada.
+   */
+  @PostMapping(PATH_DOCUMENTACION_INICIAL_INVESTIGADOR)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER')")
+  public ResponseEntity<DocumentacionMemoria> newDocumentacionMemoriaInicialInvestigador(@PathVariable Long id,
+      @Valid @RequestBody DocumentacionMemoria documentacionMemoria) {
+    log.debug("newDocumentacionMemoriaInicialInvestigador(Long id, DocumentacionMemoria documentacionMemoria) - start");
+    DocumentacionMemoria returnValue = documentacionMemoriaService.createDocumentacionInicialInvestigador(id,
+        documentacionMemoria);
+
+    log.debug("newDocumentacionMemoriaInicialInvestigador(Long id, DocumentacionMemoria documentacionMemoria) - end");
     return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
   }
 
@@ -561,16 +585,10 @@ public class MemoriaController {
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V')")
   public ResponseEntity<Page<Informe>> getInformesFormulario(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable pageable) {
-
+    log.debug("getInformesFormulario(Long id, Pageable pageable) - start");
     Page<Informe> page = informeService.findByMemoria(id, pageable);
-
-    if (page.isEmpty()) {
-      log.debug(GET_INFORMES_FORMULARIO_LONG_ID_PAGEABLE_PAGEABLE_END);
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    log.debug(GET_INFORMES_FORMULARIO_LONG_ID_PAGEABLE_PAGEABLE_END);
-    return new ResponseEntity<>(page, HttpStatus.OK);
+    log.debug("getInformesFormulario(Long id, Pageable pageable) - end");
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(page, HttpStatus.OK);
 
   }
 
@@ -740,17 +758,11 @@ public class MemoriaController {
   @GetMapping("/{id}/informe/ultima-version")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ER', 'ETI-MEM-V', 'ETI-EVC-EVALR')")
   public ResponseEntity<Informe> getInformeFormularioUltimaVersion(@PathVariable Long id) {
-
+    log.debug("getInformeFormularioUltimaVersion(Long id) - start");
     Optional<Informe> returnValue = informeService.findFirstByMemoriaOrderByVersionDesc(id);
-
-    if (!returnValue.isPresent()) {
-      log.debug(GET_INFORMES_FORMULARIO_LONG_ID_PAGEABLE_PAGEABLE_END);
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    log.debug(GET_INFORMES_FORMULARIO_LONG_ID_PAGEABLE_PAGEABLE_END);
-    return new ResponseEntity<>(returnValue.get(), HttpStatus.OK);
-
+    log.debug("getInformeFormularioUltimaVersion(Long id) - end");
+    return returnValue.isPresent() ? new ResponseEntity<>(returnValue.get(), HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   /**

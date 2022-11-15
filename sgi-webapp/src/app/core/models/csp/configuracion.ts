@@ -10,4 +10,6 @@ export interface IConfiguracion {
   formatoIdentificadorJustificacion: string;
   /** Plantilla informativa del formato del código de los identificadores de justificación */
   plantillaFormatoIdentificadorJustificacion: string;
+  /** Dedicacion minima de un miembro de un grupo de investigacion */
+  dedicacionMinimaGrupo: number;
 }

@@ -59,7 +59,7 @@ export class SolicitudRrhhSolitanteComponent extends FormFragmentComponent<ISoli
   }
 
   constructor(
-    protected actionService: SolicitudActionService,
+    public readonly actionService: SolicitudActionService,
     private matDialog: MatDialog,
     public authService: SgiAuthService,
     private readonly translate: TranslateService

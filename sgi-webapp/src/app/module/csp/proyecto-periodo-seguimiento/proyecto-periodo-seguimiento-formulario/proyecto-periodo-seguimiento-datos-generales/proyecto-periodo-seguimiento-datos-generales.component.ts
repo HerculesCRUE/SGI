@@ -89,6 +89,7 @@ export class ProyectoPeriodoSeguimientoDatosGeneralesComponent extends FormFragm
       this.formPart.getFormGroup().controls.fechaFinPresentacionConvocatoria.value);
     this.formPart.getFormGroup().controls.observaciones.setValue(this.formPart.getFormGroup().controls.observacionesConvocatoria.value);
     this.formPart.getFormGroup().controls.tipoSeguimiento.setValue(this.formPart.getFormGroup().controls.tipoSeguimientoConvocatoria.value);
+    this.formGroup.markAllAsTouched();
   }
 
   private setupI18N(): void {

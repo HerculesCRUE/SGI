@@ -29,6 +29,9 @@
         <mat-error *ngIf="formGroup.controls.miembro.errors?.contains">
           {{'error.csp.persona-equipo.duplicate' | translate}}
         </mat-error>
+        <mat-error *ngIf="formGroup.controls.miembro.errors?.participacionTotalPeriodo">
+          {{ 'error.grupo-equipo.participacion-total-periodo' | translate }}
+        </mat-error>
       </mat-form-field>
     </div>
     <!-- Periodo participacion -->

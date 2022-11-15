@@ -136,7 +136,7 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
     List<ConvocatoriaEntidadConvocante> entidades = Arrays.asList(buildMockConvocatoriaEntidadConvocante(1L,
         convocatoriaCloned));
 
-    BDDMockito.given(convocatoriaEntidadConvocanteRepository.findByProgramaIsNotNullAndConvocatoriaId(anyLong()))
+    BDDMockito.given(convocatoriaEntidadConvocanteRepository.findByConvocatoriaId(anyLong()))
         .willReturn(entidades);
 
     BDDMockito.given(convocatoriaEntidadConvocanteRepository

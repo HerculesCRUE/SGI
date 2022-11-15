@@ -342,6 +342,22 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     return codigoEconomicoItemA.localeCompare(codigoEconomicoItemB);
   }
 
+  protected compareFechaDevengoRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+    if (!itemA || !itemB || itemA.level < 3 || itemB.level < 3) {
+      return 0;
+    }
+
+    const fechaDevengoInMillisItemA = this.getItemLevel(itemA, 3)?.item?.fechaDevengo?.toMillis() ?? 0;
+    const fechaDevengoInMillisItemB = this.getItemLevel(itemB, 3)?.item?.fechaDevengo?.toMillis() ?? 0;
+    return fechaDevengoInMillisItemB - fechaDevengoInMillisItemA;
+  }
+
+  protected compareFechaDevengoDesglose(itemA: IDesglose, itemB: IDesglose): number {
+    const fechaDevengoInMillisItemA = itemA?.fechaDevengo.toMillis() ?? 0;
+    const fechaDevengoInMillisItemB = itemB?.fechaDevengo.toMillis() ?? 0;
+    return fechaDevengoInMillisItemB - fechaDevengoInMillisItemA;
+  }
+
   private fillProyectosMap(): Observable<Map<string, IProyecto>> {
     return from(this.relaciones).pipe(
       filter(relacion => relacion.tipoEntidad === TipoEntidad.PROYECTO),

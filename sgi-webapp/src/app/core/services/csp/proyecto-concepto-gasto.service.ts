@@ -7,7 +7,9 @@ import { IProyectoConceptoGastoCodigoEcBackend } from '@core/models/csp/backend/
 import { IProyectoConceptoGasto } from '@core/models/csp/proyecto-concepto-gasto';
 import { IProyectoConceptoGastoCodigoEc } from '@core/models/csp/proyecto-concepto-gasto-codigo-ec';
 import { environment } from '@env';
-import { SgiMutableRestService, SgiRestListResult } from '@sgi/framework/http';
+import {
+  RSQLSgiRestFilter, SgiMutableRestService, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult
+} from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -23,6 +25,19 @@ export class ProyectoConceptoGastoService
       ProyectoConceptoGastoService.name,
       `${environment.serviceServers.csp}${ProyectoConceptoGastoService.MAPPING}`,
       http,
+      PROYECTO_CONCEPTO_GASTO_CONVERTER
+    );
+  }
+
+  findByConceptoGastoId(conceptoGastoId: number, permitido: boolean): Observable<SgiRestListResult<IProyectoConceptoGasto>> {
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('conceptoGasto.id', SgiRestFilterOperator.EQUALS, conceptoGastoId.toString())
+        .and('permitido', SgiRestFilterOperator.EQUALS, permitido.toString()),
+    };
+
+    return this.find<IProyectoConceptoGastoBackend, IProyectoConceptoGasto>(
+      this.endpointUrl,
+      options,
       PROYECTO_CONCEPTO_GASTO_CONVERTER
     );
   }

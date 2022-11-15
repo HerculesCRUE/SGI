@@ -1,23 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { IGrupo } from '@core/models/csp/grupo';
 import { TIPO_MAP } from '@core/models/csp/grupo-tipo';
 import { IPersona } from '@core/models/sgp/persona';
 import { ROUTE_NAMES } from '@core/route.names';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
-import { LineaInvestigacionService } from '@core/services/csp/linea-investigacion/linea-investigacion.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { EMPTY, from, Observable } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../csp-route-names';
-
-const MSG_ERROR_LOAD = marker('error.load');
 
 interface IGrupoListado extends IGrupo {
   investigadoresPrincipales: IPersona[];
@@ -40,13 +35,11 @@ export class GrupoListadoInvComponent extends AbstractTablePaginationComponent<I
 
   constructor(
     private readonly logger: NGXLogger,
-    protected snackBarService: SnackBarService,
     private grupoService: GrupoService,
     private personaService: PersonaService,
-    public authService: SgiAuthService,
-    private lineaInvestigacionService: LineaInvestigacionService
+    public authService: SgiAuthService
   ) {
-    super(snackBarService, MSG_ERROR_LOAD);
+    super();
   }
 
   ngOnInit(): void {
@@ -56,8 +49,7 @@ export class GrupoListadoInvComponent extends AbstractTablePaginationComponent<I
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IGrupoListado>> {
-    const gruposInvestigacion$ = this.grupoService.findAll(this.getFindOptions(reset));
-    return gruposInvestigacion$.pipe(
+    return this.grupoService.findAll(this.getFindOptions(reset)).pipe(
       map(result => {
         return {
           page: result.page,
@@ -101,10 +93,9 @@ export class GrupoListadoInvComponent extends AbstractTablePaginationComponent<I
       .and('proyectoSgeRef', SgiRestFilterOperator.EQUALS, controls.proyectoSgeRef.value);
   }
 
-  onClearFilters() {
-    super.onClearFilters();
+  protected resetFilters(): void {
+    super.resetFilters();
     this.buildFormGroup();
-    this.onSearch();
   }
 
   private buildFormGroup() {
@@ -125,6 +116,7 @@ export class GrupoListadoInvComponent extends AbstractTablePaginationComponent<I
       }),
       catchError((error) => {
         this.logger.error(error);
+        this.processError(error);
         return EMPTY;
       })
     );

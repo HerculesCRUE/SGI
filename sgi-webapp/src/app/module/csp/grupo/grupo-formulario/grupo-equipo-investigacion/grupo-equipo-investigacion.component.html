@@ -1,5 +1,8 @@
 <sgi-fragment title="{{'menu.csp.proyectos.equipo' | translate}}">
 
+  <sgi-error-message *ngIf="formPart.hasErrors()"
+    [message]="'error.csp.grupo.equipo-investigacion.ip-sin-participacion' | translate">
+  </sgi-error-message>
   <div class="mat-elevation-z4">
     <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
 

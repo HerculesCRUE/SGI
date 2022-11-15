@@ -55,7 +55,7 @@ class ConvocatoriaEntidadConvocanteRepositoryTest extends BaseRepositoryTest {
     // when: se busca el ConvocatoriaEntidadConvocante por ConvocatoriaId y
     // EntidadRef
     ConvocatoriaEntidadConvocante dataFound = repository
-        .findByConvocatoriaIdAndEntidadRef(convocatoriaIdBuscado, entidadRefBuscado).get();
+        .findByConvocatoriaIdAndEntidadRefAndProgramaId(convocatoriaIdBuscado, entidadRefBuscado, null).get();
 
     // then: Se recupera el ConvocatoriaEntidadConvocante con el ConvocatoriaId y
     // EntidadRef buscado
@@ -103,10 +103,10 @@ class ConvocatoriaEntidadConvocanteRepositoryTest extends BaseRepositoryTest {
     // when: se busca el ConvocatoriaEntidadConvocante por ConvocatoriaId y
     // EntidadRef
     Optional<ConvocatoriaEntidadConvocante> dataFound = repository
-        .findByConvocatoriaIdAndEntidadRef(convocatoriaIdBuscado, entidadRefBuscado);
+        .findByConvocatoriaIdAndEntidadRefAndProgramaId(convocatoriaIdBuscado, entidadRefBuscado, null);
 
     // then: No hay ningun ConvocatoriaEntidadConvocante con el ConvocatoriaId y
     // EntidadRef buscado
-    Assertions.assertThat(dataFound).isEqualTo(Optional.empty());
+    Assertions.assertThat(dataFound).isEmpty();
   }
 }

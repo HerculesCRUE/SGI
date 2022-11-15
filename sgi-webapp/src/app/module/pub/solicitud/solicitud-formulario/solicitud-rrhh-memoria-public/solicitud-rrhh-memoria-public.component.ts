@@ -33,7 +33,7 @@ export class SolicitudRrhhMemoriaPublicComponent extends FormFragmentComponent<I
   }
 
   constructor(
-    protected actionService: SolicitudPublicActionService,
+    public readonly actionService: SolicitudPublicActionService,
     private readonly translate: TranslateService
   ) {
     super(actionService.FRAGMENT.MEMORIA, actionService);

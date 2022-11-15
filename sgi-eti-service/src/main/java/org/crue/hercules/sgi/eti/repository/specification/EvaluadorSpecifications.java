@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 public class EvaluadorSpecifications {
 
   public static final String PRESIDENTE = "presidente";
+  public static final String SECRETARIO = "secretario";
 
   public static Specification<Evaluador> activos() {
     return (root, query, cb) -> {
@@ -59,6 +60,19 @@ public class EvaluadorSpecifications {
   public static Specification<Evaluador> byComite(String comite) {
     return (root, query, cb) -> {
       return cb.equal(root.get(Evaluador_.comite).get(Comite_.comite), comite);
+    };
+  }
+
+  public static Specification<Evaluador> secretarios() {
+    return (root, query, cb) -> {
+      return cb.equal(cb.lower(root.get(Evaluador_.cargoComite).get(CargoComite_.nombre)), SECRETARIO);
+    };
+  }
+
+  public static Specification<Evaluador> between(Instant fecha) {
+    return (root, query, cb) -> {
+      return cb.and(cb.lessThan(root.get(Evaluador_.fechaAlta), fecha),
+          cb.greaterThan(root.get(Evaluador_.fechaBaja), fecha));
     };
   }
 }

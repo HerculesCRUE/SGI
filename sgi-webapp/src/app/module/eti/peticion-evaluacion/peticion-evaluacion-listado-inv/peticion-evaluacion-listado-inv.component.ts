@@ -20,7 +20,6 @@ import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { IPeticionEvaluacionListadoModalData, PeticionEvaluacionListadoExportModalComponent } from '../modals/peticion-evaluacion-listado-export-modal/peticion-evaluacion-listado-export-modal.component';
 
-const MSG_ERROR = marker('error.load');
 const MSG_FOOTER = marker('btn.add.entity');
 const MSG_DELETE = marker('msg.delete.entity');
 const MSG_DELETE_SUCCESS = marker('msg.delete.entity.success');
@@ -31,7 +30,9 @@ const PETICION_EVALUACION_KEY = marker('eti.peticion-evaluacion');
   templateUrl: './peticion-evaluacion-listado-inv.component.html',
   styleUrls: ['./peticion-evaluacion-listado-inv.component.scss']
 })
-export class PeticionEvaluacionListadoInvComponent extends AbstractTablePaginationComponent<IPeticionEvaluacionWithIsEliminable> implements OnInit {
+export class PeticionEvaluacionListadoInvComponent
+  extends AbstractTablePaginationComponent<IPeticionEvaluacionWithIsEliminable>
+  implements OnInit {
 
 
   ROUTE_NAMES = ROUTE_NAMES;
@@ -58,8 +59,7 @@ export class PeticionEvaluacionListadoInvComponent extends AbstractTablePaginati
     private readonly translate: TranslateService,
     private matDialog: MatDialog
   ) {
-
-    super(snackBarService, MSG_ERROR);
+    super();
 
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';

@@ -1,6 +1,9 @@
 <div [ngClass]="!!content ? 'scrollable-panel-with-footer' : 'scrollable-panel'">
   <div>
     <sgi-fragment-title></sgi-fragment-title>
+    <ng-container *ngIf="problems.length">
+      <sgi-problem-panel [problems]="problems"></sgi-problem-panel>
+    </ng-container>
     <ng-content></ng-content>
   </div>
 </div>

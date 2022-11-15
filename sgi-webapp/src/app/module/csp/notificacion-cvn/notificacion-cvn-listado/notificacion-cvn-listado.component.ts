@@ -23,7 +23,6 @@ import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 import { NotificacionCvnAsociarAutorizacionModalComponent } from '../modals/notificacion-cvn-asociar-autorizacion-modal/notificacion-cvn-asociar-autorizacion-modal.component';
 import { NotificacionCvnAsociarProyectoModalComponent } from '../modals/notificacion-cvn-asociar-proyecto-modal/notificacion-cvn-asociar-proyecto-modal.component';
 
-const MSG_ERROR_LOAD = marker('error.load');
 const MSG_ASOCIAR_SUCCESS = marker('msg.asociar.entity.success');
 const AUTORIZACION_KEY = marker('csp.autorizacion');
 const PROYECTO_KEY = marker('csp.proyecto');
@@ -67,7 +66,7 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
     private readonly translate: TranslateService,
     private dialogService: DialogService,
   ) {
-    super(snackBarService, MSG_ERROR_LOAD);
+    super();
     this.initFlexProperties();
   }
 
@@ -210,6 +209,7 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
       }),
       catchError((error) => {
         this.logger.error(error);
+        this.processError(error);
         return of(notificacion);
       })
     );
@@ -226,6 +226,7 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
       }),
       catchError((error) => {
         this.logger.error(error);
+        this.processError(error);
         return of(notificacion);
       })
 
@@ -245,6 +246,7 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
       }),
       catchError((error) => {
         this.logger.error(error);
+        this.processError(error);
         return of(notificacion);
       })
     );
@@ -271,13 +273,12 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
       .and('entidadParticipacionRef', SgiRestFilterOperator.EQUALS, controls.entidadParticipacion.value?.id);
   }
 
-  onClearFilters() {
-    super.onClearFilters();
+  protected resetFilters(): void {
+    super.resetFilters();
     this.formGroup.controls.fechaInicioProyectoDesde.setValue(null);
     this.formGroup.controls.fechaInicioProyectoHasta.setValue(null);
     this.formGroup.controls.fechaFinProyectoDesde.setValue(null);
     this.formGroup.controls.fechaFinProyectoHasta.setValue(null);
-    this.onSearch();
   }
 
   private initFlexProperties(): void {
@@ -286,7 +287,6 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
   }
-
 
   openModalAsociarAutorizacion(data: INotificacionProyectoExternoCVN): void {
     const config: MatDialogConfig<INotificacionProyectoExternoCVN> = {
@@ -326,10 +326,10 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorDesasociarProyecto);
+            this.processError(new SgiError(this.textoErrorDesasociarProyecto));
           }
         }
       );
@@ -350,10 +350,10 @@ export class NotificacionCvnListadoComponent extends AbstractTablePaginationComp
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorDesasociarAutorizacion);
+            this.processError(new SgiError(this.textoErrorDesasociarAutorizacion));
           }
         }
       );

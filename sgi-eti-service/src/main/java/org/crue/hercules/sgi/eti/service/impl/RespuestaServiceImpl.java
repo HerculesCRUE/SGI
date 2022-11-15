@@ -219,8 +219,7 @@ public class RespuestaServiceImpl implements RespuestaService {
                 lastBloque.getOrden(), lastApartado.getOrden(), formulario.getId(), memoria.getId());
       }
 
-      if (respuestaUltimoBloqueApartado != null && respuestaUltimoBloqueApartado.getValor() != null
-          && !respuestaUltimoBloqueApartado.getValor().contains("null")) {
+      if (respuestaUltimoBloqueApartado != null && respuestaUltimoBloqueApartado.getValor() != null) {
         completado = Boolean.TRUE;
       }
     }

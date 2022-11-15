@@ -68,6 +68,7 @@ import { SeguimientoGastosJustificadosResumenListadoGeneralExportService } from 
 import { RequerimientoJustificacionListadoExportModalComponent } from './modals/requerimiento-justificacion-listado-export-modal/requerimiento-justificacion-listado-export-modal.component';
 import { RequerimientoJustificacionListadoExportService } from './requerimiento-justificacion-listado-export.service';
 import { RequerimientoJustificacionGeneralListadoExportService } from './requerimiento-justificacion-general-listado-export.service';
+import { FacturasEmitidasExportModalComponent } from './ejecucion-economica-formulario/facturas-emitidas/export/facturas-emitidas-export-modal.component';
 @NgModule({
   declarations: [
     EjecucionEconomicaListadoComponent,
@@ -111,7 +112,8 @@ import { RequerimientoJustificacionGeneralListadoExportService } from './requeri
     SeguimientoJustificacionModalComponent,
     RequerimientoJustificacionListadoExportModalComponent,
     SeguimientoJustificacionAnualidadModalComponent,
-    SeguimientoGastosJustificadosResumenExportModalComponent
+    SeguimientoGastosJustificadosResumenExportModalComponent,
+    FacturasEmitidasExportModalComponent
   ],
   imports: [
     CommonModule,

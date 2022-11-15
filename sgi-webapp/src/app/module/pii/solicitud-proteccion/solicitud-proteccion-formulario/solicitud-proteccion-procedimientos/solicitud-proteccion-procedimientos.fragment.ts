@@ -214,9 +214,9 @@ export class SolicitudProteccionProcedimientosFragment extends Fragment {
       mergeMap((wrapped) => {
         return forkJoin([
           wrapped.value?.id ? this.procedimientoDocumentoService.deleteById(wrapped.value?.id as number) : of(void 0),
-          wrapped.value?.documento?.documentoRef ? this.documentoService.deleteById(wrapped.value?.documento?.documentoRef) : of(void 0)
+          wrapped.value?.documento?.documentoRef ? this.documentoService.eliminarFichero(wrapped.value?.documento.documentoRef) : of(void 0)
         ]).pipe(
-          catchError(e => of(void 0))
+          catchError(() => of(void 0))
         );
       }),
       switchMap(() => {

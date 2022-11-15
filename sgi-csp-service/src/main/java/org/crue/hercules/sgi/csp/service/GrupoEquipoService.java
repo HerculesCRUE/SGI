@@ -1,6 +1,8 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -13,15 +15,19 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
 
+import org.apache.commons.lang3.Range;
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.dto.GrupoEquipoDto;
 import org.crue.hercules.sgi.csp.exceptions.GrupoEquipoNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.GrupoEquipoParticipacionNotValidException;
 import org.crue.hercules.sgi.csp.exceptions.GrupoEquipoUniqueException;
 import org.crue.hercules.sgi.csp.exceptions.GrupoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.RolProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.BaseEntity;
+import org.crue.hercules.sgi.csp.model.Configuracion;
 import org.crue.hercules.sgi.csp.model.Grupo;
 import org.crue.hercules.sgi.csp.model.GrupoEquipo;
+import org.crue.hercules.sgi.csp.repository.ConfiguracionRepository;
 import org.crue.hercules.sgi.csp.repository.GrupoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.GrupoRepository;
 import org.crue.hercules.sgi.csp.repository.RolProyectoRepository;
@@ -49,6 +55,7 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 @RequiredArgsConstructor
 public class GrupoEquipoService {
+  private static final BigDecimal PARTICIPACION_MAX = new BigDecimal(GrupoEquipo.PARTICIPACION_MAX);
 
   private final SgiConfigProperties sgiConfigProperties;
   private final GrupoEquipoRepository repository;
@@ -56,6 +63,7 @@ public class GrupoEquipoService {
   private final Validator validator;
   private final RolProyectoRepository rolProyectoRepository;
   private final GrupoAuthorityHelper authorityHelper;
+  private final ConfiguracionRepository configuracionRepository;
 
   /**
    * Guarda la entidad {@link GrupoEquipo}.
@@ -75,34 +83,6 @@ public class GrupoEquipoService {
 
     log.debug("create(GrupoEquipo grupoEquipo) - end");
     return returnValue;
-  }
-
-  /**
-   * Actualiza los datos del {@link GrupoEquipo}.
-   *
-   * @param grupoEquipoActualizar {@link GrupoEquipo} con los datos actualizados.
-   * @return {@link GrupoEquipo} actualizado.
-   */
-  @Transactional
-  @Validated({ BaseEntity.Update.class })
-  public GrupoEquipo update(@Valid GrupoEquipo grupoEquipoActualizar) {
-    log.debug("update(GrupoEquipo grupoEquipoActualizar) - start");
-
-    AssertHelper.idNotNull(grupoEquipoActualizar.getId(), GrupoEquipo.class);
-    authorityHelper.checkUserHasAuthorityViewGrupo(grupoEquipoActualizar.getGrupoId());
-
-    return repository.findById(grupoEquipoActualizar.getId()).map(data -> {
-      data.setFechaInicio(grupoEquipoActualizar.getFechaInicio());
-      data.setFechaFin(grupoEquipoActualizar.getFechaFin());
-      data.setPersonaRef(grupoEquipoActualizar.getPersonaRef());
-      data.setDedicacion(grupoEquipoActualizar.getDedicacion());
-      data.setParticipacion(grupoEquipoActualizar.getParticipacion());
-
-      GrupoEquipo returnValue = repository.save(data);
-
-      log.debug("update(GrupoEquipo grupoEquipoActualizar) - end");
-      return returnValue;
-    }).orElseThrow(() -> new GrupoEquipoNotFoundException(grupoEquipoActualizar.getId()));
   }
 
   /**
@@ -332,11 +312,37 @@ public class GrupoEquipoService {
     }
 
     this.validateGrupoEquipo(grupoEquipos);
+    this.validateGruposEquipoParticipacion(grupoId, grupoEquipos);
 
     List<GrupoEquipo> returnValue = repository.saveAll(grupoEquipos);
     log.debug("update(Long grupoId, List<GrupoEquipo> grupoEquipos) - END");
 
     return returnValue;
+  }
+
+  /**
+   * Obtener todas las entidades {@link GrupoEquipo} paginadas y/o filtradas.
+   *
+   * @param paging la información de la paginación.
+   * @param query  la información del filtro.
+   * @return la lista de entidades {@link GrupoEquipo} paginadas y/o
+   *         filtradas.
+   */
+  public Page<GrupoEquipo> findAll(String query, Pageable paging) {
+    log.debug("findAll(String query, Pageable paging) - start");
+
+    Specification<GrupoEquipo> specs = SgiRSQLJPASupport.toSpecification(query);
+    Page<GrupoEquipo> returnValue = repository.findAll(specs, paging);
+
+    log.debug("findAll(String query, Pageable paging) - end");
+    return returnValue;
+  }
+
+  public void validateGrupoEquipoByGrupo(Long grupoId) {
+    List<GrupoEquipo> gruposEquipo = this.findAllByGrupo(grupoId);
+
+    this.validateGrupoEquipo(gruposEquipo);
+    this.validateGruposEquipoParticipacion(grupoId, gruposEquipo);
   }
 
   private void validateGrupoEquipo(List<GrupoEquipo> grupoEquipos) {
@@ -361,14 +367,11 @@ public class GrupoEquipoService {
           throw new GrupoEquipoUniqueException();
         }
 
-        if (grupoEquipo.getRol() == null
-            && grupoEquipo.getRol().getId() == null) {
-          Set<ConstraintViolation<GrupoEquipo>> result = validator.validate(grupoEquipo,
-              BaseEntity.Update.class);
+        Set<ConstraintViolation<GrupoEquipo>> result = validator.validate(grupoEquipo,
+            BaseEntity.Update.class);
 
-          if (!result.isEmpty()) {
-            throw new ConstraintViolationException(result);
-          }
+        if (!result.isEmpty()) {
+          throw new ConstraintViolationException(result);
         }
 
         if (!rolProyectoRepository.existsById(grupoEquipo.getRol().getId())) {
@@ -381,4 +384,102 @@ public class GrupoEquipoService {
     }
   }
 
+  private void validateGruposEquipoParticipacion(Long grupoId, List<GrupoEquipo> gruposEquipoToValidate) {
+    Optional<Configuracion> configuracion = configuracionRepository.findFirstByOrderByIdAsc();
+    final BigDecimal minDedication = configuracion.isPresent()
+        && configuracion.get().getDedicacionMinimaGrupo() != null ? configuracion.get().getDedicacionMinimaGrupo()
+            : new BigDecimal("0");
+
+    if (gruposEquipoToValidate.stream()
+        .anyMatch(toValidate -> minDedication.compareTo(toValidate.getParticipacion()) > 0)) {
+      throw new GrupoEquipoParticipacionNotValidException(minDedication);
+    }
+
+    List<String> distinctPersonasRef = gruposEquipoToValidate.stream().map(GrupoEquipo::getPersonaRef).distinct()
+        .collect(Collectors.toList());
+
+    distinctPersonasRef.forEach(personaRef -> validateGruposEquipoParticipacionByPersonaRef(
+        grupoId,
+        personaRef,
+        gruposEquipoToValidate.stream().filter(toValidate -> personaRef.equals(toValidate.getPersonaRef()))
+            .collect(Collectors.toList()),
+        minDedication));
+  }
+
+  private void validateGruposEquipoParticipacionByPersonaRef(Long grupoId, String personaRef,
+      List<GrupoEquipo> gruposEquipoToValidate, BigDecimal minDedication) {
+    Specification<GrupoEquipo> specs = GrupoEquipoSpecifications.byPersonaRefAndGrupoActivo(personaRef)
+        .and(GrupoEquipoSpecifications.notEqualGroupoId(grupoId));
+    List<GrupoEquipo> personaRefGruposEquipo = repository.findAll(specs);
+    personaRefGruposEquipo.addAll(gruposEquipoToValidate);
+
+    Optional<Instant> fechaInicioMin = personaRefGruposEquipo.stream().map(GrupoEquipo::getFechaInicio)
+        .min(Instant::compareTo);
+
+    if (fechaInicioMin.isPresent()) {
+      personaRefGruposEquipo.sort(
+          Comparator.comparing(this::getGrupoEquipoFechaFin, Comparator.nullsLast(Comparator.naturalOrder())));
+      List<Long> fechasFinMillisDistinct = personaRefGruposEquipo.stream().map(grupoEquipo -> {
+        final Instant fechaFin = getGrupoEquipoFechaFin(grupoEquipo);
+        return fechaFin != null ? fechaFin.toEpochMilli() : Long.MAX_VALUE;
+      }).distinct().collect(Collectors.toList());
+
+      List<Range<Long>> ranges = buildRangesFromFechasFin(fechasFinMillisDistinct, fechaInicioMin.get().toEpochMilli());
+
+      for (Range<Long> range : ranges) {
+        final BigDecimal participacionTotalRange = personaRefGruposEquipo.stream()
+            .filter(grupoEquipo -> isGrupoEquipoInRange(range, grupoEquipo))
+            .map(GrupoEquipo::getParticipacion).reduce(new BigDecimal("0"), BigDecimal::add);
+        if (participacionTotalRange.compareTo(PARTICIPACION_MAX) > 0) {
+          throw new GrupoEquipoParticipacionNotValidException(minDedication);
+        }
+      }
+    }
+  }
+
+  private List<Range<Long>> buildRangesFromFechasFin(List<Long> fechasFinMillisSortedAsc, Long fechaInicioMinMillis) {
+    List<Range<Long>> ranges = new ArrayList<>();
+
+    Range<Long> previousRange = null;
+    for (Long fechaFinMillis : fechasFinMillisSortedAsc) {
+      Range<Long> currentRange = Range.between(
+          previousRange != null ? previousRange.getMaximum() + 1L : fechaInicioMinMillis,
+          fechaFinMillis);
+      ranges.add(currentRange);
+      previousRange = currentRange;
+    }
+    return ranges;
+  }
+
+  private boolean isGrupoEquipoInRange(Range<Long> range, GrupoEquipo grupoEquipo) {
+    final Instant grupoEquipoFechaFin = grupoEquipo.getFechaFin() != null ? grupoEquipo.getFechaFin()
+        : findGrupoFechanFin(grupoEquipo);
+    return (grupoEquipo.getFechaInicio().toEpochMilli() - range.getMinimum()) == 0
+        ||
+        ((grupoEquipo.getFechaInicio().toEpochMilli() - range.getMinimum()) > 0 &&
+            (grupoEquipo.getFechaInicio().toEpochMilli() - range.getMaximum()) <= 0)
+        ||
+        ((grupoEquipo.getFechaInicio().toEpochMilli() - range.getMinimum()) < 0 &&
+            (grupoEquipoFechaFin == null || (grupoEquipoFechaFin.toEpochMilli() - range.getMinimum()) >= 0));
+  }
+
+  private Instant getGrupoEquipoFechaFin(GrupoEquipo grupoEquipo) {
+    return grupoEquipo.getFechaFin() != null ? grupoEquipo.getFechaFin() : findGrupoFechanFin(grupoEquipo);
+  }
+
+  private Instant findGrupoFechanFin(GrupoEquipo grupoEquipo) {
+    final Grupo grupo = grupoRepository.findById(grupoEquipo.getGrupoId())
+        .orElseThrow(() -> new GrupoNotFoundException(grupoEquipo.getGrupoId()));
+
+    return grupo.getFechaFin();
+  }
+
+  private List<GrupoEquipo> findAllByGrupo(Long grupoId) {
+    AssertHelper.idNotNull(grupoId, Grupo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(grupoId);
+
+    Specification<GrupoEquipo> specs = GrupoEquipoSpecifications.byGrupoId(grupoId);
+
+    return repository.findAll(specs);
+  }
 }

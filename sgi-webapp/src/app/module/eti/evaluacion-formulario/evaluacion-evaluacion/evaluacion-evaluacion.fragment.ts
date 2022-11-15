@@ -113,6 +113,11 @@ export class EvaluacionEvaluacionFragment extends FormFragment<IMemoria> {
     this.comentarios$ = comentarios;
   }
 
+  handleErrors(errors: Error[]): void {
+    this.clearProblems();
+    errors.forEach(this.processError);
+  }
+
   private checkComentario(dictamen: IDictamen) {
     if (this.evaluacion?.tipoEvaluacion?.id === TIPO_EVALUACION.MEMORIA && dictamen?.id === DICTAMEN.NO_PROCEDE_EVALUAR) {
       this.mostrarComentario$.next(true);

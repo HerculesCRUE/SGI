@@ -1,7 +1,9 @@
+import { IConfiguracion } from '@core/models/csp/configuracion';
 import { IGrupo } from '@core/models/csp/grupo';
 import { IGrupoEquipo } from '@core/models/csp/grupo-equipo';
 import { ICategoriaProfesional } from '@core/models/sgp/categoria-profesional';
 import { Fragment } from '@core/services/action-service';
+import { ConfiguracionService } from '@core/services/csp/configuracion.service';
 import { GrupoEquipoService } from '@core/services/csp/grupo-equipo/grupo-equipo.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -19,6 +21,7 @@ export interface IGrupoEquipoListado extends IGrupoEquipo {
 
 export class GrupoEquipoInvestigacionFragment extends Fragment {
   equipos$ = new BehaviorSubject<StatusWrapper<IGrupoEquipoListado>[]>([]);
+  configuracion: IConfiguracion;
 
   constructor(
     private readonly logger: NGXLogger,
@@ -28,6 +31,7 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
     private readonly personaService: PersonaService,
     private readonly vinculacionService: VinculacionService,
     public readonly readonly: boolean,
+    private readonly configuracionService: ConfiguracionService
   ) {
     super(key);
     this.setComplete(true);
@@ -81,11 +85,16 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
         ).subscribe(
           result => {
             this.equipos$.next(result);
+            this.checkErrors(result);
           },
           error => {
             this.logger.error(error);
           }
         )
+      );
+
+      this.subscriptions.push(
+        this.configuracionService.getConfiguracion().subscribe(configuracion => this.configuracion = configuracion)
       );
     }
   }
@@ -97,6 +106,7 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
     const current = this.equipos$.value;
     current.push(wrapper);
     this.equipos$.next(current);
+    this.checkErrors(current);
     this.setChanges(true);
     return element;
   }
@@ -107,7 +117,9 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
     if (index >= 0) {
       wrapper.setEdited();
       this.getVinculacionPersona(this.equipos$.value[index].value).subscribe();
-      this.equipos$.value[index] = wrapper;
+      current[index] = wrapper;
+      this.equipos$.next(current);
+      this.checkErrors(current);
       this.setChanges(true);
     }
   }
@@ -118,8 +130,23 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
     if (index >= 0) {
       current.splice(index, 1);
       this.equipos$.next(current);
+      this.checkErrors(current);
       this.setChanges(true);
     }
+  }
+
+  /*
+    Cuando se crea un grupo se añade directamente al IP como miembro del equipo sin indicar dedicacion ni participacion,
+    pero la participacion y la dedicacion son datos obligatorios a la hora de introducir un miembro del equipo. Por lo que
+    nos aseguramos de que no existan registros sin dichos datos.
+  */
+  private checkErrors(miembrosEquipo: StatusWrapper<IGrupoEquipoListado>[]): void {
+    this.setErrors(this.hasDedicacionError(miembrosEquipo));
+  }
+
+  private hasDedicacionError(miembrosEquipo: StatusWrapper<IGrupoEquipoListado>[]): boolean {
+    return miembrosEquipo.some(miembroEquipo =>
+      !!!miembroEquipo.value.dedicacion || !(typeof miembroEquipo.value.participacion === 'number'));
   }
 
   saveOrUpdate(): Observable<void> {

@@ -1,0 +1,48 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="0000000000011-solicitud_modalidad">
+    <validCheckSum>8:29f796fe5953c66b04bf89a7689b0f5c</validCheckSum>
+    <validCheckSum>8:729b3cbb216785045c0adc0058f17a9a</validCheckSum>
+    <sql>
+      UPDATE ${schemaPrefix}solicitud_modalidad SET programa_convocatoria_id=(
+        SELECT
+          max(cec.programa_id)
+        FROM ${schemaPrefix}convocatoria_entidad_convocante cec 
+        WHERE 
+          cec.convocatoria_id=(
+            SELECT
+              s.convocatoria_id
+            FROM ${schemaPrefix}solicitud s
+            WHERE s.id = ${schemaPrefix}solicitud_modalidad.solicitud_id
+          )
+          AND  ${schemaPrefix}solicitud_modalidad.entidad_ref=cec.entidad_ref
+      )
+    </sql>
+  </changeSet>
+  <changeSet context="!test" author="master" id="0000000000011-proyecto_entidad_convocante">
+    <validCheckSum>8:70d97a201a8bfdbd950ea8ebf8179eb0</validCheckSum>
+    <validCheckSum>8:0850fd6f669e355d15fd64c413945ac3</validCheckSum>
+    <sql>
+      UPDATE ${schemaPrefix}proyecto_entidad_convocante SET programa_id=(
+        SELECT
+          sm.programa_id
+        FROM ${schemaPrefix}solicitud_modalidad sm 
+        WHERE 
+          sm.solicitud_id=(
+            SELECT
+              p.solicitud_id
+            FROM ${schemaPrefix}proyecto p
+            WHERE p.id = ${schemaPrefix}proyecto_entidad_convocante.proyecto_id
+          )
+          AND sm.entidad_ref=${schemaPrefix}proyecto_entidad_convocante.entidad_ref
+          AND sm.programa_convocatoria_id=${schemaPrefix}proyecto_entidad_convocante.programa_convocatoria_id
+      ) 
+      WHERE 
+        ${schemaPrefix}proyecto_entidad_convocante.programa_id IS NULL
+        AND ${schemaPrefix}proyecto_entidad_convocante.programa_convocatoria_id IS NOT NULL
+    </sql>
+  </changeSet>
+
+</databaseChangeLog>

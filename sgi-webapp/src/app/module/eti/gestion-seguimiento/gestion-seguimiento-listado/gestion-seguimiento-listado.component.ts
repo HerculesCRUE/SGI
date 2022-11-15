@@ -3,14 +3,12 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
@@ -19,8 +17,6 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { ISeguimientoListadoModalData, SeguimientoListadoExportModalComponent } from '../../seguimiento/modals/seguimiento-listado-export-modal/seguimiento-listado-export-modal.component';
 import { RolPersona } from '../../seguimiento/seguimiento-listado-export.service';
-
-const MSG_ERROR = marker('error.load');
 
 @Component({
   selector: 'sgi-gestion-seguimiento-listado',
@@ -46,12 +42,10 @@ export class GestionSeguimientoListadoComponent extends AbstractTablePaginationC
   constructor(
     private readonly logger: NGXLogger,
     private readonly evaluacionesService: EvaluacionService,
-    protected readonly snackBarService: SnackBarService,
     protected readonly personaService: PersonaService,
     private matDialog: MatDialog
   ) {
-
-    super(snackBarService, MSG_ERROR);
+    super();
 
     this.suscripciones = [];
 
@@ -83,12 +77,11 @@ export class GestionSeguimientoListadoComponent extends AbstractTablePaginationC
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IEvaluacion>> {
-    const observable$ = this.evaluacionesService.findSeguimientoMemoria(this.getFindOptions(reset));
-    return observable$;
+    return this.evaluacionesService.findSeguimientoMemoria(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {
-    this.displayedColumns = ['memoria.comite.comite', 'tipoEvaluacion', 'fechaDictamen', 'memoria.numReferencia', 'solicitante',
+    this.displayedColumns = ['memoria.comite.comite', 'tipoEvaluacion', 'memoria.tipoMemoria.nombre', 'fechaDictamen', 'memoria.numReferencia', 'solicitante',
       'dictamen.nombre', 'version', 'acciones'];
   }
 
@@ -139,22 +132,22 @@ export class GestionSeguimientoListadoComponent extends AbstractTablePaginationC
           return of([]);
         }
       }),
-    ),
       catchError((error) => {
         this.logger.error(error);
         // On error reset pagination values
         this.paginator.firstPage();
         this.totalElementos = 0;
-        this.snackBarService.showError(MSG_ERROR);
+        this.processError(error);
         return of([]);
-      });
+      })
+    );
   }
 
   /**
    * Clean filters an reload the table
    */
-  onClearFilters(): void {
-    super.onClearFilters();
+  protected resetFilters(): void {
+    super.resetFilters();
     this.formGroup.controls.fechaEvaluacionInicio.setValue(null);
     this.formGroup.controls.fechaEvaluacionFin.setValue(null);
   }

@@ -295,5 +295,8 @@
 
   </section>
 
+  <sgi-info-message *ngIf="actionService.showSolicitudRRHHToValidateInfoMessage()"
+    message="{{'info.csp.solicitud.datos-generales.solicitud-rrhh-validar' | translate}}">
+  </sgi-info-message>
 
 </sgi-fragment>

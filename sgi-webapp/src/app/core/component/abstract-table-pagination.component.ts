@@ -2,7 +2,6 @@ import { AfterViewInit, Directive, OnDestroy, OnInit, ViewChild } from '@angular
 import { FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormGroupUtil } from '@core/utils/form-group-util';
 import {
   RSQLSgiRestSort,
@@ -11,12 +10,13 @@ import {
   SgiRestListResult,
   SgiRestSortDirection
 } from '@sgi/framework/http';
-import { merge, Observable, of, Subscription } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { EMPTY, merge, Observable, of, Subscription } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { AbstractMenuContentComponent } from './abstract-menu-content.component';
 
 @Directive()
 // tslint:disable-next-line: directive-class-suffix
-export abstract class AbstractTablePaginationComponent<T> implements OnInit, OnDestroy, AfterViewInit {
+export abstract class AbstractTablePaginationComponent<T> extends AbstractMenuContentComponent implements OnInit, OnDestroy, AfterViewInit {
   columnas: string[];
   elementosPagina: number[];
   totalElementos: number;
@@ -29,9 +29,8 @@ export abstract class AbstractTablePaginationComponent<T> implements OnInit, OnD
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   protected constructor(
-    protected readonly snackBarService: SnackBarService,
-    protected readonly msgError: string
   ) {
+    super();
     this.elementosPagina = [5, 10, 25, 100];
   }
 
@@ -58,7 +57,8 @@ export abstract class AbstractTablePaginationComponent<T> implements OnInit, OnD
         this.loadTable();
       }),
       catchError(err => {
-        return err;
+        this.processError(err);
+        return EMPTY;
       })
     ).subscribe();
     // First load
@@ -70,6 +70,7 @@ export abstract class AbstractTablePaginationComponent<T> implements OnInit, OnD
    */
   onSearch(): void {
     this.filter = this.createFilter();
+    this.clearProblems();
     this.loadTable(true);
   }
 
@@ -77,9 +78,16 @@ export abstract class AbstractTablePaginationComponent<T> implements OnInit, OnD
    * Clean filters an reload the table
    */
   onClearFilters(): void {
+    this.resetFilters();
+    this.onSearch();
+  }
+
+  /**
+   * Reset filters
+   */
+  protected resetFilters(): void {
     FormGroupUtil.clean(this.formGroup);
     this.filter = undefined;
-    this.loadTable(true);
   }
 
   /**
@@ -89,7 +97,10 @@ export abstract class AbstractTablePaginationComponent<T> implements OnInit, OnD
    */
   protected getObservableLoadTable(reset?: boolean): Observable<T[]> {
     // Do the request with paginator/sort/filter values
-    const observable$ = this.createObservable(reset);
+    const observable$ = of(void 0).pipe(
+      tap(() => this.clearProblems()),
+      switchMap(() => this.createObservable(reset))
+    );
     return observable$?.pipe(
       map((response: SgiRestListResult<T>) => {
         // Map respose total
@@ -105,7 +116,7 @@ export abstract class AbstractTablePaginationComponent<T> implements OnInit, OnD
         // On error reset pagination values
         this.paginator?.firstPage();
         this.totalElementos = 0;
-        this.showMensajeErrorLoadTable();
+        this.processError(error);
         return of([]);
       })
     );
@@ -128,13 +139,6 @@ export abstract class AbstractTablePaginationComponent<T> implements OnInit, OnD
     };
     this.findOptions = options;
     return options;
-  }
-
-  /**
-   * Muestra un mensaje de error si se produce un error al cargar los datos de la tabla
-   */
-  protected showMensajeErrorLoadTable(): void {
-    this.snackBarService.showError(this.msgError);
   }
 
   /**

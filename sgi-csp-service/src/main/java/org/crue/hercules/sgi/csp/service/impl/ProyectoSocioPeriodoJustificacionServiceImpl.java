@@ -13,12 +13,14 @@ import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacionDocumento;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoJustificacionDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoSocioPeriodoJustificacionSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioPeriodoJustificacionService;
+import org.crue.hercules.sgi.csp.service.SgdocService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,24 +45,19 @@ public class ProyectoSocioPeriodoJustificacionServiceImpl implements ProyectoSoc
   private final ProyectoRepository proyectoRepository;
 
   private final ProyectoSocioPeriodoJustificacionDocumentoRepository proyectoSocioPeriodoJustificacionDocumentoRepository;
+  /** SGDOC service */
+  private final SgdocService sgdocService;
 
-  /**
-   * {@link ProyectoSocioPeriodoJustificacionServiceImpl}.
-   * 
-   * @param proyectoSocioPeriodoJustificacionRepository          {@link ProyectoSocioPeriodoJustificacionRepository}.
-   * @param proyectoSocioRepository                              {@link ProyectoSocioRepository}.
-   * @param proyectoSocioPeriodoJustificacionDocumentoRepository {@link ProyectoSocioPeriodoJustificacionDocumentoRepository}.
-   * @param proyectoRepository                                   {@link ProyectoRepository}.
-   */
   public ProyectoSocioPeriodoJustificacionServiceImpl(
       ProyectoSocioPeriodoJustificacionRepository proyectoSocioPeriodoJustificacionRepository,
       ProyectoSocioRepository proyectoSocioRepository,
       ProyectoSocioPeriodoJustificacionDocumentoRepository proyectoSocioPeriodoJustificacionDocumentoRepository,
-      ProyectoRepository proyectoRepository) {
+      ProyectoRepository proyectoRepository, SgdocService sgdocService) {
     this.repository = proyectoSocioPeriodoJustificacionRepository;
     this.proyectoSocioRepository = proyectoSocioRepository;
     this.proyectoSocioPeriodoJustificacionDocumentoRepository = proyectoSocioPeriodoJustificacionDocumentoRepository;
     this.proyectoRepository = proyectoRepository;
+    this.sgdocService = sgdocService;
   }
 
   /**
@@ -99,8 +96,19 @@ public class ProyectoSocioPeriodoJustificacionServiceImpl implements ProyectoSoc
       List<Long> periodoJustificacionId = periodoJustificacionesEliminar.stream()
           .map(ProyectoSocioPeriodoJustificacion::getId).collect(Collectors.toList());
 
+      periodoJustificacionId.stream().forEach(id -> {
+        List<ProyectoSocioPeriodoJustificacionDocumento> documentos = proyectoSocioPeriodoJustificacionDocumentoRepository
+            .findAllByProyectoSocioPeriodoJustificacionId(id);
+        if (!documentos.isEmpty()) {
+          documentos.stream().forEach(documento -> {
+            sgdocService.delete(documento.getDocumentoRef());
+          });
+        }
+      });
+
       proyectoSocioPeriodoJustificacionDocumentoRepository
           .deleteByProyectoSocioPeriodoJustificacionIdIn(periodoJustificacionId);
+
       repository.deleteAll(periodoJustificacionesEliminar);
     }
 
@@ -316,6 +324,22 @@ public class ProyectoSocioPeriodoJustificacionServiceImpl implements ProyectoSoc
     boolean returnValue = repository.count(specs) > 0;
     log.debug("isRangoFechasSolapado(ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacion) - end");
     return returnValue;
+  }
+
+  /**
+   * Comprueba la existencia de documentos relacionados al
+   * {@link ProyectoSocioPeriodoJustificacion} por id.
+   *
+   * @param id el id de la entidad {@link ProyectoSocioPeriodoJustificacion}.
+   * @return true si existe y false en caso contrario.
+   */
+  @Override
+  public boolean existsDocumentosById(Long id) {
+    log.debug("existsDocumentosById(final Long id)  - start", id);
+    final boolean existe = proyectoSocioPeriodoJustificacionDocumentoRepository
+        .existsByProyectoSocioPeriodoJustificacionId(id);
+    log.debug("existsDocumentosById(final Long id)  - end", id);
+    return existe;
   }
 
 }

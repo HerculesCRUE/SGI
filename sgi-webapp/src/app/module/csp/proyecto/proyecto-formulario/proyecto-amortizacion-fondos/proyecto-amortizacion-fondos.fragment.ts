@@ -61,7 +61,7 @@ export class ProyectoAmortizacionFondosFragment extends Fragment {
             if (this.isInitialized() && this.periodosAmortizacion$.value.length > 0) {
               return of(void 0);
             }
-            return this.proyectoPeriodoAmortizacionService.findByproyectoSGERef(listadoProyectosSGE).pipe(
+            return this.proyectoPeriodoAmortizacionService.findByproyectoId(key).pipe(
               map((response: SgiRestListResult<IProyectoPeriodoAmortizacionListado>) => {
                 return response.items.map(periodo => new StatusWrapper<IProyectoPeriodoAmortizacionListado>(periodo));
               }),
@@ -96,7 +96,10 @@ export class ProyectoAmortizacionFondosFragment extends Fragment {
                 )
               ),
               toArray(),
-              catchError(() => EMPTY)
+              catchError((error) => {
+                this.processError(error);
+                return EMPTY;
+              })
             );
           }),
         ).subscribe(() => {

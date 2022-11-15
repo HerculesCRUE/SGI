@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTableWithoutPaginationComponent } from '@core/component/abstract-table-without-pagination.component';
 import { IEvaluacionWithNumComentario } from '@core/models/eti/evaluacion-with-num-comentario';
 import { IDocumento } from '@core/models/sgdoc/documento';
@@ -11,8 +10,6 @@ import { SgiRestFilter, SgiRestListResult } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { Rol } from '../evaluacion-formulario.action.service';
-
-const MSG_ERROR = marker('error.load');
 
 @Component({
   selector: 'sgi-evaluacion-listado-anterior-memoria',
@@ -33,7 +30,7 @@ export class EvaluacionListadoAnteriorMemoriaComponent extends AbstractTableWith
     private readonly documentoService: DocumentoService,
     private readonly evaluacionService: EvaluacionService,
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
   }
 
   protected createObservable(): Observable<SgiRestListResult<IEvaluacionWithNumComentario>> {

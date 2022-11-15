@@ -29,9 +29,9 @@ export class ModeloEjecucionEditarComponent extends ActionComponent {
 
   MODELO_EJECUCION_ROUTE_NAMES = MODELO_EJECUCION_ROUTE_NAMES;
 
-  textoCrear: string;
-  textoCrearSuccess: string;
-  textoCrearError: string;
+  textoEditar: string;
+  textoEditarSuccess: string;
+  textoEditarError: string;
 
   constructor(
     private readonly logger: NGXLogger,
@@ -62,7 +62,7 @@ export class ModeloEjecucionEditarComponent extends ActionComponent {
           { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
-    ).subscribe((value) => this.textoCrear = value);
+    ).subscribe((value) => this.textoEditar = value);
 
     this.translate.get(
       MODELO_EJECUCION_KEY,
@@ -74,7 +74,7 @@ export class ModeloEjecucionEditarComponent extends ActionComponent {
           { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
-    ).subscribe((value) => this.textoCrearError = value);
+    ).subscribe((value) => this.textoEditarError = value);
 
     this.translate.get(
       MODELO_EJECUCION_KEY,
@@ -86,7 +86,7 @@ export class ModeloEjecucionEditarComponent extends ActionComponent {
           { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
-    ).subscribe((value) => this.textoCrearSuccess = value);
+    ).subscribe((value) => this.textoEditarSuccess = value);
   }
 
   saveOrUpdate(): void {
@@ -100,11 +100,11 @@ export class ModeloEjecucionEditarComponent extends ActionComponent {
           }
         }
         else {
-          this.snackBarService.showError(this.textoCrearError);
+          this.snackBarService.showError(this.textoEditarError);
         }
       },
       () => {
-        this.snackBarService.showSuccess(this.textoCrearSuccess);
+        this.snackBarService.showSuccess(this.textoEditarSuccess);
       }
     );
   }

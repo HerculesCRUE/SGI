@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { IConfiguracion } from '@core/models/eti/configuracion';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
@@ -11,16 +10,12 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { ConfiguracionService } from '@core/services/eti/configuracion.service';
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
-import { NGXLogger } from 'ngx-logger';
 import { Observable } from 'rxjs';
 import { TipoComentario } from '../../evaluacion/evaluacion-listado-export.service';
 import { EvaluacionListadoExportModalComponent, IEvaluacionListadoModalData } from '../../evaluacion/modals/evaluacion-listado-export-modal/evaluacion-listado-export-modal.component';
-
-const MSG_ERROR = marker('error.load');
 
 @Component({
   selector: 'sgi-evaluacion-evaluador-listado',
@@ -36,14 +31,12 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
   private numLimiteDiasEvaluar = null;
 
   constructor(
-    private readonly logger: NGXLogger,
     private readonly evaluadorService: EvaluadorService,
     private readonly personaService: PersonaService,
-    protected readonly snackBarService: SnackBarService,
     private readonly configuracionService: ConfiguracionService,
     private matDialog: MatDialog
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
 
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
@@ -70,8 +63,8 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
     this.loadNumDiasLimiteEvaluar();
   }
 
-  onClearFilters(): void {
-    super.onClearFilters();
+  protected resetFilters(): void {
+    super.resetFilters();
     this.formGroup.controls.fechaEvaluacionInicio.setValue(null);
     this.formGroup.controls.fechaEvaluacionFin.setValue(null);
   }
@@ -81,7 +74,7 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
   }
 
   protected initColumns() {
-    this.columnas = ['memoria.comite.comite', 'tipoEvaluacion', 'convocatoriaReunion.fechaEvaluacion',
+    this.columnas = ['memoria.comite.comite', 'tipoEvaluacion', 'memoria.tipoMemoria.nombre', 'convocatoriaReunion.fechaEvaluacion',
       'memoria.numReferencia', 'solicitante', 'version', 'acciones'];
   }
 
@@ -98,8 +91,7 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
           }
         },
         (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR);
+          this.processError(error);
         })
     );
   }
@@ -115,6 +107,9 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
           this.personaService.findById(personaId).subscribe(
             (persona: IPersona) => {
               evaluacion.memoria.peticionEvaluacion.solicitante = persona;
+            },
+            (error) => {
+              this.processError(error);
             }
           )
         );

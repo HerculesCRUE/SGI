@@ -33,7 +33,9 @@ import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
+import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.csp.model.TipoEnlace;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
 import org.junit.jupiter.api.Test;
@@ -46,6 +48,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
@@ -90,6 +93,7 @@ class ConvocatoriaIT extends BaseIT {
   private static final String PATH_PROYECTOS_REFERENCED = "/proyectosreferenced";
   private static final String PATH_CLONE = "/clone";
   private static final String PATH_FORMULARIO_SOLICITUD = "/formulariosolicitud";
+  private static final String PATH_ENLACES = ConvocatoriaController.PATH_ENLACES;
 
   private HttpEntity<Convocatoria> buildRequest(HttpHeaders headers, Convocatoria entity) throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());
@@ -554,6 +558,48 @@ class ConvocatoriaIT extends BaseIT {
         .isEqualTo("entidad-" + String.format("%03d", 1));
   }
 
+  @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/programa.sql",
+    "classpath:scripts/convocatoria_entidad_convocante.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void updateEntidadesConvocantes_ReturnsConvocatoriaEntidadConvocanteList() throws Exception {
+    Long convocatoriaId = 1L;
+
+    List<ConvocatoriaEntidadConvocante> toUpdateList = Arrays.asList(
+        generarMockConvocatoriaEntidadConvocante(1L, 4L),
+        generarMockConvocatoriaEntidadConvocante(null, 6L));
+
+    final ResponseEntity<List<ConvocatoriaEntidadConvocante>> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_ENTIDAD_CONVOCANTE,
+        HttpMethod.PATCH,
+        buildGenericRequest(null,
+            toUpdateList, "CSP-CON-E"),
+        new ParameterizedTypeReference<List<ConvocatoriaEntidadConvocante>>() {
+        }, convocatoriaId);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    List<ConvocatoriaEntidadConvocante> convocatoriaEntidadesConvocantesUpdated = response.getBody();
+
+    Assertions.assertThat(convocatoriaEntidadesConvocantesUpdated).hasSize(toUpdateList.size());
+
+    Assertions.assertThat(convocatoriaEntidadesConvocantesUpdated.get(0).getPrograma().getId())
+        .as("get(0).getPrograma().getId()")
+        .isEqualTo(toUpdateList.get(0).getPrograma().getId());
+    Assertions.assertThat(convocatoriaEntidadesConvocantesUpdated.get(1).getPrograma().getId())
+        .as("get(1).getPrograma().getId()")
+        .isEqualTo(toUpdateList.get(1).getPrograma().getId());
+  }
+
   /**
    * 
    * CONVOCATORIA ENTIDAD FINANCIADORA
@@ -767,6 +813,67 @@ class ConvocatoriaIT extends BaseIT {
         .isEqualTo("descripcion-" + String.format("%03d", 2));
     Assertions.assertThat(convocatoriasEnlaces.get(2).getDescripcion()).as("get(2).getDescripcion()")
         .isEqualTo("descripcion-" + String.format("%03d", 1));
+  }
+
+  @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/modelo_ejecucion.sql",
+    "classpath:scripts/tipo_finalidad.sql",
+    "classpath:scripts/tipo_regimen_concurrencia.sql",
+    "classpath:scripts/tipo_ambito_geografico.sql",
+    "classpath:scripts/convocatoria.sql",
+    "classpath:scripts/tipo_enlace.sql",
+    "classpath:scripts/modelo_tipo_enlace.sql",
+    "classpath:scripts/convocatoria_enlace.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void updateEnlaces_ReturnsConvocatoriaEnlaceList() throws Exception {
+    Long convocatoriaId = 1L;
+
+    List<ConvocatoriaEnlace> toUpdateList = Arrays.asList(
+        generarMockConvocatoriaEnlace(1L, "www.hola.es"),
+        generarMockConvocatoriaEnlace(2L, "www.adios.es"));
+
+    final ResponseEntity<List<ConvocatoriaEnlace>> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_ENLACES,
+        HttpMethod.PATCH,
+        buildGenericRequest(null,
+            toUpdateList, "CSP-CON-E"),
+        new ParameterizedTypeReference<List<ConvocatoriaEnlace>>() {
+        }, convocatoriaId);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    List<ConvocatoriaEnlace> convocatoriaEnlacesUpdated = response.getBody();
+
+    Assertions.assertThat(convocatoriaEnlacesUpdated).hasSize(toUpdateList.size());
+
+    Assertions.assertThat(convocatoriaEnlacesUpdated.get(0).getUrl()).as("get(0).getUrl()")
+        .isEqualTo(toUpdateList.get(0).getUrl());
+    Assertions.assertThat(convocatoriaEnlacesUpdated.get(1).getUrl()).as("get(1).getUrl()")
+        .isEqualTo(toUpdateList.get(1).getUrl());
+  }
+
+  /**
+   * Función que devuelve un objeto ConvocatoriaEnlace
+   * 
+   * @param id     id del ConvocatoriaEnlace
+   * @param nombre nombre del ConvocatoriaEnlace
+   * @return el objeto ConvocatoriaEnlace
+   */
+  private ConvocatoriaEnlace generarMockConvocatoriaEnlace(Long id, String url) {
+    TipoEnlace tipoEnlace = new TipoEnlace();
+    tipoEnlace.setId(1L);
+
+    ConvocatoriaEnlace convocatoriaEnlace = new ConvocatoriaEnlace();
+    convocatoriaEnlace.setId(id);
+    convocatoriaEnlace.setUrl(url);
+    convocatoriaEnlace.setDescripcion("descripcion-" + id);
+    convocatoriaEnlace.setTipoEnlace(tipoEnlace);
+
+    return convocatoriaEnlace;
   }
 
   /*
@@ -1764,4 +1871,18 @@ class ConvocatoriaIT extends BaseIT {
     return convocatoria;
 
   }
+
+  private ConvocatoriaEntidadConvocante generarMockConvocatoriaEntidadConvocante(Long id, Long programaId) {
+    Programa programa = new Programa();
+    programa.setId(programaId);
+
+    ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante = new ConvocatoriaEntidadConvocante();
+    convocatoriaEntidadConvocante.setId(id);
+    convocatoriaEntidadConvocante.setConvocatoriaId(id == null ? 1 : id);
+    convocatoriaEntidadConvocante.setEntidadRef("entidad-" + (id == null ? 1 : id));
+    convocatoriaEntidadConvocante.setPrograma(programa);
+
+    return convocatoriaEntidadConvocante;
+  }
+
 }

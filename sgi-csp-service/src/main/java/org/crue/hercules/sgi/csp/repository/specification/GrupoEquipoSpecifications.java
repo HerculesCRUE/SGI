@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.repository.specification;
 
 import java.time.Instant;
 
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
@@ -10,6 +11,7 @@ import org.crue.hercules.sgi.csp.model.Grupo;
 import org.crue.hercules.sgi.csp.model.GrupoEquipo;
 import org.crue.hercules.sgi.csp.model.GrupoEquipo_;
 import org.crue.hercules.sgi.csp.model.Grupo_;
+import org.crue.hercules.sgi.framework.data.jpa.domain.Activable_;
 import org.springframework.data.jpa.domain.Specification;
 
 public class GrupoEquipoSpecifications {
@@ -47,14 +49,20 @@ public class GrupoEquipoSpecifications {
   }
 
   /**
-   * {@link GrupoEquipo} cuya persona Ref sea la recibida.
+   * {@link GrupoEquipo} cuya persona Ref sea la recibida de entidades
+   * {@link Grupo} activas.
    * 
    * @param personaRef persona ref de {@link GrupoEquipo}
    * @return specification para obtener los {@link GrupoEquipo} cuya persona
-   *         Ref sea la recibida.
+   *         Ref sea la recibida de entidades {@link Grupo} activas.
    */
-  public static Specification<GrupoEquipo> byPersonaRef(String personaRef) {
-    return (root, query, cb) -> cb.equal(root.get(GrupoEquipo_.personaRef), personaRef);
+  public static Specification<GrupoEquipo> byPersonaRefAndGrupoActivo(String personaRef) {
+    return (root, query, cb) -> {
+      Join<GrupoEquipo, Grupo> joinGrupo = root.join(GrupoEquipo_.grupo);
+      return cb.and(
+          cb.equal(root.get(GrupoEquipo_.personaRef), personaRef),
+          cb.equal(joinGrupo.get(Activable_.activo), Boolean.TRUE));
+    };
   }
 
   /**
@@ -102,4 +110,14 @@ public class GrupoEquipoSpecifications {
     };
   }
 
+  /**
+   * {@link GrupoEquipo} cuyo grupoId no sea el recibido por parametero.
+   * 
+   * @param grupoId identificador de un {@link Grupo}
+   * @return specification para obtener los {@link GrupoEquipo} cuyo grupoId no
+   *         sea el recibido por parametero.
+   */
+  public static Specification<GrupoEquipo> notEqualGroupoId(Long grupoId) {
+    return (root, query, cb) -> cb.notEqual(root.get(GrupoEquipo_.grupoId), grupoId);
+  }
 }

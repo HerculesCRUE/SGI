@@ -14,6 +14,8 @@ import javax.validation.Payload;
 public @interface UniqueNombreFuenteFinanciacionActiva {
   String message() default "{org.crue.hercules.sgi.csp.validation.UniqueNombreFuenteFinanciacionActiva.message}";
 
+  String field() default "name";
+
   Class<?>[] groups() default {};
 
   Class<? extends Payload>[] payload() default {};

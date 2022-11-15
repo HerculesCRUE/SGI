@@ -7,8 +7,6 @@ import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, takeLast, tap } from 'rxjs/operators';
 
 export class ProyectoEntidadesConvocantesFragment extends Fragment {
-  private deleted: Set<number> = new Set<number>();
-  private edited: Set<number> = new Set<number>();
   proyectoEntidadConvocantes$ = new BehaviorSubject<IProyectoEntidadConvocante[]>([]);
 
   constructor(
@@ -55,10 +53,6 @@ export class ProyectoEntidadesConvocantesFragment extends Fragment {
   }
 
   public deleteProyectoEntidadConvocante(proyectoEntidadConvocante: IProyectoEntidadConvocante) {
-    if (proyectoEntidadConvocante.id) {
-      this.deleted.add(proyectoEntidadConvocante.id);
-    }
-
     const current = this.proyectoEntidadConvocantes$.value;
     const index = current.findIndex(value => value === proyectoEntidadConvocante);
     current.splice(index, 1);
@@ -74,9 +68,6 @@ export class ProyectoEntidadesConvocantesFragment extends Fragment {
         // Creamos un nuevo ProyectoEntidadConvocante para forzar la actualización de la fila
         // (de otro modo el pipe "proyectoEntidadConvocantePlan" no se re-evalúa)
         const newProyectoEntidadConvocante = { ...data };
-        if (data.id) {
-          this.edited.add(data.id);
-        }
         return newProyectoEntidadConvocante;
       }
       return proyectoEntidadConvocante;
@@ -94,90 +85,30 @@ export class ProyectoEntidadesConvocantesFragment extends Fragment {
   }
 
   saveOrUpdate(): Observable<void> {
-    return merge(
-      this.deleteProyectoEntidadConvocantes(),
-      this.updateProyectoEntidadConvocantes(),
-      this.createProyectoEntidadConvocantes()
-    ).pipe(
-      takeLast(1),
-      tap(() => {
-        if (this.isSaveOrUpdateComplete()) {
-          this.setChanges(false);
-        }
-      })
-    );
-  }
-
-  private deleteProyectoEntidadConvocantes(): Observable<void> {
-    if (this.deleted.size === 0) {
-      return of(void 0);
-    }
-    return from(this.deleted).pipe(
-      mergeMap((id) => {
-        return this.proyectoService.deleteEntidadConvocanteById(this.getKey() as number, id)
-          .pipe(
-            tap(() => {
-              this.deleted.delete(id);
-            })
-          );
-      })
-    );
-  }
-
-  private updateProyectoEntidadConvocantes(): Observable<void> {
-    const editedEntidades = this.proyectoEntidadConvocantes$.value.filter((value) => value.id && this.edited.has(value.id));
-    if (editedEntidades.length === 0) {
-      return of(void 0);
-    }
-    return from(editedEntidades).pipe(
-      mergeMap((data) => {
-        return this.proyectoService.setEntidadConvocantePrograma(this.getKey() as number,
-          data.id, data.programa).pipe(
-            map((updatedEntidad) => {
-              this.edited.delete(updatedEntidad.id);
-              let current: IProyectoEntidadConvocante[] = this.proyectoEntidadConvocantes$.value;
-              current = current.map((proyectoEntidadConvocante) =>
-                proyectoEntidadConvocante.id === updatedEntidad.id ? updatedEntidad : proyectoEntidadConvocante);
-              this.proyectoEntidadConvocantes$.next(
-                current.map((value) => {
-                  if (!value.entidad.nombre) {
-                    value.entidad = data.entidad;
-                  }
-                  return value;
-                })
-              );
-            })
-          );
-      })
-    );
-  }
-
-  private createProyectoEntidadConvocantes(): Observable<void> {
-    const createdEntidades = this.proyectoEntidadConvocantes$.value.filter((value) => !value.id);
-    if (createdEntidades.length === 0) {
-      return of(void 0);
-    }
-    return from(createdEntidades).pipe(
-      mergeMap((data) => {
-        return this.proyectoService.createEntidadConvocante(this.getKey() as number, data).pipe(
-          map((createdEntidad) => {
-            let current: IProyectoEntidadConvocante[] = this.proyectoEntidadConvocantes$.value;
-            current = current.map((proyectoEntidadConvocante) =>
-              proyectoEntidadConvocante === data ? createdEntidad : proyectoEntidadConvocante);
-            this.proyectoEntidadConvocantes$.next(current.map((value) => {
-              if (!value.entidad.nombre) {
-                value.entidad = data.entidad;
+    return this.updateEntidadesConvocantes()
+      .pipe(
+        map(updatedEntidadesConvocante => {
+          this.proyectoEntidadConvocantes$.next(
+            this.proyectoEntidadConvocantes$.value.map(entidadConvocante => {
+              if (!!!entidadConvocante.id) {
+                entidadConvocante.id = updatedEntidadesConvocante.find(e =>
+                  e.entidad?.id === entidadConvocante.entidad?.id
+                  && e.programa?.id === entidadConvocante.programa?.id
+                  && e.programaConvocatoria?.id === entidadConvocante.programaConvocatoria?.id).id;
               }
-              return value;
-            }));
-          })
-        );
-      })
+              return entidadConvocante;
+            })
+          );
+        }),
+        tap(() => this.setChanges(false)),
+      );
+  }
+
+  private updateEntidadesConvocantes(): Observable<IProyectoEntidadConvocante[]> {
+    return this.proyectoService.updateEntidadesConvocantes(
+      this.getKey() as number,
+      this.proyectoEntidadConvocantes$.value
     );
   }
 
-  private isSaveOrUpdateComplete(): boolean {
-    const created: boolean = this.proyectoEntidadConvocantes$.value.some((proyectoEntidadConvocate) => !proyectoEntidadConvocate.id);
-    return (this.deleted.size > 0 || this.edited.size > 0 || created);
-  }
 }

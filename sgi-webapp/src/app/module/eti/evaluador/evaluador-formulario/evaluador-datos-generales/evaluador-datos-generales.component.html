@@ -59,6 +59,9 @@
         <mat-error *ngIf="formGroup.controls.fechaBaja.errors?.required">
           {{'error.required.entity' | translate:msgParamFechaBajaEntity}}
         </mat-error>
+        <mat-error *ngIf="formGroup.controls.fechaBaja.errors?.after">
+          {{'error.after.fecha-baja' | translate}}
+        </mat-error>
       </mat-form-field>
     </div>
 

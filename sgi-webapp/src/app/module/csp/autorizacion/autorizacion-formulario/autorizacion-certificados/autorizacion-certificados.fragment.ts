@@ -17,6 +17,7 @@ export interface CertificadoAutorizacionListado {
 export class AutorizacionCertificadosFragment extends Fragment {
   certificadosAutorizacion$ = new BehaviorSubject<StatusWrapper<CertificadoAutorizacionListado>[]>([]);
   private certificadosAutorizacionEliminados: StatusWrapper<CertificadoAutorizacionListado>[] = [];
+  private documentosRefUnrelated: string[] = [];
 
   constructor(
     key: number,
@@ -110,7 +111,9 @@ export class AutorizacionCertificadosFragment extends Fragment {
             const index = this.certificadosAutorizacion$.value.findIndex((currentCertificado) =>
               currentCertificado === wrappedCertificadoAutorizacion);
             wrappedCertificadoAutorizacion.value.certificado.id = createdCertificado.id;
-            this.certificadosAutorizacion$.value[index] = new StatusWrapper<CertificadoAutorizacionListado>(wrappedCertificadoAutorizacion.value);
+            this.certificadosAutorizacion$.value[index] = new StatusWrapper<CertificadoAutorizacionListado>(
+              wrappedCertificadoAutorizacion.value
+            );
             this.certificadosAutorizacion$.next(this.certificadosAutorizacion$.value);
           })
         );
@@ -118,42 +121,54 @@ export class AutorizacionCertificadosFragment extends Fragment {
     );
   }
 
+  /**
+   * Si el certificado ya esta creado lo anade a la lista de elementos a eliminar
+   * y si no esta persistido aun se elimina directamente el documento asociado.
+   */
   public deleteCertificado(wrapper: StatusWrapper<CertificadoAutorizacionListado>) {
+    let deleteDocumento$ = of(void 0);
     const current = this.certificadosAutorizacion$.value;
-    const index = current.findIndex(
-      (value) => value.value === wrapper.value
-    );
+    const index = current.findIndex(value => value.value === wrapper.value);
+
     if (index >= 0) {
-      if (!wrapper.created) {
+      if (wrapper.created) {
+        deleteDocumento$ = this.documentoService.eliminarFichero(wrapper.value.certificado.documento.documentoRef);
+      } else {
         this.certificadosAutorizacionEliminados.push(current[index]);
       }
-      current.splice(index, 1);
-      this.certificadosAutorizacion$.next(current);
-      this.setChanges(true);
+
+      deleteDocumento$.subscribe(() => {
+        current.splice(index, 1);
+        this.certificadosAutorizacion$.next(current);
+        this.setChanges(true);
+      });
     }
   }
 
-  public updateCertificado(wrapper: StatusWrapper<CertificadoAutorizacionListado>): void {
+  /**
+   * Actualiza el certificado y si se modifica el documento asociado lo anade a la lista de documentos a eliminar
+   * y si no esta persistido aun se elimina directamente.
+   */
+  public updateCertificado(wrapper: StatusWrapper<CertificadoAutorizacionListado>, previousDocumentoRef: string): void {
     const current = this.certificadosAutorizacion$.value;
     const index = current.findIndex(value => value.value.certificado.id === wrapper.value.certificado.id);
     if (index >= 0) {
-      wrapper.setEdited();
+
+      if (!wrapper.created) {
+        wrapper.setEdited();
+      }
+
+      if (!!previousDocumentoRef && wrapper.value.certificado.documento.documentoRef !== previousDocumentoRef) {
+        if (wrapper.created) {
+          this.documentoService.eliminarFichero(wrapper.value.certificado.documento.documentoRef).subscribe();
+        } else {
+          this.documentosRefUnrelated.push(previousDocumentoRef);
+        }
+      }
+
       this.certificadosAutorizacion$.value[index] = wrapper;
       this.certificadosAutorizacion$.next(this.certificadosAutorizacion$.value);
       this.setChanges(true);
-
-    }
-  }
-
-  public createCertificado(wrapper: StatusWrapper<CertificadoAutorizacionListado>): void {
-    const current = this.certificadosAutorizacion$.value;
-    const index = current.findIndex(value => value.value.certificado.id === wrapper.value.certificado.id);
-    if (index >= 0) {
-      wrapper.setCreated();
-      this.certificadosAutorizacion$.value[index] = wrapper;
-      this.certificadosAutorizacion$.next(this.certificadosAutorizacion$.value);
-      this.setChanges(true);
-
     }
   }
 
@@ -168,9 +183,29 @@ export class AutorizacionCertificadosFragment extends Fragment {
             tap(() => {
               this.certificadosAutorizacionEliminados = this.certificadosAutorizacionEliminados.filter(deletedCertificado =>
                 deletedCertificado.value.certificado.id !== wrapped.value.certificado.id);
-            })
+            }),
+            switchMap(() => this.documentoService.eliminarFichero(wrapped.value.certificado.documento.documentoRef))
           );
       })
+    );
+  }
+
+  private deleteDocumentosUnrelated(): Observable<void> {
+    if (this.documentosRefUnrelated.length === 0) {
+      return of(void 0);
+    }
+
+    return from(this.documentosRefUnrelated).pipe(
+      mergeMap(documentoRef =>
+        this.documentoService.eliminarFichero(documentoRef)
+          .pipe(
+            tap(() =>
+              this.documentosRefUnrelated = this.documentosRefUnrelated
+                .filter(documentoRefEliminado => documentoRefEliminado !== documentoRef)
+            )
+          )
+      ),
+      takeLast(1)
     );
   }
 
@@ -196,7 +231,8 @@ export class AutorizacionCertificadosFragment extends Fragment {
     return concat(
       this.deletecertificados(),
       this.updateCertificadosAutorizacion(),
-      this.createCertificados()
+      this.createCertificados(),
+      this.deleteDocumentosUnrelated()
     ).pipe(
       takeLast(1),
       tap(() => {

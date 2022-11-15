@@ -1,16 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { MatDialog } from '@angular/material/dialog';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { IRelacionEjecucionEconomica, TipoEntidad, TIPO_ENTIDAD_MAP } from '@core/models/csp/relacion-ejecucion-economica';
 import { IRolProyecto } from '@core/models/csp/rol-proyecto';
 import { ROUTE_NAMES } from '@core/route.names';
-import { RelacionEjecucionEconomicaService } from '@core/services/csp/relacion-ejecucion-economica/relacion-ejecucion-economica.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { RelacionEjecucionEconomicaService } from '@core/services/csp/relacion-ejecucion-economica/relacion-ejecucion-economica.service';
 import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
@@ -18,10 +17,7 @@ import { EMPTY, from, Observable, Subscription } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { EJECUCION_ECONOMICA_ROUTE_NAMES } from '../ejecucion-economica-route-names';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../ejecucion-economica.action.service';
-import { MatDialog } from '@angular/material/dialog';
 import { IRequerimientoJustificacionListadoModalData, RequerimientoJustificacionListadoExportModalComponent } from '../modals/requerimiento-justificacion-listado-export-modal/requerimiento-justificacion-listado-export-modal.component';
-
-const MSG_ERROR = marker('error.load');
 
 @Component({
   selector: 'sgi-ejecucion-economica-listado',
@@ -57,7 +53,6 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
 
   constructor(
     private readonly logger: NGXLogger,
-    protected snackBarService: SnackBarService,
     private rolProyectoService: RolProyectoService,
     private proyectoService: ProyectoService,
     private personaService: PersonaService,
@@ -65,7 +60,7 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
     private grupoService: GrupoService,
     private readonly matDialog: MatDialog
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
   }
 
   ngOnInit(): void {
@@ -104,6 +99,7 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
               switchMap(personaRefs => this.personaService.findAllByIdIn(personaRefs).pipe(
                 catchError((error) => {
                   this.logger.error(error);
+                  this.processError(error);
                   return EMPTY;
                 })
               )),
@@ -176,9 +172,8 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
     this.busquedaAvanzada = !this.busquedaAvanzada;
   }
 
-  onClearFilters(): void {
+  protected resetFilters(): void {
     this.initFormGroup(true);
-    this.onSearch();
   }
 
   ngOnDestroy(): void {
@@ -237,10 +232,7 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
             );
           });
         },
-        (error) => {
-          this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR);
-        }
+        (error) => this.logger.error(error)
       )
     );
   }

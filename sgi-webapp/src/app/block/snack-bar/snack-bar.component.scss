@@ -3,6 +3,11 @@
 :host {
   flex-direction: column;
 }
+
+.preserve-lines {
+  white-space: pre-line;
+}
+
 .error-snack-bar {
   background-color: map-get($sgi-custom-colors, danger);
   color: map-get($sgi-custom-colors, white);

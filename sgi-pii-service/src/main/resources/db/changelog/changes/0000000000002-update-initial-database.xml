@@ -80,6 +80,8 @@
     <dropNotNullConstraint columnDataType="int" columnName="hasta" tableName="tramo_reparto" />
   </changeSet>
   <changeSet author="master" id="0000000000002-10">
+    <validCheckSum>8:78131ad306e7c9ca6377ba1fe4485b92</validCheckSum>
+    <dropDefaultValue tableName="TRAMO_REPARTO" columnName="ACTIVO" />
     <dropColumn columnName="ACTIVO" tableName="TRAMO_REPARTO" />
   </changeSet>
   <changeSet author="master" id="0000000000002-11">

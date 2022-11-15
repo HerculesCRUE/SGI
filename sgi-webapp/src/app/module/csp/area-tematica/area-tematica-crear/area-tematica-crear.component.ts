@@ -15,7 +15,7 @@ import { AreaTematicaActionService } from '../area-tematica.action.service';
 const MSG_BUTTON_SAVE = marker('btn.save.entity');
 const MSG_SUCCESS = marker('msg.save.entity.success');
 const MSG_ERROR = marker('error.save.entity');
-const AREA_TEMATICA_KEY = marker('csp.area-tematica');
+const AREA_TEMATICA_KEY = marker('csp.area-tematica.listado');
 const AREA_KEY = marker('csp.area');
 @Component({
   selector: 'sgi-area-tematica-crear',
@@ -75,7 +75,7 @@ export class AreaTematicaCrearComponent extends ActionComponent implements OnIni
       switchMap((value) => {
         return this.translate.get(
           MSG_SUCCESS,
-          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
     ).subscribe((value) => this.textoCrearSuccess = value);
@@ -87,7 +87,7 @@ export class AreaTematicaCrearComponent extends ActionComponent implements OnIni
       switchMap((value) => {
         return this.translate.get(
           MSG_ERROR,
-          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
     ).subscribe((value) => this.textoCrearError = value);

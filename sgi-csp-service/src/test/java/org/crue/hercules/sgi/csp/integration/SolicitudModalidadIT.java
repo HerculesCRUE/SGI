@@ -125,6 +125,7 @@ class SolicitudModalidadIT extends BaseIT {
     solicitudModalidad.setEntidadRef("entidad-001");
     solicitudModalidad.setSolicitudId(1L);
     solicitudModalidad.setPrograma(programa);
+    solicitudModalidad.setProgramaConvocatoriaId(1L);
 
     return solicitudModalidad;
   }

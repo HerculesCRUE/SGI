@@ -5,11 +5,13 @@
       <mat-form-field class="input-form">
         <mat-label>{{'csp.convocatoria-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
         <sgi-select-empresa formControlName="empresa"
-          placeholder="{{'csp.convocatoria-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"
-          [selectedEmpresas]="data.selectedEmpresas" required>
+          placeholder="{{'csp.convocatoria-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}" required>
         </sgi-select-empresa>
         <mat-error *ngIf="formGroup.controls.empresa.errors?.required">
           {{ 'error.required.entity' | translate:msgParamEntity }}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.empresa.errors?.duplicated">
+          {{ 'error.csp.convocatoria-entidad-convocatante.duplicated' | translate }}
         </mat-error>
       </mat-form-field>
     </div>
@@ -26,8 +28,8 @@
             <li class="mat-tree-node">
               <button mat-icon-button disabled></button>
               <mat-checkbox class="checkbox" color="primary" [checked]="node === checkedNode" [disabled]="data.readonly"
-                (change)="onCheckNode(node, $event)">
-                {{node.programa.value.nombre}}
+                (change)="onCheckNode(node, $event)" matTooltip="{{node.programa.value.descripcion}}">
+                <span class="break-spaces">{{node.programa.value.nombre}}</span>
               </mat-checkbox>
             </li>
           </mat-tree-node>
@@ -40,8 +42,9 @@
                   </mat-icon>
                 </button>
                 <mat-checkbox class="checkbox" color="primary" [checked]="node === checkedNode"
-                  [disabled]="data.readonly" (change)="onCheckNode(node, $event)">
-                  {{node.programa.value.nombre}}
+                  [disabled]="data.readonly" (change)="onCheckNode(node, $event)"
+                  matTooltip="{{node.programa.value.descripcion}}">
+                  <span class="break-spaces">{{node.programa.value.nombre}}</span>
                 </mat-checkbox>
               </div>
               <ul [class.arbol-invisible]="!treeControl.isExpanded(node)">

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IActa } from '@core/models/eti/acta';
+import { Module } from '@core/module';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { ActaService } from '@core/services/eti/acta.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -25,18 +26,25 @@ export class ActaResolver extends SgiResolverResolver<IActa> {
   }
 
   protected resolveEntity(route: ActivatedRouteSnapshot): Observable<IActa> {
-    const peticion = this.service.findById(Number(route.paramMap.get('id')));
-    if (this.authService.hasAuthorityForAnyUO('ETI-ACT-INV-ER')) {
+    const isInvestigador = route.data.module === Module.INV && this.hasViewAuthorityInv();
+
+    const acta$ = this.service.findById(Number(route.paramMap.get('id')));
+    if (isInvestigador) {
       return this.service.isMiembroActivoComite(Number(route.paramMap.get('id'))).pipe(
         switchMap(response => {
           if (response) {
-            return peticion;
+            return acta$;
           } else {
             return throwError('NOT_FOUND');
           }
-        }));
+        })
+      );
     } else {
-      return peticion;
+      return acta$;
     }
+  }
+
+  private hasViewAuthorityInv(): boolean {
+    return this.authService.hasAuthority('ETI-ACT-INV-ER');
   }
 }

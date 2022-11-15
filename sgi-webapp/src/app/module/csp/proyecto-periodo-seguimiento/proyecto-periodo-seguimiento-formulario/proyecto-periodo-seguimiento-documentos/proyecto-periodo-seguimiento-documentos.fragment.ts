@@ -287,11 +287,11 @@ export class ProyectoPeriodoSeguimientoDocumentosFragment extends Fragment {
       mergeMap((documento) => {
         return this.periodoSeguimientoDocumentoService.deleteById(documento.id)
           .pipe(
-            switchMap(() => {
-              this.documentosEliminados = this.documentosEliminados.filter(deleted =>
-                deleted.id !== documento.id);
-              return this.documentoService.eliminarFichero(documento.documentoRef);
-            })
+            tap(() => {
+              this.documentosEliminados = this.documentosEliminados
+                .filter(deleted => deleted.id !== documento.id);
+            }),
+            switchMap(() => this.documentoService.eliminarFichero(documento.documentoRef))
           );
       }));
   }

@@ -8,7 +8,7 @@ import { AbstractTablePaginationComponent } from '@core/component/abstract-table
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IActaWithNumEvaluaciones } from '@core/models/eti/acta-with-num-evaluaciones';
-import { ESTADO_ACTA_MAP, TipoEstadoActa } from '@core/models/eti/tipo-estado-acta';
+import { ESTADO_ACTA_MAP } from '@core/models/eti/tipo-estado-acta';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
@@ -26,7 +26,6 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { ActaListadoExportModalComponent, IActaListadoModalData } from '../modals/acta-listado-export-modal/acta-listado-export-modal.component';
 
 const MSG_BUTTON_NEW = marker('btn.add.entity');
-const MSG_ERROR = marker('error.load');
 const MSG_FINALIZAR_ERROR = marker('error.eti.acta.finalizar');
 const MSG_FINALIZAR_SUCCESS = marker('msg.eti.acta.finalizar.success');
 const ACTA_KEY = marker('eti.acta');
@@ -55,6 +54,7 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
   finalizarSubscription: Subscription;
 
   textoCrear: string;
+  private textoFinalizarError: string;
 
   blockchainEnable: boolean;
 
@@ -71,8 +71,7 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
     private readonly matDialog: MatDialog,
     private readonly cnfService: ConfigService
   ) {
-
-    super(snackBarService, MSG_ERROR);
+    super();
 
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
@@ -111,6 +110,10 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
         );
       })
     ).subscribe((value) => this.textoCrear = value);
+
+    this.translate.get(
+      MSG_FINALIZAR_ERROR
+    ).subscribe((value) => this.textoFinalizarError = value);
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IActaWithNumEvaluaciones>> {
@@ -153,8 +156,8 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
     return filter;
   }
 
-  onClearFilters(): void {
-    super.onClearFilters();
+  protected resetFilters(): void {
+    super.resetFilters();
     this.formGroup.controls.fechaEvaluacionInicio.setValue(null);
     this.formGroup.controls.fechaEvaluacionFin.setValue(null);
   }
@@ -178,10 +181,10 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
         this.paginator.firstPage();
         this.totalElementos = 0;
         if (error instanceof SgiError) {
-          this.snackBarService.showError(error);
+          this.processError(error);
         }
         else {
-          this.snackBarService.showError(MSG_FINALIZAR_ERROR);
+          this.processError(new SgiError(this.textoFinalizarError));
         }
         return of([]);
       }));
@@ -226,9 +229,12 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
           documento.nombre = documentoInfo.nombre;
           return this.documentoService.downloadFichero(documentoInfo.documentoRef);
         })
-      ).subscribe(response => {
-        triggerDownloadToUser(response, documento.nombre);
-      });
+      ).subscribe(
+        (response) => {
+          triggerDownloadToUser(response, documento.nombre);
+        },
+        this.processError
+      );
     }
   }
 
@@ -248,13 +254,18 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
    * @param actaId id del acta a confirmar.
    */
   confirmarRegistroBlockchain(actaId: number) {
-    this.suscripciones.push(this.actasService.isRegistroBlockchainConfirmado(actaId).subscribe((value) => {
-      if (value) {
-        this.snackBarService.showSuccess(MSG_REGISTRO_BLOCKCHAIN_OK);
-      } else {
-        this.snackBarService.showSuccess(MSG_REGISTRO_BLOCKCHAIN_ALTERADO);
-      }
-    }));
+    this.suscripciones.push(
+      this.actasService.isRegistroBlockchainConfirmado(actaId).subscribe(
+        (value) => {
+          if (value) {
+            this.snackBarService.showSuccess(MSG_REGISTRO_BLOCKCHAIN_OK);
+          } else {
+            this.snackBarService.showSuccess(MSG_REGISTRO_BLOCKCHAIN_ALTERADO);
+          }
+        },
+        this.processError
+      )
+    );
   }
 
 }

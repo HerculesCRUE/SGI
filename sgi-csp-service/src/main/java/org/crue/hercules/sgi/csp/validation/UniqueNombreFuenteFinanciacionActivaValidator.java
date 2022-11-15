@@ -14,10 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class UniqueNombreFuenteFinanciacionActivaValidator
     implements ConstraintValidator<UniqueNombreFuenteFinanciacionActiva, FuenteFinanciacion> {
+
   private FuenteFinanciacionRepository repository;
+  private String field;
 
   public UniqueNombreFuenteFinanciacionActivaValidator(FuenteFinanciacionRepository repository) {
     this.repository = repository;
+  }
+
+  @Override
+  public void initialize(UniqueNombreFuenteFinanciacionActiva constraintAnnotation) {
+    ConstraintValidator.super.initialize(constraintAnnotation);
+    field = constraintAnnotation.field();
   }
 
   @Override
@@ -39,5 +47,11 @@ public class UniqueNombreFuenteFinanciacionActivaValidator
     // can be used in the error message
     HibernateConstraintValidatorContext hibernateContext = context.unwrap(HibernateConstraintValidatorContext.class);
     hibernateContext.addMessageParameter("entity", ApplicationContextSupport.getMessage(FuenteFinanciacion.class));
+
+    // Disable default message to allow binding the message to a property
+    hibernateContext.disableDefaultConstraintViolation();
+    // Build a custom message for a property using the default message
+    hibernateContext.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+        .addPropertyNode(ApplicationContextSupport.getMessage(field)).addConstraintViolation();
   }
 }

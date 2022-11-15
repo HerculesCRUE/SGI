@@ -61,6 +61,8 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
 
     BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(generarMockProyecto(1L)));
+    BDDMockito.given(repository.findAll(ArgumentMatchers.<Specification<ProyectoPeriodoSeguimiento>>any(),
+        ArgumentMatchers.<Pageable>any())).willReturn(Page.empty());
 
     BDDMockito.given(repository.save(proyectoPeriodoSeguimiento)).will((InvocationOnMock invocation) -> {
       ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoCreado = invocation.getArgument(0);
@@ -256,6 +258,8 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
         .willReturn(Optional.of(generarMockProyecto(1L)));
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(proyectoPeriodoSeguimiento));
+    BDDMockito.given(repository.findAll(ArgumentMatchers.<Specification<ProyectoPeriodoSeguimiento>>any(),
+        ArgumentMatchers.<Pageable>any())).willReturn(Page.empty());
 
     BDDMockito.given(repository.save(ArgumentMatchers.<ProyectoPeriodoSeguimiento>any()))
         .will((InvocationOnMock invocation) -> invocation.getArgument(0));

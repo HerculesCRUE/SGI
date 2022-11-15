@@ -108,11 +108,12 @@ export class ModeloEjecucionTipoDocumentoFragment extends Fragment {
     });
     createdModelos = createdModelos.filter(x => x.value.modeloTipoFase);
     return from(createdModelos).pipe(
-      mergeMap((wrappedTarea) => {
-        return this.modeloTipoDocumentoService.create(wrappedTarea.value).pipe(
-          map((updatedTarea) => {
-            const index = this.modeloTipoDocumento$.value.findIndex((currentTarea) => currentTarea === wrappedTarea);
-            this.modeloTipoDocumento$.value[index] = new StatusWrapper<IModeloTipoDocumento>(updatedTarea);
+      mergeMap((wrappedDocumento) => {
+        return this.modeloTipoDocumentoService.create(wrappedDocumento.value).pipe(
+          map((updatedDocumento) => {
+            const index = this.modeloTipoDocumento$.value.findIndex((currentDocumento) => currentDocumento === wrappedDocumento);
+            this.modeloTipoDocumento$.value[index] = new StatusWrapper<IModeloTipoDocumento>(updatedDocumento);
+            this.modeloTipoDocumento$.next(this.modeloTipoDocumento$.value);
           })
         );
       })

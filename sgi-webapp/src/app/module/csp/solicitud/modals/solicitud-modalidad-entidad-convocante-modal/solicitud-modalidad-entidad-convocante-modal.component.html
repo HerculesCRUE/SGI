@@ -3,21 +3,19 @@
   <form [formGroup]="formGroup">
     <div fxLayout="row">
       <!-- Entidad convocante -->
-      <div fxFlex>
-        <mat-form-field>
-          <mat-label>{{'csp.solicitud-modalidad.entidad-convocante' | translate}}</mat-label>
-          <input matInput formControlName="entidadConvocante" type="text"
-            placeholder="{{'csp.solicitud-modalidad.entidad-convocante' | translate}}" maxlength="100">
-        </mat-form-field>
-      </div>
-      <!-- Plan-->
-      <div fxFlex>
-        <mat-form-field>
-          <mat-label>{{'csp.solicitud-modalidad.plan' | translate}}</mat-label>
-          <input matInput formControlName="plan" type="text"
-            placeholder="{{'csp.solicitud-modalidad.plan' | translate}}" maxlength="100">
-        </mat-form-field>
-      </div>
+      <mat-form-field fxFlex>
+        <mat-label>{{'csp.solicitud-modalidad.entidad-convocante' | translate}}</mat-label>
+        <input matInput formControlName="entidadConvocante" type="text"
+          placeholder="{{'csp.solicitud-modalidad.entidad-convocante' | translate}}" maxlength="100">
+      </mat-form-field>
+    </div>
+    <!-- Plan-->
+    <div fxLayout="row">
+      <mat-form-field fxFlex>
+        <mat-label>{{'csp.solicitud-modalidad.plan' | translate}}</mat-label>
+        <input matInput formControlName="plan" type="text" placeholder="{{'csp.solicitud-modalidad.plan' | translate}}"
+          maxlength="100">
+      </mat-form-field>
     </div>
     <!-- Modalidad -->
     <div class="programa">
@@ -26,9 +24,13 @@
           <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
             <li class="mat-tree-node">
               <button mat-icon-button disabled></button>
-              <mat-checkbox class="checkbox" color="primary" [checked]="node === checkedNode"
-                (change)="onCheckNode(node, $event)" [disabled]="this.data.readonly">
+              <mat-label *ngIf="node.programa.id === data.programa?.id">
                 {{node.programa.nombre}}
+              </mat-label>
+              <mat-checkbox *ngIf="node.programa.id !== data.programa?.id" class="checkbox" color="primary"
+                [checked]="node === checkedNode" (change)="onCheckNode(node, $event)" [disabled]="this.data.readonly"
+                matTooltip="{{node.programa.descripcion}}">
+                <span class="break-spaces">{{node.programa.nombre}}</span>
               </mat-checkbox>
             </li>
           </mat-tree-node>
@@ -41,13 +43,14 @@
                   </mat-icon>
                 </button>
 
-                <mat-label *ngIf="node === rootNode">
+                <mat-label *ngIf="node === rootNode" matTooltip="{{node.programa.descripcion}}">
                   {{node.programa.nombre}}
                 </mat-label>
 
                 <mat-checkbox *ngIf="node !== rootNode" class="checkbox" color="primary"
-                  [checked]="node === checkedNode" (change)="onCheckNode(node, $event)" [disabled]="this.data.readonly">
-                  {{node.programa.nombre}}
+                  [checked]="node === checkedNode" (change)="onCheckNode(node, $event)" [disabled]="this.data.readonly"
+                  matTooltip="{{node.programa.descripcion}}">
+                  <span class="break-spaces">{{node.programa.nombre}}</span>
                 </mat-checkbox>
               </div>
               <ul [class.arbol-invisible]="!treeControl.isExpanded(node)">

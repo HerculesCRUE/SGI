@@ -135,7 +135,7 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
   }
 
   /**
-   * Se sobrecarga el metodo para permirtir la sobreescritura del findAll y retornar otro tipo. 
+   * Se sobrecarga el metodo para permirtir la sobreescritura del findAll y retornar otro tipo.
    * Siempre se retornará {@link IMemoriaPeticionEvaluacion}
    */
   findAll(options?: SgiRestFindOptions): Observable<SgiRestListResult<IMemoria>>;
@@ -202,6 +202,15 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
   createDocumentacionInicial(id: number, documentacionMemoria: IDocumentacionMemoria): Observable<IDocumentacionMemoria> {
     return this.http.post<IDocumentacionMemoriaBackend>(
       `${this.endpointUrl}/${id}/documentacion-inicial`,
+      DOCUMENTACION_MEMORIA_CONVERTER.fromTarget(documentacionMemoria)
+    ).pipe(
+      map(response => DOCUMENTACION_MEMORIA_CONVERTER.toTarget(response))
+    );
+  }
+
+  createDocumentacionInicialInvestigador(id: number, documentacionMemoria: IDocumentacionMemoria): Observable<IDocumentacionMemoria> {
+    return this.http.post<IDocumentacionMemoriaBackend>(
+      `${this.endpointUrl}/${id}/documentacion-inicial/investigador`,
       DOCUMENTACION_MEMORIA_CONVERTER.fromTarget(documentacionMemoria)
     ).pipe(
       map(response => DOCUMENTACION_MEMORIA_CONVERTER.toTarget(response))

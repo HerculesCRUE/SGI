@@ -450,9 +450,8 @@
             </button>
           </ng-container>
           <ng-container *sgiHasAnyAuthority="['CSP-PRO-R', 'CSP-PRO-R_' + proyecto.unidadGestion.id ]">
-            <button *ngIf="(proyecto.estado.estado === Estado.BORRADOR && proyecto.activo === false)"
-              (click)="activateProyecto(proyecto)" mat-icon-button color="accent"
-              matTooltip="{{'btn.recover' | translate}}">
+            <button *ngIf="proyecto.activo === false" (click)="activateProyecto(proyecto)" mat-icon-button
+              color="accent" matTooltip="{{'btn.recover' | translate}}">
               <mat-icon>add_circle_outline</mat-icon>
             </button>
           </ng-container>

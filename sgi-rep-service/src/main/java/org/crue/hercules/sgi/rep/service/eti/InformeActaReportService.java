@@ -4,15 +4,27 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
+import org.crue.hercules.sgi.rep.dto.eti.ActaComentariosMemoriaReportOutput;
+import org.crue.hercules.sgi.rep.dto.eti.ActaComentariosReportOutput;
 import org.crue.hercules.sgi.rep.dto.eti.ActaDto;
 import org.crue.hercules.sgi.rep.dto.eti.AsistentesDto;
+import org.crue.hercules.sgi.rep.dto.eti.BloqueOutput;
+import org.crue.hercules.sgi.rep.dto.eti.BloquesReportInput;
+import org.crue.hercules.sgi.rep.dto.eti.BloquesReportOutput;
+import org.crue.hercules.sgi.rep.dto.eti.ComentarioDto;
 import org.crue.hercules.sgi.rep.dto.eti.MemoriaEvaluadaDto;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeActa;
 import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
@@ -24,6 +36,7 @@ import org.pentaho.reporting.engine.classic.core.MasterReport;
 import org.pentaho.reporting.engine.classic.core.SubReport;
 import org.pentaho.reporting.engine.classic.core.TableDataFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,17 +49,28 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 public class InformeActaReportService extends SgiReportService {
 
+  private static final String DICTAMEN_FAVORABLE = "Favorable";
+  private static final String TIPO_EVALUACION_MEMORIA = "Memoria";
+  private static final String TIPO_EVALUACION_SEG_ANUAL = "Seguimiento anual";
+  private static final String TIPO_EVALUACION_SEG_FINAL = "Seguimiento final";
+
   private final SgiApiSgpService personaService;
   private final ConvocatoriaReunionService convocatoriaReunionService;
   private final ActaService actaService;
+  private final EvaluacionService evaluacionService;
+  private final BaseActaComentariosReportService baseActaComentariosReportService;
 
   public InformeActaReportService(SgiConfigProperties sgiConfigProperties, SgiApiSgpService personaService,
-      ConvocatoriaReunionService convocatoriaReunionService, ActaService actaService) {
+      ConvocatoriaReunionService convocatoriaReunionService, ActaService actaService,
+      EvaluacionService evaluacionService,
+      BaseActaComentariosReportService baseActaComentariosReportService) {
 
     super(sgiConfigProperties);
     this.personaService = personaService;
     this.convocatoriaReunionService = convocatoriaReunionService;
     this.actaService = actaService;
+    this.evaluacionService = evaluacionService;
+    this.baseActaComentariosReportService = baseActaComentariosReportService;
   }
 
   private DefaultTableModel getTableModelGeneral(ActaDto acta) {
@@ -54,6 +78,12 @@ public class InformeActaReportService extends SgiReportService {
     Vector<Object> columnsData = new Vector<>();
     Vector<Vector<Object>> rowsData = new Vector<>();
     Vector<Object> elementsRow = new Vector<>();
+
+    columnsData.add("fecha");
+    String i18nDe = ApplicationContextSupport.getMessage("common.de");
+    String pattern = String.format("EEEE dd '%s' MMMM '%s' yyyy", i18nDe, i18nDe);
+    Instant fecha = acta.getConvocatoriaReunion().getFechaEvaluacion();
+    elementsRow.add(formatInstantToString(fecha, pattern));
 
     columnsData.add("numeroActa");
     Integer numeroActa = acta.getNumero();
@@ -64,10 +94,9 @@ public class InformeActaReportService extends SgiReportService {
     elementsRow.add(comite);
 
     columnsData.add("fechaConvocatoria");
-    String i18nDe = ApplicationContextSupport.getMessage("common.de");
-    String pattern = String.format("dd '%s' MMMM '%s' yyyy", i18nDe, i18nDe);
+    String patternFechaConv = String.format("dd '%s' MMMM '%s' yyyy", i18nDe, i18nDe);
     Instant fechaEvaluacion = acta.getConvocatoriaReunion().getFechaEvaluacion();
-    elementsRow.add(formatInstantToString(fechaEvaluacion, pattern));
+    elementsRow.add(formatInstantToString(fechaEvaluacion, patternFechaConv));
 
     columnsData.add("lugar");
     elementsRow.add(acta.getConvocatoriaReunion().getLugar());
@@ -120,6 +149,9 @@ public class InformeActaReportService extends SgiReportService {
     columnsData.add("numeroEvaluacionesRevisiones");
     Long numeroEvaluacionesRevisiones = actaService.countEvaluacionesRevisionSinMinima(acta.getId());
     elementsRow.add(null != numeroEvaluacionesRevisiones ? numeroEvaluacionesRevisiones : 0);
+
+    columnsData.add("ordenDelDia");
+    elementsRow.add(acta.getConvocatoriaReunion().getOrdenDia());
 
     rowsData.add(elementsRow);
 
@@ -186,6 +218,20 @@ public class InformeActaReportService extends SgiReportService {
       SubReport subreportMemoriasEvaluadas = (SubReport) bandMemoriasEvaluadas.getElement(0);
       subreportMemoriasEvaluadas.setDataFactory(dataFactorySubReportMemoriasEvaluadas);
 
+      ActaComentariosReportOutput actaComentariosReportOutput = this.getActaComentariosSubReport(idActa);
+      Map<String, TableModel> hmTableModel = baseActaComentariosReportService
+          .generateTableModelFromReportOutput(actaComentariosReportOutput);
+      if (hmTableModel != null && !hmTableModel.isEmpty()) {
+        Map.Entry<String, TableModel> entry = hmTableModel.entrySet().iterator().next();
+        String queryComentarios = entry.getKey();
+        TableModel tableModelComentarios = entry.getValue();
+        TableDataFactory dataFactorySubReportComentarios = new TableDataFactory();
+        dataFactorySubReportComentarios.addTable(queryComentarios, tableModelComentarios);
+        Band bandComentarios = (Band) report.getItemBand().getElement(4);
+        SubReport subReportComentarios = (SubReport) bandComentarios.getElement(0);
+        subReportComentarios.setDataFactory(dataFactorySubReportComentarios);
+      }
+
       sgiReport.setContent(generateReportOutput(sgiReport.getOutputType(), report));
 
     } catch (Exception e) {
@@ -230,6 +276,83 @@ public class InformeActaReportService extends SgiReportService {
     DefaultTableModel tableModel = new DefaultTableModel();
     tableModel.setDataVector(rowsData, columnsData);
     return tableModel;
+  }
+
+  /**
+   * Devuelve el contenido para generar el subreport de comentarios del acta
+   *
+   * @param actaId Id del acta
+   * @return ActaComentariosReportOutput Datos a presentar en el informe
+   */
+  protected ActaComentariosReportOutput getActaComentariosSubReport(Long actaId) {
+    log.debug("getActaComentariosSubReport(actaId) - start");
+
+    Assert.notNull(
+        actaId,
+        // Defer message resolution untill is needed
+        () -> ProblemMessage.builder().key(Assert.class, "notNull")
+            .parameter("field", ApplicationContextSupport.getMessage("id"))
+            .parameter("entity", ApplicationContextSupport.getMessage(ActaDto.class)).build());
+
+    ActaComentariosReportOutput actaComentariosSubReportOutput = new ActaComentariosReportOutput();
+    actaComentariosSubReportOutput.setComentariosMemoria(new ArrayList<>());
+
+    try {
+
+      List<MemoriaEvaluadaDto> memorias = actaService.findAllMemoriasEvaluadasSinRevMinimaByActaId(actaId);
+
+      memorias.stream().filter(memoria -> !memoria.getDictamen().equals(DICTAMEN_FAVORABLE)
+          && (memoria.getTipoEvaluacion().equals(TIPO_EVALUACION_MEMORIA)
+              || memoria.getTipoEvaluacion().equals(TIPO_EVALUACION_SEG_ANUAL)
+              || memoria.getTipoEvaluacion().equals(TIPO_EVALUACION_SEG_FINAL)))
+          .forEach(memoria -> {
+            ActaComentariosMemoriaReportOutput comentariosMemoriaReportOutput = new ActaComentariosMemoriaReportOutput();
+            comentariosMemoriaReportOutput.setNumReferenciaMemoria(memoria.getNumReferencia());
+            comentariosMemoriaReportOutput.setBloques(new ArrayList<>());
+
+            List<ComentarioDto> comentarios = evaluacionService.findByEvaluacionIdGestor(memoria.getEvaluacionId());
+
+            if (null != comentarios && !comentarios.isEmpty()) {
+              comentariosMemoriaReportOutput.setNumComentarios(comentarios.size());
+
+              final Set<Long> apartados = new HashSet<>();
+              comentarios
+                  .forEach(c -> baseActaComentariosReportService.getApartadoService().findTreeApartadosById(apartados,
+                      c.getApartado()));
+              Long idFormulario = comentarios.get(0).getApartado().getBloque().getFormulario().getId();
+
+          // @formatter:off
+              BloquesReportInput etiBloquesReportInput = BloquesReportInput.builder()
+              .idMemoria(memoria.getEvaluacionId())
+              .idFormulario(idFormulario)
+              .mostrarRespuestas(false)
+              .mostrarContenidoApartado(false)
+              .comentarios(comentarios)
+              .apartados(apartados)
+              .build();
+              // @formatter:on
+
+              BloquesReportOutput reportOutput = baseActaComentariosReportService
+                  .getDataFromApartadosAndRespuestas(etiBloquesReportInput);
+
+              final int orden = comentariosMemoriaReportOutput.getBloques().size();
+              for (BloqueOutput bloque : reportOutput.getBloques()) {
+                bloque.setOrden(bloque.getOrden() + orden);
+              }
+
+              comentariosMemoriaReportOutput.getBloques().addAll(reportOutput.getBloques());
+            }
+            actaComentariosSubReportOutput.getComentariosMemoria().add(comentariosMemoriaReportOutput);
+          });
+
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      throw new GetDataReportException();
+    }
+
+    log.debug("getActaComentariosSubReport(actaId) - end");
+
+    return actaComentariosSubReportOutput;
   }
 
 }

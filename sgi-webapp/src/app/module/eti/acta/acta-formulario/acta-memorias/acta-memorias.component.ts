@@ -36,7 +36,7 @@ export class ActaMemoriasComponent extends FragmentComponent implements OnInit {
     private evaluacionService: EvaluacionService
   ) {
     super(formService.FRAGMENT.MEMORIAS, formService);
-    this.displayedColumns = ['numReferencia', 'version', 'dictamen.nombre', 'informe'];
+    this.displayedColumns = ['numReferencia', 'version', 'fichaEvaluador', 'dictamen.nombre', 'informe'];
     this.memorias$ = (this.fragment as ActaMemoriasFragment).memorias$;
   }
 
@@ -47,6 +47,21 @@ export class ActaMemoriasComponent extends FragmentComponent implements OnInit {
   visualizarInforme(idEvaluacion: number): void {
     const documento: IDocumento = {} as IDocumento;
     this.evaluacionService.getDocumentoEvaluacion(idEvaluacion).pipe(
+      switchMap((documentoInfo: IDocumento) => {
+        documento.nombre = documentoInfo.nombre;
+        return this.documentoService.downloadFichero(documentoInfo.documentoRef);
+      })
+    ).subscribe(response => {
+      triggerDownloadToUser(response, documento.nombre);
+    });
+  }
+
+  /**
+   * Visualiza el informe del evaluador a partir de su evaluación
+   */
+  visualizarInformeEvaluador(idEvaluacion: number): void {
+    const documento: IDocumento = {} as IDocumento;
+    this.evaluacionService.getDocumentoEvaluador(idEvaluacion).pipe(
       switchMap((documentoInfo: IDocumento) => {
         documento.nombre = documentoInfo.nombre;
         return this.documentoService.downloadFichero(documentoInfo.documentoRef);

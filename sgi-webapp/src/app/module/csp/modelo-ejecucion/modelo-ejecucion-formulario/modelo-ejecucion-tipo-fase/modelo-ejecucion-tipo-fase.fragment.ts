@@ -95,11 +95,12 @@ export class ModeloEjecucionTipoFaseFragment extends Fragment {
       return of(void 0);
     }
     return from(updatedModelos).pipe(
-      mergeMap((wrappedTarea) => {
-        return this.modeloTipoFaseService.update(wrappedTarea.value.id, wrappedTarea.value).pipe(
-          map((updatedTarea) => {
-            const index = this.modeloTipoFase$.value.findIndex((currentTarea) => currentTarea === wrappedTarea);
-            this.modeloTipoFase$.value[index] = new StatusWrapper<IModeloTipoFase>(updatedTarea);
+      mergeMap((wrappedFase) => {
+        return this.modeloTipoFaseService.update(wrappedFase.value.id, wrappedFase.value).pipe(
+          map((updatedFase) => {
+            const index = this.modeloTipoFase$.value.findIndex((currentFase) => currentFase === wrappedFase);
+            this.modeloTipoFase$.value[index] = new StatusWrapper<IModeloTipoFase>(updatedFase);
+            this.modeloTipoFase$.next(this.modeloTipoFase$.value);
           })
         );
       })
@@ -121,11 +122,12 @@ export class ModeloEjecucionTipoFaseFragment extends Fragment {
       } as IModeloEjecucion
     );
     return from(createdModelos).pipe(
-      mergeMap((wrappedTarea) => {
-        return this.modeloTipoFaseService.create(wrappedTarea.value).pipe(
-          map((updatedTarea) => {
-            const index = this.modeloTipoFase$.value.findIndex((currentTarea) => currentTarea === wrappedTarea);
-            this.modeloTipoFase$.value[index] = new StatusWrapper<IModeloTipoFase>(updatedTarea);
+      mergeMap((wrappedFase) => {
+        return this.modeloTipoFaseService.create(wrappedFase.value).pipe(
+          map((updatedFase) => {
+            const index = this.modeloTipoFase$.value.findIndex((currentFase) => currentFase === wrappedFase);
+            this.modeloTipoFase$.value[index] = new StatusWrapper<IModeloTipoFase>(updatedFase);
+            this.modeloTipoFase$.next(this.modeloTipoFase$.value);
           })
         );
       })

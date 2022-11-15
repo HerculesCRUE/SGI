@@ -72,8 +72,7 @@ export class MemoriaListadoGesComponent extends AbstractTablePaginationComponent
     private readonly personaService: PersonaService,
     private matDialog: MatDialog
   ) {
-
-    super(snackBarService, MSG_ERROR);
+    super();
 
     this.totalElementos = 0;
 
@@ -151,7 +150,7 @@ export class MemoriaListadoGesComponent extends AbstractTablePaginationComponent
         },
         (error) => {
           this.logger.error(error);
-          this.snackBarService.showError(MSG_ERROR);
+          this.processError(error);
         }
       );
     this.suscripciones.push(personaServiceOneSubscription);
@@ -185,7 +184,7 @@ export class MemoriaListadoGesComponent extends AbstractTablePaginationComponent
         this.logger.error(error);
         // On error reset pagination values
         this.paginator.firstPage();
-        this.snackBarService.showError(MSG_ERROR);
+        this.processError(error);
         return of([]);
       })
     );

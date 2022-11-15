@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { TipoEstadoProduccion, TIPO_ESTADO_PRODUCCION_MAP } from '@core/models/prc/estado-produccion-cientifica';
 import { IObraArtistica } from '@core/models/prc/obra-artistica';
@@ -8,14 +7,11 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { Module } from '@core/module';
 import { LayoutService } from '@core/services/layout.service';
 import { ObraArtisticaService } from '@core/services/prc/obra-artistica/obra-artistica.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { IAuthStatus, SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
-
-const MSG_ERROR = marker('error.load');
 
 @Component({
   selector: 'sgi-obra-artistica-listado',
@@ -44,12 +40,11 @@ export class ObraArtisticaListadoComponent extends AbstractTablePaginationCompon
   }
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
     private readonly authService: SgiAuthService,
     private readonly obraArtisticaService: ObraArtisticaService,
     private readonly layoutService: LayoutService
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
     this.TIPO_ESTADO_PRODUCCION_LIST = Object.values(TipoEstadoProduccion);
   }
 
@@ -100,13 +95,11 @@ export class ObraArtisticaListadoComponent extends AbstractTablePaginationCompon
     return filter;
   }
 
-  onClearFilters() {
-    super.onClearFilters();
+  protected resetFilters(): void {
+    super.resetFilters();
     this.formGroup.controls.fechaInicioDesde.setValue(null);
     this.formGroup.controls.fechaInicioHasta.setValue(null);
     this.formGroup.controls.estado.setValue(this.FILTER_ESTADO_INITIAL_VALUE);
-
-    this.onSearch();
   }
 
   private initFlexProperties(): void {

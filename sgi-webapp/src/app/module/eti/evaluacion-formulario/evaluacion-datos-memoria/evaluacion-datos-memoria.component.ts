@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { FormFragmentComponent } from '@core/component/fragment.component';
+import { FormFragmentComponent, FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IMemoria } from '@core/models/eti/memoria';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -8,6 +8,7 @@ import { EvaluacionFormularioActionService } from '../evaluacion-formulario.acti
 import {
   EvaluacionListadoAnteriorMemoriaComponent
 } from '../evaluacion-listado-anterior-memoria/evaluacion-listado-anterior-memoria.component';
+import { EvaluacionDatosMemoriaFragment } from './evaluacion-datos-memoria.fragment';
 
 @Component({
   selector: 'sgi-evaluacion-datos-memoria',
@@ -24,6 +25,8 @@ export class EvaluacionDatosMemoriaComponent extends FormFragmentComponent<IMemo
   get MSG_PARAMS() {
     return MSG_PARAMS;
   }
+
+  formPart: EvaluacionDatosMemoriaFragment;
 
   constructor(
     public actionService: EvaluacionFormularioActionService
@@ -47,6 +50,7 @@ export class EvaluacionDatosMemoriaComponent extends FormFragmentComponent<IMemo
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
 
+    this.formPart = this.fragment as EvaluacionDatosMemoriaFragment;
   }
 
   ngAfterViewInit(): void {

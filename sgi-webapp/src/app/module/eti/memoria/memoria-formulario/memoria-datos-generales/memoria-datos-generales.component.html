@@ -1,102 +1,98 @@
 <!-- Memoria datos generales -->
 <sgi-fragment title="{{'label.datos-generales' | translate}}">
-  <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-    [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
-    <!-- Referencia de la memoria -->
-    <ng-container *ngIf="this.formGroup.controls.numReferencia.value">
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
+  <form [formGroup]="formGroup" fxLayout="column">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Referencia de la memoria -->
+      <ng-container *ngIf="this.formGroup.controls.numReferencia.value">
+        <div fxFlex="20">
+          <mat-form-field>
+            <mat-label>{{'eti.memoria.referencia' | translate}}</mat-label>
+            <input type="text" [placeholder]="'eti.memoria.referencia' | translate" arial-label="Number" matInput
+              formControlName="numReferencia">
+          </mat-form-field>
+        </div>
+      </ng-container>
+    </div>
+    <div fxFlex fxLayout="row wrap" fxLayoutGap="10px">
+      <!-- Comité -->
+      <div fxFlex="40">
         <mat-form-field>
-          <mat-label>{{'eti.memoria.referencia' | translate}}</mat-label>
-          <input type="text" [placeholder]="'eti.memoria.referencia' | translate" arial-label="Number" matInput
-            formControlName="numReferencia">
+          <mat-label>{{'label.eti.comite' | translate}}</mat-label>
+          <sgi-select-comite #selectComite [displayWith]="displayerComite" formControlName="comite" required>
+          </sgi-select-comite>
+          <mat-error *ngIf="formGroup.controls.comite.errors?.required">
+            {{'error.required.entity' | translate:msgParamComiteEntity}}
+          </mat-error>
         </mat-form-field>
       </div>
-    </ng-container>
 
-    <!-- Comité -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field>
-        <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-        <sgi-select-comite #selectComite formControlName="comite" required></sgi-select-comite>
-        <mat-error *ngIf="formGroup.controls.comite.errors?.required">
-          {{'error.required.entity' | translate:msgParamComiteEntity}}
-        </mat-error>
-      </mat-form-field>
-    </div>
-
-    <!-- Tipo de Memoria -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field>
-        <mat-label>{{'eti.memoria.tipo' | translate}}</mat-label>
-        <sgi-select-entity #selectTipoMemoria formControlName="tipoMemoria" required
-          [resetOnChange]="selectComite.selectionChange" [options]="tiposMemoria$ | async"></sgi-select-entity>
-        <mat-error *ngIf="formGroup.controls.tipoMemoria.errors?.required">
-          {{'error.required.entity' | translate:msgParamTipoMemoriaEntity}}
-        </mat-error>
-      </mat-form-field>
-    </div>
-
-    <!-- memoria original-->
-    <ng-container *ngIf="this.datosGeneralesFragment.showMemoriaOriginal">
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
+      <!-- Tipo de Memoria -->
+      <div fxFlex="10">
         <mat-form-field>
-          <mat-label>{{'eti.memoria.original' | translate}}</mat-label>
-          <sgi-select-entity formControlName="memoriaOriginal" [resetOnChange]="selectComite.selectionChange"
-            [options]="memorias$ | async" [displayWith]="displayerMemoria"
-            [required]="this.datosGeneralesFragment.showMemoriaOriginal">
+          <mat-label>{{'eti.memoria.tipo' | translate}}</mat-label>
+          <sgi-select-entity #selectTipoMemoria formControlName="tipoMemoria" required
+            [resetOnChange]="selectComite.selectionChange" [options]="tiposMemoria$ | async"></sgi-select-entity>
+          <mat-error *ngIf="formGroup.controls.tipoMemoria.errors?.required">
+            {{'error.required.entity' | translate:msgParamTipoMemoriaEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- memoria original-->
+      <ng-container *ngIf="this.datosGeneralesFragment.showMemoriaOriginal">
+        <div fxFlex="25">
+          <mat-form-field>
+            <mat-label>{{'eti.memoria.original' | translate}}</mat-label>
+            <sgi-select-entity formControlName="memoriaOriginal" [resetOnChange]="selectComite.selectionChange"
+              [options]="memorias$ | async" [displayWith]="displayerMemoria"
+              [required]="this.datosGeneralesFragment.showMemoriaOriginal">
+            </sgi-select-entity>
+            <mat-error *ngIf="formGroup.controls.memoriaOriginal?.errors?.required">
+              {{'error.required.entity' | translate:msgParamOrginalEntity}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </ng-container>
+
+      <!-- Título -->
+      <ng-container *ngIf="this.datosGeneralesFragment.showTitulo">
+        <div fxFlex="76">
+          <mat-form-field>
+            <mat-label>{{'eti.memoria.titulo-descriptivo' | translate}}</mat-label>
+            <textarea matInput [placeholder]="'eti.memoria.titulo-descriptivo' | translate"
+              formControlName="titulo"></textarea>
+            <sgi-field-info matSuffix [visible]="true" message="{{textoInfoTituloDescriptivo}}">
+            </sgi-field-info>
+            <mat-error *ngIf="formGroup.controls.titulo.hasError('maxlength')">
+              {{'error.maxlength.entity' | translate:msgParamTituloDescriptivoEntity}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </ng-container>
+
+      <!-- Persona equipo trabajo -->
+      <div fxFlex="40">
+        <mat-form-field fxFill>
+          <mat-label>{{'eti.memoria.responsable' | translate}}</mat-label>
+          <sgi-select-entity formControlName="personaResponsable"
+            [options]="datosGeneralesFragment.personasResponsable$ | async" [displayWith]="displayerPersonaResponsable">
           </sgi-select-entity>
-          <mat-error *ngIf="formGroup.controls.memoriaOriginal?.errors?.required">
-            {{'error.required.entity' | translate:msgParamOrginalEntity}}
-          </mat-error>
         </mat-form-field>
       </div>
-    </ng-container>
 
-    <!-- Título -->
-    <ng-container *ngIf="this.datosGeneralesFragment.showTitulo">
-      <div [fxFlex.sm]="fxFlexPropertiesTextarea.sm" [fxFlex.md]="fxFlexPropertiesTextarea.md"
-        [fxFlex.gt-md]="fxFlexPropertiesTextarea.gtMd" [fxFlexOrder]="fxFlexPropertiesTextarea.order">
-        <mat-form-field>
-          <mat-label>{{'eti.memoria.titulo-descriptivo' | translate}}</mat-label>
-          <textarea matInput [placeholder]="'eti.memoria.titulo-descriptivo' | translate"
-            formControlName="titulo"></textarea>
-          <sgi-field-info matSuffix [visible]="true" message="{{textoInfoTituloDescriptivo}}">
-          </sgi-field-info>
-          <mat-error *ngIf="formGroup.controls.titulo.hasError('maxlength')">
-            {{'error.maxlength.entity' | translate:msgParamTituloDescriptivoEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </ng-container>
-
-    <!-- Persona equipo trabajo -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field fxFill>
-        <mat-label>{{'eti.memoria.responsable' | translate}}</mat-label>
-        <sgi-select-entity formControlName="personaResponsable"
-          [options]="datosGeneralesFragment.personasResponsable$ | async" [displayWith]="displayerPersonaResponsable">
-        </sgi-select-entity>
-      </mat-form-field>
+      <!-- Código órgano competente -->
+      <ng-container *ngIf="this.datosGeneralesFragment.showCodOrganoCompetente">
+        <div fxFlex="35.5">
+          <mat-form-field>
+            <mat-label>{{'eti.memoria.codigo-organo-compentente' | translate}}</mat-label>
+            <input type="text" [placeholder]="'eti.memoria.codigo-organo-compentente' | translate" arial-label="Number"
+              matInput formControlName="codOrganoCompetente">
+            <mat-error *ngIf="formGroup.controls.codOrganoCompetente.hasError('maxlength')">
+              {{'error.maxlength.entity' | translate:msgParamCodigoOrganoCompenteteEntity}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </ng-container>
     </div>
-
-    <!-- Código órgano competente -->
-    <ng-container *ngIf="this.datosGeneralesFragment.showCodOrganoCompetente">
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'eti.memoria.codigo-organo-compentente' | translate}}</mat-label>
-          <input type="text" [placeholder]="'eti.memoria.codigo-organo-compentente' | translate" arial-label="Number"
-            matInput formControlName="codOrganoCompetente">
-          <mat-error *ngIf="formGroup.controls.codOrganoCompetente.hasError('maxlength')">
-            {{'error.maxlength.entity' | translate:msgParamCodigoOrganoCompenteteEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </ng-container>
   </form>
 </sgi-fragment>

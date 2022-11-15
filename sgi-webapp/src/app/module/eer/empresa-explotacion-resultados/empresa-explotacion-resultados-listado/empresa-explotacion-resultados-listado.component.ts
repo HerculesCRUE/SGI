@@ -16,11 +16,10 @@ import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap } from 'rxjs/operators';
 import { EER_ROUTE_NAMES } from '../../eer-route-names';
 
 const MSG_BUTTON_ADD = marker('btn.add.entity');
-const MSG_ERROR_LOAD = marker('error.load');
 const MSG_ERROR_DELETE = marker('error.delete.entity');
 const MSG_DELETE = marker('msg.delete.entity');
 const MSG_SUCCESS_DELETE = marker('msg.delete.entity.success');
@@ -32,7 +31,10 @@ const EMPRESA_ENTIDAD_KEY = marker('eer.empresa-explotacion-resultados.entidad')
   templateUrl: './empresa-explotacion-resultados-listado.component.html',
   styleUrls: ['./empresa-explotacion-resultados-listado.component.scss']
 })
-export class EmpresaExplotacionResultadosListadoComponent extends AbstractTablePaginationComponent<IEmpresaExplotacionResultados> implements OnInit {
+export class EmpresaExplotacionResultadosListadoComponent
+  extends AbstractTablePaginationComponent<IEmpresaExplotacionResultados>
+  implements OnInit {
+
   ROUTE_NAMES = ROUTE_NAMES;
   EER_ROUTE_NAMES = EER_ROUTE_NAMES;
 
@@ -61,7 +63,7 @@ export class EmpresaExplotacionResultadosListadoComponent extends AbstractTableP
     private readonly translate: TranslateService,
     private empresaService: EmpresaService
   ) {
-    super(snackBarService, MSG_ERROR_LOAD);
+    super();
   }
 
   ngOnInit(): void {
@@ -96,6 +98,11 @@ export class EmpresaExplotacionResultadosListadoComponent extends AbstractTableP
               });
 
               return responseEmpresas;
+            }),
+            catchError((error) => {
+              this.logger.error(error);
+              this.processError(error);
+              return of(responseEmpresas);
             })
           );
         } else {
@@ -144,19 +151,18 @@ export class EmpresaExplotacionResultadosListadoComponent extends AbstractTableP
       (error) => {
         this.logger.error(error);
         if (error instanceof SgiError) {
-          this.snackBarService.showError(error);
+          this.processError(error);
         } else {
-          this.snackBarService.showError(this.textoErrorDesactivar);
+          this.processError(new SgiError(this.textoErrorDesactivar));
         }
       }
     );
     this.suscripciones.push(subcription);
   }
 
-  onClearFilters() {
-    super.onClearFilters();
+  protected resetFilters(): void {
+    super.resetFilters();
     this.buildFormGroup();
-    this.onSearch();
   }
 
   private buildFormGroup() {

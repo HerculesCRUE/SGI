@@ -5,6 +5,7 @@ import java.time.Instant;
 import javax.validation.Valid;
 
 import org.crue.hercules.sgi.csp.exceptions.GastoProyectoNotFoundException;
+import org.crue.hercules.sgi.csp.model.Configuracion;
 import org.crue.hercules.sgi.csp.model.EstadoGastoProyecto;
 import org.crue.hercules.sgi.csp.model.GastoProyecto;
 import org.crue.hercules.sgi.csp.model.Proyecto;
@@ -31,11 +32,15 @@ public class GastoProyectoService {
 
   private final GastoProyectoRepository repository;
   private final EstadoGastoProyectoRepository estadoGastoProyectoRepository;
+  private final ConfiguracionService configuracionService;
 
   public GastoProyectoService(GastoProyectoRepository gastoProyectoRepository,
-      EstadoGastoProyectoRepository estadoGastoProyectoRepository) {
+      EstadoGastoProyectoRepository estadoGastoProyectoRepository,
+      ConfiguracionService configuracionService) {
     this.repository = gastoProyectoRepository;
     this.estadoGastoProyectoRepository = estadoGastoProyectoRepository;
+    this.configuracionService = configuracionService;
+
   }
 
   /**
@@ -49,21 +54,34 @@ public class GastoProyectoService {
   public GastoProyecto create(@Valid GastoProyecto gastoProyecto) {
     log.debug("create(GastoProyecto gastoProyecto) - start");
 
-    GastoProyecto gastoProyectoSinEstado = repository.save(gastoProyecto);
+    EstadoGastoProyecto estadoGastoProyectoToCreate = gastoProyecto.getEstado();
+    // Si el estado viene cubierto con datos que no existen en la BBDD genera la
+    // siguiente excepcion:
+    // org.springframework.dao.InvalidDataAccessApiUsageException:
+    // org.hibernate.TransientPropertyValueException: object references an unsaved
+    // transient instance - save the transient instance before flushing :
+    // org.crue.hercules.sgi.csp.model.GastoProyecto.estado
+    // por la llamada al configuracionService.findConfiguracion()
+    gastoProyecto.setEstado(null);
 
-    EstadoGastoProyecto estadoGastoProyectoNuevo = new EstadoGastoProyecto();
-    estadoGastoProyectoNuevo.setComentario(gastoProyecto.getEstado().getComentario());
-    estadoGastoProyectoNuevo.setFechaEstado(Instant.now());
-    estadoGastoProyectoNuevo.setEstado(gastoProyecto.getEstado().getEstado());
-    estadoGastoProyectoNuevo.setGastoProyectoId(gastoProyecto.getId());
+    GastoProyecto gastoProyectoCreated = repository.save(gastoProyecto);
 
-    EstadoGastoProyecto returnValueEstadoGastoProyecto = estadoGastoProyectoRepository.save(estadoGastoProyectoNuevo);
-    gastoProyectoSinEstado.setEstado(returnValueEstadoGastoProyecto);
+    Configuracion configuracion = configuracionService.findConfiguracion();
+    if (estadoGastoProyectoToCreate != null && Boolean.TRUE.equals(configuracion.getValidacionGastos())) {
+      estadoGastoProyectoToCreate.setFechaEstado(Instant.now());
+      estadoGastoProyectoToCreate.setGastoProyectoId(gastoProyectoCreated.getId());
 
-    GastoProyecto returnValue = repository.save(gastoProyectoSinEstado);
+      EstadoGastoProyecto newEstadoGastoProyecto = estadoGastoProyectoRepository.save(estadoGastoProyectoToCreate);
+      gastoProyectoCreated.setEstado(newEstadoGastoProyecto);
+
+      GastoProyecto gastoProyectoUpdatedWithEstado = repository.save(gastoProyectoCreated);
+
+      log.debug("create(GastoProyecto gastoProyecto) - end");
+      return gastoProyectoUpdatedWithEstado;
+    }
 
     log.debug("create(GastoProyecto gastoProyecto) - end");
-    return returnValue;
+    return gastoProyectoCreated;
   }
 
   /**

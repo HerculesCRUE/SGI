@@ -1,7 +1,6 @@
-import { AfterViewInit, Directive, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Directive, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatSort } from '@angular/material/sort';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormGroupUtil } from '@core/utils/form-group-util';
 import {
   RSQLSgiRestSort,
@@ -10,8 +9,8 @@ import {
   SgiRestListResult,
   SgiRestSortDirection
 } from '@sgi/framework/http';
-import { merge, Observable, of, Subscription } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { EMPTY, merge, Observable, of, Subscription } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 @Directive()
 // tslint:disable-next-line: directive-class-suffix
@@ -25,10 +24,16 @@ export abstract class AbstractTableWithoutPaginationComponent<T> implements OnIn
 
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-  protected constructor(
-    protected readonly snackBarService: SnackBarService,
-    protected readonly msgError: string
-  ) {
+  @Output()
+  readonly errors = new EventEmitter<Error[]>();
+  // tslint:disable-next-line: variable-name
+  private _errors: Error[] = [];
+
+  public readonly processError: (error: Error) => void = (error: Error) => {
+    this._errors = [...this._errors, error];
+  }
+
+  protected constructor() {
     this.elementosPagina = [5, 10, 25, 100];
   }
 
@@ -54,7 +59,9 @@ export abstract class AbstractTableWithoutPaginationComponent<T> implements OnIn
         this.loadTable();
       }),
       catchError(err => {
-        return err;
+        this.processError(err);
+        this.emmitErrors();
+        return EMPTY;
       })
     ).subscribe();
     // First load
@@ -66,6 +73,7 @@ export abstract class AbstractTableWithoutPaginationComponent<T> implements OnIn
    */
   onSearch(): void {
     this.filter = this.createFilters();
+    this.clearErrors();
     this.loadTable(true);
   }
 
@@ -73,9 +81,16 @@ export abstract class AbstractTableWithoutPaginationComponent<T> implements OnIn
    * Clean filters an reload the table
    */
   onClearFilters(): void {
+    this.resetFilters();
+    this.onSearch();
+  }
+
+  /**
+   * Reset filters
+   */
+  protected resetFilters(): void {
     FormGroupUtil.clean(this.formGroup);
     this.filter = undefined;
-    this.loadTable(true);
   }
 
   /**
@@ -85,7 +100,10 @@ export abstract class AbstractTableWithoutPaginationComponent<T> implements OnIn
    */
   protected getObservableLoadTable(reset?: boolean): Observable<T[]> {
     // Do the request with paginator/sort/filter values
-    const observable$ = this.createObservable();
+    const observable$ = this.createObservable() ? of(void 0).pipe(
+      tap(() => this.clearErrors()),
+      switchMap(() => this.createObservable())
+    ) : this.createObservable();
     return observable$?.pipe(
       map((response: SgiRestListResult<T>) => {
         // Map respose total
@@ -94,12 +112,13 @@ export abstract class AbstractTableWithoutPaginationComponent<T> implements OnIn
         // Return the values
         return response.items;
       }),
-      catchError(() => {
+      catchError((error) => {
         // On error reset pagination values
         this.totalElementos = 0;
-        this.showMensajeErrorLoadTable();
+        this.processError(error);
         return of([]);
-      })
+      }),
+      tap(() => this.emmitErrors())
     );
   }
 
@@ -115,13 +134,6 @@ export abstract class AbstractTableWithoutPaginationComponent<T> implements OnIn
       filters: this.filter,
     };
     return options;
-  }
-
-  /**
-   * Muestra un mensaje de error si se produce un error al cargar los datos de la tabla
-   */
-  protected showMensajeErrorLoadTable(): void {
-    this.snackBarService.showError(this.msgError);
   }
 
   /**
@@ -145,4 +157,14 @@ export abstract class AbstractTableWithoutPaginationComponent<T> implements OnIn
    * Crea los filtros para el listado
    */
   protected abstract createFilters(formGroup?: FormGroup): SgiRestFilter[];
+
+  protected clearErrors(): void {
+    this._errors = [];
+    this.emmitErrors();
+  }
+
+  private emmitErrors(): void {
+    this.errors.next(this._errors);
+  }
+
 }

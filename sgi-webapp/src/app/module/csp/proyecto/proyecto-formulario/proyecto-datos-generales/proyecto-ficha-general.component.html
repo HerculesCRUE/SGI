@@ -33,7 +33,7 @@
         <mat-label>{{'csp.proyecto.codigos-sge' | translate}}</mat-label>
         <mat-select matNativeControl formControlName="codigosSge" multiple>
           <mat-option *ngFor="let proyecto of this.proyectosSge" [value]="proyecto">
-            {{proyecto.value.proyectoSge.id}}
+            {{proyecto.value.proyectoSge?.id}}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -307,10 +307,14 @@
       <!-- Paquete de trabajo -->
       <mat-form-field fxFlex="33%">
         <mat-label>{{'csp.proyecto.permite-paquetes-trabajo' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
-        <mat-select matNativeControl formControlName="permitePaquetesTrabajo" [required]="formPart.abiertoRequired">
+        <mat-select #paquetesTrabajo matNativeControl formControlName="permitePaquetesTrabajo"
+          [required]="formPart.abiertoRequired">
           <mat-option [value]="true">{{'label.si' | translate}}</mat-option>
           <mat-option [value]="false">{{'label.no' | translate}}</mat-option>
         </mat-select>
+        <sgi-field-info matSuffix [visible]="paquetesTrabajo.disabled"
+          message="{{'msg.csp.proyecto.paquetes-trabajo.existentes' | translate}}">
+        </sgi-field-info>
         <mat-error *ngIf="formGroup.controls.permitePaquetesTrabajo.errors?.required">
           {{'error.required.entity' | translate:msgParamPaqueteTrabajoEntity}}
         </mat-error>

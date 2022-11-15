@@ -10,6 +10,7 @@ import org.crue.hercules.sgi.eti.model.BaseEntity;
 import org.crue.hercules.sgi.eti.model.Comentario;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
+import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.crue.hercules.sgi.eti.model.TipoComentario;
 import org.crue.hercules.sgi.eti.service.ComentarioService;
 import org.crue.hercules.sgi.eti.service.EvaluacionService;
@@ -521,7 +522,7 @@ public class EvaluacionController {
    * @return el documento del evaluador
    */
   @GetMapping("/{idEvaluacion}/documento-evaluador")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR', 'ETI-EVC-EVALR')")
   public ResponseEntity<DocumentoOutput> documentoEvaluador(@PathVariable Long idEvaluacion) {
     log.debug("documentoEvaluador(@PathVariable Long idEvaluacion) - start");
     DocumentoOutput documento = service.generarDocumentoEvaluador(idEvaluacion);
@@ -599,6 +600,21 @@ public class EvaluacionController {
     log.debug("enviarComunicado(Long id) - end");
     return Boolean.TRUE.equals(returnValue) ? new ResponseEntity<>(HttpStatus.OK)
         : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Devuelve el secretario activo según la fecha de evaluación
+   * 
+   * @param idEvaluacion Id de {@link Evaluacion}.
+   * @return el secretario de la evaluación
+   */
+  @GetMapping("/{idEvaluacion}/secretario-evaluacion")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR')")
+  ResponseEntity<Evaluador> findSecretarioEvaluacion(@PathVariable Long idEvaluacion) {
+    log.debug("findSecretarioEvaluacion(@PathVariable Long idEvaluacion) - start");
+    Evaluador secretario = service.findSecretarioEvaluacion(idEvaluacion);
+    log.debug("findSecretarioEvaluacion(@PathVariable Long idEvaluacion) - end");
+    return new ResponseEntity<>(secretario, HttpStatus.OK);
   }
 
 }

@@ -37,7 +37,6 @@ import { IProyectoProyectoSgeBackend } from '@core/models/csp/backend/proyecto-p
 import { IProyectoSocioBackend } from '@core/models/csp/backend/proyecto-socio-backend';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { IEstadoProyecto } from '@core/models/csp/estado-proyecto';
-import { IPrograma } from '@core/models/csp/programa';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoAgrupacionGasto } from '@core/models/csp/proyecto-agrupacion-gasto';
 import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
@@ -52,6 +51,7 @@ import { IProyectoEntidadFinanciadora } from '@core/models/csp/proyecto-entidad-
 import { IProyectoEntidadGestora } from '@core/models/csp/proyecto-entidad-gestora';
 import { IProyectoEquipo } from '@core/models/csp/proyecto-equipo';
 import { IProyectoFacturacion } from '@core/models/csp/proyecto-facturacion';
+import { IProyectoFase } from '@core/models/csp/proyecto-fase';
 import { IProyectoHito } from '@core/models/csp/proyecto-hito';
 import { IProyectoIVA } from '@core/models/csp/proyecto-iva';
 import { IProyectoPalabraClave } from '@core/models/csp/proyecto-palabra-clave';
@@ -59,7 +59,6 @@ import { IProyectoPaqueteTrabajo } from '@core/models/csp/proyecto-paquete-traba
 import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
 import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
 import { IProyectoPeriodoSeguimiento } from '@core/models/csp/proyecto-periodo-seguimiento';
-import { IProyectoFase } from '@core/models/csp/proyecto-fase';
 import { IProyectoPresupuestoTotales } from '@core/models/csp/proyecto-presupuesto-totales';
 import { IProyectoProrroga } from '@core/models/csp/proyecto-prorroga';
 import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
@@ -91,6 +90,8 @@ import { IProyectoAnualidadResumenResponse } from './proyecto-anualidad/proyecto
 import { PROYECTO_ANUALIDAD_RESUMEN_RESPONSE_CONVERTER } from './proyecto-anualidad/proyecto-anualidad-resumen-response.converter';
 import { IProyectoFacturacionResponse } from './proyecto-facturacion/proyecto-facturacion-response';
 import { PROYECTO_FACTURACION_RESPONSE_CONVERTER } from './proyecto-facturacion/proyecto-facturacion-response.converter';
+import { IProyectoFaseResponse } from './proyecto-fase/proyecto-fase-response';
+import { PROYECTO_FASE_RESPONSE_CONVERTER } from './proyecto-fase/proyecto-fase-response.converter';
 import { IProyectoHitoResponse } from './proyecto-hito/proyecto-hito-response';
 import { PROYECTO_HITO_RESPONSE_CONVERTER } from './proyecto-hito/proyecto-hito-response.converter';
 import { PROYECTO_PALABRACLAVE_REQUEST_CONVERTER } from './proyecto-palabra-clave/proyecto-palabra-clave-request.converter';
@@ -102,8 +103,6 @@ import { IProyectoResponsableEconomicoResponse } from './proyecto-responsable-ec
 import { PROYECTO_RESPONSABLE_ECONOMICO_RESPONSE_CONVERTER } from './proyecto-responsable-economico/proyecto-responsable-economico-response.converter';
 import { IProyectosCompetitivosPersonasResponse } from './proyectos-competitivos-personas/proyectos-competitivos-personas-response';
 import { PROYECTOS_COMPETITIVOS_PERSONAS_RESPONSE_CONVERTER } from './proyectos-competitivos-personas/proyectos-competitivos-personas-response.converter';
-import { PROYECTO_FASE_RESPONSE_CONVERTER } from './proyecto-fase/proyecto-fase-response.converter';
-import { IProyectoFaseResponse } from './proyecto-fase/proyecto-fase-response';
 import { IRequerimientoJustificacionResponse } from './requerimiento-justificacion/requerimiento-justificacion-response';
 import { REQUERIMIENTO_JUSTIFICACION_RESPONSE_CONVERTER } from './requerimiento-justificacion/requerimiento-justificacion-response.converter';
 
@@ -308,27 +307,15 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
     );
   }
 
-  public createEntidadConvocante(idProyecto: number, element: IProyectoEntidadConvocante): Observable<IProyectoEntidadConvocante> {
-    return this.http.post<IProyectoEntidadConvocanteBackend>(
+  updateEntidadesConvocantes(
+    idProyecto: number,
+    entidadesConvocantes: IProyectoEntidadConvocante[]
+  ): Observable<IProyectoEntidadConvocante[]> {
+    return this.http.patch<IProyectoEntidadConvocanteBackend[]>(
       `${this.endpointUrl}/${idProyecto}/${ProyectoService.ENTIDAD_CONVOCANTES_MAPPING}`,
-      PROYECTO_ENTIDAD_CONVOCANTE_CONVERTER.fromTarget(element)
+      PROYECTO_ENTIDAD_CONVOCANTE_CONVERTER.fromTargetArray(entidadesConvocantes)
     ).pipe(
-      map(response => PROYECTO_ENTIDAD_CONVOCANTE_CONVERTER.toTarget(response))
-    );
-  }
-
-  public deleteEntidadConvocanteById(idProyecto: number, id: number): Observable<void> {
-    const endpointUrl = `${this.endpointUrl}/${idProyecto}/${ProyectoService.ENTIDAD_CONVOCANTES_MAPPING}`;
-    return this.http.delete<void>(`${endpointUrl}/${id}`);
-  }
-
-  setEntidadConvocantePrograma(idProyecto: number, id: number, programa: IPrograma): Observable<IProyectoEntidadConvocante> {
-    const endpointUrl = `${this.endpointUrl}/${idProyecto}/${ProyectoService.ENTIDAD_CONVOCANTES_MAPPING}`;
-    return this.http.patch<IProyectoEntidadConvocanteBackend>(
-      `${endpointUrl}/${id}/programa`,
-      programa
-    ).pipe(
-      map(response => PROYECTO_ENTIDAD_CONVOCANTE_CONVERTER.toTarget(response))
+      map((response => PROYECTO_ENTIDAD_CONVOCANTE_CONVERTER.toTargetArray(response)))
     );
   }
 

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { IDireccionTesis, TIPO_PROYECTO_MAP } from '@core/models/prc/direccion-tesis';
 import { TipoEstadoProduccion, TIPO_ESTADO_PRODUCCION_MAP } from '@core/models/prc/estado-produccion-cientifica';
@@ -8,14 +7,11 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { Module } from '@core/module';
 import { LayoutService } from '@core/services/layout.service';
 import { DireccionTesisService } from '@core/services/prc/direccion-tesis/direccion-tesis.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { IAuthStatus, SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
-
-const MSG_ERROR = marker('error.load');
 
 @Component({
   selector: 'sgi-tesis-tfm-tfg-listado',
@@ -49,12 +45,11 @@ export class TesisTfmTfgListadoComponent extends AbstractTablePaginationComponen
   }
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
     private readonly authService: SgiAuthService,
     private readonly direccionTesisService: DireccionTesisService,
     private readonly layoutService: LayoutService
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
     this.TIPO_ESTADO_PRODUCCION_LIST = Object.values(TipoEstadoProduccion);
   }
 
@@ -106,13 +101,11 @@ export class TesisTfmTfgListadoComponent extends AbstractTablePaginationComponen
     return filter;
   }
 
-  onClearFilters() {
-    super.onClearFilters();
+  protected resetFilters(): void {
+    super.resetFilters();
     this.formGroup.controls.fechaDefensaDesde.setValue(null);
     this.formGroup.controls.fechaDefensaHasta.setValue(null);
     this.formGroup.controls.estado.setValue(this.FILTER_ESTADO_INITIAL_VALUE);
-
-    this.onSearch();
   }
 
   private initFlexProperties(): void {

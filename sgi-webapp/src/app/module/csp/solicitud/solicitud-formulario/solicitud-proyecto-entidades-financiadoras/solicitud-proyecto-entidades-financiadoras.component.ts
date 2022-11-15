@@ -212,7 +212,7 @@ export class SolicitudProyectoEntidadesFinanciadorasComponent extends FragmentCo
       switchMap((value) => {
         return this.translate.get(
           MSG_DELETE,
-          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
         );
       })
     ).subscribe((value) => this.textoDelete = value);

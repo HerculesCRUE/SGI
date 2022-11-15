@@ -1,8 +1,4 @@
 <sgi-menu-content>
-  <ng-container *ngIf="problems?.length">
-    <sgi-problem-panel [problems]="problems"></sgi-problem-panel>
-  </ng-container>
-
   <!-- Buscador de solicitudes -->
   <form [formGroup]="formGroup" fxLayout="column">
 
@@ -12,6 +8,10 @@
         <mat-label>{{'pub.solicitud.consultar.numero-documento' | translate}}</mat-label>
         <input matInput formControlName="numeroDocumento" type="text"
           placeholder="{{'pub.solicitud.consultar.numero-documento' | translate}}" required>
+        <mat-icon color="primary" matSuffix
+          matTooltip="{{'pub.solicitud.consultar.numero-documento.tooltip' | translate}}">
+          error
+        </mat-icon>
         <mat-error *ngIf="formGroup.controls.numeroDocumento.errors?.required">
           {{ 'error.required.entity' | translate:msgParamNumeroDocumento }}
         </mat-error>
@@ -24,6 +24,10 @@
         <mat-label>{{'pub.solicitud.consultar.uuid-solicitud' | translate}}</mat-label>
         <input matInput formControlName="uuid" type="text"
           placeholder="{{'pub.solicitud.consultar.uuid-solicitud' | translate}}" required>
+        <mat-icon color="primary" matSuffix
+          matTooltip="{{'pub.solicitud.consultar.uuid-solicitud.tooltip' | translate}}">
+          error
+        </mat-icon>
         <mat-error *ngIf="formGroup.controls.uuid.errors?.required">
           {{ 'error.required.entity' | translate:msgParamUUID }}
         </mat-error>

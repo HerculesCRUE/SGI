@@ -1,0 +1,52 @@
+[
+  {
+    "key": "ap1_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Descripción y resumen",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Descripción de los conocimientos obtenidos con el proyecto de investigación<\/p>"
+      },
+      {
+        "key": "descripcion",
+        "type": "textarea",
+        "templateOptions": {
+          "placeholder": "Descripción",
+          "label": "Descripción",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20",
+          "maxLength": 4000
+        },
+        "expressionProperties": {
+          "templateOptions.description": "(model?.descripcion?.length ?? 0) + ' / ' + field.templateOptions.maxLength"
+        }
+      },
+      {
+        "template": "<p>Haga un breve resumen de los resultados obtenidos con el proyecto finalizado<\/p>"
+      },
+      {
+        "key": "resumen",
+        "type": "textarea",
+        "templateOptions": {
+          "placeholder": "Resumen",
+          "label": "Resumen",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20",
+          "maxLength": 4000
+        },
+        "expressionProperties": {
+          "templateOptions.description": "(model?.resumen?.length ?? 0) + ' / ' + field.templateOptions.maxLength"
+        }
+      }
+    ]
+  }
+]

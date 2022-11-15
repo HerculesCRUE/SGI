@@ -157,6 +157,7 @@ export class ProyectoProrrogaDatosGeneralesFragment extends FormFragment<IProyec
           Validators.max(2_147_483_647)
         ]);
         form.importe.disable();
+        form.importe.reset();
       } else if (value === Tipo.IMPORTE) {
         form.importe.setValidators([
           Validators.required,
@@ -166,6 +167,7 @@ export class ProyectoProrrogaDatosGeneralesFragment extends FormFragment<IProyec
         form.importe.enable();
         form.fechaFin.setValidators(null);
         form.fechaFin.disable();
+        form.fechaFin.reset();
       } else {
         form.fechaFin.setValidators([Validators.required, fechaFinValidator]);
         form.fechaFin.enable();

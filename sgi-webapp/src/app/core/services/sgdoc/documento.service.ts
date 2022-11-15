@@ -4,7 +4,7 @@ import { DOCUMENTO_CONVERTER } from '@core/converters/sgdoc/documento.converter'
 import { IDocumentoBackend } from '@core/models/sgdoc/backend/documento-backend';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { environment } from '@env';
-import { SgiMutableRestService } from '@sgi/framework/http/';
+import { FindByIdCtor, mixinFindById, SgiRestBaseService } from '@sgi/framework/http/';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, takeLast } from 'rxjs/operators';
 
@@ -26,18 +26,24 @@ export function triggerDownloadToUser(file: Blob, fileName: string) {
   window.URL.revokeObjectURL(href);
 }
 
+// tslint:disable-next-line: variable-name
+const _DocumentoMixinBase:
+  FindByIdCtor<string, IDocumento, IDocumentoBackend> &
+  typeof SgiRestBaseService = mixinFindById(
+    SgiRestBaseService,
+    DOCUMENTO_CONVERTER
+  );
+
 @Injectable({
   providedIn: 'root'
 })
-export class DocumentoService extends SgiMutableRestService<string, IDocumentoBackend, IDocumento>{
+export class DocumentoService extends _DocumentoMixinBase {
   private static readonly MAPPING = '/documentos';
 
   constructor(protected http: HttpClient) {
     super(
-      DocumentoService.name,
       `${environment.serviceServers.sgdoc}${DocumentoService.MAPPING}`,
-      http,
-      DOCUMENTO_CONVERTER
+      http
     );
   }
 
@@ -98,7 +104,6 @@ export class DocumentoService extends SgiMutableRestService<string, IDocumentoBa
 
   }
 
-
   /**
    * Elimina el documento.
    * @param documentoRef referencia del documento.
@@ -106,4 +111,5 @@ export class DocumentoService extends SgiMutableRestService<string, IDocumentoBa
   eliminarFichero(documentoRef: string): Observable<void> {
     return this.http.delete<void>(`${this.endpointUrl}/${documentoRef}`);
   }
+
 }

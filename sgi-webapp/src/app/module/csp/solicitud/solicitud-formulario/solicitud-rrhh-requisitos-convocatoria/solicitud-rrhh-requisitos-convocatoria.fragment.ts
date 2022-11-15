@@ -18,6 +18,7 @@ import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { SolicitudRrhhRequisitoCategoriaService } from '@core/services/csp/solicitud-rrhh-requisito-categoria/solicitud-rrhh-requisito-categoria.service';
 import { SolicitudRrhhRequisitoNivelAcademicoService } from '@core/services/csp/solicitud-rrhh-requisito-nivel-academico/solicitud-rrhh-requisito-nivel-academico.service';
 import { SolicitudRrhhService } from '@core/services/csp/solicitud-rrhh/solicitud-rrhh.service';
+import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { CategoriaProfesionalService } from '@core/services/sgp/categoria-profesional.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
 import { NivelAcademicosService } from '@core/services/sgp/nivel-academico.service';
@@ -61,6 +62,7 @@ export interface RequisitoNivelAcademicoExigidoAndAcreditado extends RequisitoNi
 export class SolicitudRrhhRequisitosConvocatoriaFragment extends Fragment {
   acreditacionesCategoriaProfesionalEliminadas: ISolicitudRrhhRequisitoCategoria[] = [];
   acreditacionesNivelAcademicoEliminadas: ISolicitudRrhhRequisitoNivelAcademico[] = [];
+  private documentosRefUnrelated: string[] = [];
 
   requisitosCategoriasExigidasSolicitante$ = new BehaviorSubject<StatusWrapper<RequisitoCategoriaProfesionalExigidoAndAcreditado>[]>([]);
   requisitosNivelesAcademicosExigidosSolicitante$ = new BehaviorSubject<StatusWrapper<RequisitoNivelAcademicoExigidoAndAcreditado>[]>([]);
@@ -90,6 +92,7 @@ export class SolicitudRrhhRequisitosConvocatoriaFragment extends Fragment {
     private categoriasProfesionalesService: CategoriaProfesionalService,
     private datosAcademicosService: DatosAcademicosService,
     private vinculacionService: VinculacionService,
+    private documentoService: DocumentoService,
     public readonly: boolean
   ) {
     super(key);
@@ -260,12 +263,32 @@ export class SolicitudRrhhRequisitosConvocatoriaFragment extends Fragment {
     );
   }
 
+  private deleteDocumentosUnrelated(): Observable<void> {
+    if (this.documentosRefUnrelated.length === 0) {
+      return of(void 0);
+    }
+
+    return from(this.documentosRefUnrelated).pipe(
+      mergeMap(documentoRef =>
+        this.documentoService.eliminarFichero(documentoRef)
+          .pipe(
+            tap(() =>
+              this.documentosRefUnrelated = this.documentosRefUnrelated
+                .filter(documentoRefEliminado => documentoRefEliminado !== documentoRef)
+            )
+          )
+      ),
+      takeLast(1)
+    );
+  }
+
   saveOrUpdate(): Observable<void> {
     return merge(
       this.deleteAcreditacionesCategoriasProfesionales(),
       this.deleteAcreditacionesNivelesAcademicos(),
       this.createAcreditacionesCategoriasProfesionales(this.solicitudId),
-      this.createAcreditacionesNivelesAcademicos(this.solicitudId)
+      this.createAcreditacionesNivelesAcademicos(this.solicitudId),
+      this.deleteDocumentosUnrelated()
     ).pipe(
       takeLast(1),
       tap(() => {
@@ -276,23 +299,38 @@ export class SolicitudRrhhRequisitosConvocatoriaFragment extends Fragment {
     );
   }
 
+  /**
+   * Si la acreditacion ya esta creado lo anade a la lista de elementos a eliminar
+   * y si no esta persistido aun se elimina directamente el documento asociado.
+   */
   deleteAcreditacionCategoriaProfesional(wrapper: StatusWrapper<RequisitoCategoriaProfesionalExigidoAndAcreditado>): void {
-    wrapper.value.nivelAcreditado.documento = null;
-    if (!wrapper.created) {
+    if (wrapper.created) {
+      this.documentoService.eliminarFichero(wrapper.value.nivelAcreditado.documento.documentoRef).subscribe();
+    } else {
       this.acreditacionesCategoriaProfesionalEliminadas.push(wrapper.value.nivelAcreditado);
+      this.documentosRefUnrelated.push(wrapper.value.nivelAcreditado.documento.documentoRef);
       this.setChanges(true);
     }
 
+    wrapper.value.nivelAcreditado.documento = null;
     wrapper.setDeleted();
     this.checkRequisitosAcreditatos();
   }
 
+  /**
+   * Si la acreditacion ya esta creado lo anade a la lista de elementos a eliminar
+   * y si no esta persistido aun se elimina directamente el documento asociado.
+   */
   deleteAcreditacionNivelAcademico(wrapper: StatusWrapper<RequisitoNivelAcademicoExigidoAndAcreditado>): void {
-    wrapper.value.nivelAcreditado.documento = null;
-    if (!wrapper.created) {
+    if (wrapper.created) {
+      this.documentoService.eliminarFichero(wrapper.value.nivelAcreditado.documento.documentoRef).subscribe();
+    } else {
       this.acreditacionesNivelAcademicoEliminadas.push(wrapper.value.nivelAcreditado);
+      this.documentosRefUnrelated.push(wrapper.value.nivelAcreditado.documento.documentoRef);
       this.setChanges(true);
     }
+
+    wrapper.value.nivelAcreditado.documento = null;
     wrapper.setDeleted();
     this.checkRequisitosAcreditatos();
   }

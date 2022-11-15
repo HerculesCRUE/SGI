@@ -42,9 +42,6 @@ export class SolicitudRrhhTutorPublicComponent extends FormFragmentComponent<ISo
   emails = new MatTableDataSource<IEmail>();
   columnsEmails = ['email'];
 
-  telefonos = new MatTableDataSource<string>();
-  columnsTelefonos = ['telefono'];
-
   get MSG_PARAMS() {
     return MSG_PARAMS;
   }
@@ -54,7 +51,7 @@ export class SolicitudRrhhTutorPublicComponent extends FormFragmentComponent<ISo
   }
 
   constructor(
-    protected actionService: SolicitudPublicActionService,
+    public readonly actionService: SolicitudPublicActionService,
     private readonly translate: TranslateService
   ) {
     super(actionService.FRAGMENT.TUTOR, actionService);
@@ -65,7 +62,6 @@ export class SolicitudRrhhTutorPublicComponent extends FormFragmentComponent<ISo
     super.ngOnInit();
     this.setupI18N();
     this.loadEmails();
-    this.loadTelefonos();
   }
 
   private loadEmails() {
@@ -74,17 +70,6 @@ export class SolicitudRrhhTutorPublicComponent extends FormFragmentComponent<ISo
         this.emails.data = [];
       } else {
         this.emails.data = data;
-      }
-    }
-    ));
-  }
-
-  private loadTelefonos() {
-    this.subscriptions.push(this.formPart.tutorTelefonos$.subscribe((data) => {
-      if (!data || data.length === 0) {
-        this.telefonos.data = [];
-      } else {
-        this.telefonos.data = data;
       }
     }
     ));

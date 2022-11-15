@@ -15,7 +15,6 @@ import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-const MSG_ERROR = marker('error.load');
 const MSG_CREATE = marker('btn.add.entity');
 const MSG_SAVE_SUCCESS = marker('msg.save.entity.success');
 const MSG_SAVE_ERROR = marker('error.save.entity');
@@ -60,8 +59,9 @@ export class TipoProteccionListadoComponent extends AbstractTablePaginationCompo
     private readonly tipoProteccionService: TipoProteccionService,
     protected readonly snackBarService: SnackBarService,
     private readonly dialogService: DialogService,
-    private readonly translate: TranslateService) {
-    super(snackBarService, MSG_ERROR);
+    private readonly translate: TranslateService
+  ) {
+    super();
   }
 
   ngOnInit(): void {
@@ -210,8 +210,7 @@ export class TipoProteccionListadoComponent extends AbstractTablePaginationCompo
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<ITipoProteccion>> {
-    const observable$ = this.tipoProteccionService.findTodos(this.getFindOptions(reset));
-    return observable$;
+    return this.tipoProteccionService.findTodos(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {
@@ -246,10 +245,10 @@ export class TipoProteccionListadoComponent extends AbstractTablePaginationCompo
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorDesactivar);
+            this.processError(new SgiError(this.textoErrorDesactivar));
           }
         }
       );
@@ -276,10 +275,10 @@ export class TipoProteccionListadoComponent extends AbstractTablePaginationCompo
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorReactivar);
+            this.processError(new SgiError(this.textoErrorReactivar));
           }
         }
       );

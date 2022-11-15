@@ -71,5 +71,4 @@
   <changeSet author="user (generated)" id="0000000000010-6">
     <addForeignKeyConstraint baseColumnNames="proyecto_periodo_justificacion_id" baseTableName="proyecto_periodo_justificacion_seguimiento" constraintName="FK_PROYECTOPERIODOJUSTIFICACIONSEGUIMIENTO_PROYECTOPERIODOJUSTIFICACION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="proyecto_periodo_justificacion" validate="true" />
   </changeSet>
-
 </databaseChangeLog>

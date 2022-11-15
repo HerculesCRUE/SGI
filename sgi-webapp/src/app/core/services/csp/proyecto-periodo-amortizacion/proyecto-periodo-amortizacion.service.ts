@@ -2,7 +2,19 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IProyectoPeriodoAmortizacion } from '@core/models/csp/proyecto-periodo-amortizacion';
 import { environment } from '@env';
-import { CreateCtor, FindAllCtor, mixinCreate, mixinFindAll, mixinUpdate, RSQLSgiRestFilter, SgiRestBaseService, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult, UpdateCtor } from '@sgi/framework/http';
+import {
+  CreateCtor,
+  FindAllCtor,
+  mixinCreate,
+  mixinFindAll,
+  mixinUpdate,
+  RSQLSgiRestFilter,
+  SgiRestBaseService,
+  SgiRestFilterOperator,
+  SgiRestFindOptions,
+  SgiRestListResult,
+  UpdateCtor
+} from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { IProyectoPeriodoAmortizacionRequest } from './proyecto-periodo-amortizacion-request';
 import { PROYECTO_PERIODO_AMORTIZACION_REQUEST_CONVERTER } from './proyecto-periodo-amortizacion-request.converter';
@@ -12,8 +24,19 @@ import { PROYECTO_PERIODO_AMORTIZACION_RESPONSE_CONVERTER } from './proyecto-per
 // tslint:disable-next-line: variable-name
 const _ProyectoPeriodoAmortizacionServiceMixinBase:
   FindAllCtor<IProyectoPeriodoAmortizacion, IProyectoPeriodoAmortizacionResponse> &
-  CreateCtor<IProyectoPeriodoAmortizacion, IProyectoPeriodoAmortizacion, IProyectoPeriodoAmortizacionRequest, IProyectoPeriodoAmortizacionRequest> &
-  UpdateCtor<number, IProyectoPeriodoAmortizacion, IProyectoPeriodoAmortizacion, IProyectoPeriodoAmortizacionRequest, IProyectoPeriodoAmortizacionRequest> &
+  CreateCtor<
+    IProyectoPeriodoAmortizacion,
+    IProyectoPeriodoAmortizacion,
+    IProyectoPeriodoAmortizacionRequest,
+    IProyectoPeriodoAmortizacionRequest
+  > &
+  UpdateCtor<
+    number,
+    IProyectoPeriodoAmortizacion,
+    IProyectoPeriodoAmortizacion,
+    IProyectoPeriodoAmortizacionRequest,
+    IProyectoPeriodoAmortizacionRequest
+  > &
   typeof SgiRestBaseService =
   mixinFindAll(
     mixinUpdate(
@@ -41,9 +64,9 @@ export class ProyectoPeriodoAmortizacionService
     );
   }
 
-  findByproyectoSGERef(proyectoSGERef: string[]): Observable<SgiRestListResult<IProyectoPeriodoAmortizacion>> {
+  findByproyectoId(proyectoId: number): Observable<SgiRestListResult<IProyectoPeriodoAmortizacion>> {
     const options: SgiRestFindOptions = {
-      filter: new RSQLSgiRestFilter('proyectoSGERef', SgiRestFilterOperator.IN, proyectoSGERef)
+      filter: new RSQLSgiRestFilter('proyectoAnualidad.proyecto.id', SgiRestFilterOperator.EQUALS, proyectoId.toString())
     };
 
     return this.findAll(options);

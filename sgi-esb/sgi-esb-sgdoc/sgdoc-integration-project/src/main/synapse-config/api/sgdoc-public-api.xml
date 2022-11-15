@@ -45,4 +45,18 @@
     </faultSequence>
   </resource>
 
+  <resource methods="DELETE" uri-template="/documentos/{id}">
+    <inSequence>
+      <send>
+        <endpoint key="sgdoc-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
 </api>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
@@ -9,18 +9,20 @@ import { TranslateService } from '@ngx-translate/core';
 import { PlanInvestigacionActionService } from '../../plan-investigacion.action.service';
 
 const PLAN_INVESTIGACION_NOMBRE_KEY = marker('csp.plan-investigacion.nombre');
+const PLAN_INVESTIGACION_DESCRIPCION_KEY = marker('csp.plan-investigacion.descripcion');
 
 @Component({
   selector: 'sgi-plan-investigacion-datos-generales',
   templateUrl: './plan-investigacion-datos-generales.component.html',
   styleUrls: ['./plan-investigacion-datos-generales.component.scss']
 })
-export class PlanInvestigacionDatosGeneralesComponent extends FormFragmentComponent<IPrograma> {
+export class PlanInvestigacionDatosGeneralesComponent extends FormFragmentComponent<IPrograma> implements OnInit {
 
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
 
   msgParamNombreEntity = {};
+  msgParamDescripcionEntity = {};
 
   constructor(
     readonly actionService: PlanInvestigacionActionService,
@@ -43,12 +45,21 @@ export class PlanInvestigacionDatosGeneralesComponent extends FormFragmentCompon
     super.ngOnInit();
     this.setupI18N();
   }
+
   private setupI18N(): void {
     this.translate.get(
       PLAN_INVESTIGACION_NOMBRE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamNombreEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
-  }
+    ).subscribe((value) =>
+      this.msgParamNombreEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }
+    );
 
+    this.translate.get(
+      PLAN_INVESTIGACION_DESCRIPCION_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) =>
+      this.msgParamDescripcionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }
+    );
+  }
 
 }

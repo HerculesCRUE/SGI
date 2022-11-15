@@ -4,6 +4,7 @@ import javax.annotation.PostConstruct;
 
 import org.crue.hercules.sgi.csp.dto.GrupoInput;
 import org.crue.hercules.sgi.csp.dto.GrupoOutput;
+import org.crue.hercules.sgi.csp.dto.GrupoResumenOutput;
 import org.crue.hercules.sgi.csp.model.Grupo;
 import org.crue.hercules.sgi.csp.model.GrupoTipo.Tipo;
 import org.modelmapper.ModelMapper;
@@ -47,6 +48,10 @@ public class GrupoConverter {
 
   public Page<GrupoOutput> convert(Page<Grupo> page) {
     return page.map(this::convert);
+  }
+
+  public GrupoResumenOutput convertToGrupoResumenOutput(Grupo grupo) {
+    return modelMapper.map(grupo, GrupoResumenOutput.class);
   }
 
 }

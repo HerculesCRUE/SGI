@@ -74,6 +74,7 @@
 
   <!-- puntuacion_grupo -->
   <changeSet author="user (generated)" id="0000000000001-6">
+    <validCheckSum>8:afe75c1153c0ff1394a1caff3a9f9fdf</validCheckSum>
     <dropColumn columnName="PUNTOS" tableName="PUNTUACION_GRUPO" />
     <addColumn tableName="puntuacion_grupo">
       <column name="puntos_costes_indirectos" type="decimal(19, 2)">
@@ -90,8 +91,10 @@
         <constraints nullable="false" />
       </column>
     </addColumn>
+    <dropUniqueConstraint constraintName="UK_PUNTUACIONGRUPO_GRUPOREF_CONVOCATORIABAREMACIONID" tableName="puntuacion_grupo" />
     <modifyDataType tableName="puntuacion_grupo" columnName="grupo_ref" newDataType="BIGINT" />
     <addNotNullConstraint columnDataType="bigint" columnName="convocatoria_baremacion_id" tableName="puntuacion_grupo" validate="true" />
+    <addUniqueConstraint columnNames="grupo_ref, convocatoria_baremacion_id" constraintName="UK_PUNTUACIONGRUPO_GRUPOREF_CONVOCATORIABAREMACIONID" tableName="puntuacion_grupo" />
   </changeSet>
 
   <!-- puntuacion_grupo_investigador -->
@@ -124,6 +127,8 @@
 
   <!-- editorial_prestigio -->
   <changeSet author="user (generated)" id="0000000000001-10">
+    <validCheckSum>8:0e2b191dd15b35dbf1eb8c9cf114b4a4</validCheckSum>
+    <dropForeignKeyConstraint baseTableName="editorial_prestigio" constraintName="FK_EDITORIALPRESTIGIO_TABLAEDITORIAL" />
     <dropColumn columnName="TABLA_INDICE_ID" tableName="EDITORIAL_PRESTIGIO" />
     <addForeignKeyConstraint baseColumnNames="tabla_editorial_id" baseTableName="editorial_prestigio" constraintName="FK_EDITORIALPRESTIGIO_TABLAEDITORIAL" referencedColumnNames="id" referencedTableName="tabla_editorial" />
   </changeSet>

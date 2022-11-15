@@ -25,13 +25,15 @@ class GastoProyectoServiceTest extends BaseServiceTest {
   private GastoProyectoRepository gastoProyectoRepository;
   @Mock
   private EstadoGastoProyectoRepository estadoGastoProyectoRepository;
+  @Mock
+  private ConfiguracionService configuracionService;
 
   private GastoProyectoService gastoProyectoService;
 
   @BeforeEach
   void setup() {
     this.gastoProyectoService = new GastoProyectoService(this.gastoProyectoRepository,
-        this.estadoGastoProyectoRepository);
+        this.estadoGastoProyectoRepository, this.configuracionService);
   }
 
   @Test

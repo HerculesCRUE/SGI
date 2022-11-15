@@ -24,7 +24,8 @@ class ProyectoPeriodojustificacionResponseConverter extends
       observaciones: value.observaciones,
       convocatoriaPeriodoJustificacionId: value.convocatoriaPeriodoJustificacionId,
       fechaPresentacionJustificacion: LuxonUtils.fromBackend(value.fechaPresentacionJustificacion),
-      identificadorJustificacion: value.identificadorJustificacion
+      identificadorJustificacion: value.identificadorJustificacion,
+      estado: value.estado
     };
   }
   fromTarget(value: IProyectoPeriodoJustificacion): IProyectoPeriodoJustificacionResponse {
@@ -43,7 +44,8 @@ class ProyectoPeriodojustificacionResponseConverter extends
       observaciones: value.observaciones,
       convocatoriaPeriodoJustificacionId: value.convocatoriaPeriodoJustificacionId,
       fechaPresentacionJustificacion: LuxonUtils.toBackend(value.fechaPresentacionJustificacion),
-      identificadorJustificacion: value.identificadorJustificacion
+      identificadorJustificacion: value.identificadorJustificacion,
+      estado: value.estado
     };
   }
 }

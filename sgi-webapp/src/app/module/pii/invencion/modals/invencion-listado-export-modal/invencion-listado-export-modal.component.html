@@ -8,7 +8,12 @@
     </mat-form-field>
 
     <!-- Columns visibility -->
-    <mat-label>{{'export.columns' | translate}}</mat-label>
+    <div class="row-visibility-header">
+      <mat-label>{{'export.columns' | translate}}</mat-label>
+      <mat-checkbox color="primary" class="checkbox" formControlName="showTodos" (change)="selectUnselectAll($event)">
+        <mat-label>{{'label.todos' | translate}}</mat-label>
+      </mat-checkbox>
+    </div>
 
     <div class="row-visibility">
       <div class="columns-visibility">

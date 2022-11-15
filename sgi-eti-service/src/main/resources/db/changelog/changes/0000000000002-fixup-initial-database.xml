@@ -3,7 +3,8 @@
 
   <!-- Modificar columna genero para que sea nullable false -->
   <changeSet author="master" id="0000000000002-7">
-    <addNotNullConstraint columnName="genero" tableName="comite" />
+    <validCheckSum>8:6a42aee311d0f9b4cd61fb9812b8ef68</validCheckSum>
+    <addNotNullConstraint columnName="genero" tableName="comite" columnDataType="VARCHAR(1)" />
   </changeSet>
 
 </databaseChangeLog>

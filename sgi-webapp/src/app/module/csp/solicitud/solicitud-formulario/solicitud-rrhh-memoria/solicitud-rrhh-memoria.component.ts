@@ -34,7 +34,7 @@ export class SolicitudRrhhMemoriaComponent extends FormFragmentComponent<ISolici
   }
 
   constructor(
-    protected actionService: SolicitudActionService,
+    public readonly actionService: SolicitudActionService,
     public authService: SgiAuthService,
     private readonly translate: TranslateService
   ) {

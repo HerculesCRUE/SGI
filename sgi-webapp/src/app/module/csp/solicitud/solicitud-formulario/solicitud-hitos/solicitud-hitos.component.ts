@@ -50,7 +50,7 @@ export class SolicitudHitosComponent extends FragmentComponent implements OnInit
 
   constructor(
     protected convocatoriaReunionService: ConvocatoriaService,
-    private actionService: SolicitudActionService,
+    public readonly actionService: SolicitudActionService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private readonly translate: TranslateService

@@ -55,6 +55,13 @@ export class ProyectoPaqueteTrabajoFragment extends Fragment {
     }
   }
 
+  hasPaquetesTrabajo$(): Observable<boolean> {
+    return this.paquetesTrabajo$.asObservable()
+      .pipe(
+        map(paquetesTrabajo => paquetesTrabajo.length > 0)
+      );
+  }
+
   saveOrUpdate(): Observable<void> {
     return merge(
       this.deletePaqueteTrabajos(),

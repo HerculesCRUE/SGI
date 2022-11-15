@@ -41,5 +41,25 @@ function getSGIVinculacionCategoriaProfesional(vinculacionesCategoriasProfesiona
     );
   }
 
+  if (sgiVinculacionCategoriaProfesional
+    && sgiVinculacionCategoriaProfesional.categoriaProfesional
+    && sgiVinculacionCategoriaProfesional.categoriaProfesional.nombre) {
+    sgiVinculacionCategoriaProfesional.categoriaProfesional.nombre = escape(sgiVinculacionCategoriaProfesional.categoriaProfesional.nombre);
+  }
+
   return sgiVinculacionCategoriaProfesional ? sgiVinculacionCategoriaProfesional : {};
+}
+
+function escape(val) {
+  if (typeof (val) != "string") return val;
+  return val
+    .replace(/[\\]/g, '\\\\')
+    .replace(/[\/]/g, '\\/')
+    .replace(/[\b]/g, '\\b')
+    .replace(/[\f]/g, '\\f')
+    .replace(/[\n]/g, '\\n')
+    .replace(/[\r]/g, '\\r')
+    .replace(/[\t]/g, '\\t')
+    .replace(/[\"]/g, '\\"')
+    .replace(/\\'/g, "\\'");
 }

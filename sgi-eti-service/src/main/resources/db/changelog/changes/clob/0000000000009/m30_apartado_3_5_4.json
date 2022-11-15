@@ -1,0 +1,133 @@
+[
+  {
+    "key": "ap3_5_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.5.4 Organismo modificado genéticamente"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4 || !formState.mainModel.ap3_4.ap3_4_3 || !formState.mainModel.ap3_4.ap3_4_3.tareasUsoConfinadoRadio || formState.mainModel.ap3_4.ap3_4_3.tareasUsoConfinadoRadio === 'no'",
+    "fieldGroup": [
+      {
+        "type": "table-crud",
+        "key": "microorganismosParasitosTable",
+        "templateOptions": {
+          "entity": "Microorganismo/Parásito",
+          "gender": "female"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Microorganismo/Parásito"
+          },
+          "fieldGroup": [
+            {
+              "key": "organismoModificadoNombre",
+              "type": "textarea",
+              "templateOptions": {
+                "label": "Nombre",
+                "placeholder": "Nombre",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoHuesped",
+              "type": "textarea",
+              "templateOptions": {
+                "label": "Huésped",
+                "placeholder": "Huésped",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoVectorUtilizado",
+              "type": "textarea",
+              "templateOptions": {
+                "label": "Vector utilizado",
+                "placeholder": "Vector utilizado",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoInsertoEspecie",
+              "type": "textarea",
+              "templateOptions": {
+                "label": "Inserto y especie de procedencia del inserto",
+                "placeholder": "Inserto y especie de procedencia del inserto",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoProteina",
+              "type": "textarea",
+              "templateOptions": {
+                "label": "Proteína que codifica",
+                "placeholder": "Proteína que codifica",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoGrupoRiesgo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Grupo de riesgo",
+                "order": 20,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "Grupo 1"
+                  },
+                  {
+                    "value": "2",
+                    "label": "Grupo 2"
+                  },
+                  {
+                    "value": "3",
+                    "label": "Grupo 3"
+                  },
+                  {
+                    "value": "4",
+                    "label": "Grupo 4"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "organismoModificadoVolumenMaximo",
+              "type": "textarea",
+              "templateOptions": {
+                "label": "Volumen máximo de muestra que se maneja en cada vez o número de animales",
+                "placeholder": "Volumen máximo de muestra que se maneja en cada vez o número de animales",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "* Notas adicionales: <strong>A</strong>: Posibles efectos alérgicos; <strong>D</strong>: Lista de trabajadores expuestos debe conservarse; <strong>T</strong>: Producción de tóxinas; <strong>V</strong>: Vacuna eficaz disponible"
+      }
+    ]
+  }
+]

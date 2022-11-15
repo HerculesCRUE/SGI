@@ -53,4 +53,4 @@ INSERT INTO test.estado_solicitud (id, solicitud_id, estado, fecha_estado, comen
 UPDATE test.solicitud SET estado_solicitud_id = 1 WHERE id = 1;
 
 -- SOLICITUD MODALIDAD
-INSERT INTO test.solicitud_modalidad (id, solicitud_id, entidad_ref, programa_id) VALUES (1, 1, 'entidad-001', 2);
+INSERT INTO test.solicitud_modalidad (id, solicitud_id, entidad_ref, programa_id, programa_convocatoria_id) VALUES (1, 1, 'entidad-001', 2, 1);

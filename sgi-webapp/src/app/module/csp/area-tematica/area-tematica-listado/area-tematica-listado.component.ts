@@ -19,7 +19,6 @@ import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 const MSG_BUTTON_ADD = marker('btn.add.entity');
-const MSG_ERROR = marker('error.load');
 const MSG_REACTIVE = marker('msg.csp.reactivate');
 const MSG_SUCCESS_REACTIVE = marker('msg.reactivate.entity.success');
 const MSG_ERROR_REACTIVE = marker('error.reactivate.entity');
@@ -56,7 +55,7 @@ export class AreaTematicaListadoComponent extends AbstractTablePaginationCompone
     public authService: SgiAuthService,
     private readonly translate: TranslateService
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -166,15 +165,13 @@ export class AreaTematicaListadoComponent extends AbstractTablePaginationCompone
     ).subscribe((value) => this.textoErrorReactivar = value);
   }
 
-  onClearFilters() {
+  protected resetFilters(): void {
     this.formGroup.controls.activo.setValue('true');
     this.formGroup.controls.nombre.setValue('');
-    this.onSearch();
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IAreaTematica>> {
-    const observable$ = this.areaTematicaService.findTodos(this.getFindOptions(reset));
-    return observable$;
+    return this.areaTematicaService.findTodos(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {
@@ -221,11 +218,12 @@ export class AreaTematicaListadoComponent extends AbstractTablePaginationCompone
         },
         (error) => {
           this.logger.error(error);
+          this.processError(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorDesactivar);
+            this.processError(new SgiError(this.textoErrorDesactivar));
           }
         }
       );
@@ -254,10 +252,10 @@ export class AreaTematicaListadoComponent extends AbstractTablePaginationCompone
           this.logger.error(error);
           areaTematica.activo = false;
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorReactivar);
+            this.processError(new SgiError(this.textoErrorReactivar));
           }
         }
       );

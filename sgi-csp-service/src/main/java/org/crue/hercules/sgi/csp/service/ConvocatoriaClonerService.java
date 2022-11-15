@@ -138,7 +138,7 @@ public class ConvocatoriaClonerService {
    */
   public void cloneConvocatoriasEntidadesConvocantes(Long convocatoriaToCloneId, Long convocatoriaClonedId) {
 
-    this.convocatoriaEntidadConvocanteRepository.findByProgramaIsNotNullAndConvocatoriaId(convocatoriaToCloneId)
+    this.convocatoriaEntidadConvocanteRepository.findByConvocatoriaId(convocatoriaToCloneId)
         .stream().forEach(entidad -> this.convocatoriaEntidadConvocanteRepository
             .save(ConvocatoriaEntidadConvocante.builder().convocatoriaId(convocatoriaClonedId)
                 .entidadRef(entidad.getEntidadRef()).programa(entidad.getPrograma()).build()));

@@ -16,4 +16,9 @@ export class EvaluacionDocumentacionFragment extends Fragment {
     return of(void 0);
   }
 
+  handleErrors(errors: Error[]): void {
+    this.clearProblems();
+    errors.forEach(this.processError);
+  }
+
 }

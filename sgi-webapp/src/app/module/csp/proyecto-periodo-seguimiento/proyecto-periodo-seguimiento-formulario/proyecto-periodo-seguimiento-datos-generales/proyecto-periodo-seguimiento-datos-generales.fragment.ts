@@ -43,7 +43,7 @@ export class ProyectoPeriodoSeguimientoDatosGeneralesFragment extends FormFragme
         ]),
         fechaFin: new FormControl(null, [
           Validators.required,
-          DateValidator.maxDate(this.proyecto?.fechaFin)
+          DateValidator.maxDate(this.proyecto?.fechaFinDefinitiva ?? this.proyecto?.fechaFin)
         ]),
         fechaInicioPresentacion: new FormControl(null),
         fechaFinPresentacion: new FormControl(null),

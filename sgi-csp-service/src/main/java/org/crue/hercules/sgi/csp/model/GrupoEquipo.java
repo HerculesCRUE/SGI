@@ -91,16 +91,14 @@ public class GrupoEquipo extends BaseEntity {
   private RolProyecto rol;
 
   /** Dedicacion */
-  @Column(name = "dedicacion", nullable = false)
+  @Column(name = "dedicacion", nullable = true)
   @Enumerated(EnumType.STRING)
-  @NotNull
   private Dedicacion dedicacion;
 
   /** Participacion */
-  @Column(name = "participacion", nullable = false)
+  @Column(name = "participacion", nullable = true)
   @Min(PARTICIPACION_MIN)
   @Max(PARTICIPACION_MAX)
-  @NotNull
   private BigDecimal participacion;
 
   /** Grupo */
@@ -121,5 +119,4 @@ public class GrupoEquipo extends BaseEntity {
   public interface OnDelete {
 
   }
-
 }

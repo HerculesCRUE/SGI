@@ -18,4 +18,7 @@ export interface IComite {
 
   /** Activo */
   activo: boolean;
+
+  /** nombreInvestigacion */
+  nombreInvestigacion: string;
 }

@@ -5,7 +5,7 @@ import { ICampoProduccionCientificaWithConfiguracion } from '@core/models/prc/ca
 import { IIndiceImpacto } from '@core/models/prc/indice-impacto';
 import { IProduccionCientifica } from '@core/models/prc/produccion-cientifica';
 import { IProyectoPrc } from '@core/models/prc/proyecto-prc';
-import { GrupoService } from '@core/services/csp/grupo/grupo.service';
+import { GrupoResumenService } from '@core/services/csp/grupo-resumen/grupo-resumen.service';
 import { ProyectoResumenService } from '@core/services/csp/proyecto-resumen/proyecto-resumen.service';
 import { AutorService } from '@core/services/prc/autor/autor.service';
 import { ConfiguracionCampoService } from '@core/services/prc/configuracion-campo/configuracion-campo.service';
@@ -27,7 +27,7 @@ export class ProduccionCientificaInitializerService {
     private autorService: AutorService,
     private proyectoResumenService: ProyectoResumenService,
     private documentoService: DocumentoService,
-    private grupoService: GrupoService
+    private grupoResumenService: GrupoResumenService
   ) { }
 
   initializeCamposProduccionCientifica$(produccionCientifica: IProduccionCientifica):
@@ -103,11 +103,12 @@ export class ProduccionCientificaInitializerService {
                 switchMap(response =>
                   from(response.items).pipe(
                     mergeMap(autorGrupo =>
-                      this.grupoService.findById(autorGrupo.grupo.id).pipe(
+                      this.grupoResumenService.findById(autorGrupo.grupo.id).pipe(
                         map(grupo => {
                           autorGrupo.grupo = grupo;
                           return autorGrupo;
-                        })
+                        }),
+                        catchError(() => of(autorGrupo))
                       )
                     ),
                     toArray(),

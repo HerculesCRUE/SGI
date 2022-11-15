@@ -28,7 +28,7 @@ export class SolicitudHistoricoEstadosPublicComponent extends FragmentComponent 
 
   constructor(
     protected snackBarService: SnackBarService,
-    private actionService: SolicitudPublicActionService
+    public readonly actionService: SolicitudPublicActionService
   ) {
     super(actionService.FRAGMENT.HISTORICO_ESTADOS, actionService);
     this.formPart = this.fragment as SolicitudHistoricoEstadosPublicFragment;

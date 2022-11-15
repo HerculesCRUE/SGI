@@ -14,6 +14,7 @@ import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoJustificacionNotDelet
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.Configuracion;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.repository.EstadoProyectoPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
@@ -52,6 +53,8 @@ class ProyectoPeriodoJustificacionServiceTest extends BaseServiceTest {
   private EntityManagerFactory entityManagerFactory;
   @MockBean
   private PersistenceUnitUtil persistenceUnitUtil;
+  @MockBean
+  private EstadoProyectoPeriodoJustificacionRepository estadoProyectoPeriodoJustificacionRepository;
 
   // This bean must be created by Spring so validations can be applied
   @Autowired

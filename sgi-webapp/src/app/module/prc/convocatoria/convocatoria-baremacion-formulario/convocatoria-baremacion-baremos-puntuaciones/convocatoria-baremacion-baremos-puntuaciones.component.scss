@@ -17,3 +17,12 @@
     color: map-get($sgi-custom-colors, danger);
   }
 }
+
+.programa {
+  .arbol {
+    .arbol-tree {
+      overflow-y: scroll;
+      max-height: 600px;
+    }
+  }
+}

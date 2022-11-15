@@ -254,12 +254,13 @@ export class ProyectoProrrogaDocumentosComponent extends FragmentComponent imple
         }
       }
       else if (this.viewMode === VIEW_MODE.EDIT) {
+        const currentDocumentoRef = this.viewingNode.documento.value.documentoRef;
         if (this.uploader.uploadSelection()) {
           this.uploader.uploadSelection().subscribe(
-            () => this.updateNode(this.getDetailNode())
+            () => this.updateNode(this.getDetailNode(), currentDocumentoRef)
           );
         } else {
-          this.updateNode(this.getDetailNode())
+          this.updateNode(this.getDetailNode(), currentDocumentoRef);
         }
       }
     }
@@ -282,8 +283,8 @@ export class ProyectoProrrogaDocumentosComponent extends FragmentComponent imple
     this.switchToNone();
   }
 
-  private updateNode(node: NodeDocumento) {
-    this.formPart.updateNode(node);
+  private updateNode(node: NodeDocumento, currentDocumentoRef: string) {
+    this.formPart.updateNode(node, currentDocumentoRef);
     this.expandParents(node);
     this.switchToView();
   }

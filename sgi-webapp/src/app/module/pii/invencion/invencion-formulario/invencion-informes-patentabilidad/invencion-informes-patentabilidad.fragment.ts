@@ -13,6 +13,7 @@ export class InvencionInformesPatentabilidadFragment extends Fragment {
 
   public informesPatentabilidad$ = new BehaviorSubject<StatusWrapper<IInformePatentabilidad>[]>([]);
   private informesPatentabilidadToDelete: StatusWrapper<IInformePatentabilidad>[] = [];
+  private documentosRefUnrelated: string[] = [];
 
   constructor(
     key: number,
@@ -82,41 +83,66 @@ export class InvencionInformesPatentabilidadFragment extends Fragment {
     this.setChanges(true);
   }
 
-  updateInformePatentabilidad(updatedInformePatentabilidad: IInformePatentabilidad, index: number) {
+  /**
+   * Actualiza el informe de patentabilidad y si se modifica el documento asociado lo anade a la lista de documentos a eliminar
+   * y si no esta persistido aun se elimina directamente.
+   */
+  updateInformePatentabilidad(updatedInformePatentabilidad: IInformePatentabilidad, previousDocumentoRef: string, index: number) {
     if (index >= 0) {
       const current = this.informesPatentabilidad$.value;
       const wrapper = current[index];
+
       if (!wrapper.created) {
         wrapper.setEdited();
       }
+
+      if (!!previousDocumentoRef && updatedInformePatentabilidad.documento.documentoRef !== previousDocumentoRef) {
+        if (wrapper.created) {
+          this.documentoService.eliminarFichero(wrapper.value.documento.documentoRef).subscribe();
+        } else {
+          this.documentosRefUnrelated.push(previousDocumentoRef);
+        }
+      }
+
       this.informesPatentabilidad$.next(current);
       this.setChanges(true);
     }
   }
 
+  /**
+   * Si el informe de patentabilidad ya esta creado lo anade a la lista de elementos a eliminar
+   * y si no esta persistido aun se elimina directamente el documento asociado.
+   */
   deleteInformePatentabilidad(wrapper: StatusWrapper<IInformePatentabilidad>): void {
+    let deleteDocumento$ = of(void 0);
     const current = this.informesPatentabilidad$.value;
     const index = current.findIndex(value => value === wrapper);
+
     if (index >= 0) {
-      if (!wrapper.created) {
-        this.informesPatentabilidadToDelete.push(current[index]);
-        this.removeDeletedInformePatentabilidadFromArray(index, current)
+      if (wrapper.created) {
+        deleteDocumento$ = this.documentoService.eliminarFichero(wrapper.value.documento.documentoRef);
       } else {
-        this.documentoService.deleteById(wrapper.value.documento.documentoRef).subscribe(() => {
-          this.removeDeletedInformePatentabilidadFromArray(index, current)
-        });
+        this.informesPatentabilidadToDelete.push(current[index]);
       }
+
+      deleteDocumento$.subscribe(() =>
+        this.removeDeletedInformePatentabilidadFromArray(index, current)
+      );
     }
   }
 
-  private removeDeletedInformePatentabilidadFromArray(index: number, currentInformesPatentabilidad: StatusWrapper<IInformePatentabilidad>[]): void {
+  private removeDeletedInformePatentabilidadFromArray(
+    index: number,
+    currentInformesPatentabilidad: StatusWrapper<IInformePatentabilidad>[]
+  ): void {
     currentInformesPatentabilidad.splice(index, 1);
     this.informesPatentabilidad$.next(currentInformesPatentabilidad);
     this.setChanges(this.hasFragmentChangesPending());
   }
 
   private hasFragmentChangesPending() {
-    return this.informesPatentabilidadToDelete.length > 0 || this.informesPatentabilidad$.value.some((value) => value.created || value.edited);
+    return this.informesPatentabilidadToDelete.length > 0
+      || this.informesPatentabilidad$.value.some((value) => value.created || value.edited);
   }
 
   hasEditPerm(): boolean {
@@ -127,7 +153,8 @@ export class InvencionInformesPatentabilidadFragment extends Fragment {
     return merge(
       this.deleteInformesPatentabilidad(),
       this.updateInformesPatentabilidad(),
-      this.createInformesPatentabilidad()
+      this.createInformesPatentabilidad(),
+      this.deleteDocumentosUnrelated()
     ).pipe(
       takeLast(1),
       tap(() => {
@@ -143,9 +170,31 @@ export class InvencionInformesPatentabilidadFragment extends Fragment {
 
     return from(this.informesPatentabilidadToDelete).pipe(
       mergeMap(wrapped =>
-        merge(this.deleteInformePatentabilidadById(wrapped), this.deleteInformePatentabilidadRelatedDocumento(wrapped.value.documento.documentoRef)
+        merge(
+          this.deleteInformePatentabilidadById(wrapped),
+          this.deleteInformePatentabilidadRelatedDocumento(wrapped.value.documento.documentoRef)
         )
-      )
+      ),
+      takeLast(1)
+    );
+  }
+
+  private deleteDocumentosUnrelated(): Observable<void> {
+    if (this.documentosRefUnrelated.length === 0) {
+      return of(void 0);
+    }
+
+    return from(this.documentosRefUnrelated).pipe(
+      mergeMap(documentoRef =>
+        this.documentoService.eliminarFichero(documentoRef)
+          .pipe(
+            tap(() =>
+              this.documentosRefUnrelated = this.documentosRefUnrelated
+                .filter(documentoRefEliminado => documentoRefEliminado !== documentoRef)
+            )
+          )
+      ),
+      takeLast(1)
     );
   }
 
@@ -161,7 +210,7 @@ export class InvencionInformesPatentabilidadFragment extends Fragment {
   }
 
   private deleteInformePatentabilidadRelatedDocumento(documentoRef: string): Observable<void> {
-    return this.documentoService.deleteById(documentoRef).pipe(
+    return this.documentoService.eliminarFichero(documentoRef).pipe(
       catchError(() => of(void 0))
     );
   }
@@ -169,12 +218,12 @@ export class InvencionInformesPatentabilidadFragment extends Fragment {
   private updateInformesPatentabilidad(): Observable<void> {
     const current = this.informesPatentabilidad$.value;
     return from(current.filter(wrapper => wrapper.edited)).pipe(
-      mergeMap((wrapper => {
+      mergeMap(wrapper => {
         return this.informePatentabilidadService.update(wrapper.value.id, wrapper.value).pipe(
           map((informePatentabilidadResponse) => this.refreshInformesPatentabilidadData(informePatentabilidadResponse, wrapper, current)),
           catchError(() => of(void 0))
-        )
-      }))
+        );
+      })
     );
   }
 
@@ -185,7 +234,7 @@ export class InvencionInformesPatentabilidadFragment extends Fragment {
         return this.informePatentabilidadService.create(wrapper.value).pipe(
           map((informePatentabilidadResponse) => this.refreshInformesPatentabilidadData(informePatentabilidadResponse, wrapper, current)),
           catchError(() => of(void 0))
-        )
+        );
       }))
     );
   }
@@ -209,4 +258,5 @@ export class InvencionInformesPatentabilidadFragment extends Fragment {
     target.documento = source.documento;
     target.entidadCreadora = source.entidadCreadora;
   }
+
 }

@@ -26,3 +26,5 @@ export const DEDICACION_MAP: Map<Dedicacion, string> = new Map([
   [Dedicacion.COMPLETA, marker(`csp.grupo-equipo.dedicacion.COMPLETA`)],
   [Dedicacion.PARCIAL, marker(`csp.grupo-equipo.dedicacion.PARCIAL`)]
 ]);
+
+export const PARTICIPACION_MAX = 100;

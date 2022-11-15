@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { Estado, ESTADO_MAP } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
@@ -8,14 +7,10 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
-import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
 import { merge, Observable, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
-
-const MSG_ERROR = marker('error.load');
 
 export interface IProyectoListadoData extends IProyecto {
   prorrogado: boolean;
@@ -49,11 +44,9 @@ export class ProyectoListadoInvComponent extends AbstractTablePaginationComponen
   }
 
   constructor(
-    protected readonly snackBarService: SnackBarService,
-    private readonly proyectoService: ProyectoService,
-    public authService: SgiAuthService
+    private readonly proyectoService: ProyectoService
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -74,10 +67,9 @@ export class ProyectoListadoInvComponent extends AbstractTablePaginationComponen
     this.filter = this.createFilter();
   }
 
-  onClearFilters() {
-    super.onClearFilters();
+  protected resetFilters(): void {
+    super.resetFilters();
     this.formGroup.controls.aplicarFiltro.setValue('false');
-    this.onSearch();
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IProyectoListadoData>> {

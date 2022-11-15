@@ -38,6 +38,7 @@ import org.crue.hercules.sgi.eti.repository.RetrospectivaRepository;
 import org.crue.hercules.sgi.eti.repository.specification.EvaluacionSpecifications;
 import org.crue.hercules.sgi.eti.service.ComunicadosService;
 import org.crue.hercules.sgi.eti.service.EvaluacionService;
+import org.crue.hercules.sgi.eti.service.EvaluadorService;
 import org.crue.hercules.sgi.eti.service.MemoriaService;
 import org.crue.hercules.sgi.eti.service.SgdocService;
 import org.crue.hercules.sgi.eti.service.sgi.SgiApiRepService;
@@ -105,34 +106,19 @@ public class EvaluacionServiceImpl implements EvaluacionService {
   /** Comunicado service */
   private final ComunicadosService comunicadosService;
 
+  /** Evaluador service */
+  private final EvaluadorService evaluadorService;
+
   private static final String TIPO_ACTIVIDAD_INVESTIGACION_TUTELADA = "Investigación tutelada";
 
-  /**
-   * Instancia un nuevo {@link EvaluacionServiceImpl}
-   * 
-   * @param evaluacionRepository          repository para {@link Evaluacion}
-   * @param memoriaRepository             repository para {@link Memoria}
-   * @param estadoMemoriaRepository       repository para {@link EstadoMemoria}
-   * @param retrospectivaRepository       repository para {@link Retrospectiva}
-   * @param memoriaService                service para {@link Memoria}
-   * @param comentarioRepository          repository para {@link Comentario}
-   * @param convocatoriaReunionRepository repository para
-   *                                      {@link ConvocatoriaReunion}
-   * @param evaluacionConverter           converter para {@link Evaluacion}
-   * @param reportService                 servicio para informes
-   *                                      {@link SgiApiRepService}
-   * @param sgdocService                  servicio gestor documental
-   *                                      {@link SgdocService}
-   * @param comunicadosService            {@link ComunicadosService}
-   * @param sgiConfigProperties           {@link SgiConfigProperties}
-   */
   @Autowired
   public EvaluacionServiceImpl(EvaluacionRepository evaluacionRepository,
       EstadoMemoriaRepository estadoMemoriaRepository, RetrospectivaRepository retrospectivaRepository,
       MemoriaService memoriaService, ComentarioRepository comentarioRepository,
       ConvocatoriaReunionRepository convocatoriaReunionRepository, MemoriaRepository memoriaRepository,
       EvaluacionConverter evaluacionConverter, SgiApiRepService reportService, SgdocService sgdocService,
-      ComunicadosService comunicadosService, SgiConfigProperties sgiConfigProperties) {
+      ComunicadosService comunicadosService, SgiConfigProperties sgiConfigProperties,
+      EvaluadorService evaluadorService) {
 
     this.evaluacionRepository = evaluacionRepository;
     this.estadoMemoriaRepository = estadoMemoriaRepository;
@@ -146,6 +132,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
     this.sgdocService = sgdocService;
     this.comunicadosService = comunicadosService;
     this.sgiConfigProperties = sgiConfigProperties;
+    this.evaluadorService = evaluadorService;
   }
 
   /**
@@ -923,6 +910,22 @@ public class EvaluacionServiceImpl implements EvaluacionService {
 
     log.debug("recuperaInformesAvisoSeguimientoAnualPendiente() - end");
     return evaluacionesPendientesAviso;
+  }
+
+  /**
+   * Obtiene el secretario activo de la fecha de evaluación
+   * 
+   * @param idEvaluacion id de la {@link Evaluacion}
+   * @return secretario de la evaluación
+   */
+  public Evaluador findSecretarioEvaluacion(Long idEvaluacion) {
+    log.debug("findSecretarioEvaluacion(Long idEvaluacion) - start");
+    Evaluacion evaluacion = this.findById(idEvaluacion);
+    Evaluador secretario = evaluadorService.findSecretarioInFechaAndComite(
+        evaluacion.getConvocatoriaReunion().getFechaEvaluacion(),
+        evaluacion.getConvocatoriaReunion().getComite().getComite());
+    log.debug("findSecretarioEvaluacion(Long idEvaluacion) - end");
+    return secretario;
   }
 
   private ZonedDateTime getLastInstantOfDay() {

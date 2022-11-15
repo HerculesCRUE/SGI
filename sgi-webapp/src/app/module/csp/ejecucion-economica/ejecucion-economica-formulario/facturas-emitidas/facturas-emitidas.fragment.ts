@@ -8,7 +8,10 @@ import { LuxonUtils } from '@core/utils/luxon-utils';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../../ejecucion-economica.action.service';
-import { DesgloseEconomicoFragment, IColumnDefinition, RowTreeDesglose } from '../desglose-economico.fragment';
+import {
+  DesgloseEconomicoFragment, IColumnDefinition,
+  IDesgloseEconomicoExportData, RowTreeDesglose
+} from '../desglose-economico.fragment';
 
 export class FacturasEmitidasFragment extends DesgloseEconomicoFragment<IDatoEconomico> {
 
@@ -48,6 +51,36 @@ export class FacturasEmitidasFragment extends DesgloseEconomicoFragment<IDatoEco
 
   protected getDatosEconomicos(facturaRange?: any): Observable<IDatoEconomico[]> {
     return this.calendarioFacturacionService.getFacturasEmitidas(this.proyectoSge.id, facturaRange);
+  }
+
+  public loadDataExport(): Observable<IDesgloseEconomicoExportData> {
+    const fechas = this.formGroupFechas.controls;
+    const facturaRange = {
+      desde: LuxonUtils.toBackend(fechas.facturaDesde.value, true),
+      hasta: LuxonUtils.toBackend(fechas.facturaHasta.value, true)
+    };
+    const exportData: IDesgloseEconomicoExportData = {
+      data: [],
+      columns: []
+    };
+    return of(exportData).pipe(
+      switchMap((exportDataResult) => {
+        return this.getDatosEconomicos(facturaRange).pipe(
+          map(data => {
+            exportDataResult.data = data;
+            return exportDataResult;
+          })
+        );
+      }),
+      switchMap((exportDataResult) => {
+        return this.getColumns().pipe(
+          map((columns) => {
+            exportDataResult.columns = columns;
+            return exportDataResult;
+          })
+        );
+      })
+    );
   }
 
   public loadDesglose(): void {

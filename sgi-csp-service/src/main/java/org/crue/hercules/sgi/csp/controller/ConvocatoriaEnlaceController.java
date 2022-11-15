@@ -59,11 +59,17 @@ public class ConvocatoriaEnlaceController {
   /**
    * Crea un nuevo {@link ConvocatoriaEnlace}.
    * 
+   * @deprecated
+   *             Usar
+   *             {@link ConvocatoriaController#updateEnlaces(Long, java.util.List)}
+   *             para la gestion conjunta de datos.
+   * 
    * @param convocatoriaEnlace {@link ConvocatoriaEnlace} que se quiere crear.
    * @return Nuevo {@link ConvocatoriaEnlace} creado.
    */
   @PostMapping
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-E')")
+  @Deprecated
   public ResponseEntity<ConvocatoriaEnlace> create(@Valid @RequestBody ConvocatoriaEnlace convocatoriaEnlace) {
     log.debug("create(ConvocatoriaEnlace convocatoriaEnlace) - start");
     ConvocatoriaEnlace returnValue = service.create(convocatoriaEnlace);
@@ -74,12 +80,18 @@ public class ConvocatoriaEnlaceController {
   /**
    * Actualiza el {@link ConvocatoriaEnlace} con el id indicado.
    * 
+   * @deprecated
+   *             Usar
+   *             {@link ConvocatoriaController#updateEnlaces(Long, java.util.List)}
+   *             para la gestion conjunta de datos.
+   * 
    * @param convocatoriaEnlace {@link ConvocatoriaEnlace} a actualizar.
    * @param id                 id {@link ConvocatoriaEnlace} a actualizar.
    * @return {@link ConvocatoriaEnlace} actualizado.
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
+  @Deprecated
   public ConvocatoriaEnlace update(
       @Validated({ Update.class, Default.class }) @RequestBody ConvocatoriaEnlace convocatoriaEnlace,
       @PathVariable Long id) {
@@ -93,10 +105,16 @@ public class ConvocatoriaEnlaceController {
   /**
    * Desactiva el {@link ConvocatoriaEnlace} con id indicado.
    * 
+   * @deprecated
+   *             Usar
+   *             {@link ConvocatoriaController#updateEnlaces(Long, java.util.List)}
+   *             para la gestion conjunta de datos.
+   * 
    * @param id Identificador de {@link ConvocatoriaEnlace}.
    */
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-CON-E')")
+  @Deprecated
   public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
     service.delete(id);

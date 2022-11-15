@@ -1,6 +1,5 @@
 package org.crue.hercules.sgi.csp.service;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
@@ -28,7 +27,6 @@ import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
 import org.crue.hercules.sgi.csp.model.Grupo;
 import org.crue.hercules.sgi.csp.model.GrupoEquipo;
-import org.crue.hercules.sgi.csp.model.GrupoEquipo.Dedicacion;
 import org.crue.hercules.sgi.csp.model.GrupoEspecialInvestigacion;
 import org.crue.hercules.sgi.csp.model.GrupoTipo;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
@@ -74,6 +72,7 @@ public class GrupoService {
   private final GrupoEquipoRepository grupoEquipoRepository;
   private final GrupoPersonaAutorizadaRepository grupoPersonaAutorizadaRepository;
   private final GrupoAuthorityHelper authorityHelper;
+  private final GrupoEquipoService grupoEquipoService;
 
   /**
    * Guarda la entidad {@link Grupo}.
@@ -269,6 +268,24 @@ public class GrupoService {
   }
 
   /**
+   * Obtiene una entidad {@link Grupo} por id sin hacer la comprobacion de
+   * visibilidad.
+   * 
+   * @param id Identificador de la entidad {@link Grupo}.
+   * @return la entidad {@link Grupo}.
+   */
+  public Grupo findGrupoResumenById(Long id) {
+    log.debug("findGrupoResumenById(Long id) - start");
+
+    AssertHelper.idNotNull(id, Grupo.class);
+
+    final Grupo returnValue = repository.findById(id).orElseThrow(() -> new GrupoNotFoundException(id));
+
+    log.debug("findGrupoResumenById(Long id) - end");
+    return returnValue;
+  }
+
+  /**
    * Comprueba la existencia del {@link Grupo} por id.
    *
    * @param id el id de la entidad {@link Grupo}.
@@ -400,6 +417,8 @@ public class GrupoService {
       if (!result.isEmpty()) {
         throw new ConstraintViolationException(result);
       }
+
+      grupoEquipoService.validateGrupoEquipoByGrupo(id);
 
       grupo.setActivo(true);
 
@@ -615,8 +634,6 @@ public class GrupoService {
         .fechaInicio(newGrupo.getFechaInicio())
         .fechaFin(newGrupo.getFechaFin())
         .rol(rolProyecto)
-        .dedicacion(Dedicacion.COMPLETA)
-        .participacion(new BigDecimal(100))
         .grupoId(newGrupo.getId())
         .build();
 

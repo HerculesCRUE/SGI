@@ -283,7 +283,7 @@ public abstract class BaseApartadosRespuestasReportService extends SgiDynamicRep
     // @formatter:on  
   }
 
-  private ApartadoOutput getApartadoOutputFromElementRow(int index, List<ApartadoOutput> jerarquiaApartados) {
+  protected ApartadoOutput getApartadoOutputFromElementRow(int index, List<ApartadoOutput> jerarquiaApartados) {
     ApartadoOutput apartadoOutput = null;
     if (jerarquiaApartados.size() >= index + 1 && null != jerarquiaApartados.get(index)) {
       apartadoOutput = jerarquiaApartados.get(index);

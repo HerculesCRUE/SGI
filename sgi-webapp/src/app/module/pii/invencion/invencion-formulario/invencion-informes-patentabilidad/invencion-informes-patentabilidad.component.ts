@@ -93,11 +93,13 @@ export class InvencionInformesPatentabilidadComponent extends FragmentComponent 
       data
     };
 
+    const currentDocumentoRef = data.informePatentabilidad?.documento?.documentoRef;
+
     const dialogRef = this.matDialog.open(InformePatentabilidadModalComponent, config);
     dialogRef.afterClosed().subscribe((informePatentabilidad: IInformePatentabilidad) => {
       if (informePatentabilidad) {
         if (wrapper) {
-          this.formPart.updateInformePatentabilidad(informePatentabilidad, row);
+          this.formPart.updateInformePatentabilidad(informePatentabilidad, currentDocumentoRef, row);
         } else {
           this.formPart.addInformePatentabilidad(informePatentabilidad);
         }

@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
@@ -50,14 +49,6 @@ export class RequerimientoJustificacionListadoExportModalComponent extends BaseE
     super.ngOnInit();
     this.reportTitle = this.translate.instant(REPORT_TITLE_KEY);
     this.formGroup = this.buildFormGroup();
-  }
-
-  selectUnselectAll($event: MatCheckboxChange): void {
-    Object.keys(this.formGroup.controls).forEach(key => {
-      if (key.startsWith('show')) {
-        this.formGroup.get(key).patchValue($event.checked);
-      }
-    });
   }
 
   protected buildFormGroup(): FormGroup {

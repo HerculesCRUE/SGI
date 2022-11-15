@@ -13,7 +13,8 @@ class SolicitudModalidadConverter extends SgiBaseConverter<ISolicitudModalidadBa
       id: value.id,
       solicitudId: value.solicitudId,
       entidad: { id: value.entidadRef } as IEmpresa,
-      programa: value.programa
+      programa: value.programa,
+      programaConvocatoriaId: value.programaConvocatoriaId
     };
   }
 
@@ -25,7 +26,8 @@ class SolicitudModalidadConverter extends SgiBaseConverter<ISolicitudModalidadBa
       id: value.id,
       solicitudId: value.solicitudId,
       entidadRef: value.entidad?.id,
-      programa: value.programa
+      programa: value.programa,
+      programaConvocatoriaId: value.programaConvocatoriaId
     };
   }
 }

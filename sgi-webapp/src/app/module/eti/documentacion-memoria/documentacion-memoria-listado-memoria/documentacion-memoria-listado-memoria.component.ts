@@ -8,12 +8,10 @@ import { IDocumento } from '@core/models/sgdoc/documento';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiRestFilter, SgiRestListResult } from '@sgi/framework/http';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
-const MSG_ERROR = marker('error.load');
 const FICHA_EVALUADOR = marker('eti.documentacion-memoria.ficha-evaluador');
 
 interface IDocumentacionMemoriaWithInformeAndFichaEvaluador extends IDocumentacionMemoria {
@@ -27,8 +25,8 @@ interface IDocumentacionMemoriaWithInformeAndFichaEvaluador extends IDocumentaci
   styleUrls: ['./documentacion-memoria-listado-memoria.component.scss']
 })
 
-export class DocumentacionMemoriaListadoMemoriaComponent extends
-  AbstractTableWithoutPaginationComponent<IDocumentacionMemoriaWithInformeAndFichaEvaluador>  {
+export class DocumentacionMemoriaListadoMemoriaComponent
+  extends AbstractTableWithoutPaginationComponent<IDocumentacionMemoriaWithInformeAndFichaEvaluador>  {
   documentacionMemoria$: Observable<IDocumentacionMemoriaWithInformeAndFichaEvaluador[]>;
   @Input() memoriaId: number;
   @Input() tipoEvaluacion: number;
@@ -37,11 +35,10 @@ export class DocumentacionMemoriaListadoMemoriaComponent extends
 
   constructor(
     private readonly memoriaService: MemoriaService,
-    protected readonly snackBarService: SnackBarService,
     private readonly documentoService: DocumentoService,
     private readonly evaluacionService: EvaluacionService
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
   }
 
   protected createObservable(): Observable<SgiRestListResult<IDocumentacionMemoriaWithInformeAndFichaEvaluador>> {

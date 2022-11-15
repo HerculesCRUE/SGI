@@ -28,4 +28,39 @@ public class ProyectoPeriodoJustificacionInput implements Serializable {
   private TipoJustificacion tipoJustificacion;
   private String observaciones;
   private Long convocatoriaPeriodoJustificacionId;
+  private EstadoProyectoPeriodoJustificacion estado;
+
+  @Data
+  @EqualsAndHashCode(callSuper = false)
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  public static class EstadoProyectoPeriodoJustificacion implements Serializable {
+
+    /** Enumerado Tipo de Seguimiento */
+    public enum TipoEstadoPeriodoJustificacion {
+      /** Pendiente */
+      PENDIENTE,
+      /** Elaboracion */
+      ELABORACION,
+      /** Entregada */
+      ENTREGADA,
+      /** Subsanación */
+      SUBSANACION,
+      /** Cerrada */
+      CERRADA;
+    }
+
+    /**
+     * Serial version
+     */
+    private static final long serialVersionUID = 1L;
+
+    private Long id;
+    private Long proyectoPeriodoJustificacionId;
+    private TipoEstadoPeriodoJustificacion estado;
+    private Instant fechaEstado;
+    private String comentario;
+
+  }
 }

@@ -16,6 +16,7 @@ import { EjecucionEconomicaActionService } from '../../ejecucion-economica.actio
 import { FacturasEmitidasModalComponent } from '../../modals/facturas-emitidas-modal/facturas-emitidas-modal.component';
 import { RowTreeDesglose } from '../desglose-economico.fragment';
 import { IDesglose } from '../facturas-justificantes.fragment';
+import { FacturasEmitidasExportModalComponent } from './export/facturas-emitidas-export-modal.component';
 import { FacturasEmitidasFragment } from './facturas-emitidas.fragment';
 
 @Component({
@@ -80,6 +81,19 @@ export class FacturasEmitidasComponent extends FragmentComponent implements OnIn
         };
         this.matDialog.open(FacturasEmitidasModalComponent, config);
       }
+    ));
+  }
+
+  openExportModal(): void {
+
+    this.subscriptions.push(this.formPart.loadDataExport().subscribe(
+      (exportData) => {
+        const config = {
+          data: exportData
+        };
+        this.matDialog.open(FacturasEmitidasExportModalComponent, config);
+      },
+      this.formPart.processError
     ));
   }
 

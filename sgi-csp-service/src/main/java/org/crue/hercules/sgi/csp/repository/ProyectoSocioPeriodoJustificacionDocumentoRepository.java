@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.repository;
 import java.util.List;
 
 import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacionDocumento;
@@ -49,4 +50,15 @@ public interface ProyectoSocioPeriodoJustificacionDocumentoRepository
    * @return true si existe y false en caso contrario.
    */
   boolean existsByProyectoSocioPeriodoJustificacionProyectoSocioProyectoId(Long proyectoId);
+
+  /**
+   * Comprueba si existen datos vinculados a {@link ProyectoPeriodoJustificacion}
+   * de
+   * {@link ProyectoSocioPeriodoJustificacionDocumento}
+   *
+   * @param proyectoPeriodoJustificacionId Id del
+   *                                       {@link ProyectoPeriodoJustificacion}.
+   * @return true si existe y false en caso contrario.
+   */
+  boolean existsByProyectoSocioPeriodoJustificacionId(Long proyectoPeriodoJustificacionId);
 }

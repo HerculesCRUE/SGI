@@ -7,13 +7,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.dto.EvaluacionWithNumComentario;
 import org.crue.hercules.sgi.eti.dto.MemoriaPeticionEvaluacion;
 import org.crue.hercules.sgi.eti.exceptions.MemoriaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Comite;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Dictamen;
 import org.crue.hercules.sgi.eti.model.DocumentacionMemoria;
@@ -31,7 +30,6 @@ import org.crue.hercules.sgi.eti.model.TipoDocumento;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.model.TipoMemoria;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.custom.CustomConvocatoriaReunionRepository;
 import org.crue.hercules.sgi.eti.service.DocumentacionMemoriaService;
 import org.crue.hercules.sgi.eti.service.EvaluacionService;
@@ -51,12 +49,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * MemoriaControllerTest
@@ -902,7 +901,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-EDOC" })
   public void newDocumentacionMemoriaInicial_ReturnsMemoria() throws Exception {
     // given: Un documentación memoria nueva
     String nuevaDocumentacionMemoriaJson = mapper.writeValueAsString(generarMockDocumentacionMemoria(1L,
@@ -913,13 +912,41 @@ public class MemoriaControllerTest extends BaseControllerTest {
 
     BDDMockito
         .given(documentacionMemoriaService.createDocumentacionInicial(ArgumentMatchers.anyLong(),
-            ArgumentMatchers.<DocumentacionMemoria>any(), ArgumentMatchers.<Authentication>any()))
+            ArgumentMatchers.<DocumentacionMemoria>any()))
         .willReturn(documentacionMemoria);
 
     // when: Creamos una memoria
     mockMvc
         .perform(
             MockMvcRequestBuilders.post(MEMORIA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/documentacion-inicial", 1L)
+                .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
+                .content(nuevaDocumentacionMemoriaJson))
+        .andDo(SgiMockMvcResultHandlers.printOnError())
+        // then: Crea el nuevo tipo memoria y lo devuelve
+        .andExpect(MockMvcResultMatchers.status().isCreated())
+        .andExpect(MockMvcResultMatchers.jsonPath("memoria.titulo").value("memoria1"));
+  }
+
+  @Test
+  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ER" })
+  public void newDocumentacionMemoriaInicialInvestigador_ReturnsMemoria() throws Exception {
+    // given: Un documentación memoria nueva
+    String nuevaDocumentacionMemoriaJson = mapper.writeValueAsString(generarMockDocumentacionMemoria(1L,
+        generarMockMemoria(null, "001", "memoria1", 1), generarMockTipoDocumento(1L)));
+
+    DocumentacionMemoria documentacionMemoria = generarMockDocumentacionMemoria(1L,
+        generarMockMemoria(1L, "001", "memoria1", 1), generarMockTipoDocumento(1L));
+
+    BDDMockito
+        .given(documentacionMemoriaService.createDocumentacionInicialInvestigador(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.<DocumentacionMemoria>any()))
+        .willReturn(documentacionMemoria);
+
+    // when: Creamos una memoria
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders
+                .post(MEMORIA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/documentacion-inicial/investigador", 1L)
                 .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
                 .content(nuevaDocumentacionMemoriaJson))
         .andDo(SgiMockMvcResultHandlers.printOnError())

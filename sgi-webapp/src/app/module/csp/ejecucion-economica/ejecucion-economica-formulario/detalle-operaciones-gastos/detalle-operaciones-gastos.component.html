@@ -51,8 +51,7 @@
           <mat-header-cell *matHeaderCellDef>{{'sge.dato-economico.codigo-economico' | translate}}
           </mat-header-cell>
           <mat-cell *matCellDef="let element">
-            {{element.item.codigoEconomico?.id}}
-            {{element.item.codigoEconomico?.nombre ? ' - ' + element.item.codigoEconomico.nombre : '' }}
+            {{ getCodigoEconomicoTitle(element.item.codigoEconomico) }}
           </mat-cell>
         </ng-container>
 

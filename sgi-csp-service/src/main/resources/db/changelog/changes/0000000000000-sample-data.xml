@@ -3371,7 +3371,7 @@ industries" />
   </changeSet>
 
   <!-- TODO: Mover al fichero adecuado ya que no se trata de datos de prueba -->
-  <changeSet context="!text" author="master" id="0000000000000-rol_proyecto">
+  <changeSet context="!test" author="master" id="0000000000000-rol_proyecto">
     <insert tableName="rol_proyecto">
       <column name="id" valueSequenceNext="rol_proyecto_seq" />
       <column name="abreviatura" value="IP" />

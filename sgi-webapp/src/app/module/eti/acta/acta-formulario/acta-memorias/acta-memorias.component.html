@@ -18,6 +18,19 @@
       </ng-container>
 
       <!-- Dictamen Column -->
+      <ng-container matColumnDef="fichaEvaluador">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.acta.memoria.ficha-evaluador' |
+          translate}}
+        </th>
+        <td mat-cell *matCellDef="let memoria">
+          <button *ngIf="memoria?.idEvaluacion" mat-button matTooltip="{{'btn.show.file' | translate}}"
+            (click)="visualizarInformeEvaluador(memoria.idEvaluacion)">
+            <mat-icon color="primary">picture_as_pdf</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- Dictamen Column -->
       <ng-container matColumnDef="dictamen.nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.dictamen' | translate}}
         </th>

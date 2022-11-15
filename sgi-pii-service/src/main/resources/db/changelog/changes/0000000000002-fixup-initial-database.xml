@@ -3,7 +3,8 @@
 
   <!-- Modificar columna tipo de tramo_reparto para que sea nullable false -->
   <changeSet author="master" id="0000000000002-36">
-    <addNotNullConstraint columnName="tipo" tableName="tramo_reparto" />
+    <validCheckSum>8:541a5099a5ca9edbe636816ffa6d545b</validCheckSum>
+    <addNotNullConstraint columnName="tipo" tableName="tramo_reparto" columnDataType="varchar(25)" />
   </changeSet>
 
 </databaseChangeLog>

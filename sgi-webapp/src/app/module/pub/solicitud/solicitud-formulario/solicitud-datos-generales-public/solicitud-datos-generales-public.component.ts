@@ -53,8 +53,8 @@ export class SolicitudDatosGeneralesPublicComponent extends FormFragmentComponen
   msgParamAreaAnepEntity = {};
 
   dataSourceEntidadesConvocantes: MatTableDataSource<SolicitudModalidadEntidadConvocantePublicListado>;
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
 
   areasAnep = new MatTableDataSource<SolicitudRrhhAreaAnepPublicListado>();
   columnsAreasAnep = ['niveles', 'areaAnep', 'acciones'];
@@ -90,7 +90,7 @@ export class SolicitudDatosGeneralesPublicComponent extends FormFragmentComponen
   }
 
   constructor(
-    protected actionService: SolicitudPublicActionService,
+    public readonly actionService: SolicitudPublicActionService,
     private matDialog: MatDialog,
     private readonly translate: TranslateService
   ) {
@@ -113,9 +113,10 @@ export class SolicitudDatosGeneralesPublicComponent extends FormFragmentComponen
           case 'entidadConvocante':
             return entidadConvocanteModalidad.entidadConvocante.entidad.nombre;
           case 'plan':
-            return entidadConvocanteModalidad.plan.nombre;
+            return entidadConvocanteModalidad.plan?.nombre;
           case 'programaConvocatoria':
-            return entidadConvocanteModalidad.entidadConvocante.programa.nombre;
+            return entidadConvocanteModalidad.entidadConvocante.programa?.padre?.id ?
+              entidadConvocanteModalidad.entidadConvocante.programa?.nombre : '';
           case 'modalidadSolicitud':
             return entidadConvocanteModalidad.modalidad?.value.programa?.nombre;
           default:
@@ -124,11 +125,13 @@ export class SolicitudDatosGeneralesPublicComponent extends FormFragmentComponen
       };
 
     this.subscriptions.push(this.formPart.entidadesConvocantesModalidad$.subscribe(elements => {
-      // Bind on new data where convocatoria is selected
-      this.dataSourceEntidadesConvocantes.paginator = this.paginator;
-      this.sort?.sort(({ id: 'entidadConvocante', start: 'asc' }) as MatSortable);
-      this.dataSourceEntidadesConvocantes.sort = this.sort;
       this.dataSourceEntidadesConvocantes.data = elements;
+
+      setTimeout(() => {
+        this.dataSourceEntidadesConvocantes.paginator = this.paginator;
+        this.sort?.sort(({ id: 'entidadConvocante', start: 'asc' }) as MatSortable);
+        this.dataSourceEntidadesConvocantes.sort = this.sort;
+      }, 0);
     }));
   }
 
@@ -227,7 +230,7 @@ export class SolicitudDatosGeneralesPublicComponent extends FormFragmentComponen
         }
 
         if (!entidadConvocanteModalidad.modalidad) {
-          this.formPart.addSolicitudModalidad(entidadConvocanteModalidadModal.modalidad);
+          this.formPart.addSolicitudModalidad(entidadConvocanteModalidadModal.modalidad, entidadConvocanteModalidadModal.programa?.id);
         } else if (!entidadConvocanteModalidadModal.modalidad) {
           this.formPart.deleteSolicitudModalidad(entidadConvocanteModalidad.modalidad);
         } else if (!entidadConvocanteModalidad.modalidad.created) {
@@ -269,5 +272,4 @@ export class SolicitudDatosGeneralesPublicComponent extends FormFragmentComponen
     }
     ));
   }
-
 }

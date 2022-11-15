@@ -288,8 +288,9 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
         );
       }
       else if (this.viewMode === VIEW_MODE.EDIT) {
+        const currentDocumentoRef = this.viewingNode.documento.value.documentoRef;
         this.uploader.uploadSelection().subscribe(
-          () => this.updateNode(this.getDetailNode())
+          () => this.updateNode(this.getDetailNode(), currentDocumentoRef)
         );
       }
     }
@@ -314,8 +315,8 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
     this.switchToNone();
   }
 
-  private updateNode(node: NodeDocumento): void {
-    this.formPart.updateNode(node);
+  private updateNode(node: NodeDocumento, currentDocumentoRef: string): void {
+    this.formPart.updateNode(node, currentDocumentoRef);
     this.expandParents(node);
     this.switchToView();
   }

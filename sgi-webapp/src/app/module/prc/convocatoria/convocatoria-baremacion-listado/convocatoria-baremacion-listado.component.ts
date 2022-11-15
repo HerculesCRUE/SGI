@@ -19,7 +19,6 @@ import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { isConvocatoriaBaremacionEditable } from '../convocatoria-baremacion.resolver';
 
-const MSG_ERROR = marker('error.load');
 const MSG_BUTTON_NEW = marker('btn.add.entity');
 const MSG_REACTIVE = marker('msg.reactivate.entity');
 const MSG_SUCCESS_REACTIVE = marker('msg.reactivate.entity.success');
@@ -68,7 +67,7 @@ export class ConvocatoriaBaremacionListadoComponent extends AbstractTablePaginat
     private router: Router,
     private activatedRoute: ActivatedRoute
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
   }
 
   ngOnInit(): void {
@@ -110,11 +109,9 @@ export class ConvocatoriaBaremacionListadoComponent extends AbstractTablePaginat
     return filter;
   }
 
-  onClearFilters() {
-    super.onClearFilters();
+  protected resetFilters(): void {
+    super.resetFilters();
     this.formGroup.controls.activo.setValue('true');
-
-    this.onSearch();
   }
 
   deactivate(convocatoriaBaremacion: IConvocatoriaBaremacion): void {
@@ -133,10 +130,10 @@ export class ConvocatoriaBaremacionListadoComponent extends AbstractTablePaginat
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorDesactivar);
+            this.processError(new SgiError(this.textoErrorDesactivar));
           }
         }
       );
@@ -159,10 +156,10 @@ export class ConvocatoriaBaremacionListadoComponent extends AbstractTablePaginat
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorReactivar);
+            this.processError(new SgiError(this.textoErrorReactivar));
           }
         }
       );
@@ -335,10 +332,10 @@ export class ConvocatoriaBaremacionListadoComponent extends AbstractTablePaginat
         }, (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textErrorCloning);
+            this.processError(new SgiError(this.textErrorCloning));
           }
         }));
   }
@@ -368,10 +365,10 @@ export class ConvocatoriaBaremacionListadoComponent extends AbstractTablePaginat
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorBaremationCall);
+            this.processError(new SgiError(this.textoErrorBaremationCall));
           }
         }
       );

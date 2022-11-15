@@ -286,8 +286,31 @@ public class DocumentacionMemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
   public void createDocumentacionInicial_ReturnsDocumentacion() {
+    // given: Una nueva documentación
+    Memoria memoria = generarMockMemoria(1L, "Memoria1", 5L);
+    DocumentacionMemoria documentacionMemoriaNew = generarMockDocumentacionMemoria(null, memoria,
+        generarMockTipoDocumento(4L));
+
+    DocumentacionMemoria documentacionMemoria = generarMockDocumentacionMemoria(1L, memoria,
+        generarMockTipoDocumento(4L));
+
+    BDDMockito.given(memoriaRepository.findByIdAndActivoTrue(Mockito.anyLong())).willReturn(Optional.of(memoria));
+
+    BDDMockito.given(documentacionMemoriaRepository.save(documentacionMemoriaNew)).willReturn(documentacionMemoria);
+
+    // when: Creamos la documentación memoria
+    DocumentacionMemoria documentacionMemoriaCreada = documentacionMemoriaService.createDocumentacionInicial(1L,
+        documentacionMemoriaNew);
+
+    // then: El documentación memoria se crea correctamente
+    Assertions.assertThat(documentacionMemoriaCreada).isNotNull();
+    Assertions.assertThat(documentacionMemoriaCreada.getId()).isEqualTo(1L);
+    Assertions.assertThat(documentacionMemoria.getMemoria().getId()).isEqualTo(1L);
+  }
+
+  @Test
+  public void createDocumentacionInicialInvestigador_ReturnsDocumentacion() {
     // given: Una nueva documentación
     Memoria memoria = generarMockMemoria(1L, "Memoria1", 1L);
     DocumentacionMemoria documentacionMemoriaNew = generarMockDocumentacionMemoria(null, memoria,
@@ -299,10 +322,11 @@ public class DocumentacionMemoriaServiceTest extends BaseServiceTest {
     BDDMockito.given(memoriaRepository.findByIdAndActivoTrue(Mockito.anyLong())).willReturn(Optional.of(memoria));
 
     BDDMockito.given(documentacionMemoriaRepository.save(documentacionMemoriaNew)).willReturn(documentacionMemoria);
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
     // when: Creamos la documentación memoria
-    DocumentacionMemoria documentacionMemoriaCreada = documentacionMemoriaService.createDocumentacionInicial(1L,
-        documentacionMemoriaNew, authentication);
+    DocumentacionMemoria documentacionMemoriaCreada = documentacionMemoriaService
+        .createDocumentacionInicialInvestigador(1L,
+            documentacionMemoriaNew);
 
     // then: El documentación memoria se crea correctamente
     Assertions.assertThat(documentacionMemoriaCreada).isNotNull();
@@ -318,10 +342,9 @@ public class DocumentacionMemoriaServiceTest extends BaseServiceTest {
         generarMockTipoDocumento(4L));
 
     try {
-      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
       // when: Creamos la documentación memoria con id de documentación memoria
       // distinto de null
-      documentacionMemoriaService.createDocumentacionInicial(1L, documentacionMemoriaNew, authentication);
+      documentacionMemoriaService.createDocumentacionInicial(1L, documentacionMemoriaNew);
       Assertions.fail("DocumentacionMemoria id tiene que ser null para crear un nuevo DocumentacionMemoria");
       // then: se debe lanzar una excepción
     } catch (IllegalArgumentException e) {
@@ -339,9 +362,8 @@ public class DocumentacionMemoriaServiceTest extends BaseServiceTest {
         generarMockTipoDocumento(4L));
 
     try {
-      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
       // when: Creamos la documentación memoria con id de memoria null
-      documentacionMemoriaService.createDocumentacionInicial(null, documentacionMemoriaNew, authentication);
+      documentacionMemoriaService.createDocumentacionInicial(null, documentacionMemoriaNew);
       Assertions.fail("El identificador de la memoria no puede ser null para crear un nuevo documento asociado a esta");
       // then: se debe lanzar una excepción
     } catch (IllegalArgumentException e) {
@@ -352,22 +374,19 @@ public class DocumentacionMemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
   public void createDocumentacionInicial_throwNotFoundMemoria() {
     // given: Una nueva documentación
     Memoria memoria = generarMockMemoria(1L, "Memoria1", 1L);
     DocumentacionMemoria documentacionMemoriaNew = generarMockDocumentacionMemoria(null, memoria,
         generarMockTipoDocumento(4L));
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     Assertions
         .assertThatThrownBy(
-            () -> documentacionMemoriaService.createDocumentacionInicial(1L, documentacionMemoriaNew, authentication))
+            () -> documentacionMemoriaService.createDocumentacionInicial(1L, documentacionMemoriaNew))
         .isInstanceOf(MemoriaNotFoundException.class);
 
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-PEV-INV-ER" })
   public void createDocumentacionInicial_failStatusMemoria() {
     // given: Una nueva documentación
     Memoria memoria = generarMockMemoria(1L, "Memoria1", 4L);
@@ -377,9 +396,8 @@ public class DocumentacionMemoriaServiceTest extends BaseServiceTest {
     BDDMockito.given(memoriaRepository.findByIdAndActivoTrue(Mockito.anyLong())).willReturn(Optional.of(memoria));
 
     try {
-      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
       // when: Creamos la documentación memoria con id de memoria null
-      documentacionMemoriaService.createDocumentacionInicial(1L, documentacionMemoriaNew, authentication);
+      documentacionMemoriaService.createDocumentacionInicial(1L, documentacionMemoriaNew);
       Assertions.fail("La memoria no se encuentra en un estado adecuado para añadir documentación.");
       // then: se debe lanzar una excepción
     } catch (IllegalArgumentException e) {

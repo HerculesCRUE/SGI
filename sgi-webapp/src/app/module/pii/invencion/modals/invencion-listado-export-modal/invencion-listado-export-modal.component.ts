@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
@@ -50,12 +51,40 @@ export class InvencionListadoExportModalComponent extends BaseExportModalCompone
     this.formGroup = this.buildFormGroup();
   }
 
+  selectUnselectAll($event: MatCheckboxChange): void {
+    Object.keys(this.formGroup.controls).forEach(key => {
+      if (key.startsWith('show')) {
+        this.formGroup.get(key).patchValue($event.checked);
+      }
+    });
+  }
+
   protected buildFormGroup(): FormGroup {
-    return new FormGroup({
+    const formGroup = new FormGroup({
       outputType: new FormControl(OutputReport.XLSX, Validators.required),
+
+      showTodos: new FormControl(true),
       showSolicitudesDeProteccion: new FormControl(true),
       showEquipoInventor: new FormControl(true),
     });
+
+    Object.keys(formGroup.controls).forEach(key => {
+      if (key.startsWith('show')) {
+        this.subscriptions.push(formGroup.get(key).valueChanges.subscribe(() => {
+          let cont = 0;
+          Object.keys(formGroup.controls).forEach(key => {
+            if (key.startsWith('show') && !formGroup.get(key).value) {
+              formGroup.controls.showTodos.setValue(false, { emitEvent: false });
+              cont++;
+            } else if (cont === 0) {
+              formGroup.controls.showTodos.setValue(true, { emitEvent: false });
+            }
+          });
+        }))
+      }
+    });
+
+    return formGroup;
   }
 
   protected getReportOptions(): IReportConfig<IInvencionReportOptions> {
@@ -65,7 +94,7 @@ export class InvencionListadoExportModalComponent extends BaseExportModalCompone
         findOptions: this.modalData.findOptions,
         showSolicitudesDeProteccion: this.formGroup.controls.showSolicitudesDeProteccion.value,
         showEquipoInventor: this.formGroup.controls.showEquipoInventor.value,
-        columnMinWidth: 120
+        columnMinWidth: 180
       }
     };
     return reportModalData;

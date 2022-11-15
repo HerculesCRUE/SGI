@@ -28,7 +28,6 @@ import { MEMORIAS_ROUTE } from '../memoria-route-names';
 import { IMemoriaListadoModalData, MemoriaListadoExportModalComponent } from '../modals/memoria-listado-export-modal/memoria-listado-export-modal.component';
 
 const MSG_BUTTON_SAVE = marker('btn.add.entity');
-const MSG_ERROR = marker('error.load');
 const MSG_SUCCESS_ENVIAR_SECRETARIA = marker('msg.eti.memoria.enviar-secretaria.success');
 const MSG_ERROR_ENVIAR_SECRETARIA = marker('error.eti.memoria.enviar-secretaria');
 const MSG_CONFIRM_ENVIAR_SECRETARIA = marker('msg.eti.memoria.enviar-secretaria');
@@ -82,7 +81,7 @@ export class MemoriaListadoInvComponent extends AbstractTablePaginationComponent
     private authService: SgiAuthService,
     private matDialog: MatDialog
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
 
     this.totalElementos = 0;
     this.suscripciones = [];
@@ -286,7 +285,8 @@ export class MemoriaListadoInvComponent extends AbstractTablePaginationComponent
     // Si la retrospectiva ya está 'En secretaría' no se muestra el botón.
     // El estado de la memoria debe de ser mayor a FIN_EVALUACION
     return (memoria.estadoActual.id >= ESTADO_MEMORIA.FIN_EVALUACION && memoria.comite.id === COMITE.CEEA && memoria.requiereRetrospectiva
-      && memoria.retrospectiva.estadoRetrospectiva.id === ESTADO_RETROSPECTIVA.COMPLETADA && this.isUserSolicitantePeticionEvaluacion(solicitanteRef));
+      && memoria.retrospectiva.estadoRetrospectiva.id === ESTADO_RETROSPECTIVA.COMPLETADA
+      && this.isUserSolicitantePeticionEvaluacion(solicitanteRef));
   }
 
   enviarSecretariaRetrospectiva(memoria: IMemoriaPeticionEvaluacion) {

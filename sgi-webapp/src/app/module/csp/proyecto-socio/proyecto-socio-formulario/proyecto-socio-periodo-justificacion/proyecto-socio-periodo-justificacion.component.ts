@@ -6,6 +6,7 @@ import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoSocioPeriodoJustificacion } from '@core/models/csp/proyecto-socio-periodo-justificacion';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ProyectoSocioPeriodoJustificacionService } from '@core/services/csp/proyecto-socio-periodo-justificacion.service';
 import { DialogService } from '@core/services/dialog.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
@@ -16,6 +17,7 @@ import { ProyectoSocioPeriodoJustificacionFragment } from './proyecto-socio-peri
 
 const MSG_DELETE = marker('msg.delete.entity');
 const PROYECTO_SOCIO_PERIODO_JUSTIFICACION_KEY = marker('title.csp.proyecto-socio-periodo-justificacion');
+const MSG_DELETE_WITH_DOCUMENTOS = marker('msg.csp.proyecto-socio-periodo-justificacion.documentos.delete');
 
 @Component({
   selector: 'sgi-proyecto-socio-periodo-justificacion',
@@ -45,7 +47,8 @@ export class ProyectoSocioPeriodoJustificacionComponent extends FragmentComponen
   constructor(
     private actionService: ProyectoSocioActionService,
     private dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly proyectoSocioPeriodoJustificacion: ProyectoSocioPeriodoJustificacionService
   ) {
     super(actionService.FRAGMENT.PERIODO_JUSTIFICACION, actionService);
     this.formPart = this.fragment as ProyectoSocioPeriodoJustificacionFragment;
@@ -89,15 +92,22 @@ export class ProyectoSocioPeriodoJustificacionComponent extends FragmentComponen
   }
 
   deletePeriodoJustificacion(wrapper: StatusWrapper<IProyectoSocioPeriodoJustificacion>): void {
-    this.subscriptions.push(
-      this.dialogService.showConfirmation(this.textoDelete).subscribe(
-        (aceptado) => {
-          if (aceptado) {
-            this.formPart.deletePeriodoJustificacion(wrapper);
+    this.proyectoSocioPeriodoJustificacion.existsDocumentos(wrapper.value.id).subscribe(res => {
+      let msgDelete = this.textoDelete;
+      if (res) {
+        msgDelete = MSG_DELETE_WITH_DOCUMENTOS;
+      }
+
+      this.subscriptions.push(
+        this.dialogService.showConfirmation(msgDelete).subscribe(
+          (aceptado: boolean) => {
+            if (aceptado) {
+              this.formPart.deletePeriodoJustificacion(wrapper);
+            }
           }
-        }
-      )
-    );
+        )
+      );
+    });
   }
 
 }

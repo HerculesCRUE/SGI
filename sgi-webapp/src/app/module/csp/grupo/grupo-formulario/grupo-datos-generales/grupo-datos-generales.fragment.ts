@@ -1,6 +1,6 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { IGrupo } from '@core/models/csp/grupo';
-import { Dedicacion, IGrupoEquipo } from '@core/models/csp/grupo-equipo';
+import { IGrupoEquipo } from '@core/models/csp/grupo-equipo';
 import { IGrupoEspecialInvestigacion } from '@core/models/csp/grupo-especial-investigacion';
 import { IGrupoPalabraClave } from '@core/models/csp/grupo-palabra-clave';
 import { IGrupoTipo } from '@core/models/csp/grupo-tipo';
@@ -18,12 +18,14 @@ import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, Observable, of } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { GrupoValidator } from '../../validators/grupo-validator';
+import { IGrupoEquipoListado } from '../grupo-equipo-investigacion/grupo-equipo-investigacion.fragment';
 
 export class GrupoDatosGeneralesFragment extends FormFragment<IGrupo> {
 
   private grupo: IGrupo;
   readonly tipos$ = new BehaviorSubject<IGrupoTipo[]>([]);
   readonly especialesInvestigacion$ = new BehaviorSubject<IGrupoEspecialInvestigacion[]>([]);
+  equipoInvestigacion$ = new BehaviorSubject<IGrupoEquipoListado[]>([]);
 
   constructor(
     private readonly logger: NGXLogger,
@@ -173,6 +175,24 @@ export class GrupoDatosGeneralesFragment extends FormFragment<IGrupo> {
       form.disable();
     }
 
+    this.subscriptions.push(
+      this.equipoInvestigacion$.subscribe(equipoInvestigacion => {
+        const fechaInicioControl = form.get('fechaInicio');
+        const fechaFinControl = form.get('fechaFin');
+        fechaInicioControl.setValidators([
+          Validators.required,
+          GrupoValidator.fechaInicioConflictsEquipoInvestigacion(equipoInvestigacion)
+        ]
+        );
+        fechaFinControl.setValidators(
+          GrupoValidator.fechaFinConflictsEquipoInvestigacion(equipoInvestigacion)
+        );
+        fechaInicioControl.updateValueAndValidity();
+        fechaFinControl.updateValueAndValidity();
+      }
+      )
+    );
+
     return form;
   }
 
@@ -262,8 +282,8 @@ export class GrupoDatosGeneralesFragment extends FormFragment<IGrupo> {
       fechaInicio: grupo.fechaInicio,
       fechaFin: null,
       rol,
-      dedicacion: Dedicacion.COMPLETA,
-      participacion: 100
+      dedicacion: null,
+      participacion: null
     };
   }
 

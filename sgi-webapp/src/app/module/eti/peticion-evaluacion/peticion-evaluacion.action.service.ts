@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IChecklist } from '@core/models/eti/checklist';
 import { IEquipoTrabajo } from '@core/models/eti/equipo-trabajo';
 import { IPeticionEvaluacion } from '@core/models/eti/peticion-evaluacion';
+import { IPersona } from '@core/models/sgp/persona';
 import { ActionService, IFragment } from '@core/services/action-service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { ApartadoService } from '@core/services/eti/apartado.service';
@@ -95,9 +96,16 @@ export class PeticionEvaluacionActionService extends ActionService {
       }
     });
 
-    this.datosGenerales =
-      new PeticionEvaluacionDatosGeneralesFragment(
-        fb, this.peticionEvaluacion?.id, peticionEvaluacionService, sgiAuthService, checklistService, solicitudService, this.checklist, this.readonly);
+    this.datosGenerales = new PeticionEvaluacionDatosGeneralesFragment(
+      fb,
+      this.peticionEvaluacion?.id,
+      peticionEvaluacionService,
+      sgiAuthService,
+      checklistService,
+      solicitudService,
+      this.checklist,
+      this.readonly
+    );
     this.equipoInvestigadorListado = new EquipoInvestigadorListadoFragment(
       this.peticionEvaluacion?.id, personaService, peticionEvaluacionService, sgiAuthService, datosAcademicosService, vinculacionService);
     this.memoriasListado = new MemoriasListadoFragment(this.peticionEvaluacion?.id, peticionEvaluacionService, memoriaService);
@@ -131,6 +139,8 @@ export class PeticionEvaluacionActionService extends ActionService {
     this.subscriptions.push(
       this.datosGenerales.solicitantePeticionEvaluacion$.subscribe((value) => {
         this.memoriasListado.solicitantePeticionEvaluacion = value;
+        this.equipoInvestigadorListado.solicitantePeticionEvaluacion = value;
+        this.tareas.solicitantePeticionEvaluacion = value;
       })
     );
 

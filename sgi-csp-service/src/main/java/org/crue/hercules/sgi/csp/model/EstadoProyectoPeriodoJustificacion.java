@@ -1,16 +1,17 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.time.Instant;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
@@ -59,11 +60,9 @@ public class EstadoProyectoPeriodoJustificacion extends BaseEntity {
   @SequenceGenerator(name = "estado_periodo_justificacion_seq", sequenceName = "estado_periodo_justificacion_seq", allocationSize = 1)
   private Long id;
 
-  /** ProyectoPeriodoJustificacion Ids */
-  @OneToMany(mappedBy = "estado")
-  @Getter(AccessLevel.NONE)
-  @Setter(AccessLevel.NONE)
-  private final List<ProyectoPeriodoJustificacion> proyectoJustificaciones = null;
+  /** Proyecto periodo justificacion id */
+  @Column(name = "proyecto_periodo_justificacion_id", nullable = false)
+  private Long proyectoPeriodoJustificacionId;
 
   /** Tipo Estado */
   @Column(name = "estado", length = 10)
@@ -78,5 +77,12 @@ public class EstadoProyectoPeriodoJustificacion extends BaseEntity {
   @Column(name = "comentario", nullable = true)
   @Size(max = 2000)
   private String comentario;
+
+  // Relation mappings for JPA metamodel generation only
+  @ManyToOne
+  @JoinColumn(name = "proyecto_periodo_justificacion_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_ESTADOPROYECTOPERIODOJUSTIFICACION_PROYECTOPERIODOJUSTIFICACION"))
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final ProyectoPeriodoJustificacion proyectoPeriodoJustificacion = null;
 
 }

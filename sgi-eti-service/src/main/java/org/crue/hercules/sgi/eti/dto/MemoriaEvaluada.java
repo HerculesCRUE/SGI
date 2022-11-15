@@ -16,6 +16,7 @@ public class MemoriaEvaluada implements Serializable {
    */
   private static final long serialVersionUID = 1L;
 
+  private Long evaluacionId;
   private String numReferencia;
   private String personaRef;
   private String dictamen;

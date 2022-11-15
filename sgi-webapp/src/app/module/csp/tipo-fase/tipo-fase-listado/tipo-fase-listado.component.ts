@@ -19,7 +19,6 @@ import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { TipoFaseModalComponent } from '../tipo-fase-modal/tipo-fase-modal.component';
 
-const MSG_ERROR = marker('error.load');
 const MSG_SAVE_SUCCESS = marker('msg.save.entity.success');
 const MSG_UPDATE_SUCCESS = marker('msg.update.entity.success');
 const MSG_DEACTIVATE = marker('msg.deactivate.entity');
@@ -61,7 +60,7 @@ export class TipoFaseListadoComponent extends AbstractTablePaginationComponent<I
     private readonly translate: TranslateService,
     private readonly authService: SgiAuthService
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -191,8 +190,7 @@ export class TipoFaseListadoComponent extends AbstractTablePaginationComponent<I
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<ITipoFase>> {
-    const observable$ = this.tipoFaseService.findTodos(this.getFindOptions(reset));
-    return observable$;
+    return this.tipoFaseService.findTodos(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {
@@ -217,10 +215,9 @@ export class TipoFaseListadoComponent extends AbstractTablePaginationComponent<I
     return filter;
   }
 
-  onClearFilters() {
+  protected resetFilters(): void {
     this.formGroup.controls.activo.setValue('true');
     this.formGroup.controls.nombre.setValue('');
-    this.onSearch();
   }
 
   /**
@@ -263,10 +260,10 @@ export class TipoFaseListadoComponent extends AbstractTablePaginationComponent<I
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorDesactivar);
+            this.processError(new SgiError(this.textoErrorDesactivar));
           }
         }
       );
@@ -296,10 +293,10 @@ export class TipoFaseListadoComponent extends AbstractTablePaginationComponent<I
           this.logger.error(error);
           tipoFase.activo = false;
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorReactivar);
+            this.processError(new SgiError(this.textoErrorReactivar));
           }
         }
       );

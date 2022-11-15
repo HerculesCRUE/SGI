@@ -15,7 +15,7 @@ import { AreaTematicaActionService } from '../area-tematica.action.service';
 const MSG_BUTTON_SAVE = marker('btn.save.entity');
 const MSG_SUCCESS = marker('msg.update.entity.success');
 const MSG_ERROR = marker('error.update.entity');
-const AREA_TEMATICA_KEY = marker('csp.area-tematica');
+const AREA_TEMATICA_KEY = marker('csp.area-tematica.listado');
 const AREA_KEY = marker('csp.area');
 @Component({
   selector: 'sgi-area-tematica-editar',

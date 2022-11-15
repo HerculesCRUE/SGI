@@ -8,6 +8,7 @@ import org.crue.hercules.sgi.framework.http.HttpEntityBuilder;
 import org.crue.hercules.sgi.rep.config.RestApiProperties;
 import org.crue.hercules.sgi.rep.dto.eti.ComentarioDto;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
+import org.crue.hercules.sgi.rep.dto.eti.EvaluadorDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.crue.hercules.sgi.rep.service.BaseRestTemplateService;
 import org.springframework.core.ParameterizedTypeReference;
@@ -114,6 +115,22 @@ public class EvaluacionService extends BaseRestTemplateService<EvaluacionDto> {
     }
 
     return fechaEnvioSecretaria;
+  }
+
+  public EvaluadorDto findSecretarioEvaluacion(Long idEvaluacion) {
+    EvaluadorDto secretario = null;
+    try {
+      String endPoint = "/secretario-evaluacion";
+      final ResponseEntity<EvaluadorDto> responseSecretario = getRestTemplate().exchange(
+          getUrlBase() + URL_API + "/" + idEvaluacion + endPoint, HttpMethod.GET,
+          new HttpEntityBuilder<>().withCurrentUserAuthorization().build(), EvaluadorDto.class);
+
+      secretario = responseSecretario.getBody();
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      throw new GetDataReportException();
+    }
+    return secretario;
   }
 
   @Override

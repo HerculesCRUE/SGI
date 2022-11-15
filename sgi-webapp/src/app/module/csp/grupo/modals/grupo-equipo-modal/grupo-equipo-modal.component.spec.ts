@@ -24,7 +24,9 @@ describe('GrupoEquipoModalComponent', () => {
       rol: { id: 1 } as IRolProyecto
     } as IGrupoEquipo,
     fechaInicioMin: undefined,
-    fechaFinMax: undefined
+    fechaFinMax: undefined,
+    dedicacionMinimaGrupo: undefined,
+    grupo: undefined
   };
 
   beforeEach(waitForAsync(() => {

@@ -87,7 +87,8 @@ export class FacturasGastosFragment extends FacturasJustificantesFragment {
         || this.compareConceptoGastoNombreRowTree(a, b)
         || this.compareClasificacionSGENombreRowTree(a, b)
         || this.comparePartidaPresupuestariaRowTree(a, b)
-        || this.compareCodigoEconomicoRowTree(a, b);
+        || this.compareCodigoEconomicoRowTree(a, b)
+        || this.compareFechaDevengoRowTree(a, b);
     });
   }
 
@@ -98,7 +99,8 @@ export class FacturasGastosFragment extends FacturasJustificantesFragment {
         || this.compareConceptoGastoNombreDesglose(a, b)
         || this.compareClasificacionSGENombreDesglose(a, b)
         || this.comparePartidaPresupuestariaDesglose(a, b)
-        || this.compareCodigoEconomicoDesglose(a, b);
+        || this.compareCodigoEconomicoDesglose(a, b)
+        || this.compareFechaDevengoDesglose(a, b);
     });
   }
 

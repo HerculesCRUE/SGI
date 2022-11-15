@@ -19,7 +19,6 @@ import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { TipoEnlaceModalComponent } from '../tipo-enlace-modal/tipo-enlace-modal.component';
 
-const MSG_ERROR = marker('error.load');
 const MSG_SAVE_SUCCESS = marker('msg.save.entity.success');
 const MSG_UPDATE_SUCCESS = marker('msg.update.entity.success');
 const MSG_DEACTIVATE = marker('msg.deactivate.entity');
@@ -61,7 +60,7 @@ export class TipoEnlaceListadoComponent extends AbstractTablePaginationComponent
     private readonly translate: TranslateService,
     private authService: SgiAuthService
   ) {
-    super(snackBarService, MSG_ERROR);
+    super();
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -189,8 +188,7 @@ export class TipoEnlaceListadoComponent extends AbstractTablePaginationComponent
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<ITipoEnlace>> {
-    const observable$ = this.tipoEnlaceService.findTodos(this.getFindOptions(reset));
-    return observable$;
+    return this.tipoEnlaceService.findTodos(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {
@@ -215,10 +213,9 @@ export class TipoEnlaceListadoComponent extends AbstractTablePaginationComponent
     return filter;
   }
 
-  onClearFilters() {
+  protected resetFilters(): void {
     this.formGroup.controls.activo.setValue('true');
     this.formGroup.controls.nombre.setValue('');
-    this.onSearch();
   }
 
   /**
@@ -261,10 +258,10 @@ export class TipoEnlaceListadoComponent extends AbstractTablePaginationComponent
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorDesactivar);
+            this.processError(new SgiError(this.textoErrorDesactivar));
           }
         }
       );
@@ -293,10 +290,10 @@ export class TipoEnlaceListadoComponent extends AbstractTablePaginationComponent
           this.logger.error(error);
           tipoEnlace.activo = false;
           if (error instanceof SgiError) {
-            this.snackBarService.showError(error);
+            this.processError(error);
           }
           else {
-            this.snackBarService.showError(this.textoErrorReactivar);
+            this.processError(new SgiError(this.textoErrorReactivar));
           }
         }
       );

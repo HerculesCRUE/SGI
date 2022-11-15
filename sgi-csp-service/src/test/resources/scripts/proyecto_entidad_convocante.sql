@@ -15,3 +15,6 @@ scripts = {
 */
 INSERT INTO test.proyecto_entidad_convocante (id, entidad_ref, proyecto_id, programa_id, programa_convocatoria_id) 
 VALUES (1, 'ent-001', 1, 8, 4);
+
+
+ALTER SEQUENCE test.proyecto_entidad_convocante_seq restart with 2;

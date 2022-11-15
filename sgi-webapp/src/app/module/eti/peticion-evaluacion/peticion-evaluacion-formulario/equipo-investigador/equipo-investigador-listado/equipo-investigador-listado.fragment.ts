@@ -1,5 +1,7 @@
 import { IEquipoTrabajoWithIsEliminable } from '@core/models/eti/equipo-trabajo-with-is-eliminable';
 import { IMemoriaPeticionEvaluacion } from '@core/models/eti/memoria-peticion-evaluacion';
+import { IPeticionEvaluacion } from '@core/models/eti/peticion-evaluacion';
+import { IPersona } from '@core/models/sgp/persona';
 import { Fragment } from '@core/services/action-service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
@@ -19,6 +21,7 @@ export class EquipoInvestigadorListadoFragment extends Fragment {
   private selectedIdPeticionEvaluacion: number;
 
   memorias: IMemoriaPeticionEvaluacion[] = [];
+  solicitantePeticionEvaluacion: IPersona;
 
   constructor(
     key: number,
@@ -139,6 +142,7 @@ export class EquipoInvestigadorListadoFragment extends Fragment {
    * @param equipoTrabajo un equipoTrabajo
    */
   addEquipoTrabajo(equipoTrabajo: IEquipoTrabajoWithIsEliminable): void {
+    equipoTrabajo.peticionEvaluacion = { id: this.getKey() as number } as IPeticionEvaluacion;
     const wrapped = new StatusWrapper<IEquipoTrabajoWithIsEliminable>(equipoTrabajo);
     wrapped.setCreated();
     const current = this.equiposTrabajo$.value;

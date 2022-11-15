@@ -653,32 +653,34 @@ public class MemoriaServiceImpl implements MemoriaService {
    */
   public Memoria getEstadoAnteriorMemoria(Memoria memoria, Boolean cambiarEstadoRetrospectiva) {
 
-    if (memoria.getRetrospectiva() == null || !cambiarEstadoRetrospectiva) {
-      List<EstadoMemoria> estadosMemoria = estadoMemoriaRepository
-          .findAllByMemoriaIdOrderByFechaEstadoDesc(memoria.getId());
+    List<EstadoMemoria> estadosMemoria = estadoMemoriaRepository
+        .findAllByMemoriaIdOrderByFechaEstadoDesc(memoria.getId());
 
-      Optional<EstadoMemoria> estadoAnteriorMemoria = estadosMemoria.stream()
-          .filter(estadoMemoria -> !Objects.equals(estadoMemoria.getTipoEstadoMemoria().getId(),
-              memoria.getEstadoActual().getId()))
-          .findFirst();
+    Optional<EstadoMemoria> estadoAnteriorMemoria = estadosMemoria.stream()
+        .filter(estadoMemoria -> !Objects.equals(estadoMemoria.getTipoEstadoMemoria().getId(),
+            memoria.getEstadoActual().getId()))
+        .findFirst();
 
-      Assert.isTrue(estadoAnteriorMemoria.isPresent(), "No se puede recuperar el estado anterior de la memoria");
+    Assert.isTrue(estadoAnteriorMemoria.isPresent(), "No se puede recuperar el estado anterior de la memoria");
 
-      Optional<EstadoMemoria> estadoMemoriaActual = estadosMemoria.stream()
-          .filter(estadoMemoria -> Objects.equals(estadoMemoria.getTipoEstadoMemoria().getId(),
-              memoria.getEstadoActual().getId()))
-          .findAny();
+    Optional<EstadoMemoria> estadoMemoriaActual = estadosMemoria.stream()
+        .filter(estadoMemoria -> Objects.equals(estadoMemoria.getTipoEstadoMemoria().getId(),
+            memoria.getEstadoActual().getId()))
+        .findAny();
 
-      Assert.isTrue(estadoMemoriaActual.isPresent(), "No se puede recuperar el estado actual de la memoria");
+    Assert.isTrue(estadoMemoriaActual.isPresent(), "No se puede recuperar el estado actual de la memoria");
 
-      memoria.setEstadoActual(estadoAnteriorMemoria.get().getTipoEstadoMemoria());
-      // eliminamos el estado a cambiar en el histórico
-      estadoMemoriaRepository.deleteById(estadoMemoriaActual.get().getId());
-    } else {
+    memoria.setEstadoActual(estadoAnteriorMemoria.get().getTipoEstadoMemoria());
+    // eliminamos el estado a cambiar en el histórico
+    estadoMemoriaRepository.deleteById(estadoMemoriaActual.get().getId());
+
+    if (Objects.nonNull(memoria.getRetrospectiva()) || cambiarEstadoRetrospectiva.booleanValue()) {
       // El estado anterior de la retrospectiva es el estado con id anterior al que
       // tiene actualmente
       Optional<EstadoRetrospectiva> estadoRetrospectiva = estadoRetrospectivaRepository
-          .findById(memoria.getRetrospectiva().getEstadoRetrospectiva().getId() - 1);
+          .findById(memoria.getRetrospectiva().getEstadoRetrospectiva().getTipo().getId() > 1
+              ? (memoria.getRetrospectiva().getEstadoRetrospectiva().getTipo().getId() - 1)
+              : 1);
 
       Assert.isTrue(estadoRetrospectiva.isPresent(), "No se puede recuperar el estado anterior de la retrospectiva");
 

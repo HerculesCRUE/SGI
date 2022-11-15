@@ -93,7 +93,7 @@ public class PeticionEvaluacion extends BaseEntity {
   private String codigo;
 
   /** Título */
-  @Column(name = "titulo", length = 250)
+  @Column(name = "titulo", length = 1000)
   private String titulo;
 
   /** Tipo Actividad */
@@ -146,11 +146,11 @@ public class PeticionEvaluacion extends BaseEntity {
   private String otroValorSocial;
 
   /** Objetivos */
-  @Column(name = "objetivos", length = 2000)
+  @Column(name = "objetivos", length = 4000)
   private String objetivos;
 
   /** Diseño metodológico */
-  @Column(name = "dis_metodologico", length = 2000)
+  @Column(name = "dis_metodologico", length = 4000)
   private String disMetodologico;
 
   /** Externo */

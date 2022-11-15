@@ -933,15 +933,20 @@ class MemoriaServiceTest extends BaseServiceTest {
 
   @Test
   void getEstadoAnteriorMemoria_returnMemoria() {
-    // Descomentar si el mock no es una memoria de tipo retrospectiva
-    // BDDMockito.given(estadoMemoriaRepository.findAllByMemoriaIdOrderByFechaEstadoDesc(ArgumentMatchers.anyLong()))
-    // .willReturn(generarEstadosMemoria(2L));
+
+    List<EstadoMemoria> estados = new ArrayList<EstadoMemoria>();
+    estados.addAll(generarEstadosMemoria(1L));
+    estados.addAll(generarEstadosMemoria(2L));
+
+    BDDMockito.given(estadoMemoriaRepository.findAllByMemoriaIdOrderByFechaEstadoDesc(ArgumentMatchers.anyLong()))
+        .willReturn(estados);
+
     BDDMockito.given(estadoRetrospectivaRepository.findById(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(generarEstadoRetrospectiva(2L)));
+        .willReturn(Optional.of(generarEstadoRetrospectiva(1L)));
 
     // when: find unlimited asignables para tipo convocatoria seguimiento
     Memoria returnMemoria = memoriaService
-        .getEstadoAnteriorMemoria(generarMockMemoria(1L, "ref-001", "TituloMemoria", 1, 1L));
+        .getEstadoAnteriorMemoria(generarMockMemoria(1L, "ref-001", "TituloMemoria", 1, 2L));
 
     Assertions.assertThat(returnMemoria.getId()).isEqualTo(1L);
     Assertions.assertThat(returnMemoria.getTitulo()).isEqualTo("TituloMemoria");
@@ -1020,7 +1025,11 @@ class MemoriaServiceTest extends BaseServiceTest {
     EstadoMemoria estadoMemoria = new EstadoMemoria();
     estadoMemoria.setFechaEstado(Instant.now());
     estadoMemoria.setId(id);
-    estadoMemoria.setMemoria(generarMockMemoria(1L, "ref-001", "TituloMemoria", 1, 1L));
+    estadoMemoria.setMemoria(generarMockMemoria(1L, "ref-001", "TituloMemoria", 1, id));
+    TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
+    tipoEstadoMemoria.setActivo(true);
+    tipoEstadoMemoria.setId(id);
+    estadoMemoria.setTipoEstadoMemoria(tipoEstadoMemoria);
     estadosMemoria.add(estadoMemoria);
     return estadosMemoria;
   }
@@ -1208,9 +1217,8 @@ class MemoriaServiceTest extends BaseServiceTest {
     EstadoMemoria estadoMemoria = new EstadoMemoria(null, memoria, tipoEstadoMemoria, Instant.now());
 
     memoriaServicioActualizado.setEstadoActual(tipoEstadoMemoria);
-    BDDMockito.given(this.estadoMemoriaRepository.findTopByMemoriaIdOrderByFechaEstadoDesc(anyLong())).willReturn(estadoMemoria);
-
-
+    BDDMockito.given(this.estadoMemoriaRepository.findTopByMemoriaIdOrderByFechaEstadoDesc(anyLong()))
+        .willReturn(estadoMemoria);
 
     // when: Actualizamos la Memoria con el estado archivado
     memoriaService.archivarNoPresentados();

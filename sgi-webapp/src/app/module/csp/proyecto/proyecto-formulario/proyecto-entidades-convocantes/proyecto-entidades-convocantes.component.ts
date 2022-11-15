@@ -98,8 +98,10 @@ export class ProyectoEntidadesConvocantesComponent extends FragmentComponent imp
   openModal(value?: IProyectoEntidadConvocante): void {
     const data: ProyectoEntidadConvocanteModalData = {
       proyectoEntidadConvocante: value,
-      selectedEmpresas: this.proyectoEntidadesConvocantesFragment.
-        proyectoEntidadConvocantes$.value.map((convocanteData) => convocanteData.entidad),
+      selectedEntidadesConvocantes: this.dataSource.data
+        .filter(convocanteData =>
+          !(convocanteData?.entidad?.id === value?.entidad?.id
+            && convocanteData?.programa?.id === value?.programa?.id)),
       readonly: this.actionService.readonly
     };
     const config = {

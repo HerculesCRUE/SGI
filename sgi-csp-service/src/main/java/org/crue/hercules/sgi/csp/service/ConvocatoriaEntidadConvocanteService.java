@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.List;
+
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.Solicitud;
@@ -10,6 +12,20 @@ import org.springframework.data.domain.Pageable;
  * Service Interface para gestionar {@link ConvocatoriaEntidadConvocante}.
  */
 public interface ConvocatoriaEntidadConvocanteService {
+
+  /**
+   * Actualiza el listado de {@link ConvocatoriaEntidadConvocante} de la
+   * {@link Convocatoria} con el listado entidadesConvocantes
+   * creando, editando o eliminando los elementos segun proceda.
+   *
+   * @param convocatoriaId       Id de la {@link Convocatoria}.
+   * @param entidadesConvocantes lista con los nuevos
+   *                             {@link ConvocatoriaEntidadConvocante} a guardar.
+   * @return la lista de entidades {@link ConvocatoriaEntidadConvocante}
+   *         persistida.
+   */
+  List<ConvocatoriaEntidadConvocante> updateEntidadesConvocantesConvocatoria(Long convocatoriaId,
+      List<ConvocatoriaEntidadConvocante> entidadesConvocantes);
 
   /**
    * Guardar un nuevo {@link ConvocatoriaEntidadConvocante}.

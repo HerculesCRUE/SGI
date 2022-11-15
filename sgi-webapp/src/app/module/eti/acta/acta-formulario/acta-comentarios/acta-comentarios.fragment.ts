@@ -2,6 +2,7 @@ import { IComentario } from '@core/models/eti/comentario';
 import { IDictamen } from '@core/models/eti/dictamen';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { ESTADO_MEMORIA } from '@core/models/eti/tipo-estado-memoria';
+import { TIPO_EVALUACION } from '@core/models/eti/tipo-evaluacion';
 import { Fragment } from '@core/services/action-service';
 import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reunion.service';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
@@ -51,6 +52,7 @@ export class ActaComentariosFragment extends Fragment {
               if (evaluacion.dictamen?.activo) {
                 evaluacionesComentario.push(evaluacion);
                 this.idsEvaluacion.push(evaluacion.id);
+                this.showAddComentarios = this.checkAddComentario(evaluacion);
                 return this.service.getComentariosActa(evaluacion.id).pipe(
                   map((comentarios) => {
                     if (comentarios.items.length > 0) {
@@ -70,7 +72,6 @@ export class ActaComentariosFragment extends Fragment {
                           comentario.evaluador = persona;
                           this.comentarios$.next([...current]);
                           this.evaluaciones$.next([...evaluacionesComentario]);
-                          this.showAddComentarios = this.checkAddComentario(evaluacion);
                         });
                       });
                     } else {
@@ -175,7 +176,7 @@ export class ActaComentariosFragment extends Fragment {
 
   private checkAddComentario(evaluacion: IEvaluacion): boolean {
     if (evaluacion.dictamen?.activo &&
-      ((evaluacion.convocatoriaReunion.tipoConvocatoriaReunion.id === 1 && evaluacion.memoria.estadoActual.id === ESTADO_MEMORIA.EN_EVALUACION) ||
+      ((evaluacion.convocatoriaReunion.tipoConvocatoriaReunion.id === 1 && (evaluacion.memoria.estadoActual.id === ESTADO_MEMORIA.EN_EVALUACION || evaluacion.tipoEvaluacion.id === TIPO_EVALUACION.RETROSPECTIVA)) ||
         evaluacion.convocatoriaReunion.tipoConvocatoriaReunion.id > 1 && (evaluacion.memoria.estadoActual.id === ESTADO_MEMORIA.EN_EVALUACION_SEGUIMIENTO_FINAL ||
           evaluacion.memoria.estadoActual.id === ESTADO_MEMORIA.EN_EVALUACION_SEGUIMIENTO_ANUAL))) {
       return true;

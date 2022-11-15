@@ -24,7 +24,14 @@ class ProyectoPeriodoJustificacionRequestConverter
       observaciones: value.observaciones,
       convocatoriaPeriodoJustificacionId: value.convocatoriaPeriodoJustificacionId,
       fechaPresentacionJustificacion: null,
-      identificadorJustificacion: null
+      identificadorJustificacion: null,
+      estado: {
+        id: value.estado?.id,
+        estado: value.estado?.estado,
+        fechaEstado: undefined,
+        comentario: value.estado?.comentario,
+        proyectoPeriodoJustificacionId: value.id
+      },
     };
   }
 
@@ -43,6 +50,11 @@ class ProyectoPeriodoJustificacionRequestConverter
       tipoJustificacion: value.tipoJustificacion,
       observaciones: value.observaciones,
       convocatoriaPeriodoJustificacionId: value.convocatoriaPeriodoJustificacionId,
+      estado: {
+        id: value.estado?.id,
+        estado: value.estado?.estado,
+        comentario: value.estado?.comentario
+      },
     };
   }
 }

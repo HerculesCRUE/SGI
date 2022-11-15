@@ -76,4 +76,10 @@ export class DetalleOperacionesGastosComponent extends FragmentComponent impleme
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
+  getCodigoEconomicoTitle(codigoEconomico: any): string {
+    if (!!!codigoEconomico) {
+      return '';
+    }
+    return (codigoEconomico.id ?? '') + (codigoEconomico.nombre ? ' - ' + codigoEconomico.nombre : '');
+  }
 }

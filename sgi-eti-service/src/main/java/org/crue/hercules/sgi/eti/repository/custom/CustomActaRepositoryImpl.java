@@ -303,7 +303,9 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
     Join<Memoria, PeticionEvaluacion> joinPeticionEvaluacion = joinMemoria.join(Memoria_.peticionEvaluacion,
         JoinType.LEFT);
 
-    cq.multiselect(joinMemoria.get(Memoria_.numReferencia), joinPeticionEvaluacion.get(PeticionEvaluacion_.personaRef),
+    cq.multiselect(
+        root.get(Evaluacion_.id),
+        joinMemoria.get(Memoria_.numReferencia), joinPeticionEvaluacion.get(PeticionEvaluacion_.personaRef),
         root.get(Evaluacion_.dictamen).get(Dictamen_.nombre), root.get(Evaluacion_.version),
         root.get(Evaluacion_.tipoEvaluacion).get(TipoEvaluacion_.nombre));
 
@@ -384,6 +386,6 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
     List<Long> result = typedQuery.getResultList();
 
     log.debug("hasAssignedActasByEvaluador(String personaRef) - end");
-    return result.size() > 0;
+    return !result.isEmpty();
   }
 }

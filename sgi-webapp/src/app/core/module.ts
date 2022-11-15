@@ -8,7 +8,7 @@ export class Module {
     public readonly title: string,
     public readonly path: string,
     public readonly name: string,
-    public readonly icon: string
+    public readonly icon: string,
   ) { }
 
   public static readonly CSP = new Module('CSP', marker('csp'), 'csp', marker('title.modulo.csp'), 'business_center');
@@ -21,11 +21,25 @@ export class Module {
   static get values(): Module[] {
     return [
       this.CSP,
-      this.EER,
       this.ETI,
-      this.INV,
+      this.PRC,
       this.PII,
-      this.PRC
+      this.EER,
+      this.INV
+    ];
+  }
+
+  /**
+   * Obtiene todos los modulos principales del SGI.
+   */
+  static get mainModules(): Module[] {
+    // Order = priority
+    return [
+      this.CSP,
+      this.ETI,
+      this.PRC,
+      this.PII,
+      this.EER
     ];
   }
 

@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { FormFragmentComponent } from '@core/component/fragment.component';
-import { IDocumentacionMemoria } from '@core/models/eti/documentacion-memoria';
+import { FragmentComponent } from '@core/component/fragment.component';
 import { DocumentacionMemoriaListadoMemoriaComponent } from '../../documentacion-memoria/documentacion-memoria-listado-memoria/documentacion-memoria-listado-memoria.component';
 import { Rol, SeguimientoFormularioActionService } from '../seguimiento-formulario.action.service';
+import { SeguimientoDocumentacionFragment } from './seguimiento-documentacion.fragment';
 
 
 @Component({
@@ -10,13 +10,17 @@ import { Rol, SeguimientoFormularioActionService } from '../seguimiento-formular
   templateUrl: './seguimiento-documentacion.component.html',
   styleUrls: ['./seguimiento-documentacion.component.scss']
 })
-export class SeguimientoDocumentacionComponent extends FormFragmentComponent<IDocumentacionMemoria> implements AfterViewInit {
+export class SeguimientoDocumentacionComponent extends FragmentComponent implements AfterViewInit {
   @ViewChild('documentacionMemoriaListado') documentacion: DocumentacionMemoriaListadoMemoriaComponent;
+
+  formPart: SeguimientoDocumentacionFragment;
 
   constructor(
     private actionService: SeguimientoFormularioActionService
   ) {
     super(actionService.FRAGMENT.DOCUMENTACION, actionService);
+
+    this.formPart = this.fragment as SeguimientoDocumentacionFragment;
   }
 
   ngAfterViewInit() {

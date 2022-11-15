@@ -59,25 +59,6 @@
 
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <div fxLayout="column" fxFlex="0 1 calc((100% - (10px * 2)) / 3)">
-        <h3>{{'csp.solicitud.solicitud-rrhh.telefono' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</h3>
-        <div class="mat-elevation-z4">
-          <table mat-table [dataSource]="telefonos" matSort matSortActive="nombre" matSortDirection="asc"
-            matSortDisableClear>
-            <!-- Telefono Column -->
-            <ng-container matColumnDef="telefono">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>
-                {{'csp.solicitud.solicitud-rrhh.telefono' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
-              </th>
-              <td mat-cell *matCellDef="let data">
-                {{data}}
-              </td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="columnsTelefonos"></tr>
-            <tr mat-row *matRowDef="let row; columns: columnsTelefonos"></tr>
-          </table>
-        </div>
-      </div>
-      <div fxLayout="column" fxFlex="0 1 calc((100% - (10px * 2)) / 3)">
         <h3>{{'csp.solicitud.solicitud-rrhh.email' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}</h3>
         <div class="mat-elevation-z4">
           <table mat-table [dataSource]="emails" matSort matSortActive="nombre" matSortDirection="asc"
@@ -98,5 +79,9 @@
       </div>
     </div>
   </form>
+
+  <sgi-info-message *ngIf="actionService.showSolicitudRRHHToValidateInfoMessage()"
+    message="{{'info.csp.solicitud.datos-generales.solicitud-rrhh-validar' | translate}}">
+  </sgi-info-message>
 
 </sgi-fragment>

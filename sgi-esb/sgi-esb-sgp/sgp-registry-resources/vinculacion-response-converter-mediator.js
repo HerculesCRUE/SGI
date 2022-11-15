@@ -11,6 +11,12 @@ function mediate(mc) {
 
     if (vinculacion.areaConocimiento) {
       vinculacionResponse.areaConocimiento = vinculacion.areaConocimiento;
+      if (vinculacionResponse.areaConocimiento.nombre) {
+        vinculacionResponse.areaConocimiento.nombre = escape(vinculacionResponse.areaConocimiento.nombre);
+      }
+      if (vinculacionResponse.areaConocimiento.anepDescripcion) {
+        vinculacionResponse.areaConocimiento.anepDescripcion = escape(vinculacionResponse.areaConocimiento.anepDescripcion);
+      }
     }
     if (vinculacion.empresaRef) {
       vinculacionResponse.empresaRef = vinculacion.empresaRef;
@@ -23,6 +29,9 @@ function mediate(mc) {
     }
     if (vinculacion.centro) {
       vinculacionResponse.centro = vinculacion.centro;
+      if (vinculacionResponse.centro.nombre) {
+        vinculacionResponse.centro.nombre = escape(vinculacionResponse.centro.nombre);
+      }
     }
 
     var sgiVinculacionCategoriaProfesional = getSGIVinculacionCategoriaProfesional(vinculacion.vinculacionesCategoriasProfesionales);
@@ -67,6 +76,12 @@ function getSGIVinculacionCategoriaProfesional(vinculacionesCategoriasProfesiona
     );
   }
 
+  if (sgiVinculacionCategoriaProfesional
+    && sgiVinculacionCategoriaProfesional.categoriaProfesional
+    && sgiVinculacionCategoriaProfesional.categoriaProfesional.nombre) {
+    sgiVinculacionCategoriaProfesional.categoriaProfesional.nombre = escape(sgiVinculacionCategoriaProfesional.categoriaProfesional.nombre);
+  }
+
   return sgiVinculacionCategoriaProfesional ? sgiVinculacionCategoriaProfesional : {};
 }
 
@@ -78,11 +93,25 @@ function getSGIDepartmento(vinculacionesDepartamentos, tipoPersonal) {
         if (vinculacionDepartamento.tipoPersonal === tipoPersonal) {
           sgiDepartamento = vinculacionDepartamento.departamento;
           if (sgiDepartamento.nombre) {
-            sgiDepartamento.nombre = sgiDepartamento.nombre.replace(/"/g, '\\\"');
+            sgiDepartamento.nombre = escape(sgiDepartamento.nombre);
           }
         }
       }
     );
   }
   return sgiDepartamento;
+}
+
+function escape(val) {
+  if (typeof (val) != "string") return val;
+  return val
+    .replace(/[\\]/g, '\\\\')
+    .replace(/[\/]/g, '\\/')
+    .replace(/[\b]/g, '\\b')
+    .replace(/[\f]/g, '\\f')
+    .replace(/[\n]/g, '\\n')
+    .replace(/[\r]/g, '\\r')
+    .replace(/[\t]/g, '\\t')
+    .replace(/[\"]/g, '\\"')
+    .replace(/\\'/g, "\\'");
 }

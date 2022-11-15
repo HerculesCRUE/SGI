@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -61,4 +63,8 @@ public class Configuracion extends BaseEntity {
   /** Plantilla formato identificador justificacion. */
   @Column(name = "plantilla_formato_identificador_justificacion", nullable = true, unique = true)
   private String plantillaFormatoIdentificadorJustificacion;
+
+  /** Dedicacion minima grupo. */
+  @Column(name = "dedicacion_minima_grupo", nullable = true, unique = true)
+  private BigDecimal dedicacionMinimaGrupo;
 }
