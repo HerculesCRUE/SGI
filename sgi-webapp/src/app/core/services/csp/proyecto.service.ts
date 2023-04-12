@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { ESTADO_PROYECTO_CONVERTER } from '@core/converters/csp/estado-proyecto.converter';
 import { PROYECTO_AREA_CONOCIMIENTO_CONVERTER } from '@core/converters/csp/proyecto-area-conocimiento.converter';
 import { PROYECTO_CLASIFICACION_CONVERTER } from '@core/converters/csp/proyecto-clasificacion.converter';
+import { PROYECTO_CONCEPTO_GASTO_CODIGO_EC_CONVERTER } from '@core/converters/csp/proyecto-concepto-gasto-codigo-ec.converter';
 import { PROYECTO_CONCEPTO_GASTO_CONVERTER } from '@core/converters/csp/proyecto-concepto-gasto.converter';
 import { PROYECTO_CONTEXTO_CONVERTER } from '@core/converters/csp/proyecto-contexto.converter';
 import { PROYECTO_DOCUMENTO_CONVERTER } from '@core/converters/csp/proyecto-documento.converter';
@@ -23,6 +24,7 @@ import { IProyectoAreaConocimientoBackend } from '@core/models/csp/backend/proye
 import { IProyectoBackend } from '@core/models/csp/backend/proyecto-backend';
 import { IProyectoClasificacionBackend } from '@core/models/csp/backend/proyecto-clasificacion-backend';
 import { IProyectoConceptoGastoBackend } from '@core/models/csp/backend/proyecto-concepto-gasto-backend';
+import { IProyectoConceptoGastoCodigoEcBackend } from '@core/models/csp/backend/proyecto-concepto-gasto-codigo-ec-backend';
 import { IProyectoContextoBackend } from '@core/models/csp/backend/proyecto-contexto-backend';
 import { IProyectoDocumentoBackend } from '@core/models/csp/backend/proyecto-documento-backend';
 import { IProyectoEntidadConvocanteBackend } from '@core/models/csp/backend/proyecto-entidad-convocante-backend';
@@ -44,6 +46,7 @@ import { IProyectoAnualidadResumen } from '@core/models/csp/proyecto-anualidad-r
 import { IProyectoAreaConocimiento } from '@core/models/csp/proyecto-area-conocimiento';
 import { IProyectoClasificacion } from '@core/models/csp/proyecto-clasificacion';
 import { IProyectoConceptoGasto } from '@core/models/csp/proyecto-concepto-gasto';
+import { IProyectoConceptoGastoCodigoEc } from '@core/models/csp/proyecto-concepto-gasto-codigo-ec';
 import { IProyectoContexto } from '@core/models/csp/proyecto-contexto';
 import { IProyectoDocumento } from '@core/models/csp/proyecto-documento';
 import { IProyectoEntidadConvocante } from '@core/models/csp/proyecto-entidad-convocante';
@@ -550,6 +553,29 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
       undefined,
       PROYECTO_CONCEPTO_GASTO_CONVERTER
     );
+  }
+
+  /**
+   * Recupera listado de proyecto concepto gastos códigos económicos permitidos.
+   * @param id proyecto
+   */
+  findAllProyectoConceptoGastoCodigosEcsPermitidos(id: number): Observable<SgiRestListResult<IProyectoConceptoGastoCodigoEc>> {
+    return this.find<IProyectoConceptoGastoCodigoEcBackend, IProyectoConceptoGastoCodigoEc>(
+      `${this.endpointUrl}/${id}/proyectoconceptosgastocodigosecs/permitidos`,
+      undefined,
+      PROYECTO_CONCEPTO_GASTO_CODIGO_EC_CONVERTER
+    );
+  }
+
+  /**
+   * Recupera listado de proyecto concepto gasto códigos económicos NO permitidos.
+   * @param id proyecto
+   */
+  findAllProyectoConceptoGastoCodigosEcsNoPermitidos(id: number): Observable<SgiRestListResult<IProyectoConceptoGastoCodigoEc>> {
+    return this.find<IProyectoConceptoGastoCodigoEcBackend, IProyectoConceptoGastoCodigoEc>(
+      `${this.endpointUrl}/${id}/proyectoconceptosgastocodigosecs/nopermitidos`,
+      undefined,
+      PROYECTO_CONCEPTO_GASTO_CODIGO_EC_CONVERTER);
   }
 
   /**

@@ -183,6 +183,15 @@ export abstract class SelectDialogComponent<D, T> implements
   // tslint:disable-next-line: variable-name
   private _displayWith: (option: T) => string = (option) => `${option}`;
 
+  get notFoundSelectedValue$(): Observable<boolean> {
+    return this._notFoundSelectedValue$.asObservable();
+  }
+  protected setNotFoundSelectedValue(value: boolean) {
+    this._notFoundSelectedValue$.next(value);
+  }
+  // tslint:disable-next-line: variable-name
+  private _notFoundSelectedValue$ = new BehaviorSubject<boolean>(false);
+
   private onChange: (value: any) => void = () => { };
   private onTouched = () => { };
 

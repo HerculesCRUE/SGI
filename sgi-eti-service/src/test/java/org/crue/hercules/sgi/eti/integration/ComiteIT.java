@@ -296,7 +296,7 @@ public class ComiteIT extends BaseIT {
   }
 
   @Test
-  public void findMemorias_ReturnsMemoria() throws Exception {
+  public void findMemoriasPeticionEvaluacionModificables_ReturnsMemoria() throws Exception {
 
     // when: find unlimited asignables para el comité
     HttpHeaders headers = new HttpHeaders();
@@ -312,21 +312,15 @@ public class ComiteIT extends BaseIT {
     // then: Obtiene las memorias del comité 2.
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<Memoria> memoria = response.getBody();
-    Assertions.assertThat(memoria.size()).isEqualTo(13);
+    Assertions.assertThat(memoria.size()).isEqualTo(7);
 
     Assertions.assertThat(memoria.get(0).getTitulo()).isEqualTo("Memoria002");
-    Assertions.assertThat(memoria.get(1).getTitulo()).isEqualTo("Memoria003");
-    Assertions.assertThat(memoria.get(2).getTitulo()).isEqualTo("Memoria004");
-    Assertions.assertThat(memoria.get(3).getTitulo()).isEqualTo("Memoria005");
-    Assertions.assertThat(memoria.get(4).getTitulo()).isEqualTo("Memoria006");
-    Assertions.assertThat(memoria.get(5).getTitulo()).isEqualTo("Memoria007");
-    Assertions.assertThat(memoria.get(6).getTitulo()).isEqualTo("Memoria008");
-    Assertions.assertThat(memoria.get(7).getTitulo()).isEqualTo("Memoria010");
-    Assertions.assertThat(memoria.get(8).getTitulo()).isEqualTo("Memoria011");
-    Assertions.assertThat(memoria.get(9).getTitulo()).isEqualTo("Memoria012");
-    Assertions.assertThat(memoria.get(10).getTitulo()).isEqualTo("Memoria013");
-    Assertions.assertThat(memoria.get(11).getTitulo()).isEqualTo("Memoria014");
-    Assertions.assertThat(memoria.get(12).getTitulo()).isEqualTo("Memoria015");
+    Assertions.assertThat(memoria.get(1).getTitulo()).isEqualTo("Memoria004");
+    Assertions.assertThat(memoria.get(2).getTitulo()).isEqualTo("Memoria006");
+    Assertions.assertThat(memoria.get(3).getTitulo()).isEqualTo("Memoria007");
+    Assertions.assertThat(memoria.get(4).getTitulo()).isEqualTo("Memoria010");
+    Assertions.assertThat(memoria.get(5).getTitulo()).isEqualTo("Memoria014");
+    Assertions.assertThat(memoria.get(6).getTitulo()).isEqualTo("Memoria015");
   }
 
   @Test

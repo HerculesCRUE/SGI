@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.crue.hercules.sgi.eti.exceptions.EvaluadorNotFoundException;
 import org.crue.hercules.sgi.eti.model.Comite;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.springframework.data.domain.Page;
@@ -44,11 +45,13 @@ public interface EvaluadorService {
    * conflicto de intereses con ningún miembro del equipo investigador de la
    * memoria.
    * 
-   * @param idComite  Identificador del {@link Comite}
-   * @param idMemoria Identificador de la {@link Memoria}
+   * @param idComite        Identificador del {@link Comite}
+   * @param idMemoria       Identificador de la {@link Memoria}
+   * @param fechaEvaluacion la fecha de Evaluación de la
+   *                        {@link ConvocatoriaReunion}
    * @return lista de evaluadores sin conflictos de intereses
    */
-  List<Evaluador> findAllByComiteSinconflictoInteresesMemoria(Long idComite, Long idMemoria);
+  List<Evaluador> findAllByComiteSinconflictoInteresesMemoria(Long idComite, Long idMemoria, Instant fechaEvaluacion);
 
   /**
    * Obtiene {@link Evaluador} por id.
@@ -81,5 +84,13 @@ public interface EvaluadorService {
    * @return el secretario {@link Evaluador}
    */
   Evaluador findSecretarioInFechaAndComite(Instant fecha, String comite);
+
+  /**
+   * Comprueba si la persona es evaluador en algun {@link Comite}
+   * 
+   * @param personaRef identificador de la persona
+   * @return si es evaluador o no
+   */
+  boolean isEvaluador(String personaRef);
 
 }

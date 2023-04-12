@@ -8,9 +8,11 @@ import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.OutputType;
 import org.crue.hercules.sgi.rep.dto.eti.InformeEvaluacionReportInput;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeEvaluacionRetrospectiva;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ class InformeEvaluacionRetrospectivaReportServiceTest extends BaseReportEtiServi
   private SgiConfigProperties sgiConfigProperties;
 
   @Mock
+  private SgiApiConfService sgiApiConfService;
+
+  @Mock
   private EvaluacionService evaluacionService;
 
   @Mock
@@ -34,8 +39,8 @@ class InformeEvaluacionRetrospectivaReportServiceTest extends BaseReportEtiServi
 
   @BeforeEach
   public void setUp() throws Exception {
-    informeEvaluacionRetrospectivaReportService = new InformeEvaluacionRetrospectivaReportService(sgiConfigProperties,
-        personaService, evaluacionService);
+    informeEvaluacionRetrospectivaReportService = new InformeEvaluacionRetrospectivaReportService(
+        sgiConfigProperties, sgiApiConfService, personaService, evaluacionService);
   }
 
   @Test
@@ -47,6 +52,10 @@ class InformeEvaluacionRetrospectivaReportServiceTest extends BaseReportEtiServi
 
     BDDMockito.given(evaluacionService.findById(idEvaluacion)).willReturn((generarMockEvaluacion(idEvaluacion)));
     BDDMockito.given(personaService.findById(null)).willReturn((generarMockPersona("123456F")));
+
+    BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
+        .willReturn(getResource("eti/prpt/rep-eti-evaluacion-retrospectiva.prpt"));
+    BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
 
     ReportInformeEvaluacionRetrospectiva report = new ReportInformeEvaluacionRetrospectiva();
     report.setOutputType(OutputType.PDF);

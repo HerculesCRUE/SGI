@@ -215,7 +215,7 @@ export class GrupoEquipoModalComponent extends DialogFormComponent<GrupoEquipoMo
             Validators.required,
             Validators.pattern('^[0-9]*$'),
             Validators.min(this.data.dedicacionMinimaGrupo),
-            Validators.max(100)])
+            Validators.max(99)])
       },
       {
         validators: [
@@ -355,6 +355,7 @@ export class GrupoEquipoModalComponent extends DialogFormComponent<GrupoEquipoMo
       formGroup.controls.participacion.disable({ emitEvent: false });
     } else {
       formGroup.controls.participacion.enable({ emitEvent: false });
+      formGroup.controls.participacion.markAsTouched({ onlySelf: true });
     }
   }
 

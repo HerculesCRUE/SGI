@@ -10,4 +10,5 @@ export interface SgiFormlyFieldConfig extends FormlyFieldConfig {
 export interface SgiFormlyTemplateOptions extends FormlyTemplateOptions {
   comentario?: IComentario;
   locked?: boolean;
+  modified?: boolean;
 }

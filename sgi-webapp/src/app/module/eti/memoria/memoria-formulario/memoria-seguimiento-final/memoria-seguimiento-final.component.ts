@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FragmentComponent } from '@core/component/fragment.component';
+import { IComentario } from '@core/models/eti/comentario';
 import { Subscription } from 'rxjs';
 import { IBlock } from '../../memoria-formly-form.fragment';
 import { MemoriaActionService } from '../../memoria.action.service';
@@ -18,6 +19,10 @@ export class MemoriaSeguimientoFinalComponent extends FragmentComponent implemen
   block: IBlock;
 
   private memoriaFormularioFragment: MemoriaSeguimientoFinalFragment;
+
+  get comentariosGenerales(): IComentario[] {
+    return this.memoriaFormularioFragment.comentariosGenerales;
+  }
 
   constructor(
     actionService: MemoriaActionService

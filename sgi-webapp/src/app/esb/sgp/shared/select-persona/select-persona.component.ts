@@ -3,9 +3,12 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inje
 import { NgControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormField, MatFormFieldControl, MAT_FORM_FIELD } from '@angular/material/form-field';
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { SearchResult, SelectDialogComponent } from '@core/component/select-dialog/select-dialog.component';
+import { MSG_PARAMS } from '@core/i18n';
 import { IPersona } from '@core/models/sgp/persona';
 import { PersonaService } from '@core/services/sgp/persona.service';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SearchPersonaModalComponent, SearchPersonaModalData } from './dialog/search-persona.component';
@@ -24,6 +27,8 @@ export enum TipoColectivo {
   TUTOR_CSP = 'TUTOR_CSP',
   MIEMBRO_EQUIPO_EMPRESA_EXPLOTACION_RESULTADOS = 'MIEMBRO_EQUIPO_EMPRESA_EXPLOTACION_RESULTADOS'
 }
+
+const SGP_NOT_FOUND = marker("error.sgp.not-found");
 
 @Component({
   selector: 'sgi-select-persona',
@@ -78,10 +83,11 @@ export class SelectPersonaComponent extends SelectDialogComponent<SearchPersonaM
     @Self() @Optional() ngControl: NgControl,
     dialog: MatDialog,
     focusMonitor: FocusMonitor,
-    private readonly personaService: PersonaService
+    private readonly personaService: PersonaService,
+    private readonly translate: TranslateService
   ) {
     super(changeDetectorRef, elementRef, parentFormField, ngControl, dialog, SearchPersonaModalComponent, focusMonitor);
-    this.displayWith = (option) => `${option.nombre} ${option.apellidos}${this.getEmailPrincipal(option)}`;
+    this.displayWith = (option) => this.getDisplayValue(option);
   }
 
   protected getDialogData(): SearchPersonaModalData {
@@ -90,14 +96,6 @@ export class SelectPersonaComponent extends SelectDialogComponent<SearchPersonaM
       tipoColectivo: this.tipoColectivo,
       colectivos: this._colectivos
     };
-  }
-
-  private getEmailPrincipal({ emails }: IPersona): string {
-    if (!emails) {
-      return '';
-    }
-    const emailDataPrincipal = emails.find(emailData => emailData.principal);
-    return emailDataPrincipal?.email ? ` (${emailDataPrincipal?.email})` : '';
   }
 
   protected search(term: string): Observable<SearchResult<IPersona>> {
@@ -116,4 +114,28 @@ export class SelectPersonaComponent extends SelectDialogComponent<SearchPersonaM
       })
     );
   }
+
+  private getDisplayValue(persona: IPersona): string {
+    const notFoundSelectedValue = !!persona && Object.keys(persona).length == 1 && !!persona.id;
+    setTimeout(() => this.setNotFoundSelectedValue(notFoundSelectedValue));
+
+    if (notFoundSelectedValue) {
+      return this.getErrorMsg(persona.id);
+    }
+
+    return `${persona.nombre} ${persona.apellidos}${this.getEmailPrincipal(persona)}`;
+  }
+
+  private getErrorMsg(id: string): string {
+    return this.translate.instant(SGP_NOT_FOUND, { ids: id, ...MSG_PARAMS.CARDINALIRY.SINGULAR })
+  }
+
+  private getEmailPrincipal({ emails }: IPersona): string {
+    if (!emails) {
+      return '';
+    }
+    const emailDataPrincipal = emails.find(emailData => emailData.principal);
+    return emailDataPrincipal?.email ? ` (${emailDataPrincipal?.email})` : '';
+  }
+
 }

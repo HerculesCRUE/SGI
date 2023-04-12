@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.ConceptoGastoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaConceptoGastoNotFoundException;
@@ -12,6 +13,7 @@ import org.crue.hercules.sgi.csp.repository.ConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoCodigoEcRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
+import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaConceptoGastoCodigoEcSpecifications;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaConceptoGastoSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaConceptoGastoService;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
@@ -69,16 +71,10 @@ public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConcept
     Assert.notNull(convocatoriaConceptoGasto.getConvocatoriaId(),
         "Id Convocatoria no puede ser null para crear ConvocatoriaConceptoGasto");
 
-    if (convocatoriaConceptoGasto.getConceptoGasto() != null) {
-      if (convocatoriaConceptoGasto.getConceptoGasto().getId() != null) {
-        convocatoriaConceptoGasto.setConceptoGasto(
-            conceptoGastoRepository.findById(convocatoriaConceptoGasto.getConceptoGasto().getId()).orElseThrow(
-                () -> new ConceptoGastoNotFoundException(convocatoriaConceptoGasto.getConceptoGasto().getId())));
-        Assert.isTrue(convocatoriaConceptoGasto.getConceptoGasto().getActivo(), "El ConceptoGasto debe estar activo");
-      } else {
-        convocatoriaConceptoGasto.setConceptoGasto(null);
-      }
-    }
+    convocatoriaConceptoGasto.setConceptoGasto(
+        conceptoGastoRepository.findById(convocatoriaConceptoGasto.getConceptoGasto().getId()).orElseThrow(
+            () -> new ConceptoGastoNotFoundException(convocatoriaConceptoGasto.getConceptoGasto().getId())));
+    Assert.isTrue(convocatoriaConceptoGasto.getConceptoGasto().getActivo(), "El ConceptoGasto debe estar activo");
 
     Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaConceptoGasto.getConvocatoriaId())
         .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaConceptoGasto.getConvocatoriaId()));
@@ -129,16 +125,10 @@ public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConcept
     Assert.notNull(convocatoriaConceptoGastoActualizar.getConvocatoriaId(),
         "Id Convocatoria no puede ser null para actualizar ConvocatoriaConceptoGasto");
 
-    if (convocatoriaConceptoGastoActualizar.getConceptoGasto() != null) {
-      if (convocatoriaConceptoGastoActualizar.getConceptoGasto().getId() != null) {
-        convocatoriaConceptoGastoActualizar.setConceptoGasto(
-            conceptoGastoRepository.findById(convocatoriaConceptoGastoActualizar.getConceptoGasto().getId())
-                .orElseThrow(() -> new ConceptoGastoNotFoundException(
-                    convocatoriaConceptoGastoActualizar.getConceptoGasto().getId())));
-      } else {
-        convocatoriaConceptoGastoActualizar.setConceptoGasto(null);
-      }
-    }
+    convocatoriaConceptoGastoActualizar.setConceptoGasto(
+        conceptoGastoRepository.findById(convocatoriaConceptoGastoActualizar.getConceptoGasto().getId())
+            .orElseThrow(() -> new ConceptoGastoNotFoundException(
+                convocatoriaConceptoGastoActualizar.getConceptoGasto().getId())));
 
     Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaConceptoGastoActualizar.getConvocatoriaId())
         .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaConceptoGastoActualizar.getConvocatoriaId()));
@@ -164,6 +154,11 @@ public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConcept
     Assert.isTrue(!existsConvocatoriaConceptoGastoConMesesSolapados(convocatoriaConceptoGastoActualizar),
         "El concepto de gasto '" + convocatoriaConceptoGastoActualizar.getConceptoGasto()
             + "' ya está presente y tiene un periodo de vigencia que se solapa con el indicado");
+
+    Assert.isTrue(
+        !existsConvocatoriaConceptoGastoAndCodigoEconomicoConMesesSolapados(convocatoriaConceptoGastoActualizar),
+        "El concepto gasto '" + convocatoriaConceptoGastoActualizar.getConceptoGasto()
+            + "' tiene códigos económicos que se solapan con otros códigos económicos de la convocatoria");
 
     return repository.findById(convocatoriaConceptoGastoActualizar.getId()).map(convocatoriaConceptoGasto -> {
 
@@ -325,10 +320,12 @@ public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConcept
         .byRangoMesesSolapados(convocatoriaConceptoGasto.getMesInicial(), convocatoriaConceptoGasto.getMesFinal());
     Specification<ConvocatoriaConceptoGasto> specByIdNotEqual = ConvocatoriaConceptoGastoSpecifications
         .byIdNotEqual(convocatoriaConceptoGasto.getId());
+    Specification<ConvocatoriaConceptoGasto> specByPermitido = ConvocatoriaConceptoGastoSpecifications
+        .byPermitido(convocatoriaConceptoGasto.getPermitido());
 
     Specification<ConvocatoriaConceptoGasto> specs = Specification.where(specByConvocatoria)
         .and(specByConceptoGastoConvocatoriaActiva).and(specByConceptoGasto).and(specByRangoMesesSolapados)
-        .and(specByIdNotEqual);
+        .and(specByIdNotEqual).and(specByPermitido);
 
     Page<ConvocatoriaConceptoGasto> convocatoriaConceptoGastos = repository.findAll(specs, Pageable.unpaged());
 
@@ -337,6 +334,65 @@ public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConcept
         "existsConvocatoriaConceptoGastoConMesesSolapados(ConvocatoriaConceptoGasto convocatoriaConceptoGasto) - end");
 
     return returnValue;
+  }
+
+  private boolean existsConvocatoriaConceptoGastoAndCodigoEconomicoConMesesSolapados(
+      ConvocatoriaConceptoGasto convocatoriaConceptoGasto) {
+
+    Specification<ConvocatoriaConceptoGasto> specByConvocatoria = ConvocatoriaConceptoGastoSpecifications
+        .byConvocatoria(convocatoriaConceptoGasto.getConvocatoriaId());
+    Specification<ConvocatoriaConceptoGasto> specByIdNotEqual = ConvocatoriaConceptoGastoSpecifications
+        .byIdNotEqual(convocatoriaConceptoGasto.getId());
+    Specification<ConvocatoriaConceptoGasto> specByRangoMesesSolapados = ConvocatoriaConceptoGastoSpecifications
+        .byRangoMesesSolapados(convocatoriaConceptoGasto.getMesInicial(), convocatoriaConceptoGasto.getMesFinal());
+    Specification<ConvocatoriaConceptoGasto> specByConceptoGasto = ConvocatoriaConceptoGastoSpecifications
+        .byConceptoGasto(convocatoriaConceptoGasto.getConceptoGasto());
+
+    Specification<ConvocatoriaConceptoGasto> specs = Specification.where(specByConvocatoria).and(specByIdNotEqual).and(
+        specByRangoMesesSolapados).and(specByConceptoGasto);
+
+    List<ConvocatoriaConceptoGasto> convocatoriaConceptosGastoSolapados = repository.findAll(specs);
+
+    Specification<ConvocatoriaConceptoGastoCodigoEc> specCodigoEcByConceptosGasto = ConvocatoriaConceptoGastoCodigoEcSpecifications
+        .byConvocatoriaConceptosGastoIds(
+            convocatoriaConceptosGastoSolapados.stream().map(ConvocatoriaConceptoGasto::getId)
+                .collect(Collectors.toList()));
+
+    Specification<ConvocatoriaConceptoGastoCodigoEc> specCodigoEcByConceptoGastoId = ConvocatoriaConceptoGastoCodigoEcSpecifications
+        .byConvocatoriaConceptoGasto(convocatoriaConceptoGasto.getId());
+
+    List<ConvocatoriaConceptoGastoCodigoEc> convocatoriaCodigosEconomicosSolapados = convocatoriaConceptoGastoCodigoEcRepository
+        .findAll(specCodigoEcByConceptosGasto);
+
+    List<ConvocatoriaConceptoGastoCodigoEc> convocatoriaCodigosEconomicosConceptoGasto = convocatoriaConceptoGastoCodigoEcRepository
+        .findAll(specCodigoEcByConceptoGastoId);
+
+    return convocatoriaCodigosEconomicosSolapados.stream()
+        .anyMatch(
+            codigoEconomico -> convocatoriaCodigosEconomicosConceptoGasto.stream()
+                .anyMatch(codigo -> codigo.getCodigoEconomicoRef().equals(codigoEconomico.getCodigoEconomicoRef()))
+                && convocatoriaConceptosGastoSolapados.stream()
+                    .anyMatch(concepto -> concepto.getId().equals(codigoEconomico.getConvocatoriaConceptoGastoId())
+                        && isConceptosGastoSolapados(convocatoriaConceptoGasto, concepto)));
+  }
+
+  private boolean isConceptosGastoSolapados(ConvocatoriaConceptoGasto convocatoriaConceptoGastoA,
+      ConvocatoriaConceptoGasto convocatoriaConceptoGastoB) {
+    Integer fechaInicioProyectoConceptoGastoA = convocatoriaConceptoGastoA.getMesInicial() != null
+        ? convocatoriaConceptoGastoA.getMesInicial()
+        : Integer.MIN_VALUE;
+    Integer fechaFinProyectoConceptoGastoA = convocatoriaConceptoGastoA.getMesFinal() != null
+        ? convocatoriaConceptoGastoA.getMesFinal()
+        : Integer.MAX_VALUE;
+    Integer fechaInicioProyectoConceptoGastoB = convocatoriaConceptoGastoB.getMesInicial() != null
+        ? convocatoriaConceptoGastoB.getMesInicial()
+        : Integer.MIN_VALUE;
+    Integer fechaFinProyectoConceptoGastoB = convocatoriaConceptoGastoB.getMesFinal() != null
+        ? convocatoriaConceptoGastoB.getMesFinal()
+        : Integer.MAX_VALUE;
+
+    return fechaInicioProyectoConceptoGastoA <= fechaFinProyectoConceptoGastoA
+        && fechaInicioProyectoConceptoGastoB <= fechaFinProyectoConceptoGastoB;
   }
 
 }

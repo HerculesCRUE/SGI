@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { IConfiguracion } from '@core/models/eti/configuracion';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
+import { TIPO_CONVOCATORIA_REUNION } from '@core/models/eti/tipo-convocatoria-reunion';
 import { IPersona } from '@core/models/sgp/persona';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
@@ -29,6 +30,10 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
   fxLayoutProperties: FxLayoutProperties;
 
   private numLimiteDiasEvaluar = null;
+
+  get TIPO_CONVOCATORIA() {
+    return TIPO_CONVOCATORIA_REUNION;
+  }
 
   constructor(
     private readonly evaluadorService: EvaluadorService,

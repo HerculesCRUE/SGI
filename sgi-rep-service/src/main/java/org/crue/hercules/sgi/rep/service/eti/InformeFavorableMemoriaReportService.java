@@ -12,6 +12,7 @@ import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableMemoria;
 import org.crue.hercules.sgi.rep.dto.eti.TareaDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.pentaho.reporting.engine.classic.core.Band;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
@@ -32,10 +33,11 @@ public class InformeFavorableMemoriaReportService extends InformeEvaluacionBaseR
   private final EvaluacionService evaluacionService;
   private final PeticionEvaluacionService peticionEvaluacionService;
 
-  public InformeFavorableMemoriaReportService(SgiConfigProperties sgiConfigProperties, SgiApiSgpService personaService,
+  public InformeFavorableMemoriaReportService(SgiConfigProperties sgiConfigProperties,
+      SgiApiConfService sgiApiConfService, SgiApiSgpService personaService,
       EvaluacionService evaluacionService, PeticionEvaluacionService peticionEvaluacionService) {
 
-    super(sgiConfigProperties, personaService, evaluacionService);
+    super(sgiConfigProperties, sgiApiConfService, personaService, evaluacionService);
     this.evaluacionService = evaluacionService;
 
     this.peticionEvaluacionService = peticionEvaluacionService;
@@ -56,7 +58,7 @@ public class InformeFavorableMemoriaReportService extends InformeEvaluacionBaseR
     columnsData.add("fechaDictamen");
     String i18nDe = ApplicationContextSupport.getMessage("common.de");
     String pattern = String.format("EEEE dd '%s' MMMM '%s' yyyy", i18nDe, i18nDe);
-    elementsRow.add(formatInstantToString(evaluacion.getFechaDictamen(), pattern));
+    elementsRow.add(formatInstantToString(evaluacion.getConvocatoriaReunion().getFechaEvaluacion(), pattern));
 
     columnsData.add("numeroActa");
     String i18nActa = ApplicationContextSupport.getMessage("acta");
@@ -67,6 +69,10 @@ public class InformeFavorableMemoriaReportService extends InformeEvaluacionBaseR
     elementsRow.add(codigoActa);
 
     fillCommonFieldsEvaluacion(evaluacion, columnsData, elementsRow);
+
+    columnsData.add("resourcesBaseURL");
+    elementsRow.add(getRepResourcesBaseURL());
+
     rowsData.add(elementsRow);
 
     DefaultTableModel tableModel = new DefaultTableModel();
@@ -82,6 +88,7 @@ public class InformeFavorableMemoriaReportService extends InformeEvaluacionBaseR
         .findTareasEquipoTrabajo(evaluacion.getMemoria().getPeticionEvaluacion().getId());
 
     columnsData.add("nombreInvestigador");
+    columnsData.add("articuloInvestigador");
     List<String> personas = new ArrayList<>();
     tareas.forEach(tarea -> {
       Vector<Object> elementsRow = new Vector<>();

@@ -7,7 +7,7 @@
           <a [routerLink]="segment.path" class="breadcrumb__point r-link">{{segment.title.key |
             translate:segment.title.params}}</a>
           <span class="breadcrumb__divider" aria-hidden="true" *ngIf="i < data.length - 1">
-            <img class="chevron" src="assets/icons/chevron_right.svg" alt="" />
+            <mat-icon class="chevron">chevron_right</mat-icon>
           </span>
         </li>
       </ol>

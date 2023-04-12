@@ -27,7 +27,7 @@
       </div>
 
       <!-- Tipo de Memoria -->
-      <div fxFlex="10">
+      <div fxFlex="15">
         <mat-form-field>
           <mat-label>{{'eti.memoria.tipo' | translate}}</mat-label>
           <sgi-select-entity #selectTipoMemoria formControlName="tipoMemoria" required
@@ -40,7 +40,7 @@
 
       <!-- memoria original-->
       <ng-container *ngIf="this.datosGeneralesFragment.showMemoriaOriginal">
-        <div fxFlex="25">
+        <div fxFlex="40">
           <mat-form-field>
             <mat-label>{{'eti.memoria.original' | translate}}</mat-label>
             <sgi-select-entity formControlName="memoriaOriginal" [resetOnChange]="selectComite.selectionChange"
@@ -49,22 +49,6 @@
             </sgi-select-entity>
             <mat-error *ngIf="formGroup.controls.memoriaOriginal?.errors?.required">
               {{'error.required.entity' | translate:msgParamOrginalEntity}}
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </ng-container>
-
-      <!-- Título -->
-      <ng-container *ngIf="this.datosGeneralesFragment.showTitulo">
-        <div fxFlex="76">
-          <mat-form-field>
-            <mat-label>{{'eti.memoria.titulo-descriptivo' | translate}}</mat-label>
-            <textarea matInput [placeholder]="'eti.memoria.titulo-descriptivo' | translate"
-              formControlName="titulo"></textarea>
-            <sgi-field-info matSuffix [visible]="true" message="{{textoInfoTituloDescriptivo}}">
-            </sgi-field-info>
-            <mat-error *ngIf="formGroup.controls.titulo.hasError('maxlength')">
-              {{'error.maxlength.entity' | translate:msgParamTituloDescriptivoEntity}}
             </mat-error>
           </mat-form-field>
         </div>
@@ -80,9 +64,25 @@
         </mat-form-field>
       </div>
 
+      <!-- Título -->
+      <ng-container *ngIf="this.datosGeneralesFragment.showTitulo">
+        <div fxFlex="95.5">
+          <mat-form-field>
+            <mat-label>{{'eti.memoria.titulo-descriptivo' | translate}}</mat-label>
+            <textarea matInput [placeholder]="'eti.memoria.titulo-descriptivo' | translate"
+              formControlName="titulo"></textarea>
+            <sgi-field-info matSuffix [visible]="true" message="{{textoInfoTituloDescriptivo}}">
+            </sgi-field-info>
+            <mat-error *ngIf="formGroup.controls.titulo.hasError('maxlength')">
+              {{'error.maxlength.entity' | translate:msgParamTituloDescriptivoEntity}}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </ng-container>
+
       <!-- Código órgano competente -->
       <ng-container *ngIf="this.datosGeneralesFragment.showCodOrganoCompetente">
-        <div fxFlex="35.5">
+        <div fxFlex="40">
           <mat-form-field>
             <mat-label>{{'eti.memoria.codigo-organo-compentente' | translate}}</mat-label>
             <input type="text" [placeholder]="'eti.memoria.codigo-organo-compentente' | translate" arial-label="Number"
@@ -94,5 +94,10 @@
         </div>
       </ng-container>
     </div>
+
+    <sgi-info-message
+      *ngIf="this.datosGeneralesFragment.showInfoRatificacion && !this.actionService.isLoadDocumentoRatificacion()"
+      message="{{'eti.memoria.info-ratificacion' | translate}}">
+    </sgi-info-message>
   </form>
 </sgi-fragment>

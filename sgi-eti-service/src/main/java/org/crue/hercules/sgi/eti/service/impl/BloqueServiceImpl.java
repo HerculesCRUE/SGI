@@ -4,6 +4,7 @@ import org.crue.hercules.sgi.eti.exceptions.BloqueNotFoundException;
 import org.crue.hercules.sgi.eti.model.Bloque;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.repository.BloqueRepository;
+import org.crue.hercules.sgi.eti.repository.specification.BloqueSpecifications;
 import org.crue.hercules.sgi.eti.service.BloqueService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
@@ -42,6 +43,7 @@ public class BloqueServiceImpl implements BloqueService {
    * @param query  información del filtro.
    * @return el listado de entidades {@link Bloque} paginadas y filtradas.
    */
+  @Override
   public Page<Bloque> findAll(String query, Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");
     Specification<Bloque> specs = SgiRSQLJPASupport.toSpecification(query);
@@ -59,12 +61,12 @@ public class BloqueServiceImpl implements BloqueService {
    * @throws BloqueNotFoundException Si no existe ningún {@link Bloque} con ese
    *                                 id.
    */
+  @Override
   public Bloque findById(final Long id) throws BloqueNotFoundException {
     log.debug("Petición a get Bloque : {}  - start", id);
-    final Bloque Bloque = bloqueRepository.findById(id).orElseThrow(() -> new BloqueNotFoundException(id));
+    final Bloque bloque = bloqueRepository.findById(id).orElseThrow(() -> new BloqueNotFoundException(id));
     log.debug("Petición a get Bloque : {}  - end", id);
-    return Bloque;
-
+    return bloque;
   }
 
   /**
@@ -82,6 +84,20 @@ public class BloqueServiceImpl implements BloqueService {
     Page<Bloque> resultado = bloqueRepository.findByFormularioId(id, pageable);
     log.debug("update(Bloque bloqueActualizar) - start");
     return resultado;
+  }
+
+  /**
+   * Obtiene el {@link Bloque} de comentarios generales.
+   *
+   * @return la entidad {@link Bloque}.
+   * @throws BloqueNotFoundException Si no existe el {@link Bloque}
+   */
+  @Override
+  public Bloque getBloqueComentariosGenerales() throws BloqueNotFoundException {
+    log.debug("getBloqueComentariosGenerales() - start");
+    final Bloque bloque = bloqueRepository.findOne(BloqueSpecifications.bloqueComentarioGenerales()).orElseThrow(() -> new BloqueNotFoundException(null));
+    log.debug("getBloqueComentariosGenerales() - end");
+    return bloque;
   }
 
 }

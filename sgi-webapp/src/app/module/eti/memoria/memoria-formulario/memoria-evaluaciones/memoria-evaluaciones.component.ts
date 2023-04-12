@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, MatSortable } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
@@ -86,10 +86,14 @@ export class MemoriaEvaluacionesComponent extends FragmentComponent implements O
             return wrapper.value.tipoEvaluacion?.nombre;
           case 'dictamen':
             return wrapper.value.dictamen?.nombre;
+          case 'tipoEvaluacionVersion':
+            return wrapper.value.tipoEvaluacion?.nombre + wrapper.value.version;
           default:
             return wrapper.value[property];
         }
       };
+
+    this.dataSource.sort = this.sort;
 
   }
 

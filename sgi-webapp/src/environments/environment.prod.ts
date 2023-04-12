@@ -52,7 +52,7 @@ export const environment = {
       /\/api\/rel(?!\/config\/time-zone$).*/i,
       /\/api\/rep(?!\/config\/time-zone$).*/i,
       /\/api\/prc(?!\/config\/time-zone$).*/i,
-      /\/api\/cnf.*/i,
+      /\/api\/cnf(?!\/config\/time-zone$).*/i,
       /\/api\/com.*/i,
       /\/api\/tp.*/i,
       /\/api\/eer(?!\/config\/time-zone$).*/i

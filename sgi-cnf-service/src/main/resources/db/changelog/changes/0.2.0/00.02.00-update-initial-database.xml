@@ -1,0 +1,41 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <property name="blob_type" value="BYTEA" dbms="postgresql" />
+  <property name="blob_type" value="BLOB" dbms="!postgresql" />
+
+  <changeSet author="user (generated)" id="00.02.00-1">
+    <createTable tableName="resources">
+      <column name="name" type="VARCHAR(100)">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="resourcesPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" defaultValue="master" />
+      <column name="creation_date" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP()" />
+      <column name="last_modified_by" type="VARCHAR(255)" defaultValue="master" />
+      <column name="last_modified_date" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP()" />
+      <column name="description" type="VARCHAR(250)" />
+      <column name="value" type="${blob_type}" />
+      <column name="default_value" type="${blob_type}" />
+      <column name="public_access" type="BOOLEAN">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="user (generated)" id="00.02.00-2">
+    <dropNotNullConstraint columnDataType="CLOB" columnName="value" tableName="config" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="00.02.00-3">
+    <addColumn tableName="config">
+      <column name="default_value" type="CLOB" />
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

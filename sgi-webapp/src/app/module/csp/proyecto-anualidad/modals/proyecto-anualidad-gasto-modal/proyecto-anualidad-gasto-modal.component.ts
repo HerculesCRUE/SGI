@@ -519,7 +519,7 @@ export class ProyectoAnualidadGastoModalComponent extends DialogFormComponent<Pr
     conceptoGasto: IConceptoGasto,
     permitido: boolean
   ): Observable<IProyectoConceptoGastoCodigoEc[]> {
-    return this.proyectoConceptoGastoService.findByConceptoGastoId(conceptoGasto.id, permitido).pipe(
+    return this.proyectoConceptoGastoService.findByConceptoGastoId(conceptoGasto.id, this.data.proyectoId, permitido).pipe(
       map(proyectoConceptosGasto =>
         proyectoConceptosGasto.items.map(proyectoConceptoGasto => {
           return {

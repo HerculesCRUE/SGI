@@ -9,6 +9,7 @@ html,
 body {
   height: 100%;
 }
+
 body {
   margin: 0;
 }
@@ -26,6 +27,7 @@ body {
   .mat-header-row {
     background-color: map-get($sgi-custom-colors, bg);
   }
+
   width: 100%;
 }
 
@@ -33,6 +35,7 @@ body {
 /** From angular material table.scss */
 /**/
 .mat-table {
+
   .mat-header-cell,
   .mat-cell,
   .mat-footer-cell {
@@ -73,6 +76,7 @@ mat-radio-group.radio-inline {
     padding: 5px 15px 0px 0px;
   }
 }
+
 /**/
 /** RADIOBUTTON */
 /**/
@@ -88,23 +92,26 @@ mat-form-field {
 
 // Allow responsive reserved space for errors in fields
 .mat-form-field-appearance-legacy .mat-form-field-wrapper {
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 0;
-    .mat-form-field-flex {
-        order: 1;
-    }
-    .mat-form-field-underline {
-        position: relative;
-        order: 2;
-        bottom: 0 !important;
-    }
-    .mat-form-field-subscript-wrapper {
-        position: relative;
-        order: 3;
-        min-height: 1.33em; // Default line-height for inputs in $custom-typography
-        margin-bottom: -0.083em; // Difference between default padding and the min-height. (1.25 - 1.333)
-    }
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0;
+
+  .mat-form-field-flex {
+    order: 1;
+  }
+
+  .mat-form-field-underline {
+    position: relative;
+    order: 2;
+    bottom: 0 !important;
+  }
+
+  .mat-form-field-subscript-wrapper {
+    position: relative;
+    order: 3;
+    min-height: 1.33em; // Default line-height for inputs in $custom-typography
+    margin-bottom: -0.083em; // Difference between default padding and the min-height. (1.25 - 1.333)
+  }
 }
 
 // Icono de requerido de mat-form-field (por defecto es accent)
@@ -113,7 +120,7 @@ mat-form-field {
 }
 
 .mat-form-field-label mat-label {
-  color: rgba(black, 0.7);
+  color: map-get($sgi-custom-colors, label);
 }
 
 /**/
@@ -128,12 +135,12 @@ mat-form-field {
   margin: 13px 0;
   padding: 10px;
   border-radius: 5px;
-  color: map-get($palette-primary, 400);
+  color: map-get($palette-primary, $primary-color);
   background-color: map-get($palette-primary, 100);
   text-align: center;
-  -webkit-box-shadow: 0 5px 6px -6px map-get($palette-grey, 300);
-  -moz-box-shadow: 0 5px 6px -6px map-get($palette-grey, 300);
-  box-shadow: 0 5px 6px -6px map-get($palette-grey, 300);
+  -webkit-box-shadow: 0 5px 6px -6px map-get($sgi-custom-colors, divider);
+  -moz-box-shadow: 0 5px 6px -6px map-get($sgi-custom-colors, divider);
+  box-shadow: 0 5px 6px -6px map-get($sgi-custom-colors, divider);
 }
 
 /**/
@@ -147,13 +154,13 @@ mat-form-field {
 // Botones disabled
 .mat-raised-button.mat-accent[disabled] {
   color: map-get($sgi-custom-colors, white);
-  background: map-get($palette-accent, 500);
+  background: map-get($palette-accent, $accent-color - 200);
   opacity: 0.5;
 }
 
 .mat-raised-button.mat-primary[disabled] {
   color: map-get($sgi-custom-colors, white);
-  background: map-get($palette-primary, 400);
+  background: map-get($palette-primary, $primary-color);
   opacity: 0.5;
 }
 
@@ -162,6 +169,7 @@ mat-form-field {
   cursor: pointer;
   font-weight: bold;
   color: map-get($sgi-custom-colors, black);
+
   .underline {
     text-decoration: underline;
   }
@@ -170,7 +178,8 @@ mat-form-field {
 .link-busqueda {
   cursor: pointer;
   font-weight: bold;
-  color: map-get($palette-primary, 400);
+  color: map-get($palette-primary, $primary-color);
+
   &.underline {
     text-decoration: underline;
   }
@@ -179,25 +188,30 @@ mat-form-field {
 .separation-button {
   padding-top: 15px;
   padding-bottom: 15px;
-  button ~ button {
+
+  button~button {
     margin-left: 10px;
   }
+
   button.rounded {
     border-radius: 1.5em;
     padding-right: 1.2em;
     font-weight: bold;
+
     mat-icon {
       margin-left: -0.2em;
       padding-right: 0.1em;
     }
   }
+
   // Boton verde terciario
   .mat-three {
     background-color: map-get($sgi-custom-colors, three-buton);
     font-weight: bold;
-    color: #5a5a5a;
+    color: $dark-secondary-text;
     border-radius: 20px;
     min-width: 150px;
+
     &:has([mat-icon]) {
       text-align: left;
       padding-right: 35px;
@@ -216,28 +230,34 @@ mat-form-field {
 .sgi-dialog-container {
   .mat-dialog-container {
     padding: 0;
+
     .mat-dialog-content,
     .mat-dialog-actions {
       margin: 0;
       padding: 10px;
     }
+
     .mat-dialog-content {
       .form-inline {
         display: block;
       }
+
       .programa {
         .arbol {
           padding: 10px;
-          border: 1px solid map-get($palette-grey, 300);
+          border: 1px solid map-get($sgi-custom-colors, divider);
           margin: 10px 0px 10px 0px;
+
           .mat-tree-node {
             button {
               font-weight: 400;
             }
           }
+
           .arbol-invisible {
             display: none;
           }
+
           .arbol-tree ul,
           .arbol-tree li {
             margin-top: 0;
@@ -245,20 +265,23 @@ mat-form-field {
             list-style-type: none;
           }
         }
+
         .visualizacion {
           h3 {
             font-weight: bold;
           }
+
           background: map-get($sgi-custom-colors, bg);
           padding: 30px;
         }
       }
     }
   }
+
   .sgi-dialog-header {
     font-size: map-get($sgi-typography-size, dialog-header);
     color: map-get($sgi-custom-colors, white);
-    background-color: map-get($palette-primary, 400);
+    background-color: map-get($palette-primary, $primary-color);
     padding-top: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
@@ -268,3 +291,32 @@ mat-form-field {
 /**/
 /** FIN MODALES */
 /**/
+
+/**/
+/** SELECTS */
+/**/
+
+.mat-select-panel mat-option.mat-option {
+  height: unset;
+}
+
+.mat-option-text.mat-option-text {
+  white-space: normal;
+  line-height: normal;
+  min-height: 1.5em;
+  margin-top: 0.9em;
+  margin-bottom: 0.9em;
+}
+
+/**/
+/** FIN SELECTS */
+/**/
+
+.not-found-error,
+.mat-input-element.not-found-error {
+  color: map-get($palette-warn, $warn-color);
+
+  &:disabled {
+    color: map-get($palette-warn, $warn-color - 100);
+  }
+}

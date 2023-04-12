@@ -142,6 +142,8 @@ export class ConvocatoriaConceptoGastoCodigoEcComponent extends FragmentComponen
     const data: IConvocatoriaConceptoGastoCodigoEcModalComponent = {
       convocatoriaConceptoGastoCodigoEc: wrapper.value,
       convocatoriaConceptoGastoCodigoEcsTabla,
+      convocatoriaConceptoGastoCodigoEcsConvocatoria: this.transformToConvocatoriaConceptoGastoCodigoEc(this.actionService.convocatoriaConceptoGastoCodigosEc),
+      convocatoriaConceptoGasto: this.actionService.convocatoriaConceptoGasto,
       permitido: this.actionService.permitido,
       editModal: true,
       readonly: this.formPart.readonly,
@@ -196,6 +198,8 @@ export class ConvocatoriaConceptoGastoCodigoEcComponent extends FragmentComponen
     const data: IConvocatoriaConceptoGastoCodigoEcModalComponent = {
       convocatoriaConceptoGastoCodigoEc,
       convocatoriaConceptoGastoCodigoEcsTabla,
+      convocatoriaConceptoGastoCodigoEcsConvocatoria: this.transformToConvocatoriaConceptoGastoCodigoEc(this.actionService.convocatoriaConceptoGastoCodigosEc),
+      convocatoriaConceptoGasto: this.actionService.convocatoriaConceptoGasto,
       permitido,
       editModal: false,
       readonly: this.formPart.readonly
@@ -241,6 +245,16 @@ export class ConvocatoriaConceptoGastoCodigoEcComponent extends FragmentComponen
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
+  private transformToConvocatoriaConceptoGastoCodigoEc(convocatoriaConceptoGastoCodigosEc: IConvocatoriaConceptoGastoCodigoEc[]): ConvocatoriaConceptoGastoCodigoEc[] {
+    const convocatoriaConceptoGastos = this.actionService.convocatoriaConceptoGastosPermitidos.concat(this.actionService.convocatoriaConceptoGastosNoPermitidos);
+    return convocatoriaConceptoGastoCodigosEc.map(c => {
+      return {
+        ...c,
+        convocatoriaConceptoGasto: convocatoriaConceptoGastos.find(convocatoriaConceptoGasto => convocatoriaConceptoGasto.id === c.convocatoriaConceptoGastoId)
+      };
+    });
   }
 
 }

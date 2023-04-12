@@ -1,0 +1,94 @@
+[
+  {
+    "key": "ap4_1_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.2 Características del riesgo de los agentes biológicos y/o material biológico, sustancias químicas peligrosas, sustancias radiactivas y/o nanopartículas"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Los agentes biológicos, material biológico, sustancias químicas peligrosas, sustancias radiactivas y/o nanopartículas que se utilizan ¿implican algún tipo de efecto potencialmente nocivo?</p>"
+      },
+      {
+        "key": "agentesBiologicos",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "key": "grupoDiana",
+        "type": "multicheckbox",
+        "hideExpression": "!model.agentesBiologicos || model.agentesBiologicos === 'no'",
+        "templateOptions": {
+          "label": "Grupo diana:",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "serHumamno",
+              "label": "Ser humano"
+            },
+            {
+              "value": "animales",
+              "label": "Animales"
+            },
+            {
+              "value": "medioambiente",
+              "label": "Medio ambiente"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Tipo de efecto nocivo",
+        "hideExpression": "!model.agentesBiologicos || model.agentesBiologicos === 'no'"
+      },
+      {
+        "key": "efectoNocivo",
+        "type": "multicheckbox",
+        "hideExpression": "!model.agentesBiologicos || model.agentesBiologicos === 'no'",
+        "templateOptions": {
+          "label": "Tipo:",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "infeccioso",
+              "label": "Infeccioso"
+            },
+            {
+              "value": "toxico",
+              "label": "Tóxico"
+            },
+            {
+              "value": "alergico",
+              "label": "Alérgico"
+            },
+            {
+              "value": "radiactivo",
+              "label": "Radiactivo"
+            },
+            {
+              "value": "otro",
+              "label": "Otro"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

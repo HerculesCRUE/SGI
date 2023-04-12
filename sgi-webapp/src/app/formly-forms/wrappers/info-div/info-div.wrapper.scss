@@ -2,8 +2,9 @@
 
 .info {
   mat-icon {
-    color: map-get($palette-primary, 400);
+    color: map-get($palette-primary, $primary-color);
   }
+
   padding: 1em;
   margin-bottom: 2em;
   background-color: map-get($sgi-custom-colors, bg);

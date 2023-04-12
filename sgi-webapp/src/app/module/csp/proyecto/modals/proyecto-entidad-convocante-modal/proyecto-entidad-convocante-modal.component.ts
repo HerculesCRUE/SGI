@@ -127,7 +127,7 @@ export class ProyectoEntidadConvocanteModalComponent extends DialogFormComponent
     this.translate.get(
       PROYECTO_ENTIDAD_CONVOCANTE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamEntity = { entity: value, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamEntity = { entity: value, ...MSG_PARAMS.CARDINALIRY.SINGULAR, ...MSG_PARAMS.GENDER.FEMALE });
 
     this.translate.get(
       PROYECTO_ENTIDAD_CONVOCANTE_PLAN_KEY

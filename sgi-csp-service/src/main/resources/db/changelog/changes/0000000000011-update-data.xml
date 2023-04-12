@@ -1,5 +1,7 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                                                                                                                                                                                                                                             http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                                                                                                                                                                                                                                                             http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
   <property name="schemaPrefix" value="" />
 
   <changeSet context="!test" author="master" id="0000000000011-solicitud_modalidad">
@@ -43,6 +45,24 @@
         ${schemaPrefix}proyecto_entidad_convocante.programa_id IS NULL
         AND ${schemaPrefix}proyecto_entidad_convocante.programa_convocatoria_id IS NOT NULL
     </sql>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000011-estado_proyecto_periodo_justificacion">
+    <sql>
+      UPDATE ${schemaPrefix}estado_proyecto_periodo_justificacion SET proyecto_periodo_justificacion_id=(
+        SELECT
+          pj.id
+        FROM ${schemaPrefix}proyecto_periodo_justificacion pj 
+        WHERE 
+          pj.estado = ${schemaPrefix}estado_proyecto_periodo_justificacion.id
+      )
+    </sql>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000011-estado_proyecto_periodo_justificacion-clean">
+    <delete tableName="estado_proyecto_periodo_justificacion">
+      <where>proyecto_periodo_justificacion_id is null</where>
+    </delete>
   </changeSet>
 
 </databaseChangeLog>

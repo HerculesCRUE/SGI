@@ -1,0 +1,128 @@
+[
+  {
+    "key": "ap2_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "2.1 Personal que llevará a cabo las tareas con animales"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>A continuación se muestran todas las personas integrantes del equipo investigador. Añadir en este apartado cualquier otra persona que colabore en el proyecto realizando tareas relacionadas con los animales de experimentación.<br><br>Especificar por cada persona<br><ul><li>Datos indentificativos (nombre, E-mail, vinculacion y nivel académico)</li><li>Tareas concretas que realizará de acuerdo o lo descrito en el apartado '3.3 Diseño metodológico' (diseño del proyecto y metodología, realización de cada intervención y/o eutanasia, aplicación del protocolo de supervisión, etc..)</li></ul></p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>La normativa respecto a la experimentación animal está en continua revisión. Actualmente la capacitación necesaria para la experimentación animal se especifica en la orden ministerial Orden <a href='https://www.boe.es/diario_boe/txt.php?id=BOE-A-2015-3564' target='_blank'>ECC/566/2015</a>. Ya no se habla de categorías A, B, C y D sino de 'funciones'. De forma simplificada la equivalencia entre ambas es la siguiente:<br>Se puede encontrar información sobre cursos de capacitación autorizados en las páginas de la <a href='https://secal.es' target='_blank'>SECAL</a> y <a href='https://www.animalaria.org' target='_blank'>ANIMALARIA</a>.</div><br><ul><li>Categoría A: Función a y b</li><li>Categoría B: Función b y c</li><li>Categoría C: Función c y d</li><li>Categoría D1: Función e</li><li>Categoría D2: Función f y b</li></ul></p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: recuerde que hay que aportar copia de todas las acreditaciones del equipo investigador en el apartado '5.1. Acreditaciones' para que queden archivadas junto con la memoria del proyecto.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota:  En cada solicitud sólo debe haber una persona con Función D, que además será la persona que solicita la evaluación.</p><p>El resto de los integrantes del equipo, tendrán la función B o C en función de que realicen la eutanasia (B) o las intervenciones (C), y habrá tantos como personal con acreditación. Aquellos que todavía no han realizado el TBS trabajo bajo supervisión (requerido para la obtención de la acreditación) no se pueden incluir como integrantes del equipo en esa solicitud, hasta que hayan finalizado su TBS y hayan obtenido la capacitación.</p><p>Quienes posean las acreditaciones antiguas de categoría B y C, deben solicitar la acreditación para las nuevas funciones al mismo organismo acreditador.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Esta sección se cumplimenta automáticamente a partir de los datos introducidos en el apartado <b>Asignación de tareas</b> de la <b>Solicitud de Evaluación</b>. Acceda a este punto del menú para realizar las modificaciones necesarias."
+      },
+      {
+        "type": "table-crud",
+        "key": "equipoInvestigador",
+        "templateOptions": {
+          "entity": "equipo investigador",
+          "gender": "male",
+          "disabled": true
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Equipo investigador"
+          },
+          "fieldGroup": [
+            {
+              "key": "nombre",
+              "type": "input",
+              "templateOptions": {
+                "label": "Nombre",
+                "order": 10,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.nombre"
+              }
+            },
+            {
+              "key": "email",
+              "type": "input",
+              "templateOptions": {
+                "label": "E-mail",
+                "order": 20,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.emails?.find((e)=>e.principal)?.email"
+              }
+            },
+            {
+              "key": "vinculacion",
+              "type": "input",
+              "templateOptions": {
+                "label": "Vinculación",
+                "order": 30,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.vinculacion?.categoriaProfesional?.nombre"
+              }
+            },
+            {
+              "key": "nivelAcademico",
+              "type": "input",
+              "templateOptions": {
+                "label": "Nivel académico",
+                "order": 40,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona.datosAcademicos?.nivelAcademico?.nombre"
+              }
+            },
+            {
+              "key": "tarea",
+              "type": "input",
+              "templateOptions": {
+                "label": "Tarea",
+                "order": 50,
+                "expressionModelValue": "formState.tareas[$1].tipoTarea?.nombre"
+              }
+            },
+            {
+              "key": "experiencia",
+              "type": "input",
+              "templateOptions": {
+                "label": "Formación específica o  experiencia",
+                "order": 60,
+                "expressionModelValue": "formState.tareas[$1].formacionEspecifica?.nombre"
+              }
+            },
+            {
+              "key": "organismo",
+              "type": "input",
+              "templateOptions": {
+                "label": "Organismo acreditador",
+                "order": 70,
+                "expressionModelValue": "formState.tareas[$1].organismo"
+              }
+            },
+            {
+              "key": "anio",
+              "type": "input",
+              "templateOptions": {
+                "label": "Año",
+                "order": 80,
+                "expressionModelValue": "formState.tareas[$1].anio"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

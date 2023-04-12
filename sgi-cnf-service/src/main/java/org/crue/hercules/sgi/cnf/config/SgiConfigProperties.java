@@ -16,4 +16,9 @@ public class SgiConfigProperties {
    * TimeZone.
    */
   private TimeZone timeZone;
+
+  /**
+   * Cache max age for resources in seconds
+   */
+  private Long resourcesCacheMaxAge;
 }

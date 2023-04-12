@@ -504,6 +504,63 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
     return queryResponsable;
   }
 
+  @Override
+  public Page<Memoria> findAllMemoriasPeticionEvaluacionModificables(Long idComite, Long idPeticionEvaluacion,
+      Pageable pageable) {
+    log.debug(
+        "findAllMemoriasPeticionEvaluacionModificables(Long idComite, Long idPeticionEvaluacion, Pageable pageable) - start");
+
+    // Crete query
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Memoria> cq = cb.createQuery(Memoria.class);
+
+    CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+    Root<Memoria> rootCount = countQuery.from(Memoria.class);
+    countQuery.select(cb.count(rootCount));
+
+    // Define FROM clause
+    Root<Memoria> root = cq.from(Memoria.class);
+
+    // Memorias activos
+    Predicate memoriasActivas = cb.and(cb.equal(root.get(Memoria_.activo), Boolean.TRUE),
+        cb.equal(root.get(Memoria_.comite).get(Comite_.id), idComite),
+        cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id), idPeticionEvaluacion),
+        cb.greaterThanOrEqualTo(root.get(Memoria_.estadoActual).get(TipoEstadoMemoria_.id),
+            Constantes.TIPO_ESTADO_MEMORIA_FIN_EVALUACION));
+
+    Predicate memoriasActivasCount = cb.and(cb.equal(rootCount.get(Memoria_.activo), Boolean.TRUE),
+        cb.equal(rootCount.get(Memoria_.comite).get(Comite_.id), idComite),
+        cb.equal(rootCount.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id), idPeticionEvaluacion),
+        cb.greaterThanOrEqualTo(rootCount.get(Memoria_.estadoActual).get(TipoEstadoMemoria_.id),
+            Constantes.TIPO_ESTADO_MEMORIA_FIN_EVALUACION));
+
+    // Join all restrictions
+    cq.where(memoriasActivas);
+
+    countQuery.where(memoriasActivasCount);
+
+    List<Order> orders = QueryUtils.toOrders(pageable.getSort(), root, cb);
+    cq.orderBy(orders);
+
+    // Número de registros totales para la paginación
+    Long count = entityManager.createQuery(countQuery).getSingleResult();
+
+    TypedQuery<Memoria> typedQuery = entityManager.createQuery(cq);
+    if (pageable.isPaged()) {
+      typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+      typedQuery.setMaxResults(pageable.getPageSize());
+    }
+
+    List<Memoria> result = typedQuery.getResultList();
+
+    Page<Memoria> returnValue = new PageImpl<>(result, pageable, count);
+
+    log.debug(
+        "findAllMemoriasPeticionEvaluacionModificables(Long idComite, Long idPeticionEvaluacion, Pageable pageable) - end");
+
+    return returnValue;
+  }
+
   @Getter
   @Setter
   @AllArgsConstructor

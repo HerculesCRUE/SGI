@@ -71,7 +71,7 @@ public class EvaluadorControllerTest extends BaseControllerTest {
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String EVALUADOR_CONTROLLER_BASE_PATH = "/evaluadores";
   private static final String PATH_PARAMETER_EVALUACIONES = "/evaluaciones";
-  private static final String PATH_PARAMETER_SINCONFLICTOINTERES = "/comite/{idComite}/sinconflictointereses/{idMemoria}";
+  private static final String PATH_PARAMETER_SINCONFLICTOINTERES = "/comite/{idComite}/sinconflictointereses/{idMemoria}/fecha/{fechaEvaluacion}";
   private static final String PATH_PARAMETER_CONFLICTOS_INTERES = "/{id}/conflictos";
 
   @Test
@@ -410,12 +410,13 @@ public class EvaluadorControllerTest extends BaseControllerTest {
     }
 
     BDDMockito.given(evaluadorService.findAllByComiteSinconflictoInteresesMemoria(ArgumentMatchers.anyLong(),
-        ArgumentMatchers.anyLong())).willReturn(evaluadores);
+        ArgumentMatchers.anyLong(), ArgumentMatchers.any(Instant.class))).willReturn(evaluadores);
 
     // when: find unlimited
     mockMvc
         .perform(MockMvcRequestBuilders
-            .get(EVALUADOR_CONTROLLER_BASE_PATH + PATH_PARAMETER_SINCONFLICTOINTERES, idComite, idMemoria)
+            .get(EVALUADOR_CONTROLLER_BASE_PATH + PATH_PARAMETER_SINCONFLICTOINTERES, idComite, idMemoria,
+                Instant.now())
             .with(SecurityMockMvcRequestPostProcessors.csrf()).accept(MediaType.APPLICATION_JSON))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Get a page one hundred Evaluador
@@ -435,12 +436,13 @@ public class EvaluadorControllerTest extends BaseControllerTest {
     }
 
     BDDMockito.given(evaluadorService.findAllByComiteSinconflictoInteresesMemoria(ArgumentMatchers.anyLong(),
-        ArgumentMatchers.anyLong())).willReturn(evaluadores);
+        ArgumentMatchers.anyLong(), ArgumentMatchers.any(Instant.class))).willReturn(evaluadores);
 
     // when: get page=3 with pagesize=10
     MvcResult requestResult = mockMvc
         .perform(MockMvcRequestBuilders
-            .get(EVALUADOR_CONTROLLER_BASE_PATH + PATH_PARAMETER_SINCONFLICTOINTERES, idComite, idMemoria)
+            .get(EVALUADOR_CONTROLLER_BASE_PATH + PATH_PARAMETER_SINCONFLICTOINTERES, idComite, idMemoria,
+                Instant.now())
             .with(SecurityMockMvcRequestPostProcessors.csrf()).accept(MediaType.APPLICATION_JSON))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: the asked Evaluadors are returned with the right page
@@ -470,11 +472,12 @@ public class EvaluadorControllerTest extends BaseControllerTest {
     List<Evaluador> evaluadores = new ArrayList<>();
 
     BDDMockito.given(evaluadorService.findAllByComiteSinconflictoInteresesMemoria(ArgumentMatchers.anyLong(),
-        ArgumentMatchers.anyLong())).willReturn(evaluadores);
+        ArgumentMatchers.anyLong(), ArgumentMatchers.any(Instant.class))).willReturn(evaluadores);
     // when: find unlimited
     mockMvc
         .perform(MockMvcRequestBuilders
-            .get(EVALUADOR_CONTROLLER_BASE_PATH + PATH_PARAMETER_SINCONFLICTOINTERES, idComite, idMemoria)
+            .get(EVALUADOR_CONTROLLER_BASE_PATH + PATH_PARAMETER_SINCONFLICTOINTERES, idComite, idMemoria,
+                Instant.now())
             .with(SecurityMockMvcRequestPostProcessors.csrf()).accept(MediaType.APPLICATION_JSON))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Devuelve error No Content

@@ -12,4 +12,7 @@ import lombok.experimental.SuperBuilder;
 public class ActaComentariosMemoriaReportOutput extends BloquesReportOutput {
   private String numReferenciaMemoria;
   private Integer numComentarios;
+  private String tituloProyecto;
+  private String responsable;
+  private String dictamen;
 }

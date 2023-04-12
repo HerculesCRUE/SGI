@@ -15,6 +15,7 @@ import org.crue.hercules.sgi.rep.dto.eti.ActaComentariosReportOutput;
 import org.crue.hercules.sgi.rep.dto.eti.ApartadoOutput;
 import org.crue.hercules.sgi.rep.dto.eti.BloqueOutput;
 import org.crue.hercules.sgi.rep.dto.eti.ElementOutput;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -27,7 +28,7 @@ public class BaseActaComentariosReportService extends BaseApartadosRespuestasRep
 
   // @formatter:off
   protected static final String[] COLUMNS_TABLE_MODEL_ACTA = new String[] { 
-    "num_referencia_memoria", "num_comentarios",
+    "num_referencia_memoria", "num_comentarios", "titulo_proyecto", "responsable", "dictamen",
     "bloque_id", "bloque_nombre", "bloque_orden", 
     "apartado_id", "apartado_nombre", "apartado_orden", 
     "apartado_hijo_padre_id", "apartado_hijo_id", "apartado_hijo_nombre", "apartado_hijo_orden",
@@ -37,21 +38,12 @@ public class BaseActaComentariosReportService extends BaseApartadosRespuestasRep
     COMPONENT_ID, COMPONENT_TYPE, "content", "content_orden" };
   // @formatter:on
 
-  private final BloqueService bloqueService;
-  private final ApartadoService apartadoService;
-  private final SgiFormlyService sgiFormlyService;
-  private final RespuestaService respuestaService;
-
   protected BaseActaComentariosReportService(SgiConfigProperties sgiConfigProperties,
+      SgiApiConfService sgiApiConfService,
       BloqueService bloqueService, ApartadoService apartadoService, SgiFormlyService sgiFormlyService,
       RespuestaService respuestaService) {
 
-    super(sgiConfigProperties, bloqueService, apartadoService, sgiFormlyService, respuestaService);
-
-    this.bloqueService = bloqueService;
-    this.apartadoService = apartadoService;
-    this.sgiFormlyService = sgiFormlyService;
-    this.respuestaService = respuestaService;
+    super(sgiConfigProperties, sgiApiConfService, bloqueService, apartadoService, sgiFormlyService, respuestaService);
   }
 
   protected Map<String, TableModel> generateTableModelFromReportOutput(ActaComentariosReportOutput actaComentarios) {
@@ -68,10 +60,10 @@ public class BaseActaComentariosReportService extends BaseApartadosRespuestasRep
           apartados.clear();
           apartados.add(apartado);
           generateElementTableModelApartado(hmTableModel, tableModelGeneral, bloque, apartados,
-              comentariosMemoria.getNumReferenciaMemoria(), comentariosMemoria.getNumComentarios());
+              comentariosMemoria);
 
           parseApartadoHijoElementTableModel(hmTableModel, tableModelGeneral, bloque, apartados,
-              comentariosMemoria.getNumReferenciaMemoria(), comentariosMemoria.getNumComentarios());
+              comentariosMemoria);
         }
       }
     }
@@ -83,7 +75,7 @@ public class BaseActaComentariosReportService extends BaseApartadosRespuestasRep
 
   private void parseApartadoHijoElementTableModel(Map<String, TableModel> hmTableModel,
       final DefaultTableModel tableModelGeneral, BloqueOutput bloque, List<ApartadoOutput> jerarquiaApartados,
-      String numReferenciaMemoria, Integer numComentarios) {
+      ActaComentariosMemoriaReportOutput comentariosMemoria) {
     ApartadoOutput apartado = jerarquiaApartados.get(jerarquiaApartados.size() - 1);
     if (CollectionUtils.isNotEmpty(apartado.getApartadosHijos())) {
       for (ApartadoOutput apartadoHijo : apartado.getApartadosHijos()) {
@@ -91,34 +83,33 @@ public class BaseActaComentariosReportService extends BaseApartadosRespuestasRep
         jerarquiaApartadosHijos.addAll(jerarquiaApartados);
         jerarquiaApartadosHijos.add(apartadoHijo);
         generateElementTableModelApartado(hmTableModel, tableModelGeneral, bloque, jerarquiaApartadosHijos,
-            numReferenciaMemoria, numComentarios);
+            comentariosMemoria);
         parseApartadoHijoElementTableModel(hmTableModel, tableModelGeneral, bloque, jerarquiaApartadosHijos,
-            numReferenciaMemoria, numComentarios);
+            comentariosMemoria);
       }
     }
   }
 
   private void generateElementTableModelApartado(Map<String, TableModel> hmTableModel,
       final DefaultTableModel tableModelGeneral, BloqueOutput bloque, List<ApartadoOutput> jerarquiaApartados,
-      String numReferenciaMemoria, Integer numComentarios) {
+      ActaComentariosMemoriaReportOutput comentariosMemoria) {
     ApartadoOutput apartado = jerarquiaApartados.get(jerarquiaApartados.size() - 1);
     if (CollectionUtils.isNotEmpty(apartado.getElementos())) {
       for (int i = 0; i < apartado.getElementos().size(); i++) {
         ElementOutput elemento = apartado.getElementos().get(i);
 
         parseElementTypeFromTableModel(hmTableModel, elemento);
-        tableModelGeneral.addRow(generateElementRow(bloque, jerarquiaApartados, elemento, i, numReferenciaMemoria,
-            numComentarios));
+        tableModelGeneral.addRow(generateElementRow(bloque, jerarquiaApartados, elemento, i, comentariosMemoria));
       }
     } else {
       ElementOutput elementoVacio = ElementOutput.builder().content("").tipo(EMPTY_TYPE).nombre("").build();
-      tableModelGeneral.addRow(generateElementRow(bloque, jerarquiaApartados, elementoVacio, 0, numReferenciaMemoria,
-          numComentarios));
+      tableModelGeneral.addRow(generateElementRow(bloque, jerarquiaApartados,
+          elementoVacio, 0, comentariosMemoria));
     }
   }
 
   protected Object[] generateElementRow(BloqueOutput bloque, List<ApartadoOutput> jerarquiaApartados,
-      ElementOutput elemento, int rowIndex, String numReferenciaMemoria, Integer numComentarios) {
+      ElementOutput elemento, int rowIndex, ActaComentariosMemoriaReportOutput comentariosMemoria) {
     int i = 0;
     ApartadoOutput apartado = getApartadoOutputFromElementRow(i++, jerarquiaApartados);
     ApartadoOutput apartadoHijo = getApartadoOutputFromElementRow(i++, jerarquiaApartados);
@@ -128,7 +119,7 @@ public class BaseActaComentariosReportService extends BaseApartadosRespuestasRep
 
     // @formatter:off
     return new Object[] { 
-      numReferenciaMemoria, numComentarios,
+      comentariosMemoria.getNumReferenciaMemoria(), comentariosMemoria.getNumComentarios(), comentariosMemoria.getTituloProyecto(), comentariosMemoria.getResponsable(), comentariosMemoria.getDictamen(),
       bloque.getId(), bloque.getNombre(), bloque.getOrden(), 
       apartado.getId(), apartado.getTitulo(), apartado.getOrden(), 
       apartado.getId(), apartadoHijo.getId(), apartadoHijo.getTitulo(), apartadoHijo.getOrden(),

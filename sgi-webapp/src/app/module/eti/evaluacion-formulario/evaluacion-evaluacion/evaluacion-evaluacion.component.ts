@@ -2,8 +2,10 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IDictamen } from '@core/models/eti/dictamen';
+import { DICTAMEN, IDictamen } from '@core/models/eti/dictamen';
 import { IMemoria } from '@core/models/eti/memoria';
+import { TIPO_EVALUACION } from '@core/models/eti/tipo-evaluacion';
+import { TIPO_MEMORIA } from '@core/models/eti/tipo-memoria';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
@@ -129,6 +131,36 @@ export class EvaluacionEvaluacionComponent extends FormFragmentComponent<IMemori
     ).subscribe(response => {
       triggerDownloadToUser(response, documento.nombre);
     });
+  }
+
+  enableBtnVisualizarInforme(): boolean {
+    const hasDictamenAndNotEdited = !!this.formPart.evaluacion?.dictamen?.id
+      && (this.formGroup.controls.dictamen.value?.id === this.formPart.evaluacion.dictamen.id);
+
+    if (!hasDictamenAndNotEdited) {
+      return false;
+    }
+
+    if (this.formPart.evaluacion?.tipoEvaluacion?.id === TIPO_EVALUACION.MEMORIA) {
+      const tipoMemoriaWithInforme = [
+        TIPO_MEMORIA.NUEVA,
+        TIPO_MEMORIA.RATIFICACION,
+        TIPO_MEMORIA.MODIFICACION,
+      ].includes(this.formPart.evaluacion?.memoria?.tipoMemoria?.id);
+      const tipoDictamenConInforme = [
+        DICTAMEN.FAVORABLE,
+        DICTAMEN.PDTE_CORRECCIONES,
+        DICTAMEN.FAVORABLE_PDTE_REV_MINIMA
+      ].includes(this.formGroup.controls.dictamen.value?.id);
+      return hasDictamenAndNotEdited && tipoMemoriaWithInforme && tipoDictamenConInforme;
+    } else if (this.formPart.evaluacion?.tipoEvaluacion?.id === TIPO_EVALUACION.RETROSPECTIVA) {
+      const tipoDictamenWithInforme = [
+        DICTAMEN.FAVORABLE_RETROSPECTIVA
+      ].includes(this.formGroup.controls.dictamen.value?.id);
+      return hasDictamenAndNotEdited && tipoDictamenWithInforme;
+    }
+
+    return false;
   }
 
   ngOnDestroy(): void {

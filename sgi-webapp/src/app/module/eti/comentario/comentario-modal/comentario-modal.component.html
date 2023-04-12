@@ -17,7 +17,8 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'eti.comentario.bloque' | translate}}</mat-label>
-        <sgi-select-entity formControlName="bloque" [options]="apartado$ | async" required>
+        <sgi-select-entity formControlName="bloque" [options]="bloques$ | async" [displayWith]="displayerBloque"
+          required>
         </sgi-select-entity>
         <mat-error *ngIf="formGroup.controls.bloque.errors?.required">
           {{'error.required.entity' | translate:msgParamBloqueEntity}}
@@ -37,7 +38,7 @@
                 <button mat-icon-button disabled></button>
                 <mat-checkbox class="checkbox" color="primary" [checked]="node === checkedNode"
                   (change)="onCheckNode(node, $event)">
-                  {{node.apartado.value.nombre}}
+                  {{node.apartado.value | bloqueApartado}}
                 </mat-checkbox>
               </li>
             </mat-tree-node>
@@ -51,7 +52,7 @@
                   </button>
                   <mat-checkbox class="checkbox" color="primary" [checked]="node === checkedNode"
                     (change)="onCheckNode(node, $event)">
-                    {{node.apartado.value.nombre}}
+                    {{node.apartado.value | bloqueApartado}}
                   </mat-checkbox>
                 </div>
                 <ul [class.arbol-invisible]="!treeControl.isExpanded(node)">

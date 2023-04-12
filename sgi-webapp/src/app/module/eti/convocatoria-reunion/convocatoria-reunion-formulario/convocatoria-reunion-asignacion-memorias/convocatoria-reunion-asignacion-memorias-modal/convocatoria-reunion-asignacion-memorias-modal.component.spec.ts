@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
+import { IConvocatoriaReunion } from '@core/models/eti/convocatoria-reunion';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { IMemoria } from '@core/models/eti/memoria';
 import TestUtils from '@core/utils/test-utils';
@@ -28,7 +29,9 @@ describe('ConvocatoriaReunionAsignacionMemoriasModalComponent', () => {
       idTipoConvocatoria: 0,
       fechaLimite: DateTime.now()
     },
-    evaluacion: {} as IEvaluacion
+    evaluacion: {
+      convocatoriaReunion: { fechaEvaluacion: DateTime.now() } as IConvocatoriaReunion
+    } as IEvaluacion
   } as ConvocatoriaReunionAsignacionMemoriasModalComponentData;
 
   beforeEach(waitForAsync(() => {

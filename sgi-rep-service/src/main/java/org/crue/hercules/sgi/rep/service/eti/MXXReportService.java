@@ -14,9 +14,6 @@ import java.util.stream.Stream;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
@@ -32,9 +29,12 @@ import org.crue.hercules.sgi.rep.dto.eti.MXXReportOutput;
 import org.crue.hercules.sgi.rep.dto.eti.MemoriaDto;
 import org.crue.hercules.sgi.rep.dto.eti.MemoriaPeticionEvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.PeticionEvaluacionDto;
-import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
+import org.crue.hercules.sgi.rep.dto.eti.TipoActividadDto;
+import org.crue.hercules.sgi.rep.dto.eti.TipoInvestigacionTuteladaDto;
 import org.crue.hercules.sgi.rep.dto.sgp.EmailDto;
+import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
 import org.pentaho.reporting.engine.classic.core.SubReport;
@@ -45,6 +45,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,16 +63,24 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
   private final PeticionEvaluacionService peticionEvaluacionService;
   private final SgiApiSgpService personaService;
 
-  private static final String NO_REF_CEID = "NoRefCEID: ";
+  private static final String NO_REF_CEID = "Número referencia memoria: ";
   private static final String DATOS_SOLICITANTE_TYPE = "datosSolicitanteType";
   private static final String TITULO = "titulo";
+  private static final String RESPONSE_SI = "Sí";
+  private static final String RESPONSE_NO = "No";
+
+  public static final Long TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_ANUAL = 11L;
+  public static final Long TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_FINAL = 16L;
+  public static final Long TIPO_MEMORIA_MODIFICACION = 2L;
+  public static final Long TIPO_MEMORIA_RATIFICACION = 3L;
 
   @Autowired
-  public MXXReportService(SgiConfigProperties sgiConfigProperties, MemoriaService memoriaService,
+  public MXXReportService(SgiConfigProperties sgiConfigProperties, SgiApiConfService sgiApiConfService,
+      MemoriaService memoriaService,
       PeticionEvaluacionService peticionEvaluacionService, SgiApiSgpService personaService, BloqueService bloqueService,
       ApartadoService apartadoService, SgiFormlyService sgiFormlyService, RespuestaService respuestaService) {
 
-    super(sgiConfigProperties, bloqueService, apartadoService, sgiFormlyService, respuestaService);
+    super(sgiConfigProperties, sgiApiConfService, bloqueService, apartadoService, sgiFormlyService, respuestaService);
     this.memoriaService = memoriaService;
     this.peticionEvaluacionService = peticionEvaluacionService;
     this.personaService = personaService;
@@ -167,6 +178,41 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
       elementsRow.add(memoria.getComite().getFormulario().getNombre());
       columnsDataTitulo.add("comite");
       elementsRow.add(memoria.getComite().getComite());
+      columnsDataTitulo.add("retrospectiva");
+      if (ObjectUtils.isNotEmpty(memoria.getEstadoActual())) {
+        elementsRow.add(!memoria.getEstadoActual().getId().equals(TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_ANUAL)
+            && !memoria.getEstadoActual().getId().equals(TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_FINAL)
+            && ObjectUtils.isNotEmpty(memoria.getRetrospectiva())
+            && memoria.getRetrospectiva().getEstadoRetrospectiva().getId() > 1);
+      } else {
+        elementsRow.add(false);
+      }
+      columnsDataTitulo.add("seguimientoAnual");
+      if (ObjectUtils.isNotEmpty(memoria.getEstadoActual())) {
+        elementsRow.add(memoria.getEstadoActual().getId().equals(TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_ANUAL));
+      } else {
+        elementsRow.add(false);
+      }
+      columnsDataTitulo.add("seguimientoFinal");
+      if (ObjectUtils.isNotEmpty(memoria.getEstadoActual())) {
+        elementsRow.add(memoria.getEstadoActual().getId().equals(TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_FINAL));
+      } else {
+        elementsRow.add(false);
+      }
+
+      columnsDataTitulo.add("tipoMemoriaModificacion");
+      if (ObjectUtils.isNotEmpty(memoria.getTipoMemoria())) {
+        elementsRow.add(memoria.getTipoMemoria().getId().equals(TIPO_MEMORIA_MODIFICACION));
+      } else {
+        elementsRow.add(false);
+      }
+
+      columnsDataTitulo.add("tipoMemoriaRatificacion");
+      if (ObjectUtils.isNotEmpty(memoria.getTipoMemoria())) {
+        elementsRow.add(memoria.getTipoMemoria().getId().equals(TIPO_MEMORIA_RATIFICACION));
+      } else {
+        elementsRow.add(false);
+      }
 
       rowsDataTitulo.add(elementsRow);
 
@@ -279,6 +325,7 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
         .idFormulario(idFormulario)
         .mostrarRespuestas(true)
         .mostrarContenidoApartado(true)
+        .idMemoriaOriginal(ObjectUtils.isNotEmpty(memoria.getMemoriaOriginal()) ? memoria.getMemoriaOriginal().getId() : null)
         .build();
       // @formatter:on
 
@@ -321,8 +368,10 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
     // @formatter:on
 
     getApartadoDatosSolicitante(bloqueOutput, peticionEvaluacion.getPersonaRef());
+    getApartadoCodigoSolicitudEvaluacion(bloqueOutput, peticionEvaluacion.getCodigo());
     getApartadoTituloProyecto(bloqueOutput, peticionEvaluacion.getTitulo());
-    getApartadoTipoActividad(bloqueOutput, peticionEvaluacion.getTipoActividad().getNombre());
+    getApartadoTipoActividad(bloqueOutput, peticionEvaluacion.getTipoActividad(),
+        peticionEvaluacion.getTipoInvestigacionTutelada());
     getApartadoFinanciacion(bloqueOutput, peticionEvaluacion);
     getApartadoFechasClave(bloqueOutput, peticionEvaluacion);
     getApartadoResumen(bloqueOutput, peticionEvaluacion.getResumen());
@@ -349,6 +398,20 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
     bloqueOutput.getApartados().add(apartadoOutput);
   }
 
+  private void getApartadoCodigoSolicitudEvaluacion(BloqueOutput bloqueOutput, String codigo) {
+
+    int apartadoIndex = bloqueOutput.getApartados().size() + 1;
+    String apartadoTitle = "mxx.codigoSolicitudEvaluacion";
+    ApartadoOutput apartadoOutput = generateApartadoOutputBasic(apartadoIndex, apartadoTitle);
+
+    String question = "";
+    String answer = null != codigo ? codigo : "";
+    ElementOutput tituloElementOutput = generateTemplateElementOutput(question, answer);
+
+    apartadoOutput.getElementos().add(tituloElementOutput);
+    bloqueOutput.getApartados().add(apartadoOutput);
+  }
+
   private void getApartadoTituloProyecto(BloqueOutput bloqueOutput, String titulo) {
 
     int apartadoIndex = bloqueOutput.getApartados().size() + 1;
@@ -363,13 +426,18 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
     bloqueOutput.getApartados().add(apartadoOutput);
   }
 
-  private void getApartadoTipoActividad(BloqueOutput bloqueOutput, String tipoActividad) {
+  private void getApartadoTipoActividad(BloqueOutput bloqueOutput, TipoActividadDto tipoActividad,
+      TipoInvestigacionTuteladaDto tipoInvestigacionTutelada) {
     int apartadoIndex = bloqueOutput.getApartados().size() + 1;
     String apartadoTitle = "mxx.tipoActividad";
     ApartadoOutput apartadoOutput = generateApartadoOutputBasic(apartadoIndex, apartadoTitle);
 
     String question = "";
-    String answer = null != tipoActividad ? tipoActividad : "";
+    String answerTipoActivadad = null != tipoActividad ? tipoActividad.getNombre() : "";
+    String answerTipoInvestigacionTutelada = null != tipoInvestigacionTutelada ? tipoInvestigacionTutelada.getNombre()
+        : "";
+    String answer = answerTipoActivadad
+        + (answerTipoInvestigacionTutelada.isEmpty() ? "" : " - " + answerTipoInvestigacionTutelada);
     ElementOutput tipoActividadElementOutput = generateTemplateElementOutput(question, answer);
 
     apartadoOutput.getElementos().add(tipoActividadElementOutput);
@@ -383,23 +451,26 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
     ApartadoOutput apartadoOutput = generateApartadoOutputBasic(apartadoIndex, apartadoTitle);
 
     String question = "¿Se dispone de financiación para la realización del proyecto?: ";
-    String disponeFinanciacion = Boolean.TRUE.equals(peticionEvaluacion.getExisteFinanciacion()) ? "Sí" : "No";
+    String disponeFinanciacion = Boolean.TRUE.equals(peticionEvaluacion.getExisteFinanciacion()) ? RESPONSE_SI
+        : RESPONSE_NO;
     ElementOutput disponeFinanciacionElementOutput = generateTemplateElementOutput(question, disponeFinanciacion);
     apartadoOutput.getElementos().add(disponeFinanciacionElementOutput);
 
-    question = "Indicar la fuente de financiación: ";
-    String fuenteFinanciacion = null != peticionEvaluacion.getFuenteFinanciacion()
-        ? peticionEvaluacion.getFuenteFinanciacion()
-        : "";
-    ElementOutput fuenteFinanciacionElementOutput = generateTemplateElementOutput(question, fuenteFinanciacion);
-    apartadoOutput.getElementos().add(fuenteFinanciacionElementOutput);
+    if (Boolean.TRUE.equals(peticionEvaluacion.getExisteFinanciacion())) {
+      question = "Indicar la fuente de financiación: ";
+      String fuenteFinanciacion = null != peticionEvaluacion.getFuenteFinanciacion()
+          ? peticionEvaluacion.getFuenteFinanciacion()
+          : "";
+      ElementOutput fuenteFinanciacionElementOutput = generateTemplateElementOutput(question, fuenteFinanciacion);
+      apartadoOutput.getElementos().add(fuenteFinanciacionElementOutput);
 
-    question = "Estado de la financiación: ";
-    String estadoFinanciacion = null != peticionEvaluacion.getEstadoFinanciacion()
-        ? EstadoFinanciacionI18n.getI18nMessageFromValorSocialEnum(peticionEvaluacion.getEstadoFinanciacion().name())
-        : "";
-    ElementOutput estadoElementOutput = generateTemplateElementOutput(question, estadoFinanciacion);
-    apartadoOutput.getElementos().add(estadoElementOutput);
+      question = "Estado de la financiación: ";
+      String estadoFinanciacion = null != peticionEvaluacion.getEstadoFinanciacion()
+          ? EstadoFinanciacionI18n.getI18nMessageFromValorSocialEnum(peticionEvaluacion.getEstadoFinanciacion().name())
+          : "";
+      ElementOutput estadoElementOutput = generateTemplateElementOutput(question, estadoFinanciacion);
+      apartadoOutput.getElementos().add(estadoElementOutput);
+    }
 
     bloqueOutput.getApartados().add(apartadoOutput);
   }
@@ -453,7 +524,7 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
       rowElementsTableCrud.add(elementOutputTableCrud);
 
       elementOutputTableCrud = ElementOutput.builder()
-        .nombre("NoRefCEID")
+        .nombre("Referencia memoria")
         .content(memoriaPeticionEvaluacion.getNumReferencia())
         .build();
       rowElementsTableCrud.add(elementOutputTableCrud);
@@ -569,7 +640,7 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
         area = ObjectUtils.defaultIfNull(persona.getVinculacion().getAreaConocimiento().getNombre(), "");
       }
 
-      elementsRow.add(persona.getNombre());
+      elementsRow.add(persona.getNombre() + " " + persona.getApellidos());
       elementsRow.add(telefono);
       elementsRow.add(email);
       elementsRow.add(departamento);

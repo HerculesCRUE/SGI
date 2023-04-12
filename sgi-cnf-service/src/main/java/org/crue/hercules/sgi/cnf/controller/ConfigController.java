@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,6 +47,7 @@ public class ConfigController {
   public static final String PATH_NAME = PATH_DELIMITER + "{name}";
   /** The path to request the Time Zone */
   public static final String PATH_TIMEZONE = PATH_DELIMITER + "time-zone";
+  public static final String PATH_RESTORE = PATH_NAME + PATH_DELIMITER + "restore";
 
   private final ConfigConverter converter;
   private final SgiConfigProperties sgiConfigProperties;
@@ -126,6 +128,7 @@ public class ConfigController {
    * @return the newly created {@link Config}
    */
   @PostMapping
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-cnf')) or hasAuthority('ADM-CNF-E')")
   public ResponseEntity<ConfigOutput> create(@Valid @RequestBody CreateConfigInput config) {
     log.debug("create(ChecklistInput checklist) - start");
     Config created = service.create(converter.convert(config));
@@ -141,7 +144,8 @@ public class ConfigController {
    * @param config {@link Config} data
    * @return the updated {@link Config}
    */
-  @PatchMapping(PATH_NAME)
+  @PutMapping(PATH_NAME)
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-cnf')) or hasAuthority('ADM-CNF-E')")
   public ResponseEntity<ConfigOutput> update(@PathVariable String name, @Valid @RequestBody UpdateConfigInput config) {
     log.debug("update(Long id, String respuesta) - start");
     Config updated = service.update(converter.convert(name, config));
@@ -151,11 +155,46 @@ public class ConfigController {
   }
 
   /**
+   * Update existing {@link Config} value.
+   * 
+   * @param name  {@link Config} name
+   * @param value {@link Config} value
+   * @return the updated {@link Config}
+   */
+  @PatchMapping(PATH_NAME)
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-cnf')) or hasAuthority('ADM-CNF-E')")
+  public ResponseEntity<ConfigOutput> updateValue(@PathVariable String name,
+      @Valid @RequestBody(required = false) String value) {
+    log.debug("updateValue(String name, String value) - start");
+    Config updated = service.updateValue(name, value);
+    ConfigOutput returnValue = converter.convert(updated);
+    log.debug("updateValue(String name, String value) - end");
+    return new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
+  /**
+   * Restore the default value of an existing {@link Config}
+   * 
+   * @param name {@link Config} name
+   * @return the updated {@link Config}
+   */
+  @PatchMapping(PATH_RESTORE)
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-cnf')) or hasAuthority('ADM-CNF-E')")
+  public ResponseEntity<ConfigOutput> restoreDefaultValue(@PathVariable String name) {
+    log.debug("restoreDefaultValue({}) - start", name);
+    Config restored = service.restoreDefaultValue(name);
+    ConfigOutput returnValue = converter.convert(restored);
+    log.debug("restoreDefaultValue({}) - end", name);
+    return new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
+  /**
    * Delete existing {@link Config}.
    * 
    * @param name {@link Config} name
    */
   @DeleteMapping(PATH_NAME)
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-cnf')) or hasAuthority('ADM-CNF-E')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
   public void delete(@PathVariable String name) {
     log.debug("delete(String name) - start");

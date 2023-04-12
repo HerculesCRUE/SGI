@@ -5,10 +5,10 @@
     align-items: center;
     background-color: map-get($palette-warn, 100);
     border-radius: 5px;
-    box-shadow: 0 5px 6px -6px map-get($palette-grey, 300);
-    -moz-box-shadow: 0 5px 6px -6px map-get($palette-grey, 300);
-    -webkit-box-shadow: 0 5px 6px -6px map-get($palette-grey, 300);
-    color: map-get($palette-warn, 400);
+    box-shadow: 0 5px 6px -6px map-get($sgi-custom-colors, divider);
+    -moz-box-shadow: 0 5px 6px -6px map-get($sgi-custom-colors, divider);
+    -webkit-box-shadow: 0 5px 6px -6px map-get($sgi-custom-colors, divider);
+    color: map-get($palette-warn, $warn-color);
     display: flex;
     margin: 13px 0;
     padding: 10px;

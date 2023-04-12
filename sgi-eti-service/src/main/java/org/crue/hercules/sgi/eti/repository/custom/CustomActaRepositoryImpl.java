@@ -14,6 +14,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import org.springframework.data.domain.Sort;
 import javax.persistence.criteria.Subquery;
 
 import org.crue.hercules.sgi.eti.dto.ActaWithNumEvaluaciones;
@@ -25,6 +26,7 @@ import org.crue.hercules.sgi.eti.model.ConflictoInteres;
 import org.crue.hercules.sgi.eti.model.ConflictoInteres_;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion_;
 import org.crue.hercules.sgi.eti.model.Dictamen_;
+import org.crue.hercules.sgi.eti.model.EquipoTrabajo;
 import org.crue.hercules.sgi.eti.model.EquipoTrabajo_;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluacion_;
@@ -34,8 +36,6 @@ import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Memoria_;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion_;
-import org.crue.hercules.sgi.eti.model.Tarea;
-import org.crue.hercules.sgi.eti.model.Tarea_;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion_;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion_;
 import org.springframework.data.domain.Page;
@@ -307,7 +307,8 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
         root.get(Evaluacion_.id),
         joinMemoria.get(Memoria_.numReferencia), joinPeticionEvaluacion.get(PeticionEvaluacion_.personaRef),
         root.get(Evaluacion_.dictamen).get(Dictamen_.nombre), root.get(Evaluacion_.version),
-        root.get(Evaluacion_.tipoEvaluacion).get(TipoEvaluacion_.nombre));
+        root.get(Evaluacion_.tipoEvaluacion).get(TipoEvaluacion_.nombre),
+        joinPeticionEvaluacion.get(PeticionEvaluacion_.titulo));
 
     // Where
     cq.where(
@@ -315,6 +316,9 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
             rootActa.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.id)),
         cb.equal(rootActa.get(Acta_.id), idActa), cb.isNotNull(root.get(Evaluacion_.dictamen)),
         cb.equal(root.get(Evaluacion_.esRevMinima), false));
+
+    List<Order> orders = QueryUtils.toOrders(Sort.by(Sort.Direction.ASC, Memoria_.NUM_REFERENCIA), joinMemoria, cb);
+    cq.orderBy(orders);
 
     TypedQuery<MemoriaEvaluada> typedQuery = entityManager.createQuery(cq);
 
@@ -346,18 +350,19 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
 
     Root<Evaluacion> rootEvaluacion = cq.from(Evaluacion.class);
 
-    Subquery<String> queryPersonaRefTareas = cq.subquery(String.class);
-    Root<Tarea> subqRootTareas = queryPersonaRefTareas.from(Tarea.class);
+    Subquery<String> queryPersonaRefEquipoTrabajo = cq.subquery(String.class);
+    Root<EquipoTrabajo> subqRootEquipoTrabajo = queryPersonaRefEquipoTrabajo.from(EquipoTrabajo.class);
 
-    queryPersonaRefTareas.select(subqRootTareas.get(Tarea_.equipoTrabajo).get(EquipoTrabajo_.personaRef)).where(
-        cb.equal(subqRootTareas.get(Tarea_.memoria).get(Memoria_.id),
-            rootEvaluacion.get(Evaluacion_.memoria).get(Memoria_.id)));
+    queryPersonaRefEquipoTrabajo.select(subqRootEquipoTrabajo.get(EquipoTrabajo_.personaRef)).where(
+        cb.equal(subqRootEquipoTrabajo.get(EquipoTrabajo_.peticionEvaluacion).get(PeticionEvaluacion_.id),
+            rootEvaluacion.get(Evaluacion_.memoria).get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id)));
 
     Subquery<Long> queryConflictosInteres = cq.subquery(Long.class);
     Root<ConflictoInteres> subqRootConflictosInteres = queryConflictosInteres.from(ConflictoInteres.class);
 
     queryConflictosInteres.select(subqRootConflictosInteres.get(ConflictoInteres_.evaluador).get(Evaluador_.id)).where(
-        cb.in(subqRootConflictosInteres.get(ConflictoInteres_.personaConflictoRef)).value(queryPersonaRefTareas));
+        cb.in(subqRootConflictosInteres.get(ConflictoInteres_.personaConflictoRef))
+            .value(queryPersonaRefEquipoTrabajo));
 
     Subquery<String> queryEvaluadoresComite = cq.subquery(String.class);
     Root<Evaluador> subqRootEvaluadores = queryEvaluadoresComite.from(Evaluador.class);

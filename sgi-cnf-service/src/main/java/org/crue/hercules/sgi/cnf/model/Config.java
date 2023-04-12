@@ -41,8 +41,12 @@ public class Config extends BaseEntity {
   private String description;
 
   /** Config value */
-  @Column(name = "value", nullable = false, columnDefinition = "clob")
+  @Column(name = "value", nullable = true, columnDefinition = "clob")
   private String value;
+
+  /** Config default value */
+  @Column(name = "default_value", nullable = true, columnDefinition = "clob")
+  private String defaultValue;
 
   /**
    * Validations on entity creation interface marker.

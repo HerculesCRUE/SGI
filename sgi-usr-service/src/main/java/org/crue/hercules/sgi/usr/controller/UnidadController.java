@@ -44,7 +44,7 @@ public class UnidadController {
    * @return la lista de {@link Unidad} solicitada
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-PRO-V', 'CSP-PRO-C', 'CSP-PRO-E', 'CSP-PRO-B', 'CSP-PRO-R', 'CSP-ME-C', 'CSP-ME-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-PRO-V', 'CSP-PRO-C', 'CSP-PRO-E', 'CSP-PRO-B', 'CSP-PRO-R', 'CSP-ME-C', 'CSP-ME-E', 'ADM-CNF-E')")
   public ResponseEntity<Page<Unidad>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");

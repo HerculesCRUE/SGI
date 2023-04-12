@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -105,4 +106,22 @@ public class FormularioController {
     }
     return new ResponseEntity<>(page, HttpStatus.OK);
   }
+
+  /**
+   * Actualiza el estado de la memoria o de la retrospectiva al estado final
+   * correspondiente al tipo de formulario completado.
+   * 
+   * @param memoriaId      identificador de la {@link Memoria}
+   * @param tipoFormulario identifcador del tipo de formulario
+   *                       {@link Formulario.Tipo}
+   * @return {@link HttpStatus#NO_CONTENT}
+   */
+  @RequestMapping(path = "/completado", method = RequestMethod.HEAD)
+  public ResponseEntity<Void> completado(@RequestParam Long memoriaId, @RequestParam Long tipoFormulario) {
+    log.debug("completado(Long memoriaId, Long tipoFormulario) - start");
+    formularioService.completado(memoriaId, tipoFormulario);
+    log.debug("completado(Long memoriaId, Long tipoFormulario) - end");
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
 }

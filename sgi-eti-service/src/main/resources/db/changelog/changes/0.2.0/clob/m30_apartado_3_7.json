@@ -1,0 +1,81 @@
+[
+  {
+    "key": "ap3_7",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.7 Trayectoria completa de los agentes biológicos, organismos modificados genéticamente, sustancias químicas peligrosas, sustancias radiactivas y/o nanopartículas"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Describir a continuación el recorrido que siguen los agentes biológicos, organismos modificados genéticamente, sustancias químicas peligrosas, sustancias radiactivas y/o nanopartícula desde su obtención hasta su eliminación:</p>"
+      },
+      {
+        "key": "mododeobtención",
+        "className": "descripcion",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Modo de obtención",
+          "placeholder": "Modo de obtención",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "transporte",
+        "className": "descripcion",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Transporte",
+          "placeholder": "Transporte",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "recepcion",
+        "className": "descripcion",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Recepción",
+          "placeholder": "Recepción",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "almacenamiento",
+        "className": "descripcion",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Almacenamiento",
+          "placeholder": "Almacenamiento",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "eliminacion",
+        "className": "descripcion",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Eliminación",
+          "placeholder": "Eliminación",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

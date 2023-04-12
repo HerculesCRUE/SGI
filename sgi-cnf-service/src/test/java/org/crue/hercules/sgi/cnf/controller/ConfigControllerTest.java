@@ -105,7 +105,7 @@ class ConfigControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = {})
+  @WithMockUser(username = "user", authorities = { "ADM-CNF-E" })
   void creteConfig_ReturnsConfig() throws Exception {
     // given: new Config
     Config config = Config.builder().name("test-config").description("Test config description")
@@ -127,7 +127,7 @@ class ConfigControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = {})
+  @WithMockUser(username = "user", authorities = { "ADM-CNF-E" })
   void creteConfig_WithExistingName_ReturnsBadRequest() throws Exception {
     // given: existing Config name
     Config config = Config.builder().name("test-config").description("Test config description")
@@ -165,7 +165,7 @@ class ConfigControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = {})
+  @WithMockUser(username = "user", authorities = { "ADM-CNF-E" })
   void updateConfig_ReturnsConfig() throws Exception {
     Config config = Config.builder().name("test-config").description("Test config description")
         .value("Test config value").build();
@@ -174,7 +174,7 @@ class ConfigControllerTest extends BaseControllerTest {
     });
 
     mockMvc
-        .perform(MockMvcRequestBuilders.patch(ConfigController.MAPPING + ConfigController.PATH_NAME, config.getName())
+        .perform(MockMvcRequestBuilders.put(ConfigController.MAPPING + ConfigController.PATH_NAME, config.getName())
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
             .content(mapper.writeValueAsString(modelMapper.map(config, CreateConfigInput.class))))
         .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isOk())
@@ -184,7 +184,7 @@ class ConfigControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = {})
+  @WithMockUser(username = "user", authorities = { "ADM-CNF-E" })
   void deleteConfig_ReturnsNothing() throws Exception {
     String name = "test-config";
 

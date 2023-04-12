@@ -7,7 +7,7 @@ import org.crue.hercules.sgi.rep.dto.SgiReportDto;
  */
 public class ReportInformeFavorableModificacion extends SgiReportDto {
   public ReportInformeFavorableModificacion() {
-    this.setPath("report/eti/informeFavorableModificacion.prpt");
+    this.setPath("rep-eti-evaluacion-favorable-memoria-modificacion-prpt");
     this.setName("informeFavorableModificacion");
   }
 }

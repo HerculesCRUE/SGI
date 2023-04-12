@@ -25,7 +25,7 @@ class MXXReportServiceIT extends BaseIT {
   @Test
   void testPdfM10() throws Exception {
     // given: data for report
-    String reportPath = "report/eti/mxx.prpt";
+    String reportPath = "rep-eti-mxx-prpt";
     String reportName = "reportM10_";
     String outputJson = "eti/M10.json";
 

@@ -406,7 +406,7 @@ public class ComiteControllerTest extends BaseControllerTest {
     final String url = new StringBuffer(COMITE_CONTROLLER_BASE_PATH).append(PATH_PARAMETER_ID_COMITE)
         .append("/memorias-peticion-evaluacion").append(PATH_PARAMETER_ID_PETICION_EVALUACION).toString();
 
-    BDDMockito.given(memoriaService.findByComiteAndPeticionEvaluacion(ArgumentMatchers.anyLong(),
+    BDDMockito.given(memoriaService.findAllMemoriasPeticionEvaluacionModificables(ArgumentMatchers.anyLong(),
         ArgumentMatchers.anyLong(), ArgumentMatchers.<Pageable>any()))
         .willReturn(new PageImpl<>(Collections.emptyList()));
 
@@ -433,7 +433,7 @@ public class ComiteControllerTest extends BaseControllerTest {
       memorias.add(memoria);
     }
 
-    BDDMockito.given(memoriaService.findByComiteAndPeticionEvaluacion(ArgumentMatchers.anyLong(),
+    BDDMockito.given(memoriaService.findAllMemoriasPeticionEvaluacionModificables(ArgumentMatchers.anyLong(),
         ArgumentMatchers.anyLong(), ArgumentMatchers.<Pageable>any())).willAnswer(new Answer<Page<Memoria>>() {
           @Override
           public Page<Memoria> answer(InvocationOnMock invocation) throws Throwable {

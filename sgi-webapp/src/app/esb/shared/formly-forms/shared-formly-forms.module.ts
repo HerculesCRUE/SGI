@@ -13,6 +13,7 @@ import { SharedModule } from '@shared/shared.module';
 import { DateTimePickerTypeComponent } from './types/datetimepicker.type';
 import { SelectAttributesTypeComponent } from './types/select-attributes.type';
 import { SelectObjectTypeComponent } from './types/select-object.type';
+import { SelectTypeComponent } from './types/select.type';
 import { TableCRUDModalComponent } from './types/table-crud/table-crud-modal/table-crud-modal.component';
 import { TableCRUDTypeComponent } from './types/table-crud/table-crud.type';
 import { GlobalWrapperComponent } from './wrappers/global/global.wrapper';
@@ -20,6 +21,7 @@ import { MatCardGroupWrapperComponent } from './wrappers/mat-card-group/mat-card
 
 @NgModule({
   declarations: [
+    SelectTypeComponent,
     SelectObjectTypeComponent,
     TableCRUDTypeComponent,
     TableCRUDModalComponent,
@@ -41,6 +43,11 @@ import { MatCardGroupWrapperComponent } from './wrappers/mat-card-group/mat-card
     FormlyMaterialModule,
     FormlyModule.forChild({
       types: [
+        {
+          name: 'select',
+          component: SelectTypeComponent,
+          wrappers: ['form-field']
+        },
         {
           name: 'select-object',
           component: SelectObjectTypeComponent,
@@ -85,6 +92,7 @@ import { MatCardGroupWrapperComponent } from './wrappers/mat-card-group/mat-card
     })
   ],
   exports: [
+    SelectTypeComponent,
     SelectObjectTypeComponent,
     TableCRUDTypeComponent,
     TableCRUDModalComponent,

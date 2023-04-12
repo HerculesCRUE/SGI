@@ -1,5 +1,7 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                                                                                                                                                                                                                                             http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                                                                                                                                                                                                                                                             http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
   <property name="schemaPrefix" value="" />
   <changeSet context="!test" author="master" id="0000000000002-configuracion_baremo">
     <update tableName="configuracion_baremo">
@@ -56,6 +58,7 @@
   <changeSet context="!test" author="master" id="0000000000002-configuracion_baremo-configuracion_baremo_padre_id">
     <validCheckSum>8:897674f39deb94abf51bdbf98d19a15d</validCheckSum>
     <validCheckSum>8:c954a4861abd3f45d2253907123b61bd</validCheckSum>
+    <validCheckSum>8:28dd08fd135f07b034c8f1a9a2ef5971</validCheckSum>
     <update tableName="configuracion_baremo">
       <column name="configuracion_baremo_padre_id" valueComputed="(select id from ${schemaPrefix}configuracion_baremo where tipo_baremo='DIRECCION_TESIS' order by id asc OFFSET 0 ROWS FETCH FIRST 1 ROW only)" />
       <where>tipo_baremo in ('DIRECCION_TESIS_TESIS', 'DIRECCION_TESIS_TESINA_O_DEA_O_TFM', 

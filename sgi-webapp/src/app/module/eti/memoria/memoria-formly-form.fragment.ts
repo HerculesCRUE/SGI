@@ -4,7 +4,7 @@ import { IBloque } from '@core/models/eti/bloque';
 import { IComentario } from '@core/models/eti/comentario';
 import { IComite } from '@core/models/eti/comite';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
-import { resolveFormularioByTipoEvaluacionAndComite } from '@core/models/eti/formulario';
+import { FORMULARIO, resolveFormularioByTipoEvaluacionAndComite } from '@core/models/eti/formulario';
 import { IMemoria } from '@core/models/eti/memoria';
 import { IRespuesta } from '@core/models/eti/respuesta';
 import { ITarea } from '@core/models/eti/tarea';
@@ -50,6 +50,7 @@ interface IFormlyData {
 interface IApartadoWithRespuestaAndComentario extends IApartado {
   respuesta: IRespuesta;
   comentario: IComentario;
+  respuestaAnterior: IRespuesta;
 }
 
 export abstract class MemoriaFormlyFormFragment extends Fragment {
@@ -58,6 +59,7 @@ export abstract class MemoriaFormlyFormFragment extends Fragment {
   protected memoria: IMemoria;
   protected tareas: ITarea[];
   private comentarios: Map<number, IComentario>;
+  private _comentariosGenerales: IComentario[] = [];
 
   public blocks$: BehaviorSubject<IBlock[]> = new BehaviorSubject<IBlock[]>([]);
   public selectedIndex$: BehaviorSubject<number> = new BehaviorSubject<number>(undefined);
@@ -70,6 +72,12 @@ export abstract class MemoriaFormlyFormFragment extends Fragment {
   private formStateGlobal: any = {};
 
   private lastCompletedBlock: number;
+
+  private formularioTipo: FORMULARIO;
+
+  get comentariosGenerales(): IComentario[] {
+    return this._comentariosGenerales;
+  }
 
   isReadonly(): boolean {
     return this.readonly;
@@ -230,19 +238,48 @@ export abstract class MemoriaFormlyFormFragment extends Fragment {
 
   saveOrUpdate(): Observable<void> {
     const respuestas: IRespuesta[] = [];
-    this.blocks$.value.forEach((block) => {
-      block.questions.forEach((question) => {
-        respuestas.push(...this.getRespuestas(question));
-      });
+    let hasLastBloqueSavedRespuestas = false;
+    let formLoadComplete = true;
+
+    this.blocks$.value.forEach((block, index) => {
+      const respuestasBloque = this.getRespuestasBloque(block);
+      respuestas.push(...respuestasBloque);
+
+      formLoadComplete = formLoadComplete && block.loaded$.value;
+
+      if (index === this.blocks$.value.length - 1) {
+        hasLastBloqueSavedRespuestas = this.hasBloqueSavedRespuestas(block, respuestasBloque);
+      }
     });
+
     if (respuestas.length === 0) {
       return of(void 0);
     }
+
     return merge(
       this.updateRespuestas(respuestas.filter((respuesta) => respuesta.id !== undefined)),
       this.createRespuestas(respuestas.filter((respuesta) => respuesta.id === undefined)),
     ).pipe(
-      takeLast(1)
+      takeLast(1),
+      switchMap(() => {
+        if (this.isFormularioM20()) {
+          const respuestaEvaluacionRetrospectiva = respuestas.find(respuesta =>
+            this.isRespuestaEvaluacionRetrospectivaAndFilled(respuesta));
+
+          if (!!respuestaEvaluacionRetrospectiva) {
+            return this.respuestaService.updateDatosRetrospectiva(respuestaEvaluacionRetrospectiva.id);
+          }
+        }
+
+        return of(void 0);
+      }),
+      switchMap(() => {
+        if ((formLoadComplete && !hasLastBloqueSavedRespuestas) || this.isFormularioMemoriaModificacion(this.memoria)) {
+          return this.formularioService.completado(this.memoria.id, this.formularioTipo);
+        }
+
+        return of(void 0);
+      })
     );
   }
 
@@ -344,7 +381,8 @@ export abstract class MemoriaFormlyFormFragment extends Fragment {
   }
 
   private loadFormulario(tipoEvaluacion: TIPO_EVALUACION, comite: IComite): Observable<void> {
-    return this.formularioService.findById(resolveFormularioByTipoEvaluacionAndComite(tipoEvaluacion, comite)).pipe(
+    this.formularioTipo = resolveFormularioByTipoEvaluacionAndComite(tipoEvaluacion, comite);
+    return this.formularioService.findById(this.formularioTipo).pipe(
       switchMap((formulario) => {
         return this.formularioService.getBloques(formulario.id);
       }),
@@ -416,9 +454,14 @@ export abstract class MemoriaFormlyFormFragment extends Fragment {
         }
         return this.evaluacionService.getComentariosGestor(value.id).pipe(map(response => response.items));
       }),
+      tap((comentarios) => {
+        this._comentariosGenerales = comentarios.filter(c => !!!c.apartado.bloque.formulario?.id);
+      }),
       map((comentarios) => {
         const apartadoComentario = new Map<number, IComentario>();
-        comentarios.forEach((comentario) => apartadoComentario.set(comentario.apartado.id, comentario));
+        comentarios
+          .filter(c => !!c.apartado.bloque.formulario?.id)
+          .forEach((comentario) => apartadoComentario.set(comentario.apartado.id, comentario));
         return apartadoComentario;
       })
     );
@@ -449,7 +492,18 @@ export abstract class MemoriaFormlyFormFragment extends Fragment {
               map((respuesta) => {
                 apartado.respuesta = respuesta ? respuesta : { valor: {} } as IRespuesta;
                 return apartado;
-              })
+              }),
+              switchMap((aptdo) => {
+                if (this.memoria.memoriaOriginal) {
+                  return this.respuestaService.findByMemoriaIdAndApartadoId(this.memoria.memoriaOriginal.id, apartado.id).pipe(
+                    map((respuesta) => {
+                      aptdo.respuestaAnterior = respuesta ? respuesta : { valor: {} } as IRespuesta;
+                      return aptdo;
+                    }));
+                } else {
+                  return of(aptdo);
+                }
+              }),
             ));
           });
           return zip(...respuestasApartados);
@@ -596,13 +650,14 @@ export abstract class MemoriaFormlyFormFragment extends Fragment {
         firstFieldConfig.templateOptions = {};
       }
       firstFieldConfig.templateOptions.comentario = question.apartado.comentario;
+      firstFieldConfig.templateOptions.modified = Boolean(question.apartado.respuestaAnterior) ? this.isRespuestaApartadoModified(question.apartado.respuesta, question.apartado.respuestaAnterior) : false;
       firstFieldConfig.group = new Group();
 
       this.evalExpressionLock(firstFieldConfig, model, formState);
 
       if (
         this.readonly
-        || (!this.readonly && this.comentarios.size && !question.apartado.comentario)
+        || (!this.readonly && (this.comentarios.size || this.comentariosGenerales.length) && !question.apartado.comentario)
         || (firstFieldConfig.templateOptions.locked)
       ) {
         firstFieldConfig.templateOptions.locked = true;
@@ -737,4 +792,55 @@ export abstract class MemoriaFormlyFormFragment extends Fragment {
   private evalExpression(expression: Function, thisArg: any, argVal: any[]): any {
     return expression.apply(thisArg, argVal);
   }
+
+  /**
+   * Comprueba si el formulario es de tipo M20
+   *
+   * @returns si el formulario es de tipo M20 o no
+   */
+  private isFormularioM20(): boolean {
+    return this.formularioTipo === FORMULARIO.M20;
+  }
+
+  /**
+   * Comprueba si la respuesta es la respuesta para la evaluacion de la retrospectiva
+   *
+   * @param respuesta una respuesta
+   * @returns si es la respuesta buscada o no
+   */
+  private isRespuestaEvaluacionRetrospectivaAndFilled(respuesta: IRespuesta): boolean {
+    return !!respuesta.valor?.evaluacionRetrospectivaRadio && ['si', 'no'].includes(respuesta.valor?.evaluacionRetrospectivaRadio);
+  }
+
+
+  /**
+   * Recupera las respuestas del bloque
+   *
+   * @param block un bloque
+   * @returns la lista de respuestas del bloque
+   */
+  private getRespuestasBloque(block: IBlock): IRespuesta[] {
+    return block.questions
+      .map(question => this.getRespuestas(question))
+      .reduce((respuestasBloque, respuestasQuestion) => respuestasBloque.concat(respuestasQuestion), []);
+  }
+
+  /**
+   * Comprueba si se esta respondiendo a las preguntas del bloque por primera vez o ya tiene respuestas previamente constestadas
+   *
+   * @param block el bloque que se quiere comprobar
+   * @returns true si se esta rellenado el bloque por primera vez
+   */
+  private hasBloqueSavedRespuestas(block: IBlock, respuestas: IRespuesta[]): boolean {
+    return !!block.loaded$.value && respuestas.length > 0 && respuestas.some(respuesta => !!respuesta.id);
+  }
+
+  private isFormularioMemoriaModificacion(memoria: IMemoria): boolean {
+    return Boolean(memoria.memoriaOriginal);
+  }
+
+  private isRespuestaApartadoModified(respuesta: IRespuesta, respuestaAnterior: IRespuesta): boolean {
+    return JSON.stringify(respuesta?.valor) !== JSON.stringify(respuestaAnterior?.valor);
+  }
+
 }

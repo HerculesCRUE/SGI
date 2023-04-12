@@ -126,6 +126,9 @@ class MemoriaServiceTest extends BaseServiceTest {
   @Mock
   private ComunicadosService comunicadosService;
 
+  @Mock
+  private RetrospectivaService retrospectivaService;
+
   @Autowired
   private SgiConfigProperties sgiConfigProperties;
 
@@ -135,7 +138,7 @@ class MemoriaServiceTest extends BaseServiceTest {
         estadoRetrospectivaRepository, evaluacionRepository, comentarioRepository, informeService,
         peticionEvaluacionRepository, comiteRepository, documentacionMemoriaRepository, respuestaRepository,
         tareaRepository, configuracionService, reportService, sgdocService, bloqueRepository, apartadoRepository,
-        comunicadosService);
+        comunicadosService, retrospectivaService);
   }
 
   @Test
@@ -171,11 +174,11 @@ class MemoriaServiceTest extends BaseServiceTest {
           "Memoria" + String.format("%03d", i), 1, 1L));
     }
 
-    BDDMockito.given(memoriaRepository.findByComiteIdAndPeticionEvaluacionIdAndActivoTrueAndComiteActivoTrue(1L, 1L,
+    BDDMockito.given(memoriaRepository.findAllMemoriasPeticionEvaluacionModificables(1L, 1L,
         Pageable.unpaged())).willReturn(new PageImpl<>(memorias));
 
     // when: find unlimited
-    Page<Memoria> page = memoriaService.findByComiteAndPeticionEvaluacion(1L, 1L, Pageable.unpaged());
+    Page<Memoria> page = memoriaService.findAllMemoriasPeticionEvaluacionModificables(1L, 1L, Pageable.unpaged());
     // then: Get a page with one hundred Memorias
     Assertions.assertThat(page.getContent().size()).isEqualTo(100);
     Assertions.assertThat(page.getNumber()).isZero();
@@ -188,16 +191,16 @@ class MemoriaServiceTest extends BaseServiceTest {
   void findByComite_NotFound_ThrowsComiteNotFoundException() throws Exception {
     BDDMockito.given(comiteRepository.findByIdAndActivoTrue(1L)).willReturn(Optional.empty());
 
-    Assertions.assertThatThrownBy(() -> memoriaService.findByComiteAndPeticionEvaluacion(1L, 1L, null))
+    Assertions.assertThatThrownBy(() -> memoriaService.findAllMemoriasPeticionEvaluacionModificables(1L, 1L, null))
         .isInstanceOf(ComiteNotFoundException.class);
   }
 
   @Test
-  void findByComiteAndPeticionEvaluacion_ComiteIdNull() throws Exception {
+  void findAllMemoriasPeticionEvaluacionModificables_ComiteIdNull() throws Exception {
 
     try {
       // when: Creamos la memoria
-      memoriaService.findByComiteAndPeticionEvaluacion(null, 1L, null);
+      memoriaService.findAllMemoriasPeticionEvaluacionModificables(null, 1L, null);
       Assertions.fail("El identificador del comité no puede ser null para recuperar sus tipos de memoria asociados.");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
@@ -207,11 +210,11 @@ class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void findByComiteAndPeticionEvaluacion_PeticionEvaluacionIdNull() throws Exception {
+  void findAllMemoriasPeticionEvaluacionModificables_PeticionEvaluacionIdNull() throws Exception {
 
     try {
       // when: Creamos la memoria
-      memoriaService.findByComiteAndPeticionEvaluacion(1L, null, null);
+      memoriaService.findAllMemoriasPeticionEvaluacionModificables(1L, null, null);
       Assertions.fail(
           "El identificador de la petición de evaluación no puede ser null para recuperar sus tipos de memoria asociados.");
       // then: se debe lanzar una excepción
@@ -1047,7 +1050,9 @@ class MemoriaServiceTest extends BaseServiceTest {
     BDDMockito.given(memoriaRepository.findById(1L)).willReturn(Optional.of(memoria));
 
     Evaluacion evaluacion = generarMockEvaluacion(Long.valueOf(1), String.format("%03d", 1), 6L, 1L, 1);
-    BDDMockito.given(evaluacionRepository.findFirstByMemoriaIdAndActivoTrueOrderByVersionDesc(memoria.getId()))
+    BDDMockito
+        .given(evaluacionRepository
+            .findFirstByMemoriaIdAndTipoEvaluacionIdAndActivoTrueOrderByVersionDesc(memoria.getId(), 1L))
         .willReturn(Optional.of(evaluacion));
 
     Memoria memoriaActualizada = generarMockMemoria(1L, "numRef-111", "Memoria1", 2, 4L);
@@ -1072,7 +1077,9 @@ class MemoriaServiceTest extends BaseServiceTest {
     BDDMockito.given(memoriaRepository.findById(1L)).willReturn(Optional.of(memoria));
 
     Evaluacion evaluacion = generarMockEvaluacion(Long.valueOf(1), String.format("%03d", 1), 21L, 1L, 1);
-    BDDMockito.given(evaluacionRepository.findFirstByMemoriaIdAndActivoTrueOrderByVersionDesc(memoria.getId()))
+    BDDMockito
+        .given(evaluacionRepository
+            .findFirstByMemoriaIdAndTipoEvaluacionIdAndActivoTrueOrderByVersionDesc(memoria.getId(), 1L))
         .willReturn(Optional.of(evaluacion));
 
     Memoria memoriaActualizada = generarMockMemoria(1L, "numRef-111", "Memoria1", 2, 18L);

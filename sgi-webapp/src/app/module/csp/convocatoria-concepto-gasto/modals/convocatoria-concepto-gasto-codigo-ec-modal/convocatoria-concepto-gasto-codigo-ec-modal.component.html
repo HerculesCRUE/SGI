@@ -11,6 +11,9 @@
         <mat-error *ngIf="formGroup.controls.codigoEconomico.errors?.required">
           {{'error.required.entity' | translate:msgParamCodigoEconomigoSgeEntity}}
         </mat-error>
+        <mat-error *ngIf="formGroup.controls.codigoEconomico.errors?.overlappedConceptoAndCodigo">
+          {{ 'error.csp.convocatoria-elegibilidad.codigo-economico.overlapped-concepto-and-codigo' | translate }}
+        </mat-error>
       </mat-form-field>
     </div>
     <h5>{{'label.csp.convocatoria-elegibilidad.codigo-economico.vigencia' | translate}}</h5>

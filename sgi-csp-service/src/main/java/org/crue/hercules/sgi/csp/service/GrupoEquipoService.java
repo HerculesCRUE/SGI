@@ -27,6 +27,7 @@ import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.Configuracion;
 import org.crue.hercules.sgi.csp.model.Grupo;
 import org.crue.hercules.sgi.csp.model.GrupoEquipo;
+import org.crue.hercules.sgi.csp.model.GrupoEquipo.Dedicacion;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionRepository;
 import org.crue.hercules.sgi.csp.repository.GrupoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.GrupoRepository;
@@ -387,11 +388,16 @@ public class GrupoEquipoService {
   private void validateGruposEquipoParticipacion(Long grupoId, List<GrupoEquipo> gruposEquipoToValidate) {
     Optional<Configuracion> configuracion = configuracionRepository.findFirstByOrderByIdAsc();
     final BigDecimal minDedication = configuracion.isPresent()
-        && configuracion.get().getDedicacionMinimaGrupo() != null ? configuracion.get().getDedicacionMinimaGrupo()
-            : new BigDecimal("0");
+        && configuracion.get().getDedicacionMinimaGrupo() != null
+        && configuracion.get().getDedicacionMinimaGrupo().signum() > 0
+            ? configuracion.get().getDedicacionMinimaGrupo()
+            : new BigDecimal("1");
+    final BigDecimal maxDedication = new BigDecimal("100");
 
     if (gruposEquipoToValidate.stream()
-        .anyMatch(toValidate -> minDedication.compareTo(toValidate.getParticipacion()) > 0)) {
+        .anyMatch(toValidate -> minDedication.compareTo(toValidate.getParticipacion()) > 0
+            || (toValidate.getDedicacion().equals(Dedicacion.PARCIAL)
+                && maxDedication.compareTo(toValidate.getParticipacion()) <= 0))) {
       throw new GrupoEquipoParticipacionNotValidException(minDedication);
     }
 

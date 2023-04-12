@@ -268,7 +268,7 @@
         <th mat-header-cell *matHeaderCellDef>
           {{'csp.solicitud.solicitante' | translate}}
         </th>
-        <td mat-cell *matCellDef="let element">
+        <td mat-cell *matCellDef="let element" sgpNotFoundError [model]="element.solicitante">
           {{ element.nombreSolicitante}}
         </td>
       </ng-container>

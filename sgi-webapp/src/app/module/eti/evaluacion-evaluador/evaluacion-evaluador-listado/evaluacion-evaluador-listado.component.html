@@ -58,7 +58,8 @@
       <div class="col">
         <mat-form-field>
           <mat-label>{{'eti.evaluacion.tipo-convocatoria' | translate}}</mat-label>
-          <sgi-select-tipo-convocatoria-reunion formControlName="tipoConvocatoria">
+          <sgi-select-tipo-convocatoria-reunion formControlName="tipoConvocatoria"
+            [excluded]="[TIPO_CONVOCATORIA.SEGUIMIENTO]">
           </sgi-select-tipo-convocatoria-reunion>
         </mat-form-field>
       </div>

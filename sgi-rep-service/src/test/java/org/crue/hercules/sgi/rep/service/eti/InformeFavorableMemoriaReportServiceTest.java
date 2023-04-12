@@ -12,9 +12,11 @@ import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableMemoria;
 import org.crue.hercules.sgi.rep.dto.eti.TareaDto;
 import org.crue.hercules.sgi.rep.dto.eti.TareaDto.EquipoTrabajoDto;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
@@ -32,6 +34,9 @@ class InformeFavorableMemoriaReportServiceTest extends BaseReportEtiServiceTest 
   @Autowired
   private SgiConfigProperties sgiConfigProperties;
 
+  @Mock
+  private SgiApiConfService sgiApiConfService;
+
   @MockBean
   private EvaluacionService evaluacionService;
 
@@ -43,8 +48,8 @@ class InformeFavorableMemoriaReportServiceTest extends BaseReportEtiServiceTest 
 
   @BeforeEach
   public void setUp() throws Exception {
-    informeFavorableMemoriaReportService = new InformeFavorableMemoriaReportService(sgiConfigProperties,
-        personaService, evaluacionService, peticionEvaluacionService);
+    informeFavorableMemoriaReportService = new InformeFavorableMemoriaReportService(
+        sgiConfigProperties, sgiApiConfService, personaService, evaluacionService, peticionEvaluacionService);
   }
 
   @Test
@@ -56,6 +61,10 @@ class InformeFavorableMemoriaReportServiceTest extends BaseReportEtiServiceTest 
     BDDMockito.given(peticionEvaluacionService.findTareasEquipoTrabajo(idEvaluacion))
         .willReturn((generarMockTareas(idEvaluacion)));
     BDDMockito.given(personaService.findById(null)).willReturn((generarMockPersona("123456F")));
+
+    BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
+        .willReturn(getResource("eti/prpt/rep-eti-evaluacion-favorable-memoria-nueva.prpt"));
+    BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
 
     ReportInformeFavorableMemoria report = new ReportInformeFavorableMemoria();
     report.setOutputType(OutputType.PDF);
@@ -79,6 +88,10 @@ class InformeFavorableMemoriaReportServiceTest extends BaseReportEtiServiceTest 
     BDDMockito.given(peticionEvaluacionService.findTareasEquipoTrabajo(idEvaluacion))
         .willReturn((generarMockTareas(idEvaluacion)));
     BDDMockito.given(personaService.findById(null)).willReturn((generarMockPersona("123456F")));
+
+    BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
+        .willReturn(getResource("eti/prpt/rep-eti-evaluacion-favorable-memoria-nueva.prpt"));
+    BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
 
     ReportInformeFavorableMemoria report = new ReportInformeFavorableMemoria();
     report.setOutputType(OutputType.PDF);

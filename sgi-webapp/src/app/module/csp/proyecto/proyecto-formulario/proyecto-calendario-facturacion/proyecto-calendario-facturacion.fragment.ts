@@ -12,6 +12,7 @@ import { map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators
 
 export interface IProyectoFacturacionData extends IProyectoFacturacion {
   numeroFacturaEmitida: string;
+  estadosNotSaved: IEstadoValidacionIP[];
 }
 export class ProyectoCalendarioFacturacionFragment extends Fragment {
 
@@ -41,10 +42,16 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
     this.loadProyectosFacturacionByProyectoId();
   }
 
+  private proyectoFacturacionToIProyectoFacturacionData(proyectoFacturacion: IProyectoFacturacion): IProyectoFacturacionData {
+    const proyectoFacturacionData = proyectoFacturacion as IProyectoFacturacionData;
+    proyectoFacturacionData.estadosNotSaved = [];
+    return proyectoFacturacionData;
+  }
+
   private loadProyectosFacturacionByProyectoId(): void {
     this.loadProyectosFacturacionByProyectoIdSubscription =
       this.proyectoService.findProyectosFacturacionByProyectoId(this.getKey() as number).pipe(
-        map(response => response.items.map(item => new StatusWrapper(item as IProyectoFacturacionData))),
+        map(response => response.items.map(item => new StatusWrapper(this.proyectoFacturacionToIProyectoFacturacionData(item)))),
         switchMap(response =>
           from(response).pipe(
             mergeMap(data => {
@@ -91,6 +98,7 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
     proyectoFacturacion.estadoValidacionIP = { estado: TipoEstadoValidacion.PENDIENTE } as IEstadoValidacionIP;
     const newItem = new StatusWrapper<IProyectoFacturacionData>(proyectoFacturacion);
     newItem.setCreated();
+    newItem.value.estadosNotSaved = [];
 
     const current = this.proyectosFacturacion$.value;
     current.push(newItem);
@@ -111,6 +119,8 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
     } else {
       toUpdate.setCreated();
     }
+
+    toUpdate.value.estadosNotSaved.push(toUpdate.value.estadoValidacionIP);
 
     const current = this.proyectosFacturacion$.value;
     current[index] = toUpdate;
@@ -164,9 +174,25 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
 
     return from(toUpdateProyetosFacturacionItems).pipe(
       mergeMap((toUpdate: StatusWrapper<IProyectoFacturacionData>) => {
-        const obs$ = this.isInvestigador
+        const update$ = this.isInvestigador
           ? this.proyectoFacturacionService.updateValidacionIP(toUpdate.value.id, toUpdate.value)
           : this.proyectoFacturacionService.update(toUpdate.value.id, toUpdate.value);
+
+        // elimina el ultimo estado que ya se guardara con el update
+        const currentEstado = toUpdate.value.estadosNotSaved.pop();
+
+        let obs$: Observable<IProyectoFacturacion>;
+
+        if (toUpdate.value.estadosNotSaved.length > 0) {
+          obs$ = this.updateEstadosNotSaved(toUpdate.value).pipe(
+            switchMap(() => {
+              toUpdate.value.estadoValidacionIP = currentEstado;
+              return update$;
+            })
+          );
+        } else {
+          obs$ = update$;
+        }
 
         return obs$
           .pipe(
@@ -202,7 +228,29 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
               proyectoFacturacionListado.id = createdProyectoFacturacion.id;
               this.proyectosFacturacion$.value[index] = new StatusWrapper<IProyectoFacturacionData>(proyectoFacturacionListado);
               this.proyectosFacturacion$.next(this.proyectosFacturacion$.value);
-            }));
+              return proyectoFacturacionListado;
+            }),
+            switchMap(createdProyectoFacturacion => this.updateEstadosNotSaved(createdProyectoFacturacion).pipe(map(() => void 0)))
+          );
+      })
+    );
+  }
+
+  private updateEstadosNotSaved(proyectoFacturacion: IProyectoFacturacionData): Observable<IProyectoFacturacionData> {
+    if (proyectoFacturacion.estadosNotSaved.length === 0) {
+      return of(proyectoFacturacion);
+    }
+
+    proyectoFacturacion.estadoValidacionIP = proyectoFacturacion.estadosNotSaved.shift();
+
+    return this.proyectoFacturacionService.update(proyectoFacturacion.id, proyectoFacturacion).pipe(
+      switchMap(() => {
+
+        if (proyectoFacturacion.estadosNotSaved.length === 0) {
+          return of(proyectoFacturacion);
+        }
+
+        return this.updateEstadosNotSaved(proyectoFacturacion);
       })
     );
   }

@@ -2,7 +2,9 @@ package org.crue.hercules.sgi.eti.service;
 
 import java.util.Optional;
 
+import org.crue.hercules.sgi.eti.dto.RespuestaRetrospectivaFormulario;
 import org.crue.hercules.sgi.eti.exceptions.RespuestaNotFoundException;
+import org.crue.hercules.sgi.eti.exceptions.RespuestaRetrospectivaFormularioNotValidException;
 import org.crue.hercules.sgi.eti.model.Respuesta;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -74,4 +76,22 @@ public interface RespuestaService {
    * @return Respuesta
    */
   Optional<Respuesta> findLastByMemoriaId(Long idMemoria);
+
+  /**
+   * Actualiza los datos de la restrospectiva en la memoria con los valores de la
+   * respuesta si el formulario es de tipo M20.
+   * 
+   * @param id identificador de la {@link Respuesta} con los datos de la
+   *           retrospectiva
+   * @throws RespuestaNotFoundException                        si no existe la
+   *                                                           respuesta con el id
+   *                                                           dado
+   * @throws RespuestaRetrospectivaFormularioNotValidException si la respuesta no
+   *                                                           cumple con el
+   *                                                           esquema de
+   *                                                           {@link RespuestaRetrospectivaFormulario}
+   */
+  void updateDatosRetrospectiva(Long id)
+      throws RespuestaNotFoundException, RespuestaRetrospectivaFormularioNotValidException;
+
 }

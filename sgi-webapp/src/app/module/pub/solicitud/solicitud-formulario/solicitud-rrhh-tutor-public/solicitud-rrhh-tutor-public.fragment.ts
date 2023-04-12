@@ -113,6 +113,10 @@ export class SolicitudRrhhTutorPublicFragment extends FormFragment<ISolicitudRrh
     }
 
     return this.personaService.findById(tutor.id).pipe(
+      catchError((err) => {
+        this.logger.error(err);
+        return of(tutor);
+      }),
       switchMap((persona: IPersona) => {
         if (!!!persona?.id) {
           return of(persona);
@@ -145,6 +149,10 @@ export class SolicitudRrhhTutorPublicFragment extends FormFragment<ISolicitudRrh
         tutor.datosContacto = datosContacto;
         tutor.vinculacion = vinculacion;
         return tutor;
+      }),
+      catchError((err) => {
+        this.logger.error(err);
+        return of(tutor);
       })
     );
   }

@@ -1,5 +1,7 @@
+@import "colors.scss";
+
 .mat-row.selected {
-  background: #f5f5f5;
+  background-color: map-get($palette-grey, 100);
 }
 
 .table-sectores-licenciados {

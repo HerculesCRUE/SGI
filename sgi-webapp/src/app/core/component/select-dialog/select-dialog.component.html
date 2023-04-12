@@ -3,7 +3,8 @@
     [placeholder]="placeholder" *ngIf="empty" [attr.tabindex]="disabled ? -1 : null">
 
   <input #displayInput type="text" class="mat-input-element" readonly [disabled]="disabled"
-    [attr.tabindex]="disabled ? -1 : null" *ngIf="!empty" [value]="displayWith(this.value)">
+    [attr.tabindex]="disabled ? -1 : null" *ngIf="!empty" [value]="displayWith(this.value)"
+    [class]="(notFoundSelectedValue$ | async) ? 'not-found-error' : ''">
 
   <div class="icon-wrapper" [class.disabled]="disabled">
     <button #dialogButton mat-icon-button type="button" [disabled]="disabled" (click)="showDialog()"

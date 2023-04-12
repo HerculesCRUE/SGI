@@ -16,6 +16,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ComentarioModalComponent, ComentarioModalData } from '../../../comentario/comentario-modal/comentario-modal.component';
+import { getApartadoNombre, getSubApartadoNombre } from '../../../shared/pipes/bloque-apartado.pipe';
 import { Rol } from '../../acta-rol';
 import { ActaActionService } from '../../acta.action.service';
 import { ActaComentariosFragment } from './acta-comentarios.fragment';
@@ -123,14 +124,11 @@ export class ActaComentariosComponent extends FragmentComponent implements OnIni
   }
 
   getApartadoNombre(comentario: IComentario): string {
-    const nombre = comentario.apartado?.padre ?
-      comentario.apartado?.padre?.nombre : comentario.apartado?.nombre;
-    return nombre;
+    return getApartadoNombre(comentario.apartado);
   }
 
   getSubApartadoNombre(comentario: IComentario): string {
-    const nombre = comentario.apartado?.padre ? comentario.apartado?.nombre : '';
-    return nombre;
+    return getSubApartadoNombre(comentario.apartado);
   }
 
   /**

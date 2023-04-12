@@ -4,7 +4,6 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.OutputStream;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
@@ -31,6 +30,7 @@ import org.crue.hercules.sgi.rep.dto.OutputType;
 import org.crue.hercules.sgi.rep.dto.SgiReportDto;
 import org.crue.hercules.sgi.rep.dto.SgiReportDto.FieldOrientation;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
 import org.pentaho.reporting.engine.classic.core.DataFactory;
 import org.pentaho.reporting.engine.classic.core.DefaultReportEnvironment;
@@ -75,6 +75,8 @@ public class SgiReportService {
 
   private final SgiConfigProperties sgiConfigProperties;
 
+  private final SgiApiConfService sgiApiConfService;
+
   protected static final String EMPTY_TYPE = "empty";
   protected static final String COMPONENT_ID = "component_id";
   protected static final String COMPONENT_TYPE = "component_type";
@@ -92,8 +94,12 @@ public class SgiReportService {
   protected static final String DATE_PATTERN_DEFAULT = "dd/MM/yyyy";
   protected static final String NUMBER_PATTERN_DEFAULT = "0.00";
 
-  public SgiReportService(SgiConfigProperties sgiConfigProperties) {
+  private static final String PATH_DELIMITER = "/";
+  private static final String PATH_RESOURCES = PATH_DELIMITER + "public/resources/";
+
+  public SgiReportService(SgiConfigProperties sgiConfigProperties, SgiApiConfService sgiApiConfService) {
     this.sgiConfigProperties = sgiConfigProperties;
+    this.sgiApiConfService = sgiApiConfService;
 
     // Initialize the reporting engine
     ClassicEngineBoot.getInstance().start();
@@ -258,16 +264,14 @@ public class SgiReportService {
    * @return MasterReport
    */
   protected MasterReport getReportDefinition(String reportPath) {
-
-    // Using the classloader, get the URL to the reportDefinition file
-    final ClassLoader classloader = this.getClass().getClassLoader();
-    final URL reportDefinitionURL = classloader.getResource(reportPath);
-
     try {
       // Parse the report file
       final ResourceManager resourceManager = new ResourceManager();
       resourceManager.registerDefaults();
-      Resource directly = resourceManager.createDirectly(reportDefinitionURL, MasterReport.class);
+
+      byte[] reportDefinition = sgiApiConfService.getResource(reportPath);
+      Resource directly = resourceManager.createDirectly(reportDefinition, MasterReport.class);
+
       MasterReport report = (MasterReport) directly.getResource();
 
       DefaultReportEnvironment reportEnvironment = new DefaultReportEnvironment(
@@ -438,4 +442,15 @@ public class SgiReportService {
     log.error(e.getMessage());
     return "<b>" + e.getMessage() + "</b>";
   }
+
+  /**
+   * URL en la que se encuentran los recursos a los que se puede hacer referencia
+   * desde de las plantillas de los informes (ej. imagenes)
+   * 
+   * @return la URL en la que se encuentran los recursos para los informes
+   */
+  protected String getRepResourcesBaseURL() {
+    return sgiApiConfService.getServiceBaseURL().concat(PATH_RESOURCES);
+  }
+
 }

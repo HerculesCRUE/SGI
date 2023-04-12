@@ -10,6 +10,10 @@ import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto_;
 import org.crue.hercules.sgi.csp.model.Convocatoria_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConvocatoriaConceptoGastoSpecifications {
 
   /**
@@ -18,9 +22,8 @@ public class ConvocatoriaConceptoGastoSpecifications {
    * @return specification para obtener las {@link Convocatoria} activas.
    */
   public static Specification<ConvocatoriaConceptoGasto> byConvocatoriaActiva() {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ConvocatoriaConceptoGasto_.convocatoria).get(Convocatoria_.activo), Boolean.TRUE);
-    };
+    return (root, query, cb) -> cb.equal(root.get(ConvocatoriaConceptoGasto_.convocatoria).get(Convocatoria_.activo),
+        Boolean.TRUE);
   }
 
   /**
@@ -31,9 +34,7 @@ public class ConvocatoriaConceptoGastoSpecifications {
    *         permitidos o no.
    */
   public static Specification<ConvocatoriaConceptoGasto> byPermitido(Boolean permitido) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ConvocatoriaConceptoGasto_.permitido), permitido);
-    };
+    return (root, query, cb) -> cb.equal(root.get(ConvocatoriaConceptoGasto_.permitido), permitido);
   }
 
   /**
@@ -44,9 +45,8 @@ public class ConvocatoriaConceptoGastoSpecifications {
    *         convocatoria
    */
   public static Specification<ConvocatoriaConceptoGasto> byConvocatoria(Long idConvocatoria) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ConvocatoriaConceptoGasto_.convocatoria).get(Convocatoria_.id), idConvocatoria);
-    };
+    return (root, query, cb) -> cb.equal(root.get(ConvocatoriaConceptoGasto_.convocatoria).get(Convocatoria_.id),
+        idConvocatoria);
   }
 
   /**
@@ -57,11 +57,8 @@ public class ConvocatoriaConceptoGastoSpecifications {
    *         valor en los meses
    */
   public static Specification<ConvocatoriaConceptoGasto> withMeses() {
-    return (root, query, cb) -> {
-
-      return cb.and(cb.isNotNull(root.get(ConvocatoriaConceptoGasto_.mesInicial)),
-          cb.isNotNull(root.get(ConvocatoriaConceptoGasto_.mesFinal)));
-    };
+    return (root, query, cb) -> cb.and(cb.isNotNull(root.get(ConvocatoriaConceptoGasto_.mesInicial)),
+        cb.isNotNull(root.get(ConvocatoriaConceptoGasto_.mesFinal)));
   }
 
   /**
@@ -74,15 +71,13 @@ public class ConvocatoriaConceptoGastoSpecifications {
    *         rango de meses solapados
    */
   public static Specification<ConvocatoriaConceptoGasto> byRangoMesesSolapados(Integer mesInicial, Integer mesFinal) {
-    return (root, query, cb) -> {
-      return cb
-          .and(
-              cb.or(cb.isNull(root.get(ConvocatoriaConceptoGasto_.mesInicial)),
-                  cb.lessThanOrEqualTo(root.get(ConvocatoriaConceptoGasto_.mesInicial),
-                      mesFinal != null ? mesFinal : 12)),
-              cb.or(cb.isNull(root.get(ConvocatoriaConceptoGasto_.mesFinal)), cb.greaterThanOrEqualTo(
-                  root.get(ConvocatoriaConceptoGasto_.mesFinal), mesInicial != null ? mesInicial : 1)));
-    };
+    return (root, query, cb) -> cb
+        .and(
+            cb.or(cb.isNull(root.get(ConvocatoriaConceptoGasto_.mesInicial)),
+                cb.lessThanOrEqualTo(root.get(ConvocatoriaConceptoGasto_.mesInicial),
+                    mesFinal != null ? mesFinal : 9999)),
+            cb.or(cb.isNull(root.get(ConvocatoriaConceptoGasto_.mesFinal)), cb.greaterThanOrEqualTo(
+                root.get(ConvocatoriaConceptoGasto_.mesFinal), mesInicial != null ? mesInicial : 1)));
   }
 
   /**
@@ -93,9 +88,7 @@ public class ConvocatoriaConceptoGastoSpecifications {
    *         id no se encuentre entre los recibidos.
    */
   public static Specification<ConvocatoriaConceptoGasto> notIn(List<Long> excluidos) {
-    return (root, query, cb) -> {
-      return root.get(ConvocatoriaConceptoGasto_.id).in(excluidos).not();
-    };
+    return (root, query, cb) -> root.get(ConvocatoriaConceptoGasto_.id).in(excluidos).not();
   }
 
   /**
@@ -107,9 +100,8 @@ public class ConvocatoriaConceptoGastoSpecifications {
    *         el {@link ConceptoGasto} indicado.
    */
   public static Specification<ConvocatoriaConceptoGasto> byConceptoGasto(ConceptoGasto conceptoGasto) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ConvocatoriaConceptoGasto_.conceptoGasto).get(ConceptoGasto_.id), conceptoGasto.getId());
-    };
+    return (root, query, cb) -> cb.equal(root.get(ConvocatoriaConceptoGasto_.conceptoGasto).get(ConceptoGasto_.id),
+        conceptoGasto.getId());
   }
 
   /**

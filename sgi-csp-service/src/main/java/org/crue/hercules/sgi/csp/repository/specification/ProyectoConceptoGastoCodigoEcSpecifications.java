@@ -3,6 +3,9 @@ package org.crue.hercules.sgi.csp.repository.specification;
 import java.time.Instant;
 import java.util.List;
 
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
+
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto_;
 import org.crue.hercules.sgi.csp.model.Proyecto;
@@ -40,6 +43,52 @@ public class ProyectoConceptoGastoCodigoEcSpecifications {
     return (root, query, cb) -> cb.equal(
         root.get(ProyectoConceptoGastoCodigoEc_.proyectoConceptoGasto).get(ProyectoConceptoGasto_.permitido),
         permitido);
+  }
+
+  /**
+   * Se obtienen los {@link ProyectoConceptoGastoCodigoEc} por
+   * proyectoConceptosGastoIds
+   * 
+   * @param proyectoConceptosGastoIds identificadores de
+   *                                  {@link ProyectoConceptoGasto}
+   * @return specification para obtener los {@link ProyectoConceptoGastoCodigoEc}
+   *         por proyectoConceptosGastoIds
+   */
+  public static Specification<ProyectoConceptoGastoCodigoEc> byProyectoConceptosGastoIds(
+      List<Long> proyectoConceptosGastoIds) {
+    return (root, query, cb) -> {
+
+      if (proyectoConceptosGastoIds == null || proyectoConceptosGastoIds.isEmpty()) {
+        return cb.isTrue(cb.literal(false));
+      }
+
+      return root.get(ProyectoConceptoGastoCodigoEc_.proyectoConceptoGastoId)
+          .in(proyectoConceptosGastoIds);
+    };
+  }
+
+  /**
+   * Se obtienen los {@link ProyectoConceptoGastoCodigoEc} por
+   * {@link ConceptoGasto}
+   * 
+   * @param proyectoConceptoGastoId identificador de la
+   *                                {@link ProyectoConceptoGasto}
+   * @return specification para obtener los
+   *         {@link ProyectoConceptoGastoCodigoEc} por {@link ConceptoGasto}
+   */
+  public static Specification<ProyectoConceptoGastoCodigoEc> byConceptoGasto(
+      Long proyectoConceptoGastoId) {
+    return (root, query, cb) -> {
+      Subquery<Long> queryConvocatoriaConceptoGasto = query.subquery(Long.class);
+      Root<ProyectoConceptoGasto> subqRoot = queryConvocatoriaConceptoGasto.from(ProyectoConceptoGasto.class);
+      queryConvocatoriaConceptoGasto
+          .select(subqRoot.get(ProyectoConceptoGasto_.conceptoGasto).get(ConceptoGasto_.id))
+          .where(cb.equal(subqRoot.get(ProyectoConceptoGasto_.id), proyectoConceptoGastoId));
+
+      return root.get(
+          ProyectoConceptoGastoCodigoEc_.proyectoConceptoGasto)
+          .get(ProyectoConceptoGasto_.conceptoGasto).get(ConceptoGasto_.id).in(queryConvocatoriaConceptoGasto);
+    };
   }
 
   /**
@@ -97,6 +146,31 @@ public class ProyectoConceptoGastoCodigoEcSpecifications {
                 fechaFin != null ? fechaFin : Instant.parse("2500-01-01T23:59:59Z"))),
         cb.or(cb.isNull(root.get(ProyectoConceptoGastoCodigoEc_.fechaFin)),
             cb.greaterThanOrEqualTo(root.get(ProyectoConceptoGastoCodigoEc_.fechaFin),
+                fechaInicio != null ? fechaInicio : Instant.parse("1900-01-01T00:00:00Z"))));
+  }
+
+  /**
+   * {@link ProyectoConceptoGastoCodigoEc} del {@link Proyecto} con fechas
+   * solapadas
+   * 
+   * @param fechaInicio fecha inicio de {@link ProyectoConceptoGastoCodigoEc}
+   * @param fechaFin    fecha fin de la {@link ProyectoConceptoGastoCodigoEc}.
+   * @return specification para obtener los {@link ProyectoConceptoGastoCodigoEc}
+   *         con rango de fechas solapadas
+   */
+  public static Specification<ProyectoConceptoGastoCodigoEc> byRangoFechaConceptoGastoSolapados(Instant fechaInicio,
+      Instant fechaFin) {
+    return (root, query, cb) -> cb.and(
+        cb.or(
+            cb.isNull(
+                root.get(ProyectoConceptoGastoCodigoEc_.proyectoConceptoGasto).get(ProyectoConceptoGasto_.fechaInicio)),
+            cb.lessThanOrEqualTo(root.get(ProyectoConceptoGastoCodigoEc_.proyectoConceptoGasto).get(
+                ProyectoConceptoGasto_.fechaInicio),
+                fechaFin != null ? fechaFin : Instant.parse("2500-01-01T23:59:59Z"))),
+        cb.or(cb.isNull(root.get(ProyectoConceptoGastoCodigoEc_.proyectoConceptoGasto).get(
+            ProyectoConceptoGasto_.fechaFin)),
+            cb.greaterThanOrEqualTo(root.get(ProyectoConceptoGastoCodigoEc_.proyectoConceptoGasto).get(
+                ProyectoConceptoGasto_.fechaFin),
                 fechaInicio != null ? fechaInicio : Instant.parse("1900-01-01T00:00:00Z"))));
   }
 

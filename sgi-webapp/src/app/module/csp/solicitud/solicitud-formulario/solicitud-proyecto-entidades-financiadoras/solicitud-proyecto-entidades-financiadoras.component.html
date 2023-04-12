@@ -13,7 +13,7 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             {{'csp.solicitud-entidad-financiadora.nombre' | translate}}
           </th>
-          <td mat-cell *matCellDef="let element">
+          <td mat-cell *matCellDef="let element" sgempNotFoundError [model]="element.empresa">
             {{element.empresa?.nombre}}
           </td>
         </ng-container>
@@ -103,7 +103,7 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               {{'csp.solicitud-entidad-financiadora.nombre' | translate}}
             </th>
-            <td mat-cell *matCellDef="let wrapper">
+            <td mat-cell *matCellDef="let wrapper" sgempNotFoundError [model]="wrapper.value.empresa">
               {{wrapper.value.empresa?.nombre}}
             </td>
           </ng-container>

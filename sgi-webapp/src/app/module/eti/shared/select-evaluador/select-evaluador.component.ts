@@ -1,4 +1,5 @@
 import { PlatformLocation } from '@angular/common';
+import { InstantiateExpr } from '@angular/compiler';
 import { Component, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
@@ -12,6 +13,7 @@ import { ROUTE_NAMES } from '@core/route.names';
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SgiAuthService } from '@sgi/framework/auth';
+import { DateTime } from 'luxon';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ETI_ROUTE_NAMES } from '../../eti-route-names';
@@ -41,8 +43,18 @@ export class SelectEvaluadorComponent extends SelectServiceExtendedComponent<IEv
     }
     this.stateChanges.next();
   }
+
+  @Input()
+  get fechaEvaluacion(): DateTime {
+    return this._fechaEvaluacion;
+  }
+  set fechaEvaluacion(value: DateTime) {
+    this._fechaEvaluacion = value;
+  }
   // tslint:disable-next-line: variable-name
-  private _memoria: IMemoria
+  private _memoria: IMemoria;
+  // tslint:disable-next-line: variable-name
+  private _fechaEvaluacion: DateTime;
 
   @Input()
   set excludeOnChange(value: Observable<IEvaluador>) {
@@ -84,7 +96,7 @@ export class SelectEvaluadorComponent extends SelectServiceExtendedComponent<IEv
       return of([]);
     }
 
-    return this.evaluadorService.findAllMemoriasAsignablesConvocatoria(this.memoria.comite.id, this.memoria.id).pipe(
+    return this.evaluadorService.findAllMemoriasAsignablesConvocatoria(this.memoria.comite.id, this.memoria.id, this.fechaEvaluacion).pipe(
       map(({ items }) => items),
       switchMap((evaluadores) => {
         if (evaluadores) {

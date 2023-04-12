@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.eti.controller;
 
 import org.crue.hercules.sgi.eti.model.Apartado;
 import org.crue.hercules.sgi.eti.model.Bloque;
+import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.service.ApartadoService;
 import org.crue.hercules.sgi.eti.service.BloqueService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
@@ -22,9 +23,17 @@ import lombok.extern.slf4j.Slf4j;
  * BloqueController
  */
 @RestController
-@RequestMapping("/bloques")
+@RequestMapping(BloqueController.REQUEST_MAPPING)
 @Slf4j
 public class BloqueController {
+
+  public static final String PATH_DELIMITER = "/";
+  public static final String REQUEST_MAPPING = PATH_DELIMITER + "bloques";
+  public static final String PATH_COMENTARIOS_GENERALES = PATH_DELIMITER + "comentarios-generales";
+
+  public static final String PATH_ID = PATH_DELIMITER + "{id}";
+  public static final String PATH_APARTADOS = PATH_ID + PATH_DELIMITER + "apartados";
+  public static final String PATH_FORMULARIO = PATH_DELIMITER + "{idFormulario}" + PATH_DELIMITER + "formulario";
 
   /** Bloque service */
   private final BloqueService service;
@@ -50,9 +59,10 @@ public class BloqueController {
    * 
    * @param query  filtro de búsqueda.
    * @param paging pageable
+   * @return el listado de entidades {@link Bloque} paginadas y filtradas.
    */
   @GetMapping()
-  ResponseEntity<Page<Bloque>> findAll(@RequestParam(name = "q", required = false) String query,
+  public ResponseEntity<Page<Bloque>> findAll(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");
     Page<Bloque> page = service.findAll(query, paging);
@@ -71,8 +81,8 @@ public class BloqueController {
    * @param id Identificador de {@link Bloque}.
    * @return {@link Bloque} correspondiente al id.
    */
-  @GetMapping("/{id}")
-  Bloque one(@PathVariable Long id) {
+  @GetMapping(PATH_ID)
+  public Bloque one(@PathVariable Long id) {
     log.debug("Bloque one(Long id) - start");
     Bloque returnValue = service.findById(id);
     log.debug("Bloque one(Long id) - end");
@@ -86,9 +96,10 @@ public class BloqueController {
    * @param paging pageable
    * @return el listado de entidades {@link Apartado} paginadas y filtradas.
    */
-  @GetMapping("/{id}/apartados")
+  @GetMapping(PATH_APARTADOS)
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR', 'ETI-MEM-INV-ER')")
-  ResponseEntity<Page<Apartado>> getApartados(@PathVariable Long id, @RequestPageable(sort = "s") Pageable paging) {
+  public ResponseEntity<Page<Apartado>> getApartados(@PathVariable Long id,
+      @RequestPageable(sort = "s") Pageable paging) {
     log.debug("getApartados(Long id, Pageable paging - start");
     Page<Apartado> page = apartadoService.findByBloqueId(id, paging);
     log.debug("getApartados(Long id, Pageable paging - end");
@@ -101,15 +112,34 @@ public class BloqueController {
   /**
    * Devuelve los bloques a través del id del formulario.
    * 
+   * @deprecated Usar {@link FormularioController#getBloques(Long, Pageable)}
+   * 
    * @param idFormulario Identificador de {@link Formulario}.
-   * @return Page<Bloque>
+   * @param paging       pageable
+   * @return el listado de entidades {@link Bloque} paginadas.
    */
-  @GetMapping("/{idFormulario}/formulario")
+  @GetMapping(PATH_FORMULARIO)
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-PEV-INV-VR')")
-  Page<Bloque> findByFormularioId(@PathVariable Long idFormulario, @RequestPageable(sort = "s") Pageable paging) {
+  @Deprecated
+  public Page<Bloque> findByFormularioId(@PathVariable Long idFormulario,
+      @RequestPageable(sort = "s") Pageable paging) {
     log.debug("Bloque findByFormularioId(Long idFormulario, Pageable paging) - start");
     Page<Bloque> returnValue = service.findByFormularioId(idFormulario, paging);
     log.debug("Bloque findByFormularioId(Long idFormulario, Pageable paging) - end");
+    return returnValue;
+  }
+
+  /**
+   * Obtiene el {@link Bloque} de comentarios generales.
+   *
+   * @return el {@link Bloque}.
+   */
+  @GetMapping(PATH_COMENTARIOS_GENERALES)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-PEV-INV-C', 'ETI-PEV-INV-ER')")
+  public Bloque getBloqueComentariosGenerales() {
+    log.debug("getBloqueComentariosGenerales() - start");
+    Bloque returnValue = service.getBloqueComentariosGenerales();
+    log.debug("getBloqueComentariosGenerales() - end");
     return returnValue;
   }
 

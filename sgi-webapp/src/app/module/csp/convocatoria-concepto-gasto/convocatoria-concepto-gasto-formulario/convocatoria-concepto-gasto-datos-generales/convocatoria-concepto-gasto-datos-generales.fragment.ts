@@ -2,6 +2,7 @@ import { FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } fro
 import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { IConvocatoriaConceptoGasto } from '@core/models/csp/convocatoria-concepto-gasto';
+import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatoria-concepto-gasto-codigo-ec';
 import { FormFragment } from '@core/services/action-service';
 import { ConvocatoriaConceptoGastoService } from '@core/services/csp/convocatoria-concepto-gasto.service';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
@@ -13,12 +14,15 @@ export class ConvocatoriaConceptoGastoDatosGeneralesFragment extends FormFragmen
 
   private convocatoriaConceptoGasto: IConvocatoriaConceptoGasto;
   public readonly conceptoGasto$: Subject<IConceptoGasto> = new BehaviorSubject<IConceptoGasto>(null);
+  private codigosEconomicos: IConvocatoriaConceptoGastoCodigoEc[];
 
   constructor(
     key: number,
     private convocatoria: IConvocatoria,
     private service: ConvocatoriaConceptoGastoService,
-    private selectedConvocatoriaConceptoGastos: IConvocatoriaConceptoGasto[],
+    private selectedConvocatoriaConceptoGastosPermitidos: IConvocatoriaConceptoGasto[],
+    private selectedConvocatoriaConceptoGastosNoPermitidos: IConvocatoriaConceptoGasto[],
+    private selectedConvocatoriaConceptoGastoCodigosEc: IConvocatoriaConceptoGastoCodigoEc[],
     private permitido: boolean,
     private canEdit: boolean
   ) {
@@ -63,6 +67,7 @@ export class ConvocatoriaConceptoGastoDatosGeneralesFragment extends FormFragmen
 
     form.setValidators([
       this.notOverlapsSameConceptoGasto('mesInicial', 'mesFinal', 'conceptoGasto'),
+      this.notOverlapsSameConceptoGastoAndCodigoEconomico('mesInicial', 'mesFinal', 'conceptoGasto'),
       this.fieldsAreEqualOrSmallerThanNumber('mesInicial', 'mesFinal', this.convocatoria?.duracion),
       NumberValidator.isAfter('mesInicial', 'mesFinal')
     ]);
@@ -114,6 +119,12 @@ export class ConvocatoriaConceptoGastoDatosGeneralesFragment extends FormFragmen
         return this.convocatoriaConceptoGasto.id;
       })
     );
+  }
+
+  setCodigosEconomicos(codigosEconomicos: IConvocatoriaConceptoGastoCodigoEc[]): void {
+    this.codigosEconomicos = codigosEconomicos;
+    this.getFormGroup()?.controls.mesInicial.updateValueAndValidity();
+    this.getFormGroup()?.controls.mesFinal.updateValueAndValidity();
   }
 
   private create(convocatoriaConceptoGasto: IConvocatoriaConceptoGasto): Observable<IConvocatoriaConceptoGasto> {
@@ -187,9 +198,9 @@ export class ConvocatoriaConceptoGastoDatosGeneralesFragment extends FormFragmen
         }
 
         const inicioRangoNumber = inicioRangoControl.value ? inicioRangoControl.value : 1;
-        const finRangoNumber = finRangoControl.value ? finRangoControl.value : 12;
+        const finRangoNumber = finRangoControl.value ? finRangoControl.value : Number.MAX_VALUE;
 
-        const convocatoriaConceptoGastos = this.selectedConvocatoriaConceptoGastos
+        const convocatoriaConceptoGastos = this.getConvocatoriaConceptoGastosTipo(this.permitido)
           .filter(convocatoriaConceptoGasto => convocatoriaConceptoGasto.conceptoGasto.id === filterFieldControl.value?.id);
 
         const ranges = convocatoriaConceptoGastos.map(convocatoriaConceptoGasto => {
@@ -220,4 +231,75 @@ export class ConvocatoriaConceptoGastoDatosGeneralesFragment extends FormFragmen
       }
     };
   }
+
+  /**
+   * Comprueba que el rango entre los 2 campos indicados no se superpone con ninguno de los rangos de la lista
+   *
+   * @param startRangeFieldName Nombre del campo que indica el inicio del rango.
+   * @param endRangeFieldName Nombre del campo que indica el fin del rango.
+   * @param ranges Lista de rangos con los que se quiere comprobar.
+   */
+  private notOverlapsSameConceptoGastoAndCodigoEconomico(startRangeFieldName: string, endRangeFieldName: string, filterFieldName: string): ValidatorFn {
+    return (formGroup: FormGroup): ValidationErrors | null => {
+
+      const filterFieldControl = formGroup.controls[filterFieldName];
+      const inicioRangoControl = formGroup.controls[startRangeFieldName];
+      const finRangoControl = formGroup.controls[endRangeFieldName];
+
+      if (filterFieldControl.value) {
+
+        if ((inicioRangoControl.errors && !inicioRangoControl.errors.overlappedConceptoAndCodigo)
+          || (finRangoControl.errors && !finRangoControl.errors.overlappedConceptoAndCodigo)) {
+          return;
+        }
+
+        const inicioRangoNumber = inicioRangoControl.value ? inicioRangoControl.value : 1;
+        const finRangoNumber = finRangoControl.value ? finRangoControl.value : Number.MAX_VALUE;
+
+        const convocatoriaConceptoGastos = this.selectedConvocatoriaConceptoGastoCodigosEc
+          .filter(c => this.isInCodigosEconomicosConceptoCasto(c.codigoEconomico.id))
+          .map(c => this.getConvocatoriaConceptoGastos().find(concepto => concepto.id === c.convocatoriaConceptoGastoId && concepto.conceptoGasto.id === filterFieldControl.value?.id))
+          .filter(c => !!c);
+
+        const ranges = convocatoriaConceptoGastos.map(convocatoriaConceptoGasto => {
+          return {
+            inicio: convocatoriaConceptoGasto.mesInicial ? convocatoriaConceptoGasto.mesInicial : 1,
+            fin: convocatoriaConceptoGasto.mesFinal ? convocatoriaConceptoGasto.mesFinal : 12
+          };
+        });
+
+
+        if (ranges.some(r => inicioRangoNumber <= r.fin && r.inicio <= finRangoNumber)) {
+          inicioRangoControl.setErrors({ overlappedConceptoAndCodigo: true });
+          inicioRangoControl.markAsTouched({ onlySelf: true });
+
+          finRangoControl.setErrors({ overlappedConceptoAndCodigo: true });
+          finRangoControl.markAsTouched({ onlySelf: true });
+        } else {
+          if (inicioRangoControl.errors) {
+            delete inicioRangoControl.errors.overlappedConceptoAndCodigo;
+            inicioRangoControl.updateValueAndValidity({ onlySelf: true });
+          }
+
+          if (finRangoControl.errors) {
+            delete finRangoControl.errors.overlappedConceptoAndCodigo;
+            finRangoControl.updateValueAndValidity({ onlySelf: true });
+          }
+        }
+      }
+    };
+  }
+
+  private getConvocatoriaConceptoGastosTipo(permitos: boolean): IConvocatoriaConceptoGasto[] {
+    return permitos ? this.selectedConvocatoriaConceptoGastosPermitidos : this.selectedConvocatoriaConceptoGastosNoPermitidos;
+  }
+
+  private getConvocatoriaConceptoGastos(): IConvocatoriaConceptoGasto[] {
+    return this.selectedConvocatoriaConceptoGastosPermitidos.concat(this.selectedConvocatoriaConceptoGastosNoPermitidos);
+  }
+
+  private isInCodigosEconomicosConceptoCasto(codigoEconomicoId: string): boolean {
+    return this.codigosEconomicos.some(c => c.codigoEconomico.id == codigoEconomicoId);
+  }
+
 }

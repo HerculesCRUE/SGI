@@ -38,6 +38,7 @@ import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
 import org.crue.hercules.sgi.csp.model.ProyectoAreaConocimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoClasificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoConceptoGasto;
+import org.crue.hercules.sgi.csp.model.ProyectoConceptoGastoCodigoEc;
 import org.crue.hercules.sgi.csp.model.ProyectoDocumento;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadGestora;
@@ -68,6 +69,7 @@ import org.crue.hercules.sgi.csp.service.ProyectoAgrupacionGastoService;
 import org.crue.hercules.sgi.csp.service.ProyectoAnualidadService;
 import org.crue.hercules.sgi.csp.service.ProyectoAreaConocimientoService;
 import org.crue.hercules.sgi.csp.service.ProyectoClasificacionService;
+import org.crue.hercules.sgi.csp.service.ProyectoConceptoGastoCodigoEcService;
 import org.crue.hercules.sgi.csp.service.ProyectoConceptoGastoService;
 import org.crue.hercules.sgi.csp.service.ProyectoDocumentoService;
 import org.crue.hercules.sgi.csp.service.ProyectoEntidadFinanciadoraService;
@@ -130,109 +132,55 @@ public class ProyectoController {
   public static final String PATH_ANUALIDAD_GASTOS = PATH_ID + PATH_SEPARATOR + "anualidad-gastos";
   public static final String PATH_ANUALIDAD_INGRESOS = PATH_ID + PATH_SEPARATOR + "anualidad-ingresos";
   public static final String PATH_CAMBIAR_ESTADO = PATH_ID + PATH_SEPARATOR + "cambiar-estado";
+  public static final String PATH_CODIGOS_ECONOMICOS = PATH_ID + PATH_SEPARATOR + "proyectoconceptosgastocodigosecs";
+  public static final String PATH_CODIGOS_ECONOMICOS_NO_PERMITIDOS = PATH_CODIGOS_ECONOMICOS + PATH_SEPARATOR
+      + "nopermitidos";
+  public static final String PATH_CODIGOS_ECONOMICOS_PERMITIDOS = PATH_CODIGOS_ECONOMICOS + PATH_SEPARATOR
+      + "permitidos";
   public static final String PATH_GASTOS_PROYECTO = PATH_ID + PATH_SEPARATOR + "gastos-proyecto";
   public static final String PATH_INVESTIGADORES_PRINCIPALES = PATH_ID + PATH_SEPARATOR + "investigadoresprincipales";
   public static final String PATH_MODIFICABLE = PATH_ID + PATH_SEPARATOR + "modificable";
   public static final String PATH_PRORROGAS = PATH_ID + PATH_SEPARATOR + "proyecto-prorrogas";
-  public static final String PATH_SOLICITUD = PATH_ID + PATH_SEPARATOR + "solicitud";
   public static final String PATH_REQUERIMIENTOS_JUSTIFICACION = PATH_ID + PATH_SEPARATOR
       + "requerimientos-justificacion";
+  public static final String PATH_SOLICITUD = PATH_ID + PATH_SEPARATOR + "solicitud";
 
   private final ModelMapper modelMapper;
 
-  /** Proyecto service */
-  private final ProyectoService service;
-
-  /** ProyectoHito service */
-  private final ProyectoHitoService proyectoHitoService;
-
-  /** ProyectoFaseService */
-  private final ProyectoFaseService proyectoFaseService;
-
-  /** ProyectoPaqueteTrabajo service */
-  private final ProyectoPaqueteTrabajoService proyectoPaqueteTrabajoService;
-
-  /** ProyectoSocio service */
-  private final ProyectoSocioService proyectoSocioService;
-
-  /** ProyectoPeriodoSeguimiento service */
-  private final ProyectoPeriodoSeguimientoService proyectoPeriodoSeguimientoService;
-
-  /** ConvocatoriaEntidadFinanciadora service */
-  /** ProyectoEntidadFinanciadoraService service */
-  private final ProyectoEntidadFinanciadoraService proyectoEntidadFinanciadoraService;
-
-  /** ProyectoDocumentoService service */
-  private final ProyectoDocumentoService proyectoDocumentoService;
-
-  /** ProyectoEntidadGestoraService */
-  private final ProyectoEntidadGestoraService proyectoEntidadGestoraService;
-
-  /** ProyectoEquipo service */
-  private final ProyectoEquipoService proyectoEquipoService;
-
-  /** ProyectoProrrogaservice */
-  private final ProyectoProrrogaService proyectoProrrogaService;
-
-  /** EstadoProyecto service */
-  private final EstadoProyectoService estadoProyectoService;
-
-  /** ProrrogaDocumentoService */
-  private final ProrrogaDocumentoService prorrogaDocumentoService;
-
-  /** ProyectoPeriodoSeguimientoDocumento service */
-  private final ProyectoPeriodoSeguimientoDocumentoService proyectoPeriodoSeguimientoDocumentoService;
-
-  /** ProyectoSocioPeriodoJustificacionDocumentoService service */
-  private final ProyectoSocioPeriodoJustificacionDocumentoService proyectoSocioPeriodoJustificacionDocumentoService;
-
-  /** ProyectoClasificacionService service */
-  private final ProyectoClasificacionService proyectoClasificacionService;
-
-  /** ProyectoAreaConocimientoService */
-  private final ProyectoAreaConocimientoService proyectoAreaConocimientoService;
-
-  /** ProyectoProyectoSge service */
-  private final ProyectoProyectoSgeService proyectoProyectoSgeService;
-
-  /** ProyectoAnualidadService service */
-  private final ProyectoAnualidadService proyectoAnualidadService;
-
-  /** ProyectoPartidaService service */
-  private final ProyectoPartidaService proyectoPartidaService;
-  /** ProyectoAgrupacionGasto Service */
-  private final ProyectoAgrupacionGastoService proyectoAgrupacionGastoService;
-
-  /** ProyectoConceptoGasto service */
-  private final ProyectoConceptoGastoService proyectoConceptoGastoService;
-
-  /** ProyectoResponsableEconomicoService */
-  private final ProyectoResponsableEconomicoService proyectoResponsableEconomicoService;
-
-  /** ProyectoPeriodoJustificacionService */
-  private final ProyectoPeriodoJustificacionService proyectoPeriodoJustificacionService;
-
   private final AnualidadGastoService anualidadGastoService;
-
   private final AnualidadIngresoService anualidadIngresoService;
-
-  private final GastoProyectoService gastoProyectoService;
-
-  /** ProyectoPalabraClaveService */
-  private final ProyectoPalabraClaveService proyectoPalabraClaveService;
-
-  /** ProyectoNotificacionesProyecto service */
-  private final NotificacionProyectoExternoCVNService notificacionProyectoExternoCVNService;
-
-  /** Convocatoria service */
   private final ConvocatoriaService convocatoriaService;
-
-  private final ProyectoFaseConverter proyectoFaseConverter;
-
-  /** RequerimientoJustificacion service */
+  private final EstadoProyectoService estadoProyectoService;
+  private final GastoProyectoService gastoProyectoService;
+  private final NotificacionProyectoExternoCVNService notificacionProyectoExternoCVNService;
+  private final ProrrogaDocumentoService prorrogaDocumentoService;
+  private final ProyectoAgrupacionGastoService proyectoAgrupacionGastoService;
+  private final ProyectoAnualidadService proyectoAnualidadService;
+  private final ProyectoAreaConocimientoService proyectoAreaConocimientoService;
+  private final ProyectoClasificacionService proyectoClasificacionService;
+  private final ProyectoConceptoGastoCodigoEcService proyectoConceptoGastoCodigoEcService;
+  private final ProyectoConceptoGastoService proyectoConceptoGastoService;
+  private final ProyectoDocumentoService proyectoDocumentoService;
+  private final ProyectoEntidadFinanciadoraService proyectoEntidadFinanciadoraService;
+  private final ProyectoEntidadGestoraService proyectoEntidadGestoraService;
+  private final ProyectoEquipoService proyectoEquipoService;
+  private final ProyectoFaseService proyectoFaseService;
+  private final ProyectoHitoService proyectoHitoService;
+  private final ProyectoPalabraClaveService proyectoPalabraClaveService;
+  private final ProyectoPaqueteTrabajoService proyectoPaqueteTrabajoService;
+  private final ProyectoPartidaService proyectoPartidaService;
+  private final ProyectoPeriodoJustificacionService proyectoPeriodoJustificacionService;
+  private final ProyectoPeriodoSeguimientoDocumentoService proyectoPeriodoSeguimientoDocumentoService;
+  private final ProyectoPeriodoSeguimientoService proyectoPeriodoSeguimientoService;
+  private final ProyectoProrrogaService proyectoProrrogaService;
+  private final ProyectoProyectoSgeService proyectoProyectoSgeService;
+  private final ProyectoResponsableEconomicoService proyectoResponsableEconomicoService;
+  private final ProyectoService service;
+  private final ProyectoSocioPeriodoJustificacionDocumentoService proyectoSocioPeriodoJustificacionDocumentoService;
+  private final ProyectoSocioService proyectoSocioService;
   private final RequerimientoJustificacionService requerimientoJustificacionService;
 
-  /** RequerimientoJustificacion converter */
+  private final ProyectoFaseConverter proyectoFaseConverter;
   private final RequerimientoJustificacionConverter requerimientoJustificacionConverter;
 
   /**
@@ -1688,4 +1636,58 @@ public class ProyectoController {
     log.debug("findRequerimientosJustificacion(Long id, String query, Pageable paging) - end");
     return new ResponseEntity<>(page, HttpStatus.OK);
   }
+
+  /**
+   * Devuelve una lista paginada y filtrada de
+   * {@link ProyectoConceptoGastoCodigoEc} permitidos del
+   * {@link Proyecto}.
+   *
+   * @param id     Identificador de {@link Proyecto}.
+   * @param paging pageable.
+   * @return el listado de entidades {@link ProyectoConceptoGastoCodigoEc}
+   *         paginadas y filtradas de la {@link Proyecto}.
+   */
+  @GetMapping(PATH_CODIGOS_ECONOMICOS_PERMITIDOS)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E', 'CSP-PRO-V')")
+  public ResponseEntity<Page<ProyectoConceptoGastoCodigoEc>> findAllProyectoGastosCodigoEcPermitidos(
+      @PathVariable Long id, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAllProyectoGastosCodigoEcPermitidos(Long id, Pageable paging) - start");
+    Page<ProyectoConceptoGastoCodigoEc> page = proyectoConceptoGastoCodigoEcService
+        .findAllByProyectoAndPermitidoTrue(id, paging);
+    if (page.isEmpty()) {
+      log.debug("findAllProyectoGastosCodigoEcPermitidos(Long id, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findAllProyectoGastosCodigoEcPermitidos(Long id, Pageable paging) - end");
+    return new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve una lista paginada y filtrada de
+   * {@link ProyectoConceptoGastoCodigoEc} no permitidos del
+   * {@link Proyecto}.
+   *
+   * @param id     Identificador de {@link Proyecto}.
+   * @param paging pageable.
+   * @return el listado de entidades {@link ProyectoConceptoGastoCodigoEc}
+   *         paginadas y filtradas de la {@link Proyecto}.
+   */
+  @GetMapping(PATH_CODIGOS_ECONOMICOS_NO_PERMITIDOS)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E','CSP-PRO-V')")
+  public ResponseEntity<Page<ProyectoConceptoGastoCodigoEc>> findAllProyectoGastosCodigoEcNoPermitidos(
+      @PathVariable Long id, @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAllProyectoGastosCodigoEcNoPermitidos(Long id, Pageable paging) - start");
+    Page<ProyectoConceptoGastoCodigoEc> page = proyectoConceptoGastoCodigoEcService
+        .findAllByProyectoAndPermitidoFalse(id, paging);
+
+    if (page.isEmpty()) {
+      log.debug("findAllProyectoGastosCodigoEcNoPermitidos(Long id, Pageable paging) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    log.debug("findAllProyectoGastosCodigoEcNoPermitidos(Long id, Pageable paging) - end");
+    return new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
 }

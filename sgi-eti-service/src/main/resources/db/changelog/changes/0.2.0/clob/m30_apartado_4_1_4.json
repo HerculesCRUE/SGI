@@ -1,0 +1,29 @@
+[
+  {
+    "key": "ap4_1_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.4 Efectos nocivos que puedan derivarse del uso de agentes, material biológico, sustancias químicas peligrosas, sustancias radiactivas y/o nanopartículas"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Describir brevemente la enfermedad o efectos nocivos que puedan derivarse del uso de agentes y/o material biológico, sustancias químicas peligrosas, sustancias radiactivas y/o nanopartículas</p>"
+      },
+      {
+        "key": "efectosNocivos",
+        "className": "descripcion",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Describir",
+          "placeholder": "Describir",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

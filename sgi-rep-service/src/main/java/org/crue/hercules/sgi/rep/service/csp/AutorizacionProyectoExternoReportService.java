@@ -15,8 +15,9 @@ import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
 import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto.VinculacionDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.crue.hercules.sgi.rep.service.SgiReportService;
-import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgempService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
 import org.pentaho.reporting.engine.classic.core.TableDataFactory;
 import org.springframework.stereotype.Service;
@@ -38,11 +39,11 @@ public class AutorizacionProyectoExternoReportService extends SgiReportService {
   private final SgiApiSgempService empresaService;
 
   public AutorizacionProyectoExternoReportService(SgiConfigProperties sgiConfigProperties,
-      SgiApiSgpService personaService,
+      SgiApiConfService sgiApiConfService, SgiApiSgpService personaService,
       AutorizacionProyectoExternoService autorizacionProyectoExternoService, ConvocatoriaService convocatoriaService,
       SgiApiSgempService empresaService) {
 
-    super(sgiConfigProperties);
+    super(sgiConfigProperties, sgiApiConfService);
     this.personaService = personaService;
     this.autorizacionProyectoExternoService = autorizacionProyectoExternoService;
     this.convocatoriaService = convocatoriaService;
@@ -105,6 +106,9 @@ public class AutorizacionProyectoExternoReportService extends SgiReportService {
     String i18nDe = ApplicationContextSupport.getMessage("common.de");
     String pattern = String.format("EEEE dd '%s' MMMM '%s' yyyy", i18nDe, i18nDe);
     elementsRow.add(formatInstantToString(Instant.now(), pattern));
+
+    columnsData.add("resourcesBaseURL");
+    elementsRow.add(getRepResourcesBaseURL());
 
     rowsData.add(elementsRow);
 

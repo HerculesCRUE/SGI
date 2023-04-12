@@ -9,6 +9,7 @@ import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContext
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableRatificacion;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -21,9 +22,9 @@ import org.springframework.validation.annotation.Validated;
 public class InformeFavorableRatificacionReportService extends InformeEvaluacionBaseReportService {
 
   public InformeFavorableRatificacionReportService(SgiConfigProperties sgiConfigProperties,
-      SgiApiSgpService personaService, EvaluacionService evaluacionService) {
+      SgiApiConfService sgiApiConfService, SgiApiSgpService personaService, EvaluacionService evaluacionService) {
 
-    super(sgiConfigProperties, personaService, evaluacionService);
+    super(sgiConfigProperties, sgiApiConfService, personaService, evaluacionService);
   }
 
   protected DefaultTableModel getTableModelGeneral(EvaluacionDto evaluacion) {
@@ -48,6 +49,10 @@ public class InformeFavorableRatificacionReportService extends InformeEvaluacion
     elementsRow.add(formatInstantToString(fechaEvaluacion, pattern));
 
     fillCommonFieldsEvaluacion(evaluacion, columnsData, elementsRow);
+
+    columnsData.add("resourcesBaseURL");
+    elementsRow.add(getRepResourcesBaseURL());
+
     rowsData.add(elementsRow);
 
     DefaultTableModel tableModel = new DefaultTableModel();

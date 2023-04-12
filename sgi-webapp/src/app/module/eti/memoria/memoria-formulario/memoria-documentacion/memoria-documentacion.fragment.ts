@@ -23,6 +23,12 @@ export class MemoriaDocumentacionFragment extends Fragment {
 
   private deletedDocumentacion = new Map<TIPO_DOCUMENTACION, IDocumentacionMemoria[]>();
 
+  private documentoRatificacion = false;
+
+  get isLoadDocumentoRatificacion(): boolean {
+    return this.documentoRatificacion;
+  }
+
   constructor(
     key: number,
     readonly isInvestigador: boolean,
@@ -32,6 +38,16 @@ export class MemoriaDocumentacionFragment extends Fragment {
     super(key);
     const values = Object.values(TIPO_DOCUMENTACION);
     values.filter(value => typeof value !== 'string').forEach(value => this.deletedDocumentacion.set(value as TIPO_DOCUMENTACION, []));
+
+    this.documentacionesMemoria$.subscribe(wrappers => {
+      this.documentoRatificacion = false;
+      wrappers.forEach(wrapper => {
+        // Documento de ratificación
+        if (wrapper.value.tipoDocumento.id === 23) {
+          this.documentoRatificacion = true;
+        }
+      });
+    });
   }
 
   onInitialize(): void {
@@ -177,7 +193,7 @@ export class MemoriaDocumentacionFragment extends Fragment {
     }
   }
 
-  addDocumento(tipoDocumentacion: TIPO_DOCUMENTACION, documentacion: IDocumentacionMemoria,) {
+  addDocumento(tipoDocumentacion: TIPO_DOCUMENTACION, documentacion: IDocumentacionMemoria) {
     const data$ = this.getListByTipoDocumentacion(tipoDocumentacion);
 
     const wrapped = new StatusWrapper<IDocumentacionMemoria>(documentacion);

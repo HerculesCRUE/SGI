@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.eti.service;
 
+import org.crue.hercules.sgi.eti.exceptions.BloqueNotFoundException;
 import org.crue.hercules.sgi.eti.model.Bloque;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.springframework.data.domain.Page;
@@ -24,8 +25,10 @@ public interface BloqueService {
    *
    * @param id el id de la entidad {@link Bloque}.
    * @return la entidad {@link Bloque}.
+   * @throws BloqueNotFoundException Si no existe ningún {@link Bloque} con ese
+   *                                 id.
    */
-  Bloque findById(Long id);
+  Bloque findById(Long id) throws BloqueNotFoundException;
 
   /**
    * Obtener todas las entidades {@link Bloque} paginadas de una
@@ -36,5 +39,13 @@ public interface BloqueService {
    * @return la lista de entidades {@link Bloque} paginadas y/o filtradas.
    */
   Page<Bloque> findByFormularioId(Long id, Pageable pageable);
+
+  /**
+   * Obtiene el {@link Bloque} de comentarios generales.
+   *
+   * @return el {@link Bloque}.
+   * @throws BloqueNotFoundException Si no existe el {@link Bloque}
+   */
+  Bloque getBloqueComentariosGenerales() throws BloqueNotFoundException;
 
 }

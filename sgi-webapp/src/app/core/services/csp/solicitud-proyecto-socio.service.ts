@@ -14,8 +14,9 @@ import { ISolicitudProyectoSocioPeriodoJustificacion } from '@core/models/csp/so
 import { ISolicitudProyectoSocioPeriodoPago } from '@core/models/csp/solicitud-proyecto-socio-periodo-pago';
 import { environment } from '@env';
 import { SgiMutableRestService, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { NGXLogger } from 'ngx-logger';
+import { Observable, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { EmpresaService } from '../sgemp/empresa.service';
 
 @Injectable({
@@ -25,6 +26,7 @@ export class SolicitudProyectoSocioService extends SgiMutableRestService<number,
   private static readonly MAPPING = '/solicitudproyectosocio';
 
   constructor(
+    private readonly logger: NGXLogger,
     protected http: HttpClient,
     private empresaService: EmpresaService
   ) {
@@ -43,6 +45,10 @@ export class SolicitudProyectoSocioService extends SgiMutableRestService<number,
           map(empresa => {
             solicitudProyectoSocio.empresa = empresa;
             return solicitudProyectoSocio;
+          }),
+          catchError((err) => {
+            this.logger.error(err);
+            return of(solicitudProyectoSocio);
           })
         );
       })

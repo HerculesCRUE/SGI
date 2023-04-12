@@ -74,6 +74,9 @@
           <mat-error *ngIf="formGroup.controls.mesInicial.hasError('overlapped')">
             {{'error.csp.convocatoria-elegibilidad-concepto-gasto.mes-inicial.overlapping' | translate}}
           </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesInicial.hasError('overlappedConceptoAndCodigo')">
+            {{'error.csp.convocatoria-elegibilidad-concepto-gasto.overlapped-concepto-and-codigo' | translate}}
+          </mat-error>
         </mat-form-field>
       </div>
     </div>
@@ -104,6 +107,9 @@
           </mat-error>
           <mat-error *ngIf="formGroup.controls.mesFinal.hasError('overlapped')">
             {{'error.csp.convocatoria-elegibilidad-concepto-gasto.mes-final.overlapping' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.mesFinal.hasError('overlappedConceptoAndCodigo')">
+            {{'error.csp.convocatoria-elegibilidad-concepto-gasto.overlapped-concepto-and-codigo' | translate}}
           </mat-error>
         </mat-form-field>
       </div>

@@ -13,9 +13,11 @@ import org.crue.hercules.sgi.rep.dto.eti.MemoriaPeticionEvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.ReportMXX;
 import org.crue.hercules.sgi.rep.dto.eti.TipoEstadoMemoriaDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -30,6 +32,9 @@ class MXXReportServiceTest extends BaseReportEtiServiceTest {
 
   @MockBean
   private SgiConfigProperties sgiConfigProperties;
+
+  @Mock
+  private SgiApiConfService sgiApiConfService;
 
   @MockBean
   private MemoriaService memoriaService;
@@ -54,7 +59,8 @@ class MXXReportServiceTest extends BaseReportEtiServiceTest {
 
   @BeforeEach
   public void setUp() throws Exception {
-    mxxReportService = new MXXReportService(sgiConfigProperties, memoriaService,
+    mxxReportService = new MXXReportService(sgiConfigProperties,
+        sgiApiConfService, memoriaService,
         peticionEvaluacionService, personaService, bloqueService,
         apartadoService, sgiFormlyService, respuestaService);
   }
@@ -102,6 +108,10 @@ class MXXReportServiceTest extends BaseReportEtiServiceTest {
         peticionEvaluacionService.findMemoriaByPeticionEvaluacionMaxVersion(1L))
         .willReturn(generarMockMemoriaPeticionEvaluacionDto(idMemoria));
 
+    BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
+        .willReturn(getResource("eti/prpt/rep-eti-mxx.prpt"));
+    BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
+
     Assertions.assertThatThrownBy(() -> mxxReportService.getReportMXX(report,
         idMemoria,
         idFormulario))
@@ -122,6 +132,10 @@ class MXXReportServiceTest extends BaseReportEtiServiceTest {
     BDDMockito.given(
         peticionEvaluacionService.findMemoriaByPeticionEvaluacionMaxVersion(1L))
         .willReturn(generarMockMemoriaPeticionEvaluacionDto(idMemoria));
+
+    BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
+        .willReturn(getResource("eti/prpt/rep-eti-mxx.prpt"));
+    BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
 
     ReportMXX report = new ReportMXX();
     report.setOutputType(OutputType.PDF);

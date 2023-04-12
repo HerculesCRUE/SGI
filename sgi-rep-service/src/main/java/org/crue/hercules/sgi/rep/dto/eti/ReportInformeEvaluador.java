@@ -7,7 +7,7 @@ import org.crue.hercules.sgi.rep.dto.SgiReportDto;
  */
 public class ReportInformeEvaluador extends SgiReportDto {
   public ReportInformeEvaluador() {
-    this.setPath("report/eti/informeEvaluador.prpt");
+    this.setPath("rep-eti-ficha-evaluador-prpt");
     this.setName("informeEvaluador");
   }
 }

@@ -1,0 +1,15 @@
+<div class="mat-select-trigger">
+  <div class="mat-select-value" fxFlex="grow" [ngSwitch]="uploading && showProgress" [attr.id]="_valueId">
+    <input type="file" #fileUpload style="display:none;" [accept]="accept"
+      (change)="onSeletectFile($event.target.files)" />
+    <input type="text" class="mat-input-element" tabindex="-1" *ngSwitchCase="false" readonly
+      [value]="displayValue || '\u00A0'">
+    <span *ngSwitchCase="true">
+      <mat-progress-bar class="upload" [value]="uploadProgress | async"></mat-progress-bar>
+    </span>
+  </div>
+
+  <div class="icon-wrapper" fxFlexAlign="center" [class.disabled]="disabled" (click)="triggerUpload()">
+    <mat-icon>search</mat-icon>
+  </div>
+</div>

@@ -84,7 +84,7 @@ public class EvaluadorServiceTest extends BaseServiceTest {
   @Test
   public void create_EvaluadorWithCargoPresidenteAndFechaBajaInformada_ReturnsEvaluador() {
     // given: Un nuevo Evaluador con cargo presidente
-    String cargoComite = "presidente";
+    String cargoComite = "presidente/a";
     Instant fecha = Instant.from(Instant.now().atZone(ZoneOffset.UTC).plus(Period.ofYears(1)));
 
     Evaluador evaluadorNew = generarMockEvaluadorWithCargoComiteAndFechaBaja(null, "EvaluadorNew", 1L, cargoComite,
@@ -98,13 +98,13 @@ public class EvaluadorServiceTest extends BaseServiceTest {
 
     // then: El evaluador tiene cargo presidente
     Assertions.assertThat(evaluadorCreado).isNotNull();
-    Assertions.assertThat(evaluadorCreado.getCargoComite().getNombre().toLowerCase()).isEqualTo("presidente");
+    Assertions.assertThat(evaluadorCreado.getCargoComite().getNombre().toLowerCase()).isEqualTo("presidente/a");
   }
 
   @Test
   public void create_EvaluadorWithCargoPresidenteAndFechaBajaNull_ReturnsEvaluador() {
     // given: Un nuevo Evaluador con cargo presidente
-    String cargoComite = "presidente";
+    String cargoComite = "presidente/a";
     Instant fecha = null;
 
     Evaluador evaluadorNew = generarMockEvaluadorWithCargoComiteAndFechaBaja(null, "EvaluadorNew", 1L, cargoComite,
@@ -118,7 +118,7 @@ public class EvaluadorServiceTest extends BaseServiceTest {
 
     // then: El evaluador tiene cargo presidente
     Assertions.assertThat(evaluadorCreado).isNotNull();
-    Assertions.assertThat(evaluadorCreado.getCargoComite().getNombre().toLowerCase()).isEqualTo("presidente");
+    Assertions.assertThat(evaluadorCreado.getCargoComite().getNombre().toLowerCase()).isEqualTo("presidente/a");
   }
 
   @Test
@@ -193,7 +193,7 @@ public class EvaluadorServiceTest extends BaseServiceTest {
   @Test
   public void update_EvaluadorWithCargoPresidenteAndFechaBajaInformada_ReturnsEvaluador() {
     // given: Un nuevo Evaluador con cargo presidente
-    String cargoComite = "presidente";
+    String cargoComite = "presidente/a";
     Instant fecha = Instant.from(Instant.now().atZone(ZoneOffset.UTC).plus(Period.ofYears(1)));
 
     Evaluador evaluadorServicioActualizado = generarMockEvaluadorWithCargoComiteAndFechaBaja(1L,
@@ -216,7 +216,7 @@ public class EvaluadorServiceTest extends BaseServiceTest {
   @Test
   public void update_EvaluadorWithCargoPresidenteAndFechaBajaNull_ReturnsEvaluador() {
     // given: Un nuevo Evaluador con cargo presidente
-    String cargoComite = "presidente";
+    String cargoComite = "presidente/a";
     Instant fecha = null;
 
     Evaluador evaluadorServicioActualizado = generarMockEvaluadorWithCargoComiteAndFechaBaja(1L,
@@ -414,10 +414,11 @@ public class EvaluadorServiceTest extends BaseServiceTest {
     }
 
     BDDMockito.given(evaluadorRepository.findAllByComiteSinconflictoInteresesMemoria(ArgumentMatchers.anyLong(),
-        ArgumentMatchers.anyLong())).willReturn(evaluadores);
+        ArgumentMatchers.anyLong(), ArgumentMatchers.any(Instant.class))).willReturn(evaluadores);
 
     // when: find unlimited
-    List<Evaluador> result = evaluadorService.findAllByComiteSinconflictoInteresesMemoria(idComite, idMemoria);
+    List<Evaluador> result = evaluadorService.findAllByComiteSinconflictoInteresesMemoria(idComite, idMemoria,
+        Instant.now());
 
     // then: Get a page with one hundred Evaluadores
     Assertions.assertThat(result.size()).isEqualTo(10);
@@ -434,10 +435,11 @@ public class EvaluadorServiceTest extends BaseServiceTest {
     }
 
     BDDMockito.given(evaluadorRepository.findAllByComiteSinconflictoInteresesMemoria(ArgumentMatchers.anyLong(),
-        ArgumentMatchers.anyLong())).willReturn(evaluadores);
+        ArgumentMatchers.anyLong(), ArgumentMatchers.any(Instant.class))).willReturn(evaluadores);
 
     // when: Get page=3 with pagesize=10
-    List<Evaluador> result = evaluadorService.findAllByComiteSinconflictoInteresesMemoria(idComite, idMemoria);
+    List<Evaluador> result = evaluadorService.findAllByComiteSinconflictoInteresesMemoria(idComite, idMemoria,
+        Instant.now());
 
     // then: A List with ten Evaluadores are returned containing
     Assertions.assertThat(result.size()).isEqualTo(10);

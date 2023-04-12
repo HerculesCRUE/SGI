@@ -151,13 +151,11 @@ public class ConvocatoriaConceptoGastoCodigoEcServiceImpl implements Convocatori
   /**
    * Se valida la unicidad del código económico. Para una
    * {@link ConvocatoriaConceptoGasto} el mismo código económico solo puede
-   * aparecer una vez, salvo que lo haga en periodos de vigencia no solapados
-   * (independientemente del valor del campo "permitido").
+   * aparecer una vez, salvo que lo haga en periodos de vigencia no solapados.
    * 
    * @param convocatoriaConceptoGastoId id {@link ConvocatoriaConceptoGasto}
-   * @param fechaInicio                 fecha inicial
-   * @param fechaFin                    fecha final
-   * @param excluirId                   identificadores a excluir de la busqueda
+   * @param conceptoGastoPermitido      permitido o no
+   * 
    * @return true validación correcta/ false validacion incorrecta
    */
   private boolean existsConvocatoriaConceptoGastoCodigoEcConFechasSolapadas(
@@ -191,6 +189,46 @@ public class ConvocatoriaConceptoGastoCodigoEcServiceImpl implements Convocatori
         "existsConvocatoriaConceptoGastoCodigoEcConFechasSolapadas(ConvocatoriaConceptoGastoCodigoEc convocatoriaConceptoGastoCodigoEc) - end");
 
     return returnValue;
+  }
+
+  /**
+   * Se valida la unicidad del código económico y concepto gasto, salvo que lo
+   * haga en periodos de vigencia no solapados
+   * (independientemente del valor del campo "permitido").
+   * 
+   * @param convocatoriaConceptoGastoCodigoEc {@link ConvocatoriaConceptoGastoCodigoEc}
+   * @param mesInicioConceptoGasto            mes inicial del
+   *                                          {@link ConvocatoriaConceptoGasto}
+   * @param mesFinConceptoGasto               mes final del
+   *                                          {@link ConvocatoriaConceptoGasto}
+   * @param convocatoriaId                    Identifiacdor de la
+   *                                          {@link Convocatoria}
+   * @return true validación correcta/ false validacion incorrecta
+   */
+  private boolean existsConvocatoriaConceptoGastoCodigoEcAndConceptoGastoConFechasSolapadas(
+      ConvocatoriaConceptoGastoCodigoEc convocatoriaConceptoGastoCodigoEc,
+      Integer mesInicioConceptoGasto, Integer mesFinConceptoGasto, Long convocatoriaId) {
+
+    Specification<ConvocatoriaConceptoGastoCodigoEc> specByConvocatoria = ConvocatoriaConceptoGastoCodigoEcSpecifications
+        .byConvocatoria(convocatoriaId);
+    Specification<ConvocatoriaConceptoGastoCodigoEc> specByConceptoGastoCodigoEcActivo = ConvocatoriaConceptoGastoCodigoEcSpecifications
+        .byConceptoGastoActivo();
+
+    Specification<ConvocatoriaConceptoGastoCodigoEc> specByCodigoEconomicoRef = ConvocatoriaConceptoGastoCodigoEcSpecifications
+        .byCodigoEconomicoRef(convocatoriaConceptoGastoCodigoEc.getCodigoEconomicoRef());
+
+    Specification<ConvocatoriaConceptoGastoCodigoEc> specByRangoMesesSolapados = ConvocatoriaConceptoGastoCodigoEcSpecifications
+        .byRangoMesesConceptoGastoSolapados(mesInicioConceptoGasto, mesFinConceptoGasto);
+    Specification<ConvocatoriaConceptoGastoCodigoEc> specByIdNotEqual = ConvocatoriaConceptoGastoCodigoEcSpecifications
+        .byIdNotEqual(convocatoriaConceptoGastoCodigoEc.getId());
+    Specification<ConvocatoriaConceptoGastoCodigoEc> specByConceptoGasto = ConvocatoriaConceptoGastoCodigoEcSpecifications
+        .byConceptoGasto(convocatoriaConceptoGastoCodigoEc.getConvocatoriaConceptoGastoId());
+
+    Specification<ConvocatoriaConceptoGastoCodigoEc> specs = Specification.where(specByConvocatoria)
+        .and(specByRangoMesesSolapados).and(specByConceptoGastoCodigoEcActivo).and(specByCodigoEconomicoRef)
+        .and(specByIdNotEqual).and(specByConceptoGasto);
+
+    return repository.count(specs) > 0;
   }
 
   /**
@@ -268,6 +306,13 @@ public class ConvocatoriaConceptoGastoCodigoEcServiceImpl implements Convocatori
               convocatoriaConceptoGasto.getPermitido()),
           "El código económico '" + convocatoriaConceptoGastoCodigoEc.getCodigoEconomicoRef()
               + "' ya está presente y tiene un periodo de vigencia que se solapa con el indicado");
+
+      Assert.isTrue(
+          !existsConvocatoriaConceptoGastoCodigoEcAndConceptoGastoConFechasSolapadas(convocatoriaConceptoGastoCodigoEc,
+              convocatoriaConceptoGasto.getMesInicial(), convocatoriaConceptoGasto.getMesFinal(),
+              convocatoriaConceptoGasto.getConvocatoriaId()),
+          "El código económico '" + convocatoriaConceptoGastoCodigoEc.getCodigoEconomicoRef()
+              + "' ya está presente en otro concepto gasto de la convocatoria y tiene un periodo de vigencia que se solapa con el indicado");
 
       returnValue.add(repository.save(convocatoriaConceptoGastoCodigoEc));
     }

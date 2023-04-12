@@ -11,12 +11,13 @@ import { ETI_ROUTE_NAMES } from './eti-route-names';
 
 const MSG_ROOT_TITLE = marker('eti.root.title');
 const MSG_SOLICITUDES_CONVOCATORIA_TITLE = marker('eti.convocatoria-reunion');
-const MSG_EVALUACIONES_EVALUADOR_TITLE = marker('menu.eti.evaluacion-evaluador');
+const MSG_PERFIL_EVALUADOR_EVALUACIONES_TITLE = marker('menu.eti.perfil-evaluador-evaluaciones');
 const MSG_EVALUACIONES_TITLE = marker('eti.evaluacion');
 const MSG_ACTAS_TITLE = marker('eti.acta');
 const MSG_EVALUADORES_TITLE = marker('eti.evaluador');
 const MSG_MEMORIAS_TITLE = marker('eti.memoria');
-const MSG_SEGUIMIENTOS_TITLE = marker('menu.eti.seguimiento-evaluador');
+const MSG_PERFIL_EVALUADOR_SEGUIMIENTOS_TITLE = marker('menu.eti.perfil-evaluador-seguimientos');
+const MSG_SEGUIMIENTOS_TITLE = marker('eti.seguimiento');
 const MSG_PETICIONES_EVALUACION_TITLE = marker('eti.peticion-evaluacion');
 const MSG_GESTION_SEGUIMIENTO_TITLE = marker('eti.seguimiento');
 const MSG_CONFIGURACION_TITLE = marker('eti.configuracion');
@@ -52,6 +53,21 @@ const routes: SgiRoutes = [
         }
       },
       {
+        path: ETI_ROUTE_NAMES.PERFIL_EVALUADOR_EVALUACIONES,
+        loadChildren: () =>
+          import('./evaluacion-evaluador/evaluacion-perfil-evaluador.module').then(
+            (m) => m.EvaluacionPerfilEvaluadorModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_PERFIL_EVALUADOR_EVALUACIONES_TITLE,
+          hasAnyAuthorityForAnyUO: [
+            'ETI-EVC-V', 'ETI-EVC-EVAL'
+          ],
+          module: Module.ETI
+        }
+      },
+      {
         path: ETI_ROUTE_NAMES.EVALUACIONES_EVALUADOR,
         loadChildren: () =>
           import('./evaluacion-evaluador/evaluacion-evaluador.module').then(
@@ -59,9 +75,9 @@ const routes: SgiRoutes = [
           ),
         canActivate: [SgiAuthGuard],
         data: {
-          title: MSG_EVALUACIONES_EVALUADOR_TITLE,
+          title: MSG_EVALUACIONES_TITLE,
           hasAnyAuthorityForAnyUO: [
-            'ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR'
+            'ETI-EVC-VR', 'ETI-EVC-EVALR'
           ],
           module: Module.ETI
         }
@@ -125,6 +141,20 @@ const routes: SgiRoutes = [
         }
       },
       {
+        path: ETI_ROUTE_NAMES.PERFIL_EVALUADOR_SEGUIMIENTOS,
+        loadChildren: () =>
+          import('./seguimiento/seguimiento-perfil-evaluador.module').then(
+            (m) => m.SeguimientoPerfilEvaluadorModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_PERFIL_EVALUADOR_SEGUIMIENTOS_TITLE,
+          titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
+          hasAnyAuthorityForAnyUO: ['ETI-EVC-V', 'ETI-EVC-EVAL'],
+          module: Module.ETI
+        }
+      },
+      {
         path: ETI_ROUTE_NAMES.SEGUIMIENTOS,
         loadChildren: () =>
           import('./seguimiento/seguimiento.module').then(
@@ -134,7 +164,7 @@ const routes: SgiRoutes = [
         data: {
           title: MSG_SEGUIMIENTOS_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
-          hasAnyAuthorityForAnyUO: ['ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR'],
+          hasAnyAuthorityForAnyUO: ['ETI-EVC-VR', 'ETI-EVC-EVALR'],
           module: Module.ETI
         }
       },

@@ -331,14 +331,41 @@ export class SolicitudActionService extends ActionService {
       this.isInvestigador, solicitudService,
       solicitudProyectoService, convocatoriaService, this.readonly, this.data?.solicitud.convocatoriaId,
       this.hasAnySolicitudProyectoSocioWithRolCoordinador$, this.data?.hasPopulatedPeriodosSocios, palabraClaveService);
-    this.equipoProyecto = new SolicitudEquipoProyectoFragment(this.data?.solicitud?.id, this.data?.solicitud?.convocatoriaId,
-      solicitudService, solicitudProyectoEquipoService, this, rolProyectoService,
-      convocatoriaService, datosAcademicosService, convocatoriaRequisitoIpService, vinculacionService,
-      convocatoriaRequisitoEquipoService, datosPersonalesService, proyectoService, this.isInvestigador, this.readonly);
-    this.socio = new SolicitudProyectoSocioFragment(this.data?.solicitud?.id, solicitudService,
-      solicitudProyectoSocioService, empresaService, this.readonly);
-    this.entidadesFinanciadoras = new SolicitudProyectoEntidadesFinanciadorasFragment(this.data?.solicitud?.id, solicitudService,
-      solicitudEntidadFinanciadoraService, empresaService, solicitudEntidadFinanciadoraService, this.readonly);
+    this.equipoProyecto = new SolicitudEquipoProyectoFragment(
+      logger,
+      this.data?.solicitud?.id,
+      this.data?.solicitud?.convocatoriaId,
+      solicitudService,
+      solicitudProyectoEquipoService,
+      this,
+      rolProyectoService,
+      convocatoriaService,
+      datosAcademicosService,
+      convocatoriaRequisitoIpService,
+      vinculacionService,
+      convocatoriaRequisitoEquipoService,
+      datosPersonalesService,
+      proyectoService,
+      this.isInvestigador,
+      this.readonly
+    );
+    this.socio = new SolicitudProyectoSocioFragment(
+      logger,
+      this.data?.solicitud?.id,
+      solicitudService,
+      solicitudProyectoSocioService,
+      empresaService,
+      this.readonly
+    );
+    this.entidadesFinanciadoras = new SolicitudProyectoEntidadesFinanciadorasFragment(
+      logger,
+      this.data?.solicitud?.id,
+      solicitudService,
+      solicitudEntidadFinanciadoraService,
+      empresaService,
+      solicitudEntidadFinanciadoraService,
+      this.readonly
+    );
     this.desglosePresupuestoGlobal = new SolicitudProyectoPresupuestoGlobalFragment(this.data?.solicitud?.id, solicitudService,
       solicitudProyectoPresupuestoService, empresaService, solicitudProyectoService, this.readonly);
     this.desglosePresupuestoEntidades = new SolicitudProyectoPresupuestoEntidadesFragment(this.data?.solicitud?.id,
@@ -346,8 +373,14 @@ export class SolicitudActionService extends ActionService {
       this.readonly);
     this.clasificaciones = new SolicitudProyectoClasificacionesFragment(this.data?.solicitud?.id, solicitudProyectoClasificacionService,
       solicitudService, clasificacionService, this.readonly);
-    this.responsableEconomico = new SolicitudProyectoResponsableEconomicoFragment(this.data?.solicitud?.id, solicitudService,
-      solicitudProyectoResponsableEconomicoService, personaService, this.readonly);
+    this.responsableEconomico = new SolicitudProyectoResponsableEconomicoFragment(
+      logger,
+      this.data?.solicitud?.id,
+      solicitudService,
+      solicitudProyectoResponsableEconomicoService,
+      personaService,
+      this.readonly
+    );
     this.autoevaluacion = new SolicitudAutoevaluacionFragment(this.data?.solicitud, formlyService, checklistService, authService);
 
     // Fragments Socitudes Rrhh
@@ -378,6 +411,7 @@ export class SolicitudActionService extends ActionService {
     );
 
     this.requisitosConvocatoriaRrhh = new SolicitudRrhhRequisitosConvocatoriaFragment(
+      logger,
       this.data?.solicitud?.id,
       this.data?.solicitud.convocatoriaId,
       this.data?.solicitud.estado,

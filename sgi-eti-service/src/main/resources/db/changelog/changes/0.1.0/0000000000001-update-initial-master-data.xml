@@ -1,0 +1,59 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000001-update-initial-master-data.xml">
+
+  <changeSet context="!test" author="master" id="0000000000001-formly">
+    <update tableName="formly">
+      <column name="esquema" valueClobFile="clob/0000000000001/checklist.json" />
+      <where>:name=:value AND :name=:value</where>
+      <whereParams>
+        <param name="nombre" value="CHECKLIST" />
+        <param name="version" valueNumeric="1" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000001-tipo_comentario">
+    <insert tableName="tipo_comentario">
+      <column name="id" valueNumeric="3" />
+      <column name="nombre" value="ACTA" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000001-comite">
+    <update tableName="comite">
+      <column name="comite" value="CEI" />
+      <column name="nombre_secretario" value="NombreCEI Apellido1 Apellido2" />
+      <column name="nombre_investigacion" value="Seres humanos, sus muestras y sus datos" />
+      <column name="nombre_decreto" value="CEI, BOE 32, 17-2-2014" />
+      <column name="articulo" value="9.3.3. del PNT-CEI de 28 de mayo de 2014" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="1" />
+      </whereParams>
+    </update>
+    <update tableName="comite">
+      <column name="nombre_secretario" value="NombreCEEA Apellido1 Apellido2" />
+      <column name="nombre_investigacion" value="Animales" />
+      <column name="nombre_decreto" value="CEEA, BOE 32, 17-2-2014" />
+      <column name="articulo" value="9.3.3. del PNT-CEEA de 28 de mayo de 2014" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="2" />
+      </whereParams>
+    </update>
+    <update tableName="comite">
+      <column name="comite" value="CBE" />
+      <column name="nombre_secretario" value="NombreCBE Apellido1 Apellido2" />
+      <column name="nombre_investigacion" value="Agentes biológicos, OMG, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanoparticulas" />
+      <column name="nombre_decreto" value="CBE, BOE 32, 17-2-2014" />
+      <column name="articulo" value="9.3.3. del PNT-CEEA de 28 de mayo de 2014" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="3" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+</databaseChangeLog>

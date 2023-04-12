@@ -1,16 +1,17 @@
 @import "colors.scss";
+
 :host {
   .mat-icon.danger {
     color: map-get($sgi-custom-colors, danger);
   }
-  
+
   .tooltip-inv {
     text-align: left;
     display: flex;
-    align-items:center;
+    align-items: center;
 
-    .info-icon{
-        margin-right: 1rem;
+    .info-icon {
+      margin-right: 1rem;
     }
   }
 }

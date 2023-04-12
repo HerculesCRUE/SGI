@@ -36,6 +36,7 @@ import org.crue.hercules.sgi.eti.model.Informe;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.Respuesta;
+import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.Tarea;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
@@ -57,6 +58,7 @@ import org.crue.hercules.sgi.eti.service.ComunicadosService;
 import org.crue.hercules.sgi.eti.service.ConfiguracionService;
 import org.crue.hercules.sgi.eti.service.InformeService;
 import org.crue.hercules.sgi.eti.service.MemoriaService;
+import org.crue.hercules.sgi.eti.service.RetrospectivaService;
 import org.crue.hercules.sgi.eti.service.SgdocService;
 import org.crue.hercules.sgi.eti.service.sgi.SgiApiRepService;
 import org.crue.hercules.sgi.eti.util.Constantes;
@@ -143,6 +145,8 @@ public class MemoriaServiceImpl implements MemoriaService {
   /** Comunicado service */
   private final ComunicadosService comunicadosService;
 
+  private final RetrospectivaService retrospectivaService;
+
   private static final String TIPO_ACTIVIDAD_INVESTIGACION_TUTELADA = "Investigación tutelada";
 
   public MemoriaServiceImpl(SgiConfigProperties sgiConfigProperties, MemoriaRepository memoriaRepository,
@@ -152,7 +156,8 @@ public class MemoriaServiceImpl implements MemoriaService {
       ComiteRepository comiteRepository, DocumentacionMemoriaRepository documentacionMemoriaRepository,
       RespuestaRepository respuestaRepository, TareaRepository tareaRepository,
       ConfiguracionService configuracionService, SgiApiRepService reportService, SgdocService sgdocService,
-      BloqueRepository bloqueRepository, ApartadoRepository apartadoRepository, ComunicadosService comunicadosService) {
+      BloqueRepository bloqueRepository, ApartadoRepository apartadoRepository, ComunicadosService comunicadosService,
+      RetrospectivaService retrospectivaService) {
     this.sgiConfigProperties = sgiConfigProperties;
     this.memoriaRepository = memoriaRepository;
     this.estadoMemoriaRepository = estadoMemoriaRepository;
@@ -171,6 +176,7 @@ public class MemoriaServiceImpl implements MemoriaService {
     this.bloqueRepository = bloqueRepository;
     this.apartadoRepository = apartadoRepository;
     this.comunicadosService = comunicadosService;
+    this.retrospectivaService = retrospectivaService;
   }
 
   /**
@@ -225,6 +231,13 @@ public class MemoriaServiceImpl implements MemoriaService {
     nuevaMemoria.setVersion(1);
     nuevaMemoria.setActivo(Boolean.TRUE);
     nuevaMemoria.setMemoriaOriginal(memoria);
+
+    if (nuevaMemoria.getRequiereRetrospectiva()) {
+      Retrospectiva retrospectiva = Retrospectiva.builder()
+          .estadoRetrospectiva(EstadoRetrospectiva.builder().id(Constantes.ESTADO_RETROSPECTIVA_PENDIENTE).build())
+          .fechaRetrospectiva(memoria.getRetrospectiva().getFechaRetrospectiva()).build();
+      nuevaMemoria.setRetrospectiva(retrospectivaService.create(retrospectiva));
+    }
 
     // La memoria se crea con tipo estado memoria "En elaboración".
     TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
@@ -674,7 +687,7 @@ public class MemoriaServiceImpl implements MemoriaService {
     // eliminamos el estado a cambiar en el histórico
     estadoMemoriaRepository.deleteById(estadoMemoriaActual.get().getId());
 
-    if (Objects.nonNull(memoria.getRetrospectiva()) || cambiarEstadoRetrospectiva.booleanValue()) {
+    if (Objects.nonNull(memoria.getRetrospectiva()) && cambiarEstadoRetrospectiva.booleanValue()) {
       // El estado anterior de la retrospectiva es el estado con id anterior al que
       // tiene actualmente
       Optional<EstadoRetrospectiva> estadoRetrospectiva = estadoRetrospectivaRepository
@@ -707,7 +720,7 @@ public class MemoriaServiceImpl implements MemoriaService {
             || memoria.getEstadoActual().getId() == 7L || memoria.getEstadoActual().getId() == 8L
             || memoria.getEstadoActual().getId() == 11L || memoria.getEstadoActual().getId() == 16L
             || memoria.getEstadoActual().getId() == 21L,
-        "La memoria no está en un estado correcto para pasar al estado 'En secretaría'");
+        "No se puede realizar la acción porque la memoria ya ha sido enviada a secretaría");
 
     Assert.isTrue(memoria.getPeticionEvaluacion().getPersonaRef().equals(personaRef),
         "El usuario no es el propietario de la petición evaluación.");
@@ -776,7 +789,8 @@ public class MemoriaServiceImpl implements MemoriaService {
    */
   private void crearEvaluacion(Memoria memoria, Long tipoEvaluacion) {
     log.debug("crearEvaluacion(memoria, tipoEvaluacion)- start");
-    Evaluacion evaluacion = evaluacionRepository.findFirstByMemoriaIdAndActivoTrueOrderByVersionDesc(memoria.getId())
+    Evaluacion evaluacion = evaluacionRepository
+        .findFirstByMemoriaIdAndTipoEvaluacionIdAndActivoTrueOrderByVersionDesc(memoria.getId(), tipoEvaluacion)
         .orElseThrow(() -> new EvaluacionNotFoundException(memoria.getId()));
 
     Evaluacion evaluacionNueva = new Evaluacion();
@@ -893,8 +907,10 @@ public class MemoriaServiceImpl implements MemoriaService {
   }
 
   @Override
-  public Page<Memoria> findByComiteAndPeticionEvaluacion(Long idComite, Long idPeticionEvaluacion, Pageable paging) {
-    log.debug("findByComiteAndPeticionEvaluacion(Long idComite, Long idPeticionEvaluacion, Pageable paging) - start");
+  public Page<Memoria> findAllMemoriasPeticionEvaluacionModificables(Long idComite, Long idPeticionEvaluacion,
+      Pageable paging) {
+    log.debug(
+        "findAllMemoriasPeticionEvaluacionModificables(Long idComite, Long idPeticionEvaluacion, Pageable paging) - start");
 
     Assert.notNull(idComite,
         "El identificador del comité no puede ser null para recuperar sus tipos de memoria asociados.");
@@ -903,9 +919,9 @@ public class MemoriaServiceImpl implements MemoriaService {
         "El identificador de la petición de evaluación no puede ser null para recuperar sus tipos de memoria asociados.");
 
     return comiteRepository.findByIdAndActivoTrue(idComite).map(comite -> {
-      log.debug("findByComiteAndPeticionEvaluacion(Long idComite, Long idPeticionEvaluacion, Pageable paging) - end");
-      return memoriaRepository.findByComiteIdAndPeticionEvaluacionIdAndActivoTrueAndComiteActivoTrue(idComite,
-          idPeticionEvaluacion, paging);
+      log.debug(
+          "findAllMemoriasPeticionEvaluacionModificables(Long idComite, Long idPeticionEvaluacion, Pageable paging) - end");
+      return memoriaRepository.findAllMemoriasPeticionEvaluacionModificables(idComite, idPeticionEvaluacion, paging);
 
     }).orElseThrow(() -> new ComiteNotFoundException(idComite));
 

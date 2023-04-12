@@ -2,6 +2,7 @@ import { StepperSelectionEvent, STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/step
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import { FragmentComponent } from '@core/component/fragment.component';
+import { IComentario } from '@core/models/eti/comentario';
 import { Subscription } from 'rxjs';
 import { IBlock } from '../../memoria-formly-form.fragment';
 import { MemoriaActionService } from '../../memoria.action.service';
@@ -28,6 +29,10 @@ export class MemoriaFormularioComponent extends FragmentComponent implements OnI
   @ViewChild(MatStepper, { static: true }) private stepper: MatStepper;
 
   private memoriaFormularioFragment: MemoriaFormularioFragment;
+
+  get comentariosGenerales(): IComentario[] {
+    return this.memoriaFormularioFragment.comentariosGenerales;
+  }
 
   constructor(
     actionService: MemoriaActionService

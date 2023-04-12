@@ -1,7 +1,7 @@
 package org.crue.hercules.sgi.rep.controller;
 
 import org.crue.hercules.sgi.rep.dto.OutputType;
-import org.crue.hercules.sgi.rep.dto.eti.ReportInformeDetalleGrupo;
+import org.crue.hercules.sgi.rep.dto.prc.ReportInformeDetalleGrupo;
 import org.crue.hercules.sgi.rep.service.prc.InformeDetalleGrupoReportService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;

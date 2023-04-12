@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.eti.repository.custom;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,7 @@ import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.Comite_;
 import org.crue.hercules.sgi.eti.model.ConflictoInteres;
 import org.crue.hercules.sgi.eti.model.ConflictoInteres_;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.EquipoTrabajo;
 import org.crue.hercules.sgi.eti.model.EquipoTrabajo_;
 import org.crue.hercules.sgi.eti.model.Evaluador;
@@ -43,12 +45,15 @@ public class CustomEvaluadorRepositoryImpl implements CustomEvaluadorRepository 
    * conflicto de intereses con ningún miembro del equipo investigador de la
    * memoria.
    * 
-   * @param idComite  Identificador del {@link Comite}
-   * @param idMemoria Identificador de la {@link Memoria}
+   * @param idComite        Identificador del {@link Comite}
+   * @param idMemoria       Identificador de la {@link Memoria}
+   * @param fechaEvaluacion la fecha de Evaluación de la
+   *                        {@link ConvocatoriaReunion}
    * @return lista de evaluadores sin conflictos de intereses
    */
   @Override
-  public List<Evaluador> findAllByComiteSinconflictoInteresesMemoria(Long idComite, Long idMemoria) {
+  public List<Evaluador> findAllByComiteSinconflictoInteresesMemoria(Long idComite, Long idMemoria,
+      Instant fechaEvaluacion) {
     log.debug("findAllByComiteSinconflictoInteresesMemoria(Long idComite, Long idMemoria) - start");
     final List<Predicate> predicates = new ArrayList<>();
 
@@ -91,12 +96,25 @@ public class CustomEvaluadorRepositoryImpl implements CustomEvaluadorRepository 
     sqEvaluadoresConflictoIntereses.where(
         rootConflicto.get(ConflictoInteres_.personaConflictoRef).in(sqPersonaRefEquipoTrabajoInPeticionEvaluacion));
 
+    Predicate pFechaBajaIsNull = cb.isNull(root.get(Evaluador_.fechaBaja));
+    Predicate pFechaAltaLTEFechaEvaluacion = cb.lessThanOrEqualTo(root.get(Evaluador_.fechaAlta), fechaEvaluacion);
+    Predicate pAndFechaBajaIsNullAndFechaAlta = cb.and(pFechaBajaIsNull,
+        pFechaAltaLTEFechaEvaluacion);
+
+    Predicate pFechaBajaGTEFechaEvaluacion = cb.greaterThanOrEqualTo(root.get(Evaluador_.fechaBaja), fechaEvaluacion);
+    Predicate pAndFechaBajaFechaAlta = cb.and(pFechaBajaGTEFechaEvaluacion,
+        pFechaAltaLTEFechaEvaluacion);
+
+    Predicate pOrFechaBajaFechaAlta = cb.or(pAndFechaBajaIsNullAndFechaAlta,
+        pAndFechaBajaFechaAlta);
+
     predicates.add(cb.not(root.get(Evaluador_.id).in(sqEvaluadoresConflictoIntereses)));
+    predicates.add(pOrFechaBajaFechaAlta);
 
     // Join all restrictions
     cq.where(cb.and(predicates.toArray(new Predicate[] {})));
 
-    TypedQuery<Evaluador> typedQuery = entityManager.createQuery(cq);
+    TypedQuery<Evaluador> typedQuery = entityManager.createQuery(cq.distinct(true));
 
     List<Evaluador> result = typedQuery.getResultList();
 

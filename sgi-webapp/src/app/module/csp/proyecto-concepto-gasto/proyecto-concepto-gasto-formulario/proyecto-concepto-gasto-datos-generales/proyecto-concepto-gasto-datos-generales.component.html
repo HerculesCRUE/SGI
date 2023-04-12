@@ -66,6 +66,9 @@
             <mat-error *ngIf="formGroup.controls.fechaInicio.hasError('overlapped')">
               {{'error.overlapping.record.entity' | translate:msgParamConceptoGastoEntity}}
             </mat-error>
+            <mat-error *ngIf="formGroup.controls.fechaInicio.hasError('overlappedConceptoAndCodigo')">
+              {{'error.csp.proyecto-concepto-gasto.overlapped-concepto-and-codigo' | translate}}
+            </mat-error>
             <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.minDate">
               {{'error.csp.proyecto-concepto-gasto.fecha-inicio.min' | translate}}
             </mat-error>
@@ -90,6 +93,9 @@
             </mat-error>
             <mat-error *ngIf="formGroup.controls.fechaFin.hasError('overlapped')">
               {{'error.overlapping.record.entity' | translate:msgParamConceptoGastoEntity}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.fechaFin.hasError('overlappedConceptoAndCodigo')">
+              {{'error.csp.proyecto-concepto-gasto.overlapped-concepto-and-codigo' | translate}}
             </mat-error>
             <mat-error *ngIf="formGroup.controls.fechaFin.errors?.minDate">
               {{'error.csp.proyecto-concepto-gasto.fecha-fin.min' | translate}}

@@ -7,14 +7,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.converter.ProyectoFaseConverter;
+import org.crue.hercules.sgi.csp.converter.RequerimientoJustificacionConverter;
 import org.crue.hercules.sgi.csp.dto.ProyectoFaseAvisoOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoFaseOutput;
-import java.util.stream.Collectors;
-
-import org.crue.hercules.sgi.csp.converter.RequerimientoJustificacionConverter;
 import org.crue.hercules.sgi.csp.dto.RequerimientoJustificacionOutput;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
@@ -49,6 +48,7 @@ import org.crue.hercules.sgi.csp.service.ProyectoAgrupacionGastoService;
 import org.crue.hercules.sgi.csp.service.ProyectoAnualidadService;
 import org.crue.hercules.sgi.csp.service.ProyectoAreaConocimientoService;
 import org.crue.hercules.sgi.csp.service.ProyectoClasificacionService;
+import org.crue.hercules.sgi.csp.service.ProyectoConceptoGastoCodigoEcService;
 import org.crue.hercules.sgi.csp.service.ProyectoConceptoGastoService;
 import org.crue.hercules.sgi.csp.service.ProyectoDocumentoService;
 import org.crue.hercules.sgi.csp.service.ProyectoEntidadFinanciadoraService;
@@ -181,6 +181,9 @@ class ProyectoControllerTest extends BaseControllerTest {
 
   @MockBean
   private ProyectoFaseConverter proyectoFaseConverter;
+
+  @MockBean
+  private ProyectoConceptoGastoCodigoEcService proyectoConceptoGastoCodigoEcService;
 
   @MockBean
   private RequerimientoJustificacionService requerimientoJustificacionService;

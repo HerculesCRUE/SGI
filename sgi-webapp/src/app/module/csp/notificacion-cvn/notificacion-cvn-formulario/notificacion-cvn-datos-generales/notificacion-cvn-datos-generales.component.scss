@@ -1,18 +1,23 @@
-:host{
-  .mat-table{
-    .mat-cell{
-        color: #9e9e9e
+@import "colors.scss";
+
+:host {
+  .mat-table {
+    .mat-cell {
+      color: map-get($palette-grey, 500);
     }
   }
-  #acreditacion{
+
+  #acreditacion {
     width: 90%;
   }
+
   .mat-icon-button {
     height: 1.5em;
     width: 1.5em;
     font: inherit;
     vertical-align: baseline;
-    align-self:center;
+    align-self: center;
+
     .mat-icon {
       font-size: 1.4em;
       width: 1em;

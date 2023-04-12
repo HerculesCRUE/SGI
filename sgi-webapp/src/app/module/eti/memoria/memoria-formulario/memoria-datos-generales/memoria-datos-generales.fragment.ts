@@ -2,6 +2,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { COMITE, IComite } from '@core/models/eti/comite';
 import { IMemoria } from '@core/models/eti/memoria';
 import { IPeticionEvaluacion } from '@core/models/eti/peticion-evaluacion';
+import { ESTADO_MEMORIA } from '@core/models/eti/tipo-estado-memoria';
 import { ITipoMemoria, TIPO_MEMORIA } from '@core/models/eti/tipo-memoria';
 import { IPersona } from '@core/models/sgp/persona';
 import { FormFragment } from '@core/services/action-service';
@@ -19,16 +20,20 @@ export class MemoriaDatosGeneralesFragment extends FormFragment<IMemoria>  {
   public showMemoriaOriginal = false;
   public personasResponsable$: BehaviorSubject<IPersona[]> = new BehaviorSubject<IPersona[]>([]);
   public mostrarCodOrgano = false;
+  public showInfoRatificacion = false;
 
   public idPeticionEvaluacion: number;
+  private isInvestigador: boolean;
 
   constructor(
     private fb: FormBuilder, readonly: boolean, key: number, private service: MemoriaService,
     private personaService: PersonaService,
-    private readonly peticionEvaluacionService: PeticionEvaluacionService) {
+    private readonly peticionEvaluacionService: PeticionEvaluacionService,
+    private readonly moduloInv: boolean) {
     super(key);
     this.memoria = {} as IMemoria;
     this.readonly = readonly;
+    this.isInvestigador = moduloInv;
   }
 
   public loadResponsable(idPeticionEvaluacion: number): void {
@@ -128,6 +133,12 @@ export class MemoriaDatosGeneralesFragment extends FormFragment<IMemoria>  {
 
   public onTipoMemoriaChange(tipoMemoria: ITipoMemoria) {
     this.showMemoriaOriginal = tipoMemoria?.id === TIPO_MEMORIA.MODIFICACION;
+    if (this.isInvestigador) {
+      this.checkShowInfoRatificacion(tipoMemoria);
+    } else {
+      this.showInfoRatificacion = false;
+    }
+
     if (this.showMemoriaOriginal) {
       this.getFormGroup().controls.memoriaOriginal.setValidators(Validators.required);
     }
@@ -178,6 +189,21 @@ export class MemoriaDatosGeneralesFragment extends FormFragment<IMemoria>  {
           this.loadResponsable(memoria.peticionEvaluacion.id);
         })
       );
+    }
+  }
+
+  private checkShowInfoRatificacion(tipoMemoria: ITipoMemoria) {
+    if (tipoMemoria?.id === TIPO_MEMORIA.RATIFICACION && this.memoria.estadoActual) {
+      const estado = this.memoria.estadoActual.id as ESTADO_MEMORIA;
+      if (estado === ESTADO_MEMORIA.COMPLETADA || estado === ESTADO_MEMORIA.EN_ELABORACION
+        || estado === ESTADO_MEMORIA.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS
+        || estado === ESTADO_MEMORIA.PENDIENTE_CORRECCIONES) {
+        this.showInfoRatificacion = true;
+      }
+    } else if (tipoMemoria?.id === TIPO_MEMORIA.RATIFICACION && !this.memoria.estadoActual) {
+      this.showInfoRatificacion = true;
+    } else if (tipoMemoria?.id !== TIPO_MEMORIA.RATIFICACION) {
+      this.showInfoRatificacion = false;
     }
   }
 

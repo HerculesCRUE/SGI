@@ -21,8 +21,9 @@ import { DatosPersonalesService } from '@core/services/sgp/datos-personales.serv
 import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateTime } from 'luxon';
+import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, forkJoin, from, Observable, of } from 'rxjs';
-import { concatMap, filter, map, mergeMap, share, switchMap, takeLast, tap } from 'rxjs/operators';
+import { catchError, concatMap, filter, map, mergeMap, share, switchMap, takeLast, tap } from 'rxjs/operators';
 import { SolicitudActionService } from '../../solicitud.action.service';
 
 export enum HelpIconClass {
@@ -55,6 +56,7 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
   solicitudId: number;
 
   constructor(
+    private readonly logger: NGXLogger,
     key: number,
     private convocatoriaId: number,
     private solicitudService: SolicitudService,
@@ -359,6 +361,10 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
 
     if (requisitosConvocatoria.nivelesAcademicosRequisitosEquipo.length > 0) {
       return this.datosAcademicosService.findByPersonaId(solicitudProyectoEquipo.persona.id).pipe(
+        catchError((err) => {
+          this.logger.error(err);
+          return of(null);
+        }),
         map(datosAcademicos => {
           if (datosAcademicos?.nivelAcademico) {
             const nivelAcademicoInRequisitos = requisitosConvocatoria.nivelesAcademicosRequisitosEquipo
@@ -395,6 +401,10 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
 
     if (requisitosConvocatoria.requisitosEquipo?.edadMaxima) {
       return this.datosPersonalesService.findByPersonaId(solicitudProyectoEquipo.persona.id).pipe(
+        catchError((err) => {
+          this.logger.error(err);
+          return of(null);
+        }),
         map(datosPersonales => {
 
           if (!datosPersonales.fechaNacimiento) {
@@ -422,6 +432,10 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
     if (requisitosConvocatoria.categoriasProfesionalesRequisitosEquipo.length > 0
       || (requisitosConvocatoria.requisitosEquipo && !requisitosConvocatoria.requisitosEquipo.vinculacionUniversidad)) {
       return this.vinculacionService.findByPersonaId(solicitudProyectoEquipo.persona.id).pipe(
+        catchError((err) => {
+          this.logger.error(err);
+          return of(null);
+        }),
         map(vinculaciones => {
 
           if (requisitosConvocatoria.categoriasProfesionalesRequisitosEquipo.length > 0) {
@@ -565,6 +579,10 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
 
     if (requisitosConvocatoria.nivelesAcademicosRequisitosIp.length > 0) {
       return this.datosAcademicosService.findByPersonaId(solicitudProyectoEquipo.persona.id).pipe(
+        catchError((err) => {
+          this.logger.error(err);
+          return of(null);
+        }),
         map(datosAcademicos => {
           if (datosAcademicos?.nivelAcademico) {
             const nivelAcademicoInRequisitos = requisitosConvocatoria.nivelesAcademicosRequisitosIp
@@ -607,6 +625,10 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
 
     if (requisitosConvocatoria.requisitosIp?.edadMaxima) {
       return this.datosPersonalesService.findByPersonaId(solicitudProyectoEquipo.persona.id).pipe(
+        catchError((err) => {
+          this.logger.error(err);
+          return of(null);
+        }),
         map(datosPersonales => {
 
           if (!datosPersonales.fechaNacimiento) {
@@ -634,6 +656,10 @@ export class SolicitudEquipoProyectoFragment extends Fragment {
     if (requisitosConvocatoria.categoriasProfesionalesRequisitosIp.length > 0
       || (requisitosConvocatoria.requisitosIp && !requisitosConvocatoria.requisitosIp.vinculacionUniversidad)) {
       return this.vinculacionService.findByPersonaId(solicitudProyectoEquipo.persona.id).pipe(
+        catchError((err) => {
+          this.logger.error(err);
+          return of(null);
+        }),
         map(vinculaciones => {
 
           if (requisitosConvocatoria.categoriasProfesionalesRequisitosIp.length > 0) {

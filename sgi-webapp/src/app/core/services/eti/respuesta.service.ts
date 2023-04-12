@@ -54,4 +54,14 @@ export class RespuestaService extends SgiMutableRestService<number, IRespuestaBa
     );
   }
 
+  /**
+   * Actualiza los datos de la restrospectiva en la memoria con los valores de la
+   * respuesta si el formulario es de tipo M20.
+   *
+   * @param id identificador de la respuesta
+   */
+  updateDatosRetrospectiva(id: number): Observable<void> {
+    return this.http.patch<void>(`${this.endpointUrl}/${id}/update-datos-retrospectiva`, undefined);
+  }
+
 }

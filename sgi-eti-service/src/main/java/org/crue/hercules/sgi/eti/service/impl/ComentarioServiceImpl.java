@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.crue.hercules.sgi.eti.exceptions.ComentarioNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.EvaluacionNotFoundException;
+import org.crue.hercules.sgi.eti.exceptions.NoRelatedEntitiesException;
+import org.crue.hercules.sgi.eti.model.Bloque;
 import org.crue.hercules.sgi.eti.model.Comentario;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
@@ -34,7 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ComentarioServiceImpl implements ComentarioService {
-  private static final String MSG_EL_BLOQUE_SELECCIONADO_NO_ES_CORRECTO_PARA_EL_TIPO_DE_EVALUACION = "El bloque seleccionado no es correcto para el tipo de evaluación.";
   private static final String MSG_EL_ID_DE_LA_EVALUACION_NO_PUEDE_SER_NULO_PARA_LISTAR_SUS_COMENTARIOS = "El id de la evaluación no puede ser nulo para listar sus comentarios";
   private static final String MSG_COMENTARIO_ID_NO_PUEDE_SER_NULL_PARA_ELIMINAR_UN_COMENTARIO = "Comentario id no puede ser null para eliminar un comentario.";
   private static final String MSG_EVALUACION_ID_NO_PUEDE_SER_NULL_PARA_ELIMINAR_UN_COMENTARIO = "Evaluación id no puede ser null para eliminar un comentario.";
@@ -70,8 +71,8 @@ public class ComentarioServiceImpl implements ComentarioService {
     return evaluacionRepository.findById(evaluacionId).map(evaluacion -> {
 
       validarTipoEvaluacionAndFormulario(evaluacion.getTipoEvaluacion().getId(),
-          evaluacion.getMemoria().getComite().getComite(),
-          comentario.getApartado().getBloque().getFormulario().getId());
+          evaluacion.getMemoria().getComite().getId(),
+          comentario.getApartado().getBloque());
 
       validateEstadoEvaluacion(evaluacion);
 
@@ -101,8 +102,8 @@ public class ComentarioServiceImpl implements ComentarioService {
     return evaluacionRepository.findById(evaluacionId).map(evaluacion -> {
 
       validarTipoEvaluacionAndFormulario(evaluacion.getTipoEvaluacion().getId(),
-          evaluacion.getMemoria().getComite().getComite(),
-          comentario.getApartado().getBloque().getFormulario().getId());
+          evaluacion.getMemoria().getComite().getId(),
+          comentario.getApartado().getBloque());
 
       Assert.isTrue(
           (evaluacion.getEvaluador1().getPersonaRef()).equals(personaRef)
@@ -155,8 +156,8 @@ public class ComentarioServiceImpl implements ComentarioService {
     return evaluacionRepository.findById(evaluacionId).map(evaluacion -> {
 
       validarTipoEvaluacionAndFormulario(evaluacion.getTipoEvaluacion().getId(),
-          evaluacion.getMemoria().getComite().getComite(),
-          comentario.getApartado().getBloque().getFormulario().getId());
+          evaluacion.getMemoria().getComite().getId(),
+          comentario.getApartado().getBloque());
 
       validateEstadoEvaluacion(evaluacion);
 
@@ -200,7 +201,7 @@ public class ComentarioServiceImpl implements ComentarioService {
     Assert.notNull(comentarioId, MSG_COMENTARIO_ID_NO_PUEDE_SER_NULL_PARA_ELIMINAR_UN_COMENTARIO);
 
     Evaluacion evaluacion = evaluacionRepository.findById(evaluacionId)
-      .orElseThrow(() -> new EvaluacionNotFoundException(evaluacionId));
+        .orElseThrow(() -> new EvaluacionNotFoundException(evaluacionId));
 
     validateEstadoEvaluacion(evaluacion);
 
@@ -282,8 +283,8 @@ public class ComentarioServiceImpl implements ComentarioService {
     return evaluacionRepository.findById(evaluacionId).map(evaluacion -> {
 
       validarTipoEvaluacionAndFormulario(evaluacion.getTipoEvaluacion().getId(),
-          evaluacion.getMemoria().getComite().getComite(),
-          comentarioActualizar.getApartado().getBloque().getFormulario().getId());
+          evaluacion.getMemoria().getComite().getId(),
+          comentarioActualizar.getApartado().getBloque());
 
       validateEstadoEvaluacion(evaluacion);
 
@@ -316,8 +317,8 @@ public class ComentarioServiceImpl implements ComentarioService {
     return evaluacionRepository.findById(evaluacionId).map(evaluacion -> {
 
       validarTipoEvaluacionAndFormulario(evaluacion.getTipoEvaluacion().getId(),
-          evaluacion.getMemoria().getComite().getComite(),
-          comentarioActualizar.getApartado().getBloque().getFormulario().getId());
+          evaluacion.getMemoria().getComite().getId(),
+          comentarioActualizar.getApartado().getBloque());
 
       Assert.isTrue(
           (evaluacion.getEvaluador1().getPersonaRef()).equals(personaRef)
@@ -492,47 +493,47 @@ public class ComentarioServiceImpl implements ComentarioService {
    * de evaluación.
    * 
    * @param idTipoEvaluacion Identificador {@link TipoEvaluacion}.
-   * @param comite           nombre de {@link Comite}.
+   * @param idComite         Identificador del {@link Comite}.
    * @param idFormulario     Identificador de {@link Formulario}
    */
-  private void validarTipoEvaluacionAndFormulario(Long idTipoEvaluacion, String comite, Long idFormulario) {
+  private void validarTipoEvaluacionAndFormulario(Long idTipoEvaluacion, Long idComite, Bloque bloque) {
+    Long idFormulario = null;
+
+    if (bloque.getFormulario() != null) {
+      idFormulario = bloque.getFormulario().getId();
+    }
+
+    boolean isValid = false;
 
     switch (idTipoEvaluacion.intValue()) {
-      case 1: {
-        // Tipo Evaluación Retrospectiva
-
-        // El id formulario debe ser del tipo 6 - > Retrospectiva
-        Assert.isTrue(idFormulario.equals(6L), MSG_EL_BLOQUE_SELECCIONADO_NO_ES_CORRECTO_PARA_EL_TIPO_DE_EVALUACION);
+      case Constantes.TIPO_EVALUACION_RETROSPECTIVA_INT: {
+        isValid = idFormulario == null || Constantes.FORMULARIO_RETROSPECTIVA.equals(idFormulario);
         break;
       }
-      case 2: {
-        // Tipo Evaluación Memoria
-
-        // El id formulario debe ser del tipo 1 - > M10 si el comité es CEI
-        Assert.isTrue(
-            (idFormulario.equals(1L) && comite.equals("CEI")) || (idFormulario.equals(2L) && comite.equals("CEEA"))
-                || (idFormulario.equals(3L) && comite.equals("CBE")),
-            MSG_EL_BLOQUE_SELECCIONADO_NO_ES_CORRECTO_PARA_EL_TIPO_DE_EVALUACION);
-
+      case Constantes.TIPO_EVALUACION_MEMORIA_INT: {
+        isValid = idFormulario == null
+            || (Constantes.FORMULARIO_M10.equals(idFormulario) && Constantes.COMITE_CEI.equals(idComite))
+            || (Constantes.FORMULARIO_M20.equals(idFormulario) && Constantes.COMITE_CEEA.equals(idComite))
+            || (Constantes.FORMULARIO_M30.equals(idFormulario) && Constantes.COMITE_CBE.equals(idComite));
         break;
       }
-      case 3: {
-        // Tipo Evaluación Seguimiento Anual
-
-        // El id formulario debe ser del tipo 4 - > Seguimiento Anual
-        Assert.isTrue(idFormulario.equals(4L), MSG_EL_BLOQUE_SELECCIONADO_NO_ES_CORRECTO_PARA_EL_TIPO_DE_EVALUACION);
+      case Constantes.TIPO_EVALUACION_SEGUIMIENTO_ANUAL_INT: {
+        isValid = idFormulario == null || Constantes.FORMULARIO_ANUAL.equals(idFormulario);
         break;
       }
-      case 4: {
-        // Tipo Evaluación Seguimiento Final
-        // El id formulario debe ser del tipo 5 - > Seguimiento Final
-        Assert.isTrue(idFormulario.equals(5L), MSG_EL_BLOQUE_SELECCIONADO_NO_ES_CORRECTO_PARA_EL_TIPO_DE_EVALUACION);
+      case Constantes.TIPO_EVALUACION_SEGUIMIENTO_FINAL_INT: {
+        isValid = idFormulario == null || Constantes.FORMULARIO_FINAL.equals(idFormulario);
         break;
       }
       default:
         log.warn("Tipo de Evaluación con el id: {} no encontrado.", idTipoEvaluacion.intValue());
         break;
     }
+
+    if (!isValid) {
+      throw new NoRelatedEntitiesException(Comentario.class, TipoEvaluacion.class);
+    }
+
   }
 
   private void validateEstadoEvaluacion(Evaluacion evaluacion) {

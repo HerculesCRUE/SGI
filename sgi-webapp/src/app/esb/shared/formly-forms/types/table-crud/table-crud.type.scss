@@ -1,15 +1,17 @@
+@import "colors.scss";
+
 :host ::ng-deep {
   formly-field-mat-multicheckbox mat-checkbox {
     display: block;
   }
 
   formly-validation-message {
-    color: #c11b4a;
+    color: map-get($palette-warn, $warn-color);
     font-size: 75%;
   }
 }
 
 .tbl-label {
   font-weight: 600;
-  color: rgba(0, 0, 0, 0.7);
+  color: map-get($sgi-custom-colors, label);
 }

@@ -11,10 +11,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.validation.Valid;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto;
@@ -31,12 +29,17 @@ import org.crue.hercules.sgi.rep.dto.eti.ElementOutput;
 import org.crue.hercules.sgi.rep.dto.eti.RespuestaDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.crue.hercules.sgi.rep.service.SgiDynamicReportService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
+import org.pentaho.reporting.engine.classic.core.Band;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
 import org.pentaho.reporting.engine.classic.core.SubReport;
 import org.pentaho.reporting.engine.classic.core.TableDataFactory;
 import org.pentaho.reporting.engine.classic.core.function.FormulaExpression;
 import org.pentaho.reporting.engine.classic.core.style.ElementStyleKeys;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,6 +51,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class BaseApartadosRespuestasReportService extends SgiDynamicReportService {
 
+  private static final Long DICTAMEN_NO_PROCEDE_EVALUAR = 4L;
+
   private final BloqueService bloqueService;
   private final ApartadoService apartadoService;
   private final SgiFormlyService sgiFormlyService;
@@ -55,18 +60,20 @@ public abstract class BaseApartadosRespuestasReportService extends SgiDynamicRep
 
   // @formatter:off
   protected static final String[] COLUMNS_TABLE_MODEL = new String[] { 
+    "numero_comentarios", "comentario_no_procede_evaluar",
     "bloque_id", "bloque_nombre", "bloque_orden", 
-    "apartado_id", "apartado_nombre", "apartado_orden", 
+    "apartado_id", "apartado_nombre", "apartado_orden", "apartado_modificado",
     "apartado_hijo_padre_id", "apartado_hijo_id", "apartado_hijo_nombre", "apartado_hijo_orden",
     "apartado_nieto_padre_id", "apartado_nieto_id", "apartado_nieto_nombre", "apartado_nieto_orden",
     "apartado_bisnieto_padre_id", "apartado_bisnieto_id", "apartado_bisnieto_nombre", "apartado_bisnieto_orden",
     "apartado_tataranieto_padre_id", "apartado_tataranieto_id", "apartado_tataranieto_nombre", "apartado_tataranieto_orden",
-    COMPONENT_ID, COMPONENT_TYPE, "content", "content_orden" };
+    COMPONENT_ID, COMPONENT_TYPE, "content", "content_orden", "resourcesBaseURL" };
   // @formatter:on
 
-  protected BaseApartadosRespuestasReportService(SgiConfigProperties sgiConfigProperties, BloqueService bloqueService,
+  protected BaseApartadosRespuestasReportService(SgiConfigProperties sgiConfigProperties,
+      SgiApiConfService sgiApiConfService, BloqueService bloqueService,
       ApartadoService apartadoService, SgiFormlyService sgiFormlyService, RespuestaService respuestaService) {
-    super(sgiConfigProperties);
+    super(sgiConfigProperties, sgiApiConfService);
     this.bloqueService = bloqueService;
     this.apartadoService = apartadoService;
     this.sgiFormlyService = sgiFormlyService;
@@ -91,7 +98,13 @@ public abstract class BaseApartadosRespuestasReportService extends SgiDynamicRep
     bloquesReportOutput.setBloques(new ArrayList<>());
 
     try {
-      List<BloqueDto> bloques = bloqueService.findByFormularioId(input.getIdFormulario());
+      List<BloqueDto> bloques = new ArrayList<>();
+      if (input.getIdFormulario() > 0) {
+        bloques.addAll(bloqueService.findByFormularioId(input.getIdFormulario()));
+      }
+      if (!CollectionUtils.isEmpty(input.getComentarios())) {
+        bloques.add(bloqueService.getBloqueComentariosGenerales());
+      }
 
       final int tamBloques = bloquesReportOutput.getBloques().size();
 
@@ -115,10 +128,16 @@ public abstract class BaseApartadosRespuestasReportService extends SgiDynamicRep
 
   private void parseBloque(BloquesReportInput input, BloquesReportOutput bloquesReportOutput, BloqueDto bloque,
       int tamBloques) {
+
+    String nombre = bloque.getNombre();
+    if (bloque.getFormulario() != null) {
+      nombre = bloque.getOrden() + ". " + bloque.getNombre();
+    }
+
     // @formatter:off
     BloqueOutput bloqueOutput = BloqueOutput.builder()
       .id(bloque.getId())
-      .nombre(bloque.getOrden() + ". " + bloque.getNombre())
+      .nombre(nombre)
       .orden(tamBloques + bloque.getOrden())
       .apartados(new ArrayList<>())
       .build();
@@ -173,14 +192,18 @@ public abstract class BaseApartadosRespuestasReportService extends SgiDynamicRep
     ApartadoOutput apartadoOutput = null;
 
     List<ComentarioDto> comentarios = new ArrayList<>();
-
     if (CollectionUtils.isNotEmpty(input.getComentarios())) {
       comentarios = input.getComentarios().stream()
           .filter(c -> c.getApartado().getId().compareTo(apartado.getId()) == 0).collect(Collectors.toList());
     }
 
-    RespuestaDto respuestaDto = null;
+    RespuestaDto respuestaAnteriorDto = null;
+    if (ObjectUtils.isNotEmpty(input.getIdMemoriaOriginal())) {
+      respuestaAnteriorDto = respuestaService.findByMemoriaIdAndApartadoId(input.getIdMemoriaOriginal(),
+          apartado.getId());
+    }
 
+    RespuestaDto respuestaDto = null;
     if (null != input.getMostrarRespuestas() && input.getMostrarRespuestas()) {
       respuestaDto = respuestaService.findByMemoriaIdAndApartadoId(input.getIdMemoria(), apartado.getId());
     }
@@ -194,12 +217,23 @@ public abstract class BaseApartadosRespuestasReportService extends SgiDynamicRep
       .respuesta(respuestaDto)
       .comentarios(comentarios)
       .mostrarContenidoApartado(input.getMostrarContenidoApartado())
+      .modificado(this.isRespuestaModificada(respuestaDto, respuestaAnteriorDto))
+      .numeroComentariosGestor(input.getNumeroComentariosGestor())
       .build();
     // @formatter:on
 
     sgiFormlyService.parseApartadoAndRespuestaAndComentarios(apartadoOutput);
 
     return apartadoOutput;
+  }
+
+  private Boolean isRespuestaModificada(RespuestaDto respuestaDto, RespuestaDto respuestaAnteriorDto) {
+    Boolean respuestaModificada = Boolean.FALSE;
+    if (ObjectUtils.isNotEmpty(respuestaDto) && ObjectUtils.isNotEmpty(respuestaAnteriorDto) && !respuestaDto.getValor()
+        .equals(respuestaAnteriorDto.getValor())) {
+      respuestaModificada = Boolean.TRUE;
+    }
+    return respuestaModificada;
   }
 
   /**
@@ -215,14 +249,18 @@ public abstract class BaseApartadosRespuestasReportService extends SgiDynamicRep
 
     tableModelGeneral.setColumnIdentifiers(COLUMNS_TABLE_MODEL);
 
-    List<ApartadoOutput> apartados = new ArrayList<>();
-    for (BloqueOutput bloque : bloquesReportOutput.getBloques()) {
-      for (ApartadoOutput apartado : bloque.getApartados()) {
-        apartados.clear();
-        apartados.add(apartado);
-        generateElementTableModelApartado(hmTableModel, tableModelGeneral, bloque, apartados);
+    if (bloquesReportOutput.getBloques().isEmpty()) {
+      tableModelGeneral.addRow(generateEmptyRow(bloquesReportOutput));
+    } else {
+      List<ApartadoOutput> apartados = new ArrayList<>();
+      for (BloqueOutput bloque : bloquesReportOutput.getBloques()) {
+        for (ApartadoOutput apartado : bloque.getApartados()) {
+          apartados.clear();
+          apartados.add(apartado);
+          generateElementTableModelApartado(hmTableModel, tableModelGeneral, bloque, apartados);
 
-        parseApartadoHijoElementTableModel(hmTableModel, tableModelGeneral, bloque, apartados);
+          parseApartadoHijoElementTableModel(hmTableModel, tableModelGeneral, bloque, apartados);
+        }
       }
     }
 
@@ -272,13 +310,29 @@ public abstract class BaseApartadosRespuestasReportService extends SgiDynamicRep
 
     // @formatter:off
     return new Object[] { 
+      apartado.getNumeroComentariosGestor(), null,
       bloque.getId(), bloque.getNombre(), bloque.getOrden(), 
-      apartado.getId(), apartado.getTitulo(), apartado.getOrden(), 
+      apartado.getId(), apartado.getTitulo(), apartado.getOrden(),  apartado.getModificado(),
       apartado.getId(), apartadoHijo.getId(), apartadoHijo.getTitulo(), apartadoHijo.getOrden(),
       apartadoNieto.getId(), apartadoNieto.getId(), apartadoNieto.getTitulo(), apartadoNieto.getOrden(),
       apartadoBisnieto.getId(), apartadoBisnieto.getId(), apartadoBisnieto.getTitulo(), apartadoBisnieto.getOrden(), 
       apartadoTataraNieto.getId(), apartadoTataraNieto.getId(), apartadoTataraNieto.getTitulo(),apartadoTataraNieto.getOrden(), 
-      elemento.getNombre(), elemento.getTipo(), elemento.getContent(), rowIndex
+      elemento.getNombre(), elemento.getTipo(), elemento.getContent(), rowIndex, getRepResourcesBaseURL()
+    };
+    // @formatter:on  
+  }
+
+  protected Object[] generateEmptyRow(BloquesReportOutput bloquesReportOutput) {
+    // @formatter:off
+    return new Object[] { 
+      bloquesReportOutput.getEvaluacion().getDictamen().getId().equals(DICTAMEN_NO_PROCEDE_EVALUAR) && ObjectUtils.isNotEmpty(bloquesReportOutput.getEvaluacion().getComentario()) ? 1 : null,bloquesReportOutput.getEvaluacion().getDictamen().getId().equals(DICTAMEN_NO_PROCEDE_EVALUAR) && ObjectUtils.isNotEmpty(bloquesReportOutput.getEvaluacion().getComentario()) ? bloquesReportOutput.getEvaluacion().getComentario() : null,
+      null, null, null, 
+      null, null, null, null,
+      null, null, null, null,
+      null, null, null, null,
+      null, null, null, null, 
+      null, null, null, null, 
+      null, null, null, null, getRepResourcesBaseURL()
     };
     // @formatter:on  
   }
@@ -400,6 +454,9 @@ public abstract class BaseApartadosRespuestasReportService extends SgiDynamicRep
     subReportTableCrud.setDataFactory(dataFactorySubReportTableCrud);
 
     subReportTableCrud.setQuery(queryKey);
+    if (elementKey.contains("memoriasProyecto")) {
+      subReportTableCrud.getReportFooter().setPagebreakBeforePrint(true);
+    }
     report.getItemBand().addSubReport(subReportTableCrud);
   }
 

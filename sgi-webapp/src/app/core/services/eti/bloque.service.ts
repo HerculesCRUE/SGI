@@ -29,4 +29,12 @@ export class BloqueService extends SgiReadOnlyRestService<number, IBloque> {
   getApartados(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IApartado>> {
     return this.find<IApartado, IApartado>(`${this.endpointUrl}/${id}/apartados`, options);
   }
+
+  /**
+   * Devuelve el bloque de comentarios generales
+   */
+  getBloqueComentariosGenerales(): Observable<IBloque> {
+    return this.http.get<IBloque>(`${this.endpointUrl}/comentarios-generales`);
+  }
+
 }

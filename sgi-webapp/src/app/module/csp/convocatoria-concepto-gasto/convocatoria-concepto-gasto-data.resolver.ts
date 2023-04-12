@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
+import { IConvocatoriaConceptoGasto } from '@core/models/csp/convocatoria-concepto-gasto';
+import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatoria-concepto-gasto-codigo-ec';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { ConvocatoriaConceptoGastoService } from '@core/services/csp/convocatoria-concepto-gasto.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { NGXLogger } from 'ngx-logger';
-import { Observable, throwError } from 'rxjs';
+import { forkJoin, Observable, throwError } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { CONVOCATORIA_DATA_KEY } from '../convocatoria/convocatoria-data.resolver';
 import { CONVOCATORIA_ROUTE_PARAMS } from '../convocatoria/convocatoria-route-params';
@@ -78,33 +80,60 @@ export class ConvocatoriaConceptoGastoDataResolver extends SgiResolverResolver<I
       map(convocatoria => {
         return {
           convocatoria,
-          selectedConvocatoriaConceptoGastos: [],
+          selectedConvocatoriaConceptoGastosPermitidos: [],
+          selectedConvocatoriaConceptoGastosNoPermitidos: [],
+          selectedConvocatoriaConceptoGastoCodigosEc: [],
           permitido,
           readonly,
           canEdit
         };
       }),
-      switchMap(data => {
-        return this.convocatoriaService.findAllConvocatoriaConceptoGastosPermitidos(convocatoriaId).pipe(
-          map(conceptosGastoPermitido => {
-            conceptosGastoPermitido.items
-              .filter(concepto => concepto.id !== convocatoriaConceptoGastoId).forEach(
-                conceptoGastoPermitido => data.selectedConvocatoriaConceptoGastos.push(conceptoGastoPermitido)
-              );
+      switchMap(data =>
+        forkJoin(
+          {
+            selectedConvocatoriaConceptoGastosPermitidos: this.getConceptoGastosPermitidos(convocatoriaId, convocatoriaConceptoGastoId),
+            selectedConvocatoriaConceptoGastosNoPermitidos: this.getConceptoGastosNoPermitidos(convocatoriaId, convocatoriaConceptoGastoId),
+            selectedConvocatoriaConceptoGastoCodigosEcPermitidos: this.getCodigosEconomicosPermitidos(convocatoriaId, convocatoriaConceptoGastoId),
+            selectedConvocatoriaConceptoGastoCodigosEcNoPermitidos: this.getCodigosEconomicosNoPermitidos(convocatoriaId, convocatoriaConceptoGastoId),
+          }
+        ).pipe(
+          map(({
+            selectedConvocatoriaConceptoGastosPermitidos,
+            selectedConvocatoriaConceptoGastosNoPermitidos,
+            selectedConvocatoriaConceptoGastoCodigosEcPermitidos,
+            selectedConvocatoriaConceptoGastoCodigosEcNoPermitidos
+          }) => {
+            data.selectedConvocatoriaConceptoGastosPermitidos = selectedConvocatoriaConceptoGastosPermitidos;
+            data.selectedConvocatoriaConceptoGastosNoPermitidos = selectedConvocatoriaConceptoGastosNoPermitidos;
+            data.selectedConvocatoriaConceptoGastoCodigosEc = selectedConvocatoriaConceptoGastoCodigosEcPermitidos.concat(selectedConvocatoriaConceptoGastoCodigosEcNoPermitidos);
             return data;
           })
-        );
-      }),
-      switchMap(data => {
-        return this.convocatoriaService.findAllConvocatoriaConceptoGastosNoPermitidos(convocatoriaId).pipe(
-          map(conceptosGastoNoPermitido => {
-            conceptosGastoNoPermitido.items
-              .filter(concepto => concepto.id !== convocatoriaConceptoGastoId).forEach(
-                conceptoGastoNoPermitido => data.selectedConvocatoriaConceptoGastos.push(conceptoGastoNoPermitido));
-            return data;
-          })
-        );
-      })
+        ),
+      )
+    );
+  }
+
+  private getConceptoGastosPermitidos(convocatoriaId: number, currentConvocatoriaConceptoGastoId: number): Observable<IConvocatoriaConceptoGasto[]> {
+    return this.convocatoriaService.findAllConvocatoriaConceptoGastosPermitidos(convocatoriaId).pipe(
+      map(response => response.items.filter(concepto => concepto.id !== currentConvocatoriaConceptoGastoId)),
+    );
+  }
+
+  private getConceptoGastosNoPermitidos(convocatoriaId: number, currentConvocatoriaConceptoGastoId: number): Observable<IConvocatoriaConceptoGasto[]> {
+    return this.convocatoriaService.findAllConvocatoriaConceptoGastosNoPermitidos(convocatoriaId).pipe(
+      map(response => response.items.filter(concepto => concepto.id !== currentConvocatoriaConceptoGastoId)),
+    );
+  }
+
+  private getCodigosEconomicosPermitidos(convocatoriaId: number, currentConvocatoriaConceptoGastoId: number): Observable<IConvocatoriaConceptoGastoCodigoEc[]> {
+    return this.convocatoriaService.findAllConvocatoriaConceptoGastoCodigoEcsPermitidos(convocatoriaId).pipe(
+      map(response => response.items.filter(codigoEconomico => codigoEconomico.convocatoriaConceptoGastoId !== currentConvocatoriaConceptoGastoId)),
+    );
+  }
+
+  private getCodigosEconomicosNoPermitidos(convocatoriaId: number, currentConvocatoriaConceptoGastoId: number): Observable<IConvocatoriaConceptoGastoCodigoEc[]> {
+    return this.convocatoriaService.findAllConvocatoriaConceptoGastoCodigoEcsNoPermitidos(convocatoriaId).pipe(
+      map(response => response.items.filter(codigoEconomico => codigoEconomico.convocatoriaConceptoGastoId !== currentConvocatoriaConceptoGastoId)),
     );
   }
 
@@ -130,4 +159,5 @@ export class ConvocatoriaConceptoGastoDataResolver extends SgiResolverResolver<I
     }
     return permitido ? CONVOCATORIA_CONCEPTO_GASTO_PERMITIDO_KEY : CONVOCATORIA_CONCEPTO_GASTO_NO_PERMITIDO_KEY;
   }
+
 }

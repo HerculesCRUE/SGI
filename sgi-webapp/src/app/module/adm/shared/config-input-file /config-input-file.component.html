@@ -1,0 +1,24 @@
+<form [formGroup]="formGroup" fxLayout="column">
+
+  <div fxFlex fxLayout="row" fxLayoutGap="10px">
+    <mat-form-field>
+      <mat-label>{{label | translate}}</mat-label>
+      <sgi-resource-upload #uploader placeholder="{{label | translate:labelParams}}" formControlName="resource"
+        [key]="resourceInfo?.name" [matTooltip]="resourceInfo?.description" matTooltipShowDelay="200">
+      </sgi-resource-upload>
+    </mat-form-field>
+
+    <ng-container *ngIf="!formGroup.valid || hasChanges() else download">
+      <button color="primary" mat-icon-button (click)="save()" matTooltip="{{'btn.save' | translate}}">
+        <mat-icon>save</mat-icon>
+      </button>
+    </ng-container>
+    <ng-template #download>
+      <button color="primary" mat-icon-button (click)="downloadResource()"
+        matTooltip="{{'btn.download.file' | translate}}">
+        <mat-icon>file_download</mat-icon>
+      </button>
+    </ng-template>
+  </div>
+
+</form>

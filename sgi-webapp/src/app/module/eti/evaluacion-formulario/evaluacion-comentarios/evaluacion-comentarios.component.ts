@@ -15,6 +15,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ComentarioModalComponent, ComentarioModalData } from '../../comentario/comentario-modal/comentario-modal.component';
+import { getApartadoNombre, getSubApartadoNombre } from '../../shared/pipes/bloque-apartado.pipe';
 import { EvaluacionFormularioActionService, Rol } from '../evaluacion-formulario.action.service';
 import { EvaluacionComentarioFragment } from './evaluacion-comentarios.fragment';
 
@@ -50,7 +51,7 @@ export class EvaluacionComentariosComponent extends FragmentComponent implements
     private tipoComentarioService: TipoComentarioService,
     private matDialog: MatDialog,
     private actionService: EvaluacionFormularioActionService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
   ) {
     super(actionService.FRAGMENT.COMENTARIOS, actionService);
     this.formPart = this.fragment as EvaluacionComentarioFragment;
@@ -107,14 +108,11 @@ export class EvaluacionComentariosComponent extends FragmentComponent implements
   }
 
   getApartadoNombre(comentario: IComentario): string {
-    const nombre = comentario.apartado?.padre ?
-      comentario.apartado?.padre?.nombre : comentario.apartado?.nombre;
-    return nombre;
+    return getApartadoNombre(comentario.apartado);
   }
 
   getSubApartadoNombre(comentario: IComentario): string {
-    const nombre = comentario.apartado?.padre ? comentario.apartado?.nombre : '';
-    return nombre;
+    return getSubApartadoNombre(comentario.apartado);
   }
 
   /**

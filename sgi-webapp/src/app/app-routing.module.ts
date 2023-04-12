@@ -74,6 +74,14 @@ const routes: SgiRoutes = [
       )
   },
   {
+    path: APP_ROUTE_NAMES.ADM,
+    loadChildren: () =>
+      import('./module/adm/adm.module').then(
+        (m) => m.CnfModule
+      ),
+    canActivate: [SgiAuthGuard, AllowModuleGuard]
+  },
+  {
     path: '**',
     component: RootComponent
   },

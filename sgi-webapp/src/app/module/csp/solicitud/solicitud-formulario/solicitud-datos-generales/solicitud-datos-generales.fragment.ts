@@ -88,6 +88,10 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
           map(solicitente => {
             solicitud.solicitante = solicitente;
             return solicitud;
+          }),
+          catchError((err) => {
+            this.logger.error(err);
+            return of(solicitud);
           })
         );
       }),

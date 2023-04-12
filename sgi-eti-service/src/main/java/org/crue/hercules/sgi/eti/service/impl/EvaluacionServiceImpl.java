@@ -486,6 +486,17 @@ public class EvaluacionServiceImpl implements EvaluacionService {
       memoriaService.updateEstadoMemoria(evaluacionActualizar.getMemoria(), 6L);
     }
 
+    // Si el dictamen es "Solicitud de aclaraciones" y la Evaluación es de Revisión
+    // Mínima, se cambia el estado de la memoria a "En aclaracion seguimiento
+    // final".
+    if (evaluacionActualizar.getDictamen() != null
+        && evaluacionActualizar.getDictamen().getId()
+            .intValue() == Constantes.DICTAMEN_SOLICITUD_ACLARACIONES_SEGUIMIENTO_FINAL
+        && evaluacionActualizar.getEsRevMinima().booleanValue()) {
+      memoriaService.updateEstadoMemoria(evaluacionActualizar.getMemoria(),
+          Constantes.ESTADO_MEMORIA_EN_ACLARACION_SEGUIMIENTO_FINAL);
+    }
+
     return evaluacionRepository.findById(evaluacionActualizar.getId()).map(evaluacion -> {
       evaluacion.setDictamen(evaluacionActualizar.getDictamen());
       evaluacion.setEsRevMinima(evaluacionActualizar.getEsRevMinima());

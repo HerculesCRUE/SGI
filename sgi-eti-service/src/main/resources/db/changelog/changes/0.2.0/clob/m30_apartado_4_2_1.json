@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap4_2_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.1 Lugar en el que se realizará el manejo de agentes biológicos, organismos modificados genéticamente, sustancias químicas peligrosas, sustancias radiactivas y/o nanopartículas"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>La manipulación de agentes biológicos o materiales susceptibles de contenerlos requiere unas condiciones específicas del lugar de trabajo acordes con el grado de peligrosidad del agente y nivel de riesgo que garanticen la seguridad.<br>El tipo de laboratorio debe ser adecuado al nivel de riesgo. En caso de exposición a más de un agente biológico se tendrá en cuenta <b>el de mayor riesgo</b>.</p><ul><li>Nivel de contención C1: Laboratorio básico</li><li>Nivel de contención C2: Laboratorio básico con cabina de seguridad biológica u otros dispositivos apropiados de protección personal o contención física.</li><li>Nivel de contención C3: Laboratorio restringido con cabina de seguridad biológica u otros dispositivos apropiados de protección personal o contención física</li><li>Nivel de contención C4: Laboratorio estanco de contención máxima</li></ul><p>Para más información sobre medidas y niveles de contención consultar el <b><a href='https://boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#anv' target='_blank'>Anexo V del RD 664-97</a></b>.</p>"
+      }
+    ]
+  }
+]

@@ -1,0 +1,48 @@
+[
+  {
+    "key": "ap4_2_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.3 Severidad global"
+    },
+    "fieldGroup": [
+      {
+        "template": "Teniendo en cuenta la severidad acumulada ¿Cómo calificaría la severidad global de todo el proceso?"
+      },
+      {
+        "key": "severidadGlobal",
+        "type": "select",
+        "templateOptions": {
+          "label": "Severidad",
+          "order": 40,
+          "options": [
+            {
+              "value": "1",
+              "label": "No recuperación"
+            },
+            {
+              "value": "2",
+              "label": "Leve"
+            },
+            {
+              "value": "3",
+              "label": "Moderada"
+            },
+            {
+              "value": "4",
+              "label": "Severa"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: Valore la severidad global según la siguiente escala: 1. No recuperación, 2. Leve, 3. Moderada, 4. Severa</p>"
+      }
+    ]
+  }
+]

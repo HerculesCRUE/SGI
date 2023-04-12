@@ -12,8 +12,8 @@ import { LuxonUtils } from '@core/utils/luxon-utils';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, from, Observable } from 'rxjs';
-import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export interface IGrupoEquipoListado extends IGrupoEquipo {
   categoriaProfesional: ICategoriaProfesional;
@@ -49,6 +49,10 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
                   map(persona => {
                     element.persona = persona;
                     return element as IGrupoEquipoListado;
+                  }),
+                  catchError((err) => {
+                    this.logger.error(err);
+                    return of(element);
                   })
                 );
               }),
@@ -88,7 +92,7 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
             this.checkErrors(result);
           },
           error => {
-            this.logger.error(error);
+            this.processError(error);
           }
         )
       );

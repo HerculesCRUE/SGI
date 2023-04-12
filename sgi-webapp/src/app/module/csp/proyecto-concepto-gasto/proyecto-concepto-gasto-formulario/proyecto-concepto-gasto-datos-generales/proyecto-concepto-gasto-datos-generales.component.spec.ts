@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Data } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { IProyecto } from '@core/models/csp/proyecto';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
@@ -22,8 +23,12 @@ describe('ProyectoConceptoGastoDatosGeneralesComponent', () => {
     [PROYECTO_CONCEPTO_GASTO_DATA_KEY]: {
       proyecto: {
         id: 1
-      },
-      selectedProyectoConceptosGasto: [],
+      } as IProyecto,
+      selectedProyectoConceptosGasto: null,
+      selectedProyectoConceptosGastoCodigosEc: [],
+      convocatoriaConceptoGastoId: null,
+      selectedProyectoConceptosGastoNoPermitidos: [],
+      selectedProyectoConceptosGastoPermitidos: [],
       permitido: true,
       readonly: false
     } as IProyectoConceptoGastoData

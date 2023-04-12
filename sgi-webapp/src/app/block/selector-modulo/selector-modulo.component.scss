@@ -15,10 +15,10 @@
 
         &:hover,
         &:focus {
-          border-color: map-get($palette-primary, 400);
+          border-color: map-get($palette-primary, $primary-color);
 
           .module-link {
-            background-color: map-get($palette-primary, 400);
+            background-color: map-get($palette-primary, $primary-color);
 
             .mat-icon {
               color: white;

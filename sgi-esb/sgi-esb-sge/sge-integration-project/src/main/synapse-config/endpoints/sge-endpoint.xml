@@ -2,7 +2,7 @@
 <endpoint name="sge-endpoint" xmlns="http://ws.apache.org/ns/synapse">
     <address uri="$SYSTEM:SGI_ESB_SGE_SERVICE_URL">
         <timeout>
-            <duration>60000</duration>
+            <duration>160000</duration> <!-- 180s timeout ingress & http.socket.timeout - 15s synapse.timeout_handler_interval - 5s extra margin = 160s -->
             <responseAction>fault</responseAction>
         </timeout>
         <suspendOnFailure>

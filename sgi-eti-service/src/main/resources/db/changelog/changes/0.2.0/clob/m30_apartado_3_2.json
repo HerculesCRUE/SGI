@@ -1,0 +1,33 @@
+[
+  {
+    "key": "ap3_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.2 Diseño metodológico del proyecto"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Esta sección se cumplimenta automáticamente a partir de los datos introducidos en el campo <b>Diseño metodológico</b> del apartado <b>Datos generales</b> de la <b>Solicitud de Evaluación</b>. Acceda a este punto del menú para realizar las modificaciones necesarias."
+      },
+      {
+        "key": "disenoMetodologico",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Diseño metodológico",
+          "placeholder": "Diseño",
+          "disabled": true,
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10",
+          "expressionModelValue": "formState.memoria.peticionEvaluacion.disMetodologico"
+        }
+      }
+    ]
+  }
+]

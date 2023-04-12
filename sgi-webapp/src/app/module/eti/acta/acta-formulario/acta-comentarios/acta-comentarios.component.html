@@ -21,7 +21,9 @@
       <!-- Bloque Column -->
       <ng-container matColumnDef="apartado.bloque">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'eti.comentario.bloque' | translate}}</th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.apartado?.bloque?.nombre}}
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.apartado?.bloque.orden === 0 ?
+          wrapper.value.apartado?.bloque?.nombre : (wrapper.value.apartado?.bloque?.orden + ' '
+          +wrapper.value.apartado?.bloque?.nombre)}}
         </td>
       </ng-container>
 

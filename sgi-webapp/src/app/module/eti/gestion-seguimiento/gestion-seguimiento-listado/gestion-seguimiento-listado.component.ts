@@ -70,7 +70,6 @@ export class GestionSeguimientoListadoComponent extends AbstractTablePaginationC
       fechaEvaluacionInicio: new FormControl(null, []),
       fechaEvaluacionFin: new FormControl(null, []),
       referenciaMemoria: new FormControl('', []),
-      tipoConvocatoriaReunion: new FormControl(null, []),
       solicitante: new FormControl('', []),
       tipoEvaluacion: new FormControl(null, [])
     });
@@ -92,11 +91,7 @@ export class GestionSeguimientoListadoComponent extends AbstractTablePaginationC
       .and('fechaDictamen', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaEvaluacionInicio.value))
       .and('fechaDictamen', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaEvaluacionFin.value))
       .and('memoria.numReferencia', SgiRestFilterOperator.LIKE_ICASE, controls.referenciaMemoria.value)
-      .and(
-        'convocatoriaReunion.tipoConvocatoriaReunion.id',
-        SgiRestFilterOperator.EQUALS,
-        controls.tipoConvocatoriaReunion.value?.id?.toString()
-      ).and('memoria.peticionEvaluacion.personaRef', SgiRestFilterOperator.EQUALS, controls.solicitante.value.id);
+      .and('memoria.peticionEvaluacion.personaRef', SgiRestFilterOperator.EQUALS, controls.solicitante.value.id);
 
     return filter;
   }

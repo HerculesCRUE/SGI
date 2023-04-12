@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { SgpFormlyFormsModule } from '../formly-forms/sgp-formly-forms.module';
+import { SgpNotFoundErrorDirective } from './directives/sgp-not-found-error.directive';
 import { PersonaEmailPipe } from './pipes/persona-email.pipe';
 import { PersonaEntidadPipe } from './pipes/persona-entidad.pipe';
 import { PersonaNombreCompletoPipe } from './pipes/persona-nombre-completo.pipe';
@@ -22,7 +23,8 @@ import { SelectTipoDocumentoComponent } from './select-tipo-documento/select-tip
     PersonaEmailPipe,
     PersonaNombreCompletoPipe,
     SelectSexoComponent,
-    SelectTipoDocumentoComponent
+    SelectTipoDocumentoComponent,
+    SgpNotFoundErrorDirective
   ],
   imports: [
     SharedModule,
@@ -40,7 +42,8 @@ import { SelectTipoDocumentoComponent } from './select-tipo-documento/select-tip
     PersonaEmailPipe,
     PersonaNombreCompletoPipe,
     SelectSexoComponent,
-    SelectTipoDocumentoComponent
+    SelectTipoDocumentoComponent,
+    SgpNotFoundErrorDirective
   ]
 })
 export class SgpSharedModule { }

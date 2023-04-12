@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
+import { IProyectoConceptoGasto } from '@core/models/csp/proyecto-concepto-gasto';
+import { IProyectoConceptoGastoCodigoEc } from '@core/models/csp/proyecto-concepto-gasto-codigo-ec';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { NGXLogger } from 'ngx-logger';
-import { Observable, throwError } from 'rxjs';
+import { forkJoin, Observable, throwError } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { PROYECTO_DATA_KEY } from '../proyecto/proyecto-data.resolver';
 import { PROYECTO_ROUTE_PARAMS } from '../proyecto/proyecto-route-params';
@@ -77,33 +79,60 @@ export class ProyectoConceptoGastoDataResolver extends SgiResolverResolver<IProy
       map(proyecto => {
         return {
           proyecto,
-          selectedProyectoConceptosGasto: [],
+          selectedProyectoConceptosGastoCodigosEc: [],
+          selectedProyectoConceptosGastoPermitidos: [],
+          selectedProyectoConceptosGastoNoPermitidos: [],
           convocatoriaConceptoGastoId,
           permitido,
           readonly
         };
       }),
-      switchMap(data => {
-        return this.proyectoService.findAllProyectoConceptosGastoPermitidos(proyectoId).pipe(
-          map(conceptosGastoPermitido => {
-            conceptosGastoPermitido.items
-              .filter(concepto => concepto.id !== proyectoConceptoGastoId).forEach(
-                conceptoGastoPermitido => data.selectedProyectoConceptosGasto.push(conceptoGastoPermitido)
-              );
+      switchMap(data =>
+        forkJoin(
+          {
+            selectedProyectoConceptosGastoPermitidos: this.getProyectoConceptosGastoPermitidos(proyectoId, proyectoConceptoGastoId),
+            selectedProyectoConceptosGastoNoPermitidos: this.getProyectoConceptosGastoNoPermitidos(proyectoId, proyectoConceptoGastoId),
+            selectedProyectoConceptosGastoCodigosEcPermitidos: this.getCodigosEconomicosPermitidos(proyectoId, proyectoConceptoGastoId),
+            selectedProyectoConceptosGastoCodigosEcNoPermitidos: this.getCodigosEconomicosNoPermitidos(proyectoId, proyectoConceptoGastoId),
+          }
+        ).pipe(
+          map(({
+            selectedProyectoConceptosGastoPermitidos,
+            selectedProyectoConceptosGastoNoPermitidos,
+            selectedProyectoConceptosGastoCodigosEcPermitidos,
+            selectedProyectoConceptosGastoCodigosEcNoPermitidos
+          }) => {
+            data.selectedProyectoConceptosGastoPermitidos = selectedProyectoConceptosGastoPermitidos;
+            data.selectedProyectoConceptosGastoNoPermitidos = selectedProyectoConceptosGastoNoPermitidos;
+            data.selectedProyectoConceptosGastoCodigosEc = selectedProyectoConceptosGastoCodigosEcPermitidos.concat(selectedProyectoConceptosGastoCodigosEcNoPermitidos);
             return data;
           })
-        );
-      }),
-      switchMap(data => {
-        return this.proyectoService.findAllProyectoConceptosGastoNoPermitidos(proyectoId).pipe(
-          map(conceptosGastoNoPermitido => {
-            conceptosGastoNoPermitido.items
-              .filter(concepto => concepto.id !== proyectoConceptoGastoId).forEach(
-                conceptoGastoNoPermitido => data.selectedProyectoConceptosGasto.push(conceptoGastoNoPermitido));
-            return data;
-          })
-        );
-      })
+        ),
+      )
+    );
+  }
+
+  private getProyectoConceptosGastoPermitidos(convocatoriaId: number, currentProyectoConceptoGastoId: number): Observable<IProyectoConceptoGasto[]> {
+    return this.proyectoService.findAllProyectoConceptosGastoPermitidos(convocatoriaId).pipe(
+      map(response => response.items.filter(concepto => concepto.id !== currentProyectoConceptoGastoId)),
+    );
+  }
+
+  private getProyectoConceptosGastoNoPermitidos(convocatoriaId: number, currentProyectoConceptoGastoId: number): Observable<IProyectoConceptoGasto[]> {
+    return this.proyectoService.findAllProyectoConceptosGastoNoPermitidos(convocatoriaId).pipe(
+      map(response => response.items.filter(concepto => concepto.id !== currentProyectoConceptoGastoId)),
+    );
+  }
+
+  private getCodigosEconomicosPermitidos(convocatoriaId: number, currentProyectoConceptoGastoId: number): Observable<IProyectoConceptoGastoCodigoEc[]> {
+    return this.proyectoService.findAllProyectoConceptoGastoCodigosEcsPermitidos(convocatoriaId).pipe(
+      map(response => response.items.filter(codigoEconomico => codigoEconomico.proyectoConceptoGasto?.id !== currentProyectoConceptoGastoId)),
+    );
+  }
+
+  private getCodigosEconomicosNoPermitidos(convocatoriaId: number, currentProyectoConceptoGastoId: number): Observable<IProyectoConceptoGastoCodigoEc[]> {
+    return this.proyectoService.findAllProyectoConceptoGastoCodigosEcsNoPermitidos(convocatoriaId).pipe(
+      map(response => response.items.filter(codigoEconomico => codigoEconomico.proyectoConceptoGasto?.id !== currentProyectoConceptoGastoId)),
     );
   }
 

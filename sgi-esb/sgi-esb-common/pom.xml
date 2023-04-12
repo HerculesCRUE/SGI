@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.crue.hercules.sgi.esb</groupId>
   <artifactId>sgi-esb-common</artifactId>
@@ -71,8 +73,18 @@
     <java.version>1.8</java.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <revision>0.0.13</revision>
+    <maven.executable>mvnw</maven.executable>
+    <revision>0.2.0</revision>
   </properties>
+
+  <profiles>
+    <profile>
+      <id>ci</id>
+      <properties>
+        <maven.executable>mvn</maven.executable>
+      </properties>
+    </profile>
+  </profiles>
 
   <build>
     <plugins>

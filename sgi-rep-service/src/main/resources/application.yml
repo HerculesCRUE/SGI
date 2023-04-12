@@ -88,7 +88,7 @@ spring:
             client-name: SGI (service login)
             client-secret: 875010ad-320f-41ce-bd72-14fa05330ec9
             provider: keycloak
-            scope: sgi-csp,sgi-eti,sgi-prc,sgi-sgemp,sgi-sgp     
+            scope: sgi-csp,sgi-eti,sgi-prc,sgi-sgemp,sgi-sgp,sgi-cnf     
         provider:
           keycloak:
             issuer-uri: http://sgi-auth:8080/auth/realms/sgi
@@ -124,6 +124,9 @@ spring:
 logging:
   level:
     org:
+      crue:
+        hercules:
+          sgi: DEBUG
       hibernate:
         # Log the SQL statements
         SQL: DEBUG
@@ -189,8 +192,8 @@ sgi:
       pii-url: "http://sgi-pii-service:8080"
       prc-url: "http://sgi-prc-service:8080"
       rel-url: "http://sgi-rel-service:8080"
-      sgemp-url: "http://sgi-esb:8080/api/sgemp"
-      sgp-url: "http://sgi-esb:8080/api/sgp"
+      sgemp-url: "http://sgi-esb:8080/sgemp"
+      sgp-url: "http://sgi-esb:8080/sgp"
       tp-url: "http://sgi-tp-service:8080"
       usr-url: "http://sgi-usr-service:8080"
 spring:

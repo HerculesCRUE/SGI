@@ -4,6 +4,10 @@ import org.crue.hercules.sgi.csp.model.AreaTematica;
 import org.crue.hercules.sgi.csp.model.AreaTematica_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AreaTematicaSpecifications {
 
   /**

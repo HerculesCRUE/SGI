@@ -1,10 +1,13 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                                                                                                                                                                                                                                             http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                                                                                                                                                                                                                                                             http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
   <property name="schemaPrefix" value="" />
 
   <changeSet context="!test" author="master" id="0000000000001-solicitud_proyecto_entidad">
     <validCheckSum>8:c0a14bd41175cf9b365a0d762d56869f</validCheckSum>
     <validCheckSum>8:d100f54fe5f5bf2ef38dc05c171e03ec</validCheckSum>
+    <validCheckSum>8:2a72d1ff128bbc335675df7a43d8782e</validCheckSum>
     <!-- Carga de la nueva tabla solicitud_proyecto_entidad a partir de datos existentes en convocatoria_entidad_financiadora -->
     <sql dbms="!postgresql, !mssql">INSERT INTO ${schemaPrefix}solicitud_proyecto_entidad(id, created_by, creation_date, last_modified_by, last_modified_date, solicitud_proyecto_id, convocatoria_entidad_financiadora_id, convocatoria_entidad_gestora_id, solicitud_proyecto_entidad_financiadora_ajena_id) 
       SELECT 
@@ -144,6 +147,7 @@
   <changeSet context="!test" author="master" id="0000000000001-solicitud_proyecto_presupuesto">
     <validCheckSum>8:24676541849f3ccb51f34d61496923ee</validCheckSum>
     <validCheckSum>8:56134c1b6306895fcc3a8b262b571653</validCheckSum>
+    <validCheckSum>8:94593869370d90fdc937d19784d193a9</validCheckSum>
     <!-- Actualizar solicitud_proyecto_entidad_id en solicitud_proyecto_presupuesto -->
     <sql>
       UPDATE ${schemaPrefix}solicitud_proyecto_presupuesto SET solicitud_proyecto_entidad_id=(
@@ -216,6 +220,7 @@
   <changeSet context="!test" author="master" id="0000000000001-convocatoria">
     <validCheckSum>8:fbcd1779113311fa3273eabd5c173f1d</validCheckSum>
     <validCheckSum>8:bdc2773335b8c2a53e622efe99eab6c8</validCheckSum>
+    <validCheckSum>8:dba449da46be8f468cac0459154f212b</validCheckSum>
     <sql>
       UPDATE ${schemaPrefix}convocatoria SET formulario_solicitud=(
         SELECT

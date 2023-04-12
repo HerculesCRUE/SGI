@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedModule } from '@shared/shared.module';
+import { ComentariosGeneralesFormlyComponent } from './comentarios-generales-formly/comentarios-generales-formly.component';
 import { SelectComiteComponent } from './select-comite/select-comite.component';
 import { SelectEvaluadorComponent } from './select-evaluador/select-evaluador.component';
 import { SelectTipoConvocatoriaReunionComponent } from './select-tipo-convocatoria-reunion/select-tipo-convocatoria-reunion.component';
@@ -14,7 +15,8 @@ import { SelectTipoEvaluacionComponent } from './select-tipo-evaluacion/select-t
     SelectComiteComponent,
     SelectEvaluadorComponent,
     SelectTipoConvocatoriaReunionComponent,
-    SelectTipoEvaluacionComponent
+    SelectTipoEvaluacionComponent,
+    ComentariosGeneralesFormlyComponent
   ],
   imports: [
     SharedModule,
@@ -28,7 +30,8 @@ import { SelectTipoEvaluacionComponent } from './select-tipo-evaluacion/select-t
     SelectComiteComponent,
     SelectEvaluadorComponent,
     SelectTipoConvocatoriaReunionComponent,
-    SelectTipoEvaluacionComponent
+    SelectTipoEvaluacionComponent,
+    ComentariosGeneralesFormlyComponent
   ]
 })
 export class EtiSharedModule { }

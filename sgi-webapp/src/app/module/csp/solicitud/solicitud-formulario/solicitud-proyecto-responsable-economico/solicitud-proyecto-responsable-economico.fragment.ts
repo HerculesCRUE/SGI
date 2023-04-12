@@ -4,13 +4,15 @@ import { SolicitudProyectoResponsableEconomicoService } from '@core/services/csp
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { BehaviorSubject, from, Observable } from 'rxjs';
-import { map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { NGXLogger } from 'ngx-logger';
+import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 
 export class SolicitudProyectoResponsableEconomicoFragment extends Fragment {
   responsablesEconomicos$ = new BehaviorSubject<StatusWrapper<ISolicitudProyectoResponsableEconomico>[]>([]);
 
   constructor(
+    private logger: NGXLogger,
     key: number,
     private solicitudService: SolicitudService,
     private solicitudProyectoResponsableEconomicoService: SolicitudProyectoResponsableEconomicoService,
@@ -34,6 +36,10 @@ export class SolicitudProyectoResponsableEconomicoFragment extends Fragment {
                   map((persona) => {
                     responsableEconomico.persona = persona;
                     return responsableEconomico;
+                  }),
+                  catchError((err) => {
+                    this.logger.error(err);
+                    return of(responsableEconomico);
                   })
                 );
               })

@@ -30,11 +30,17 @@ public class FormularioServiceTest extends BaseServiceTest {
   @Mock
   private FormularioRepository formularioRepository;
 
+  @Mock
+  private MemoriaService memoriaService;
+
+  @Mock
+  private RetrospectivaService retrospectivaService;
+
   private FormularioService formularioService;
 
   @BeforeEach
   public void setUp() throws Exception {
-    formularioService = new FormularioServiceImpl(formularioRepository);
+    formularioService = new FormularioServiceImpl(formularioRepository, memoriaService, retrospectivaService);
   }
 
   @Test

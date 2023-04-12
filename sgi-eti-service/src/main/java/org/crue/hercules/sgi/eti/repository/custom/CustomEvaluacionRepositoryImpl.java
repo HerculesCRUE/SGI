@@ -27,6 +27,7 @@ import org.crue.hercules.sgi.eti.model.ConflictoInteres;
 import org.crue.hercules.sgi.eti.model.ConflictoInteres_;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion_;
+import org.crue.hercules.sgi.eti.model.EquipoTrabajo;
 import org.crue.hercules.sgi.eti.model.EquipoTrabajo_;
 import org.crue.hercules.sgi.eti.model.EstadoMemoria;
 import org.crue.hercules.sgi.eti.model.EstadoMemoria_;
@@ -37,10 +38,9 @@ import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.crue.hercules.sgi.eti.model.Evaluador_;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Memoria_;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacion_;
 import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.Retrospectiva_;
-import org.crue.hercules.sgi.eti.model.Tarea;
-import org.crue.hercules.sgi.eti.model.Tarea_;
 import org.crue.hercules.sgi.eti.model.TipoComentario_;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria_;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion_;
@@ -483,19 +483,20 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
         .not());
 
     if (personaRef != null) {
-      Subquery<String> queryPersonaRefTareas = cq.subquery(String.class);
-      Root<Tarea> subqRootTareas = queryPersonaRefTareas.from(Tarea.class);
+      Subquery<String> queryPersonaRefEquipoTrabajo = cq.subquery(String.class);
+      Root<EquipoTrabajo> subqRootEquipoTrabajo = queryPersonaRefEquipoTrabajo.from(EquipoTrabajo.class);
 
-      queryPersonaRefTareas.select(subqRootTareas.get(Tarea_.equipoTrabajo).get(EquipoTrabajo_.personaRef))
-          .where(cb.equal(subqRootTareas.get(Tarea_.memoria).get(Memoria_.id),
-              rootEvaluacion.get(Evaluacion_.memoria).get(Memoria_.id)));
+      queryPersonaRefEquipoTrabajo.select(subqRootEquipoTrabajo.get(EquipoTrabajo_.personaRef)).where(
+          cb.equal(subqRootEquipoTrabajo.get(EquipoTrabajo_.peticionEvaluacion).get(PeticionEvaluacion_.id),
+              rootEvaluacion.get(Evaluacion_.memoria).get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id)));
 
       Subquery<Long> queryConflictosInteres = cq.subquery(Long.class);
       Root<ConflictoInteres> subqRootConflictosInteres = queryConflictosInteres.from(ConflictoInteres.class);
 
       queryConflictosInteres.select(subqRootConflictosInteres.get(ConflictoInteres_.evaluador).get(Evaluador_.id))
           .where(
-              cb.in(subqRootConflictosInteres.get(ConflictoInteres_.personaConflictoRef)).value(queryPersonaRefTareas));
+              cb.in(subqRootConflictosInteres.get(ConflictoInteres_.personaConflictoRef))
+                  .value(queryPersonaRefEquipoTrabajo));
 
       Subquery<String> queryEvaluadores = cq.subquery(String.class);
       Root<Evaluador> subqRootEvaluadores = queryEvaluadores.from(Evaluador.class);
@@ -633,18 +634,20 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
             Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_SEGUIMIENTO_FINAL_ACLARACIONES)));
 
     if (personaRef != null) {
-      Subquery<String> queryPersonaRefTareas = cq.subquery(String.class);
-      Root<Tarea> subqRootTareas = queryPersonaRefTareas.from(Tarea.class);
+      Subquery<String> queryPersonaRefEquipoTrabajo = cq.subquery(String.class);
+      Root<EquipoTrabajo> subqRootEquipoTrabajo = queryPersonaRefEquipoTrabajo.from(EquipoTrabajo.class);
 
-      queryPersonaRefTareas.select(subqRootTareas.get(Tarea_.equipoTrabajo).get(EquipoTrabajo_.personaRef)).where(cb
-          .equal(subqRootTareas.get(Tarea_.memoria).get(Memoria_.id), root.get(Evaluacion_.memoria).get(Memoria_.id)));
+      queryPersonaRefEquipoTrabajo.select(subqRootEquipoTrabajo.get(EquipoTrabajo_.personaRef)).where(
+          cb.equal(subqRootEquipoTrabajo.get(EquipoTrabajo_.peticionEvaluacion).get(PeticionEvaluacion_.id),
+              root.get(Evaluacion_.memoria).get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id)));
 
       Subquery<Long> queryConflictosInteres = cq.subquery(Long.class);
       Root<ConflictoInteres> subqRootConflictosInteres = queryConflictosInteres.from(ConflictoInteres.class);
 
       queryConflictosInteres.select(subqRootConflictosInteres.get(ConflictoInteres_.evaluador).get(Evaluador_.id))
           .where(
-              cb.in(subqRootConflictosInteres.get(ConflictoInteres_.personaConflictoRef)).value(queryPersonaRefTareas));
+              cb.in(subqRootConflictosInteres.get(ConflictoInteres_.personaConflictoRef))
+                  .value(queryPersonaRefEquipoTrabajo));
 
       Subquery<String> queryEvaluadores = cq.subquery(String.class);
       Root<Evaluador> subqRootEvaluadores = queryEvaluadores.from(Evaluador.class);
@@ -706,17 +709,19 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
     Predicate memoriaVersion = cb.equal(root.get(Evaluacion_.version),
         root.get(Evaluacion_.memoria).get(Memoria_.version));
 
-    Subquery<String> queryPersonaRefTareas = cq.subquery(String.class);
-    Root<Tarea> subqRootTareas = queryPersonaRefTareas.from(Tarea.class);
+    Subquery<String> queryPersonaRefEquipoTrabajo = cq.subquery(String.class);
+    Root<EquipoTrabajo> subqRootEquipoTrabajo = queryPersonaRefEquipoTrabajo.from(EquipoTrabajo.class);
 
-    queryPersonaRefTareas.select(subqRootTareas.get(Tarea_.equipoTrabajo).get(EquipoTrabajo_.personaRef)).where(
-        cb.equal(subqRootTareas.get(Tarea_.memoria).get(Memoria_.id), root.get(Evaluacion_.memoria).get(Memoria_.id)));
+    queryPersonaRefEquipoTrabajo.select(subqRootEquipoTrabajo.get(EquipoTrabajo_.personaRef)).where(
+        cb.equal(subqRootEquipoTrabajo.get(EquipoTrabajo_.peticionEvaluacion).get(PeticionEvaluacion_.id),
+            root.get(Evaluacion_.memoria).get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id)));
 
     Subquery<Long> queryConflictosInteres = cq.subquery(Long.class);
     Root<ConflictoInteres> subqRootConflictosInteres = queryConflictosInteres.from(ConflictoInteres.class);
 
     queryConflictosInteres.select(subqRootConflictosInteres.get(ConflictoInteres_.evaluador).get(Evaluador_.id)).where(
-        cb.in(subqRootConflictosInteres.get(ConflictoInteres_.personaConflictoRef)).value(queryPersonaRefTareas));
+        cb.in(subqRootConflictosInteres.get(ConflictoInteres_.personaConflictoRef))
+            .value(queryPersonaRefEquipoTrabajo));
 
     Subquery<String> queryEvaluadores = cq.subquery(String.class);
     Root<Evaluador> subqRootEvaluadores = queryEvaluadores.from(Evaluador.class);
@@ -956,7 +961,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
       Predicate pComiteActivo = cb.equal(joinEComite.get(Comite_.activo), true);
       Predicate pEvaluadorActivo = cb.equal(root.get(Evaluador_.activo), true);
       Predicate pCargoComiteActivo = cb.equal(joinCargoComite.get(CargoComite_.activo), true);
-      Predicate pCargoComitePresidente = cb.equal(cb.lower(joinCargoComite.get(CargoComite_.nombre)),
+      Predicate pCargoComitePresidente = cb.equal(joinCargoComite.get(CargoComite_.id),
           EvaluadorSpecifications.PRESIDENTE);
 
       Predicate pFechaBajaIsNull = cb.isNull(root.get(Evaluador_.fechaBaja));

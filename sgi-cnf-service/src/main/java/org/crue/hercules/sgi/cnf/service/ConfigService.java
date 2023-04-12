@@ -2,18 +2,16 @@ package org.crue.hercules.sgi.cnf.service;
 
 import javax.validation.Valid;
 
+import org.crue.hercules.sgi.cnf.exceptions.CnfNotFoundException;
 import org.crue.hercules.sgi.cnf.model.Config;
 import org.crue.hercules.sgi.cnf.repository.ConfigRepository;
-import org.crue.hercules.sgi.framework.exception.NotFoundException;
-import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
+import org.crue.hercules.sgi.cnf.util.AssertHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
-import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,13 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 @Validated
 public class ConfigService {
-
-  private static final String PROBLEM_MESSAGE_PARAMETER_FIELD = "field";
-  private static final String PROBLEM_MESSAGE_PARAMETER_ENTITY = "entity";
-  private static final String PROBLEM_MESSAGE_NOTNULL = "notNull";
-  private static final String MESSAGE_KEY_NAME = "name";
-  private static final String MESSAGE_KEY_VALUE = "value";
-  private static final String MESSAGE_KEY_ID = "id";
 
   private final ConfigRepository repository;
 
@@ -55,10 +46,7 @@ public class ConfigService {
   @Validated({ Config.OnCreate.class })
   public Config create(@Valid Config config) {
     log.debug("create(Config config) - start");
-    Assert.notNull(config.getName(),
-        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
-            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_NAME))
-            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Config.class)).build());
+    AssertHelper.fieldNotNull(config.getName(), Config.class, AssertHelper.MESSAGE_KEY_NAME);
     Config returnValue = repository.save(config);
     log.debug("create(Config config) - end");
     return returnValue;
@@ -73,10 +61,7 @@ public class ConfigService {
   @Transactional
   public Config update(Config config) {
     log.debug("update(Config config) - start");
-    Assert.notNull(config.getName(),
-        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
-            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_NAME))
-            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Config.class)).build());
+    AssertHelper.fieldNotNull(config.getName(), Config.class, AssertHelper.MESSAGE_KEY_NAME);
     Config returnValue = repository.save(config);
     log.debug("update(Config config) - end");
     return returnValue;
@@ -92,21 +77,38 @@ public class ConfigService {
   @Transactional
   public Config updateValue(String name, String value) {
     log.debug("updateValue(String name, String value) - start");
-    Assert.notNull(name,
-        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
-            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_NAME))
-            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Config.class)).build());
-    Assert.notNull(value,
-        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
-            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_VALUE))
-            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Config.class)).build());
+
+    AssertHelper.fieldNotNull(name, Config.class, AssertHelper.MESSAGE_KEY_NAME);
+
     Config config = repository.findById(name)
-        .orElseThrow(() -> new NotFoundException(ProblemMessage.builder().key(NotFoundException.class)
-            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Config.class))
-            .parameter(MESSAGE_KEY_ID, name).build()));
+        .orElseThrow(() -> new CnfNotFoundException(name, Config.class));
     config.setValue(value);
+
     Config returnValue = repository.saveAndFlush(config);
+
     log.debug("updateValue(String name, String value) - end");
+    return returnValue;
+  }
+
+  /**
+   * Restore the default value of an existing {@link Config}
+   * 
+   * @param name the name of the {@link Config} to update
+   * @return Config the updated {@link Config}
+   */
+  @Transactional
+  public Config restoreDefaultValue(String name) {
+    log.debug("restoreDefaultValue({}) - start", name);
+
+    AssertHelper.fieldNotNull(name, Config.class, AssertHelper.MESSAGE_KEY_NAME);
+
+    Config config = repository.findById(name)
+        .orElseThrow(() -> new CnfNotFoundException(name, Config.class));
+    config.setValue(config.getDefaultValue());
+
+    Config returnValue = repository.saveAndFlush(config);
+
+    log.debug("restoreDefaultValue({}) - end", name);
     return returnValue;
   }
 
@@ -118,10 +120,7 @@ public class ConfigService {
   @Transactional
   public void delete(String name) {
     log.debug("delete(String name) - start");
-    Assert.notNull(name,
-        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
-            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_NAME))
-            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Config.class)).build());
+    AssertHelper.fieldNotNull(name, Config.class, AssertHelper.MESSAGE_KEY_NAME);
     repository.deleteById(name);
     log.debug("delete(String name) - end");
   }
@@ -134,15 +133,9 @@ public class ConfigService {
    */
   public Config get(String name) {
     log.debug("get(String name) - start");
-    Assert.notNull(name,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
-            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(MESSAGE_KEY_NAME))
-            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Config.class)).build());
+    AssertHelper.fieldNotNull(name, Config.class, AssertHelper.MESSAGE_KEY_NAME);
     Config returnValue = repository.findById(name)
-        .orElseThrow(() -> new NotFoundException(ProblemMessage.builder().key(NotFoundException.class)
-            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Config.class))
-            .parameter(MESSAGE_KEY_ID, name).build()));
+        .orElseThrow(() -> new CnfNotFoundException(name, Config.class));
     log.debug("get(String name) - end");
     return returnValue;
   }

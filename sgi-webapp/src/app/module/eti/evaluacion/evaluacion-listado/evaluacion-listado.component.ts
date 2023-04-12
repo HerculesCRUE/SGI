@@ -8,6 +8,7 @@ import { AbstractTablePaginationComponent } from '@core/component/abstract-table
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
+import { TIPO_CONVOCATORIA_REUNION } from '@core/models/eti/tipo-convocatoria-reunion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
@@ -32,7 +33,6 @@ const MSG_ERROR_ENVIADO = marker('msg.envio-comunicado.entity.error');
   styleUrls: ['./evaluacion-listado.component.scss']
 })
 export class EvaluacionListadoComponent extends AbstractTablePaginationComponent<IEvaluacion> implements OnInit {
-
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
 
@@ -51,6 +51,10 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
 
   get tipoColectivoSolicitante() {
     return TipoColectivo.SOLICITANTE_ETICA;
+  }
+
+  get TIPO_CONVOCATORIA() {
+    return TIPO_CONVOCATORIA_REUNION;
   }
 
   constructor(

@@ -50,6 +50,8 @@ describe('ConvocatoriaConceptoGastoCodigoEcModalComponent', () => {
         permitido: true
       }
     ] as IConvocatoriaConceptoGasto[],
+    convocatoriaConceptoGasto: null,
+    convocatoriaConceptoGastoCodigoEcsConvocatoria: [],
     editModal: true,
     permitido: true,
     readonly: false,

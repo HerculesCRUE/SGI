@@ -1,7 +1,9 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.exceptions.ConceptoGastoNotFoundException;
@@ -18,6 +20,7 @@ import org.crue.hercules.sgi.csp.repository.ProyectoConceptoGastoCodigoEcReposit
 import org.crue.hercules.sgi.csp.repository.ProyectoConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.ProyectoConceptoGastoPredicateResolver;
+import org.crue.hercules.sgi.csp.repository.specification.ProyectoConceptoGastoCodigoEcSpecifications;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoConceptoGastoSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoConceptoGastoService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -72,21 +75,15 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
     Assert.notNull(proyectoConceptoGasto.getProyectoId(),
         "Id Proyecto no puede ser null para crear ProyectoConceptoGasto");
 
-    if (proyectoConceptoGasto.getConceptoGasto() != null) {
-      if (proyectoConceptoGasto.getConceptoGasto().getId() != null) {
-        proyectoConceptoGasto.setConceptoGasto(
-            conceptoGastoRepository.findById(proyectoConceptoGasto.getConceptoGasto().getId()).orElseThrow(
-                () -> new ConceptoGastoNotFoundException(proyectoConceptoGasto.getConceptoGasto().getId())));
-        Assert.isTrue(proyectoConceptoGasto.getConceptoGasto().getActivo(), "El ConceptoGasto debe estar activo");
-      } else {
-        proyectoConceptoGasto.setConceptoGasto(null);
-      }
-    }
+    proyectoConceptoGasto.setConceptoGasto(
+        conceptoGastoRepository.findById(proyectoConceptoGasto.getConceptoGasto().getId()).orElseThrow(
+            () -> new ConceptoGastoNotFoundException(proyectoConceptoGasto.getConceptoGasto().getId())));
+    Assert.isTrue(proyectoConceptoGasto.getConceptoGasto().getActivo(), "El ConceptoGasto debe estar activo");
 
     Proyecto proyecto = proyectoRepository.findById(proyectoConceptoGasto.getProyectoId())
         .orElseThrow(() -> new ProyectoNotFoundException(proyectoConceptoGasto.getProyectoId()));
 
-    if (proyectoConceptoGasto.getFechaInicio() != null && proyecto.getFechaFin() != null) {
+    if (proyectoConceptoGasto.getFechaInicio() != null) {
       if (proyectoConceptoGasto.getFechaFin() != null) {
         Assert.isTrue(!proyectoConceptoGasto.getFechaFin().isAfter(proyecto.getFechaFin()),
             "La fecha de fin no puede ser posterior a la fecha de fin del proyecto");
@@ -133,20 +130,14 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
     Assert.notNull(proyectoConceptoGastoActualizar.getProyectoId(),
         "Id Proyecto no puede ser null para actualizar ProyectoConceptoGasto");
 
-    if (proyectoConceptoGastoActualizar.getConceptoGasto() != null) {
-      if (proyectoConceptoGastoActualizar.getConceptoGasto().getId() != null) {
-        proyectoConceptoGastoActualizar.setConceptoGasto(
-            conceptoGastoRepository.findById(proyectoConceptoGastoActualizar.getConceptoGasto().getId()).orElseThrow(
-                () -> new ConceptoGastoNotFoundException(proyectoConceptoGastoActualizar.getConceptoGasto().getId())));
-      } else {
-        proyectoConceptoGastoActualizar.setConceptoGasto(null);
-      }
-    }
+    proyectoConceptoGastoActualizar.setConceptoGasto(
+        conceptoGastoRepository.findById(proyectoConceptoGastoActualizar.getConceptoGasto().getId()).orElseThrow(
+            () -> new ConceptoGastoNotFoundException(proyectoConceptoGastoActualizar.getConceptoGasto().getId())));
 
     Proyecto proyecto = proyectoRepository.findById(proyectoConceptoGastoActualizar.getProyectoId())
         .orElseThrow(() -> new ProyectoNotFoundException(proyectoConceptoGastoActualizar.getProyectoId()));
 
-    if (proyectoConceptoGastoActualizar.getFechaInicio() != null && proyecto.getFechaFin() != null) {
+    if (proyectoConceptoGastoActualizar.getFechaInicio() != null) {
       if (proyectoConceptoGastoActualizar.getFechaFin() != null) {
         Assert.isTrue(!proyectoConceptoGastoActualizar.getFechaFin().isAfter(proyecto.getFechaFin()),
             "La fecha de fin no puede ser posterior a la fecha de fin del proyecto");
@@ -167,6 +158,10 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
     Assert.isTrue(!existsProyectoConceptoGastoConMesesSolapados(proyectoConceptoGastoActualizar),
         "El concepto de gasto '" + proyectoConceptoGastoActualizar.getConceptoGasto()
             + "' ya está presente y tiene un periodo de vigencia que se solapa con el indicado");
+
+    Assert.isTrue(!existsProyectoConceptoGastoAndCodigoEconomicoConMesesSolapados(proyectoConceptoGastoActualizar),
+        "El concepto gasto '" + proyectoConceptoGastoActualizar.getConceptoGasto()
+            + "' tiene códigos económicos que se solapan con otros códigos económicos del proyecto");
 
     return repository.findById(proyectoConceptoGastoActualizar.getId()).map(proyectoConceptoGasto -> {
 
@@ -377,17 +372,72 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
         .byRangoFechasSolapados(proyectoConceptoGasto.getFechaInicio(), proyectoConceptoGasto.getFechaFin());
     Specification<ProyectoConceptoGasto> specByIdNotEqual = ProyectoConceptoGastoSpecifications
         .byIdNotEqual(proyectoConceptoGasto.getId());
+    Specification<ProyectoConceptoGasto> specByPermitido = ProyectoConceptoGastoSpecifications
+        .byPermitido(proyectoConceptoGasto.getPermitido());
 
     Specification<ProyectoConceptoGasto> specs = Specification.where(specByProyecto)
         .and(specByConceptoGastoProyectoActiva).and(specByConceptoGasto).and(specByRangoMesesSolapados)
-        .and(specByIdNotEqual);
+        .and(specByIdNotEqual).and(specByPermitido);
 
-    Page<ProyectoConceptoGasto> proyectoConceptoGastos = repository.findAll(specs, Pageable.unpaged());
+    return repository.count(specs) > 0;
+  }
 
-    Boolean returnValue = !proyectoConceptoGastos.isEmpty();
-    log.debug("existsProyectoConceptoGastoConMesesSolapados(ProyectoConceptoGasto proyectoConceptoGasto) - end");
+  private boolean existsProyectoConceptoGastoAndCodigoEconomicoConMesesSolapados(
+      ProyectoConceptoGasto proyectoConceptoGasto) {
 
-    return returnValue;
+    Specification<ProyectoConceptoGasto> specByProyecto = ProyectoConceptoGastoSpecifications
+        .byProyecto(proyectoConceptoGasto.getProyectoId());
+    Specification<ProyectoConceptoGasto> specByIdNotEqual = ProyectoConceptoGastoSpecifications
+        .byIdNotEqual(proyectoConceptoGasto.getId());
+    Specification<ProyectoConceptoGasto> specByRangoMesesSolapados = ProyectoConceptoGastoSpecifications
+        .byRangoFechasSolapados(proyectoConceptoGasto.getFechaInicio(), proyectoConceptoGasto.getFechaFin());
+    Specification<ProyectoConceptoGasto> specByConceptoGasto = ProyectoConceptoGastoSpecifications
+        .byConceptoGasto(proyectoConceptoGasto.getConceptoGasto());
+
+    Specification<ProyectoConceptoGasto> specs = Specification.where(specByProyecto).and(specByIdNotEqual)
+        .and(specByRangoMesesSolapados).and(specByConceptoGasto);
+
+    List<ProyectoConceptoGasto> proyectoConceptosGastoSolapados = repository.findAll(specs);
+
+    Specification<ProyectoConceptoGastoCodigoEc> specCodigoEcByConceptosGasto = ProyectoConceptoGastoCodigoEcSpecifications
+        .byProyectoConceptosGastoIds(
+            proyectoConceptosGastoSolapados.stream().map(ProyectoConceptoGasto::getId).collect(Collectors.toList()));
+
+    Specification<ProyectoConceptoGastoCodigoEc> specCodigoEcByConceptoGastoId = ProyectoConceptoGastoCodigoEcSpecifications
+        .byProyectoConceptoGasto(proyectoConceptoGasto.getId());
+
+    List<ProyectoConceptoGastoCodigoEc> proyectoCodigosEconomicosSolapados = proyectoConceptoGastoCodigoEcRepository
+        .findAll(specCodigoEcByConceptosGasto);
+
+    List<ProyectoConceptoGastoCodigoEc> proyectoCodigosEconomicosConceptoGasto = proyectoConceptoGastoCodigoEcRepository
+        .findAll(specCodigoEcByConceptoGastoId);
+
+    return proyectoCodigosEconomicosSolapados.stream()
+        .anyMatch(
+            codigoEconomico -> proyectoCodigosEconomicosConceptoGasto.stream()
+                .anyMatch(codigo -> codigo.getCodigoEconomicoRef().equals(codigoEconomico.getCodigoEconomicoRef()))
+                && proyectoConceptosGastoSolapados.stream()
+                    .anyMatch(concepto -> concepto.getId().equals(codigoEconomico.getProyectoConceptoGastoId())
+                        && isConceptosGastoSolapados(proyectoConceptoGasto, concepto)));
+  }
+
+  private boolean isConceptosGastoSolapados(ProyectoConceptoGasto proyectoConceptoGastoA,
+      ProyectoConceptoGasto proyectoConceptoGastoB) {
+    Instant fechaInicioProyectoConceptoGastoA = proyectoConceptoGastoA.getFechaInicio() != null
+        ? proyectoConceptoGastoA.getFechaInicio()
+        : Instant.MIN;
+    Instant fechaFinProyectoConceptoGastoA = proyectoConceptoGastoA.getFechaFin() != null
+        ? proyectoConceptoGastoA.getFechaFin()
+        : Instant.MAX;
+    Instant fechaInicioProyectoConceptoGastoB = proyectoConceptoGastoB.getFechaInicio() != null
+        ? proyectoConceptoGastoB.getFechaInicio()
+        : Instant.MIN;
+    Instant fechaFinProyectoConceptoGastoB = proyectoConceptoGastoB.getFechaFin() != null
+        ? proyectoConceptoGastoB.getFechaFin()
+        : Instant.MAX;
+
+    return !fechaInicioProyectoConceptoGastoA.isAfter(fechaFinProyectoConceptoGastoA)
+        && !fechaInicioProyectoConceptoGastoB.isAfter(fechaFinProyectoConceptoGastoB);
   }
 
 }

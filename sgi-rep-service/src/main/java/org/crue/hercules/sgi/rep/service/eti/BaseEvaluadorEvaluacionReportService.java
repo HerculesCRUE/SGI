@@ -15,6 +15,7 @@ import org.crue.hercules.sgi.rep.dto.eti.ElementOutput;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.InformeEvaluacionEvaluadorReportOutput;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
 import org.pentaho.reporting.engine.classic.core.SubReport;
 import org.pentaho.reporting.engine.classic.core.TableDataFactory;
@@ -35,10 +36,11 @@ public abstract class BaseEvaluadorEvaluacionReportService extends BaseApartados
 
   protected static final String BLOQUE_0 = "bloque0";
 
-  protected BaseEvaluadorEvaluacionReportService(SgiConfigProperties sgiConfigProperties, BloqueService bloqueService,
+  protected BaseEvaluadorEvaluacionReportService(SgiConfigProperties sgiConfigProperties,
+      SgiApiConfService sgiApiConfService, BloqueService bloqueService,
       ApartadoService apartadoService, SgiFormlyService sgiFormlyService, RespuestaService respuestaService) {
 
-    super(sgiConfigProperties, bloqueService, apartadoService, sgiFormlyService, respuestaService);
+    super(sgiConfigProperties, sgiApiConfService, bloqueService, apartadoService, sgiFormlyService, respuestaService);
   }
 
   /**

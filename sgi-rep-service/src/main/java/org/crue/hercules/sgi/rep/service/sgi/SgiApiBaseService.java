@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class SgiApiBaseService {
   public static final String CLIENT_REGISTRATION_ID = "rep-service";
-  private final RestApiProperties restApiProperties;
+  protected final RestApiProperties restApiProperties;
   private final RestTemplate restTemplate;
 
   protected SgiApiBaseService(RestApiProperties restApiProperties, RestTemplate restTemplate) {
@@ -26,6 +26,12 @@ public abstract class SgiApiBaseService {
   protected String buildUri(
       ServiceType serviceType, String relativeUrl) {
     log.debug("buildUrl(ServiceType serviceType, String relativeUrl) - start");
+    String mergedURL = new StringBuilder(getServiceBaseURL(serviceType)).append(relativeUrl).toString();
+    log.debug("buildUrl(ServiceType serviceType, String relativeUrl) - end");
+    return mergedURL;
+  }
+
+  protected String getServiceBaseURL(ServiceType serviceType) {
     String serviceURL = null;
     switch (serviceType) {
       case CNF:
@@ -64,10 +70,8 @@ public abstract class SgiApiBaseService {
       default:
         throw new UnknownServiceTypeException(serviceType.name());
     }
-    // TODO revisit implementation
-    String mergedURL = new StringBuilder(serviceURL).append(relativeUrl).toString();
-    log.debug("buildUrl(ServiceType serviceType, String relativeUrl) - end");
-    return mergedURL;
+
+    return serviceURL;
   }
 
   protected <T> ResponseEntity<T> callEndpoint(String endPoint, HttpMethod httpMethod,

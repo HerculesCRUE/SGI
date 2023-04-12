@@ -3,7 +3,7 @@
 :host {
   .card {
     padding: 10px;
-    border: 1px solid map-get($palette-grey, 300);
+    border: 1px solid map-get($sgi-custom-colors, divider);
   }
 
   sgi-dialog-content {

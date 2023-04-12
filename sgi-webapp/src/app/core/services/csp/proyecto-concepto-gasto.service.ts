@@ -29,9 +29,10 @@ export class ProyectoConceptoGastoService
     );
   }
 
-  findByConceptoGastoId(conceptoGastoId: number, permitido: boolean): Observable<SgiRestListResult<IProyectoConceptoGasto>> {
+  findByConceptoGastoId(conceptoGastoId: number, proyectoId: number, permitido: boolean): Observable<SgiRestListResult<IProyectoConceptoGasto>> {
     const options: SgiRestFindOptions = {
       filter: new RSQLSgiRestFilter('conceptoGasto.id', SgiRestFilterOperator.EQUALS, conceptoGastoId.toString())
+        .and('proyectoId', SgiRestFilterOperator.EQUALS, proyectoId.toString())
         .and('permitido', SgiRestFilterOperator.EQUALS, permitido.toString()),
     };
 

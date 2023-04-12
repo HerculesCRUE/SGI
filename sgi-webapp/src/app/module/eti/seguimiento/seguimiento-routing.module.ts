@@ -13,7 +13,7 @@ import { SeguimientoListadoComponent } from './seguimiento-listado/seguimiento-l
 import { SEGUIMIENTO_ROUTE_NAMES } from './seguimiento-route-names';
 import { SeguimientoResolver } from './seguimiento.resolver';
 
-const SEGUIMIENTO_EVALUADOR_KEY = marker('menu.eti.seguimiento-evaluador');
+const MSG_SEGUIMIENTO_TITLE = marker('menu.eti.seguimiento');
 
 const routes: SgiAuthRoutes = [
   {
@@ -21,7 +21,7 @@ const routes: SgiAuthRoutes = [
     component: SeguimientoListadoComponent,
     canActivate: [SgiAuthGuard],
     data: {
-      title: SEGUIMIENTO_EVALUADOR_KEY,
+      title: MSG_SEGUIMIENTO_TITLE,
       titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
       hasAnyAuthorityForAnyUO: ['ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-INV-VR']
     }
@@ -35,7 +35,7 @@ const routes: SgiAuthRoutes = [
       evaluacion: SeguimientoResolver
     },
     data: {
-      title: SEGUIMIENTO_EVALUADOR_KEY,
+      title: MSG_SEGUIMIENTO_TITLE,
       titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
       hasAnyAuthorityForAnyUO: ['ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR']
     },

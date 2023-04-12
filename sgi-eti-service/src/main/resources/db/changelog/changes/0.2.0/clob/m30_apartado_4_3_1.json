@@ -1,0 +1,73 @@
+[
+  {
+    "key": "ap4_3_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.3.1 Vacunación"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>¿Qué vacunación se ofrece al personal que manejará los agentes biológicos, organismos modificados genéticamente, sustancias químicas peligrosas, sustancias radiactivas y/o nanopartículas?</p>"
+      },
+      {
+        "key": "vacunacionCheck",
+        "type": "multicheckbox",
+        "templateOptions": {
+          "label": "Cuáles",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "tetanos",
+              "label": "Tétanos"
+            },
+            {
+              "value": "hepatitis",
+              "label": "Hepatitis"
+            },
+            {
+              "value": "otras",
+              "label": "Otras"
+            },
+            {
+              "value": "noNecesariaVacunacion",
+              "label": "No es necesaria vacunación"
+            }
+          ]
+        }
+      },
+      {
+        "key": "otrasTexto",
+        "type": "textarea",
+        "hideExpression": "!model.vacunacionCheck || !model.vacunacionCheck.find((c) => c === 'otras')",
+        "templateOptions": {
+          "placeholder": "Especificar",
+          "label": "Especificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "Organismo sanitario responsable de la vacunación",
+        "hideExpression": "model.vacunacionCheck && model.vacunacionCheck.find((c) => c === 'noNecesariaVacunacion')"
+      },
+      {
+        "key": "organismoSanitario",
+        "type": "textarea",
+        "hideExpression": "model.vacunacionCheck && model.vacunacionCheck.find((c) => c === 'noNecesariaVacunacion')",
+        "templateOptions": {
+          "placeholder": "Especificar",
+          "label": "Organismo:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

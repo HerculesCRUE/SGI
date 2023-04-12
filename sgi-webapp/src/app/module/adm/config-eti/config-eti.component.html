@@ -1,0 +1,41 @@
+<sgi-menu-content>
+  <ng-container *ngFor="let config of CONFIG_MAP | keyvalue: originalOrder">
+
+    <ng-container [ngSwitch]="config.value.type">
+      <ng-container *ngSwitchCase="ConfigType.TEXT">
+        <sgi-config-input-text [key]="config.key" [label]="config.value.label" [required]="config.value.required"
+          (error)="handleErrors($event)">
+        </sgi-config-input-text>
+      </ng-container>
+      <ng-container *ngSwitchCase="ConfigType.EMAILS">
+        <sgi-config-input-emails [key]="config.key" [label]="config.value.label" [required]="config.value.required"
+          (error)="handleErrors($event)">
+        </sgi-config-input-emails>
+      </ng-container>
+      <ng-container *ngSwitchCase="ConfigType.EMAILS_UO">
+        <ng-container *ngFor="let unidadGestion of unidadesGestion$ | async">
+          <sgi-config-input-emails [key]="config.key + unidadGestion.id" [label]="config.value.label"
+            [labelParams]="{unidadGestion: unidadGestion.nombre}" [required]="config.value.required"
+            (error)="handleErrors($event)">
+          </sgi-config-input-emails>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngSwitchCase="ConfigType.FILE">
+        <sgi-config-input-file [key]="config.key" [label]="config.value.label" (error)="handleErrors($event)">
+        </sgi-config-input-file>
+      </ng-container>
+      <ng-container *ngSwitchCase="ConfigType.SELECT">
+        <sgi-config-select [key]="config.key" [label]="config.value.label" [required]="config.value.required"
+          [options$]="config.value.options" (error)="handleErrors($event)">
+        </sgi-config-select>
+      </ng-container>
+      <ng-container *ngSwitchCase="ConfigType.CONFIG_GROUP_TITLE">
+        <h3 class="config-group-title">
+          {{config.value.label | translate:config.value.labelParams}}
+        </h3>
+      </ng-container>
+      <ng-container *ngSwitchDefault></ng-container>
+    </ng-container>
+  </ng-container>
+
+</sgi-menu-content>

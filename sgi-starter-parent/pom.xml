@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -10,7 +12,7 @@
 
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-starter-parent</artifactId>
-  <version>0.0.13</version>
+  <version>0.1.0</version>
   <packaging>pom</packaging>
   <name>sgi-starter-parent</name>
   <description>Parent pom providing dependency and plugin management for applications built with Maven</description>
@@ -40,7 +42,8 @@
     <!-- Distribution Management URL's -->
     <dist.repo.rel.url>http://nexus.treelogic.local/content/repositories/releases/</dist.repo.rel.url>
     <dist.repo.snap.url>http://nexus.treelogic.local/content/repositories/snapshots/</dist.repo.snap.url>
-    <!-- spring-boot-starter-parent version to allow reconfiguration of spring boot dependencies defined there  -->
+    <!-- spring-boot-starter-parent version to allow reconfiguration of spring boot dependencies
+    defined there  -->
     <spring-boot-starter-parent.version>2.3.9.RELEASE</spring-boot-starter-parent.version>
     <!-- Dependencies versions (not defined in parent pom) -->
     <classic-core.version>8.3.0.25-1402</classic-core.version>
@@ -66,7 +69,8 @@
     <skipTests>false</skipTests>
     <skipUnitTests>${skipTests}</skipUnitTests>
     <skipIntegrationTests>${skipTests}</skipIntegrationTests>
-    <!-- Define "argLine" as a Maven property rather than as part of the configuration of maven-surefire-plugin -->
+    <!-- Define "argLine" as a Maven property rather than as part of the configuration of
+    maven-surefire-plugin -->
     <argLine>-Duser.timezone=UTC</argLine>
   </properties>
 
@@ -99,7 +103,8 @@
         </exclusions>
       </dependency>
       <!-- 
-        Apache Commons Collections - Powerful data structures that accelerate development of most significant Java applications
+        Apache Commons Collections - Powerful data structures that accelerate development of most
+      significant Java applications
         https://commons.apache.org/proper/commons-collections/index.html
       -->
       <dependency>
@@ -108,7 +113,8 @@
         <version>${commons-collections4.version}</version>
       </dependency>
       <!-- 
-        Commons Email - An API for sending email built on top of the Java Mail API, which it aims to simplify.
+        Commons Email - An API for sending email built on top of the Java Mail API, which it aims to
+      simplify.
         https://commons.apache.org/proper/commons-email/
       -->
       <dependency>
@@ -153,7 +159,8 @@
         <version>${modelmapper.version}</version>
       </dependency>
       <!--
-        RSQL to Spring JPA translation - Translate RSQL query into org.springframework.data.jpa.domain.Specification or com.querydsl.core.types.Predicate.
+        RSQL to Spring JPA translation - Translate RSQL query into
+      org.springframework.data.jpa.domain.Specification or com.querydsl.core.types.Predicate.
         https://github.com/perplexhub/rsql-jpa-specification
       -->
       <dependency>
@@ -162,7 +169,9 @@
         <version>${rsql-jpa-spring-boot-starter.version}</version>
       </dependency>
       <!-- 
-        Spring Expression Language - A powerful expression language that supports querying and manipulating an object graph at runtime (see: https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions).
+        Spring Expression Language - A powerful expression language that supports querying and manipulating
+      an object graph at runtime (see:
+      https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions).
         https://github.com/eobermuhlner/spel-scriptengine
       -->
       <dependency>
@@ -171,7 +180,8 @@
         <version>${spel-scriptengine.version}</version>
       </dependency>
       <!--
-        Spring Boot Test Starter - Imports both Spring Boot test modules as well as JUnit Jupiter, AssertJ, Hamcrest, and a number of other useful libraries.
+        Spring Boot Test Starter - Imports both Spring Boot test modules as well as JUnit Jupiter, AssertJ,
+      Hamcrest, and a number of other useful libraries.
         https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#features.testing
       -->
       <dependency>
@@ -254,7 +264,8 @@
             <execution>
               <!-- Integration test report generation config -->
               <id>it-report</id>
-              <!-- Could be integration-test but then maven-failsafe-plugin should be defined before as is associated to same integration-test phase -->
+              <!-- Could be integration-test but then maven-failsafe-plugin should be defined before
+              as is associated to same integration-test phase -->
               <phase>post-integration-test</phase>
               <goals>
                 <goal>report-integration</goal>
@@ -511,16 +522,17 @@
           <artifactId>spring-boot-maven-plugin</artifactId>
           <configuration>
             <jvmArguments>
-            -Xmx256m
-            -Xss256k
-          </jvmArguments>
+              -Xmx256m
+              -Xss256k
+            </jvmArguments>
             <profiles>
               <!-- Set default active profile -->
               <profile>${spring.profiles.active}</profile>
             </profiles>
             <!--
               Create 2 artifacts: one as dependency and another as executable fat JAR
-              See https://docs.spring.io/spring-boot/docs/current/reference/html/howto-build.html#howto-create-an-additional-executable-jar
+              See
+            https://docs.spring.io/spring-boot/docs/current/reference/html/howto-build.html#howto-create-an-additional-executable-jar
             -->
             <classifier>exec</classifier>
           </configuration>

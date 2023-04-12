@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
@@ -17,11 +19,14 @@ import org.crue.hercules.sgi.rep.dto.eti.BloqueOutput;
 import org.crue.hercules.sgi.rep.dto.eti.BloquesReportInput;
 import org.crue.hercules.sgi.rep.dto.eti.BloquesReportOutput;
 import org.crue.hercules.sgi.rep.dto.eti.ComentarioDto;
+import org.crue.hercules.sgi.rep.dto.eti.ComiteDto.Genero;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
+import org.crue.hercules.sgi.rep.dto.eti.FormularioDto;
 import org.crue.hercules.sgi.rep.dto.eti.InformeEvaluacionEvaluadorReportOutput;
-import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
 import org.crue.hercules.sgi.rep.dto.sgp.EmailDto;
+import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,14 +50,19 @@ public class InformeEvaluacionReportService extends BaseEvaluadorEvaluacionRepor
   private static final Long TIPO_COMENTARIO_GESTOR = 1L;
   private static final Long DICTAMEN_PENDIENTE_CORRECCIONES = 3L;
   private static final Long DICTAMEN_NO_PROCEDE_EVALUAR = 4L;
+  public static final Long DICTAMEN_FAVORABLE_PENDIENTE_REVISION_MINIMA = 2L;
+  public static final Long TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_ANUAL = 13L;
+  public static final Long TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_FINAL = 19L;
+  public static final Long TIPO_EVALUACION_RETROSPECTIVA = 1L;
 
   @Autowired
-  public InformeEvaluacionReportService(SgiConfigProperties sgiConfigProperties, SgiApiSgpService personaService,
+  public InformeEvaluacionReportService(SgiConfigProperties sgiConfigProperties,
+      SgiApiConfService sgiApiConfService, SgiApiSgpService personaService,
       BloqueService bloqueService, ApartadoService apartadoService, SgiFormlyService sgiFormlyService,
       RespuestaService respuestaService, EvaluacionService evaluacionService,
       ConfiguracionService configuracionService) {
 
-    super(sgiConfigProperties, bloqueService, apartadoService, sgiFormlyService, respuestaService);
+    super(sgiConfigProperties, sgiApiConfService, bloqueService, apartadoService, sgiFormlyService, respuestaService);
     this.personaService = personaService;
     this.evaluacionService = evaluacionService;
     this.configuracionService = configuracionService;
@@ -99,10 +109,13 @@ public class InformeEvaluacionReportService extends BaseEvaluadorEvaluacionRepor
     columnsDataTitulo.add("fechaDictamen");
     String i18nDe = ApplicationContextSupport.getMessage("common.de");
     String pattern = String.format("EEEE dd '%s' MMMM '%s' yyyy", i18nDe, i18nDe);
-    elementsRow.add(formatInstantToString(evaluacion.getFechaDictamen(), pattern));
+    elementsRow.add(formatInstantToString(evaluacion.getConvocatoriaReunion().getFechaEvaluacion(), pattern));
 
     columnsDataTitulo.add("numeroActa");
     elementsRow.add(evaluacion.getConvocatoriaReunion().getNumeroActa());
+
+    columnsDataTitulo.add("idComite");
+    elementsRow.add(evaluacion.getMemoria().getComite().getId());
 
     columnsDataTitulo.add("comite");
     elementsRow.add(evaluacion.getMemoria().getComite().getComite());
@@ -110,11 +123,57 @@ public class InformeEvaluacionReportService extends BaseEvaluadorEvaluacionRepor
     columnsDataTitulo.add("nombreInvestigacion");
     elementsRow.add(evaluacion.getMemoria().getComite().getNombreInvestigacion());
 
+    columnsDataTitulo.add("retrospectiva");
+    if (ObjectUtils.isNotEmpty(evaluacion.getMemoria().getEstadoActual())) {
+      elementsRow.add(!evaluacion.getMemoria().getEstadoActual().getId().equals(
+          TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_ANUAL)
+          && !evaluacion.getMemoria().getEstadoActual().getId()
+              .equals(TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_FINAL)
+          && ObjectUtils.isNotEmpty(evaluacion.getMemoria().getRetrospectiva())
+          && evaluacion.getMemoria().getRetrospectiva().getEstadoRetrospectiva().getId() > 1
+          && evaluacion.getTipoEvaluacion().getId().equals(TIPO_EVALUACION_RETROSPECTIVA));
+    } else {
+      elementsRow.add(false);
+    }
+    columnsDataTitulo.add("seguimientoAnual");
+    if (ObjectUtils.isNotEmpty(evaluacion.getMemoria().getEstadoActual())) {
+      elementsRow.add(
+          evaluacion.getMemoria().getEstadoActual().getId().equals(
+              TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_ANUAL));
+    } else {
+      elementsRow.add(false);
+    }
+    columnsDataTitulo.add("seguimientoFinal");
+    if (ObjectUtils.isNotEmpty(evaluacion.getMemoria().getEstadoActual())) {
+      elementsRow.add(
+          evaluacion.getMemoria().getEstadoActual().getId()
+              .equals(TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_FINAL));
+    } else {
+      elementsRow.add(false);
+    }
+
+    columnsDataTitulo.add("preposicionComite");
+    if (evaluacion.getMemoria().getComite().getGenero().equals(Genero.M)) {
+      elementsRow.add(ApplicationContextSupport.getMessage("common.del"));
+    } else {
+      elementsRow.add(ApplicationContextSupport.getMessage("common.dela"));
+    }
+
+    columnsDataTitulo.add("comisionComite");
+    if (evaluacion.getMemoria().getComite().getGenero().equals(Genero.M)) {
+      elementsRow.add(ApplicationContextSupport.getMessage("comite.comision.masculino"));
+    } else {
+      elementsRow.add(ApplicationContextSupport.getMessage("comite.comision.femenino"));
+    }
+
     columnsDataTitulo.add("idDictamenPendienteCorrecciones");
     elementsRow.add(DICTAMEN_PENDIENTE_CORRECCIONES);
 
     columnsDataTitulo.add("idDictamenNoProcedeEvaluar");
     elementsRow.add(DICTAMEN_NO_PROCEDE_EVALUAR);
+
+    columnsDataTitulo.add("idDictamenPendienteRevisionMinima");
+    elementsRow.add(DICTAMEN_FAVORABLE_PENDIENTE_REVISION_MINIMA);
 
     columnsDataTitulo.add("idDictamen");
     elementsRow.add(evaluacion.getDictamen().getId());
@@ -130,10 +189,9 @@ public class InformeEvaluacionReportService extends BaseEvaluadorEvaluacionRepor
         .getMesesArchivadaPendienteCorrecciones();
     elementsRow.add(mesesArchivadaPendienteCorrecciones);
 
-    columnsDataTitulo.add("numeroComentarios");
-    Integer numComentariosGestor = evaluacionService.countByEvaluacionIdAndTipoComentarioId(evaluacion.getId(),
-        TIPO_COMENTARIO_GESTOR);
-    elementsRow.add(numComentariosGestor);
+    columnsDataTitulo.add("diasArchivadaPendienteCorrecciones");
+    Integer diasArchivadaPendienteCorrecciones = configuracionService.findConfiguracion().getDiasArchivadaInactivo();
+    elementsRow.add(diasArchivadaPendienteCorrecciones);
 
     rowsDataTitulo.add(elementsRow);
 
@@ -166,11 +224,24 @@ public class InformeEvaluacionReportService extends BaseEvaluadorEvaluacionRepor
       EvaluacionDto evaluacion = evaluacionService.findById(idEvaluacion);
       informeEvaluacionEvaluadorReportOutput.setEvaluacion(evaluacion);
 
+      Integer numComentariosGestor = evaluacionService.countByEvaluacionIdAndTipoComentarioId(evaluacion.getId(),
+          TIPO_COMENTARIO_GESTOR);
+
       List<ComentarioDto> comentarios = evaluacionService.findByEvaluacionIdGestor(idEvaluacion);
       if (null != comentarios && !comentarios.isEmpty()) {
         final Set<Long> apartados = new HashSet<>();
         comentarios.forEach(c -> getApartadoService().findTreeApartadosById(apartados, c.getApartado()));
-        Long idFormulario = comentarios.get(0).getApartado().getBloque().getFormulario().getId();
+
+        Long idFormulario = 0L;
+
+        Optional<FormularioDto> formulario = comentarios.stream()
+            .map(c -> c.getApartado().getBloque().getFormulario())
+            .filter(f -> f != null)
+            .findFirst();
+
+        if (formulario.isPresent()) {
+          idFormulario = formulario.get().getId();
+        }
 
         // @formatter:off
         BloquesReportInput etiBloquesReportInput = BloquesReportInput.builder()
@@ -180,6 +251,7 @@ public class InformeEvaluacionReportService extends BaseEvaluadorEvaluacionRepor
         .mostrarContenidoApartado(false)
         .comentarios(comentarios)
         .apartados(apartados)
+        .numeroComentariosGestor(numComentariosGestor)
         .build();
         // @formatter:on
 
@@ -191,6 +263,22 @@ public class InformeEvaluacionReportService extends BaseEvaluadorEvaluacionRepor
         }
 
         informeEvaluacionEvaluadorReportOutput.getBloques().addAll(reportOutput.getBloques());
+      } else {
+
+        BloquesReportInput etiBloquesReportInput = BloquesReportInput.builder()
+            .idMemoria(idEvaluacion)
+            .idFormulario(0L)
+            .mostrarRespuestas(false)
+            .mostrarContenidoApartado(false)
+            .comentarios(null)
+            .apartados(null)
+            .numeroComentariosGestor(numComentariosGestor)
+            .build();
+
+        BloquesReportOutput reportOutput = getDataFromApartadosAndRespuestas(etiBloquesReportInput);
+
+        informeEvaluacionEvaluadorReportOutput.getBloques().addAll(reportOutput.getBloques());
+
       }
 
     } catch (Exception e) {

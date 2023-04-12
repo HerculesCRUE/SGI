@@ -1,0 +1,130 @@
+[
+  {
+    "key": "ap3_5_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.5.1 Microorganismos/parásitos"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4.ap3_4_2.tareasAgentesBiologicosRadio || formState.mainModel.ap3_4.ap3_4_2.tareasAgentesBiologicosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "type": "table-crud",
+        "key": "microorganismosParasitosTable",
+        "templateOptions": {
+          "entity": "microorganismo/parásito",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Microorganismo/Parásito"
+          },
+          "fieldGroup": [
+            {
+              "key": "nombre",
+              "type": "input",
+              "templateOptions": {
+                "label": "Nombre",
+                "order": 10
+              }
+            },
+            {
+              "key": "tipo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Tipo",
+                "order": 20,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "Bacterias y afines"
+                  },
+                  {
+                    "value": "2",
+                    "label": "Virus"
+                  },
+                  {
+                    "value": "3",
+                    "label": "Parásitos"
+                  },
+                  {
+                    "value": "4",
+                    "label": "Hongos"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "grupoRiesgo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Grupo de riesgo",
+                "order": 30,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "Grupo 1"
+                  },
+                  {
+                    "value": "2",
+                    "label": "Grupo 2"
+                  },
+                  {
+                    "value": "3",
+                    "label": "Grupo 3"
+                  },
+                  {
+                    "value": "4",
+                    "label": "Grupo 4"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "multicheckbox",
+              "key": "notasAdicionalesCheck",
+              "templateOptions": {
+                "label": "Notas adicionales",
+                "type": "array",
+                "order": 40,
+                "options": [
+                  {
+                    "value": "A",
+                    "label": "A"
+                  },
+                  {
+                    "value": "D",
+                    "label": "D"
+                  },
+                  {
+                    "value": "T",
+                    "label": "T"
+                  },
+                  {
+                    "value": "V",
+                    "label": "V"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "volumenMaximo",
+              "type": "input",
+              "templateOptions": {
+                "label": "Volumen máximo de cada cultivo",
+                "order": 50
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "* Notas adicionales: <strong>A</strong>: Posibles efectos alérgicos; <strong>D</strong>: La lista de los trabajadores expuestos al agente debe conservarse durante más de diez años después de la última exposición; <strong>T</strong>: Producción de toxinas; <strong>V</strong>: Vacuna eficaz disponible"
+      }
+    ]
+  }
+]

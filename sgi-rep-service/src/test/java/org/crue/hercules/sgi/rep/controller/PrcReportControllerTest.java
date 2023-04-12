@@ -3,7 +3,7 @@ package org.crue.hercules.sgi.rep.controller;
 import java.nio.charset.Charset;
 
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
-import org.crue.hercules.sgi.rep.dto.eti.ReportInformeDetalleGrupo;
+import org.crue.hercules.sgi.rep.dto.prc.ReportInformeDetalleGrupo;
 import org.crue.hercules.sgi.rep.service.prc.InformeDetalleGrupoReportService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

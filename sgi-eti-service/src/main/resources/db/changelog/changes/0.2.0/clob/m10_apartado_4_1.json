@@ -1,0 +1,21 @@
+[
+  {
+    "key": "ap4_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.1 Ponderación de los riesgos o molestias"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>El balance entre riesgos y beneficios es una de las cuestiones básicas en ética de la investigación.</p><p>Es responsabilidad del investigador o investigadora principal (IP) ponderar con prudencia el riesgo al que se somete a los/las participantes en relación con los beneficios esperables para ellos (previamente descritos en el apartado 1.2 de este formulario).</p><p>Hay que tener en cuenta que un gran beneficio no justifica cualquier riesgo, ni siquiera si es aceptado voluntariamente. El bienestar y la integridad del individuo priman sobre el beneficio esperable.</p><p>Para más información sobre el balance riesgo/beneficio consultar el documento de la CIOMS <a href='https://www.um.es/it/web/comision-etica-investigacion/comision-etica/ceic' target='_blank'>Pautas éticas internacionales para la investigación biomédica en seres humanos</a></p>"
+      }
+    ],
+    "hideExpression": "!formState.bloques[3].ap3_4.intervencionesSeresHumanosRadio || formState.bloques[3].ap3_4.intervencionesSeresHumanosRadio === 'no'"
+  }
+]

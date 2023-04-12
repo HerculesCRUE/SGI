@@ -15,6 +15,12 @@
   <artifact name="sgp-add-x-api-key-sequence" groupId="org.crue.hercules.sgi.esb.sgp.sequence" version="${revision}" type="synapse/sequence" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/sequences/sgp-add-x-api-key-sequence.xml</file>
   </artifact>
+  <artifact name="sgp-remove-authorization-header-sequence" groupId="org.crue.hercules.sgi.esb.sgp.sequence" version="${revision}" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+    <file>src/main/synapse-config/sequences/sgp-remove-authorization-header-sequence.xml</file>
+  </artifact>
+  <artifact name="sgp-remove-x-api-key-sequence" groupId="org.crue.hercules.sgi.esb.sgp.sequence" version="${revision}" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+    <file>src/main/synapse-config/sequences/sgp-remove-x-api-key-sequence.xml</file>
+  </artifact>
   <artifact name="sgo-endpoint" groupId="org.crue.hercules.sgi.esb.sgp.endpoint" version="${revision}" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/endpoints/sgo-endpoint.xml</file>
   </artifact>

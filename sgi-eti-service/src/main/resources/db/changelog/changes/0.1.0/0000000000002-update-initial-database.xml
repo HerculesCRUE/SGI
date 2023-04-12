@@ -1,0 +1,36 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000002-update-initial-database.xml">
+
+  <changeSet author="master" id="0000000000002-1">
+    <renameColumn tableName="configuracion" newColumnName="dias_archivada_inactivo" oldColumnName="meses_archivada_inactivo" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-2">
+    <renameColumn tableName="configuracion" newColumnName="meses_archivada_pendiente_correcciones" oldColumnName="dias_archivada_pendiente_correcciones" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-3">
+    <validCheckSum>8:56b93b6a91977bf9459618a134d9328c</validCheckSum>
+    <dropUniqueConstraint tableName="configuracion" constraintName="UC_CONFIGURACIONMESES_AVISO_PROYECTO_CEEA_COL" />
+    <dropColumn tableName="configuracion" columnName="meses_aviso_proyecto_ceea" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-4">
+    <validCheckSum>8:fae2bee2932c094dcdb58d5db84d5506</validCheckSum>
+    <!-- meses_aviso_proyecto_ceish renombrado a meses_aviso_proyecto_cei en 0000000000001-4 -->
+    <dropUniqueConstraint tableName="configuracion" constraintName="UC_CONFIGURACIONMESES_AVISO_PROYECTO_CEISH_COL" />
+    <dropColumn tableName="configuracion" columnName="meses_aviso_proyecto_cei" />
+  </changeSet>
+  <changeSet author="master" id="0000000000002-5">
+    <validCheckSum>8:7a7e28d51162df29c00dd92317b49edf</validCheckSum>
+    <!-- meses_aviso_proyecto_ceiab renombrado a meses_aviso_proyecto_cbe en 0000000000001-3 -->
+    <dropUniqueConstraint tableName="configuracion" constraintName="UC_CONFIGURACIONMESES_AVISO_PROYECTO_CEIAB_COL" />
+    <dropColumn tableName="configuracion" columnName="meses_aviso_proyecto_cbe" />
+  </changeSet>
+
+  <!-- COMITE -->
+  <!-- Nueva columna genero en comite -->
+  <changeSet author="master" id="0000000000002-6">
+    <addColumn tableName="comite">
+      <column name="genero" type="VARCHAR(1)" />
+    </addColumn>
+  </changeSet>
+</databaseChangeLog>

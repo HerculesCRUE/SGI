@@ -25,19 +25,24 @@
     [route]="[ETI_ROUTE_NAMES.EVALUADORES]" icon="group_add"
     title="{{'eti.evaluador' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
-  <ng-container *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-V', 'ETI-EVC-EVAL']">
-    <sgi-menu-item [route]="[ETI_ROUTE_NAMES.EVALUACIONES_EVALUADOR]" icon="preview"
-      title="{{'menu.eti.evaluacion-evaluador' | translate}}">
-    </sgi-menu-item>
-    <sgi-menu-item [route]="[ETI_ROUTE_NAMES.SEGUIMIENTOS]" icon="rate_review"
-      title="{{'menu.eti.seguimiento-evaluador' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
-    </sgi-menu-item>
+
+  <ng-container *ngIf="isEvaluador$ | async">
+    <sgi-menu-group *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-V', 'ETI-EVC-EVAL']"
+      title="{{'menu.eti.perfil-evaluador' | translate}}" icon="preview">
+      <sgi-menu-subitem [route]="[ETI_ROUTE_NAMES.PERFIL_EVALUADOR_EVALUACIONES]"
+        title="{{'menu.eti.evaluacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+      </sgi-menu-subitem>
+      <sgi-menu-subitem [route]="[ETI_ROUTE_NAMES.PERFIL_EVALUADOR_SEGUIMIENTOS]"
+        title="{{'menu.eti.seguimiento' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+      </sgi-menu-subitem>
+    </sgi-menu-group>
   </ng-container>
+
   <ng-container *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-VR', 'ETI-EVC-EVALR']">
-    <sgi-menu-item [route]="[ETI_ROUTE_NAMES.EVALUACIONES_EVALUADOR]" icon="assignment_ind"
+    <sgi-menu-item [route]="[ETI_ROUTE_NAMES.EVALUACIONES_EVALUADOR]" icon="preview"
       title="{{'menu.eti.evaluacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
     </sgi-menu-item>
-    <sgi-menu-item [route]="[ETI_ROUTE_NAMES.SEGUIMIENTOS]" icon="rate_review"
+    <sgi-menu-item [route]="[ETI_ROUTE_NAMES.SEGUIMIENTOS]" icon="assignment_return"
       title="{{'menu.eti.seguimiento' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
     </sgi-menu-item>
   </ng-container>

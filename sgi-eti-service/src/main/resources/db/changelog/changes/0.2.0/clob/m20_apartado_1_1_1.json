@@ -1,0 +1,306 @@
+[
+  {
+    "key": "ap1_1_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "1.1.1 Fin específico del proyecto"
+    },
+    "fieldGroup": [
+      {
+        "template": "Indicar el fin específico del proyecto:"
+      },
+      {
+        "key": "finEspecificoProyecto",
+        "type": "select",
+        "templateOptions": {
+          "label": "Seleccione",
+          "required": true,
+          "options": [
+            {
+              "label": "[PB1] Investigación Básica. Oncología",
+              "value": "PB1"
+            },
+            {
+              "label": "[PB2] Investigación Básica. Sistema cardiovascular, sanguíneo y linfático",
+              "value": "PB2"
+            },
+            {
+              "label": "[PB3] Investigación Básica. Sistema nervioso",
+              "value": "PB3"
+            },
+            {
+              "label": "[PB4] Investigación Básica. Sistema respiratorio",
+              "value": "PB4"
+            },
+            {
+              "label": "[PB5] Investigación Básica. Sistema gastrointestinal, hígado incluido",
+              "value": "PB5"
+            },
+            {
+              "label": "[PB6] Investigación Básica. Sistema músculo-esquelético",
+              "value": "PB6"
+            },
+            {
+              "label": "[PB7] Investigación Básica. Sistema inmunitario",
+              "value": "PB7"
+            },
+            {
+              "label": "[PB8] Investigación Básica. Sistema urogenital-reproductor",
+              "value": "PB8"
+            },
+            {
+              "label": "[PB9] Investigación Básica. Órganos sensoriales (piel/ojos/oídos)",
+              "value": "PB9"
+            },
+            {
+              "label": "[PB10] Investigación Básica. Sistema endocrino/metabolismo",
+              "value": "PB10"
+            },
+            {
+              "label": "[PB11] Investigación Básica. Sistema multisistémico",
+              "value": "PB11"
+            },
+            {
+              "label": "[PB12] Investigación Básica. Etología/Comportamiento animal/Biología animal",
+              "value": "PB12"
+            },
+            {
+              "label": "[PB13] Investigación Básica. Otros",
+              "value": "PB13"
+            },
+            {
+              "label": "[PT21] Investigación traslacional y aplicada. Cáncer humano",
+              "value": "PT21"
+            },
+            {
+              "label": "[PT22] Investigación traslacional y aplicada. Enfermedades infecciosas humanas",
+              "value": "PT22"
+            },
+            {
+              "label": "[PT23] Investigación traslacional y aplicada. Enfermedades cardiovasculares humanas",
+              "value": "PT23"
+            },
+            {
+              "label": "[PT24] Investigación traslacional y aplicada. Enfermedades nerviosas y mentales humanas",
+              "value": "PT24"
+            },
+            {
+              "label": "[PT25] Investigación traslacional y aplicada. Enfermedades respiratorias humanas",
+              "value": "PT25"
+            },
+            {
+              "label": "[PT26] Investigación traslacional y aplicada. Enfermedades gastrointestinales, incluidas hepáticas",
+              "value": "PT26"
+            },
+            {
+              "label": "[PT27] Investigación traslacional y aplicada. Enfermedades musculoesqueléticas humanas",
+              "value": "PT27"
+            },
+            {
+              "label": "[PT28] Investigación traslacional y aplicada. Enfermedades inmunológicas humanas",
+              "value": "PT28"
+            },
+            {
+              "label": "[PT29] Investigación traslacional y aplicada. Enfermedades humanas urogenitales y del aparato reproductor",
+              "value": "PT29"
+            },
+            {
+              "label": "[PT30] Investigación traslacional y aplicada. Enfermedades humanas de los órganos de los sentidos (piel/ojos/oídos)",
+              "value": "PT30"
+            },
+            {
+              "label": "[PT31] Investigación traslacional y aplicada. Enfermedades humanas endocrinas y metabólicas",
+              "value": "PT31"
+            },
+            {
+              "label": "[PT32] Investigación traslacional y aplicada. Otras enfermedades humanas",
+              "value": "PT32"
+            },
+            {
+              "label": "[PT33] Investigación traslacional y aplicada. Enfermedades de los animales",
+              "value": "PT33"
+            },
+            {
+              "label": "[PT34] Investigación traslacional y aplicada. Bienestar de los animales",
+              "value": "PT34"
+            },
+            {
+              "label": "[PT35] Investigación traslacional y aplicada. Diagnóstico de enfermedades",
+              "value": "PT35"
+            },
+            {
+              "label": "[PT36] Investigación traslacional y aplicada. Enfermedades de las plantas",
+              "value": "PT36"
+            },
+            {
+              "label": "[PT37] Investigación traslacional y aplicada. Toxicología y ecotoxicología no reglamentarias",
+              "value": "PT37"
+            },
+            {
+              "label": "[PE40] Protección del medio ambiente natural en interés de la salud o el bienestar de los seres humanos o de los animales",
+              "value": "PE40"
+            },
+            {
+              "label": "[PS41] Preservación de especies",
+              "value": "PS41"
+            },
+            {
+              "label": "[PE42] Enseñanza superior o formación para la adquisición, mantenimiento o mejora de las competencias profesionales",
+              "value": "PE42"
+            },
+            {
+              "label": "[PF43] Investigaciones forenses",
+              "value": "PF43"
+            },
+            {
+              "label": "[PG43] Mantenimiento de colonias de animales genéticamente alterados, no utilizados en otros procedimientos",
+              "value": "PG43"
+            },
+            {
+              "label": "[PR51] Utilización reglamentaria y producción rutinaria. Productos sanguíneos",
+              "value": "PR51"
+            },
+            {
+              "label": "[PR52] Utilización reglamentaria y producción rutinaria. Anticuerpos monoclonales",
+              "value": "PR52"
+            },
+            {
+              "label": "[PR53] Utilización reglamentaria y producción rutinaria. Otros",
+              "value": "PR53"
+            },
+            {
+              "label": "[PR61] Utilización reglamentaria/control de calidad. Ensayos de seguridad de los lotes",
+              "value": "PR61"
+            },
+            {
+              "label": "[PR62] Utilización reglamentaria/control de calidad. Ensayos de pirogenicidad",
+              "value": "PR62"
+            },
+            {
+              "label": "[PR63] Utilización reglamentaria/control de calidad. Ensayos de potencia de los lotes",
+              "value": "PR63"
+            },
+            {
+              "label": "[PR64] Utilización reglamentaria/control de calidad. Otros controles de calidad",
+              "value": "PR64"
+            },
+            {
+              "label": "[PR71] Utilización reglamentaria. Otros controles de eficacia y tolerancia",
+              "value": "PR71"
+            },
+            {
+              "label": "[PR81] Utilización reglamentaria/Toxicidad y seguridad/aguda y sub-aguda. LD50, LC50",
+              "value": "PR81"
+            },
+            {
+              "label": "[PR82] Utilización reglamentaria/Toxicidad y seguridad/aguda y subaguda. Otros métodos letales",
+              "value": "PR82"
+            },
+            {
+              "label": "[PR83] Utilización reglamentaria/Toxicidad y seguridad/Aguda y subaguda. Métodos no letales",
+              "value": "PR83"
+            },
+            {
+              "label": "[PR84] Utilización reglamentaria/Toxicidad y seguridad. Irritación/corrosión cutánea",
+              "value": "PR84"
+            },
+            {
+              "label": "[PR85] Utilización reglamentaria/Toxicidad y seguridad. Sensibilización cutánea",
+              "value": "PR85"
+            },
+            {
+              "label": "[PR86] Utilización reglamentaria/Toxicidad y seguridad. Irritación/corrosión ocular",
+              "value": "PR86"
+            },
+            {
+              "label": "[PR87] Utilización reglamentaria/Toxicidad y seguridad/Toxicidad por dosis repetidas. Hasta 28 días",
+              "value": "PR87"
+            },
+            {
+              "label": "[PR88] Utilización reglamentaria/Toxicidad y seguridad/Toxicidad por dosis repetidas. Entre 29 y 90 días",
+              "value": "PR88"
+            },
+            {
+              "label": "[PR89] Utilización reglamentaria/Toxicidad y seguridad/Toxicidad por dosis repetidas. Más de 90 días",
+              "value": "PR89"
+            },
+            {
+              "label": "[PR90] Utilización reglamentaria/Toxicidad y seguridad. Carcinogenicidad",
+              "value": "PR90"
+            },
+            {
+              "label": "[PR91] Utilización reglamentaria/Toxicidad y seguridad. Genotoxicidad",
+              "value": "PR91"
+            },
+            {
+              "label": "[PR92] Utilización reglamentaria/Toxicidad y seguridad. Toxicidad reproductiva",
+              "value": "PR92"
+            },
+            {
+              "label": "[PR93] Utilización reglamentaria/Toxicidad y seguridad. Toxicidad del desarrollo",
+              "value": "PR93"
+            },
+            {
+              "label": "[PR94] Utilización reglamentaria/Toxicidad y seguridad. Neurotoxicidad",
+              "value": "PR94"
+            },
+            {
+              "label": "[PR95] Utilización reglamentaria/Toxicidad y seguridad. Cinética",
+              "value": "PR95"
+            },
+            {
+              "label": "[PR96] Utilización reglamentaria/Toxicidad y seguridad. Farmacodinámica (incluida la farmacología de seguridad)",
+              "value": "PR96"
+            },
+            {
+              "label": "[PR97] Utilización reglamentaria/Toxicidad y seguridad. Fototoxicidad",
+              "value": "PR97"
+            },
+            {
+              "label": "[PR98] Utilización reglamentaria/Toxicidad y seguridad/Ecotoxicidad. Toxicidad aguda",
+              "value": "PR98"
+            },
+            {
+              "label": "[PR99] Utilización reglamentaria/Toxicidad y seguridad/Ecotoxicidad. Toxicidad crónica",
+              "value": "PR99"
+            },
+            {
+              "label": "[PR100] Utilización reglamentaria/Toxicidad y seguridad/Ecotoxicidad. Toxicidad reproductiva",
+              "value": "PR100"
+            },
+            {
+              "label": "[PR101] Utilización reglamentaria/Toxicidad y seguridad/Ecotoxicidad. Actividad endocrina",
+              "value": "PR101"
+            },
+            {
+              "label": "[PR102] Utilización reglamentaria/Toxicidad y seguridad/Ecotoxicidad. Bioacumulación",
+              "value": "PR102"
+            },
+            {
+              "label": "[PR103] Utilización reglamentaria/Toxicidad y seguridad/Ecotoxicidad. Otros",
+              "value": "PR103"
+            },
+            {
+              "label": "[PR104] Utilización reglamentaria/Toxicidad y seguridad. Ensayos de seguridad en el ámbito de la alimentación humana y animal",
+              "value": "PR104"
+            },
+            {
+              "label": "[PR105] Utilización reglamentaria/Toxicidad y seguridad. Seguridad de los animales destinatarios",
+              "value": "PR105"
+            },
+            {
+              "label": "[PR106] Utilización reglamentaria/Toxicidad y seguridad. Otros",
+              "value": "PR106"
+            },
+            {
+              "label": "[PN107] Fines ajenos a la UE",
+              "value": "PN107"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

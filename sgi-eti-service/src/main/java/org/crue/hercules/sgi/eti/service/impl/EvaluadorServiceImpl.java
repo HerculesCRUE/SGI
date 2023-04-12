@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.eti.exceptions.EvaluadorNotFoundException;
 import org.crue.hercules.sgi.eti.model.Comite;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.repository.EvaluadorRepository;
@@ -30,8 +31,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class EvaluadorServiceImpl implements EvaluadorService {
-  private static final String PRESIDENTE = "presidente";
-  private static final String SECRETARIO = "secretario";
+  private static final Long PRESIDENTE = 1L;
+  private static final Long SECRETARIO = 3L;
   private final EvaluadorRepository evaluadorRepository;
 
   public EvaluadorServiceImpl(EvaluadorRepository evaluadorRepository) {
@@ -52,11 +53,11 @@ public class EvaluadorServiceImpl implements EvaluadorService {
 
     // Si el evaluador a crear es presidente se ha de mirar que no coincida el
     // presidente en el rango de fechas de los presidentes existentes
-    if (evaluador.getCargoComite().getNombre().equalsIgnoreCase(PRESIDENTE) || evaluador.getCargoComite().getNombre()
-        .equalsIgnoreCase(SECRETARIO)) {
+    if (evaluador.getCargoComite().getId().equals(PRESIDENTE) || evaluador.getCargoComite().getId()
+        .equals(SECRETARIO)) {
       Assert.isTrue(
           isPresidenteOrSecretarioInFechasOk(evaluador),
-          evaluador.getCargoComite().getNombre().equalsIgnoreCase(PRESIDENTE)
+          evaluador.getCargoComite().getId().equals(PRESIDENTE)
               ? "Existen presidentes entre las fechas seleccionadas"
               : "Existen secretarios entre las fechas seleccionadas");
     } else {
@@ -78,7 +79,7 @@ public class EvaluadorServiceImpl implements EvaluadorService {
   public Boolean isPresidenteOrSecretarioInFechasOk(Evaluador evaluador) {
     Specification<Evaluador> specActivos = EvaluadorSpecifications.activos();
     Specification<Evaluador> specPresidentesOrSecretarios = null;
-    if (evaluador.getCargoComite().getNombre().equalsIgnoreCase(PRESIDENTE)) {
+    if (evaluador.getCargoComite().getId().equals(PRESIDENTE)) {
       specPresidentesOrSecretarios = EvaluadorSpecifications.presidentes();
     } else {
       specPresidentesOrSecretarios = EvaluadorSpecifications.secretarios();
@@ -172,14 +173,18 @@ public class EvaluadorServiceImpl implements EvaluadorService {
    * conflicto de intereses con ningún miembro del equipo investigador de la
    * memoria.
    * 
-   * @param idComite  Identificador del {@link Comite}
-   * @param idMemoria Identificador de la {@link Memoria}
+   * @param idComite        Identificador del {@link Comite}
+   * @param idMemoria       Identificador de la {@link Memoria}
+   * @param fechaEvaluacion la fecha de Evaluación de la
+   *                        {@link ConvocatoriaReunion}
    * @return lista de evaluadores sin conflictos de intereses
    */
   @Override
-  public List<Evaluador> findAllByComiteSinconflictoInteresesMemoria(Long idComite, Long idMemoria) {
+  public List<Evaluador> findAllByComiteSinconflictoInteresesMemoria(Long idComite, Long idMemoria,
+      Instant fechaEvaluacion) {
     log.debug("findAllByComiteSinconflictoInteresesMemoria(Long idComite, Long idMemoria) - start");
-    List<Evaluador> returnValue = evaluadorRepository.findAllByComiteSinconflictoInteresesMemoria(idComite, idMemoria);
+    List<Evaluador> returnValue = evaluadorRepository.findAllByComiteSinconflictoInteresesMemoria(idComite, idMemoria,
+        fechaEvaluacion);
     log.debug("findAllByComiteSinconflictoInteresesMemoria(Long idComite, Long idMemoria) - end");
     return returnValue;
   }
@@ -236,13 +241,13 @@ public class EvaluadorServiceImpl implements EvaluadorService {
 
     // Si el evaluador a crear es presidente se ha de mirar que no coincida el
     // presidente en el rango de fechas de los presidentes existentes
-    if (evaluadorActualizar.getCargoComite().getNombre().equalsIgnoreCase(PRESIDENTE)
-        || evaluadorActualizar.getCargoComite().getNombre()
-            .equalsIgnoreCase(SECRETARIO)) {
+    if (evaluadorActualizar.getCargoComite().getId().equals(PRESIDENTE)
+        || evaluadorActualizar.getCargoComite().getId()
+            .equals(SECRETARIO)) {
       Assert.isTrue(
           isPresidenteOrSecretarioInFechasOk(
               evaluadorActualizar),
-          evaluadorActualizar.getCargoComite().getNombre().equalsIgnoreCase(PRESIDENTE)
+          evaluadorActualizar.getCargoComite().getId().equals(PRESIDENTE)
               ? "Existen presidentes entre las fechas seleccionadas"
               : "Existen secretarios entre las fechas seleccionadas");
     } else {
@@ -326,6 +331,24 @@ public class EvaluadorServiceImpl implements EvaluadorService {
     log.info("fecha: " + fecha + "comite: " + comite + (secretario != null ? secretario.getPersonaRef() : null));
     log.debug("findSecretarioInFechaAndComite(Instant fecha, String comite) - end");
     return secretario;
+  }
+
+  /**
+   * Comprueba si la persona es evaluador en algun {@link Comite}
+   * 
+   * @param personaRef identificador de la persona
+   * @return si es evaluador o no
+   */
+  public boolean isEvaluador(String personaRef) {
+    log.debug("isEvaluador({}) - start", personaRef);
+    Specification<Evaluador> specActivos = EvaluadorSpecifications.activos();
+    Specification<Evaluador> specByPersonaRef = EvaluadorSpecifications.byPersonaRef(personaRef);
+    Specification<Evaluador> specs = Specification.where(specActivos).and(specByPersonaRef);
+
+    boolean isEvaluador = evaluadorRepository.count(specs) > 0;
+
+    log.debug("isEvaluador({}) - end", personaRef);
+    return isEvaluador;
   }
 
 }

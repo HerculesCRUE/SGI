@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Data } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
@@ -22,9 +23,15 @@ describe('ConvocatoriaConceptoGastoCodigoEcComponent', () => {
     [CONVOCATORIA_CONCEPTO_GASTO_DATA_KEY]: {
       convocatoria: {
         id: 1
-      },
+      } as IConvocatoria,
+      selectedConvocatoriaConceptoGastoCodigosEc: [],
+      selectedConvocatoriaConceptoGastosNoPermitidos: [],
+      selectedConvocatoriaConceptoGastosPermitidos: [],
       selectedConvocatoriaConceptoGastos: [],
+      convocatoriaConceptoGasto: null,
+      convocatoriaConceptoGastoCodigoEcsConvocatoria: [],
       permitido: true,
+      canEdit: true,
       readonly: false
     } as IConvocatoriaConceptoGastoData
   };

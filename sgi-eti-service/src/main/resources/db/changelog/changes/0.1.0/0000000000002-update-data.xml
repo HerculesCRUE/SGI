@@ -1,0 +1,18 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000002-update-data.xml">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="0000000000002-respuesta">
+    <customChange class="org.crue.hercules.sgi.framework.liquibase.change.custom.JsltTaskChange">
+      <param name="tableName" value="respuesta" />
+      <param name="idColumnName" value="id" />
+      <param name="jsonColumnName" value="valor" />
+      <param name="where">
+        <![CDATA[ apartado_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20')) AND nombre = 'Extracción de sangre' AND padre_id = (select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal') AND orden=10) ]]>
+      </param>
+      <param name="jsltFile" value="classpath*:db/changelog/changes/jslt/0000000000002/fix_m20_apartado_3.7.10_response.jslt" />
+    </customChange>
+  </changeSet>
+
+</databaseChangeLog>

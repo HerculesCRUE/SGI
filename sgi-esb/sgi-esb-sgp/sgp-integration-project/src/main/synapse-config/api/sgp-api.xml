@@ -8,6 +8,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="cvn-endpoint" />
       </send>
@@ -26,6 +27,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="cvn-endpoint" />
       </send>
@@ -45,6 +47,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -63,6 +66,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -82,6 +86,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -102,6 +107,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -122,6 +128,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -143,6 +150,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -162,6 +170,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -181,6 +190,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="cvn-endpoint" />
       </send>
@@ -199,6 +209,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="cvn-endpoint" />
       </send>
@@ -218,6 +229,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -236,6 +248,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -256,6 +269,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <property name="path" expression="get-property('axis2','REST_URL_POSTFIX')" type="STRING" />
       <property name="hasRsqlParams" value="true" type="STRING" />
       <script key="gov:scripts/sgp/replace-tipo-colectivo-colectivos-ids-mediator.js" language="js" />
@@ -278,6 +292,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -296,6 +311,7 @@
         <with-param name="requiredAuthorities" value="ESB-PER-C" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -314,6 +330,7 @@
         <with-param name="requiredAuthorities" value="ESB-PER-E" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -332,6 +349,7 @@
         <with-param name="requiredAuthorities" value="ESB-PER-C" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
 
       <!-- tipos via -->
       <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING" />
@@ -342,6 +360,8 @@
         <source clone="false" type="body" />
         <target type="property" property="tiposVia" />
       </enrich>
+
+      <sequence key="sgp-remove-x-api-key-sequence" />
 
       <payloadFactory media-type="json">
         <format>
@@ -706,6 +726,7 @@
         <with-param name="requiredAuthorities" value="ESB-PER-E" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
 
       <!-- tipos via -->
       <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING" />
@@ -716,6 +737,8 @@
         <source clone="false" type="body" />
         <target type="property" property="tiposVia" />
       </enrich>
+
+      <sequence key="sgp-remove-x-api-key-sequence" />
 
       <payloadFactory media-type="json">
         <format>
@@ -1351,6 +1374,7 @@
         <with-param name="requiredAuthorities" value="ESB-PER-V" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
 
       <!-- tipos via -->
       <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING" />
@@ -1361,6 +1385,8 @@
         <source clone="false" type="body" />
         <target type="property" property="tiposVia" />
       </enrich>
+
+      <sequence key="sgp-remove-x-api-key-sequence" />
 
       <payloadFactory media-type="json">
         <format>
@@ -1996,6 +2022,7 @@
         <with-param name="requiredAuthorities" value="ESB-PER-E,ESB-PER-V" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -2014,6 +2041,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -2032,6 +2060,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -2051,6 +2080,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <property name="path" expression="get-property('axis2','REST_URL_POSTFIX')" type="STRING" />
       <property name="hasRsqlParams" value="false" type="STRING" />
       <script key="gov:scripts/sgp/replace-tipo-colectivo-colectivos-ids-mediator.js" language="js" />
@@ -2074,6 +2104,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -2092,6 +2123,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -2111,6 +2143,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -2131,6 +2164,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -2151,6 +2185,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>
@@ -2170,6 +2205,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgp-endpoint" />
       </send>

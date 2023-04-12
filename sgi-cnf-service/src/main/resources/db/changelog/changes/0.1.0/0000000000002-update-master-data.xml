@@ -1,0 +1,125 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000002-update-master-data.xml">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="0000000000002-config">
+    <insert tableName="config">
+      <column name="name" value="csp-com-inicio-pres-seg-cientifico-destinatarios-1" />
+      <column name="description" value="Destinatarios de comunicado de inicio de presentacion del seguimiento científico - OTRI" />
+      <column name="value" value="[&quot;sample@sample.es&quot;]" />
+    </insert>
+    <insert tableName="config">
+      <column name="name" value="csp-com-inicio-pres-seg-cientifico-destinatarios-2" />
+      <column name="description" value="Destinatarios de comunicado de inicio de presentacion del seguimiento científico - OPE" />
+      <column name="value" value="[&quot;sample@sample.es&quot;]" />
+    </insert>
+    <insert tableName="config">
+      <column name="name" value="csp-com-inicio-pres-seg-cientifico-destinatarios-3" />
+      <column name="description" value="Destinatarios de comunicado de inicio de presentacion del seguimiento científico - UGI" />
+      <column name="value" value="[&quot;sample@sample.es&quot;]" />
+    </insert>
+    <!-- Destinatarios defecto CSP Solicitudes Hitos OTRI -->
+    <insert tableName="config">
+      <column name="name" value="csp-sol-hitos-destinatarios-1" />
+      <column name="description" value="Destinatarios defecto CSP Solicitudes Hito - OTRI" />
+      <column name="value" value="[&quot;solicitud.hitos.otri@sgi.es&quot;]" />
+    </insert>
+    <!-- Destinatarios defecto CSP Solicitudes Hitos OPE -->
+    <insert tableName="config">
+      <column name="name" value="csp-sol-hitos-destinatarios-2" />
+      <column name="description" value="Destinatarios defecto CSP Solicitudes Hito - OPE" />
+      <column name="value" value="[&quot;solicitud.hitos.ope@sgi.es&quot;]" />
+    </insert>
+    <!-- Destinatarios defecto CSP Solicitudes Hitos UGI -->
+    <insert tableName="config">
+      <column name="name" value="csp-sol-hitos-destinatarios-3" />
+      <column name="description" value="Destinatarios defecto CSP Solicitudes Hito - UGI" />
+      <column name="value" value="[&quot;solicitud.hitos.ugi@sgi.es&quot;]" />
+    </insert>
+    <!-- Destinatarios defecto CSP Solicitudes Cambio estado Solicitada -->
+    <insert tableName="config">
+      <column name="name" value="csp-com-sol-camb-est-solicitada-destinatarios-1" />
+      <column name="description" value="Destinatarios de comunicado de cambio de estado de solicitud a solicitada - OTRI" />
+      <column name="value" value="[&quot;sample@sample.es&quot;]" />
+    </insert>
+    <insert tableName="config">
+      <column name="name" value="csp-com-sol-camb-est-solicitada-destinatarios-2" />
+      <column name="description" value="Destinatarios de comunicado de cambio de estado de solicitud a solicitada - OPE" />
+      <column name="value" value="[&quot;operum@um.es&quot;,&quot;msojo@um.es&quot;,&quot;javr@um.es&quot;,&quot;lcs@um.es&quot;]" />
+    </insert>
+    <insert tableName="config">
+      <column name="name" value="csp-com-sol-camb-est-solicitada-destinatarios-3" />
+      <column name="description" value="Destinatarios de comunicado de cambio de estado de solicitud a solicitada - UGI" />
+      <column name="value" value="[&quot;ugiproy@um.es&quot;,&quot;ugirrhh@um.es&quot;]" />
+    </insert>
+    <!-- Destinatarios defecto CSP Solicitudes Cambio diferentes estados de Alegaciones -->
+    <insert tableName="config">
+      <column name="name" value="csp-com-sol-camb-est-alegaciones-destinatarios-1" />
+      <column name="description" value="Destinatarios de comunicado de cambio de estado de solicitud a alegaciones - OTRI" />
+      <column name="value" value="[&quot;sample@sample.es&quot;]" />
+    </insert>
+    <insert tableName="config">
+      <column name="name" value="csp-com-sol-camb-est-alegaciones-destinatarios-2" />
+      <column name="description" value="Destinatarios de comunicado de cambio de estado de solicitud a alegaciones - OPE" />
+      <column name="value" value="[&quot;operum@um.es&quot;,&quot;msojo@um.es&quot;,&quot;javr@um.es&quot;,&quot;lcs@um.es&quot;]" />
+    </insert>
+    <insert tableName="config">
+      <column name="name" value="csp-com-sol-camb-est-alegaciones-destinatarios-3" />
+      <column name="description" value="Destinatarios de comunicado de cambio de estado de solicitud a alegaciones - UGI" />
+      <column name="value" value="[&quot;ugiproy@um.es&quot;,&quot;ugirrhh@um.es&quot;]" />
+    </insert>
+    <!-- Destinatarios defecto CSP Vencimiento Periodo Pago Socio OTRI -->
+    <insert tableName="config">
+      <column name="name" value="csp-vencim-periodo-pago-socio-destinatarios-1" />
+      <column name="description" value="Destinatarios defecto CSP Vencimiento Periodo Pago Socio - OTRI" />
+      <column name="value" value="[&quot;venc.periodo.pago.socio.otri@sgi.es&quot;]" />
+    </insert>
+    <!-- Destinatarios defecto CSP Vencimiento Periodo Pago Socio OPE -->
+    <insert tableName="config">
+      <column name="name" value="csp-vencim-periodo-pago-socio-destinatarios-2" />
+      <column name="description" value="Destinatarios defecto CSP Vencimiento Periodo Pago Socio - OPE" />
+      <column name="value" value="[&quot;venc.periodo.pago.socio.ope@sgi.es&quot;]" />
+    </insert>
+    <!-- Destinatarios defecto CSP Vencimiento Periodo Pago Socio UGI -->
+    <insert tableName="config">
+      <column name="name" value="csp-vencim-periodo-pago-socio-destinatarios-3" />
+      <column name="description" value="Destinatarios defecto CSP Vencimiento Periodo Pago Socio - UGI" />
+      <column name="value" value="[&quot;venc.periodo.pago.socio.ugi@sgi.es&quot;]" />
+    </insert>
+    <!-- Destinatarios defecto CSP inicio/fin Periodo Justificación Socio UGI -->
+    <insert tableName="config">
+      <column name="name" value="csp-inicio-fin-periodo-just-socio-destinatarios-1" />
+      <column name="description" value="Destinatarios defecto CSP Inicio/Fin Periodo Justificación Socio - UG" />
+      <column name="value" value="[&quot;aviso.just.periodo.socio.ugi@sgi.es&quot;]" />
+    </insert>
+    <!-- Destinatarios defecto CSP inicio/fin Periodo Justificación Socio UGI -->
+    <insert tableName="config">
+      <column name="name" value="csp-inicio-fin-periodo-just-socio-destinatarios-2" />
+      <column name="description" value="Destinatarios defecto CSP Inicio/Fin Periodo Justificación Socio - UG" />
+      <column name="value" value="[&quot;aviso.just.periodo.socio.ugi@sgi.es&quot;]" />
+    </insert>
+    <!-- Destinatarios defecto CSP inicio/fin Periodo Justificación Socio UGI -->
+    <insert tableName="config">
+      <column name="name" value="csp-inicio-fin-periodo-just-socio-destinatarios-3" />
+      <column name="description" value="Destinatarios defecto CSP Inicio/Fin Periodo Justificación Socio - UG" />
+      <column name="value" value="[&quot;aviso.just.periodo.socio.ugi@sgi.es&quot;]" />
+    </insert>
+    <!-- Destinatarios por defecto para CSP Calendario Facturacion Validar IP -->
+    <insert tableName="config">
+      <column name="name" value="csp-com-cal-fact-validarip-destinatarios-1" />
+      <column name="description" value="Destinatario de comunicados al validar una factura - OTRI" />
+      <column name="value" value="[&quot;lmsi@um.es&quot;]" />
+    </insert>
+    <insert tableName="config">
+      <column name="name" value="csp-com-cal-fact-validarip-destinatarios-2" />
+      <column name="description" value="Destinatario de comunicados al validar una factura - OPE" />
+      <column name="value" value="[&quot;operum@um.es&quot;,&quot;msojo@um.es&quot;,&quot;javr@um.es&quot;,&quot;lcs@um.es&quot;]" />
+    </insert>
+    <insert tableName="config">
+      <column name="name" value="csp-com-cal-fact-validarip-destinatarios-3" />
+      <column name="description" value="Destinatario de comunicados al validar una factura - UGI" />
+      <column name="value" value="[&quot;ugiproy@um.es&quot;,&quot;ugirrhh@um.es&quot;]" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

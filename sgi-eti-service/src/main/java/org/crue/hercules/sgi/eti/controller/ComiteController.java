@@ -180,7 +180,8 @@ public class ComiteController {
   ResponseEntity<Page<Memoria>> findMemorias(@PathVariable Long idComite, @PathVariable Long idPeticionEvaluacion,
       @RequestPageable(sort = "s") Pageable pageable) {
     log.debug("findMemorias(Long id, Pageable paging) - start");
-    Page<Memoria> memorias = memoriaService.findByComiteAndPeticionEvaluacion(idComite, idPeticionEvaluacion, pageable);
+    Page<Memoria> memorias = memoriaService.findAllMemoriasPeticionEvaluacionModificables(idComite,
+        idPeticionEvaluacion, pageable);
 
     if (memorias.isEmpty()) {
       log.debug("findMemorias(Long id, Pageable paging) - end");

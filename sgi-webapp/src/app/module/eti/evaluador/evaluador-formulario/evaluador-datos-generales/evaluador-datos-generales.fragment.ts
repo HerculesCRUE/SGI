@@ -27,7 +27,7 @@ export class EvaluadorDatosGeneralesFragment extends FormFragment<IEvaluador> {
       resumen: [''],
       persona: [{ value: null, disabled: this.isEdit() }, Validators.required]
     }, {
-      validators: [DateValidator.isAfterOrEqual('fechaAlta', 'fechaBaja')]
+      validators: [DateValidator.isAfter('fechaAlta', 'fechaBaja')]
     });
   }
 

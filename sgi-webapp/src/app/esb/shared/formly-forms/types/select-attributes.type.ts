@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { FieldType } from '@ngx-formly/material/form-field';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   template: `
@@ -17,6 +19,7 @@ import { FieldType } from '@ngx-formly/material/form-field';
       [errorStateMatcher]="errorStateMatcher"
       [aria-labelledby]="_getAriaLabelledby()"
       [disableOptionCentering]="to.disableOptionCentering"
+      [sgiTooltip]="selectedOptionLabel | async"
     >
       <ng-container *ngIf="to.options | formlySelectOptions: field | async as selectOptions">
         <ng-container *ngFor="let item of selectOptions">
@@ -37,6 +40,17 @@ export class SelectAttributesTypeComponent extends FieldType implements OnInit {
       },
     },
   };
+
+  get selectedOptionLabel(): Observable<string> {
+    const options = this.to.options;
+    if (Array.isArray(options)) {
+      return of(options.find(option => this.formControl?.value === option.value)?.label);
+    } else {
+      return options.pipe(
+        map(ops => ops.find(option => this.formControl?.value === option.value)?.label)
+      );
+    }
+  }
 
   ngOnInit() {
     if (this.to.propertyMappedToFormState) {

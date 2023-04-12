@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
@@ -23,9 +23,15 @@ const CONVOCATORIA_ELEGIBILIDAD_CODIGO_ECONOMICO_PERMITIDO_KEY = marker('csp.con
 const CONVOCATORIA_ELEGIBILIDAD_CODIGO_ECONOMICO_NO_PERMITIDO_KEY = marker('csp.convocatoria-elegibilidad.codigo-economico.no-permitido');
 const TITLE_NEW_ENTITY = marker('title.new.entity');
 
+export interface ConvocatoriaConceptoGastoCodigoEc extends IConvocatoriaConceptoGastoCodigoEc {
+  convocatoriaConceptoGasto: IConvocatoriaConceptoGasto;
+}
+
 export interface IConvocatoriaConceptoGastoCodigoEcModalComponent {
   convocatoriaConceptoGastoCodigoEc: IConvocatoriaConceptoGastoCodigoEc;
   convocatoriaConceptoGastoCodigoEcsTabla: IConvocatoriaConceptoGastoCodigoEc[];
+  convocatoriaConceptoGastoCodigoEcsConvocatoria: ConvocatoriaConceptoGastoCodigoEc[];
+  convocatoriaConceptoGasto: IConvocatoriaConceptoGasto;
   permitido: boolean;
   editModal: boolean;
   readonly: boolean;
@@ -67,9 +73,11 @@ export class ConvocatoriaConceptoGastoCodigoEcModalComponent
     this.textSaveOrUpdate = this.data.convocatoriaConceptoGastoCodigoEc.codigoEconomico ? MSG_ACEPTAR : MSG_ANADIR;
 
     this.subscriptions.push(this.codigosEconomicos$.subscribe(
-      (codigosEconomicos) => this.formGroup.controls.codigoEconomico.setValidators(
-        SelectValidator.isSelectOption(codigosEconomicos.map(cod => cod.id), true)
-      )
+      (codigosEconomicos) => this.formGroup.controls.codigoEconomico.setValidators([
+        SelectValidator.isSelectOption(codigosEconomicos.map(cod => cod.id), true),
+        Validators.required,
+        this.notOverlapsSameConceptoGastoAndCodigoEconomico(this.data)
+      ])
     ));
 
     this.subscriptions.push(this.formGroup.controls.codigoEconomico.valueChanges.subscribe(
@@ -160,7 +168,7 @@ export class ConvocatoriaConceptoGastoCodigoEcModalComponent
     const codigoEconomico = this.data.convocatoriaConceptoGastoCodigoEc?.codigoEconomico ?? null;
     const formGroup = new FormGroup(
       {
-        codigoEconomico: new FormControl(codigoEconomico),
+        codigoEconomico: new FormControl(codigoEconomico, [Validators.required, this.notOverlapsSameConceptoGastoAndCodigoEconomico(this.data)]),
         fechaInicio: new FormControl(this.data.convocatoriaConceptoGastoCodigoEc?.fechaInicio),
         fechaFin: new FormControl(this.data.convocatoriaConceptoGastoCodigoEc?.fechaFin),
         observaciones: new FormControl(this.data.convocatoriaConceptoGastoCodigoEc?.observaciones),
@@ -182,6 +190,33 @@ export class ConvocatoriaConceptoGastoCodigoEcModalComponent
     }
 
     return formGroup;
+  }
+
+  private notOverlapsSameConceptoGastoAndCodigoEconomico(data: IConvocatoriaConceptoGastoCodigoEcModalComponent): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+
+      const codigoEconomico: ICodigoEconomicoGasto = control.value;
+      const mesIncialConceptoGasto = data.convocatoriaConceptoGasto.mesInicial ? data.convocatoriaConceptoGasto.mesInicial : Number.MIN_VALUE;
+      const mesFinalConceptoGasto = data.convocatoriaConceptoGasto.mesFinal ? data.convocatoriaConceptoGasto.mesFinal : Number.MAX_VALUE;
+
+      const ranges = data.convocatoriaConceptoGastoCodigoEcsConvocatoria
+        .filter(c => c.codigoEconomico.id === codigoEconomico.id && c.convocatoriaConceptoGasto.conceptoGasto.id === data.convocatoriaConceptoGasto.conceptoGasto.id)
+        .map(c => {
+          return {
+            inicio: c.convocatoriaConceptoGasto.mesInicial ? c.convocatoriaConceptoGasto.mesInicial : Number.MIN_VALUE,
+            fin: c.convocatoriaConceptoGasto.mesFinal ? c.convocatoriaConceptoGasto.mesFinal : Number.MAX_VALUE
+          };
+        });
+
+      if (ranges.some(r => mesIncialConceptoGasto <= r.fin && r.inicio <= mesFinalConceptoGasto)) {
+        return { overlappedConceptoAndCodigo: true };
+      }
+
+      return null;
+    };
   }
 
   /**

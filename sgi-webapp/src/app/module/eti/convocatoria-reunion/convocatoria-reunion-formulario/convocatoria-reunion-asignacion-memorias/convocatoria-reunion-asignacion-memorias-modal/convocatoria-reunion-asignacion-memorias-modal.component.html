@@ -20,8 +20,10 @@
           <mat-label>
             {{'eti.convocatoria-reunion.memoria.evaludador-1' | translate}}
           </mat-label>
-          <sgi-select-evaluador formControlName="evaluador1" [memoria]="formGroup.controls.memoria.value"
-            [resetOnChange]="memoria.selectionChange" [excludeOnChange]="evaluador2$" required>
+          <sgi-select-evaluador formControlName="evaluador1"
+            [fechaEvaluacion]="this.data.evaluacion.convocatoriaReunion.fechaEvaluacion"
+            [memoria]="formGroup.controls.memoria.value" [resetOnChange]="memoria.selectionChange"
+            [excludeOnChange]="evaluador2$" required>
           </sgi-select-evaluador>
           <mat-error *ngIf="formGroup.controls.evaluador1.errors?.required">
             {{'error.required.entity' | translate:msgParamEvaludador1Entity}}
@@ -34,7 +36,8 @@
           <mat-label>{{'eti.convocatoria-reunion.memoria.evaludador-2' | translate}}
           </mat-label>
           <sgi-select-evaluador formControlName="evaluador2" [memoria]="formGroup.controls.memoria.value"
-            [resetOnChange]="memoria.selectionChange" [excludeOnChange]="evaluador1$" required>
+            [resetOnChange]="memoria.selectionChange" [excludeOnChange]="evaluador1$"
+            [fechaEvaluacion]="this.data.evaluacion.convocatoriaReunion.fechaEvaluacion" required>
           </sgi-select-evaluador>
           <mat-error *ngIf="formGroup.controls.evaluador2.errors?.required">
             {{'error.required.entity' | translate:msgParamEvaludador2Entity}}

@@ -1,4 +1,4 @@
-import { Component, Optional, Self } from '@angular/core';
+import { Component, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
@@ -22,6 +22,18 @@ import { map } from 'rxjs/operators';
 })
 export class SelectTipoConvocatoriaReunionComponent extends SelectServiceComponent<TipoConvocatoriaReunion> {
 
+  @Input()
+  get excluded(): number[] {
+    return this._excluded;
+  }
+  set excluded(value: number[]) {
+    if (Array.isArray(value)) {
+      this._excluded = value;
+    }
+  }
+  // tslint:disable-next-line: variable-name
+  private _excluded: number[] = [];
+
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     private service: TipoConvocatoriaReunionService,
@@ -33,7 +45,15 @@ export class SelectTipoConvocatoriaReunionComponent extends SelectServiceCompone
     const findOptions: SgiRestFindOptions = {
       sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
     };
-    return this.service.findAll(findOptions).pipe(map(response => response.items));
+
+    return this.service.findAll(findOptions).pipe(
+      map(response => {
+        if (this.excluded.length) {
+          return response.items.filter(resp => !this.excluded.includes(resp.id));
+        } else {
+          return response.items;
+        }
+      }));
   }
 
 }

@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.crue.hercules.sgi</groupId>
     <artifactId>sgi-starter-parent</artifactId>
-    <version>0.0.13</version>
+    <version>0.1.0</version>
   </parent>
 
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-usr-service</artifactId>
+  <version>0.2.0</version>
   <packaging>jar</packaging>
   <name>sgi-usr-service</name>
   <description>Gestión de Usuarios SGI HERCULES</description>
@@ -38,6 +41,8 @@
   <properties>
     <!-- Manifest data for the Apache Maven JAR Plugin -->
     <manifest.name>org/crue/hercules/sgi/usr</manifest.name>
+    <!-- Versions -->
+    <sgi-framework-spring.version>0.1.0</sgi-framework-spring.version>
   </properties>
 
   <profiles>
@@ -74,14 +79,16 @@
       <dependency>
         <groupId>org.crue.hercules.sgi</groupId>
         <artifactId>sgi-framework-spring</artifactId>
-        <version>${project.version}</version>
+        <version>${sgi-framework-spring.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
 
   <dependencies>
     <!--
-      Commons Lang - Provides a host of helper utilities for the java.lang API, notably String manipulation methods, basic numerical methods, object reflection, concurrency, creation and serialization and System properties.
+      Commons Lang - Provides a host of helper utilities for the java.lang API, notably String
+    manipulation methods, basic numerical methods, object reflection, concurrency, creation and
+    serialization and System properties.
       https://commons.apache.org/proper/commons-lang/
     -->
     <dependency>
@@ -98,7 +105,8 @@
       <scope>runtime</scope>
     </dependency>
     <!--
-      Hibernate JPA 2 Metamodel Generator - An annotation processor based on the Pluggable Annotation Processing API with the task of creating JPA 2 static metamodel classes.
+      Hibernate JPA 2 Metamodel Generator - An annotation processor based on the Pluggable Annotation
+    Processing API with the task of creating JPA 2 static metamodel classes.
       https://docs.jboss.org/hibernate/stable/jpamodelgen/reference/en-US/html_single/
     -->
     <dependency>
@@ -114,7 +122,8 @@
       <artifactId>hibernate-validator</artifactId>
     </dependency>
     <!--
-      Hibernate Validator Annotation Processor - Detecs unsupported constraint usages, and raises an error at build time.
+      Hibernate Validator Annotation Processor - Detecs unsupported constraint usages, and raises an
+    error at build time.
       https://hibernate.org/validator/
     -->
     <dependency>
@@ -138,7 +147,8 @@
       <artifactId>liquibase-core</artifactId>
     </dependency>
     <!--
-      Project Lombok - A java library that automatically plugs into your editor and build tools, spicing up your java.
+      Project Lombok - A java library that automatically plugs into your editor and build tools, spicing
+    up your java.
       https://projectlombok.org/
     -->
     <dependency>
@@ -190,7 +200,9 @@
       <artifactId>sgi-framework-spring</artifactId>
     </dependency>
     <!-- 
-      Spring Expression Language - A powerful expression language that supports querying and manipulating an object graph at runtime (see: https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions).
+      Spring Expression Language - A powerful expression language that supports querying and manipulating
+    an object graph at runtime (see:
+    https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#expressions).
       https://github.com/eobermuhlner/spel-scriptengine
     -->
     <dependency>
@@ -199,7 +211,7 @@
     </dependency>
     <!--
       Spring Boot Configuration Processor - Spring Boot Configuration Annotation Processor.
-      https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/html/configuration-metadata.html#configuration-metadata.annotation-processor
+    https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/html/configuration-metadata.html#configuration-metadata.annotation-processor
     -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -217,7 +229,8 @@
       <optional>true</optional>
     </dependency>
     <!--
-      Spring Boot Starter Acturator - Starter for using Spring Boot's Actuator which provides production ready features to help you monitor and manage your application
+      Spring Boot Starter Acturator - Starter for using Spring Boot's Actuator which provides production
+    ready features to help you monitor and manage your application
       https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#actuator
     -->
     <dependency>
@@ -233,16 +246,18 @@
       <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
     <!--
-      Spring Boot Starter OAuth2 Client - Starter for using Spring Security's OAuth2/OpenID Connect client features.
-      https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/html/web.html#web.security.oauth2.client
+      Spring Boot Starter OAuth2 Client - Starter for using Spring Security's OAuth2/OpenID Connect
+    client features.
+    https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/html/web.html#web.security.oauth2.client
     -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-oauth2-client</artifactId>
     </dependency>
     <!--
-      Spring Boot Starter OAuth2 Resource Server - Starter for using Spring Security's OAuth2 resource server features.
-      https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/html/web.html#web.security.oauth2.server
+      Spring Boot Starter OAuth2 Resource Server - Starter for using Spring Security's OAuth2 resource
+    server features.
+    https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/html/web.html#web.security.oauth2.server
     -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -257,7 +272,8 @@
       <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
     <!--
-      Spring Boot Test Starter - Imports both Spring Boot test modules as well as JUnit Jupiter, AssertJ, Hamcrest, and a number of other useful libraries.
+      Spring Boot Test Starter - Imports both Spring Boot test modules as well as JUnit Jupiter, AssertJ,
+    Hamcrest, and a number of other useful libraries.
       https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#features.testing
     -->
     <dependency>
@@ -266,7 +282,8 @@
       <scope>test</scope>
     </dependency>
     <!--
-      Spring Boot Starter Web - Starter for building web, including RESTful, applications using Spring MVC.
+      Spring Boot Starter Web - Starter for building web, including RESTful, applications using Spring
+    MVC.
       https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/html/web.html
     -->
     <dependency>
@@ -274,7 +291,8 @@
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
     <!-- 
-      Spring Boot Context Indexer - Creates a static list of candidates at compilation time (fastets boot time vs runtime classpath scanning)
+      Spring Boot Context Indexer - Creates a static list of candidates at compilation time (fastets boot
+    time vs runtime classpath scanning)
       https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-scanning-index
     -->
     <dependency>
@@ -372,7 +390,8 @@
         </reportSets>
       </plugin>
       <!--
-        Maven Surefire Reports Plugin - Parses generated test results from both unit tests and integration tests.
+        Maven Surefire Reports Plugin - Parses generated test results from both unit tests and integration
+      tests.
         http://maven.apache.org/surefire/maven-surefire-report-plugin/
       -->
       <plugin>

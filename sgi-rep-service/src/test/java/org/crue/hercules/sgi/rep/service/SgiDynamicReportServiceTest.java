@@ -9,11 +9,15 @@ import java.util.List;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.OutputType;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentMatchers;
+import org.mockito.BDDMockito;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -26,9 +30,12 @@ class SgiDynamicReportServiceTest extends BaseReportServiceTest {
   @Autowired
   private SgiConfigProperties sgiConfigProperties;
 
+  @Mock
+  private SgiApiConfService sgiApiConfService;
+
   @BeforeEach
   public void setUp() throws Exception {
-    sgiDynamicReportService = new SgiDynamicReportService(sgiConfigProperties);
+    sgiDynamicReportService = new SgiDynamicReportService(sgiConfigProperties, sgiApiConfService);
   }
 
   @ParameterizedTest
@@ -36,6 +43,10 @@ class SgiDynamicReportServiceTest extends BaseReportServiceTest {
   void getDynamicReport_ReturnsResource(String outputType) throws Exception {
     // given: data for report
     SgiDynamicReportDto report = generarMockSgiDynamicReport(OutputType.valueOf(outputType));
+
+    BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
+        .willReturn(getResource("common/prpt/rep-common-dynamic-landscape.prpt"));
+    BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
 
     // when: generate report
     sgiDynamicReportService.generateDynamicReport(report);
@@ -74,6 +85,10 @@ class SgiDynamicReportServiceTest extends BaseReportServiceTest {
       .rows(rows)
       .build();
     // @formatter:on
+
+    BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
+        .willReturn(getResource("common/prpt/rep-common-dynamic-portrait.prpt"));
+    BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
 
     // when: generate report
     sgiDynamicReportService.generateDynamicReport(report);
@@ -114,6 +129,10 @@ class SgiDynamicReportServiceTest extends BaseReportServiceTest {
     String outputJsonPath = "common/" + fileName;
     SgiDynamicReportDto report = getSgiDynamicReportFromJson(outputJsonPath);
     report.setOutputType(OutputType.valueOf(outputType));
+
+    BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
+        .willReturn(getResource("common/prpt/rep-common-dynamic-landscape.prpt"));
+    BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
 
     // when: generate report
     sgiDynamicReportService.generateDynamicReport(report);

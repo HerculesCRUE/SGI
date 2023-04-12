@@ -4,8 +4,9 @@ import { SolicitudProyectoEntidadFinanciadoraAjenaService } from '@core/services
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
-import { map, mergeAll, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { catchError, map, mergeAll, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export interface SolicitudProyectoEntidadFinanciadoraAjenaData extends ISolicitudProyectoEntidadFinanciadoraAjena {
   hasDesglosePresupuesto: boolean;
@@ -16,6 +17,7 @@ export class SolicitudProyectoEntidadesFinanciadorasFragment extends Fragment {
   private entidadesFinanciadorasEliminadas: StatusWrapper<SolicitudProyectoEntidadFinanciadoraAjenaData>[] = [];
 
   constructor(
+    private logger: NGXLogger,
     key: number,
     private solicitudService: SolicitudService,
     private solicitudProyectoEntidadFinanciadoraService: SolicitudProyectoEntidadFinanciadoraAjenaService,
@@ -43,13 +45,17 @@ export class SolicitudProyectoEntidadesFinanciadorasFragment extends Fragment {
           switchMap((entidadesFinanciadoras) => {
             return from(entidadesFinanciadoras)
               .pipe(
-                map((entidadesFinanciadora) => {
-                  return this.empresaService.findById(entidadesFinanciadora.value.empresa.id)
+                map((entidadFinanciadora) => {
+                  return this.empresaService.findById(entidadFinanciadora.value.empresa.id)
                     .pipe(
                       map(empresa => {
-                        entidadesFinanciadora.value.empresa = empresa;
-                        return entidadesFinanciadora;
+                        entidadFinanciadora.value.empresa = empresa;
+                        return entidadFinanciadora;
                       }),
+                      catchError((err) => {
+                        this.logger.error(err);
+                        return of(entidadFinanciadora);
+                      })
                     );
 
                 }),

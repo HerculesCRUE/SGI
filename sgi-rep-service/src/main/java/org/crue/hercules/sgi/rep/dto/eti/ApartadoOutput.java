@@ -36,4 +36,11 @@ public class ApartadoOutput {
 
   @JsonIgnore
   private List<ComentarioDto> comentarios;
+
+  @JsonIgnore
+  private Boolean modificado;
+
+  @JsonIgnore
+  private Integer numeroComentariosGestor;
+
 }

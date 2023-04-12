@@ -11,9 +11,11 @@ import org.crue.hercules.sgi.rep.dto.eti.AsistentesDto;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluadorDto;
 import org.crue.hercules.sgi.rep.dto.eti.MemoriaEvaluadaDto;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeActa;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ class InformeActaReportServiceTest extends BaseReportEtiServiceTest {
 
   @Autowired
   private SgiConfigProperties sgiConfigProperties;
+
+  @Mock
+  private SgiApiConfService sgiApiConfService;
 
   @Mock
   private SgiApiSgpService personaService;
@@ -47,7 +52,9 @@ class InformeActaReportServiceTest extends BaseReportEtiServiceTest {
   @BeforeEach
   public void setUp() throws Exception {
     informeActaReportService = new InformeActaReportService(sgiConfigProperties,
-        personaService, convocatoriaReunionService, actaService, evaluacionService, baseActaComentariosReportService);
+        personaService, sgiApiConfService,
+        convocatoriaReunionService, actaService, evaluacionService,
+        baseActaComentariosReportService);
   }
 
   @Test
@@ -58,6 +65,11 @@ class InformeActaReportServiceTest extends BaseReportEtiServiceTest {
     BDDMockito.given(actaService.findById(idActa)).willReturn((generarMockActa(idActa, 2)));
     BDDMockito.given(actaService.findAllMemoriasEvaluadasSinRevMinimaByActaId(idActa))
         .willReturn((generarMockMemoriasEvaluadas(idActa)));
+
+    BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
+        .willReturn(getResource("eti/prpt/rep-eti-acta.prpt"));
+    BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
+
     BDDMockito.given(personaService.findById(null)).willReturn((generarMockPersona("123456F")));
     BDDMockito.given(convocatoriaReunionService
         .findAsistentesByConvocatoriaReunionId(1L)).willReturn((generarMockAsistentes("123456F")));

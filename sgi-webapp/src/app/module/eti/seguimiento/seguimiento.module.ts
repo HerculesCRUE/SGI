@@ -15,9 +15,9 @@ import { SeguimientoEvaluarComponent } from './seguimiento-evaluar/seguimiento-e
 import { SeguimientoGeneralListadoExportService } from './seguimiento-general-listado-export.service';
 import { SeguimientoListadoExportService } from './seguimiento-listado-export.service';
 import { SeguimientoListadoComponent } from './seguimiento-listado/seguimiento-listado.component';
+import { SeguimientoPerfilEvaluadorRoutingModule } from './seguimiento-perfil-evaluador-routing.module';
 import { SeguimientoRoutingModule } from './seguimiento-routing.module';
 import { SeguimientoResolver } from './seguimiento.resolver';
-
 
 @NgModule({
   declarations: [
@@ -31,6 +31,7 @@ import { SeguimientoResolver } from './seguimiento.resolver';
     TranslateModule,
     MaterialDesignModule,
     SeguimientoRoutingModule,
+    SeguimientoPerfilEvaluadorRoutingModule,
     SeguimientoFormularioModule,
     SgiAuthModule,
     FormsModule,

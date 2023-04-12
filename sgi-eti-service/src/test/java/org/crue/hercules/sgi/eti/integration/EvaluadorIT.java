@@ -61,7 +61,7 @@ public class EvaluadorIT extends BaseIT {
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String EVALUADOR_CONTROLLER_BASE_PATH = "/evaluadores";
   private static final String PATH_PARAMETER_EVALUACIONES = "/evaluaciones";
-  private static final String PATH_PARAMETER_SINCONFLICTOINTERES = "/comite/{idComite}/sinconflictointereses/{idMemoria}";
+  private static final String PATH_PARAMETER_SINCONFLICTOINTERES = "/comite/{idComite}/sinconflictointereses/{idMemoria}/fecha/{fechaEvaluacion}";
 
   private HttpEntity<Evaluador> buildRequest(HttpHeaders headers, Evaluador entity) throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());
@@ -355,7 +355,7 @@ public class EvaluadorIT extends BaseIT {
     final ResponseEntity<List<Evaluador>> response = restTemplate.exchange(
         EVALUADOR_CONTROLLER_BASE_PATH + PATH_PARAMETER_SINCONFLICTOINTERES, HttpMethod.GET,
         buildRequest(headers, null), new ParameterizedTypeReference<List<Evaluador>>() {
-        }, idComite, idMemoria);
+        }, idComite, idMemoria, Instant.parse("2020-08-29T10:15:30.00Z"));
 
     // then: Respuesta OK, Evaluadores retorna la información de la página
     // correcta en el header
@@ -385,7 +385,7 @@ public class EvaluadorIT extends BaseIT {
     final ResponseEntity<List<Evaluador>> response = restTemplate.exchange(
         EVALUADOR_CONTROLLER_BASE_PATH + PATH_PARAMETER_SINCONFLICTOINTERES, HttpMethod.GET,
         buildRequest(headers, null), new ParameterizedTypeReference<List<Evaluador>>() {
-        }, idComite, idMemoria);
+        }, idComite, idMemoria, Instant.parse("2020-08-29T10:15:30.00Z"));
 
     // then: Respuesta OK, Evaluadores retorna la información de la página
     // correcta en el header

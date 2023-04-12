@@ -82,3 +82,5 @@ databaseChangeLog:
       file: classpath*:db/changelog/changes/0000000000011-update-sample-data.xml
   - include:
       file: classpath*:db/changelog/changes/0000000000011-update-data.xml
+  - include:
+      file: classpath*:db/changelog/changes/0000000000011-fixup-initial-database.xml

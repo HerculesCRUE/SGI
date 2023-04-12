@@ -3,11 +3,14 @@ import { ActivatedRoute } from '@angular/router';
 import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { IConvocatoriaConceptoGasto } from '@core/models/csp/convocatoria-concepto-gasto';
+import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatoria-concepto-gasto-codigo-ec';
 import { ActionService } from '@core/services/action-service';
 import { ConvocatoriaConceptoGastoCodigoEcService } from '@core/services/csp/convocatoria-concepto-gasto-codigo-ec.service';
 import { ConvocatoriaConceptoGastoService } from '@core/services/csp/convocatoria-concepto-gasto.service';
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { NGXLogger } from 'ngx-logger';
+import { BehaviorSubject, Observable, of, Subject, throwError } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { CONVOCATORIA_CONCEPTO_GASTO_DATA_KEY } from './convocatoria-concepto-gasto-data.resolver';
 import { ConvocatoriaConceptoGastoCodigoEcFragment } from './convocatoria-concepto-gasto-formulario/convocatoria-concepto-gasto-codigo-ec/convocatoria-concepto-gasto-codigo-ec.fragment';
 import { ConvocatoriaConceptoGastoDatosGeneralesFragment } from './convocatoria-concepto-gasto-formulario/convocatoria-concepto-gasto-datos-generales/convocatoria-concepto-gasto-datos-generales.fragment';
@@ -15,7 +18,9 @@ import { CONVOCATORIA_CONCEPTO_GASTO_ROUTE_PARAMS } from './convocatoria-concept
 
 export interface IConvocatoriaConceptoGastoData {
   convocatoria: IConvocatoria;
-  selectedConvocatoriaConceptoGastos: IConvocatoriaConceptoGasto[];
+  selectedConvocatoriaConceptoGastosPermitidos: IConvocatoriaConceptoGasto[];
+  selectedConvocatoriaConceptoGastosNoPermitidos: IConvocatoriaConceptoGasto[];
+  selectedConvocatoriaConceptoGastoCodigosEc: IConvocatoriaConceptoGastoCodigoEc[];
   permitido: boolean;
   readonly: boolean;
   canEdit: boolean;
@@ -36,8 +41,16 @@ export class ConvocatoriaConceptoGastoActionService extends ActionService {
 
   public readonly blockAddCodigosEconomicos$: Subject<boolean> = new BehaviorSubject<boolean>(false);
 
-  get convocatoriaConceptoGastos(): IConvocatoriaConceptoGasto[] {
-    return this.data.selectedConvocatoriaConceptoGastos;
+  get convocatoriaConceptoGastosPermitidos(): IConvocatoriaConceptoGasto[] {
+    return this.data.selectedConvocatoriaConceptoGastosPermitidos;
+  }
+
+  get convocatoriaConceptoGastosNoPermitidos(): IConvocatoriaConceptoGasto[] {
+    return this.data.selectedConvocatoriaConceptoGastosNoPermitidos;
+  }
+
+  get convocatoriaConceptoGastoCodigosEc(): IConvocatoriaConceptoGastoCodigoEc[] {
+    return this.data.selectedConvocatoriaConceptoGastoCodigosEc;
   }
 
   get permitido(): boolean {
@@ -48,7 +61,12 @@ export class ConvocatoriaConceptoGastoActionService extends ActionService {
     return this.datosGenerales.getValue().conceptoGasto;
   }
 
+  get convocatoriaConceptoGasto(): IConvocatoriaConceptoGasto {
+    return this.datosGenerales.getValue();
+  }
+
   constructor(
+    private readonly logger: NGXLogger,
     route: ActivatedRoute,
     convocatoriaConceptoGastoService: ConvocatoriaConceptoGastoService,
     convocatoriaConceptoGastoCodigoEcService: ConvocatoriaConceptoGastoCodigoEcService,
@@ -64,11 +82,24 @@ export class ConvocatoriaConceptoGastoActionService extends ActionService {
       this.enableEdit();
     }
 
-    this.datosGenerales = new ConvocatoriaConceptoGastoDatosGeneralesFragment(id, this.data.convocatoria,
-      convocatoriaConceptoGastoService, this.convocatoriaConceptoGastos, this.data.permitido, this.data.canEdit);
+    this.datosGenerales = new ConvocatoriaConceptoGastoDatosGeneralesFragment(
+      id,
+      this.data.convocatoria,
+      convocatoriaConceptoGastoService,
+      this.convocatoriaConceptoGastosPermitidos,
+      this.convocatoriaConceptoGastosNoPermitidos,
+      this.convocatoriaConceptoGastoCodigosEc,
+      this.data.permitido,
+      this.data.canEdit
+    );
 
-    this.codigosEconomicos = new ConvocatoriaConceptoGastoCodigoEcFragment(id,
-      convocatoriaConceptoGastoService, convocatoriaConceptoGastoCodigoEcService, codigoEconomicoGastoService, !this.data.canEdit);
+    this.codigosEconomicos = new ConvocatoriaConceptoGastoCodigoEcFragment(
+      id,
+      convocatoriaConceptoGastoService,
+      convocatoriaConceptoGastoCodigoEcService,
+      codigoEconomicoGastoService,
+      !this.data.canEdit
+    );
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);
     this.addFragment(this.FRAGMENT.CODIGOS_ECONOMICOS, this.codigosEconomicos);
@@ -77,7 +108,55 @@ export class ConvocatoriaConceptoGastoActionService extends ActionService {
       (conceptoGasto => this.blockAddCodigosEconomicos$.next(!Boolean(conceptoGasto)))
     ));
 
-    // Inicializamos los datos generales
+    this.subscriptions.push(
+      this.codigosEconomicos.convocatoriaConceptoGastoCodigoEcs$.pipe(
+        map(codigosEconomicos => codigosEconomicos.map(codigoEconomico => codigoEconomico.value as IConvocatoriaConceptoGastoCodigoEc))
+      ).subscribe(
+        (codigosEconomicos => this.datosGenerales.setCodigosEconomicos(codigosEconomicos))
+      )
+    );
+
+    // Inicializamos los fragments
     this.datosGenerales.initialize();
+    this.codigosEconomicos.initialize();
   }
+
+  saveOrUpdate(): Observable<void> {
+    this.performChecks(true);
+    if (this.hasErrors()) {
+      return throwError('Errores');
+    }
+
+    if (this.isEdit()) {
+      // Si da error la actualizacion se captura el error y se reintenta una vez
+      let cascade = of(void 0);
+      if (this.datosGenerales.hasChanges()) {
+        cascade = cascade.pipe(
+          switchMap(() => this.datosGenerales.saveOrUpdate().pipe(
+            tap(() => this.datosGenerales.refreshInitialState(true)),
+            catchError((err) => {
+              this.logger.error(err);
+              return of(void 0);
+            })
+          ))
+        );
+      }
+      if (this.codigosEconomicos.hasChanges()) {
+        cascade = cascade.pipe(
+          switchMap(() => this.codigosEconomicos.saveOrUpdate().pipe(tap(() => this.codigosEconomicos.refreshInitialState(true)))),
+          catchError((err) => {
+            this.logger.error(err);
+            return of(void 0);
+          })
+        );
+      }
+      return cascade.pipe(
+        switchMap(() => super.saveOrUpdate())
+      );
+    } else {
+      return super.saveOrUpdate();
+    }
+
+  }
+
 }

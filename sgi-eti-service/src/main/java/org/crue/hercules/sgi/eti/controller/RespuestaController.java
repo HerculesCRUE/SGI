@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Respuesta;
 import org.crue.hercules.sgi.eti.service.RespuestaService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -94,6 +96,23 @@ public class RespuestaController {
     Respuesta returnValue = service.update(updatedRespuesta);
     log.debug("replaceRespuesta(Respuesta updatedRespuesta, Long id) - end");
     return returnValue;
+  }
+
+  /**
+   * Actualiza los datos de la restrospectiva en la memoria con los valores de la
+   * respuesta si el formulario es de tipo M20.
+   * 
+   * @param id identificador de la {@link Respuesta} con los datos de la
+   *           retrospectiva
+   * @return {@link HttpStatus#NO_CONTENT}
+   */
+  @PatchMapping("/{id}/update-datos-retrospectiva")
+  public ResponseEntity<Void> updateDatosRetrospectiva(@PathVariable Long id) {
+    log.debug("updateDatosRetrospectiva(Long id) - start");
+
+    service.updateDatosRetrospectiva(id);
+    log.debug("updateDatosRetrospectiva(Long id) - end");
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   /**

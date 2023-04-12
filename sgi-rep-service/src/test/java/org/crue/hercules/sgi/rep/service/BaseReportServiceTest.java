@@ -1,6 +1,8 @@
 package org.crue.hercules.sgi.rep.service;
 
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,12 +13,12 @@ import java.util.Scanner;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.crue.hercules.sgi.rep.dto.OutputType;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto;
 import org.crue.hercules.sgi.rep.dto.SgiReportDto;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * BaseReportServiceTest
@@ -98,6 +100,10 @@ public abstract class BaseReportServiceTest extends BaseServiceTest {
       throw e;
     }
     return jsonValue;
+  }
+
+  protected byte[] getResource(String path) throws Exception {
+    return Files.readAllBytes(Paths.get(this.getClass().getClassLoader().getResource(path).toURI()));
   }
 
 }

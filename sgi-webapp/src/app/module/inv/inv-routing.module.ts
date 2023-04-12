@@ -10,8 +10,8 @@ import { InvRootComponent } from './inv-root/inv-root.component';
 import { INV_ROUTE_NAMES } from './inv-route-names';
 
 const MSG_ROOT_TITLE = marker('inv.root.title');
-const MSG_EVALUACIONES_TITLE = marker('menu.principal.inv.evaluaciones');
-const MSG_SEGUIMIENTOS_TITLE = marker('menu.principal.inv.seguimientos');
+const MSG_EVALUACIONES_TITLE = marker('eti.evaluacion');
+const MSG_SEGUIMIENTOS_TITLE = marker('eti.seguimiento');
 const MSG_PETICIONES_EVALUACION_TITLE = marker('menu.principal.inv.peticionesEvaluacion');
 const MSG_MEMORIAS_TITLE = marker('menu.principal.inv.memorias');
 const MSG_CHECKLIST_TITLE = marker('menu.principal.inv.autoevaluacion');

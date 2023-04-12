@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.eti.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Constantes {
 
   // Estado retrospectiva
@@ -97,4 +101,10 @@ public class Constantes {
   public static final Long FORMULARIO_ANUAL = 4L;
   public static final Long FORMULARIO_FINAL = 5L;
   public static final Long FORMULARIO_RETROSPECTIVA = 6L;
+
+  // Comites
+  public static final Long COMITE_CEI = 1L;
+  public static final Long COMITE_CEEA = 2L;
+  public static final Long COMITE_CBE = 3L;
+
 }

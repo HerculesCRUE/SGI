@@ -5,9 +5,7 @@
 
   <changeSet author="user (generated)" id="0000000000011-1">
     <addColumn tableName="estado_proyecto_periodo_justificacion">
-      <column name="proyecto_periodo_justificacion_id" type="bigint">
-        <constraints nullable="false" />
-      </column>
+      <column name="proyecto_periodo_justificacion_id" type="bigint" />
     </addColumn>
   </changeSet>
   <changeSet author="user (generated)" id="0000000000011-2">

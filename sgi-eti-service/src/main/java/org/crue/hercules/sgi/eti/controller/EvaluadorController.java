@@ -1,9 +1,11 @@
 package org.crue.hercules.sgi.eti.controller;
 
+import java.time.Instant;
 import java.util.List;
 
 import javax.validation.Valid;
 
+import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.model.ConflictoInteres;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
@@ -86,12 +88,13 @@ public class EvaluadorController {
    * 
    * @param query filtro de búsqueda.
    */
-  @GetMapping("comite/{idComite}/sinconflictointereses/{idMemoria}")
+  @GetMapping("comite/{idComite}/sinconflictointereses/{idMemoria}/fecha/{fechaEvaluacion}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNV-C', 'ETI-CNV-E')")
   ResponseEntity<List<Evaluador>> findAllByComiteSinconflictoInteresesMemoria(@PathVariable Long idComite,
-      @PathVariable Long idMemoria) {
+      @PathVariable Long idMemoria, @PathVariable Instant fechaEvaluacion) {
     log.debug("findAllByComiteSinconflictoInteresesMemoria(Long idComite, Long idMemoria) - start");
-    List<Evaluador> result = evaluadorService.findAllByComiteSinconflictoInteresesMemoria(idComite, idMemoria);
+    List<Evaluador> result = evaluadorService.findAllByComiteSinconflictoInteresesMemoria(idComite, idMemoria,
+        fechaEvaluacion);
 
     if (result.isEmpty()) {
       log.debug("findAllByComiteSinconflictoInteresesMemoria(Long idComite, Long idMemoria) ) - end");
@@ -286,6 +289,25 @@ public class EvaluadorController {
       return new ResponseEntity<>(HttpStatus.OK);
     }
     log.debug("hasAssignedActas(Authentication authorization) - end");
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Comprueba si el usuario es Evaluador en algun comite
+   * 
+   * @param authorization authorization
+   * @return HTTP 200 si existe y HTTP 204 si no.
+   */
+  @RequestMapping(path = "/is-evaluador", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-V','ETI-EVC-VR', 'ETI-EVC-INV-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR')")
+  public ResponseEntity<Void> isEvaluador(Authentication authorization) {
+    log.debug("isEvaluador(Authentication authorization) - start");
+    String personaRef = authorization.getName();
+    if (evaluadorService.isEvaluador(personaRef)) {
+      log.debug("isEvaluador(Authentication authorization) - end");
+      return new ResponseEntity<>(HttpStatus.OK);
+    }
+    log.debug("isEvaluador(Authentication authorization) - end");
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 

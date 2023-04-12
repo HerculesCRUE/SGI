@@ -9,12 +9,10 @@ import org.crue.hercules.sgi.eti.exceptions.RespuestaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Apartado;
 import org.crue.hercules.sgi.eti.model.Bloque;
 import org.crue.hercules.sgi.eti.model.Comite;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Respuesta;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
-import org.crue.hercules.sgi.eti.repository.ApartadoRepository;
-import org.crue.hercules.sgi.eti.repository.BloqueRepository;
 import org.crue.hercules.sgi.eti.repository.RespuestaRepository;
 import org.crue.hercules.sgi.eti.service.impl.RespuestaServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,20 +36,16 @@ public class RespuestaServiceTest extends BaseServiceTest {
   @Mock
   private RespuestaRepository respuestaRepository;
   @Mock
-  private BloqueRepository bloqueRepository;
-  @Mock
   private MemoriaService memoriaService;
   @Mock
   private RetrospectivaService retrospectivaService;
-  @Mock
-  private ApartadoRepository apartadoRepository;
 
   private RespuestaService respuestaService;
 
   @BeforeEach
   public void setUp() throws Exception {
-    respuestaService = new RespuestaServiceImpl(respuestaRepository, bloqueRepository, memoriaService,
-        retrospectivaService, apartadoRepository);
+    respuestaService = new RespuestaServiceImpl(respuestaRepository, memoriaService,
+        retrospectivaService);
   }
 
   @Test
@@ -82,16 +76,7 @@ public class RespuestaServiceTest extends BaseServiceTest {
     Respuesta respuesta = generarMockRespuesta(1L);
     respuesta.setValor("{\"valor\":\"ValorNew\"}");
 
-    Memoria memoria = generarMockMemoria(1L);
-
     BDDMockito.given(respuestaRepository.save(respuestaNew)).willReturn(respuesta);
-    BDDMockito.given(memoriaService.findById(1L)).willReturn(memoria);
-    BDDMockito.given(apartadoRepository.findById(1L)).willReturn(Optional.of(getMockApartado(1L, 1L, 1L)));
-    BDDMockito.given(bloqueRepository.findFirstByFormularioIdOrderByOrdenDesc(1L))
-        .willReturn(generarMockBloque(1L, memoria.getComite().getFormulario()));
-    List<Apartado> ultimosApartados = new ArrayList<Apartado>();
-    ultimosApartados.add(getMockApartado(1L, 1L, 1L));
-    BDDMockito.given(apartadoRepository.findFirst2ByBloqueIdOrderByOrdenDesc(1L)).willReturn(ultimosApartados);
 
     // when: Creamos el Respuesta
     Respuesta respuestaCreado = respuestaService.create(respuestaNew);
@@ -120,17 +105,8 @@ public class RespuestaServiceTest extends BaseServiceTest {
 
     Respuesta respuesta = generarMockRespuesta(1L);
 
-    Memoria memoria = generarMockMemoria(1L);
-
     BDDMockito.given(respuestaRepository.findById(1L)).willReturn(Optional.of(respuesta));
     BDDMockito.given(respuestaRepository.save(respuesta)).willReturn(respuestaServicioActualizado);
-    BDDMockito.given(memoriaService.findById(1L)).willReturn(memoria);
-    BDDMockito.given(apartadoRepository.findById(1L)).willReturn(Optional.of(getMockApartado(1L, 1L, 1L)));
-    BDDMockito.given(bloqueRepository.findFirstByFormularioIdOrderByOrdenDesc(1L))
-        .willReturn(generarMockBloque(1L, memoria.getComite().getFormulario()));
-    List<Apartado> ultimosApartados = new ArrayList<Apartado>();
-    ultimosApartados.add(getMockApartado(1L, 1L, 1L));
-    BDDMockito.given(apartadoRepository.findFirst2ByBloqueIdOrderByOrdenDesc(1L)).willReturn(ultimosApartados);
 
     // when: Actualizamos el Respuesta
     Respuesta RespuestaActualizado = respuestaService.update(respuesta);

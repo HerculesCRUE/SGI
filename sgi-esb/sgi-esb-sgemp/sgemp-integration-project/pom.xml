@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.crue.hercules.sgi.esb.sgemp</groupId>
@@ -12,7 +14,8 @@
   <description>sgemp-integration-project</description>
   <properties>
     <maven.test.skip>true</maven.test.skip>
-    <CApp.type>bpel/workflow=zip,lib/registry/filter=jar,webapp/jaxws=war,lib/library/bundle=jar,service/dataservice=dbs,synapse/local-entry=xml,synapse/proxy-service=xml,carbon/application=car,registry/resource=zip,lib/dataservice/validator=jar,synapse/endpoint=xml,web/application=war,lib/carbon/ui=jar,service/axis2=aar,synapse/sequence=xml,synapse/configuration=xml,wso2/gadget=dar,lib/registry/handlers=jar,lib/synapse/mediator=jar,synapse/task=xml,synapse/api=xml,synapse/template=xml,synapse/message-store=xml,synapse/message-processors=xml,synapse/inbound-endpoint=xml</CApp.type>
+    <CApp.type>
+      bpel/workflow=zip,lib/registry/filter=jar,webapp/jaxws=war,lib/library/bundle=jar,service/dataservice=dbs,synapse/local-entry=xml,synapse/proxy-service=xml,carbon/application=car,registry/resource=zip,lib/dataservice/validator=jar,synapse/endpoint=xml,web/application=war,lib/carbon/ui=jar,service/axis2=aar,synapse/sequence=xml,synapse/configuration=xml,wso2/gadget=dar,lib/registry/handlers=jar,lib/synapse/mediator=jar,synapse/task=xml,synapse/api=xml,synapse/template=xml,synapse/message-store=xml,synapse/message-processors=xml,synapse/inbound-endpoint=xml</CApp.type>
   </properties>
   <repositories>
     <repository>
@@ -44,32 +47,32 @@
         <artifactId>maven-resources-plugin</artifactId>
         <version>3.1.0</version>
         <executions>
-            <execution>
-                <id>copy-resources</id>
-                <phase>validate</phase>
-                <goals>
-                    <goal>copy-resources</goal>
-                </goals>
-                <configuration>
-                    <outputDirectory>build</outputDirectory>
-                    <resources>
-                        <resource>
-                            <directory>./</directory>
-                            <includes>
-                                <include>artifact.xml</include>
-                            </includes>
-                            <filtering>true</filtering>
-                        </resource>
-                        <resource>
-                          <directory>./</directory>
-                          <includes>
-                              <include>src/**</include>
-                          </includes>
-                          <filtering>false</filtering>
-                      </resource>
-                    </resources>
-                </configuration>
-            </execution>
+          <execution>
+            <id>copy-resources</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>build</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>./</directory>
+                  <includes>
+                    <include>artifact.xml</include>
+                  </includes>
+                  <filtering>true</filtering>
+                </resource>
+                <resource>
+                  <directory>./</directory>
+                  <includes>
+                    <include>src/**</include>
+                  </includes>
+                  <filtering>false</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -85,7 +88,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>mvn</executable>
+              <executable>${maven.executable}</executable>
               <workingDirectory>${project.build.directory}</workingDirectory>
               <arguments>
                 <argument>clean</argument>
@@ -101,7 +104,7 @@
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>mvn</executable>
+              <executable>${maven.executable}</executable>
               <workingDirectory>${project.build.directory}</workingDirectory>
               <arguments>
                 <argument>clean</argument>

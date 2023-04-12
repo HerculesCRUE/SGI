@@ -9,6 +9,7 @@ import { Estado } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
+import { Module } from '@core/module';
 import { ActionService } from '@core/services/action-service';
 import { ContextoProyectoService } from '@core/services/csp/contexto-proyecto.service';
 import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo.service';
@@ -25,6 +26,7 @@ import { ProyectoEntidadFinanciadoraService } from '@core/services/csp/proyecto-
 import { ProyectoEntidadGestoraService } from '@core/services/csp/proyecto-entidad-gestora.service';
 import { ProyectoEquipoService } from '@core/services/csp/proyecto-equipo.service';
 import { ProyectoFacturacionService } from '@core/services/csp/proyecto-facturacion/proyecto-facturacion.service';
+import { ProyectoFaseService } from '@core/services/csp/proyecto-fase.service';
 import { ProyectoHitoService } from '@core/services/csp/proyecto-hito/proyecto-hito.service';
 import { ProyectoIVAService } from '@core/services/csp/proyecto-iva.service';
 import { ProyectoPaqueteTrabajoService } from '@core/services/csp/proyecto-paquete-trabajo.service';
@@ -32,7 +34,6 @@ import { ProyectoPartidaService } from '@core/services/csp/proyecto-partida.serv
 import { ProyectoPeriodoAmortizacionService } from '@core/services/csp/proyecto-periodo-amortizacion/proyecto-periodo-amortizacion.service';
 import { ProyectoPeriodoJustificacionService } from '@core/services/csp/proyecto-periodo-justificacion/proyecto-periodo-justificacion.service';
 import { ProyectoPeriodoSeguimientoService } from '@core/services/csp/proyecto-periodo-seguimiento.service';
-import { ProyectoFaseService } from '@core/services/csp/proyecto-fase.service';
 import { ProyectoProrrogaService } from '@core/services/csp/proyecto-prorroga.service';
 import { ProyectoProyectoSgeService } from '@core/services/csp/proyecto-proyecto-sge.service';
 import { ProyectoResponsableEconomicoService } from '@core/services/csp/proyecto-responsable-economico/proyecto-responsable-economico.service';
@@ -50,6 +51,7 @@ import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { FacturaPrevistaEmitidaService } from '@core/services/sge/factura-prevista-emitida/factura-prevista-emitida.service';
 import { PeriodoAmortizacionService } from '@core/services/sge/periodo-amortizacion/periodo-amortizacion.service';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
+import { DatosContactoService } from '@core/services/sgemp/datos-contacto/datos-contacto.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { AreaConocimientoService } from '@core/services/sgo/area-conocimiento.service';
 import { ClasificacionService } from '@core/services/sgo/clasificacion.service';
@@ -94,7 +96,6 @@ import { ProyectoRelacionFragment } from './proyecto-formulario/proyecto-relacio
 import { ProyectoResponsableEconomicoFragment } from './proyecto-formulario/proyecto-responsable-economico/proyecto-responsable-economico.fragment';
 import { ProyectoSociosFragment } from './proyecto-formulario/proyecto-socios/proyecto-socios.fragment';
 import { PROYECTO_ROUTE_PARAMS } from './proyecto-route-params';
-import { Module } from '@core/module';
 
 const MSG_SOLICITUDES = marker('csp.solicitud');
 const MSG_CONVOCATORIAS = marker('csp.convocatoria');
@@ -291,6 +292,7 @@ export class ProyectoActionService extends ActionService {
     palabraClaveService: PalabraClaveService,
     proyectoPeriodoAmortizacionService: ProyectoPeriodoAmortizacionService,
     periodoAmortizacionService: PeriodoAmortizacionService,
+    datosContactoService: DatosContactoService,
     private dialogService: DialogService
   ) {
     super();
@@ -378,7 +380,15 @@ export class ProyectoActionService extends ActionService {
           datosPersonalesService
         );
         this.entidadGestora = new ProyectoEntidadGestoraFragment(
-          fb, id, proyectoService, proyectoEntidadGestora, empresaService, this.readonly, this.data?.isVisor);
+          fb,
+          id,
+          proyectoService,
+          proyectoEntidadGestora,
+          empresaService,
+          datosContactoService,
+          this.readonly,
+          this.data?.isVisor
+        );
         this.areaConocimiento = new ProyectoAreaConocimientoFragment(this.data?.proyecto?.id,
           proyectoAreaConocimiento, proyectoService, areaConocimientoService, this.readonly, this.data?.isVisor);
         this.prorrogas = new ProyectoProrrogasFragment(id, proyectoService, proyectoProrrogaService, documentoService);

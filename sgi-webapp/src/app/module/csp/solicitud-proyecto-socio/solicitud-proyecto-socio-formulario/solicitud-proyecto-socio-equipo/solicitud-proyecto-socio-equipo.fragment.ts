@@ -5,8 +5,8 @@ import { SolicitudProyectoSocioService } from '@core/services/csp/solicitud-proy
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, from, Observable } from 'rxjs';
-import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export class SolicitudProyectoSocioEquipoFragment extends Fragment {
   solicitudProyectoSocioEquipos$ = new BehaviorSubject<StatusWrapper<ISolicitudProyectoSocioEquipo>[]>([]);
@@ -36,6 +36,10 @@ export class SolicitudProyectoSocioEquipoFragment extends Fragment {
                   map(persona => {
                     solicitudProyectoSocioEquipo.persona = persona;
                     return solicitudProyectoSocioEquipo;
+                  }),
+                  catchError((err) => {
+                    this.logger.error(err);
+                    return of(solicitudProyectoSocioEquipo);
                   })
                 );
               }),

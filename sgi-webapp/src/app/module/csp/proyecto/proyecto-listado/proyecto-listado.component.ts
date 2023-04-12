@@ -145,7 +145,6 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
       this.convocatoriaService.findById(this.convocatoriaId).pipe(
         map((convocatoria) => {
           this.formGroup.controls.convocatoria.patchValue(convocatoria);
-          this.busquedaAvanzada = true;
           this.onSearch();
         }),
         catchError((err) => {

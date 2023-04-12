@@ -1,12 +1,15 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IDictamen } from '@core/models/eti/dictamen';
-import { IEvaluacion } from '@core/models/eti/evaluacion';
+import { DICTAMEN, IDictamen } from '@core/models/eti/dictamen';
 import { IMemoria } from '@core/models/eti/memoria';
+import { TIPO_EVALUACION } from '@core/models/eti/tipo-evaluacion';
+import { IDocumento } from '@core/models/sgdoc/documento';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { TipoEvaluacionService } from '@core/services/eti/tipo-evaluacion.service';
+import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { Observable, of, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { SeguimientoFormularioActionService } from '../seguimiento-formulario.action.service';
@@ -37,7 +40,9 @@ export class SeguimientoEvaluacionComponent extends FormFragmentComponent<IMemor
 
   constructor(
     public actionService: SeguimientoFormularioActionService,
-    private tipoEvaluacionService: TipoEvaluacionService
+    private tipoEvaluacionService: TipoEvaluacionService,
+    private readonly evaluacionService: EvaluacionService,
+    private readonly documentoService: DocumentoService
   ) {
     super(actionService.FRAGMENT.EVALUACIONES, actionService);
     this.fxFlexProperties = new FxFlexProperties();
@@ -90,6 +95,35 @@ export class SeguimientoEvaluacionComponent extends FormFragmentComponent<IMemor
 
   ngOnDestroy(): void {
     this.suscriptions.forEach((suscription) => suscription.unsubscribe());
+  }
+
+  visualizarInforme(idEvaluacion: number): void {
+    const documento: IDocumento = {} as IDocumento;
+    this.evaluacionService.getDocumentoEvaluacion(idEvaluacion).pipe(
+      switchMap((documentoInfo: IDocumento) => {
+        documento.nombre = documentoInfo.nombre;
+        return this.documentoService.downloadFichero(documentoInfo.documentoRef);
+      })
+    ).subscribe(response => {
+      triggerDownloadToUser(response, documento.nombre);
+    });
+  }
+
+  enableBtnVisualizarInforme(): boolean {
+    const hasDictamenAndNotEdited = !!this.formPart.evaluacion?.dictamen?.id
+      && (this.formGroup.controls.dictamen.value?.id === this.formPart.evaluacion.dictamen.id);
+
+    if (!hasDictamenAndNotEdited) {
+      return false;
+    }
+
+    if (this.formPart.evaluacion?.tipoEvaluacion?.id === TIPO_EVALUACION.SEGUIMIENTO_ANUAL) {
+      return this.formGroup.controls.dictamen.value?.id === DICTAMEN.SOLICITUD_MODIFICACIONES_SEG_ANUAL;
+    } else if (this.formPart.evaluacion?.tipoEvaluacion?.id === TIPO_EVALUACION.SEGUIMIENTO_FINAL) {
+      return this.formGroup.controls.dictamen.value?.id === DICTAMEN.SOLICITUD_ACLARACIONES_SEG_FINAL;
+    }
+
+    return false;
   }
 
 }

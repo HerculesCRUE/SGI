@@ -1,19 +1,16 @@
 package org.crue.hercules.sgi.eti.service.impl;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.eti.dto.RespuestaRetrospectivaFormulario;
 import org.crue.hercules.sgi.eti.exceptions.RespuestaNotFoundException;
-import org.crue.hercules.sgi.eti.model.Apartado;
-import org.crue.hercules.sgi.eti.model.Bloque;
+import org.crue.hercules.sgi.eti.exceptions.RespuestaRetrospectivaFormularioNotValidException;
 import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva;
 import org.crue.hercules.sgi.eti.model.Formulario;
+import org.crue.hercules.sgi.eti.model.Formulario.Tipo;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Respuesta;
 import org.crue.hercules.sgi.eti.model.Retrospectiva;
-import org.crue.hercules.sgi.eti.repository.ApartadoRepository;
-import org.crue.hercules.sgi.eti.repository.BloqueRepository;
 import org.crue.hercules.sgi.eti.repository.RespuestaRepository;
 import org.crue.hercules.sgi.eti.service.MemoriaService;
 import org.crue.hercules.sgi.eti.service.RespuestaService;
@@ -26,8 +23,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,23 +37,16 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class RespuestaServiceImpl implements RespuestaService {
   private static final String SI = "si";
-  private static final String ID_FORMULARIO_SEG_ANUAL = "4";
-  private static final String ID_FORMULARIO_SEG_FINAL = "5";
-  private static final String ID_FORMULARIO_RETROSPECTIVA = "6";
 
   private final RespuestaRepository respuestaRepository;
-  private final BloqueRepository bloqueRepository;
   private final MemoriaService memoriaService;
   private final RetrospectivaService retrospectivaService;
-  private final ApartadoRepository apartadoRepository;
 
-  public RespuestaServiceImpl(RespuestaRepository respuestaRepository, BloqueRepository bloqueRepository,
-      MemoriaService memoriaService, RetrospectivaService retrospectivaService, ApartadoRepository apartadoRepository) {
+  public RespuestaServiceImpl(RespuestaRepository respuestaRepository,
+      MemoriaService memoriaService, RetrospectivaService retrospectivaService) {
     this.respuestaRepository = respuestaRepository;
-    this.bloqueRepository = bloqueRepository;
     this.memoriaService = memoriaService;
     this.retrospectivaService = retrospectivaService;
-    this.apartadoRepository = apartadoRepository;
   }
 
   /**
@@ -73,9 +63,7 @@ public class RespuestaServiceImpl implements RespuestaService {
 
     Respuesta respuestaNew = respuestaRepository.save(respuesta);
 
-    if (this.isFormularioCompletado(respuestaNew).booleanValue()) {
-      this.setEstadoMemoriaCompletada(respuestaNew);
-    }
+    log.debug("create(Respuesta respuesta) - end");
 
     return respuestaNew;
   }
@@ -167,10 +155,6 @@ public class RespuestaServiceImpl implements RespuestaService {
 
       Respuesta returnValue = respuestaRepository.save(respuesta);
 
-      if (this.isFormularioCompletado(returnValue).booleanValue()) {
-        this.setEstadoMemoriaCompletada(returnValue);
-      }
-
       log.debug("update(Respuesta RespuestaActualizar) - end");
       return returnValue;
     }).orElseThrow(() -> new RespuestaNotFoundException(respuestaActualizar.getId()));
@@ -182,145 +166,68 @@ public class RespuestaServiceImpl implements RespuestaService {
   }
 
   /**
-   * Comprueba si se han rellenado todos los bloques del formulario, si está
+   * Actualiza los datos de la restrospectiva en la memoria con los valores de la
+   * respuesta si el formulario es de tipo M20.
    * 
-   * completo
-   * 
-   * @param respuesta la {@link Respuesta} del formulario
-   * @return boolean true/false si está o no completo
+   * @param id identificador de la {@link Respuesta} con los datos de la
+   *           retrospectiva
+   * @throws RespuestaNotFoundException                        si no existe la
+   *                                                           respuesta con el id
+   *                                                           dado
+   * @throws RespuestaRetrospectivaFormularioNotValidException si la respuesta no
+   *                                                           cumple con el
+   *                                                           esquema de
+   *                                                           {@link RespuestaRetrospectivaFormulario}
    */
-  private Boolean isFormularioCompletado(Respuesta respuesta) {
-    Boolean completado = Boolean.FALSE;
-    Formulario formulario = null;
-    Memoria memoria = memoriaService.findById(respuesta.getMemoria().getId());
+  @Transactional
+  public void updateDatosRetrospectiva(Long id)
+      throws RespuestaNotFoundException, RespuestaRetrospectivaFormularioNotValidException {
+    Respuesta respuesta = respuestaRepository.findById(id).orElseThrow(() -> new RespuestaNotFoundException(id));
+    Formulario formulario = respuesta.getApartado().getBloque().getFormulario();
+    Memoria memoria = respuesta.getMemoria();
 
-    Optional<Apartado> apartado = apartadoRepository.findById(respuesta.getApartado().getId());
-
-    if (apartado.isPresent()) {
-      formulario = apartado.get().getBloque().getFormulario();
-    }
-
-    if (formulario != null && formulario.getId() != null) {
-      // Si el formulario es de tipo M20 y existen datos de retroespectiva se guardan
-      // en sus correspondientes tablas.
-      guardarDatosRetrospectiva(formulario, respuesta.getId(), memoria);
-      Bloque lastBloque = bloqueRepository.findFirstByFormularioIdOrderByOrdenDesc(formulario.getId());
-      List<Apartado> ultimosApartados = apartadoRepository.findFirst2ByBloqueIdOrderByOrdenDesc(lastBloque.getId());
-      Apartado lastApartado = CollectionUtils.isEmpty(ultimosApartados) ? null
-          : ultimosApartados.get(ultimosApartados.size() - 1);
-      Respuesta respuestaUltimoBloqueApartado = null;
-      if (formulario.getId().toString().equals(ID_FORMULARIO_SEG_FINAL)) {
-        respuestaUltimoBloqueApartado = respuestaRepository
-            .findByApartadoBloqueOrdenAndApartadoPadreIsNullAndApartadoOrdenAndApartadoBloqueFormularioIdAndMemoriaId(
-                lastBloque.getOrden(), 1, formulario.getId(), memoria.getId());
-      } else if (lastApartado != null) {
-        respuestaUltimoBloqueApartado = respuestaRepository
-            .findByApartadoBloqueOrdenAndApartadoPadreIsNullAndApartadoOrdenAndApartadoBloqueFormularioIdAndMemoriaId(
-                lastBloque.getOrden(), lastApartado.getOrden(), formulario.getId(), memoria.getId());
-      }
-
-      if (respuestaUltimoBloqueApartado != null && respuestaUltimoBloqueApartado.getValor() != null) {
-        completado = Boolean.TRUE;
-      }
-    }
-
-    return completado;
-  }
-
-  /**
-   * Actualiza el estado de la memoria a completada
-   * 
-   * @param respuesta la {@link Respuesta} del formulario
-   */
-  private void setEstadoMemoriaCompletada(Respuesta respuesta) {
-    // Se pasa la memoria al estado completada
-    Memoria memoria = memoriaService.findById(respuesta.getMemoria().getId());
-    Optional<Apartado> apartado = apartadoRepository.findById(respuesta.getApartado().getId());
-
-    if (!apartado.isPresent()) {
+    if (!formulario.getTipo().equals(Tipo.M20)) {
       return;
     }
-    switch (apartado.get().getBloque().getFormulario().getId().toString()) {
-      case ID_FORMULARIO_SEG_ANUAL:
-        if (memoria.getEstadoActual().getId() < Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_ANUAL) {
-          memoriaService.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_ANUAL);
-        }
-        break;
-      case ID_FORMULARIO_SEG_FINAL:
-        if (memoria.getEstadoActual().getId() < Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_FINAL) {
-          memoriaService.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_FINAL);
-        }
-        break;
-      case ID_FORMULARIO_RETROSPECTIVA:
-        if (memoria.getRetrospectiva() != null && memoria.getRetrospectiva().getEstadoRetrospectiva()
-            .getId() < Constantes.ESTADO_RETROSPECTIVA_COMPLETADA) {
-          retrospectivaService.updateEstadoRetrospectiva(memoria.getRetrospectiva(),
-              Constantes.ESTADO_RETROSPECTIVA_COMPLETADA);
-        }
-        break;
-      default:
-        if (memoria.getEstadoActual().getId() < Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA) {
-          memoriaService.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA);
-        }
-        break;
-    }
 
-  }
+    RespuestaRetrospectivaFormulario respuestaRetrospectiva = null;
 
-  /**
-   * Guarda los datos de retrospectiva del formulario M20 que se encuentran en el
-   * bloque 5 apartado 3.
-   * 
-   * @param formulario  l {@link Formulario}
-   * @param idRespuesta el identificador de la {@link Respuesta}
-   * @param memoria     la {@link Memoria} de la {@link Respuesta}
-   */
-  private void guardarDatosRetrospectiva(Formulario formulario, Long idRespuesta, Memoria memoria) {
-
-    // Bloque 5 apartado 3 - Evaluación retrospectiva
-    if (!formulario.getNombre().equals("M20")
-        || !respuestaRepository.existsByIdAndApartadoBloqueOrden(idRespuesta, 5)) {
-      return;
-    }
-    Respuesta respuesta = respuestaRepository
-        .findByApartadoBloqueOrdenAndApartadoPadreIsNullAndApartadoOrdenAndApartadoBloqueFormularioIdAndMemoriaId(5,
-            3, formulario.getId(), memoria.getId());
-    if (respuesta == null) {
-      return;
-    }
-    ObjectMapper mapper = new ObjectMapper();
     try {
-      RespuestaRetrospectivaFormulario retrospectivaForm = mapper.readValue(respuesta.getValor(),
+      respuestaRetrospectiva = new ObjectMapper().readValue(respuesta.getValor(),
           RespuestaRetrospectivaFormulario.class);
+    } catch (JsonProcessingException e) {
+      log.error("evaluateRespuestaRetrospectiva(Long id) - No se ha podido transformar el json a objeto: "
+          + respuesta.getValor(), e);
+      throw new RespuestaRetrospectivaFormularioNotValidException();
+    }
 
-      if (retrospectivaForm.getEvaluacionRetrospectivaRadio().equalsIgnoreCase(SI)) {
-        memoria.setRequiereRetrospectiva(true);
-        Retrospectiva retrospectiva = memoria.getRetrospectiva();
-        if (retrospectiva == null) {
-          retrospectiva = new Retrospectiva();
-        }
-        EstadoRetrospectiva estadoRetrospectiva = new EstadoRetrospectiva();
-        estadoRetrospectiva.setId(Constantes.ESTADO_RETROSPECTIVA_PENDIENTE);
-        retrospectiva.setEstadoRetrospectiva(estadoRetrospectiva);
-        retrospectiva.setFechaRetrospectiva(retrospectivaForm.getFechaEvRetrospectiva().toInstant());
-        if (retrospectiva.getId() == null) {
-          memoria.setRetrospectiva(retrospectivaService.create(retrospectiva));
-        } else {
-          memoria.setRetrospectiva(retrospectivaService.update(retrospectiva));
-        }
-
-      } else {
-        if (memoria.getRetrospectiva() != null) {
-          retrospectivaService.delete(memoria.getRetrospectiva().getId());
-          memoria.setRetrospectiva(null);
-        }
-        memoria.setRequiereRetrospectiva(false);
+    if (respuestaRetrospectiva.getEvaluacionRetrospectivaRadio().equalsIgnoreCase(SI)) {
+      memoria.setRequiereRetrospectiva(true);
+      Retrospectiva retrospectiva = memoria.getRetrospectiva();
+      if (retrospectiva == null) {
+        retrospectiva = new Retrospectiva();
       }
 
-      memoriaService.update(memoria);
-    } catch (Exception e) {
-      log.error("No se ha podido transformar el json a objeto: " + respuesta.getValor());
+      EstadoRetrospectiva estadoRetrospectiva = new EstadoRetrospectiva();
+      estadoRetrospectiva.setId(Constantes.ESTADO_RETROSPECTIVA_PENDIENTE);
+      retrospectiva.setEstadoRetrospectiva(estadoRetrospectiva);
+      retrospectiva.setFechaRetrospectiva(respuestaRetrospectiva.getFechaEvRetrospectiva().toInstant());
+
+      if (retrospectiva.getId() == null) {
+        memoria.setRetrospectiva(retrospectivaService.create(retrospectiva));
+      } else {
+        memoria.setRetrospectiva(retrospectivaService.update(retrospectiva));
+      }
+
+    } else {
+      if (memoria.getRetrospectiva() != null) {
+        retrospectivaService.delete(memoria.getRetrospectiva().getId());
+        memoria.setRetrospectiva(null);
+      }
+      memoria.setRequiereRetrospectiva(false);
     }
+
+    memoriaService.update(memoria);
 
   }
 

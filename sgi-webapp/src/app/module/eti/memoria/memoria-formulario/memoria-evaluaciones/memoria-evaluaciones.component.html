@@ -1,7 +1,8 @@
 <!-- Memoria Evaluaciones listado -->
 <sgi-fragment title="{{'eti.memoria.evaluacion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   <div class="mat-elevation-z4">
-    <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
+    <table mat-table [dataSource]="dataSource" matSort matSortActive="tipoEvaluacionVersion" matSortDirection="asc"
+      matSortDisableClear>
 
       <!-- Tipo Column -->
       <ng-container matColumnDef="tipoEvaluacion">

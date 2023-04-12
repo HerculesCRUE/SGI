@@ -1,11 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { SelectValue } from '@core/component/select-common/select-common.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatoria-concepto-gasto-codigo-ec';
+import { IProyectoConceptoGasto } from '@core/models/csp/proyecto-concepto-gasto';
 import { IProyectoConceptoGastoCodigoEc } from '@core/models/csp/proyecto-concepto-gasto-codigo-ec';
 import { ICodigoEconomicoGasto } from '@core/models/sge/codigo-economico-gasto';
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
@@ -28,6 +29,8 @@ export interface ProyectoConceptoGastoCodigoEcDataModal {
   convocatoriaConceptoGastoCodigoEc: IConvocatoriaConceptoGastoCodigoEc;
   proyectoConceptoGastoCodigoEc: IProyectoConceptoGastoCodigoEc;
   proyectoConceptoGastoCodigoEcsTabla: IProyectoConceptoGastoCodigoEc[];
+  proyectoConceptoGastoCodigoEcsProyecto: IProyectoConceptoGastoCodigoEc[];
+  proyectoConceptoGasto: IProyectoConceptoGasto;
   permitido: boolean;
   editModal: boolean;
   readonly: boolean;
@@ -71,9 +74,11 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
       tap(response => {
         this.codigosEconomicos = response;
 
-        this.formGroup.controls.codigoEconomico.setValidators(
-          SelectValidator.isSelectOption(this.codigosEconomicos.map(cod => cod.id), true)
-        );
+        this.formGroup.controls.codigoEconomico.setValidators([
+          SelectValidator.isSelectOption(this.codigosEconomicos.map(cod => cod.id), true),
+          Validators.required,
+          this.notOverlapsSameConceptoGastoAndCodigoEconomico(this.data)
+        ]);
 
         if (!this.formGroup.disabled) {
           this.disabledSave = false;
@@ -185,7 +190,7 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
     const codigoEconomico = this.data.proyectoConceptoGastoCodigoEc?.codigoEconomico ?? null;
     const formGroup = new FormGroup(
       {
-        codigoEconomico: new FormControl(codigoEconomico),
+        codigoEconomico: new FormControl(codigoEconomico, [Validators.required, this.notOverlapsSameConceptoGastoAndCodigoEconomico(this.data)]),
         fechaInicio: new FormControl(this.data.proyectoConceptoGastoCodigoEc?.fechaInicio),
         fechaFin: new FormControl(this.data.proyectoConceptoGastoCodigoEc?.fechaFin),
         observaciones: new FormControl(this.data.proyectoConceptoGastoCodigoEc?.observaciones),
@@ -237,6 +242,33 @@ export class ProyectoConceptoGastoCodigoEcModalComponent
     this.formGroup.controls.fechaInicio.setValue(this.formGroup.controls.fechaInicioConvocatoria.value);
     this.formGroup.controls.fechaFin.setValue(this.formGroup.controls.fechaFinConvocatoria.value);
     this.formGroup.controls.observaciones.setValue(this.formGroup.controls.observacionesConvocatoria.value);
+  }
+
+  private notOverlapsSameConceptoGastoAndCodigoEconomico(data: ProyectoConceptoGastoCodigoEcDataModal): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+
+      const codigoEconomico: ICodigoEconomicoGasto = control.value;
+      const fechaIncioConceptoGasto = data.proyectoConceptoGasto.fechaInicio ? data.proyectoConceptoGasto.fechaInicio.toMillis() : Number.MIN_VALUE;
+      const fechaFinConceptoGasto = data.proyectoConceptoGasto.fechaFin ? data.proyectoConceptoGasto.fechaFin.toMillis() : Number.MAX_VALUE;
+
+      const ranges = data.proyectoConceptoGastoCodigoEcsProyecto
+        .filter(c => c.codigoEconomico.id === codigoEconomico.id && c.proyectoConceptoGasto.conceptoGasto.id === data.proyectoConceptoGasto.conceptoGasto.id)
+        .map(c => {
+          return {
+            inicio: c.proyectoConceptoGasto.fechaInicio ? c.proyectoConceptoGasto.fechaInicio.toMillis() : Number.MIN_VALUE,
+            fin: c.proyectoConceptoGasto.fechaFin ? c.proyectoConceptoGasto.fechaFin.toMillis() : Number.MAX_VALUE
+          };
+        });
+
+      if (ranges.some(r => fechaIncioConceptoGasto <= r.fin && r.inicio <= fechaFinConceptoGasto)) {
+        return { overlappedConceptoAndCodigo: true };
+      }
+
+      return null;
+    };
   }
 
   /**

@@ -1,0 +1,23 @@
+databaseChangeLog:
+  # HERCULES_0.0.4
+  - include:
+      file: classpath*:db/changelog/changes/0.1.0/0000000000000-initial-database.xml
+  - include:
+      file: classpath*:db/changelog/changes/0.1.0/0000000000000-initial-master-data.xml
+  - include:
+      file: classpath*:db/changelog/changes/0.1.0/0000000000000-sample-data.xml
+  # HERCULES_0.0.7
+  - include:
+      file: classpath*:db/changelog/changes/0.1.0/0000000000001-update-master-data.xml
+  # HERCULES_0.0.8
+  - include:
+      file: classpath*:db/changelog/changes/0.1.0/0000000000002-update-master-data.xml
+  # HERCULES_0.0.9
+  - include:
+      file: classpath*:db/changelog/changes/0.1.0/0000000000003-update-master-data.xml
+  # HERCULES_0.0.10
+  - include:
+      file: classpath*:db/changelog/changes/0.1.0/0000000000004-update-master-data.xml
+  # HERCULES_0.0.11
+  - include:
+      file: classpath*:db/changelog/changes/0.1.0/0000000000005-update-master-data.xml

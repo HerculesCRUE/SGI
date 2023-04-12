@@ -24,11 +24,4 @@ public interface BloqueRepository extends JpaRepository<Bloque, Long>, JpaSpecif
    */
   Page<Bloque> findByFormularioId(Long id, Pageable pageable);
 
-  /**
-   * Obtiene el último bloque del formulario {@link Formulario}.
-   * 
-   * @param id Id del formulario
-   * @return el último {@link Bloque} del formulario
-   */
-  public Bloque findFirstByFormularioIdOrderByOrdenDesc(Long id);
 }

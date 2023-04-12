@@ -10,6 +10,7 @@ import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.eti.ConvocatoriaReunionDto;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableModificacion;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -25,10 +26,10 @@ public class InformeFavorableModificacionReportService extends InformeEvaluacion
   private final ConvocatoriaReunionService convocatoriaReunionService;
 
   public InformeFavorableModificacionReportService(SgiConfigProperties sgiConfigProperties,
-      SgiApiSgpService personaService, EvaluacionService evaluacionService,
+      SgiApiConfService sgiApiConfService, SgiApiSgpService personaService, EvaluacionService evaluacionService,
       ConvocatoriaReunionService convocatoriaReunionService) {
 
-    super(sgiConfigProperties, personaService, evaluacionService);
+    super(sgiConfigProperties, sgiApiConfService, personaService, evaluacionService);
     this.convocatoriaReunionService = convocatoriaReunionService;
     this.evaluacionService = evaluacionService;
   }
@@ -70,7 +71,7 @@ public class InformeFavorableModificacionReportService extends InformeEvaluacion
     }
 
     columnsData.add("fechaDictamen");
-    elementsRow.add(formatInstantToString(evaluacion.getFechaDictamen(), pattern));
+    elementsRow.add(formatInstantToString(evaluacion.getConvocatoriaReunion().getFechaEvaluacion(), pattern));
 
     columnsData.add("numeroActa");
     elementsRow
@@ -80,6 +81,10 @@ public class InformeFavorableModificacionReportService extends InformeEvaluacion
     elementsRow.add(evaluacion.getMemoria().getNumReferencia());
 
     fillCommonFieldsEvaluacion(evaluacion, columnsData, elementsRow);
+
+    columnsData.add("resourcesBaseURL");
+    elementsRow.add(getRepResourcesBaseURL());
+
     rowsData.add(elementsRow);
 
     DefaultTableModel tableModel = new DefaultTableModel();

@@ -11,7 +11,7 @@ import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { EMPTY, from, Observable } from 'rxjs';
-import { catchError, filter, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 
 interface IGrupoListado extends IGrupo {
@@ -107,11 +107,23 @@ export class GrupoListadoInvComponent extends AbstractTablePaginationComponent<I
   }
 
   private fillInvestigadorPrincipal(grupo: IGrupoListado): Observable<IGrupoListado> {
+    let idsInvestigadoresPrincipales: string[];
     return this.grupoService.findPersonaRefInvestigadoresPrincipalesWithMaxParticipacion(grupo.id).pipe(
       filter(investigadoresPrincipales => !!investigadoresPrincipales),
+      tap(investigadoresPrincipales => idsInvestigadoresPrincipales = [...investigadoresPrincipales]),
       switchMap(investigadoresPrincipales => this.personaService.findAllByIdIn(investigadoresPrincipales)),
       map(investigadoresPrincipales => {
         grupo.investigadoresPrincipales = investigadoresPrincipales.items;
+        if (grupo.investigadoresPrincipales.length < idsInvestigadoresPrincipales.length) {
+          grupo.investigadoresPrincipales.push(
+            ...idsInvestigadoresPrincipales
+              .filter(id => grupo.investigadoresPrincipales.map(i => i.id).includes(id))
+              .map(id => {
+                return { id } as IPersona;
+              })
+          )
+        }
+
         return grupo;
       }),
       catchError((error) => {

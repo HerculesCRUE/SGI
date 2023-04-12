@@ -88,7 +88,7 @@
 
       <!-- codigo subidentidad -->
       <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order" *ngIf="formPart.ocultarSubEntidad">
+        [fxFlexOrder]="fxFlexProperties.order" *ngIf="formPart.isSelectedEntidadGestoraSubentidad()">
         <mat-form-field>
           <mat-label>{{'csp.proyecto-entidad-gestora.codigo-subentidad' | translate}}</mat-label>
           <input type="text" placeholder="{{'csp.proyecto-entidad-gestora.codigo-subentidad' | translate}}" matInput
@@ -111,25 +111,13 @@
       </div>
     </div>
 
-    <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10 separation-button">
-      <!-- tipo empresa -->
-      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-        [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto-entidad-gestora.tipo-empresa' | translate}}</mat-label>
-          <input type="text" placeholder="{{'csp.proyecto-entidad-gestora.tipo-empresa' | translate}}" matInput
-            formControlName="tipoEmpresa">
-        </mat-form-field>
-      </div>
-    </div>
-
-    <div class="fieldset-form" *ngIf="formPart.ocultarSubEntidad">
+    <div class="fieldset-form" *ngIf="formPart.isSelectedEntidadGestoraSubentidad()">
       <h3>{{'title.csp.proyecto-entidad-gestora.entidad-principal' | translate}}</h3>
     </div>
 
     <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10" *ngIf="formPart.ocultarSubEntidad">
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10"
+      *ngIf="formPart.isSelectedEntidadGestoraSubentidad()">
       <!-- nombre Principal  -->
       <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
         [fxFlexOrder]="fxFlexProperties.order">
@@ -143,7 +131,8 @@
 
 
     <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10" *ngIf="formPart.ocultarSubEntidad">
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10"
+      *ngIf="formPart.isSelectedEntidadGestoraSubentidad()">
       <!-- Razon social Principal-->
       <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
         [fxFlexOrder]="fxFlexProperties.order">

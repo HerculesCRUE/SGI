@@ -54,7 +54,8 @@
           {{'csp.grupo.investigador-principal' | translate}}
         </th>
         <td mat-cell *matCellDef="let element"
-          matTooltip="{{element.investigadoresPrincipales | personaNombreCompleto}}">
+          matTooltip="{{element.investigadoresPrincipales | personaNombreCompleto}}" sgpNotFoundError
+          [model]="element.investigadoresPrincipales">
           {{element.investigadoresPrincipales | personaNombreCompleto }}
         </td>
       </ng-container>

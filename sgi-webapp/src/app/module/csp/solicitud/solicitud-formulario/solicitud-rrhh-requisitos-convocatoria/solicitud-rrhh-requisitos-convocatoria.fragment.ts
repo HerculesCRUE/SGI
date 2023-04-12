@@ -25,8 +25,9 @@ import { NivelAcademicosService } from '@core/services/sgp/nivel-academico.servi
 import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateTime } from 'luxon';
+import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, forkJoin, from, merge, Observable, of, zip } from 'rxjs';
-import { map, switchMap, tap, mergeMap, takeLast } from 'rxjs/operators';
+import { map, switchMap, tap, mergeMap, takeLast, catchError } from 'rxjs/operators';
 
 export enum HelpIconClass {
   DANGER = 'danger',
@@ -78,6 +79,7 @@ export class SolicitudRrhhRequisitosConvocatoriaFragment extends Fragment {
   readonly solicitudId: number;
 
   constructor(
+    private readonly logger: NGXLogger,
     key: number,
     readonly convocatoriaId: number,
     readonly estado: IEstadoSolicitud,
@@ -554,6 +556,10 @@ export class SolicitudRrhhRequisitosConvocatoriaFragment extends Fragment {
       map(datosAcademicos => {
         persona.datosAcademicos = datosAcademicos;
         return persona;
+      }),
+      catchError((err) => {
+        this.logger.error(err);
+        return of(persona);
       })
     );
   }
@@ -567,6 +573,10 @@ export class SolicitudRrhhRequisitosConvocatoriaFragment extends Fragment {
       map(vinculacion => {
         persona.vinculacion = vinculacion;
         return persona;
+      }),
+      catchError((err) => {
+        this.logger.error(err);
+        return of(persona);
       })
     );
   }

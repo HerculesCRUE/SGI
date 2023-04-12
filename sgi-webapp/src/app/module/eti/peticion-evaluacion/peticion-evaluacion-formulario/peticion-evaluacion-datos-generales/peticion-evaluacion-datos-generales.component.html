@@ -162,7 +162,7 @@
     <mat-form-field>
       <mat-label>{{'eti.peticion-evaluacion.valor-social' | translate}}</mat-label>
       <mat-select #valorSocial formControlName="valorSocial"
-        matTooltip="{{TIPO_VALOR_SOCIAL_MAP.get(valorSocial.value) | translate}}">
+        matTooltip="{{TIPO_VALOR_SOCIAL_MAP.get(valorSocial.value) | translate}}" required>
         <mat-option *ngFor="let item of TIPO_VALOR_SOCIAL_MAP | keyvalue"
           matTooltip="{{TIPO_VALOR_SOCIAL_MAP.get(item?.key) | translate}}" [value]="item?.key">
           {{TIPO_VALOR_SOCIAL_MAP.get(item?.key) | translate}}</mat-option>

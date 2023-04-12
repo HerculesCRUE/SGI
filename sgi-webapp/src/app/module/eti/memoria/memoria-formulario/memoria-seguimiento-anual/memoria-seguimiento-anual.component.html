@@ -1,5 +1,7 @@
 <sgi-fragment title="{{'eti.memoria.seguimiento-anual' | translate}}" class="memoria-formulario">
 
+  <sgi-comentarios-generales-formly [comentarios]="comentariosGenerales"></sgi-comentarios-generales-formly>
+
   <div class="formly" *ngIf="(block?.loaded$ | async)">
     <form [formGroup]="block.formlyData.formGroup">
       <formly-form [model]="block.formlyData.model" [fields]="block.formlyData.fields"

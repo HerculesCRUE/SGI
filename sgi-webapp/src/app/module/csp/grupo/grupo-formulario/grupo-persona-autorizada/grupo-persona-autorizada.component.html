@@ -5,10 +5,12 @@
 
       <!-- nº identificacion Column -->
       <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.grupo-persona-autorizada.email' |
-          translate}}
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.grupo-persona-autorizada.email' | translate}}
         </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.persona | personaEmail}} </td>
+        <td mat-cell *matCellDef="let wrapper" sgpNotFoundError [model]="wrapper.value.persona">
+          {{wrapper.value.persona | personaEmail}}
+        </td>
       </ng-container>
 
       <!-- nombre Column -->

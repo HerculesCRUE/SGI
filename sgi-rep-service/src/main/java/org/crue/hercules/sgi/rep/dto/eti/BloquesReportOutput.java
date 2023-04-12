@@ -15,4 +15,5 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class BloquesReportOutput {
   private List<BloqueOutput> bloques;
+  private EvaluacionDto evaluacion;
 }

@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap4_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "4.1 Reemplazo"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Una de las principales herramientas de que disponen los/las investigadores/as para cumplir con el reemplazo es el uso de métodos alternativos. Por métodos alternativos se entiende aquellos que <u>no implican el uso de animales</u>, permiten <u>reducir el número de animales</u> a utilizar o <u>sustituirlos</u> por otras especies con un menor grado de padecimiento.</p><p>Puede encontrarse más información sobre métodos alternativos en las páginas web de la <a href='https://joint-research-centre.ec.europa.eu/eu-reference-laboratory-alternatives-animal-testing-eurl-ecvam_en'>ECVAN</a> y <a href='http://www.remanet.net/'>REMA</a>.</p>"
+      }
+    ]
+  }
+]

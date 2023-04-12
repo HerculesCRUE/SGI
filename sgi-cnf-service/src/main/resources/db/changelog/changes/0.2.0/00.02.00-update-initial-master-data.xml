@@ -1,0 +1,232 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="00.02.00-config">
+    <!-- Destinatarios defecto CSP Proyectos Hitos ARI -->
+    <insert tableName="config">
+      <column name="name" value="csp-com-inicio-presentacion-gasto-destinatarios-5" />
+      <column name="description"
+        value="Destinatarios de comunicado de inicio de presentacion de justificacion de gastos - ARI" />
+      <column name="value" value="[&quot;sample@sample.es&quot;]" />
+    </insert>
+
+    <update tableName="config">
+      <column name="default_value" valueComputed="value" />
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.02.00-resources">
+
+    <!-- Informes common -->
+    <insert tableName="resources">
+      <column name="name" value="rep-common-header-logo" />
+      <column name="description"
+        value="Logo cabecera completa informes (dimensiones imagen original 2481x304)" />
+      <column name="value" valueBlobFile="blob/rep/rep-common-header-logo.jpg" />
+      <column name="default_value" valueBlobFile="blob/rep/rep-common-header-logo.jpg" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-common-dynamic-landscape-prpt" />
+      <column name="description" value="Informe dinamico en modo apaisado" />
+      <column name="value" valueBlobFile="blob/rep/rep-common-dynamic-landscape.prpt" />
+      <column name="default_value" valueBlobFile="blob/rep/rep-common-dynamic-landscape.prpt" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-common-dynamic-portrait-prpt" />
+      <column name="description" value="Informe dinamico en modo vertical" />
+      <column name="value" valueBlobFile="blob/rep/rep-common-dynamic-portrait.prpt" />
+      <column name="default_value" valueBlobFile="blob/rep/rep-common-dynamic-portrait.prpt" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <!-- Informes csp -->
+    <insert tableName="resources">
+      <column name="name" value="rep-csp-certificado-autorizacion-proyecto-externo-prpt" />
+      <column name="description" value="Informe de autorizacion de proyecto externo" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-csp-certificado-autorizacion-proyecto-externo.prpt" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-csp-certificado-autorizacion-proyecto-externo.prpt" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <!-- Informes etica -->
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-acta-prpt" />
+      <column name="description" value="Informe de acta" />
+      <column name="value" valueBlobFile="blob/rep/rep-eti-acta.prpt" />
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-acta.prpt" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-prpt" />
+      <column name="description" value="Informe evaluacion" />
+      <column name="value" valueBlobFile="blob/rep/rep-eti-evaluacion.prpt" />
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-evaluacion.prpt" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-modificacion-prpt" />
+      <column name="description"
+        value="Informe evaluación con dictamen favorable de tipo modificación" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-favorable-memoria-modificacion.prpt" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-favorable-memoria-modificacion.prpt" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-nueva-prpt" />
+      <column name="description"
+        value="Informe evaluación con dictamen favorable de memorias de tipo nueva" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-favorable-memoria-nueva.prpt" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-favorable-memoria-nueva.prpt" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-ratificacion-prpt" />
+      <column name="description"
+        value="Informe evaluación con dictamen favorable de memorias de tipo ratificación" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-favorable-memoria-ratificacion.prpt" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-favorable-memoria-ratificacion.prpt" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-retrospectiva-prpt" />
+      <column name="description"
+        value="Informe evaluación de retrospectiva" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-retrospectiva.prpt" />
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-evaluacion-retrospectiva.prpt" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-ficha-evaluador-prpt" />
+      <column name="description" value="Informe del evaluador" />
+      <column name="value" valueBlobFile="blob/rep/rep-eti-ficha-evaluador.prpt" />
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-ficha-evaluador.prpt" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-mxx-prpt" />
+      <column name="description" value="Informe formularios M10, M20 y M30" />
+      <column name="value" valueBlobFile="blob/rep/rep-eti-mxx.prpt" />
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-mxx.prpt" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <!-- Informes prc -->
+    <insert tableName="resources">
+      <column name="name" value="rep-prc-detalle-grupo-prpt" />
+      <column name="description" value="Informe de detalle de grupo" />
+      <column name="value" valueBlobFile="blob/rep/rep-prc-detalle-grupo.prpt" />
+      <column name="default_value" valueBlobFile="blob/rep/rep-prc-detalle-grupo.prpt" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <!-- Web -->
+    <insert tableName="resources">
+      <column name="name" value="web-header-logo-ministerio" />
+      <column name="description" value="Logo ministerio cabecera" />
+      <column name="value" valueBlobFile="blob/web/web-header-logo-ministerio.png" />
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-ministerio.png" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="web-header-logo-ministerio2x" />
+      <column name="description" value="Logo ministerio cabecera 2x" />
+      <column name="value" valueBlobFile="blob/web/web-header-logo-ministerio@2x.png" />
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-ministerio@2x.png" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="web-header-logo-ministerio3x" />
+      <column name="description" value="Logo ministerio cabecera 3x" />
+      <column name="value" valueBlobFile="blob/web/web-header-logo-ministerio@3x.png" />
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-ministerio@3x.png" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="web-header-logo-feder" />
+      <column name="description" value="Logo feder cabecera" />
+      <column name="value" valueBlobFile="blob/web/web-header-logo-feder.png" />
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-feder.png" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="web-header-logo-feder2x" />
+      <column name="description" value="Logo feder cabecera 2x" />
+      <column name="value" valueBlobFile="blob/web/web-header-logo-feder@2x.png" />
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-feder@2x.png" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="web-header-logo-feder3x" />
+      <column name="description" value="Logo feder cabecera 3x" />
+      <column name="value" valueBlobFile="blob/web/web-header-logo-feder@3x.png" />
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-feder@3x.png" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="web-header-logo-ue" />
+      <column name="description" value="Logo ue cabecera" />
+      <column name="value" valueBlobFile="blob/web/web-header-logo-ue.png" />
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-ue.png" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="web-header-logo-ue2x" />
+      <column name="description" value="Logo ue cabecera 2x" />
+      <column name="value" valueBlobFile="blob/web/web-header-logo-ue@2x.png" />
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-ue@2x.png" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="web-header-logo-ue3x" />
+      <column name="description" value="Logo ue cabecera 3x" />
+      <column name="value" valueBlobFile="blob/web/web-header-logo-ue@3x.png" />
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-ue@3x.png" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="web-i18n-es" />
+      <column name="description" value="i18n es" />
+      <column name="value" valueBlobFile="blob/web/web-i18n-es.json" />
+      <column name="default_value" valueBlobFile="blob/web/web-i18n-es.json" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+
+  </changeSet>
+
+</databaseChangeLog>

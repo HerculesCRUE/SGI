@@ -1,3 +1,8 @@
+export enum TIPO_CONVOCATORIA_REUNION {
+  EXTRAORDINARIA = 1,
+  ORDINARIA = 2,
+  SEGUIMIENTO = 3
+}
 
 export class TipoConvocatoriaReunion {
 

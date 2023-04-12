@@ -120,7 +120,7 @@ class ConfigControllerIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void create_ShouldReturnNewPersistedConfigOutput() throws Exception {
-    String[] roles = { "CSP-PRO-V" };
+    String[] roles = { "ADM-CNF-E" };
     CreateConfigInput input = buildMockCreateConfigInput();
 
     ResponseEntity<ConfigOutput> response = this.restTemplate.exchange(CONTROLLER_BASE_PATH, HttpMethod.POST,
@@ -144,13 +144,13 @@ class ConfigControllerIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void update_ShouldReturnModifiedConfigOutput() throws Exception {
-    String[] roles = { "CSP-PRO-V" };
+    String[] roles = { "ADM-CNF-E" };
     String configName = "entidad-implantacion";
     UpdateConfigInput input = buildMockUpdateConfigInput();
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_NAME).buildAndExpand(configName).toUri();
 
-    ResponseEntity<ConfigOutput> response = this.restTemplate.exchange(uri, HttpMethod.PATCH,
+    ResponseEntity<ConfigOutput> response = this.restTemplate.exchange(uri, HttpMethod.PUT,
         this.buildRequest(null, input, null, roles), ConfigOutput.class);
 
     Assertions.assertThat(response).isNotNull();
@@ -171,7 +171,7 @@ class ConfigControllerIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void delete_ShouldReturnStatusCodeOK() throws Exception {
-    String[] roles = { "CSP-PRO-V" };
+    String[] roles = { "ADM-CNF-E" };
     String configName = "entidad-implantacion";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_NAME).buildAndExpand(configName).toUri();

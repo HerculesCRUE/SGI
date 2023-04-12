@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -149,26 +150,21 @@ public class ProyectoConceptoGastoCodigoEcServiceImpl implements ProyectoConcept
 
     Specification<ProyectoConceptoGastoCodigoEc> specs = Specification.where(specByProyectoConceptoGasto)
         .and(specByConceptoGastoActivo);
-    Page<ProyectoConceptoGastoCodigoEc> returnValue = repository.findAll(specs, pageable);
-    return returnValue;
+    return repository.findAll(specs, pageable);
   }
 
   /**
    * Se valida la unicidad del código económico. Para un
    * {@link ProyectoConceptoGasto} el mismo código económico solo puede aparecer
-   * una vez, salvo que lo haga en periodos de vigencia no solapados
-   * (independientemente del valor del campo "permitido").
+   * una vez, salvo que lo haga en periodos de vigencia no solapados.
    * 
-   * @param proyectoConceptoGastoId id {@link ProyectoConceptoGasto}
-   * @param fechaInicio             fecha inicial
-   * @param fechaFin                fecha final
-   * @param excluirId               identificadores a excluir de la busqueda
+   * @param proyectoConceptoGastoCodigoEc {@link ProyectoConceptoGastoCodigoEc}
+   * @param conceptoGastoPermitido        permitido o no
+   * 
    * @return true validación correcta/ false validacion incorrecta
    */
   private boolean existsProyectoConceptoGastoCodigoEcConFechasSolapadas(
       ProyectoConceptoGastoCodigoEc proyectoConceptoGastoCodigoEc, Boolean conceptoGastoPermitido) {
-    log.debug(
-        "existsProyectoConceptoGastoCodigoEcConFechasSolapadas(ProyectoConceptoGastoCodigoEc proyectoConceptoGastoCodigoEc)");
 
     Specification<ProyectoConceptoGastoCodigoEc> specByProyectoConceptoGasto = ProyectoConceptoGastoCodigoEcSpecifications
         .byProyectoConceptoGasto(proyectoConceptoGastoCodigoEc.getProyectoConceptoGastoId());
@@ -188,13 +184,44 @@ public class ProyectoConceptoGastoCodigoEcServiceImpl implements ProyectoConcept
         .and(specByRangoFechaSolapados).and(specByConceptoGastoCodigoEcActivo).and(specByCodigoEconomicoRef)
         .and(specByIdNotEqual).and(specByProyectoConceptoGastoPermitido);
 
-    Page<ProyectoConceptoGastoCodigoEc> proyectoConceptoGastoCodigoEcs = repository.findAll(specs, Pageable.unpaged());
+    return repository.count(specs) > 0;
+  }
 
-    Boolean returnValue = !proyectoConceptoGastoCodigoEcs.isEmpty();
-    log.debug(
-        "existsProyectoConceptoGastoCodigoEcConFechasSolapadas(ProyectoConceptoGastoCodigoEc proyectoConceptoGastoCodigoEc) - end");
+  /**
+   * Se valida la unicidad del código económico y concepto gasto, salvo que lo
+   * haga en periodos de vigencia no solapados
+   * (independientemente del valor del campo "permitido").
+   * 
+   * @param proyectoConceptoGastoCodigoEc {@link ProyectoConceptoGastoCodigoEc}
+   * @param fechaInicioConceptoGasto      fecha inicial del
+   *                                      {@link ProyectoConceptoGasto}
+   * @param fechaFinConceptoGasto         fecha final del
+   *                                      {@link ProyectoConceptoGasto}
+   * @param proyectoId                    Identifiacdor del {@link Proyecto}
+   * @return true validación correcta/ false validacion incorrecta
+   */
+  private boolean existsProyectoConceptoGastoCodigoEcAndConceptoGastoConFechasSolapadas(
+      ProyectoConceptoGastoCodigoEc proyectoConceptoGastoCodigoEc,
+      Instant fechaInicioConceptoGasto, Instant fechaFinConceptoGasto, Long proyectoId) {
 
-    return returnValue;
+    Specification<ProyectoConceptoGastoCodigoEc> specByProyecto = ProyectoConceptoGastoCodigoEcSpecifications
+        .byProyecto(proyectoId);
+    Specification<ProyectoConceptoGastoCodigoEc> specByConceptoGastoCodigoEcActivo = ProyectoConceptoGastoCodigoEcSpecifications
+        .byConceptoGastoActivo();
+    Specification<ProyectoConceptoGastoCodigoEc> specByCodigoEconomicoRef = ProyectoConceptoGastoCodigoEcSpecifications
+        .byCodigoEconomicoRef(proyectoConceptoGastoCodigoEc.getCodigoEconomicoRef());
+    Specification<ProyectoConceptoGastoCodigoEc> specByRangoFechaSolapados = ProyectoConceptoGastoCodigoEcSpecifications
+        .byRangoFechaConceptoGastoSolapados(fechaInicioConceptoGasto, fechaFinConceptoGasto);
+    Specification<ProyectoConceptoGastoCodigoEc> specByIdNotEqual = ProyectoConceptoGastoCodigoEcSpecifications
+        .byIdNotEqual(proyectoConceptoGastoCodigoEc.getId());
+    Specification<ProyectoConceptoGastoCodigoEc> specByConceptoGasto = ProyectoConceptoGastoCodigoEcSpecifications
+        .byConceptoGasto(proyectoConceptoGastoCodigoEc.getProyectoConceptoGastoId());
+
+    Specification<ProyectoConceptoGastoCodigoEc> specs = Specification.where(specByProyecto)
+        .and(specByRangoFechaSolapados).and(specByConceptoGastoCodigoEcActivo).and(specByCodigoEconomicoRef)
+        .and(specByIdNotEqual).and(specByConceptoGasto);
+
+    return repository.count(specs) > 0;
   }
 
   /**
@@ -267,6 +294,14 @@ public class ProyectoConceptoGastoCodigoEcServiceImpl implements ProyectoConcept
               proyectoConceptoGasto.getPermitido()),
           "El código económico '" + proyectoConceptoGastoCodigoEc.getCodigoEconomicoRef()
               + "' ya está presente y tiene un periodo de vigencia que se solapa con el indicado");
+
+      Assert.isTrue(
+          !existsProyectoConceptoGastoCodigoEcAndConceptoGastoConFechasSolapadas(proyectoConceptoGastoCodigoEc,
+              proyectoConceptoGasto.getFechaInicio(),
+              proyectoConceptoGasto.getFechaFin(),
+              proyectoConceptoGasto.getProyectoId()),
+          "El código económico '" + proyectoConceptoGastoCodigoEc.getCodigoEconomicoRef()
+              + "' ya está presente en otro concepto gasto del proyecto y tiene un periodo de vigencia que se solapa con el indicado");
 
       returnValue.add(repository.save(proyectoConceptoGastoCodigoEc));
     }

@@ -305,7 +305,7 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     }
     this.addActionLink({
       title: MSG_SOLICITUDES,
-      titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
+      titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
       routerLink: ['../..', CSP_ROUTE_NAMES.SOLICITUD],
       queryParams: { [CONVOCATORIA_ACTION_LINK_KEY]: convocatoriaId }
     });
@@ -317,7 +317,7 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     }
     this.addActionLink({
       title: MSG_PROYECTOS,
-      titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
+      titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
       routerLink: ['../..', CSP_ROUTE_NAMES.PROYECTO],
       queryParams: { [CONVOCATORIA_ACTION_LINK_KEY]: convocatoriaId }
     });

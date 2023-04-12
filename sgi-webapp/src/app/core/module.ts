@@ -17,6 +17,7 @@ export class Module {
   public static readonly PII = new Module('PII', marker('pii'), 'pii', marker('title.modulo.pii'), 'tips_and_updates');
   public static readonly PRC = new Module('PRC', marker('prc'), 'prc', marker('title.modulo.prc'), 'category');
   public static readonly EER = new Module('EER', marker('eer'), 'eer', marker('title.modulo.eer'), 'business');
+  public static readonly ADM = new Module('ADM', marker('adm'), 'adm', marker('title.modulo.adm'), 'admin_panel_settings');
 
   static get values(): Module[] {
     return [
@@ -25,6 +26,7 @@ export class Module {
       this.PRC,
       this.PII,
       this.EER,
+      this.ADM,
       this.INV
     ];
   }
@@ -39,7 +41,8 @@ export class Module {
       this.ETI,
       this.PRC,
       this.PII,
-      this.EER
+      this.EER,
+      this.ADM
     ];
   }
 
@@ -57,6 +60,8 @@ export class Module {
         return Module.PRC;
       case Module.EER.path:
         return Module.EER;
+      case Module.ADM.path:
+        return Module.ADM;
       default:
         return undefined;
     }
@@ -76,6 +81,8 @@ export class Module {
         return Module.PRC;
       case Module.EER.code:
         return Module.EER;
+      case Module.ADM.code:
+        return Module.ADM;
       default:
         return undefined;
     }

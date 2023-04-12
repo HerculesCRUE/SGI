@@ -1,0 +1,23 @@
+<div *ngIf="comentarios.length > 0">
+  <mat-expansion-panel [expanded]="expanded">
+    <mat-expansion-panel-header>
+      <mat-panel-title>{{ titulo | uppercase }}</mat-panel-title>
+      <mat-panel-description>
+        &nbsp;
+        <span>
+          <mat-icon class="warning">feedback</mat-icon>
+        </span>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div>
+      <div *ngFor="let comentario of comentarios" fxLayout="row" fxLayoutGap="10px" class="comentario">
+        <div>
+          <mat-icon class="warning">feedback</mat-icon>
+        </div>
+        <div fxFlex>
+          {{ comentario.texto }}
+        </div>
+      </div>
+    </div>
+  </mat-expansion-panel>
+</div>

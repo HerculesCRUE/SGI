@@ -29,6 +29,7 @@ import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto.SgiGroupReportDto;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto.SgiRowReportDto;
 import org.crue.hercules.sgi.rep.dto.SgiReportDto.FieldOrientation;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.pentaho.reporting.engine.classic.core.ElementAlignment;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
 import org.pentaho.reporting.engine.classic.core.RelationalGroup;
@@ -66,8 +67,8 @@ public class SgiDynamicReportService extends SgiReportService {
   protected static final String NAME_SUBREPORT_FILTER = "sub-report-filter";
   protected static final String NAME_GROUP = "group_";
 
-  public SgiDynamicReportService(SgiConfigProperties sgiConfigProperties) {
-    super(sgiConfigProperties);
+  public SgiDynamicReportService(SgiConfigProperties sgiConfigProperties, SgiApiConfService sgiApiConfService) {
+    super(sgiConfigProperties, sgiApiConfService);
   }
 
   public byte[] generateDynamicReport(@Valid SgiDynamicReportDto sgiReport) {
@@ -111,9 +112,9 @@ public class SgiDynamicReportService extends SgiReportService {
       if (sgiReport.getOutputType().equals(OutputType.PDF) || sgiReport.getOutputType().equals(OutputType.RTF)) {
         sgiReport.setCustomWidth(WIDTH_LANDSCAPE);
       }
-      sgiReport.setPath("report/common/dynamicLandscape.prpt");
+      sgiReport.setPath("rep-common-dynamic-landscape-prpt");
     } else {
-      sgiReport.setPath("report/common/dynamic.prpt");
+      sgiReport.setPath("rep-common-dynamic-portrait-prpt");
     }
 
     if (!StringUtils.hasText(sgiReport.getName())) {
@@ -257,6 +258,8 @@ public class SgiDynamicReportService extends SgiReportService {
   protected void setTableModelGeneral(SgiDynamicReportDto sgiReport, final MasterReport report) {
     String queryGeneral = QUERY_TYPE + SEPARATOR_KEY + NAME_GENERAL_TABLE_MODEL;
     DefaultTableModel tableModelGeneral = getTableModelForLabel(sgiReport.getTitle());
+
+    tableModelGeneral.addColumn("resourcesBaseURL", new Object[] { getRepResourcesBaseURL() });
 
     TableDataFactory dataFactoryGeneral = new TableDataFactory();
     dataFactoryGeneral.addTable(queryGeneral, tableModelGeneral);

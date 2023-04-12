@@ -13,12 +13,12 @@
     border-radius: 4px;
 
     &.error {
-      background-color: #e35138;
-      color: #fff;
+      background-color: map-get($sgi-custom-colors, danger);
+      color: map-get($sgi-custom-colors, white);
     }
 
     &.warning {
-      background-color: rgba(map-get($sgi-custom-colors, warning), 0.1);
+      background-color: map-get($sgi-custom-colors, bg-warning);
     }
 
     &.info {

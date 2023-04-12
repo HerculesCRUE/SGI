@@ -1,9 +1,15 @@
 package org.crue.hercules.sgi.eti.service.impl;
 
 import org.crue.hercules.sgi.eti.exceptions.FormularioNotFoundException;
+import org.crue.hercules.sgi.eti.exceptions.MemoriaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Formulario;
+import org.crue.hercules.sgi.eti.model.Formulario.Tipo;
+import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.repository.FormularioRepository;
 import org.crue.hercules.sgi.eti.service.FormularioService;
+import org.crue.hercules.sgi.eti.service.MemoriaService;
+import org.crue.hercules.sgi.eti.service.RetrospectivaService;
+import org.crue.hercules.sgi.eti.util.Constantes;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,10 +27,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class FormularioServiceImpl implements FormularioService {
-  private final FormularioRepository formularioRepository;
 
-  public FormularioServiceImpl(FormularioRepository formularioRepository) {
+  private final FormularioRepository formularioRepository;
+  private final MemoriaService memoriaService;
+  private final RetrospectivaService retrospectivaService;
+
+  public FormularioServiceImpl(
+      FormularioRepository formularioRepository,
+      MemoriaService memoriaService,
+      RetrospectivaService retrospectivaService) {
     this.formularioRepository = formularioRepository;
+    this.memoriaService = memoriaService;
+    this.retrospectivaService = retrospectivaService;
   }
 
   /**
@@ -139,6 +153,47 @@ public class FormularioServiceImpl implements FormularioService {
       log.debug("update(Formulario FormularioActualizar) - end");
       return returnValue;
     }).orElseThrow(() -> new FormularioNotFoundException(formularioActualizar.getId()));
+  }
+
+  /**
+   * Actualiza el estado de la memoria o de la retrospectiva al estado final
+   * correspondiente al tipo de formulario completado.
+   *
+   * @param memoriaId        Identificador de la {@link Memoria}.
+   * @param tipoFormularioId {@link Formulario.Tipo}
+   * @throws MemoriaNotFoundException Si no existe ningún {@link Memoria} con ese
+   *                                  id.
+   */
+  @Transactional
+  public void completado(Long memoriaId, Long tipoFormularioId) throws MemoriaNotFoundException {
+    Memoria memoria = memoriaService.findById(memoriaId);
+
+    switch (Tipo.fromId(tipoFormularioId)) {
+      case SEGUIMIENTO_ANUAL:
+        if (memoria.getEstadoActual().getId() < Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_ANUAL) {
+          memoriaService.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_ANUAL);
+        }
+        break;
+      case SEGUIMIENTO_FINAL:
+        if (memoria.getEstadoActual().getId() < Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_FINAL) {
+          memoriaService.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_FINAL);
+        }
+        break;
+      case RETROSPECTIVA:
+        if (memoria.getRetrospectiva() != null
+            && memoria.getRetrospectiva().getEstadoRetrospectiva()
+                .getId() < Constantes.ESTADO_RETROSPECTIVA_COMPLETADA) {
+          retrospectivaService.updateEstadoRetrospectiva(memoria.getRetrospectiva(),
+              Constantes.ESTADO_RETROSPECTIVA_COMPLETADA);
+        }
+        break;
+      default:
+        if (memoria.getEstadoActual().getId() < Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA) {
+          memoriaService.updateEstadoMemoria(memoria,
+              Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA);
+        }
+        break;
+    }
   }
 
 }

@@ -14,6 +14,8 @@
     <org.crue.hercules.sgi.esb.sgp.endpoint_._cvn-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgp.endpoint_._cvn-endpoint>
     <org.crue.hercules.sgi.esb.sgp.endpoint_._sgp-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgp.endpoint_._sgp-endpoint>
     <org.crue.hercules.sgi.esb.sgp.sequence_._sgp-add-x-api-key-sequence>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgp.sequence_._sgp-add-x-api-key-sequence>
+    <org.crue.hercules.sgi.esb.sgp.sequence_._sgp-remove-authorization-header-sequence>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgp.sequence_._sgp-remove-authorization-header-sequence>
+    <org.crue.hercules.sgi.esb.sgp.sequence_._sgp-remove-x-api-key-sequence>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgp.sequence_._sgp-remove-x-api-key-sequence>
     <org.crue.hercules.sgi.esb.sgp.resource_._datos-contacto-response-converter-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgp.resource_._datos-contacto-response-converter-mediator>
     <org.crue.hercules.sgi.esb.sgp.resource_._replace-tipo-colectivo-colectivos-ids-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgp.resource_._replace-tipo-colectivo-colectivos-ids-mediator>
     <org.crue.hercules.sgi.esb.sgp.resource_._vinculacion-response-converter-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgp.resource_._vinculacion-response-converter-mediator>
@@ -55,6 +57,18 @@
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgp.sequence</groupId>
       <artifactId>sgp-add-x-api-key-sequence</artifactId>
+      <version>${revision}</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgp.sequence</groupId>
+      <artifactId>sgp-remove-authorization-header-sequence</artifactId>
+      <version>${revision}</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgp.sequence</groupId>
+      <artifactId>sgp-remove-x-api-key-sequence</artifactId>
       <version>${revision}</version>
       <type>xml</type>
     </dependency>

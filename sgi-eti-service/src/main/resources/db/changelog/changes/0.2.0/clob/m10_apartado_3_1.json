@@ -1,0 +1,36 @@
+[
+  {
+    "key": "ap3_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "3.1 Objetivos científicos del proyecto"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Describir brevemente los principales objetivos que se pretende alcanzar con este proyecto</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Esta sección se cumplimenta automáticamente a partir de los datos introducidos en el campo <b>Objetivos científicos</b> del apartado <b>Datos generales</b> de la <b>Solicitud de Evaluación</b>. Acceda a este punto del menú para realizar las modificaciones necesarias."
+      },
+      {
+        "key": "objetivosCientificos",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Objetivos cientificos",
+          "disabled": true,
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10",
+          "expressionModelValue": "formState.memoria.peticionEvaluacion.objetivos"
+        }
+      }
+    ]
+  }
+]

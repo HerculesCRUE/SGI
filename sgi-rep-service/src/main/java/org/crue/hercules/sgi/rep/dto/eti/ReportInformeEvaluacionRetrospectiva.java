@@ -7,7 +7,7 @@ import org.crue.hercules.sgi.rep.dto.SgiReportDto;
  */
 public class ReportInformeEvaluacionRetrospectiva extends SgiReportDto {
   public ReportInformeEvaluacionRetrospectiva() {
-    this.setPath("report/eti/informeEvaluacionRetrospectiva.prpt");
+    this.setPath("rep-eti-evaluacion-retrospectiva-prpt");
     this.setName("informeEvaluacionRetrospectiva");
   }
 }

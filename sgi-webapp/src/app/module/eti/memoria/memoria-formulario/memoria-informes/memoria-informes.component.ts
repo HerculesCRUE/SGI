@@ -70,6 +70,8 @@ export class MemoriaInformesComponent extends FragmentComponent implements OnIni
         switch (property) {
           case 'version':
             return wrapper.value.memoria?.numReferencia + '_v' + wrapper.value.version;
+          case 'tipoEvaluacionVersion':
+            return wrapper.value.tipoEvaluacion?.nombre + wrapper.value.version;
           default:
             return wrapper.value[property];
         }

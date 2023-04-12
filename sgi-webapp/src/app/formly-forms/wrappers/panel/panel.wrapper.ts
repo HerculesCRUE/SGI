@@ -15,6 +15,7 @@ export class PanelWrapperComponent extends FieldWrapper implements OnInit {
   locked = false;
   changes = false;
   errors = false;
+  modified = false;
   private group: Group;
 
   readonly to: SgiFormlyTemplateOptions;
@@ -44,6 +45,7 @@ export class PanelWrapperComponent extends FieldWrapper implements OnInit {
     }
     this.locked = Boolean(this.to.locked);
     this.comments = Boolean(this.to.comentario);
+    this.modified = Boolean(this.to.modified);
     if (!this.comments && this.field.fieldGroup) {
       this.comments = this.hasComment(this.field.fieldGroup);
     }

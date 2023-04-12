@@ -1,4 +1,5 @@
 @import "~@angular/material/theming";
+@import "colors.scss";
 
 .mat-select-trigger {
   cursor: default;
@@ -8,17 +9,19 @@
     .mat-input-element {
       cursor: default;
     }
+
     .upload {
-      display:inline-block;
+      display: inline-block;
     }
   }
 
   .icon-wrapper {
     cursor: pointer;
-    color: rgba(0, 0, 0, 0.54);
+    color: map-get($sgi-foreground, icon);
+
     &.disabled {
       cursor: default;
-      color: rgba(0, 0, 0, 0.38);
+      color: $dark-disabled-text;
     }
   }
 }

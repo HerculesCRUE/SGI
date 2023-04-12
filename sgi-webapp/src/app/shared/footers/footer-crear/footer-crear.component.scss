@@ -3,13 +3,15 @@
 
 .separation {
   height: $footerHeight;
+
   &.footer {
     position: fixed;
     bottom: 0px;
     width: 100%;
-    box-shadow: inset 0px 14px 12px -12px map-get($palette-grey, 300);
+    box-shadow: inset 0px 14px 12px -12px map-get($sgi-custom-colors, divider);
     background: map-get($sgi-custom-colors, white);
   }
+
   .boton {
     height: 100%;
     padding-left: 5px;

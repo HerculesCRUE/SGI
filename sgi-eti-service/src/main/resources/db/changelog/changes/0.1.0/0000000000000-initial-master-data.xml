@@ -1,0 +1,3526 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000000-initial-master-data.xml">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="0000000000000-tipo_tarea">
+    <insert tableName="tipo_tarea">
+      <column name="id" valueNumeric="1" />
+      <column name="nombre" value="Diseño de proyecto y procedimientos" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_tarea">
+      <column name="id" valueNumeric="2" />
+      <column name="nombre" value="Eutanasia" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_tarea">
+      <column name="id" valueNumeric="3" />
+      <column name="nombre" value="Manipulación de animales" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-tipo_evaluacion">
+    <insert tableName="tipo_evaluacion">
+      <column name="id" valueNumeric="1" />
+      <column name="nombre" value="Retrospectiva" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_evaluacion">
+      <column name="id" valueNumeric="2" />
+      <column name="nombre" value="Memoria" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_evaluacion">
+      <column name="id" valueNumeric="3" />
+      <column name="nombre" value="Seguimiento anual" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_evaluacion">
+      <column name="id" valueNumeric="4" />
+      <column name="nombre" value="Seguimiento final" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-estado_retrospectiva">
+    <insert tableName="estado_retrospectiva">
+      <column name="id" valueNumeric="1" />
+      <column name="nombre" value="Pendiente" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="estado_retrospectiva">
+      <column name="id" valueNumeric="2" />
+      <column name="nombre" value="Completada" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="estado_retrospectiva">
+      <column name="id" valueNumeric="3" />
+      <column name="nombre" value="En secretaría" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="estado_retrospectiva">
+      <column name="id" valueNumeric="4" />
+      <column name="nombre" value="En evaluación" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="estado_retrospectiva">
+      <column name="id" valueNumeric="5" />
+      <column name="nombre" value="Fin evaluación" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-formacion_especifica">
+    <insert tableName="formacion_especifica">
+      <column name="id" valueNumeric="1" />
+      <column name="nombre" value="A: Cuidado de los animales" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="formacion_especifica">
+      <column name="id" valueNumeric="2" />
+      <column name="nombre" value="B: Eutanasia de los animales" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="formacion_especifica">
+      <column name="id" valueNumeric="3" />
+      <column name="nombre" value="C: Realización de los procedimientos" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="formacion_especifica">
+      <column name="id" valueNumeric="4" />
+      <column name="nombre" value="D: Diseño de los proyectos y procedimientos" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="formacion_especifica">
+      <column name="id" valueNumeric="5" />
+      <column name="nombre" value="E: Responsable de la supervisión &lt;&lt;in situ&gt;&gt; del bienestar y cuidado de los animales" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="formacion_especifica">
+      <column name="id" valueNumeric="6" />
+      <column name="nombre" value="F: Veterinario designado" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="formacion_especifica">
+      <column name="id" valueNumeric="7" />
+      <column name="nombre" value="G: Sin especificar" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="formacion_especifica">
+      <column name="id" valueNumeric="8" />
+      <column name="nombre" value="H: No requiere" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-formulario">
+    <insert tableName="formulario">
+      <column name="id" valueNumeric="1" />
+      <column name="nombre" value="M10" />
+      <column name="descripcion" value="Descripcion1" />
+    </insert>
+    <insert tableName="formulario">
+      <column name="id" valueNumeric="2" />
+      <column name="nombre" value="M20" />
+      <column name="descripcion" value="Descripcion2" />
+    </insert>
+    <insert tableName="formulario">
+      <column name="id" valueNumeric="3" />
+      <column name="nombre" value="M30" />
+      <column name="descripcion" value="Descripcion3" />
+    </insert>
+    <insert tableName="formulario">
+      <column name="id" valueNumeric="4" />
+      <column name="nombre" value="Seguimiento Anual" />
+      <column name="descripcion" value="Descripcion4" />
+    </insert>
+    <insert tableName="formulario">
+      <column name="id" valueNumeric="5" />
+      <column name="nombre" value="Seguimiento Final" />
+      <column name="descripcion" value="Descripcion5" />
+    </insert>
+    <insert tableName="formulario">
+      <column name="id" valueNumeric="6" />
+      <column name="nombre" value="Retrospectiva" />
+      <column name="descripcion" value="Descripcion6" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-comite">
+    <validCheckSum>8:96b7755324c5488a592ddb83b3d1606a</validCheckSum>
+    <insert tableName="comite">
+      <column name="id" valueNumeric="1" />
+      <column name="comite" value="CEISH" />
+      <column name="activo" valueBoolean="true" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M10')" />
+    </insert>
+    <insert tableName="comite">
+      <column name="id" valueNumeric="2" />
+      <column name="comite" value="CEEA" />
+      <column name="activo" valueBoolean="true" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M20')" />
+    </insert>
+    <insert tableName="comite">
+      <column name="id" valueNumeric="3" />
+      <column name="comite" value="CEIAB" />
+      <column name="activo" valueBoolean="true" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M30')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-dictamen">
+    <validCheckSum>8:3da58590c304463f8018bf0be2c9629d</validCheckSum>
+    <insert tableName="dictamen">
+      <column name="id" valueNumeric="1" />
+      <column name="nombre" value="Favorable" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from ${schemaPrefix}tipo_evaluacion where nombre='Memoria')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="dictamen">
+      <column name="id" valueNumeric="2" />
+      <column name="nombre" value="Favorable pendiente de revisión mínima" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from ${schemaPrefix}tipo_evaluacion where nombre='Memoria')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="dictamen">
+      <column name="id" valueNumeric="3" />
+      <column name="nombre" value="Pendiente de correcciones" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from ${schemaPrefix}tipo_evaluacion where nombre='Memoria')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="dictamen">
+      <column name="id" valueNumeric="4" />
+      <column name="nombre" value="No procede evaluar" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from ${schemaPrefix}tipo_evaluacion where nombre='Memoria')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="dictamen">
+      <column name="id" valueNumeric="5" />
+      <column name="nombre" value="Favorable" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from ${schemaPrefix}tipo_evaluacion where nombre='Seguimiento anual')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="dictamen">
+      <column name="id" valueNumeric="6" />
+      <column name="nombre" value="Solicitud de modificaciones" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from ${schemaPrefix}tipo_evaluacion where nombre='Seguimiento anual')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="dictamen">
+      <column name="id" valueNumeric="7" />
+      <column name="nombre" value="Favorable" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from ${schemaPrefix}tipo_evaluacion where nombre='Seguimiento final')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="dictamen">
+      <column name="id" valueNumeric="8" />
+      <column name="nombre" value="Solicitud de aclaraciones" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from ${schemaPrefix}tipo_evaluacion where nombre='Seguimiento final')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="dictamen">
+      <column name="id" valueNumeric="9" />
+      <column name="nombre" value="Favorable" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from ${schemaPrefix}tipo_evaluacion where nombre='Retrospectiva')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="dictamen">
+      <column name="id" valueNumeric="10" />
+      <column name="nombre" value="Desfavorable" />
+      <column name="tipo_evaluacion_id" valueComputed="(select id from ${schemaPrefix}tipo_evaluacion where nombre='Retrospectiva')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-tipo_convocatoria_reunion">
+    <insert tableName="tipo_convocatoria_reunion">
+      <column name="id" valueNumeric="1" />
+      <column name="nombre" value="Ordinaria" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_convocatoria_reunion">
+      <column name="id" valueNumeric="2" />
+      <column name="nombre" value="Extraordinaria" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_convocatoria_reunion">
+      <column name="id" valueNumeric="3" />
+      <column name="nombre" value="Seguimiento" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-cargo_comite">
+    <insert tableName="cargo_comite">
+      <column name="id" valueNumeric="1" />
+      <column name="nombre" value="PRESIDENTE" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="cargo_comite">
+      <column name="id" valueNumeric="2" />
+      <column name="nombre" value="VOCAL" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-tipo_estado_acta">
+    <insert tableName="tipo_estado_acta">
+      <column name="id" valueNumeric="1" />
+      <column name="nombre" value="En elaboración" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_acta">
+      <column name="id" valueNumeric="2" />
+      <column name="nombre" value="Finalizada" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-tipo_comentario">
+    <insert tableName="tipo_comentario">
+      <column name="id" valueNumeric="1" />
+      <column name="nombre" value="GESTOR" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_comentario">
+      <column name="id" valueNumeric="2" />
+      <column name="nombre" value="EVALUADOR" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-tipo_documento">
+    <validCheckSum>8:a637ec9e7707303de461709497609cb7</validCheckSum>
+    <!-- Seguimiento anual -->
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="1" />
+      <column name="nombre" value="Seguimiento Anual" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='Seguimiento Anual')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <!-- Seguimiento final -->
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="2" />
+      <column name="nombre" value="Seguimiento Final" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='Seguimiento Final')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <!-- Retrospectiva -->
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="3" />
+      <column name="nombre" value="Retrospectiva" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='Retrospectiva')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <!-- M10 -->
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="4" />
+      <column name="nombre" value="Documento de consentimiento" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M10')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="5" />
+      <column name="nombre" value="Documento de cesión de datos" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M10')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="6" />
+      <column name="nombre" value="Documento de autorización" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M10')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="7" />
+      <column name="nombre" value="Documento de aceptación de colaboración" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M10')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="8" />
+      <column name="nombre" value="Informe de la Comisión de Garantías" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M10')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="9" />
+      <column name="nombre" value="Acuerdo de transferencia de muestras" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M10')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="10" />
+      <column name="nombre" value="Documento de registro de tratamiento de datos" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M10')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="11" />
+      <column name="nombre" value="Documentación adicional" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M10')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <!-- M20 -->
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="12" />
+      <column name="nombre" value="Acreditaciones" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M20')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="13" />
+      <column name="nombre" value="Informe veterinario" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M20')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="14" />
+      <column name="nombre" value="Solicitud Razonada dirigida al Comité Habilitado y al Órgano Competente" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M20')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="15" />
+      <column name="nombre" value="Resumen Anónimo no técnico RNT" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M20')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="16" />
+      <column name="nombre" value="Documentación adicional" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M20')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <!-- M30 -->
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="17" />
+      <column name="nombre" value="Acreditaciones" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M30')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="18" />
+      <column name="nombre" value="Notificación de uso de Agentes biológicos" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M30')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="19" />
+      <column name="nombre" value="Seguro de responsabilidad" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M30')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="20" />
+      <column name="nombre" value="Protocolo de actuación" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M30')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="21" />
+      <column name="nombre" value="Documentación adicional" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M30')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueNumeric="22" />
+      <column name="nombre" value="Autorización utilización confinada OMG" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M30')" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-tipo_memoria">
+    <insert tableName="tipo_memoria">
+      <column name="id" valueNumeric="1" />
+      <column name="nombre" value="Nueva" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_memoria">
+      <column name="id" valueNumeric="2" />
+      <column name="nombre" value="Modificación" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_memoria">
+      <column name="id" valueNumeric="3" />
+      <column name="nombre" value="Ratificación" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-tipo_estado_memoria">
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="1" />
+      <column name="nombre" value="En elaboración" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="2" />
+      <column name="nombre" value="Completada" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="3" />
+      <column name="nombre" value="En secretaría" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="4" />
+      <column name="nombre" value="En secretaría revisión mínima" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="5" />
+      <column name="nombre" value="En evaluación" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="6" />
+      <column name="nombre" value="Favorable Pendiente de Modificaciones Mínimas" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="7" />
+      <column name="nombre" value="Pendiente de correcciones" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="8" />
+      <column name="nombre" value="No procede evaluar" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="9" />
+      <column name="nombre" value="Fin evaluación" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="10" />
+      <column name="nombre" value="Archivado" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="11" />
+      <column name="nombre" value="Completada seguimiento anual" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="12" />
+      <column name="nombre" value="En secretaría seguimiento anual" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="13" />
+      <column name="nombre" value="En evaluación seguimiento anual" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="14" />
+      <column name="nombre" value="Fin evaluación seguimiento anual" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="15" />
+      <column name="nombre" value="Solicitud modificación" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="16" />
+      <column name="nombre" value="Completada seguimiento final" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="17" />
+      <column name="nombre" value="En secretaría seguimiento final" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="18" />
+      <column name="nombre" value="En secretaría seguimiento final aclaraciones" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="19" />
+      <column name="nombre" value="En evaluación seguimiento final" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="20" />
+      <column name="nombre" value="Fin evaluación seguimiento final" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_estado_memoria">
+      <column name="id" valueNumeric="21" />
+      <column name="nombre" value="En aclaración seguimiento final" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-tipo_actividad">
+    <insert tableName="tipo_actividad">
+      <column name="id" valueNumeric="1" />
+      <column name="nombre" value="Proyecto de investigación" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_actividad">
+      <column name="id" valueNumeric="2" />
+      <column name="nombre" value="Práctica docente" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_actividad">
+      <column name="id" valueNumeric="3" />
+      <column name="nombre" value="Investigación tutelada" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-tipo_investigacion_tutelada">
+    <insert tableName="tipo_investigacion_tutelada">
+      <column name="id" valueNumeric="1" />
+      <column name="nombre" value="Tesis Doctoral" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_investigacion_tutelada">
+      <column name="id" valueNumeric="2" />
+      <column name="nombre" value="Trabajo Fin de Máster" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_investigacion_tutelada">
+      <column name="id" valueNumeric="3" />
+      <column name="nombre" value="Trabajo Fin de Grado" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-tipo_memoria_comite">
+    <validCheckSum>8:684c930517144aaac2142d50ebc05faf</validCheckSum>
+    <insert tableName="tipo_memoria_comite">
+      <column name="id" valueSequenceNext="tipo_memoria_comite_seq" />
+      <column name="comite_id" valueComputed="(select id from ${schemaPrefix}comite where comite='CEISH')" />
+      <column name="tipo_memoria_id" valueComputed="(select id from ${schemaPrefix}tipo_memoria where nombre='Nueva')" />
+    </insert>
+    <insert tableName="tipo_memoria_comite">
+      <column name="id" valueSequenceNext="tipo_memoria_comite_seq" />
+      <column name="comite_id" valueComputed="(select id from ${schemaPrefix}comite where comite='CEISH')" />
+      <column name="tipo_memoria_id" valueComputed="(select id from ${schemaPrefix}tipo_memoria where nombre='Modificación')" />
+    </insert>
+    <insert tableName="tipo_memoria_comite">
+      <column name="id" valueSequenceNext="tipo_memoria_comite_seq" />
+      <column name="comite_id" valueComputed="(select id from ${schemaPrefix}comite where comite='CEISH')" />
+      <column name="tipo_memoria_id" valueComputed="(select id from ${schemaPrefix}tipo_memoria where nombre='Ratificación')" />
+    </insert>
+    <insert tableName="tipo_memoria_comite">
+      <column name="id" valueSequenceNext="tipo_memoria_comite_seq" />
+      <column name="comite_id" valueComputed="(select id from ${schemaPrefix}comite where comite='CEEA')" />
+      <column name="tipo_memoria_id" valueComputed="(select id from ${schemaPrefix}tipo_memoria where nombre='Nueva')" />
+    </insert>
+    <insert tableName="tipo_memoria_comite">
+      <column name="id" valueSequenceNext="tipo_memoria_comite_seq" />
+      <column name="comite_id" valueComputed="(select id from ${schemaPrefix}comite where comite='CEEA')" />
+      <column name="tipo_memoria_id" valueComputed="(select id from ${schemaPrefix}tipo_memoria where nombre='Modificación')" />
+    </insert>
+    <insert tableName="tipo_memoria_comite">
+      <column name="id" valueSequenceNext="tipo_memoria_comite_seq" />
+      <column name="comite_id" valueComputed="(select id from ${schemaPrefix}comite where comite='CEIAB')" />
+      <column name="tipo_memoria_id" valueComputed="(select id from ${schemaPrefix}tipo_memoria where nombre='Nueva')" />
+    </insert>
+    <insert tableName="tipo_memoria_comite">
+      <column name="id" valueSequenceNext="tipo_memoria_comite_seq" />
+      <column name="comite_id" valueComputed="(select id from ${schemaPrefix}comite where comite='CEIAB')" />
+      <column name="tipo_memoria_id" valueComputed="(select id from ${schemaPrefix}tipo_memoria where nombre='Modificación')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-bloque">
+    <validCheckSum>8:b528185b014cd009ea339f41fe29d6c4</validCheckSum>
+    <!-- FORMULARIO M10 -->
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="VALOR SOCIAL Y JUSTIFICACIÓN" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M10')" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="CUALIFICACIÓN DEL EQUIPO INVESTIGADOR" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M10')" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="VALIDEZ CIENTÍFICA Y METODOLÓGICA" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M10')" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="ASPECTOS ÉTICOS ESPECÍFICOS" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M10')" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="CUMPLIMIENTO DE LA DOCUMENTACIÓN" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M10')" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- FORMULARIO M20 -->
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="VALOR SOCIAL Y JUSTIFICACIÓN" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M20')" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="CUALIFICACIÓN DEL EQUIPO INVESTIGADOR" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M20')" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="VALIDEZ CIENTÍFICA Y METODOLÓGICA" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M20')" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="ASPECTOS ÉTICOS ESPECÍFICOS" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M20')" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="CUMPLIMIENTO DE LA DOCUMENTACIÓN" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M20')" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- FORMULARIO M30 -->
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="VALOR SOCIAL Y JUSTIFICACIÓN" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M30')" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="CUALIFICACIÓN DEL EQUIPO INVESTIGADOR" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M30')" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="VALIDEZ CIENTÍFICA Y METODOLÓGICA" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M30')" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="ASPECTOS ÉTICOS ESPECÍFICOS" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M30')" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="CUMPLIMIENTO DE LA DOCUMENTACIÓN" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='M30')" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- FORMULARIO SEGUIMIENTO-ANUAL -->
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="SEGUIMIENTO_ANUAL" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='Seguimiento Anual')" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- FORMULARIO SEGUIMIENTO-FINAL -->
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="SEGUIMIENTO_FINAL" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='Seguimiento Final')" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- FORMULARIO RETROSPECTIVA -->
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="nombre" value="RETROSPECTIVA" />
+      <column name="formulario_id" valueComputed="(select id from ${schemaPrefix}formulario where nombre='Retrospectiva')" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-apartado">
+    <validCheckSum>8:81020fbfc2e5aaa4bc416721051fda6f</validCheckSum>
+    <!-- FORMULARIO M10 -->
+    <!--I. VALOR SOCIAL Y JUSTIFICACIÓN-->
+    <!-- 1.1  Valor social del proyecto -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Valor social del proyecto" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_1_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 1.2  Justificación del uso de seres humanos - apartado-->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Justificación del uso de seres humanos" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_1_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!--II. CUALIFICACIÓN DEL EQUIPO INVESTIGADOR -->
+    <!-- 2.1  Personal que llevará a cabo las tareas con seres humanos, sus muestras y/o sus datos-->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '2' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Personal que llevará a cabo las tareas con seres humanos, sus muestras y/o sus datos" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_2_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!--III. VALIDEZ CIENTÍFICA Y METODOLÓGICA -->
+    <!-- 3.1 Objetivos científicos del proyecto -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Objetivos científicos del proyecto" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_3_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.2 Diseño metodológico del proyecto -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Diseño metodológico del proyecto" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_3_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.3 Referencias de publicaciones científicas -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Referencias de publicaciones científicas" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_3_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.4 Intervenciones o pruebas en seres humanos -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Intervenciones o pruebas en seres humanos" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_3_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.4.1 Proceso de reclutamiento -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Proceso de reclutamiento" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Intervenciones o pruebas en seres humanos')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_3_4_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.4.2 Reclutamiento realizado por personal ajeno al equipo investigador -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Reclutamiento realizado por personal ajeno al equipo investigador" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Intervenciones o pruebas en seres humanos')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_3_4_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.4.3 Descripción de las intervenciones o pruebas -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Descripción de las intervenciones o pruebas" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Intervenciones o pruebas en seres humanos')" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_3_4_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.4.4 Incentivos para la participación -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Incentivos para la participación" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Intervenciones o pruebas en seres humanos')" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_3_4_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.5 Muestras biológicas de origen humano -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Muestras biológicas de origen humano" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="5" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_3_5.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.5.1  Origen de las muestra -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Origen de las muestras" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Muestras biológicas de origen humano')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_3_5_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.5.2  Destino de las muestras de origen humano -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Destino de las muestras de origen humano" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Muestras biológicas de origen humano')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_3_5_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.6 Datos de carácter personal -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Datos de carácter personal" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="6" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_3_6.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!--IV. ASPECTOS ÉTICOS ESPECÍFICOS -->
+    <!-- 4.1  Ponderación de los riesgos o molestias -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Ponderación de los riesgos o molestias" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.1.1  Tipo de riesgos o molestias -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Tipo de riesgos o molestias" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Ponderación de los riesgos o molestias')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_1_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.1.2  Valoración de los riesgos o molestias -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Valoración de los riesgos o molestias" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Ponderación de los riesgos o molestias')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_1_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.1.3  Minimización del riesgo o molestias superiores al mínimo -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Minimización del riesgo o molestias superiores al mínimo" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Ponderación de los riesgos o molestias')" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_1_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.1.4  Aseguramiento del daño -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Aseguramiento del daño" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Ponderación de los riesgos o molestias')" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_1_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2  Selección equitativa de la muestra -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Selección equitativa de la muestra" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.3  Protección de grupos vulnerables -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Protección de grupos vulnerables" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.4  Información y consentimiento -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Información y consentimiento" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.4.1  Tipo de consentimiento -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Tipo de consentimiento" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Información y consentimiento')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_4_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.4.2  Información obligatoria mínima -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Información obligatoria mínima" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Información y consentimiento')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_4_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.5  Estudios genéticos -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Estudios genéticos" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="5" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_5.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.5.1  Resultado del estudio genético -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Resultado del estudio genético" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Estudios genéticos')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_5_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.5.2  Consejo genético -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Consejo genético" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Estudios genéticos')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_5_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.5.3  No discriminación por motivos genéticos -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="No discriminación por motivos genéticos" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Estudios genéticos')" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_5_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.6  Estudiantes como sujetos de investigación -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Estudiantes como sujetos de investigación" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="6" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_6.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.6.1  Justificación del uso de estudiantes -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Justificación del uso de estudiantes" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Estudiantes como sujetos de investigación')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_6_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.6.2  Beneficio formativo para el estudiante -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Beneficio formativo para el estudiante" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Estudiantes como sujetos de investigación')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_6_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.6.3  Vinculación académica con el equipo investigador -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Vinculación académica con el equipo investigador" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Estudiantes como sujetos de investigación')" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_6_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.6.4  Incentivos académicos -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Incentivos académicos" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Estudiantes como sujetos de investigación')" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_6_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.6.5  Uso de tiempo lectivo -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Uso de tiempo lectivo" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Estudiantes como sujetos de investigación')" />
+      <column name="orden" valueNumeric="5" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_6_5.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.6.6  Actividades alternativas -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Actividades alternativas" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Estudiantes como sujetos de investigación')" />
+      <column name="orden" valueNumeric="6" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_6_6.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.6.7  Protección de la privacidad -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Protección de la privacidad" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Estudiantes como sujetos de investigación')" />
+      <column name="orden" valueNumeric="7" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_4_6_7.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!--V. CUMPLIMIENTO DE LA DOCUMENTACIÓN -->
+    <!-- 5.1  Documento de consentimiento -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Documento de consentimiento" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_5_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.2  Documento de cesión de datos -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Documento de cesión de datos" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_5_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.3  Documento de autorización -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Documento de autorización" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_5_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.4  Documento de aceptación de colaboración -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Documento de aceptación de colaboración" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_5_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.5  Informe de la comisión de garantías -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Informe de la Comisión de Garantías" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="5" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_5_5.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.6  Acuerdo de transferencia de muestras -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Acuerdo de transferencia de muestras" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="6" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_5_6.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.7  Documentación adicional -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Documentación adicional" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="7" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_5_7.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.8  Aclaraciones al comité -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M10'))" />
+      <column name="nombre" value="Aclaraciones al comité" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="8" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m10_apartado_5_8.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- FORMULARIO M20-->
+    <!--I. VALOR SOCIAL Y JUSTIFICACIÓN  -->
+    <!--1.1  Valor social del proyecto -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Valor social del proyecto" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_1_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 1.1.1 Fin específico del proyecto -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Fin específico del proyecto" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Valor social del proyecto' and bloque_id = (select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20')))" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_1_1_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!--1.2  Justificación del uso de animales - apartado -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Justificación del uso de animales" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_1_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 2.1  Personal que llevará a cabo las tareas con animales -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '2' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Personal que llevará a cabo las tareas animales" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_2_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.1 Objetivos científicos del proyecto -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Objetivos científicos del proyecto" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.2 Diseño metodológico del proyecto -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Diseño metodológico del proyecto" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.3 Título descriptivo -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Título descriptivo" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.4 Tipo de proyecto -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Tipo de proyecto" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.5 Lugar en el que se realizarán las intervenciones de los animales -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Lugar en el que se realizarán las intervenciones de los animales" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="5" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_5.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.6 Datos referentes a los animales de experimentación -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Datos referentes a los animales de experimentación" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="6" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_6.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.6.1 Definición -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Definición" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Datos referentes a los animales de experimentación')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_6_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.6.2 Animales modificados genéticamente -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Animales modificados genéticamente" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Datos referentes a los animales de experimentación')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_6_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.6.3 Animales protegidos o en peligro de extinción -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Animales protegidos o en peligro de extinción" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Datos referentes a los animales de experimentación')" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_6_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.6.4 Número de animales a utilizar -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Número de animales a utilizar" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Datos referentes a los animales de experimentación')" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_6_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.6.5 Periodo del proyecto durante el que se utilizarán los animales -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Periodo del proyecto durante el que se utilizarán los animales" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Datos referentes a los animales de experimentación')" />
+      <column name="orden" valueNumeric="5" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_6_5.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7 Proceso de experimentación al que va a ser sometido el animal -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Proceso de experimentación al que va a ser sometido el animal" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="7" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_7.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7.1 Intervenciones/procedimientos que se realizarán al animal -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Intervenciones/procedimientos que se realizarán al animal" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_7_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7.2 Duración del proceso de experimentación -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Duración del proceso de experimentación" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_7_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7.3 Referencias de publicaciones científicas -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Referencias de publicaciones científicas" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal')" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_7_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7.4 Intervenciones quirúrgicas -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Intervenciones quirúrgicas" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal')" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_7_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7.5 Analgesia -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Analgesia" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal')" />
+      <column name="orden" valueNumeric="5" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_7_5.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7.6 Anestesia -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Anestesia" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal')" />
+      <column name="orden" valueNumeric="6" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_7_6.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7.7 Administración de sustancias -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Administración de sustancias" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal')" />
+      <column name="orden" valueNumeric="7" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_7_7.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7.8 Agentes biológicos -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Agentes biológicos" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal')" />
+      <column name="orden" valueNumeric="8" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_7_8.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7.9 Administración de isótopos radiactivos -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Administración de isótopos radiactivos" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal')" />
+      <column name="orden" valueNumeric="9" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_7_9.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7.10 Extracción de sangre -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Extracción de sangre" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal')" />
+      <column name="orden" valueNumeric="10" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_7_10.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7.11 Privación de alimento y/o agua -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Privación de aliminto y/o agua" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal')" />
+      <column name="orden" valueNumeric="11" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_7_11.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7.12 Destino final -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Destino final" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal')" />
+      <column name="orden" valueNumeric="12" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_7_12.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7.13 Eutanasia -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Eutanasia" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal')" />
+      <column name="orden" valueNumeric="13" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_7_13.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7.14 Mantenimiento con vida -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Mantenimiento con vida" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal')" />
+      <column name="orden" valueNumeric="14" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_7_14.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7.15 Relación y protocolo de sustancias y agentes biológicos administradas incluidas anestesia y analgesia -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Relación y protocolo de sustancias y agentes biológicos administradas incluídas anestesia y analgesia" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Proceso de experimentación al que va a ser sometido el animal')" />
+      <column name="orden" valueNumeric="15" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_3_7_15.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.1 Reemplazo -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Reemplazo" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_4_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.1.1 Métodos alternativos -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Métodos alternativos" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Reemplazo')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_4_1_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.1.2 Fuentes consultadas para búsqueda de métodos alternativos -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Fuentes consultadas para búsqueda de métodos alternativos" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Reemplazo')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_4_1_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.1.3 Elección de la especie -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Elección de la especie" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Reemplazo')" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_4_1_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2 Refinamiento -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Refinamiento" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_4_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.1 Valoración de la severidad y medidas correctoras ante el dolor, sufrimiento o la angustia del animal -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Valoración de la severidad y medidas correctoras ante el dolor, sufrimiento o la angustia del animal" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Refinamiento')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_4_2_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.2 No aplicación de medidas correctoras -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="No aplicación de medidas correctoras" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Refinamiento')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_4_2_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.3 Severidad global -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Severidad global" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Refinamiento')" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_4_2_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.4 Protocolo de supervisión -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Protocolo de supervisión" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Refinamiento')" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_4_2_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.5 Criterios de punto final -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Criterios de punto final" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Refinamiento')" />
+      <column name="orden" valueNumeric="5" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_4_2_5.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.3 Reducción -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Reducción" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_4_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.3.1 Justificación del tamaño muestral y tratamiento estadístico -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Justificación del tamaño muestral y tratamiento estadístico" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Reducción')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_4_3_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.3.2 Reutilización -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Reutilización" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Reducción')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_4_3_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.3.3 Excepciones de reutilización -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Excepciones de reutilización" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Reducción')" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_4_3_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!--V. CUMPLIMIENTO DE LA DOCUMENTACIÓN -->
+    <!-- 5.1 Acreditaciones -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Acreditaciones" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_5_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.2 Informe veterinario -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Informe veterinario" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_5_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.3 Evaluación retrospectiva -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Evaluación retrospectiva" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_5_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.4 Situaciones especiales, excepciones o salvaguardias legales -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Situaciones especiales, excepcionales o salvaguardias legales" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_5_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.5 Resumen no técnico (RNT) -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Resumen no técnico (RNT)" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="5" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_5_5.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.6 Documentación adicional -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Documentación adicional" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="6" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_5_6.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.7 Aclaraciones al comité -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M20'))" />
+      <column name="nombre" value="Aclaraciones al comité" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="7" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m20_apartado_5_7.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+
+    <!-- FORMULARIO M30-->
+    <!--I. VALOR SOCIAL Y JUSTIFICACIÓN  -->
+    <!--1.1  Valor social del proyecto -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Valor social del proyecto" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_1_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 1.2  Justificación del uso de agentes biológicos, OMG, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanoparticulas -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Justificación del uso de agentes biológicos, OMG, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanoparticulas" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_1_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!--II. CUALIFICACIÓN EQUIPO INVESTIGADOR  -->
+    <!-- 2.1  Personal que llevará a cabo las tareas con agentes biológicos, OMG, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanoparticulas. -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '2' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Personal que llevará a cabo las tareas con agentes biológicos, OMG, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanoparticulas" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_2_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!--III. VALIDEZ CIENTÍFICA Y METODOLÓGICA  -->
+    <!-- 3.1 Objetivos científicos del proyecto -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Objetivos científicos del proyecto" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.2 Diseño metodológico del proyecto -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Diseño metodológico del proyecto" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.3 Referencias de publicaciones científicas -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Referencias de publicaciones científicas" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.4 Tipo de exposición -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Tipo de exposición" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.4.1  Exposición no intencionada o incidental -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Exposición no intencionada o incidental" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Tipo de exposición')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_4_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.4.2 Exposición deliberada -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Exposición deliberada" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Tipo de exposición')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_4_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.4.3 Uso confinado de OMG -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Uso confinado de OMG" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Tipo de exposición')" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_4_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.4.4 Sustancias químicas peligrosas -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Sustancias químicas peligrosas" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Tipo de exposición')" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_4_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.4.5 Sustancias radiactivas -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Sustancias radiactivas" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Tipo de exposición')" />
+      <column name="orden" valueNumeric="5" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_4_5.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.5 Datos referentes a los agentes biológicos, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Datos referentes a los agentes biológicos, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="5" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_5.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.5.1 Microorganismos/Parásitos -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Microorganismos/Parásitos" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Datos referentes a los agentes biológicos, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_5_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.5.2 Cultivos celulares -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Cultivos celulares" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Datos referentes a los agentes biológicos, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_5_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.5.3 Material biológico -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Material biológico" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Datos referentes a los agentes biológicos, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas')" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_5_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.5.4 Organismo modificado genéticamente -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Organismo modificado genéticamente" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Datos referentes a los agentes biológicos, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas')" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_5_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.5.5 Sustancias químicas peligrosas -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Sustancias químicas peligrosas" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Datos referentes a los agentes biológicos, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas')" />
+      <column name="orden" valueNumeric="5" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_5_5.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.5.6 Sustancias radiactivas, equipo radiológico, instalación radiactiva -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Sustancias radiactivas, equipo radiológico, instalación radiactiva" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Datos referentes a los agentes biológicos, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas')" />
+      <column name="orden" valueNumeric="6" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_5_6.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.6 Frecuencia y periodicidad de uso -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Frecuencia y periodicidad de uso" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="6" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_6.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 3.7 Trayectoria completa de los agentes biológicos, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Trayectoria completa de los agentes biológicos, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="7" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_3_7.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!--IV. ASPECTOS ÉTICOS ESPECÍFICOS  -->
+    <!-- 4.1 Evaluación del riesgo -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Evaluación del riesgo" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.1.1 Nivel de riesgo -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Nivel de riesgo" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Evaluación del riesgo')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_1_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.1.2 Características del riesgo de los agentes biológicos y/o material biológico, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Características del riesgo de los agentes biológicos y/o material biológico, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Evaluación del riesgo')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_1_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.1.3 Características del riesgo de los omg -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Características del riesgo de los OMG" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Evaluación del riesgo')" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_1_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.1.4 Efectos nocivos que puedan derivarse del uso de agentes, material biológico, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Efectos nocivos que puedan derivarse del uso de agentes, material biológico, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Evaluación del riesgo')" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_1_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.1.5 Tratamiento profiláctico disponible -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Tratamiento profiláctico disponible" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Evaluación del riesgo')" />
+      <column name="orden" valueNumeric="5" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_1_5.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2 Medidas técnicas de seguridad -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Medidas técnicas de seguridad" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.1 Lugar en el que se realizará el manejo de agentes biológicos, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Lugar en el que se realizará el manejo de agentes biológicos, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Medidas técnicas de seguridad')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_2_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.1.1 Laboratorio de la Universidad -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Laboratorio de la Universidad" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Lugar en el que se realizará el manejo de agentes biológicos, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_2_1_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.1.1.1 Medidas de contención -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Medidas de contención" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Laboratorio de la Universidad')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_2_1_1_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.1.1.2 Equipos de seguridad -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Equipos de seguridad" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Laboratorio de la Universidad')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_2_1_1_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.1.1.3 Buenas prácticas de laboratorio -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Buenas prácticas de laboratorio" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Laboratorio de la Universidad')" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_2_1_1_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.1.1.4 Instalaciones -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Instalaciones" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Laboratorio de la Universidad')" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_2_1_1_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.1.2 Otro centro o lugar ajeno a la Universidad  -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Otro centro o lugar ajeno a la Universidad" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Lugar en el que se realizará el manejo de agentes biológicos, OMG, Sustancias Químicas Peligrosas , Sustancias Radiactivas y/o Nanopartículas')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_2_1_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.2 Sustitución  -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Sustitución" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Medidas técnicas de seguridad')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_2_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.3 Reducción de riesgos  -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Reducción de riesgos" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Medidas técnicas de seguridad')" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_2_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.3.1 Control de la exposición  -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Control de la exposición" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Reducción de riesgos')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_2_3_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.3.2 Medidas de reducción de la exposición  -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Medidas de reducción de la exposición" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Reducción de riesgos')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_2_3_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.3.3 Medidas de protección  -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Medidas de protección" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Reducción de riesgos')" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_2_3_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.3.4 Métodos de descontaminación/desinfección  -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Métodos de descontaminación/desinfección" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Reducción de riesgos')" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_2_3_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.2.3.5 Gestión de residuos  -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Gestión de residuos" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Reducción de riesgos')" />
+      <column name="orden" valueNumeric="5" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_2_3_5.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.3 Vigilancia y protección de la salud  -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Vigilancia y protección de la salud" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.3.1 Vacunación  -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Vacunación" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Vigilancia y protección de la salud')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_3_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 4.3.2 Medidas especiales de protección  -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Medidas especiales de protección" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Vigilancia y protección de la salud')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_4_3_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!--V. CUMPLIMIENTO DE LA DOCUMENTACIÓN -->
+
+    <!-- 5.1 Acreditaciones -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Acreditaciones" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_5_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.2 Comunicación de uso de agentes biológicos, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanopartículas y autorización para llevar a cabo utilización confinada de OMG -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Comunicación de uso de agentes biológicos, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanopartículas y autorización para llevar a cabo utilización confinada de OMG" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_5_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.2.1 Comunicación de uso de agentes biológicos, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanopartículas -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Comunicación de uso de agentes biológicos, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanopartículas" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Comunicación de uso de agentes biológicos, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanopartículas y autorización para llevar a cabo utilización confinada de OMG')" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_5_2_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.2.2 Autorización para llevar a cabo utilización confinada de OMG -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Autorización para llevar a cabo utilización confinada de OMG" />
+      <column name="padre_id" valueComputed="(select id from ${schemaPrefix}apartado where nombre = 'Comunicación de uso de agentes biológicos, Sustancias Químicas Peligrosas, Sustancias Radiactivas y/o Nanopartículas y autorización para llevar a cabo utilización confinada de OMG')" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_5_2_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.3 Seguro de accidentes y responsabilidad civil -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Seguro de accidentes y responsabilidad civil" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_5_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.4 Protocolo de actuación en caso de accidente biológico -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Protocolo de actuación en caso de accidente biológico" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_5_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.5 Documentación adicional -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Documentación adicional" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="5" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_5_5.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- 5.6 Aclaraciones al comité -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'M30'))" />
+      <column name="nombre" value="Aclaraciones al comité" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="6" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/m30_apartado_5_6.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- FORMULARIO SEGUIMIENTO-ANUAL -->
+    <!-- Descripcion y resumen -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'Seguimiento Anual'))" />
+      <column name="nombre" value="Descripción y resumen" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/seguimiento_anual.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- FORMULARIO SEGUIMIENTO-FINAL -->
+    <!-- Fecha de inicio de la actividad investigadora -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'Seguimiento Final'))" />
+      <column name="nombre" value="Fecha de inicio de la actividad investigadora" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/seguimiento_final_apartado_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- Equipo investigador -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'Seguimiento Final'))" />
+      <column name="nombre" value="Equipo investigador" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/seguimiento_final_apartado_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- Diseño metodológico -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'Seguimiento Final'))" />
+      <column name="nombre" value="Diseño metodológico" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/seguimiento_final_apartado_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- Aspectos éticos específicos -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'Seguimiento Final'))" />
+      <column name="nombre" value="Aspectos éticos específicos" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/seguimiento_final_apartado_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- Aclaraciones -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'Seguimiento Final'))" />
+      <column name="nombre" value="Aclaraciones" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="5" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/seguimiento_final_apartado_5.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- RETROSPECTIVA -->
+    <!-- Objetivos -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'Retrospectiva'))" />
+      <column name="nombre" value="Objetivos" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/retrospectiva_apartado_1.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- Supervisión -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'Retrospectiva'))" />
+      <column name="nombre" value="Supervisión" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/retrospectiva_apartado_2.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- Severidad -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'Retrospectiva'))" />
+      <column name="nombre" value="Severidad" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/retrospectiva_apartado_3.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+
+    <!-- Reducción, reemplazo y refinamiento -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id" valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where nombre = 'Retrospectiva'))" />
+      <column name="nombre" value="Reducción, reemplazo y refinamiento" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="apartado">
+      <column name="esquema" valueClobFile="clob/retrospectiva_apartado_4.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}apartado)" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-configuracion">
+    <insert tableName="configuracion">
+      <column name="id" valueSequenceNext="configuracion_seq" />
+      <column name="meses_archivada_inactivo" valueNumeric="6" />
+      <column name="dias_archivada_pendiente_correcciones" valueNumeric="45" />
+      <column name="dias_limite_evaluador" valueNumeric="3" />
+      <column name="meses_aviso_proyecto_ceea" valueNumeric="2" />
+      <column name="meses_aviso_proyecto_ceish" valueNumeric="1" />
+      <column name="meses_aviso_proyecto_ceiab" valueNumeric="1" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-formly">
+    <insert tableName="formly">
+      <column name="id" valueSequenceNext="formly_seq" />
+      <column name="nombre" value="CHECKLIST" />
+      <column name="version" valueNumeric="1" />
+      <column name="esquema" value="{}" />
+    </insert>
+    <update tableName="formly">
+      <column name="esquema" valueClobFile="clob/checklist.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueComputed="(select max(id) from ${schemaPrefix}formly)" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+</databaseChangeLog>

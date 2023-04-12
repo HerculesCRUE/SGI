@@ -19,6 +19,9 @@ import { DialogContentComponent } from './dialog-content/dialog-content.componen
 import { DialogFooterComponent } from './dialog-footer/dialog-footer.component';
 import { DialogHeaderComponent } from './dialog-header/dialog-header.component';
 import { FormAutocompleteOffDirective } from './directives/form-autocomplete-off.directive';
+import { NotFoundErrorDirective } from './directives/not-found-error.directive';
+import { SgiTooltipDirective } from './directives/sgi-tooltip.directive';
+import { ErrorMessageComponent } from './error-message/error-message.component';
 import { ExportDialogComponent } from './export-dialog/export-dialog.component';
 import { FieldInfoComponent } from './field-info/field-info.component';
 import { SgiFileUploadComponent } from './file-upload/file-upload.component';
@@ -29,6 +32,8 @@ import { FragmentComponent } from './fragment/fragment.component';
 import { IconChangesComponent } from './icon-changes/icon-changes.component';
 import { IconErrorsComponent } from './icon-errors/icon-errors.component';
 import { IconProblemsComponent } from './icon-problems/icon-problems.component';
+import { InfoMessageComponent } from './info-message/info-message.component';
+import { InputEmailsComponent } from './input-emails/input-emails.component';
 import { LuxonDatePipe } from './luxon-date-pipe';
 import { MenuContentComponent, MenuContentFooter } from './menu-content/menu-content.component';
 import { MenuGroupComponent } from './menu-group/menu-group.component';
@@ -36,6 +41,7 @@ import { MenuItemExternalComponent } from './menu-item-external/menu-item-extern
 import { MenuItemComponent } from './menu-item/menu-item.component';
 import { MenuSubItemExternalComponent } from './menu-subitem-external/menu-subitem-external.component';
 import { MenuSubItemComponent } from './menu-subitem/menu-subitem.component';
+import { NotFoundErrorComponent } from './not-found-error/not-found-error.component';
 import { PalabraClaveComponent } from './palabra-clave/palabra-clave.component';
 import { ProblemPanelComponent } from './problem-panel/problem-panel.component';
 import { RootComponent } from './root/root.component';
@@ -44,8 +50,6 @@ import { SelectEmailRecipientsComponent } from './select-email-recipients/select
 import { SelectEntityComponent } from './select-entity/select-entity.component';
 import { SelectEnumComponent } from './select-enum/select-enum.component';
 import { SelectComponent } from './select/select.component';
-import { InfoMessageComponent } from './info-message/info-message.component';
-import { ErrorMessageComponent } from './error-message/error-message.component';
 
 @NgModule({
   declarations: [
@@ -90,7 +94,11 @@ import { ErrorMessageComponent } from './error-message/error-message.component';
     ActionEmptyFooterComponent,
     SelectEmailRecipientsComponent,
     InfoMessageComponent,
-    ErrorMessageComponent
+    ErrorMessageComponent,
+    SgiTooltipDirective,
+    InputEmailsComponent,
+    NotFoundErrorComponent,
+    NotFoundErrorDirective
   ],
   imports: [
     CommonModule,
@@ -139,7 +147,11 @@ import { ErrorMessageComponent } from './error-message/error-message.component';
     DialogContentComponent,
     DialogHeaderComponent,
     InfoMessageComponent,
-    ErrorMessageComponent
+    ErrorMessageComponent,
+    SgiTooltipDirective,
+    InputEmailsComponent,
+    NotFoundErrorComponent,
+    NotFoundErrorDirective
   ]
 })
 export class SharedModule { }

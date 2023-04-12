@@ -210,6 +210,7 @@ export class SolicitudPublicActionService extends ActionService {
     );
 
     this.requisitosConvocatoriaRrhh = new SolicitudRrhhRequisitosConvocatoriaPublicFragment(
+      logger,
       this.data?.solicitud?.id,
       this.data?.publicKey,
       this.data?.solicitud.convocatoriaId,

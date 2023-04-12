@@ -24,4 +24,5 @@ public class MemoriaEvaluadaDto implements Serializable {
   private String dictamen;
   private Integer version;
   private String tipoEvaluacion;
+  private String titulo;
 }

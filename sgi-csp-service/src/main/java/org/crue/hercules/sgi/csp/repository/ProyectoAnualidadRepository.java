@@ -1,7 +1,6 @@
 package org.crue.hercules.sgi.csp.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;

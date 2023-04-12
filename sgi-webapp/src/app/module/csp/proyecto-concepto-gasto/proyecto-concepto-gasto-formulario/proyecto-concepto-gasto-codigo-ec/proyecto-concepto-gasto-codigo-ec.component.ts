@@ -150,6 +150,8 @@ export class ProyectoConceptoGastoCodigoEcComponent extends FragmentComponent im
       proyectoConceptoGastoCodigoEc: codigoEconomicoListado.proyectoCodigoEconomico?.value,
       convocatoriaConceptoGastoCodigoEc: codigoEconomicoListado.convocatoriaCodigoEconomico,
       proyectoConceptoGastoCodigoEcsTabla,
+      proyectoConceptoGastoCodigoEcsProyecto: this.fillConceptoGastoProyectoConceptoGastoCodigoEc(this.actionService.proyectoConceptosGastoCodigosEc),
+      proyectoConceptoGasto: this.actionService.proyectoConceptoGasto,
       permitido: this.actionService.permitido,
       editModal: true,
       readonly: this.formPart.readonly,
@@ -194,6 +196,8 @@ export class ProyectoConceptoGastoCodigoEcComponent extends FragmentComponent im
       proyectoConceptoGastoCodigoEc,
       convocatoriaConceptoGastoCodigoEc: undefined,
       proyectoConceptoGastoCodigoEcsTabla,
+      proyectoConceptoGastoCodigoEcsProyecto: this.fillConceptoGastoProyectoConceptoGastoCodigoEc(this.actionService.proyectoConceptosGastoCodigosEc),
+      proyectoConceptoGasto: this.actionService.proyectoConceptoGasto,
       permitido,
       editModal: false,
       readonly: this.formPart.readonly
@@ -237,6 +241,14 @@ export class ProyectoConceptoGastoCodigoEcComponent extends FragmentComponent im
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
+  private fillConceptoGastoProyectoConceptoGastoCodigoEc(convocatoriaConceptoGastoCodigosEc: IProyectoConceptoGastoCodigoEc[]): IProyectoConceptoGastoCodigoEc[] {
+    const proyectoConceptoGastos = this.actionService.proyectoConceptosGastoPermitidos.concat(this.actionService.proyectoConceptosGastoNoPermitidos);
+    return convocatoriaConceptoGastoCodigosEc.map(c => {
+      c.proyectoConceptoGasto = proyectoConceptoGastos.find(convocatoriaConceptoGasto => convocatoriaConceptoGasto.id === c.proyectoConceptoGasto.id);
+      return c;
+    });
   }
 
 }

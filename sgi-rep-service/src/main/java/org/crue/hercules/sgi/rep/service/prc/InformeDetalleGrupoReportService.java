@@ -6,12 +6,13 @@ import javax.swing.table.DefaultTableModel;
 
 import org.apache.commons.collections4.ListUtils;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
-import org.crue.hercules.sgi.rep.dto.eti.ReportInformeDetalleGrupo;
 import org.crue.hercules.sgi.rep.dto.prc.DetalleGrupoInvestigacionOutput;
+import org.crue.hercules.sgi.rep.dto.prc.ReportInformeDetalleGrupo;
 import org.crue.hercules.sgi.rep.dto.prc.DetalleGrupoInvestigacionOutput.ResumenCosteIndirectoOutput;
 import org.crue.hercules.sgi.rep.dto.prc.DetalleGrupoInvestigacionOutput.ResumenSexenioOutput;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.crue.hercules.sgi.rep.service.SgiReportService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiPrcService;
 import org.pentaho.reporting.engine.classic.core.Band;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
@@ -36,9 +37,10 @@ public class InformeDetalleGrupoReportService extends SgiReportService {
 
   private final SgiApiPrcService sgiApiPrcService;
 
-  public InformeDetalleGrupoReportService(SgiConfigProperties sgiConfigProperties, SgiApiPrcService sgiApiPrcService) {
+  public InformeDetalleGrupoReportService(SgiConfigProperties sgiConfigProperties, SgiApiConfService sgiApiConfService,
+      SgiApiPrcService sgiApiPrcService) {
 
-    super(sgiConfigProperties);
+    super(sgiConfigProperties, sgiApiConfService);
     this.sgiApiPrcService = sgiApiPrcService;
   }
 
@@ -62,6 +64,9 @@ public class InformeDetalleGrupoReportService extends SgiReportService {
 
     columnsData.add("precioPuntoCostesIndirectos");
     elementsRow.add(detalleGrupo.getPrecioPuntoCostesIndirectos());
+
+    columnsData.add("resourcesBaseURL");
+    elementsRow.add(getRepResourcesBaseURL());
 
     rowsData.add(elementsRow);
 

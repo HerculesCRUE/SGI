@@ -1,3 +1,5 @@
+@import "colors.scss";
+
 .mat-option.missing {
   text-decoration: line-through;
 }
@@ -5,7 +7,7 @@
 :host {
   .icon-wrapper {
     margin-top: -0.2em;
-    color: rgba(0, 0, 0, 0.54);
+    color: map-get($sgi-foreground, icon);
     .mat-icon-button {
       height: 1.5em;
       width: 1.5em;

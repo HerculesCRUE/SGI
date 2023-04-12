@@ -9,15 +9,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
-
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.eti.ApartadoOutput;
 import org.crue.hercules.sgi.rep.dto.eti.ElementOutput;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -62,6 +62,8 @@ public class SgiFormlyService {
   private static final String MULTICHECKBOX_TYPE = "multicheckbox";
   private static final String ANSWER_YES = "Sí";
   private static final String ANSWER_NO = "No";
+  private static final String INFO_DIV = "info-div";
+  private static final String WRAPPERS = "wrappers";
 
   /**
    * Instancia un SgiFormlyService
@@ -126,6 +128,11 @@ public class SgiFormlyService {
 
   private void evaluateFieldGroupTemplateProperty(List<ElementOutput> elementos,
       LinkedHashMap<String, Object> jsonFieldItem) {
+    Object wrappers = jsonFieldItem.get(WRAPPERS);
+    if (wrappers instanceof JSONArray && ((JSONArray) wrappers).contains(INFO_DIV)) {
+      return;
+    }
+
     ElementOutput elementOutput = evaluateTemplateField(jsonFieldItem);
     if (null != elementOutput) {
       elementos.add(elementOutput);

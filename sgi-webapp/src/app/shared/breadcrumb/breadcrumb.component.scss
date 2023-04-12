@@ -2,9 +2,9 @@
 @import "vars.scss";
 
 $background-color: map-get($sgi-custom-colors, bg);
-$border-bottom-color: map-get($palette-grey, 300);
+$border-bottom-color: map-get($sgi-custom-colors, divider);
 $breadcrumbTextColor: $dark-disabled-text;
-$breadcrumbTextColorActive: map-get($palette-primary, 400);
+$breadcrumbTextColorActive: map-get($palette-primary, $primary-color);
 
 .breadcrumbComponent {
   background-color: $background-color;
@@ -13,14 +13,16 @@ $breadcrumbTextColorActive: map-get($palette-primary, 400);
   max-height: $height;
   min-height: $height;
   box-shadow: inset 0px 14px 12px -12px $border-bottom-color;
-  border-bottom: solid #{$borderWidth} $dark-dividers;
+  border-bottom: solid #{$borderWidth} map-get($sgi-foreground, divider);
+
   .migas {
     padding: 0px 15px 0px 15px;
+
     .breadcrumb {
       .breadcrumb__divider {
         color: var(--breadcrumbTextColor);
+
         .chevron {
-          transform: rotate(90deg);
           margin-top: 5px;
           color: $breadcrumbTextColorActive;
         }

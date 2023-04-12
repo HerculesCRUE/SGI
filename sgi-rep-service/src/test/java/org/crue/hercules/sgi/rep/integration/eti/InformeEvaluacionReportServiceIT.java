@@ -19,7 +19,7 @@ class InformeEvaluacionReportServiceIT extends BaseIT {
   @Test
   void testPdfInformeEvaluacion() throws Exception {
     // given: data for report
-    String reportPath = "report/eti/informeEvaluacion.prpt";
+    String reportPath = "rep-eti-evaluacion-prpt";
     String reportName = "reportInformeEvaluacion_";
     String outputJson = "eti/informeEvaluacion.json";
 

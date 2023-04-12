@@ -53,11 +53,19 @@
     <!-- Dictamen -->
     <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
       [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field class="input-form">
-        <mat-label>{{'eti.dictamen' | translate}}</mat-label>
-        <sgi-select-entity formControlName="dictamen" [options]="dictamenes$ | async" required>
-        </sgi-select-entity>
-      </mat-form-field>
+      <div fxLayout="row">
+        <mat-form-field class="input-form">
+          <mat-label>{{'eti.dictamen' | translate}}</mat-label>
+          <sgi-select-entity formControlName="dictamen" [options]="dictamenes$ | async" required>
+          </sgi-select-entity>
+        </mat-form-field>
+        <div fxLayoutAlign="center center">
+          <button mat-icon-button color="primary" (click)="visualizarInforme(this.formPart.evaluacion?.id)"
+            [disabled]="!enableBtnVisualizarInforme()">
+            <mat-icon>picture_as_pdf</mat-icon>
+          </button>
+        </div>
+      </div>
     </div>
 
   </form>

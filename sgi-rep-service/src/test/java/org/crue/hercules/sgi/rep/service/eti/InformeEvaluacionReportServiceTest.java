@@ -6,9 +6,11 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.OutputType;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeEvaluacion;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ class InformeEvaluacionReportServiceTest extends BaseReportEtiServiceTest {
 
   @Autowired
   private SgiConfigProperties sgiConfigProperties;
+
+  @Mock
+  private SgiApiConfService sgiApiConfService;
 
   @MockBean
   private ConfiguracionService configuracionService;
@@ -49,7 +54,7 @@ class InformeEvaluacionReportServiceTest extends BaseReportEtiServiceTest {
   @BeforeEach
   public void setUp() throws Exception {
     informeEvaluacionReportService = new InformeEvaluacionReportService(sgiConfigProperties,
-        personaService, bloqueService,
+        sgiApiConfService, personaService, bloqueService,
         apartadoService, sgiFormlyService, respuestaService, evaluacionService, configuracionService);
   }
 
@@ -74,6 +79,12 @@ class InformeEvaluacionReportServiceTest extends BaseReportEtiServiceTest {
     BDDMockito.given(configuracionService.findConfiguracion()).willReturn((generarMockConfiguracion()));
     BDDMockito.given(
         evaluacionService.findByEvaluacionIdGestor(idEvaluacion)).willReturn((generarMockComentarios()));
+    BDDMockito.given(bloqueService.getBloqueComentariosGenerales())
+        .willReturn(generarMockBloque(idEvaluacion, 0L));
+
+    BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
+        .willReturn(getResource("eti/prpt/rep-eti-evaluacion.prpt"));
+    BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
 
     ReportInformeEvaluacion report = new ReportInformeEvaluacion();
     report.setOutputType(OutputType.PDF);

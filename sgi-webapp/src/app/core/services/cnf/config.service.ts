@@ -47,6 +47,15 @@ export class ConfigService extends _ConfigServiceMixinBase implements TimeZoneCo
     );
   }
 
+  updateValue(key: string, value: string): Observable<IConfigValue> {
+    return this.http.patch<IConfigValueResponse>(
+      `${this.endpointUrl}/${key}`,
+      value
+    ).pipe(
+      map((response => CONFIG_VALUE_RESPONSE_CONVERTER.toTarget(response)))
+    );
+  }
+
   getTimeZone(): Observable<string> {
     return this.http.get(`${this.endpointUrl}/time-zone`, { responseType: 'text' });
   }

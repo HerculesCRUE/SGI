@@ -1,0 +1,48 @@
+[
+  {
+    "key": "ap4_2_3_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.3.3 Medidas de protección"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p> ¿Se contemplan medidas seguras para la manipulación de los agentes biológicos, organismos modificados genéticamente, sustancias químicas peligrosas, sustancias radiactivas y/o nanopartículas?</p>"
+      },
+      {
+        "key": "medidasSeguras",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Especificar las medidas o justificar por qué no se contemplan en caso negativo:"
+      },
+      {
+        "key": "especificarLimitar",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Explica:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

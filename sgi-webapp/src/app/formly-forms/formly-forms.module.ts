@@ -6,8 +6,6 @@ import { FormlyModule } from '@ngx-formly/core';
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
 import { TranslateModule } from '@ngx-translate/core';
-import { TableTypeRepetible } from './types/table-type-repetible.component';
-import { TableType } from './types/table-type.component';
 import { TipoValorSocialComponent } from './types/tipo-valor-social.component';
 import { requiredChecked } from './validators/utils.validator';
 import { InfoDivWrapperComponent } from './wrappers/info-div/info-div.wrapper';
@@ -17,8 +15,6 @@ import { TitleDivWrapperComponent } from './wrappers/title-div/title-div.wrapper
 
 @NgModule({
   declarations: [
-    TableType,
-    TableTypeRepetible,
     PanelWrapperComponent,
     TitleDivWrapperComponent,
     SubtitleDivWrapperComponent,
@@ -34,14 +30,6 @@ import { TitleDivWrapperComponent } from './wrappers/title-div/title-div.wrapper
     FormlyMatDatepickerModule,
     FormlyModule.forChild({
       types: [
-        {
-          name: 'table',
-          component: TableType
-        },
-        {
-          name: 'table-repetible',
-          component: TableTypeRepetible
-        },
         {
           name: 'tipo-valor-social',
           component: TipoValorSocialComponent,
@@ -76,8 +64,6 @@ import { TitleDivWrapperComponent } from './wrappers/title-div/title-div.wrapper
     FormlyMaterialModule
   ],
   exports: [
-    TableType,
-    TableTypeRepetible,
     FormlyMatDatepickerModule,
     FormlyModule,
     FormlyMaterialModule

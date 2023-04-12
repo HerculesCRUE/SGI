@@ -44,7 +44,7 @@ export class SelectEnumComponent extends SelectCommonComponent<string> {
 
     // Override default display with
     this.displayWith = (option) => {
-      return this.translateService.instant(this.enumMap.get(option));
+      return !!option ? this.translateService.instant(this.enumMap.get(option)) : '';
     };
   }
 

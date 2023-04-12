@@ -20,6 +20,7 @@ import {
 import {
   EvaluacionListadoAnteriorMemoriaComponent,
 } from '../evaluacion-formulario/evaluacion-listado-anterior-memoria/evaluacion-listado-anterior-memoria.component';
+import { BloqueApartadoPipe } from '../shared/pipes/bloque-apartado.pipe';
 import { EvaluacionEvaluacionComponent } from './evaluacion-evaluacion/evaluacion-evaluacion.component';
 
 @NgModule({

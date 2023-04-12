@@ -1,4 +1,7 @@
 <sgi-fragment title="{{'eti.memoria.formulario' | translate}}" class="memoria-formulario">
+
+  <sgi-comentarios-generales-formly [comentarios]="comentariosGenerales"></sgi-comentarios-generales-formly>
+
   <mat-horizontal-stepper [linear]="true" labelPosition="bottom" (selectionChange)="onStepChange($event)">
     <ng-container *ngFor="let block of blocks; let step_index = index; let last = last;">
       <mat-step [stepControl]="block.formlyData.formGroup">

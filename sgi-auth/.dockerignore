@@ -4,3 +4,4 @@
 # Exceptions
 !pom.xml
 !broker-saml-mappers/target/*.jar
+!realm/sgi-realm.json

@@ -46,7 +46,7 @@ export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemor
 
   constructor(
     private readonly comiteService: ComiteService,
-    actionService: MemoriaActionService,
+    public actionService: MemoriaActionService,
     private readonly translate: TranslateService
   ) {
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);

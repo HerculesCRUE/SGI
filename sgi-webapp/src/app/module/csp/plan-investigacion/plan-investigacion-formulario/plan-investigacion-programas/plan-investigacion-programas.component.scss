@@ -4,7 +4,7 @@
   .programa {
     .arbol {
       padding: 10px;
-      border: 1px solid map-get($palette-grey, 300);
+      border: 1px solid map-get($sgi-custom-colors, divider);
       min-height: 275px;
 
       .mat-tree-node {

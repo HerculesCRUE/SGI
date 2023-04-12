@@ -4,16 +4,19 @@
   .area {
     .arbol {
       padding: 10px;
-      border: 1px solid map-get($palette-grey, 300);
+      border: 1px solid map-get($sgi-custom-colors, divider);
       min-height: 275px;
+
       .mat-tree-node {
         button {
           font-weight: 400;
         }
       }
+
       .arbol-invisible {
         display: none;
       }
+
       .arbol-tree ul,
       .arbol-tree li {
         margin-top: 0;
@@ -21,10 +24,12 @@
         list-style-type: none;
       }
     }
+
     .visualizacion {
       h3 {
         font-weight: bold;
       }
+
       background: map-get($sgi-custom-colors, bg);
       padding: 30px;
     }

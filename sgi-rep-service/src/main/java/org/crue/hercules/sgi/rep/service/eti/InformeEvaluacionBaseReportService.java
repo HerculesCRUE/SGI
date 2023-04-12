@@ -15,6 +15,7 @@ import org.crue.hercules.sgi.rep.dto.eti.EvaluadorDto;
 import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.crue.hercules.sgi.rep.service.SgiReportService;
+import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
 import org.pentaho.reporting.engine.classic.core.TableDataFactory;
@@ -35,10 +36,11 @@ public abstract class InformeEvaluacionBaseReportService extends SgiReportServic
   private final EvaluacionService evaluacionService;
   private final SgiApiSgpService personaService;
 
-  protected InformeEvaluacionBaseReportService(SgiConfigProperties sgiConfigProperties, SgiApiSgpService personaService,
+  protected InformeEvaluacionBaseReportService(SgiConfigProperties sgiConfigProperties,
+      SgiApiConfService sgiApiConfService, SgiApiSgpService personaService,
       EvaluacionService evaluacionService) {
 
-    super(sgiConfigProperties);
+    super(sgiConfigProperties, sgiApiConfService);
     this.personaService = personaService;
     this.evaluacionService = evaluacionService;
   }
@@ -70,6 +72,7 @@ public abstract class InformeEvaluacionBaseReportService extends SgiReportServic
   protected void addColumnAndRowDataInvestigador(String personaRef, List<Object> columnsData,
       List<Object> elementsRow) {
     columnsData.add("nombreInvestigador");
+    columnsData.add("articuloInvestigador");
     addRowDataInvestigador(personaRef, elementsRow);
   }
 
@@ -77,8 +80,12 @@ public abstract class InformeEvaluacionBaseReportService extends SgiReportServic
     try {
       PersonaDto persona = personaService.findById(personaRef);
       elementsRow.add(persona.getNombre() + " " + persona.getApellidos());
+      String investigadorMasculino = ApplicationContextSupport.getMessage("investigador.masculino");
+      String investigadorFemenino = ApplicationContextSupport.getMessage("investigador.femenino");
+      elementsRow.add(persona.getSexo().getId().equals("V") ? investigadorMasculino : investigadorFemenino);
     } catch (Exception e) {
       elementsRow.add(getErrorMessageToReport(e));
+      elementsRow.add(ApplicationContextSupport.getMessage("investigador.masculinoFemenino"));
     }
   }
 
@@ -86,6 +93,9 @@ public abstract class InformeEvaluacionBaseReportService extends SgiReportServic
       Collection<Object> elementsRow) {
     columnsData.add("tituloProyecto");
     elementsRow.add(evaluacion.getMemoria().getPeticionEvaluacion().getTitulo());
+
+    columnsData.add("referenciaProyecto");
+    elementsRow.add(evaluacion.getMemoria().getPeticionEvaluacion().getCodigo());
 
     columnsData.add("comite");
     elementsRow.add(evaluacion.getMemoria().getComite().getComite());

@@ -124,6 +124,20 @@ public abstract class BaseRestTemplateService<T extends BaseRestDto> {
     return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, responseType).getBody();
   }
 
+  protected T findFromURI(URI uri, HttpHeaders httpHeaders, ParameterizedTypeReference<T> responseType) {
+
+    HttpEntity<T> httpEntity = new HttpEntityBuilder<T>().withHeaders(httpHeaders).withCurrentUserAuthorization()
+        .build();
+
+    return exchangeAsObject(uri.toString(), httpEntity, responseType);
+
+  }
+
+  protected T exchangeAsObject(String uri, HttpEntity<T> httpEntity,
+      ParameterizedTypeReference<T> responseType) {
+    return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, responseType).getBody();
+  }
+
   private Integer getPageNumber(Pageable paging) {
     Integer index = 0;
     try {

@@ -1,7 +1,5 @@
 package org.crue.hercules.sgi.eti.repository;
 
-import java.util.List;
-
 import org.crue.hercules.sgi.eti.model.Apartado;
 import org.crue.hercules.sgi.eti.model.Bloque;
 import org.springframework.data.domain.Page;
@@ -37,13 +35,5 @@ public interface ApartadoRepository extends JpaRepository<Apartado, Long>, JpaSp
    * @return el listado de entidades {@link Apartado} paginadas y filtradas.
    */
   Page<Apartado> findByPadreId(Long id, Pageable pageable);
-
-  /**
-   * Obtiene el último Apartado del bloque {@link Bloque}.
-   * 
-   * @param idBloque Id del formulario
-   * @return el último {@link Apartado} del formulario
-   */
-  List<Apartado> findFirst2ByBloqueIdOrderByOrdenDesc(Long idBloque);
 
 }

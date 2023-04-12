@@ -20,7 +20,7 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { from, Observable, of } from 'rxjs';
+import { forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
 import { EvaluacionFormularioActionService } from '../../evaluacion-formulario/evaluacion-formulario.action.service';
 
@@ -90,7 +90,7 @@ function sortByOrden(nodes: NodeApartado[]): NodeApartado[] {
 })
 export class ComentarioModalComponent extends DialogFormComponent<ComentarioModalData> implements OnInit {
 
-  apartado$: Observable<IBloque[]>;
+  bloques$: Observable<IBloque[]>;
   evaluaciones$: Observable<IEvaluacion[]>;
   treeControl = new NestedTreeControl<NodeApartado>(node => node.childs);
   dataSource = new MatTreeNestedDataSource<NodeApartado>();
@@ -201,14 +201,17 @@ export class ComentarioModalComponent extends DialogFormComponent<ComentarioModa
    * Carga todos los bloques de la aplicación
    */
   private loadBloques(evaluacion: IEvaluacion): void {
-    this.apartado$ = this.formularioService.getBloques(resolveFormularioByTipoEvaluacionAndComite
-      (evaluacion?.tipoEvaluacion?.id, evaluacion?.memoria?.comite)).pipe(
-        map(res => res.items),
-        catchError(error => {
-          this.processError(error);
-          return of([]);
-        })
-      );
+    this.bloques$ = forkJoin({
+      bloquesFormulario: this.formularioService.getBloques(resolveFormularioByTipoEvaluacionAndComite
+        (evaluacion?.tipoEvaluacion?.id, evaluacion?.memoria?.comite)),
+      bloqueComentariosGenerales: this.bloqueService.getBloqueComentariosGenerales()
+    }).pipe(
+      map(({ bloquesFormulario, bloqueComentariosGenerales }) => bloquesFormulario.items.concat([bloqueComentariosGenerales])),
+      catchError(error => {
+        this.processError(error);
+        return of([]);
+      })
+    );
   }
 
   /**
@@ -333,6 +336,10 @@ export class ComentarioModalComponent extends DialogFormComponent<ComentarioModa
 
   displayerMemoria(evaluacion: IEvaluacion): string {
     return evaluacion.memoria?.numReferencia;
+  }
+
+  displayerBloque(bloque: IBloque): string {
+    return bloque.orden + ' ' + bloque.nombre;
   }
 
 }

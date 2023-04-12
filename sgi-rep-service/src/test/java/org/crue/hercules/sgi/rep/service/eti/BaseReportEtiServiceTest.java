@@ -23,6 +23,7 @@ import org.crue.hercules.sgi.rep.dto.eti.PeticionEvaluacionDto.EstadoFinanciacio
 import org.crue.hercules.sgi.rep.dto.eti.RespuestaDto;
 import org.crue.hercules.sgi.rep.dto.eti.TipoActividadDto;
 import org.crue.hercules.sgi.rep.dto.eti.TipoConvocatoriaReunionDto;
+import org.crue.hercules.sgi.rep.dto.eti.TipoEstadoMemoriaDto;
 import org.crue.hercules.sgi.rep.dto.eti.TipoEvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.TipoInvestigacionTuteladaDto;
 import org.crue.hercules.sgi.rep.dto.eti.TipoMemoriaDto;
@@ -121,6 +122,8 @@ abstract class BaseReportEtiServiceTest extends BaseReportServiceTest {
         .fechaEnvioSecretaria(Instant.now())
         .version(1)
         .activo(Boolean.TRUE)
+        .estadoActual(TipoEstadoMemoriaDto.builder().activo(true).id(1L)
+            .build())
         .build();
   }
 

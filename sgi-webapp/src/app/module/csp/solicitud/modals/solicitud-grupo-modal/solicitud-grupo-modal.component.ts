@@ -13,8 +13,9 @@ import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { NGXLogger } from 'ngx-logger';
+import { Observable, of } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../../csp-route-names';
 
 const GRUPO_FECHA_INICIO_KEY = marker('label.fecha-inicio');
@@ -41,6 +42,7 @@ export class SolicitudGrupoModalComponent extends DialogActionComponent<ISolicit
   msgParamGrupoEntity = {};
 
   constructor(
+    private readonly logger: NGXLogger,
     matDialogRef: MatDialogRef<SolicitudGrupoModalComponent>,
     @Inject(MAT_DIALOG_DATA) data: ISolicitudGrupo,
     private readonly translate: TranslateService,
@@ -88,6 +90,10 @@ export class SolicitudGrupoModalComponent extends DialogActionComponent<ISolicit
     const solicitudGrupoNew = this.getValue();
 
     return this.vinculacionService.findByPersonaId(solicitudGrupoNew.solicitud.solicitante.id).pipe(
+      catchError((err) => {
+        this.logger.error(err);
+        return of(null);
+      }),
       switchMap(vinculacion => this.grupoService.getNextCodigo(vinculacion ? vinculacion.departamento.id : SGI_DEP)),
       switchMap(codigoGenerated => {
         solicitudGrupoNew.grupo.codigo = codigoGenerated;

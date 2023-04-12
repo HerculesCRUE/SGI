@@ -1,17 +1,21 @@
 @import "~@angular/material/theming";
+@import "colors.scss";
 
 :host {
   .icon-wrapper {
-    color: rgba(0, 0, 0, 0.54);
+    color: map-get($sgi-foreground, icon);
     margin-top: -0.2em;
+
     &.disabled {
-      color: rgba(0, 0, 0, 0.38);
+      color: $dark-disabled-text;
     }
+
     .mat-icon-button {
       height: 1.5em;
       width: 1.5em;
       font: inherit;
       vertical-align: baseline;
+
       .mat-icon {
         font-size: 1.4em;
         width: 1em;
@@ -23,9 +27,9 @@
 }
 
 .page {
-    border-top-width: 1px;
-    border-top-style: solid;
-    border-top-color: rgba(0, 0, 0, 0.12);
-    color: rgba(0, 0, 0, 0.54);
-    font-size: 12px;
+  border-top-width: 1px;
+  border-top-style: solid;
+  border-top-color: $dark-dividers;
+  color: map-get($sgi-foreground, icon);
+  font-size: 12px;
 }

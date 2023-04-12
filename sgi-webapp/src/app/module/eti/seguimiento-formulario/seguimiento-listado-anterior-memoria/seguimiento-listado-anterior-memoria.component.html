@@ -2,7 +2,7 @@
 <div>
   <h2>{{'title.eti.seguimiento.datos-memoria.evaluaciones-anteriores' | translate}}</h2>
   <div class="mat-elevation-z4">
-    <table mat-table [dataSource]="evaluaciones$ | async" matSort matSortActive="memoria.numReferencia">
+    <table mat-table [dataSource]="evaluaciones$ | async" matSort matSortActive="version">
       <!-- NumReferencia Column -->
       <ng-container matColumnDef="memoria.numReferencia">
         <th mat-header-cell *matHeaderCellDef>

@@ -41,6 +41,21 @@ public class BloqueService extends BaseRestTemplateService<BloqueDto> {
     return result;
   }
 
+  public BloqueDto getBloqueComentariosGenerales() {
+    BloqueDto result = null;
+    try {
+      URI uri = UriComponentsBuilder.fromUriString(getUrlBase() + getUrlApi() + "/comentarios-generales").build(false)
+          .toUri();
+      result = findFromURI(uri, new HttpHeaders(), new ParameterizedTypeReference<BloqueDto>() {
+      });
+
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      throw new GetDataReportException();
+    }
+    return result;
+  }
+
   @Override
   protected String getUrlApi() {
     return URL_API;

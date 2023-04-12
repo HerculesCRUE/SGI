@@ -319,6 +319,10 @@ export class SolicitudRrhhSolitanteFragment extends FormFragment<ISolicitudSolic
     }
 
     return this.personaService.findById(id).pipe(
+      catchError((err) => {
+        this.logger.error(err);
+        return of({ id } as IPersona);
+      }),
       switchMap((solicitante: IPersona) => {
         if (!!!solicitante?.id) {
           return of(solicitante);
@@ -343,6 +347,10 @@ export class SolicitudRrhhSolitanteFragment extends FormFragment<ISolicitudSolic
         solicitante.datosPersonales = datosPersonales;
         this.solicitanteForm = solicitante;
         return solicitante;
+      }),
+      catchError((err) => {
+        this.logger.error(err);
+        return of(solicitante);
       }),
       tap(datosSolicitante => {
         if (!!!datosSolicitante) {

@@ -68,9 +68,12 @@ class ProyectoConceptoGastoServiceImplTest extends BaseServiceTest {
   void create_WithFechaInicioAfterFechaFin_ThrowsIllegalArgumentException() {
     Long proyectoId = 1L;
     Proyecto proyecto = this.buildMockProyecto(proyectoId, Instant.now(), Instant.now().plusSeconds(36000000));
-    ConceptoGasto conceptoGasto = this.buildMockConceptoGasto(null, "testing");
+    ConceptoGasto conceptoGasto = this.buildMockConceptoGasto(1L, "testing");
     ProyectoConceptoGasto proyectoConceptoGasto = this.buildMockProyectoConceptoGasto(null, proyectoId, conceptoGasto,
         Instant.now().plusSeconds(46000000), null);
+
+    BDDMockito.given(this.conceptoGastoRepository.findById(conceptoGasto.getId()))
+        .willReturn(Optional.of(conceptoGasto));
 
     BDDMockito.given(this.proyectoRepository.findById(proyectoConceptoGasto.getProyectoId()))
         .willReturn(Optional.of(proyecto));
@@ -94,9 +97,12 @@ class ProyectoConceptoGastoServiceImplTest extends BaseServiceTest {
   void update_WithFechaInicioAfterFechaFin_ThrowsIllegalArgumentException() {
     Long proyectoId = 1L;
     Proyecto proyecto = this.buildMockProyecto(proyectoId, Instant.now(), Instant.now().plusSeconds(36000000));
-    ConceptoGasto conceptoGasto = this.buildMockConceptoGasto(null, "testing");
+    ConceptoGasto conceptoGasto = this.buildMockConceptoGasto(1L, "testing");
     ProyectoConceptoGasto proyectoConceptoGasto = this.buildMockProyectoConceptoGasto(1L, proyectoId, conceptoGasto,
         Instant.now().plusSeconds(46000000), null);
+
+    BDDMockito.given(this.conceptoGastoRepository.findById(conceptoGasto.getId()))
+        .willReturn(Optional.of(conceptoGasto));
 
     BDDMockito.given(this.proyectoRepository.findById(proyectoConceptoGasto.getProyectoId()))
         .willReturn(Optional.of(proyecto));
@@ -164,6 +170,7 @@ class ProyectoConceptoGastoServiceImplTest extends BaseServiceTest {
     return ConceptoGasto.builder()
         .id(id)
         .nombre(nombre)
+        .activo(true)
         .build();
   }
 

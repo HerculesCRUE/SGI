@@ -1,0 +1,9 @@
+<mat-chip-list #chipList [placeholder]="placeholder" selectable="false">
+  <mat-chip *ngFor="let email of value" selectable="false" removable="true" [disabled]="disabled"
+    (removed)="_remove(email)">
+    {{email}}
+    <mat-icon matChipRemove *ngIf="!disabled">cancel</mat-icon>
+  </mat-chip>
+  <input #emailsInput [formControl]="emailsInputCtrl" [matChipInputFor]="chipList" (matChipInputTokenEnd)="_add($event)"
+    placeholder="{{'label.select-email-recipients.add' | translate}}">
+</mat-chip-list>

@@ -1,28 +1,30 @@
-:host{
+@import "colors.scss";
+
+:host {
   .footer-row-total {
     font-weight: bold;
-    
+
     .mat-column-totalGastosCaption {
       padding-right: 20px;
       text-align: right;
     }
-    
+
     .mat-column-importeADeducir {
-      background-color: #f3f6f9;
+      background-color: map-get($sgi-custom-colors, bg);
     }
 
     .mat-column-totalIngresosCaption {
       padding-right: 20px;
       text-align: right;
     }
-    
+
     .mat-column-importeARepartir {
-      background-color: #f3f6f9;
+      background-color: map-get($sgi-custom-colors, bg);
     }
   }
 
   .mat-row.selected {
-    background: #f5f5f5;
+    background-color: map-get($palette-grey, 100);
   }
 
   .reparto-gastos {
@@ -38,12 +40,13 @@
   }
 
   .reparto-resultado {
-      text-align: center;
+    text-align: center;
+
     h2 {
       font-weight: bold;
 
       span {
-        background-color: #f3f6f9;
+        background-color: map-get($sgi-custom-colors, bg);
         margin-left: 20px;
       }
     }

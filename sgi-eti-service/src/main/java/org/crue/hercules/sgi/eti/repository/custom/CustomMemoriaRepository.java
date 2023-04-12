@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.eti.repository.custom;
 import java.util.List;
 
 import org.crue.hercules.sgi.eti.dto.MemoriaPeticionEvaluacion;
+import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
@@ -58,4 +59,14 @@ public interface CustomMemoriaRepository {
   Page<MemoriaPeticionEvaluacion> findAllMemoriasEvaluaciones(Specification<Memoria> specs, Pageable pageable,
       String personaRefConsulta);
 
+  /**
+   * Recupera las memorias de una petición evaluación que pueden ser modificadas
+   * 
+   * @param idComite             identificador del {@link Comite}
+   * @param idPeticionEvaluacion identificador de la {@link PeticionEvaluacion}
+   * @param pageable             datos paginación
+   * @return lista paginada de {@link Memoria}
+   */
+  public Page<Memoria> findAllMemoriasPeticionEvaluacionModificables(Long idComite, Long idPeticionEvaluacion,
+      Pageable pageable);
 }

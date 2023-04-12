@@ -145,7 +145,7 @@ export class GrupoEquipoInvestigacionComponent extends FragmentComponent impleme
       selectedEntidades: this.dataSource.data.map(element => element.value),
       fechaInicioMin: this.actionService.grupo.fechaInicio,
       fechaFinMax: this.actionService.grupo.fechaFin,
-      dedicacionMinimaGrupo: this.formPart.configuracion.dedicacionMinimaGrupo ?? 0,
+      dedicacionMinimaGrupo: this.getDedicacionMinima(),
       grupo: this.actionService.grupo
     };
 
@@ -215,4 +215,13 @@ export class GrupoEquipoInvestigacionComponent extends FragmentComponent impleme
       )
     );
   }
+
+  /**
+   * Recupera la dedicacion minima de la configuracion y si no esta definada o esta en 0 la decicacion minima sera 1
+   * @returns la dedicacion minima a un grupo
+   */
+  private getDedicacionMinima(): number {
+    return !!this.formPart.configuracion.dedicacionMinimaGrupo ? this.formPart.configuracion.dedicacionMinimaGrupo : 1;
+  }
+
 }

@@ -1,7 +1,9 @@
 package org.crue.hercules.sgi.eti.service;
 
 import org.crue.hercules.sgi.eti.exceptions.FormularioNotFoundException;
+import org.crue.hercules.sgi.eti.exceptions.MemoriaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Formulario;
+import org.crue.hercules.sgi.eti.model.Memoria;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,18 +14,18 @@ public interface FormularioService {
   /**
    * Guardar {@link Formulario}.
    *
-   * @param Formulario la entidad {@link Formulario} a guardar.
+   * @param formulario la entidad {@link Formulario} a guardar.
    * @return la entidad {@link Formulario} persistida.
    */
-  Formulario create(Formulario Formulario);
+  Formulario create(Formulario formulario);
 
   /**
    * Actualizar {@link Formulario}.
    *
-   * @param Formulario la entidad {@link Formulario} a actualizar.
+   * @param formulario la entidad {@link Formulario} a actualizar.
    * @return la entidad {@link Formulario} persistida.
    */
-  Formulario update(Formulario Formulario);
+  Formulario update(Formulario formulario);
 
   /**
    * Obtener todas las entidades {@link Formulario} paginadas y/o filtradas.
@@ -62,5 +64,16 @@ public interface FormularioService {
    * @return Formulario
    */
   Formulario findByMemoriaId(Long idMemoria);
+
+  /**
+   * Actualiza el estado de la memoria o de la retrospectiva al estado final
+   * correspondiente al tipo de formulario completado.
+   *
+   * @param memoriaId        Identificador de la {@link Memoria}.
+   * @param tipoFormularioId Identificador {@link Formulario.Tipo}
+   * @throws MemoriaNotFoundException Si no existe ningún {@link Memoria} con ese
+   *                                  id.
+   */
+  void completado(Long memoriaId, Long tipoFormularioId) throws MemoriaNotFoundException;
 
 }

@@ -1,0 +1,131 @@
+[
+  {
+    "key": "ap4_2_3_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.3.5 Gestión de residuos"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Con respecto a la gestión de residuos biológicos, organismos modificados genéticamente, químicos y radiactivos, ¿conoce, aplica y tiene a su disposición el <a href='https://www.um.es/web/acti/contenido/servicios/radioproteccion-residuos/normas' target='_blank'>'Manual de Gestión de Residuos Peligrosos, Biológicos y Radiactivos de la Universidad'</a>?</p>"
+      },
+      {
+        "key": "manualGestionResiduos",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>¿Dispone de registro como unidad productora de residuos peligrosos y biológicos en la Universidad?</p>"
+      },
+      {
+        "key": "productoraResiduosPeligrosos",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>¿Se contempla gestión externa de residuos peligrosos o biológicos?</p>"
+      },
+      {
+        "key": "gestionResiduos",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Especificar gestión externa o justificar en caso positivo",
+        "hideExpression": "!model.gestionResiduos || model.gestionResiduos === 'no'"
+      },
+      {
+        "key": "residuosGenerar",
+        "type": "multicheckbox",
+        "hideExpression": "!model.gestionResiduos || model.gestionResiduos === 'no'",
+        "templateOptions": {
+          "label": "Cuáles",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "biosanitarios",
+              "label": "Residuos biosanitarios"
+            },
+            {
+              "value": "quimicos",
+              "label": "Residuos de origen químico"
+            },
+            {
+              "value": "radiactivos",
+              "label": "Residuos radiactivos"
+            },
+            {
+              "value": "animales",
+              "label": "Residuos de animales de experimentación"
+            },
+            {
+              "value": "otros",
+              "label": "Otros. Especificar"
+            }
+          ]
+        }
+      },
+      {
+        "key": "otrasTexto",
+        "type": "textarea",
+        "hideExpression": "model.gestionResiduos === 'no' || (!model.residuosGenerar || !model.residuosGenerar.find((c) => c === 'otros'))",
+        "templateOptions": {
+          "placeholder": "Otros. Especificar",
+          "label": "Otros. Especificar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Un residuo peligroso es el que presenta una o varias de las siguientes características de peligrosidad: explosivo, cancerígeno, comburente, corrosivo, inflamable, infeccioso, irritante, tóxico, nocivo, mutagénico y/o ecotóxico. Si un residuo no presenta alguna de las anteriores características, no será considerado residuo peligroso y, por tanto, su gestión se realizará junto al resto de residuos urbanos.<br><br>Dentro de los residuos peligrosos que se producen en los laboratorios de docencia y de investigación de la Universidad destacan los residuos de origen químico, residuos biosanitarios del grupo III o biológicos, residuos radiactivos y residuos de animales de experimentación <strong>(SANDACH)</strong>.<br><br>La gestión de los residuos peligrosos de la Universidad se realiza a través de la Sección de Radioprotección y Residuos del ACTI con una empresa de gestión externa.</p>"
+      }
+    ]
+  }
+]
