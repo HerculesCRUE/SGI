@@ -100,7 +100,6 @@ public class EquipoTrabajoRepositoryTest extends BaseRepositoryTest {
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
     peticionEvaluacion.setCodigo("Codigo");
     peticionEvaluacion.setDisMetodologico("DiseñoMetodologico");
-    peticionEvaluacion.setExterno(Boolean.FALSE);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);

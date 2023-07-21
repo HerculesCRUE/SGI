@@ -1,12 +1,13 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ITipoEnlace } from '@core/models/csp/tipos-configuracion';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { CspSharedModule } from '../../shared/csp-shared.module';
@@ -22,6 +23,7 @@ describe('FuenteFinanciacionModalComponent', () => {
         FuenteFinanciacionModalComponent
       ],
       imports: [
+        CspSharedModule,
         BrowserAnimationsModule,
         MaterialDesignModule,
         HttpClientTestingModule,
@@ -36,6 +38,7 @@ describe('FuenteFinanciacionModalComponent', () => {
       providers: [
         { provide: MatDialogRef, useValue: TestUtils.buildDialogActionMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: {} as ITipoEnlace },
+        SgiAuthService
       ]
     })
       .compileComponents();

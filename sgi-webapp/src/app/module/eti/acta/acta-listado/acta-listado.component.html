@@ -127,29 +127,32 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let acta;let i=index;">
           <ng-container *sgiHasAnyAuthorityForAnyUO="['ETI-ACT-E','ETI-ACT-INV-ER','ETI-ACT-ER']">
-            <a *ngIf="!isFinalizada(acta)" mat-button [routerLink]="[acta.id]" matTooltip="{{'btn.edit' | translate}}">
-              <mat-icon color="primary">border_color</mat-icon>
+            <a *ngIf="!isFinalizada(acta)" mat-icon-button [routerLink]="[acta.id]" color="primary"
+              matTooltip="{{'btn.edit' | translate}}">
+              <mat-icon>border_color</mat-icon>
             </a>
-            <a *ngIf="isFinalizada(acta)" mat-button [routerLink]="[acta.id]" matTooltip="{{'btn.view' | translate}}">
-              <mat-icon color="primary">visibility</mat-icon>
+            <a *ngIf="isFinalizada(acta)" mat-icon-button [routerLink]="[acta.id]" color="primary"
+              matTooltip="{{'btn.view' | translate}}">
+              <mat-icon>visibility</mat-icon>
             </a>
           </ng-container>
           <ng-container>
-            <button mat-button matTooltip="{{'btn.show.file' | translate}}" (click)="visualizarInforme(acta)">
-              <mat-icon color="primary">picture_as_pdf</mat-icon>
+            <button mat-icon-button matTooltip="{{'btn.show.file' | translate}}" (click)="visualizarInforme(acta)"
+              color="primary">
+              <mat-icon>picture_as_pdf</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthorityForAnyUO="'ETI-ACT-FIN'">
-            <button *ngIf="hasFinalizarActa(acta)" mat-button (click)="finishActa(acta.id)"
+            <button *ngIf="hasFinalizarActa(acta)" mat-icon-button (click)="finishActa(acta.id)" color="primary"
               matTooltip="{{'eti.acta.finalizar' | translate}}">
-              <mat-icon color="primary">https</mat-icon>
+              <mat-icon>https</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthorityForAnyUO="'ETI-ACT-FIN'">
-            <button *ngIf="acta.transaccionRef!== null && blockchainEnable" mat-button
+            <button *ngIf="acta.transaccionRef!== null && blockchainEnable" mat-icon-button color="primary"
               (click)="confirmarRegistroBlockchain(acta.id)"
               matTooltip="{{'eti.acta.confirmar-blockchain' | translate}}">
-              <mat-icon color="primary">fact_check</mat-icon>
+              <mat-icon>fact_check</mat-icon>
             </button>
           </ng-container>
         </td>

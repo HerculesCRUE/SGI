@@ -32,7 +32,6 @@ class SgiReportServiceTest extends BaseReportServiceTest {
     sgiReportService = new SgiReportService(sgiConfigProperties, sgiApiConfService);
   }
 
-  @ParameterizedTest
   @ValueSource(strings = { "PDF", "RTF", "XLS", "XLSX", "CSV", "HTML" })
   void getDynamicReport_ReturnsResource(String outputType) throws Exception {
     // given: data for report

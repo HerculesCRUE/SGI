@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
@@ -11,7 +12,7 @@ import { ISolicitudPresupuestoReportOptions, SolicitudProyectoPresupuestoListado
 const SOLICITUD_PROYECTO_PRESUPUESTO_KEY = marker('csp.solicitud-proyecto-presupuesto.titulo');
 const REPORT_TITLE_KEY = marker('csp.solicitud-proyecto-presupuesto.title-informe');
 
-export interface ISolicitudProyectoPresupuetoModalData {
+export interface ISolicitudProyectoPresupuetoModalData extends IBaseExportModalData {
   solicitudId: number;
 }
 
@@ -24,6 +25,14 @@ export class SolicitudProyectoPresupuestoListadoExportModalComponent extends Bas
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
+  }
+
+  get TOTAL_REG_EXP_EXCEL() {
+    return this.modalData.totalRegistrosExportacionExcel;
+  }
+
+  get LIMITE_REG_EXP_EXCEL() {
+    return this.modalData.limiteRegistrosExportacionExcel;
   }
 
   constructor(

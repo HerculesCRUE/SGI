@@ -7,9 +7,11 @@ import { ActivatedRoute, Data } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
+import { CspSharedModule } from '../../../shared/csp-shared.module';
 import { SOLICITUD_PROYECTO_SOCIO_DATA_KEY } from '../../solicitud-proyecto-socio-data.resolver';
 import { ISolicitudProyectoSocioData, SolicitudProyectoSocioActionService } from '../../solicitud-proyecto-socio.action.service';
 import { SolicitudProyectoSocioDatosGeneralesComponent } from './solicitud-proyecto-socio-datos-generales.component';
@@ -33,6 +35,7 @@ describe('SolicitudProyectoSocioDatosGeneralesComponent', () => {
         SolicitudProyectoSocioDatosGeneralesComponent
       ],
       imports: [
+        CspSharedModule,
         TestUtils.getIdiomas(),
         MaterialDesignModule,
         BrowserAnimationsModule,
@@ -47,7 +50,8 @@ describe('SolicitudProyectoSocioDatosGeneralesComponent', () => {
       ],
       providers: [
         SolicitudProyectoSocioActionService,
-        { provide: ActivatedRoute, useValue: routeMock }
+        { provide: ActivatedRoute, useValue: routeMock },
+        SgiAuthService
       ],
     })
       .compileComponents();

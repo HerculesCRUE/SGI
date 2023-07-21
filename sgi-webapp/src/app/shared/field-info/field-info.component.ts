@@ -39,5 +39,15 @@ export class FieldInfoComponent {
   // tslint:disable-next-line: variable-name
   private _color: ThemePalette = 'primary';
 
+  @Input()
+  get icon(): string {
+    return this._icon;
+  }
+  set icon(value: string) {
+    this._icon = value;
+  }
+  // tslint:disable-next-line: variable-name
+  private _icon = 'info';
+
   constructor() { }
 }

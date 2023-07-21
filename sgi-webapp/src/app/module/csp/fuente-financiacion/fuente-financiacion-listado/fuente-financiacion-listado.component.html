@@ -17,8 +17,8 @@
       <div class="col">
         <mat-form-field class="input-form">
           <mat-label>{{'csp.fuente-financiacion.ambito-geografico' | translate}}</mat-label>
-          <sgi-select-entity [options]="ambitosGeograficos$ | async" formControlName="ambitoGeografico">
-          </sgi-select-entity>
+          <sgi-select-tipo-ambito-geografico formControlName="ambitoGeografico" extended="false">
+          </sgi-select-tipo-ambito-geografico>
         </mat-form-field>
       </div>
 
@@ -26,7 +26,8 @@
       <div class="col">
         <mat-form-field class="input-form">
           <mat-label>{{'csp.fuente-financiacion.origen' | translate}}</mat-label>
-          <sgi-select-entity formControlName="origen" [options]="origenes$ | async"></sgi-select-entity>
+          <sgi-select-tipo-origen-fuente-financiacion formControlName="origen" extended="false">
+          </sgi-select-tipo-origen-fuente-financiacion>
         </mat-form-field>
       </div>
 
@@ -116,21 +117,21 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let fuenteFinanciacion">
           <ng-container *sgiHasAuthority="'CSP-FNT-E'">
-            <button *ngIf="fuenteFinanciacion.activo" mat-button matTooltip="{{'btn.edit' | translate}}"
-              (click)="openModal(fuenteFinanciacion)">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" *ngIf="fuenteFinanciacion.activo" mat-icon-button
+              matTooltip="{{'btn.edit' | translate}}" (click)="openModal(fuenteFinanciacion)">
+              <mat-icon>border_color</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'CSP-FNT-B'">
-            <button *ngIf="fuenteFinanciacion.activo" mat-button matTooltip="{{'btn.delete' | translate}}"
-              (click)="deactivateFuenteFinanciacion(fuenteFinanciacion)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" *ngIf="fuenteFinanciacion.activo" mat-icon-button
+              matTooltip="{{'btn.delete' | translate}}" (click)="deactivateFuenteFinanciacion(fuenteFinanciacion)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'CSP-FNT-R'">
-            <button *ngIf="!fuenteFinanciacion.activo" mat-button matTooltip="{{'btn.recover' | translate}}"
-              (click)="activateFuenteFinanciacion(fuenteFinanciacion)">
-              <mat-icon color="accent">add_circle_outline</mat-icon>
+            <button color="accent" *ngIf="!fuenteFinanciacion.activo" mat-icon-button
+              matTooltip="{{'btn.recover' | translate}}" (click)="activateFuenteFinanciacion(fuenteFinanciacion)">
+              <mat-icon>add_circle_outline</mat-icon>
             </button>
           </ng-container>
         </td>

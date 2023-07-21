@@ -8,14 +8,14 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.TipoAmbitoGeograficoNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
 import org.crue.hercules.sgi.csp.repository.TipoAmbitoGeograficoRepository;
-import org.crue.hercules.sgi.csp.service.impl.TipoAmbitoGeograficoServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -25,17 +25,14 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * TipoAmbitoGeograficoServiceTest
  */
+@Import({ TipoAmbitoGeograficoService.class })
 class TipoAmbitoGeograficoServiceTest extends BaseServiceTest {
 
-  @Mock
+  @MockBean
   private TipoAmbitoGeograficoRepository repository;
 
+  @Autowired
   private TipoAmbitoGeograficoService service;
-
-  @BeforeEach
-  void setUp() throws Exception {
-    service = new TipoAmbitoGeograficoServiceImpl(repository);
-  }
 
   @Test
   void findAll_ReturnsPage() {

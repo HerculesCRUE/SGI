@@ -28,7 +28,6 @@ import { BlockModule } from './block/block.module';
 import { ConfigService } from './core/services/config.service';
 import { HomeComponent } from './home/home.component';
 
-
 export class SgiTranslateLoader implements TranslateLoader {
   constructor(
     private httpClient: HttpClient,
@@ -73,7 +72,7 @@ const appInitializerFn = (appConfig: ConfigService) => {
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
+    HomeComponent
   ],
   imports: [
     AppRoutingModule,

@@ -8,4 +8,9 @@
   .mat-icon.danger {
     color: map-get($sgi-custom-colors, danger);
   }
+
+  .infoIcon {
+    vertical-align: middle;
+    display: inline;
+  }
 }

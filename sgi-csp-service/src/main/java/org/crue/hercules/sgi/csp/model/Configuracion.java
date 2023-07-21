@@ -67,4 +67,12 @@ public class Configuracion extends BaseEntity {
   /** Dedicacion minima grupo. */
   @Column(name = "dedicacion_minima_grupo", nullable = true, unique = true)
   private BigDecimal dedicacionMinimaGrupo;
+
+  /** Formato codigo interno proyecto. */
+  @Column(name = "formato_codigo_interno_proyecto", nullable = true, unique = true)
+  private String formatoCodigoInternoProyecto;
+
+  /** Plantilla formato codigo interno proyecto. */
+  @Column(name = "plantilla_formato_codigo_interno_proyecto", nullable = true, unique = true)
+  private String plantillaFormatoCodigoInternoProyecto;
 }

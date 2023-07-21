@@ -8,6 +8,7 @@ import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
 import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economica.service';
 import { of, Subscription } from 'rxjs';
@@ -33,6 +34,9 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
 
   msgParamEntity = {};
 
+  private totalElementos = 0;
+  private limiteRegistrosExportacionExcel: string;
+
   readonly dataSourceDesglose = new MatTableDataSource<RowTreeDesglose<IDesglose>>();
   @ViewChild('anualSel') selectAnualidades: MatSelect;
   @ViewChild('pickerDevengoDesde') pickerDevengoDesde: MatDatepicker<any>;
@@ -45,7 +49,8 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
     actionService: EjecucionEconomicaActionService,
     private ejecucionEconomicaService: EjecucionEconomicaService,
     private gastoProyectoService: GastoProyectoService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService
   ) {
     super(actionService.FRAGMENT.VIAJES_DIETAS, actionService);
 
@@ -57,7 +62,13 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
 
     this.subscriptions.push(this.formPart.desglose$.subscribe(elements => {
       this.dataSourceDesglose.data = elements;
+      this.totalElementos = elements.length;
     }));
+
+    this.subscriptions.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-viajes-dietas').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   ngOnDestroy(): void {
@@ -105,7 +116,9 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
     this.subscriptions.push(this.formPart.loadDataExport().subscribe(
       (exportData) => {
         const config = {
-          data: exportData
+          data: exportData,
+          totalRegistrosExportacionExcel: this.totalElementos,
+          limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
         };
         this.matDialog.open(ViajesDietasExportModalComponent, config);
       },

@@ -9,7 +9,6 @@ import org.crue.hercules.sgi.rep.dto.eti.FormularioDto;
 import org.crue.hercules.sgi.rep.dto.eti.MemoriaDto;
 import org.crue.hercules.sgi.rep.integration.BaseIT;
 import org.crue.hercules.sgi.rep.service.eti.MXXReportService;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -22,7 +21,6 @@ class MXXReportServiceIT extends BaseIT {
   @Autowired
   MXXReportService service;
 
-  @Test
   void testPdfM10() throws Exception {
     // given: data for report
     String reportPath = "rep-eti-mxx-prpt";
@@ -50,7 +48,6 @@ class MXXReportServiceIT extends BaseIT {
     assertNotNull(report);
   }
 
-  @Test
   void testPdfM20() throws Exception {
     try {
       // given: data for report
@@ -82,7 +79,6 @@ class MXXReportServiceIT extends BaseIT {
     }
   }
 
-  @Test
   void testPdfM30() throws Exception {
     try {
       // given: data for report

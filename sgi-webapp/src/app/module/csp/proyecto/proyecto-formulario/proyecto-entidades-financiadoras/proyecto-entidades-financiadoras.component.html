@@ -64,19 +64,19 @@
             <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}</th>
             <td mat-cell *matCellDef="let wrapper">
               <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-                <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!formPart.readonly"
-                  (click)="openModal(true, wrapper)">
-                  <mat-icon color="primary">border_color</mat-icon>
+                <button color="primary" mat-icon-button matTooltip="{{'btn.edit' | translate}}"
+                  *ngIf="!formPart.readonly" (click)="openModal(true, wrapper)">
+                  <mat-icon>border_color</mat-icon>
                 </button>
-                <button mat-button matTooltip="{{'btn.view' | translate}}" *ngIf="formPart.readonly"
-                  (click)="openModal(true, wrapper)">
-                  <mat-icon color="primary">visibility</mat-icon>
+                <button color="primary" mat-icon-button matTooltip="{{'btn.view' | translate}}"
+                  *ngIf="formPart.readonly" (click)="openModal(true, wrapper)">
+                  <mat-icon>visibility</mat-icon>
                 </button>
               </ng-container>
               <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-                <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="!formPart.readonly"
-                  (click)="deleteEntidadFinanciadora(true, wrapper)">
-                  <mat-icon color="warn">highlight_off</mat-icon>
+                <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
+                  *ngIf="!formPart.readonly" (click)="deleteEntidadFinanciadora(true, wrapper)">
+                  <mat-icon>highlight_off</mat-icon>
                 </button>
               </ng-container>
               <button mat-button matTooltip="{{'csp.proyecto-entidad-financiadora.presupuesto' | translate}}"
@@ -166,24 +166,25 @@
             <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}</th>
             <td mat-cell *matCellDef="let wrapper">
               <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-                <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!formPart.readonly"
-                  (click)="openModal(false, wrapper)">
-                  <mat-icon color="primary">border_color</mat-icon>
+                <button color="primary" mat-icon-button matTooltip="{{'btn.edit' | translate}}"
+                  *ngIf="!formPart.readonly" (click)="openModal(false, wrapper)">
+                  <mat-icon>border_color</mat-icon>
                 </button>
-                <button mat-button matTooltip="{{'btn.view' | translate}}" *ngIf="formPart.readonly"
-                  (click)="openModal(false, wrapper)">
-                  <mat-icon color="primary">visibility</mat-icon>
+                <button color="primary" mat-icon-button matTooltip="{{'btn.view' | translate}}"
+                  *ngIf="formPart.readonly" (click)="openModal(false, wrapper)">
+                  <mat-icon>visibility</mat-icon>
                 </button>
               </ng-container>
               <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-                <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="!formPart.readonly"
-                  (click)="deleteEntidadFinanciadora(false, wrapper)">
-                  <mat-icon color="warn">highlight_off</mat-icon>
+                <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
+                  *ngIf="!formPart.readonly" (click)="deleteEntidadFinanciadora(false, wrapper)">
+                  <mat-icon>highlight_off</mat-icon>
                 </button>
               </ng-container>
-              <button mat-button matTooltip="{{'csp.proyecto-entidad-financiadora.presupuesto' | translate}}"
+              <button mat-icon-button color="primary"
+                matTooltip="{{'csp.proyecto-entidad-financiadora.presupuesto' | translate}}"
                 *ngIf="wrapper.value.hasPresupuesto" (click)="showPresupuesto(wrapper)">
-                <mat-icon color="primary">cases</mat-icon>
+                <mat-icon>cases</mat-icon>
               </button>
             </td>
           </ng-container>

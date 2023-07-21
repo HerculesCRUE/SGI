@@ -3,6 +3,9 @@
   <artifact name="sgepii-add-x-api-key-sequence" groupId="org.crue.hercules.sgi.esb.sgepii.sequence" version="${revision}" type="synapse/sequence" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/sequences/sgepii-add-x-api-key-sequence.xml</file>
   </artifact>
+  <artifact name="sgepii-remove-authorization-header-sequence" groupId="org.crue.hercules.sgi.esb.sgepii.sequence" version="${revision}" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+    <file>src/main/synapse-config/sequences/sgepii-remove-authorization-header-sequence.xml</file>
+  </artifact>
   <artifact name="sgepii-endpoint" groupId="org.crue.hercules.sgi.esb.sgepii.endpoint" version="${revision}" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/endpoints/sgepii-endpoint.xml</file>
   </artifact>

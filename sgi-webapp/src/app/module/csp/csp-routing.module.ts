@@ -23,11 +23,16 @@ const MSG_TIPO_FINANCIACION_TITLE = marker('menu.csp.configuraciones.tipos-finan
 const MSG_FUENTE_FINANCIACION_TITLE = marker('menu.csp.configuraciones.fuentes-financiacion');
 const MSG_AREA_TEMATICA_TITLE = marker('menu.csp.configuraciones.areas-tematicas');
 const MSG_EJECUCION_ECONOMICA_TITLE = marker('menu.csp.ejecucion-economica');
+const MSG_TIPO_ORIGEN_FUENTE_FINANCIACION_TITLE = marker('menu.csp.tipo-origen-fuente-financiacion');
 const MSG_NOTIFICACION_PRESUPUESTO_SGE_TITLE = marker('menu.csp.notificacion-presupuesto-sge');
 const PROYECTO_KEY = marker('csp.proyectos');
 const AUTORIZACION_KEY = marker('csp.autorizacion');
 const NOTIFICACION_CVN_KEY = marker('csp.notificacion-cvn');
 const MSG_GRUPO_TITLE = marker('csp.grupo');
+const MSG_TIPO_REGIMEN_CONCURRENCIA_TITLE = marker('csp.tipo-regimen-concurrencia');
+const MSG_TIPO_AMBITO_GEOGRAFICO_TITLE = marker('csp.tipo-ambito-geografico');
+const MSG_ROL_SOCIO_PROYECTO = marker('menu.csp.rol-socio');
+const MSG_ROL_EQUIPO_TITLE = marker('csp.rol-equipo');
 
 const routes: SgiRoutes = [
   {
@@ -247,6 +252,19 @@ const routes: SgiRoutes = [
         }
       },
       {
+        path: CSP_ROUTE_NAMES.TIPO_ORIGEN_FUENTE_FINANCIACION,
+        loadChildren: () =>
+          import('./tipo-origen-fuente-financiacion/tipo-origen-fuente-financiacion.module').then(
+            (m) => m.TipoOrigenFuenteFinanciacionModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_TIPO_ORIGEN_FUENTE_FINANCIACION_TITLE,
+          titleParams: MSG_PARAMS.CARDINALIRY.SINGULAR,
+          hasAnyAuthorityForAnyUO: ['CSP-TOFF-V', 'CSP-TOFF-C', 'CSP-TOFF-E', 'CSP-TOFF-B', 'CSP-TOFF-R']
+        }
+      },
+      {
         path: CSP_ROUTE_NAMES.NOTIFICACION_PRESUPUESTO_SGE,
         loadChildren: () =>
           import('./notificacion-presupuesto-sge/notificacion-presupuesto-sge.module').then(
@@ -296,6 +314,71 @@ const routes: SgiRoutes = [
           title: MSG_GRUPO_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
           hasAnyAuthorityForAnyUO: ['CSP-GIN-V', 'CSP-GIN-E', 'CSP-GIN-C', 'CSP-GIN-B', 'CSP-GIN-R']
+        }
+      },
+      {
+        path: CSP_ROUTE_NAMES.TIPOS_REGIMEN_CONCURRENCIA,
+        loadChildren: () =>
+          import('./tipo-regimen-concurrencia/tipo-regimen-concurrencia.module').then(
+            (m) => m.TipoRegimenConcurrenciaModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_TIPO_REGIMEN_CONCURRENCIA_TITLE,
+          titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
+          hasAnyAuthority: ['CSP-TRCO-V', 'CSP-TRCO-E', 'CSP-TRCO-C', 'CSP-TRCO-B', 'CSP-TRCO-R']
+        }
+      },
+      {
+        path: CSP_ROUTE_NAMES.TIPOS_AMBITO_GEOGRAFICO,
+        loadChildren: () =>
+          import('./tipo-ambito-geografico/tipo-ambito-geografico.module').then(
+            (m) => m.TipoAmbitoGeograficoModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_TIPO_AMBITO_GEOGRAFICO_TITLE,
+          titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
+          hasAnyAuthority: ['CSP-TAGE-V', 'CSP-TAGE-C', 'CSP-TAGE-E', 'CSP-TAGE-B', 'CSP-TAGE-R']
+        }
+      },
+      {
+        path: CSP_ROUTE_NAMES.TIPO_FACTURACION,
+        loadChildren: () =>
+          import('./tipo-facturacion/tipo-facturacion.module').then(
+            (m) => m.TipoFacturacionModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_TIPO_REGIMEN_CONCURRENCIA_TITLE,
+          titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
+          hasAnyAuthorityForAnyUO: ['CSP-TFAC-V', 'CSP-TFAC-E', 'CSP-TFAC-C', 'CSP-TFAC-B', 'CSP-TFAC-R']
+        }
+      },
+      {
+        path: CSP_ROUTE_NAMES.ROL_SOCIO_PROYECTO,
+        loadChildren: () =>
+          import('./rol-socio-proyecto/rol-socio.module').then(
+            (m) => m.RolSocioModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_ROL_SOCIO_PROYECTO,
+          titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
+          hasAnyAuthority: ['CSP-ROLS-V', 'CSP-ROLS-C', 'CSP-ROLS-E', 'CSP-ROLS-B', 'CSP-ROLS-R']
+        }
+      },
+      {
+        path: CSP_ROUTE_NAMES.ROL_EQUIPO,
+        loadChildren: () =>
+          import('./rol-equipo/rol-equipo.module').then(
+            (m) => m.RolEquipoModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_ROL_EQUIPO_TITLE,
+          titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
+          hasAnyAuthorityForAnyUO: ['CSP-ROLE-V', 'CSP-ROLE-E', 'CSP-ROLE-C', 'CSP-ROLE-B', 'CSP-ROLE-R']
         }
       },
       { path: '**', component: null }

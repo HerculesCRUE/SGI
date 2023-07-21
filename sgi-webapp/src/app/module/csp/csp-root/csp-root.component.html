@@ -43,18 +43,56 @@
     [route]="urlSistemaGestionExterno" icon="logout" [title]="nombreSistemaGestionExterno">
   </sgi-menu-item-external>
 
-  <sgi-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-TFASE-V', 'CSP-TFASE-C', 'CSP-TFASE-E','CSP-TFASE-B', 'CSP-TFASE-R','CSP-TFIN-V', 'CSP-TFIN-C','CSP-TFIN-E', 
-      'CSP-TFIN-B', 'CSP-TFIN-R', 'CSP-TDOC-V', 'CSP-TDOC-C', 'CSP-TDOC-E', 'CSP-TDOC-B', 'CSP-TDOC-R', 'CSP-TENL-V', 'CSP-TENL-C', 'CSP-TENL-E',
-       'CSP-TENL-B', 'CSP-TENL-R', 'CSP-THITO-V', 'CSP-THITO-C', 'CSP-THITO-E', 'CSP-THITO-B', 'CSP-THITO-R', 'CSP-ME-V', 'CSP-ME-C', 'CSP-ME-E',
-       'CSP-ME-B', 'CSP-ME-R', 'CSP-PRG-V', 'CSP-PRG-C', 'CSP-PRG-E', 'CSP-PRG-B', 'CSP-PRG-R', 'CSP-AREA-V', 'CSP-AREA-C', 'CSP-AREA-E', 'CSP-AREA-B',
-       'CSP-AREA-R', 'CSP-FNT-V', 'CSP-FNT-C', 'CSP-FNT-E', 'CSP-FNT-B', 'CSP-FNT-R', 'CSP-TFNA-V', 'CSP-TFNA-C', 'CSP-TFNA-E', 'CSP-TFNA-B', 'CSP-TFNA-R',
-       'CSP-TGTO-V', 'CSP-TGTO-C', 'CSP-TGTO-E', 'CSP-TGTO-B', 'CSP-TGTO-R']"
-    title="{{'menu.csp.configuraciones' | translate}}" icon="settings">
+  <sgi-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-TFASE-V', 'CSP-TFASE-C', 'CSP-TFASE-E','CSP-TFASE-B', 'CSP-TFASE-R',
+    'CSP-TFIN-V', 'CSP-TFIN-C','CSP-TFIN-E', 'CSP-TFIN-B', 'CSP-TFIN-R', 'CSP-TDOC-V', 'CSP-TDOC-C', 'CSP-TDOC-E', 'CSP-TDOC-B', 
+    'CSP-TDOC-R', 'CSP-TENL-V', 'CSP-TENL-C', 'CSP-TENL-E', 'CSP-TENL-B', 'CSP-TENL-R', 'CSP-THITO-V', 'CSP-THITO-C', 'CSP-THITO-E', 
+    'CSP-THITO-B', 'CSP-THITO-R', 'CSP-ME-V', 'CSP-ME-C', 'CSP-ME-E', 'CSP-ME-B', 'CSP-ME-R', 'CSP-PRG-V', 'CSP-PRG-C', 'CSP-PRG-E',
+    'CSP-PRG-B', 'CSP-PRG-R', 'CSP-AREA-V', 'CSP-AREA-C', 'CSP-AREA-E', 'CSP-AREA-B', 'CSP-AREA-R', 'CSP-FNT-V', 'CSP-FNT-C', 'CSP-FNT-E', 
+    'CSP-FNT-B', 'CSP-FNT-R', 'CSP-TFNA-V', 'CSP-TFNA-C', 'CSP-TFNA-E', 'CSP-TFNA-B', 'CSP-TFNA-R', 'CSP-TGTO-V', 'CSP-TGTO-C', 'CSP-TGTO-E',
+    'CSP-TGTO-B', 'CSP-TGTO-R', 'CSP-TOFF-V', 'CSP-TOFF-C', 'CSP-TOFF-E', 'CSP-TOFF-B', 'CSP-TOFF-R', 'CSP-TRCO-V', 'CSP-TRCO-C', 'CSP-TRCO-E', 
+    'CSP-TRCO-B', 'CSP-TRCO-R']" title="{{'menu.csp.configuraciones' | translate}}" icon="settings">
+
+
+    <sgi-menu-subitem *sgiHasAnyAuthority="['CSP-ROLE-V', 'CSP-ROLE-C', 'CSP-ROLE-E','CSP-ROLE-B','CSP-ROLE-R']"
+      [route]="[CSP_ROUTE_NAMES.ROL_EQUIPO]"
+      title="{{'menu.csp.rol-equipo' | translate: MSG_PARAMS.CARDINALIRY.PLURAL }}">
+    </sgi-menu-subitem>
+
+    <sgi-menu-subitem *sgiHasAnyAuthority="['CSP-ROLS-V', 'CSP-ROLS-C', 'CSP-ROLS-E','CSP-ROLS-B','CSP-ROLS-R']"
+      [route]="[CSP_ROUTE_NAMES.ROL_SOCIO_PROYECTO]"
+      title="{{'menu.csp.rol-socio' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    </sgi-menu-subitem>
+
+    <sgi-menu-subitem *sgiHasAnyAuthority="['CSP-TAGE-V', 'CSP-TAGE-C', 'CSP-TAGE-E','CSP-TAGE-B','CSP-TAGE-R']"
+      [route]="[CSP_ROUTE_NAMES.TIPOS_AMBITO_GEOGRAFICO]"
+      title="{{'menu.csp.tipo-ambito-geografico' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
+    </sgi-menu-subitem>
+
+    <sgi-menu-subitem *sgiHasAnyAuthority="['CSP-TFAC-V', 'CSP-TFAC-C', 'CSP-TFAC-E','CSP-TFAC-B','CSP-TFAC-R']"
+      [route]="[CSP_ROUTE_NAMES.TIPO_FACTURACION]"
+      title="{{'menu.csp.tipo-facturacion' | translate: MSG_PARAMS.CARDINALIRY.PLURAL }}">
+    </sgi-menu-subitem>
+
+    <sgi-menu-subitem *sgiHasAnyAuthority="['CSP-TFNA-V', 'CSP-TFNA-C', 'CSP-TFNA-E', 'CSP-TFNA-B', 'CSP-TFNA-R']"
+      [route]="[CSP_ROUTE_NAMES.TIPO_FINANCIACION]"
+      title="{{'menu.csp.configuraciones.tipos-financiacion' | translate}}">
+    </sgi-menu-subitem>
+
+    <sgi-menu-subitem *sgiHasAnyAuthority="['CSP-TOFF-V', 'CSP-TOFF-C', 'CSP-TOFF-E', 'CSP-TOFF-B', 'CSP-TOFF-R']"
+      [route]="[CSP_ROUTE_NAMES.TIPO_ORIGEN_FUENTE_FINANCIACION]"
+      title="{{'menu.csp.tipo-origen-fuente-financiacion' | translate: MSG_PARAMS.CARDINALIRY.PLURAL }}">
+    </sgi-menu-subitem>
+
+    <sgi-menu-subitem [route]="[CSP_ROUTE_NAMES.TIPOS_REGIMEN_CONCURRENCIA]"
+      *sgiHasAnyAuthority="['CSP-TRCO-V', 'CSP-TRCO-C', 'CSP-TRCO-E', 'CSP-TRCO-B', 'CSP-TRCO-R']"
+      title="{{'menu.csp.tipo-regimen-concurrencia' | translate: MSG_PARAMS.CARDINALIRY.PLURAL }}">
+    </sgi-menu-subitem>
 
     <sgi-menu-subitem *sgiHasAnyAuthority="['CSP-TFASE-V', 'CSP-TFASE-C', 'CSP-TFASE-E','CSP-TFASE-B','CSP-TFASE-R']"
       [route]="[CSP_ROUTE_NAMES.TIPO_FASE]" title="{{'csp.tipo-fase' |
               translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
     </sgi-menu-subitem>
+
     <sgi-menu-subitem *sgiHasAnyAuthority="['CSP-TFIN-V','CSP-TFIN-C','CSP-TFIN-E', 'CSP-TFIN-B', 'CSP-TFIN-R']"
       [route]="[CSP_ROUTE_NAMES.TIPO_FINALIDAD]" title="{{'csp.tipo-finalidad' |
         translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
@@ -86,10 +124,7 @@
       [route]="[CSP_ROUTE_NAMES.FUENTE_FINANCIACION]"
       title="{{'menu.csp.configuraciones.fuentes-financiacion' | translate}}">
     </sgi-menu-subitem>
-    <sgi-menu-subitem *sgiHasAnyAuthority="['CSP-TFNA-V', 'CSP-TFNA-C', 'CSP-TFNA-E', 'CSP-TFNA-B', 'CSP-TFNA-R']"
-      [route]="[CSP_ROUTE_NAMES.TIPO_FINANCIACION]"
-      title="{{'menu.csp.configuraciones.tipos-financiacion' | translate}}">
-    </sgi-menu-subitem>
+
     <sgi-menu-subitem
       *sgiHasAnyAuthorityForAnyUO="['CSP-TGTO-V', 'CSP-TGTO-C', 'CSP-TGTO-E', 'CSP-TGTO-B', 'CSP-TGTO-R']"
       [route]="[CSP_ROUTE_NAMES.CONCEPTO_GASTO]" title="{{'menu.csp.configuraciones.conceptos-gasto' | translate}}">

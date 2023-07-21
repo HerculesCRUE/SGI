@@ -59,18 +59,18 @@
           {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let convocatoriaConceptoGastoCodigoEc;let i=index;">
           <ng-container>
-            <button mat-button matTooltip="{{'btn.view' | translate}}" *ngIf="formPart.readonly"
+            <button mat-icon-button color="primary" matTooltip="{{'btn.view' | translate}}" *ngIf="formPart.readonly"
               (click)="openModal(convocatoriaConceptoGastoCodigoEc)">
-              <mat-icon color="primary">visibility</mat-icon>
+              <mat-icon>visibility</mat-icon>
             </button>
-            <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!formPart.readonly"
+            <button mat-icon-button color="primary" matTooltip="{{'btn.edit' | translate}}" *ngIf="!formPart.readonly"
               (click)="openModal(convocatoriaConceptoGastoCodigoEc, i)"
               [disabled]="actionService.blockAddCodigosEconomicos$ | async">
-              <mat-icon color="primary">border_color</mat-icon>
+              <mat-icon>border_color</mat-icon>
             </button>
-            <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="!formPart.readonly"
+            <button mat-icon-button color="warn" matTooltip="{{'btn.delete' | translate}}" *ngIf="!formPart.readonly"
               (click)="deleteConvocatoriaConceptoGastoCodigoEc(convocatoriaConceptoGastoCodigoEc)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>

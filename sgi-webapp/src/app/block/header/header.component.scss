@@ -13,38 +13,43 @@ $border-color: map-get($sgi-custom-colors, divider);
     padding-left: 7px;
     padding-right: 7px;
     border-right: 1px solid $border-color;
-    .logo-ministerio {
-      width: 188px;
-      height: 58px;
+
+    .logo-ministerio-1 {
+      min-width: 210px;
+      height: 70px;
       object-fit: contain;
     }
-    .logo-feder {
-      width: 144px;
-      height: 34px;
-      object-fit: contain;
-    }
+
+    .logo-ministerio-2,
+    .logo-ministerio-3,
+    .logo-feder,
+    .logo-feder,
     .logo-ue {
-      width: 72px;
-      height: 61px;
+      height: 70px;
       object-fit: contain;
     }
   }
+
   .icons-options {
     .inline {
       display: flex;
     }
   }
+
   .select-modulo {
     border-right: 1px solid $border-color;
     padding: 7px;
     text-align: center;
+
     h2 {
       font-weight: bold;
       margin: 0px;
     }
   }
+
   .mat-menu {
     padding: 15px;
   }
 }
+
 /* FIN HEADER */

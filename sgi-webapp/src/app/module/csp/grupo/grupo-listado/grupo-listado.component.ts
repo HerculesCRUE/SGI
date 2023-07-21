@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IGrupo } from '@core/models/csp/grupo';
@@ -10,6 +11,7 @@ import { TIPO_MAP } from '@core/models/csp/grupo-tipo';
 import { ILineaInvestigacion } from '@core/models/csp/linea-investigacion';
 import { IPersona } from '@core/models/sgp/persona';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { LineaInvestigacionService } from '@core/services/csp/linea-investigacion/linea-investigacion.service';
 import { RolProyectoColectivoService } from '@core/services/csp/rol-proyecto-colectivo/rol-proyecto-colectivo.service';
@@ -24,7 +26,7 @@ import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, from, Observable } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../csp-route-names';
-import { GrupoListadoExportModalComponent, IGrupoListadoModalData } from '../modals/grupo-listado-export-modal/grupo-listado-export-modal.component';
+import { GrupoListadoExportModalComponent } from '../modals/grupo-listado-export-modal/grupo-listado-export-modal.component';
 
 const MSG_BUTTON_ADD = marker('btn.add.entity');
 const MSG_ERROR_DELETE = marker('error.delete.entity');
@@ -66,6 +68,8 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
   busquedaAvanzada = false;
   readonly lineasInvestigacion$ = new BehaviorSubject<ILineaInvestigacion[]>([]);
 
+  private limiteRegistrosExportacionExcel: string;
+
   get TIPO_MAP() {
     return TIPO_MAP;
   }
@@ -81,6 +85,7 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
     private readonly translate: TranslateService,
     private lineaInvestigacionService: LineaInvestigacionService,
     private matDialog: MatDialog,
+    private readonly cnfService: ConfigService
   ) {
     super();
   }
@@ -94,6 +99,11 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
     this.filter = this.createFilter();
     this.isInvestigador = this.authService.hasAnyAuthority(['CSP-AUT-INV-VR']);
     this.isVisor = this.authService.hasAnyAuthority(['CSP-GIN-V']);
+
+    this.suscripciones.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-grupo-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IGrupoListado>> {
@@ -389,8 +399,10 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
   }
 
   openExportModal(): void {
-    const data: IGrupoListadoModalData = {
-      findOptions: this.findOptions
+    const data: IBaseExportModalData = {
+      findOptions: this.findOptions,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

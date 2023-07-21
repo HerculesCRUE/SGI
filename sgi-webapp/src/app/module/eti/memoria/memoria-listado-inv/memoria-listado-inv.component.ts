@@ -15,6 +15,7 @@ import { ESTADO_MEMORIA, ESTADO_MEMORIA_MAP } from '@core/models/eti/tipo-estado
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { DialogService } from '@core/services/dialog.service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -68,6 +69,8 @@ export class MemoriaListadoInvComponent extends AbstractTablePaginationComponent
   textoDeleteSuccess: string;
   textoDeleteError: string;
 
+  private limiteRegistrosExportacionExcel: string;
+
   get ESTADO_MEMORIA_MAP() {
     return ESTADO_MEMORIA_MAP;
   }
@@ -79,7 +82,8 @@ export class MemoriaListadoInvComponent extends AbstractTablePaginationComponent
     protected readonly dialogService: DialogService,
     private readonly translate: TranslateService,
     private authService: SgiAuthService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService,
   ) {
     super();
 
@@ -109,6 +113,11 @@ export class MemoriaListadoInvComponent extends AbstractTablePaginationComponent
       numReferencia: new FormControl('', []),
       tipoEstadoMemoria: new FormControl(null, [])
     });
+
+    this.suscripciones.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('eti-exp-max-num-registros-excel-memoria-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   private setupI18N(): void {
@@ -320,13 +329,25 @@ export class MemoriaListadoInvComponent extends AbstractTablePaginationComponent
   public openExportModal() {
     const data: IMemoriaListadoModalData = {
       findOptions: this.findOptions,
-      isInvestigador: true
+      isInvestigador: true,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {
       data
     };
     this.matDialog.open(MemoriaListadoExportModalComponent, config);
+  }
+
+  isMemoriaSeguimiento(estadoMemoriaId: number): boolean {
+    if (estadoMemoriaId === ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_ANUAL
+      || estadoMemoriaId === ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_FINAL
+      || estadoMemoriaId === ESTADO_MEMORIA.EN_ACLARACION_SEGUIMIENTO_FINAL) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
 }

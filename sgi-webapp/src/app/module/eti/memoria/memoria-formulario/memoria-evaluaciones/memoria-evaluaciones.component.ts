@@ -6,7 +6,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IActa } from '@core/models/eti/acta';
+import { DICTAMEN } from '@core/models/eti/dictamen';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
+import { TIPO_EVALUACION } from '@core/models/eti/tipo-evaluacion';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
@@ -98,15 +100,16 @@ export class MemoriaEvaluacionesComponent extends FragmentComponent implements O
   }
 
   hasInformeEvaluacion(evaluacion: StatusWrapper<IEvaluacion>): boolean {
-    return ((evaluacion.value.tipoEvaluacion.id === 2 && (evaluacion.value.dictamen?.id === 2
-      || evaluacion.value.dictamen?.id === 3 || evaluacion.value.dictamen?.id === 4))
-      || (evaluacion.value.tipoEvaluacion.id === 4 && evaluacion.value.dictamen?.id === 8)
+    return ((evaluacion.value.tipoEvaluacion.id === TIPO_EVALUACION.MEMORIA && (evaluacion.value.dictamen?.id === DICTAMEN.FAVORABLE_PDTE_REV_MINIMA
+      || evaluacion.value.dictamen?.id === DICTAMEN.PDTE_CORRECCIONES || evaluacion.value.dictamen?.id === DICTAMEN.NO_PROCEDE_EVALUAR))
+      || (evaluacion.value.tipoEvaluacion.id === TIPO_EVALUACION.SEGUIMIENTO_ANUAL && evaluacion.value.dictamen?.id === DICTAMEN.SOLICITUD_MODIFICACIONES_SEG_ANUAL)
+      || (evaluacion.value.tipoEvaluacion.id === TIPO_EVALUACION.SEGUIMIENTO_FINAL && evaluacion.value.dictamen?.id === DICTAMEN.SOLICITUD_ACLARACIONES_SEG_FINAL)
     );
   }
 
   hasInformeFavorable(evaluacion: StatusWrapper<IEvaluacion>): boolean {
-    return ((evaluacion.value.tipoEvaluacion.id === 1 && evaluacion.value.dictamen?.id === 9)
-      || (evaluacion.value.tipoEvaluacion.id === 2 && evaluacion.value.dictamen?.id === 1)
+    return ((evaluacion.value.tipoEvaluacion.id === TIPO_EVALUACION.RETROSPECTIVA && evaluacion.value.dictamen?.id === DICTAMEN.FAVORABLE_RETROSPECTIVA)
+      || (evaluacion.value.tipoEvaluacion.id === TIPO_EVALUACION.MEMORIA && evaluacion.value.dictamen?.id === DICTAMEN.FAVORABLE)
     );
   }
 

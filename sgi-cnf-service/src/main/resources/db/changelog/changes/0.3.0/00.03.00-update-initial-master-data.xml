@@ -1,0 +1,427 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="00.03.00-config">
+    <insert tableName="config">
+      <column name="name" value="web-numero-logos-header" />
+      <column name="description"
+        value="Número de logos por defecto que aparecerán en la cabecera (1,2,3)" />
+      <column name="value" value="3" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name" value="exp-max-num-registros-excel" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx)" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name" value="csp-exp-max-num-registros-excel-convocatoria-listado" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de convocatorias" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name" value="csp-exp-max-num-registros-excel-detalle-operaciones-gastos" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de detalle de operaciones de gastos de los proyectos económicos" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name" value="csp-exp-max-num-registros-excel-detalle-operaciones-ingresos" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de detalle de operaciones de ingresos de los proyectos económicos" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name" value="csp-exp-max-num-registros-excel-detalle-operaciones-modificaciones" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de detalle de operaciones de modificación presupuestaria de los proyectos económicos" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="csp-exp-max-num-registros-excel-ejecucion-presupuestaria-estado-actual" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de estado actual de la ejecución presupuestaria de proyectos económicos" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="csp-exp-max-num-registros-excel-ejecucion-presupuestaria-gastos" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de resumen de gastos de la ejecución presupuestaria de proyectos económicos" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="csp-exp-max-num-registros-excel-ejecucion-presupuestaria-ingresos" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de resumen de ingresos de la ejecución presupuestaria de proyectos económicos" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="csp-exp-max-num-registros-excel-facturas-emitidas" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de las facturas emitidas de los proyectos económicos" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="csp-exp-max-num-registros-excel-facturas-gastos" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de las facturas y gastos de los proyectos económicos" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="csp-exp-max-num-registros-excel-personal-contratado" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de las facturas de tipo personal contratado de los proyectos económicos" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="csp-exp-max-num-registros-excel-viajes-dietas" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de las facturas de tipo viajes y dietas de los proyectos económicos" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="csp-exp-max-num-registros-excel-seguimiento-justificacion-resumen" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de los gastos justificados de los proyectos económicos" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="csp-exp-max-num-registros-excel-grupo-listado" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de grupos de investigación" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="csp-exp-max-num-registros-excel-proyecto-listado" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de proyectos" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="csp-exp-max-num-registros-excel-proyecto-consulta-presupuesto" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de presupuesto de los proyectos" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="csp-exp-max-num-registros-excel-solicitud-listado" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de las solicitudes" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="csp-exp-max-num-registros-excel-solicitud-presupuesto" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de presupuesto de las solicitudes" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="eti-exp-max-num-registros-excel-acta-listado" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de actas de reunión" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="eti-exp-max-num-registros-excel-convocatoria-reunion-listado" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de convocatorias de reunión" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="eti-exp-max-num-registros-excel-evaluacion-listado" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de evaluaciones" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="eti-exp-max-num-registros-excel-evaluador-listado" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de equipos evaluadores" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="eti-exp-max-num-registros-excel-memoria-listado" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de memorias" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="eti-exp-max-num-registros-excel-peticion-evaluacion-listado" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de solicitudes de evaluación" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="eti-exp-max-num-registros-excel-seguimiento-listado" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de evaluaciones de seguimiento" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="pii-exp-max-num-registros-excel-invencion-listado" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de invenciones" />
+      <column name="value" value="" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name"
+        value="pii-exp-max-num-registros-excel-solicitud-proteccion" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de solicitudes de protección" />
+      <column name="value" value="" />
+    </insert>
+  </changeSet>
+
+
+  <changeSet context="!test" author="master" id="00.03.00-resources-update-oracle"
+    dbms="oracle">
+    <!-- web-header-logo-feder -->
+    <update tableName="resources">
+      <column name="value" valueBlobFile="blob/web/web-header-logo-feder.png" />
+      <where>:name=:value AND dbms_lob.compare(value, default_value) = 0</where>
+      <whereParams>
+        <param name="name" value="web-header-logo-feder" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-feder.png" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="web-header-logo-feder" />
+      </whereParams>
+    </update>
+
+    <!-- report mxx -->
+    <update tableName="resources">
+      <column name="value" valueBlobFile="blob/rep/rep-eti-mxx.prpt" />
+     <where>:name=:value AND dbms_lob.compare(value, default_value) = 0</where>
+      <whereParams>
+        <param name="name" value="rep-eti-mxx-prpt" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-mxx.prpt" />
+     <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-mxx-prpt" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.03.00-resources-update-!oracle" dbms="!oracle">
+    <!-- web-header-logo-feder -->
+    <update tableName="resources">
+      <column name="value" valueBlobFile="blob/web/web-header-logo-feder.png" />
+      <where>:name=:value AND value=default_value</where>
+      <whereParams>
+        <param name="name" value="web-header-logo-feder" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-feder.png" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="web-header-logo-feder" />
+      </whereParams>
+    </update>
+
+    <!-- report mxx -->
+    <update tableName="resources">
+      <column name="value" valueBlobFile="blob/rep/rep-eti-mxx.prpt" />
+     <where>:name=:value AND value=default_value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-mxx-prpt" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-mxx.prpt" />
+     <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-mxx-prpt" />
+      </whereParams>
+    </update>
+
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.03.00-insert-resources">
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-retrospectiva-docx" />
+      <column name="description"
+        value="Informe evaluación de retrospectiva" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-retrospectiva.docx" />
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-evaluacion-retrospectiva.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-nueva-docx" />
+      <column name="description"
+        value="Informe evaluación con dictamen favorable de memorias de tipo nueva" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-favorable-memoria-nueva.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-favorable-memoria-nueva.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-modificacion-docx" />
+      <column name="description"
+        value="Informe evaluación con dictamen favorable de tipo modificación" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-favorable-memoria-modificacion.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-favorable-memoria-modificacion.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-ratificacion-docx" />
+      <column name="description"
+        value="Informe evaluación con dictamen favorable de memorias de tipo ratificación" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-favorable-memoria-ratificacion.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-favorable-memoria-ratificacion.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-docx" />
+      <column name="description"
+        value="Informe evaluación" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-docx" />
+      <column name="description"
+        value="Informe con los bloques y apartados del formulario" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-eti-bloque-apartado.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-eti-bloque-apartado.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-ficha-evaluador-docx" />
+      <column name="description"
+        value="Informe evaluación" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-eti-ficha-evaluador.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-eti-ficha-evaluador.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <delete tableName="resources">
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-prpt" />
+      </whereParams>
+    </delete>
+
+    <delete tableName="resources">
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-favorable-memoria-modificacion-prpt" />
+      </whereParams>
+    </delete>
+
+    <delete tableName="resources">
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-favorable-memoria-nueva-prpt" />
+      </whereParams>
+    </delete>
+
+    <delete tableName="resources">
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-favorable-memoria-ratificacion-prpt" />
+      </whereParams>
+    </delete>
+
+    <delete tableName="resources">
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-retrospectiva-prpt" />
+      </whereParams>
+    </delete>
+
+    <delete tableName="resources">
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-ficha-evaluador-prpt" />
+      </whereParams>
+    </delete>
+
+  </changeSet>
+
+</databaseChangeLog>

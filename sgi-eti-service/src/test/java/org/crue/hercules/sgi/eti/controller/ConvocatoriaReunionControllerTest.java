@@ -1007,8 +1007,8 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
   private ConvocatoriaReunion getMockData(Long id, Long comiteId, Long tipoId) {
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(comiteId, "Comite" + comiteId, "nombreSecretario", "nombreInvestigacion", Genero.M,
-        "nombreDecreto", "articulo", formulario, Boolean.TRUE);
+    Comite comite = new Comite(comiteId, "Comite" + comiteId, "nombreInvestigacion", Genero.M, formulario,
+        Boolean.TRUE);
 
     String tipo_txt = (tipoId == 1L) ? "Ordinaria" : (tipoId == 2L) ? "Extraordinaria" : "Seguimiento";
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(tipoId, tipo_txt, Boolean.TRUE);
@@ -1069,8 +1069,7 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
     cargoComite.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
-        "articulo", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
 
     Evaluador evaluador = new Evaluador();
     evaluador.setId(id);
@@ -1111,7 +1110,6 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
     peticionEvaluacion.setId(id);
     peticionEvaluacion.setCodigo("Codigo1");
     peticionEvaluacion.setDisMetodologico("DiseñoMetodologico1");
-    peticionEvaluacion.setExterno(Boolean.FALSE);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
@@ -1126,8 +1124,7 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
-        "articulo", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);

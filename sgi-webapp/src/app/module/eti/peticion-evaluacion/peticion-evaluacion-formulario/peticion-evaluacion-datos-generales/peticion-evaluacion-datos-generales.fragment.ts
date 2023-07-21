@@ -1,11 +1,13 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IChecklist } from '@core/models/eti/checklist';
+import { IEquipoTrabajoWithIsEliminable } from '@core/models/eti/equipo-trabajo-with-is-eliminable';
 import { IPeticionEvaluacion, TipoValorSocial } from '@core/models/eti/peticion-evaluacion';
 import { IPersona } from '@core/models/sgp/persona';
 import { FormFragment } from '@core/services/action-service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { ChecklistService } from '@core/services/eti/checklist/checklist.service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
+import { PersonaService } from '@core/services/sgp/persona.service';
 import { SgiAuthService } from '@sgi/framework/auth/public-api';
 import { BehaviorSubject, EMPTY, Observable, of, Subject } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
@@ -20,6 +22,8 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
   public mostrarCampoEspecificarValorSocial$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public solicitantePeticionEvaluacion$ = new Subject<IPersona>();
 
+  equiposTrabajo: IEquipoTrabajoWithIsEliminable[] = [];
+
   constructor(
     private fb: FormBuilder,
     key: number,
@@ -28,11 +32,11 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
     private checklistService: ChecklistService,
     private readonly solicitudService: SolicitudService,
     checklist: IChecklist,
+    private personaService: PersonaService,
     readonly: boolean,
   ) {
     super(key);
     this.peticionEvaluacion = {
-      externo: false,
       solicitante: { id: sgiAuthService.authStatus$.getValue().userRefId } as IPersona,
       activo: true
     } as IPeticionEvaluacion;
@@ -58,7 +62,8 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
       otroValorSocial: [{ value: '', disabled: this.readonly }],
       objetivosCientificos: [{ value: '', disabled: this.readonly }, [Validators.required, Validators.maxLength(4000)]],
       disenioMetodologico: [{ value: '', disabled: this.readonly }, [Validators.required, Validators.maxLength(4000)]],
-      tieneFondosPropios: [{ value: '', disabled: this.readonly }]
+      tieneFondosPropios: [{ value: '', disabled: this.readonly }],
+      tutor: [{ value: null, disabled: this.readonly }]
     });
 
     this.subscriptions.push(form.controls.existeFinanciacion.valueChanges.subscribe((value: boolean) => {
@@ -90,6 +95,20 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
           return of(value);
         }
       }),
+      switchMap((value) => {
+        if (value.tutor?.id) {
+          return this.personaService
+            .findById(value.tutor?.id).pipe(
+              map(persona => {
+                value.tutor = persona;
+                return value;
+              })
+            );
+        } else {
+          value.tutor = null;
+          return of(value);
+        }
+      }),
       catchError(() => {
         return EMPTY;
       })
@@ -117,7 +136,8 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
       valorSocial: value.valorSocial,
       otroValorSocial: value.otroValorSocial,
       objetivosCientificos: value.objetivos,
-      disenioMetodologico: value.disMetodologico
+      disenioMetodologico: value.disMetodologico,
+      tutor: value.tutor
     };
   }
 
@@ -125,7 +145,6 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
     const form = this.getFormGroup().value;
     this.peticionEvaluacion.titulo = form.titulo ? form.titulo : this.getFormGroup().controls.titulo.value;
     this.peticionEvaluacion.tipoActividad = form.tipoActividad;
-    this.peticionEvaluacion.tipoInvestigacionTutelada = form.tipoInvestigacionTutelada;
     this.peticionEvaluacion.existeFinanciacion = form.existeFinanciacion;
     if (form.existeFinanciacion) {
       this.peticionEvaluacion.fuenteFinanciacion = form.financiacion;
@@ -152,6 +171,13 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
     }
     this.peticionEvaluacion.objetivos = form.objetivosCientificos;
     this.peticionEvaluacion.disMetodologico = form.disenioMetodologico;
+    if (this.isTipoInvestigacionTutelada$.value) {
+      this.peticionEvaluacion.tipoInvestigacionTutelada = form.tipoInvestigacionTutelada;
+      this.peticionEvaluacion.tutor = form.tutor;
+    } else {
+      this.peticionEvaluacion.tutor = null;
+      this.peticionEvaluacion.tipoInvestigacionTutelada = null;
+    }
 
     return this.peticionEvaluacion;
   }

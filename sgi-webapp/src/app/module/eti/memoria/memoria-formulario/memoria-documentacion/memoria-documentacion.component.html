@@ -20,14 +20,14 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let wrapper;let i=index;">
-          <button mat-button matTooltip="{{'btn.show.file' | translate}}"
+          <button color="primary" mat-icon-button matTooltip="{{'btn.show.file' | translate}}"
             (click)="downloadDocumentacion(wrapper.value)">
-            <mat-icon color="primary">picture_as_pdf</mat-icon>
+            <mat-icon>picture_as_pdf</mat-icon>
           </button>
           <ng-container *ngIf="isEditAllowed(TIPO_DOCUMENTACION.INICIAL)">
-            <button mat-button matTooltip="{{'btn.delete' | translate}}"
+            <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
               (click)="deleteDocumentacion(TIPO_DOCUMENTACION.INICIAL, wrapper)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>
@@ -82,15 +82,15 @@
             <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
             <td mat-cell *matCellDef="let wrapper;let i=index;">
 
-              <button mat-button matTooltip="{{'btn.show.file' | translate}}"
+              <button color="primary" mat-icon-button matTooltip="{{'btn.show.file' | translate}}"
                 (click)="downloadDocumentacion(wrapper.value)">
-                <mat-icon color="primary">picture_as_pdf</mat-icon>
+                <mat-icon>picture_as_pdf</mat-icon>
               </button>
 
               <ng-container *ngIf="isEditAllowed(TIPO_DOCUMENTACION.SEGUIMIENTO_ANUAL)">
-                <button mat-button matTooltip="{{'btn.delete' | translate}}"
+                <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
                   (click)="deleteDocumentacion(TIPO_DOCUMENTACION.SEGUIMIENTO_ANUAL, wrapper)">
-                  <mat-icon color="warn">highlight_off</mat-icon>
+                  <mat-icon>highlight_off</mat-icon>
                 </button>
               </ng-container>
             </td>
@@ -141,15 +141,15 @@
             <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
             <td mat-cell *matCellDef="let wrapper;let i=index;">
 
-              <button mat-button matTooltip="{{'btn.show.file' | translate}}"
+              <button color="primary" mat-icon-button matTooltip="{{'btn.show.file' | translate}}"
                 (click)="downloadDocumentacion(wrapper.value)">
-                <mat-icon color="primary">picture_as_pdf</mat-icon>
+                <mat-icon>picture_as_pdf</mat-icon>
               </button>
 
               <ng-container *ngIf="isEditAllowed(TIPO_DOCUMENTACION.SEGUIMIENTO_FINAL)">
-                <button mat-button matTooltip="{{'btn.delete' | translate}}"
+                <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
                   (click)="deleteDocumentacion(TIPO_DOCUMENTACION.SEGUIMIENTO_FINAL, wrapper)">
-                  <mat-icon color="warn">highlight_off</mat-icon>
+                  <mat-icon>highlight_off</mat-icon>
                 </button>
               </ng-container>
             </td>
@@ -198,14 +198,14 @@
           <ng-container matColumnDef="acciones">
             <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
             <td mat-cell *matCellDef="let wrapper;let i=index;">
-              <button mat-button matTooltip="{{'btn.show.file' | translate}}"
+              <button color="primary" mat-icon-button matTooltip="{{'btn.show.file' | translate}}"
                 (click)="downloadDocumentacion(wrapper.value)">
-                <mat-icon color="primary">picture_as_pdf</mat-icon>
+                <mat-icon>picture_as_pdf</mat-icon>
               </button>
               <ng-container *ngIf="isEditAllowed(TIPO_DOCUMENTACION.RETROSPECTIVA)">
-                <button mat-button matTooltip="{{'btn.delete' | translate}}"
+                <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
                   (click)="deleteDocumentacion(TIPO_DOCUMENTACION.RETROSPECTIVA, wrapper)">
-                  <mat-icon color="warn">highlight_off</mat-icon>
+                  <mat-icon>highlight_off</mat-icon>
                 </button>
               </ng-container>
             </td>

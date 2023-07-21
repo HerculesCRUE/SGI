@@ -6,14 +6,14 @@ import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.TipoOrigenFuenteFinanciacion;
 import org.crue.hercules.sgi.csp.repository.TipoOrigenFuenteFinanciacionRepository;
-import org.crue.hercules.sgi.csp.service.impl.TipoOrigenFuenteFinanciacionServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -23,18 +23,14 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * TipoOrigenFuenteFinanciacionServiceTest
  */
-
+@Import({ TipoOrigenFuenteFinanciacionService.class })
 class TipoOrigenFuenteFinanciacionServiceTest extends BaseServiceTest {
 
-  @Mock
+  @MockBean
   private TipoOrigenFuenteFinanciacionRepository tipoOrigenFuenteFinanciacionRepository;
 
+  @Autowired
   private TipoOrigenFuenteFinanciacionService service;
-
-  @BeforeEach
-  void setUp() throws Exception {
-    service = new TipoOrigenFuenteFinanciacionServiceImpl(tipoOrigenFuenteFinanciacionRepository);
-  }
 
   @Test
   void findAll_ReturnsPage() {

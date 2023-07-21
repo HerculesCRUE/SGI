@@ -100,7 +100,7 @@ class EtiReportControllerTest extends BaseControllerTest {
     final String url = new StringBuffer(EtiReportController.MAPPING).append("/informe-evaluacion/{idEvaluacion}")
         .toString();
 
-    BDDMockito.given(informeEvaluacionReportService.getReportInformeEvaluadorEvaluacion(
+    BDDMockito.given(informeEvaluacionReportService.getReportInformeEvaluacion(
         ArgumentMatchers.<ReportInformeEvaluacion>any(),
         ArgumentMatchers
             .<Long>any()))

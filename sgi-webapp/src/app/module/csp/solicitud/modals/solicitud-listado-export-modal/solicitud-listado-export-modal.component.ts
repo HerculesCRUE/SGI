@@ -3,19 +3,15 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiRestFindOptions } from '@sgi/framework/http';
 import { ISolicitudReportOptions, SolicitudListadoExportService } from '../../solicitud-listado-export.service';
 
 const SOLICITUD_KEY = marker('csp.solicitud');
 const REPORT_TITLE_KEY = marker('csp.solicitud.listado');
-
-export interface ISolicitudListadoDataExportModalData {
-  findOptions: SgiRestFindOptions;
-}
 
 @Component({
   templateUrl: './solicitud-listado-export-modal.component.html',
@@ -28,11 +24,19 @@ export class SolicitudListadoExportModalComponent extends BaseExportModalCompone
     return MSG_PARAMS;
   }
 
+  get TOTAL_REG_EXP_EXCEL() {
+    return this.modalData.totalRegistrosExportacionExcel;
+  }
+
+  get LIMITE_REG_EXP_EXCEL() {
+    return this.modalData.limiteRegistrosExportacionExcel;
+  }
+
   constructor(
     matDialogRef: MatDialogRef<SolicitudListadoExportModalComponent>,
     translate: TranslateService,
     solicitudListadoExportService: SolicitudListadoExportService,
-    @Inject(MAT_DIALOG_DATA) private modalData: ISolicitudListadoDataExportModalData
+    @Inject(MAT_DIALOG_DATA) private modalData: IBaseExportModalData
   ) {
     super(solicitudListadoExportService, translate, matDialogRef);
   }

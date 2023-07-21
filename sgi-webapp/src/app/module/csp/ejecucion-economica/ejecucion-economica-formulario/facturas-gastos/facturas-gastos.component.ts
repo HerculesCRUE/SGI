@@ -8,6 +8,7 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economica.service';
 import { Subscription } from 'rxjs';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
@@ -38,10 +39,14 @@ export class FacturasGastosComponent extends FragmentComponent implements OnInit
     return MSG_PARAMS;
   }
 
+  private totalElementos = 0;
+  private limiteRegistrosExportacionExcel: string;
+
   constructor(
     actionService: EjecucionEconomicaActionService,
     private ejecucionEconomicaService: EjecucionEconomicaService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService
   ) {
     super(actionService.FRAGMENT.FACTURAS_GASTOS, actionService);
 
@@ -53,7 +58,13 @@ export class FacturasGastosComponent extends FragmentComponent implements OnInit
 
     this.subscriptions.push(this.formPart.desglose$.subscribe(elements => {
       this.dataSourceDesglose.data = elements;
+      this.totalElementos = elements.length;
     }));
+
+    this.subscriptions.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-facturas-gastos').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   ngOnDestroy(): void {
@@ -76,7 +87,9 @@ export class FacturasGastosComponent extends FragmentComponent implements OnInit
     this.subscriptions.push(this.formPart.loadDataExport().subscribe(
       (exportData) => {
         const config = {
-          data: exportData
+          data: exportData,
+          totalRegistrosExportacionExcel: this.totalElementos,
+          limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
         };
         this.matDialog.open(FacturasGastosExportModalComponent, config);
       },

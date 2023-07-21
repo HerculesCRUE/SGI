@@ -7,9 +7,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+
+import org.crue.hercules.sgi.csp.validation.UniqueNombreTipoAmbitoGeograficoActivo;
+import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,13 +19,18 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "tipo_ambito_geografico", uniqueConstraints = {
-    @UniqueConstraint(columnNames = { "nombre" }, name = "UK_TIPOAMBITOGEOGRAFICO_NOMBRE") })
+@Table(name = "tipo_ambito_geografico")
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @SuperBuilder
+@UniqueNombreTipoAmbitoGeograficoActivo(groups = { TipoAmbitoGeografico.OnActualizar.class,
+    BaseActivableEntity.OnActivar.class,
+    TipoAmbitoGeografico.OnCrear.class })
+@ActivableIsActivo(entityClass = TipoAmbitoGeografico.class, groups = { TipoAmbitoGeografico.OnActualizar.class })
 public class TipoAmbitoGeografico extends BaseActivableEntity {
+
+  public static final int NOMBRE_LENGTH = 50;
 
   /**
    * Serial version
@@ -38,8 +45,27 @@ public class TipoAmbitoGeografico extends BaseActivableEntity {
   private Long id;
 
   /** Nombre */
-  @Column(name = "nombre", length = 50, nullable = false)
+  @Column(name = "nombre", length = NOMBRE_LENGTH, nullable = false)
   @NotEmpty
   @Size(max = 50)
   private String nombre;
+
+  /**
+   * Interfaz para marcar validaciones en la creación de la entidad.
+   */
+  public interface OnCrear {
+  }
+
+  /**
+   * Interfaz para marcar validaciones en la actualizacion de la entidad.
+   */
+  public interface OnActualizar {
+  }
+
+  /**
+   * Interfaz para marcar validaciones en las activaciones de la entidad.
+   */
+  public interface OnActivar {
+  }
+
 }

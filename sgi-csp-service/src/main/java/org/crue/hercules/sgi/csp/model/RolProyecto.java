@@ -16,17 +16,22 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.crue.hercules.sgi.csp.validation.UniqueRolPrincipalOrdenPrimarioRolProyectoActivo;
+import org.crue.hercules.sgi.csp.model.BaseActivableEntity.OnActivar;
+import org.crue.hercules.sgi.csp.validation.UniqueAbreviaturaRolProyectoActivo;
+import org.crue.hercules.sgi.csp.validation.UniqueNombreRolProyectoActivo;
+import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "rol_proyecto")
@@ -34,8 +39,15 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class RolProyecto extends BaseEntity {
+@SuperBuilder
+@UniqueNombreRolProyectoActivo(groups = { BaseEntity.Create.class,
+    BaseEntity.Update.class, OnActivar.class })
+@UniqueAbreviaturaRolProyectoActivo(groups = { BaseEntity.Create.class,
+    BaseEntity.Update.class, OnActivar.class })
+@UniqueRolPrincipalOrdenPrimarioRolProyectoActivo(groups = { BaseEntity.Create.class,
+    BaseEntity.Update.class, OnActivar.class })
+@ActivableIsActivo(entityClass = RolProyecto.class, groups = { BaseEntity.Update.class })
+public class RolProyecto extends BaseActivableEntity {
 
   /**
    * Serial version
@@ -115,9 +127,5 @@ public class RolProyecto extends BaseEntity {
   @Setter(AccessLevel.NONE)
   @JsonIgnore
   private final List<RolProyectoColectivo> colectivos = null;
-
-  /** Activo */
-  @Column(name = "activo", columnDefinition = "boolean default true", nullable = false)
-  private Boolean activo;
 
 }

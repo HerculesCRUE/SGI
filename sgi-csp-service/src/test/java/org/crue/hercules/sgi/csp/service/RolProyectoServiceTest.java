@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Validator;
+
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.RolProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
@@ -26,11 +28,13 @@ class RolProyectoServiceTest extends BaseServiceTest {
 
   @Mock
   private RolProyectoRepository repository;
+  @Mock
+  private Validator validator;
   private RolProyectoService service;
 
   @BeforeEach
   void setUp() throws Exception {
-    service = new RolProyectoServiceImpl(repository);
+    service = new RolProyectoServiceImpl(this.repository, this.validator);
   }
 
   @Test

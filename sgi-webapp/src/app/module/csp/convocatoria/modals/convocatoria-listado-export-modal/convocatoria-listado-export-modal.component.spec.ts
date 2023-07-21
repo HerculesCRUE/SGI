@@ -5,6 +5,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
@@ -30,7 +31,7 @@ import { ConvocatoriaPartidaPresupuestariaListadoExportService } from '../../con
 import { ConvocatoriaPeriodoSeguimientoListadoExportService } from '../../convocatoria-periodo-seguimiento-listado-export.service';
 import { ConvocatoriaRequisitoEquipoListadoExportService } from '../../convocatoria-requisito-equipo-listado-export.service';
 import { ConvocatoriaRequisitoIPListadoExportService } from '../../convocatoria-requisito-ip-listado-export.service';
-import { ConvocatoriaListadoExportModalComponent, IConvocatoriaListadoModalData } from './convocatoria-listado-export-modal.component';
+import { ConvocatoriaListadoExportModalComponent } from './convocatoria-listado-export-modal.component';
 
 describe('ConvocatoriaListadoExportModalComponent', () => {
   let component: ConvocatoriaListadoExportModalComponent;
@@ -57,7 +58,7 @@ describe('ConvocatoriaListadoExportModalComponent', () => {
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
         { provide: MatDialogRef, useValue: TestUtils.buildDialogActionMatDialogRef() },
-        { provide: MAT_DIALOG_DATA, useValue: {} as IConvocatoriaListadoModalData },
+        { provide: MAT_DIALOG_DATA, useValue: {} as IBaseExportModalData },
         SgiAuthService,
         ConvocatoriaListadoExportService,
         ConvocatoriaGeneralListadoExportService,

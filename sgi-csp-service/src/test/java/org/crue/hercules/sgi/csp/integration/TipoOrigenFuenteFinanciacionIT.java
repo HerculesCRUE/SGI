@@ -32,7 +32,7 @@ class TipoOrigenFuenteFinanciacionIT extends BaseIT {
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization", String.format("bearer %s",
-        tokenBuilder.buildToken("user", "CSP-THIT-B", "CSP-THIT-C", "CSP-THIT-E", "CSP-THIT-V")));
+        tokenBuilder.buildToken("user", "CSP-FNT-E")));
 
     HttpEntity<TipoOrigenFuenteFinanciacion> request = new HttpEntity<>(entity, headers);
     return request;
@@ -44,7 +44,8 @@ class TipoOrigenFuenteFinanciacionIT extends BaseIT {
   @Test
   void findAll_WithPagingSortingAndFiltering_ReturnsTipoOrigenFuenteFinanciacionSubList() throws Exception {
     HttpHeaders headers = new HttpHeaders();
-    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-TDOC-V")));
+    headers.set("Authorization",
+        String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-TDOC-V", "CSP-TOFF-V")));
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "nombre,desc";

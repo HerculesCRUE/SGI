@@ -62,9 +62,6 @@ public class PeticionEvaluacionWithIsEliminable implements Serializable {
   /** Diseño metodológico */
   private String disMetodologico;
 
-  /** Externo */
-  private Boolean externo;
-
   /** Tiene fondos propios */
   private Boolean tieneFondosPropios;
 
@@ -86,7 +83,6 @@ public class PeticionEvaluacionWithIsEliminable implements Serializable {
     this.codigo = peticionEvaluacion.getCodigo();
     this.disMetodologico = peticionEvaluacion.getDisMetodologico();
     this.eliminable = eliminable;
-    this.externo = peticionEvaluacion.getExterno();
     this.fechaFin = peticionEvaluacion.getFechaFin();
     this.fechaInicio = peticionEvaluacion.getFechaInicio();
     this.fuenteFinanciacion = peticionEvaluacion.getFuenteFinanciacion();

@@ -19,6 +19,14 @@ const FACTURAS_EMITIDAS = marker('menu.csp.ejecucion-economica.facturas-emitidas
 export class FacturasEmitidasExportModalComponent
   extends BaseExportModalComponent<IEjecucionPresupuestariaReportOptions> implements OnInit {
 
+  get TOTAL_REG_EXP_EXCEL() {
+    return this.modalData.totalRegistrosExportacionExcel;
+  }
+
+  get LIMITE_REG_EXP_EXCEL() {
+    return this.modalData.limiteRegistrosExportacionExcel;
+  }
+
   constructor(
     matDialogRef: MatDialogRef<FacturasEmitidasExportModalComponent>,
     translate: TranslateService,

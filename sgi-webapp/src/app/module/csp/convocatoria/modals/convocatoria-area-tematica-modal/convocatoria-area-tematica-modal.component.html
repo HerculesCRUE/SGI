@@ -19,7 +19,7 @@
           <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
             <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
               <li class="mat-tree-node">
-                <button mat-icon-button disabled></button>
+                <button mat-button disabled></button>
                 <mat-checkbox class="checkbox" color="primary" [checked]="node.checked" [disabled]="node.disabled"
                   (change)="onCheckNode(node, $event)">
                   {{node.areaTematica.value.nombre}}
@@ -29,9 +29,9 @@
             <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
               <li>
                 <div class="mat-tree-node">
-                  <button mat-icon-button matTreeNodeToggle
+                  <button color="primary" mat-icon-button matTreeNodeToggle
                     [attr.aria-label]="'Toggle ' + node.areaTematica.value.nombre">
-                    <mat-icon color="primary" class="mat-icon-rtl-mirror">
+                    <mat-icon class="mat-icon-rtl-mirror">
                       {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                     </mat-icon>
                   </button>

@@ -5,12 +5,14 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEvaluador } from '@core/models/eti/evaluador';
 import { IPersona } from '@core/models/sgp/persona';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { DialogService } from '@core/services/dialog.service';
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -23,7 +25,7 @@ import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
-import { EvaluadorListadoExportModalComponent, IEvaluadorListadoModalData } from '../modals/evaluador-listado-export-modal/evaluador-listado-export-modal.component';
+import { EvaluadorListadoExportModalComponent } from '../modals/evaluador-listado-export-modal/evaluador-listado-export-modal.component';
 
 const MSG_BUTTON_SAVE = marker('btn.add.entity');
 const MSG_ERROR = marker('error.load');
@@ -59,6 +61,8 @@ export class EvaluadorListadoComponent extends AbstractTablePaginationComponent<
 
   personas$: Observable<IPersona[]> = of();
 
+  private limiteRegistrosExportacionExcel: string;
+
   get tipoColectivoEvaluador() {
     return TipoColectivo.EVALUADOR_ETICA;
   }
@@ -70,7 +74,8 @@ export class EvaluadorListadoComponent extends AbstractTablePaginationComponent<
     private readonly personaService: PersonaService,
     private readonly dialogService: DialogService,
     private readonly translate: TranslateService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService,
   ) {
     super();
     this.fxFlexProperties = new FxFlexProperties();
@@ -94,6 +99,11 @@ export class EvaluadorListadoComponent extends AbstractTablePaginationComponent<
       estado: new FormControl('', []),
       solicitante: new FormControl('', [])
     });
+
+    this.suscripciones.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('eti-exp-max-num-registros-excel-evaluador-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   private setupI18N(): void {
@@ -275,8 +285,10 @@ export class EvaluadorListadoComponent extends AbstractTablePaginationComponent<
   }
 
   public openExportModal() {
-    const data: IEvaluadorListadoModalData = {
-      findOptions: this.findOptions
+    const data: IBaseExportModalData = {
+      findOptions: this.findOptions,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

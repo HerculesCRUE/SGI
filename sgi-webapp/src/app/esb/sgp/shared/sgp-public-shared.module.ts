@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedModule } from '@shared/shared.module';
-import { SgpFormlyFormsModule } from '../formly-forms/sgp-formly-forms.module';
+import { SgpPublicFormlyFormsModule } from '../formly-forms/sgp-public-formly-forms.module';
 import { PersonaEmailPublicPipe } from './pipes/persona-email-public.pipe';
 import { PersonaEntidadPublicPipe } from './pipes/persona-entidad-public.pipe';
 import { SearchPersonaPublicModalComponent } from './select-persona-public/dialog/search-persona-public.component';
@@ -28,7 +28,7 @@ import { SelectTipoDocumentoPublicComponent } from './select-tipo-documento-publ
     MaterialDesignModule,
     FormsModule,
     ReactiveFormsModule,
-    SgpFormlyFormsModule
+    SgpPublicFormlyFormsModule
   ],
   exports: [
     PersonaEmailPublicPipe,

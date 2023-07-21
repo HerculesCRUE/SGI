@@ -19,6 +19,14 @@ const FACTURAS_JUSTIFICANTES_VIAJES_DIETAS = marker('menu.csp.ejecucion-economic
 export class ViajesDietasExportModalComponent
   extends BaseExportModalComponent<IEjecucionPresupuestariaReportOptions> implements OnInit {
 
+  get TOTAL_REG_EXP_EXCEL() {
+    return this.modalData.totalRegistrosExportacionExcel;
+  }
+
+  get LIMITE_REG_EXP_EXCEL() {
+    return this.modalData.limiteRegistrosExportacionExcel;
+  }
+
   constructor(
     matDialogRef: MatDialogRef<ViajesDietasExportModalComponent>,
     translate: TranslateService,

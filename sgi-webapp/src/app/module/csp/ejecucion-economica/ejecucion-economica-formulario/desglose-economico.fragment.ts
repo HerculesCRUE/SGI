@@ -1,4 +1,5 @@
 import { FormControl } from '@angular/forms';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
 import { IColumna } from '@core/models/sge/columna';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
@@ -78,7 +79,7 @@ export interface IRelacionEjecucionEconomicaWithCodigoExterno extends IRelacionE
   codigoExterno: string;
 }
 
-export interface IDesgloseEconomicoExportData {
+export interface IDesgloseEconomicoExportData extends IBaseExportModalData {
   data: IDatoEconomico[];
   columns: IColumnDefinition[];
 }

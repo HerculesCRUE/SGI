@@ -97,8 +97,9 @@
             </button>
           </ng-container>
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-SJUS-E'">
-            <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deleteGasto(wrapper)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
+              (click)="deleteGasto(wrapper)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </mat-cell>

@@ -87,13 +87,13 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let reparto">
           <ng-container *sgiHasAnyAuthority="['PII-INV-E', 'PII-INV-V']">
-            <button *ngIf="formPart.candEdit" mat-button matTooltip="{{'btn.edit' | translate}}"
+            <button color="primary" *ngIf="formPart.candEdit" mat-icon-button matTooltip="{{'btn.edit' | translate}}"
               [routerLink]="[reparto.id]">
-              <mat-icon color="primary">border_color</mat-icon>
+              <mat-icon>border_color</mat-icon>
             </button>
-            <button *ngIf="!formPart.candEdit" mat-button matTooltip="{{'btn.view' | translate}}"
+            <button color="primary" *ngIf="!formPart.candEdit" mat-icon-button matTooltip="{{'btn.view' | translate}}"
               [routerLink]="[reparto.id]">
-              <mat-icon color="primary">visibility</mat-icon>
+              <mat-icon>visibility</mat-icon>
             </button>
           </ng-container>
         </td>

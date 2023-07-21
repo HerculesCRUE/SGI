@@ -12,7 +12,7 @@
         <td mat-cell *matCellDef="let element">
           <mat-icon *ngIf="element.help" class="{{element.help.class}}"
             matTooltip="{{element.help.tooltip | translate}}">
-            help</mat-icon>
+            error</mat-icon>
         </td>
       </ng-container>
 
@@ -80,21 +80,22 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let element, let i=index;">
           <ng-container *ngIf="!formPart.readonly">
-            <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="openModal(element,i)">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" mat-icon-button matTooltip="{{'btn.edit' | translate}}"
+              (click)="openModal(element,i)">
+              <mat-icon>border_color</mat-icon>
             </button>
             <ng-container *ngIf="element.proyectoPeriodoJustificacion?.value">
               <ng-container *ngIf="element.isProyectoPeriodoJustificacionDeleteable; else noDeleteableInfo">
-                <button mat-button matTooltip="{{'btn.delete' | translate}}"
+                <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
                   *ngIf="element.proyectoPeriodoJustificacion?.value"
                   (click)="deletePeriodoJustificacion(i,element.proyectoPeriodoJustificacion)">
-                  <mat-icon color="warn">highlight_off</mat-icon>
+                  <mat-icon>highlight_off</mat-icon>
                 </button>
               </ng-container>
               <ng-template #noDeleteableInfo>
-                <mat-icon color="primary"
+                <mat-icon color="primary" class="infoIcon"
                   matTooltip="{{ 'csp.proyecto-periodo-justificacion.no-deleteable-info'| translate}}">
-                  help</mat-icon>
+                  info</mat-icon>
               </ng-template>
             </ng-container>
           </ng-container>

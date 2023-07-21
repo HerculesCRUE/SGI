@@ -19,6 +19,14 @@ const EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL = marker('menu.csp.ejecucion-econom
 export class EjecucionPresupuestariaEstadoActualExportModalComponent
   extends BaseExportModalComponent<IEjecucionPresupuestariaReportOptions> implements OnInit {
 
+  get TOTAL_REG_EXP_EXCEL() {
+    return this.modalData.totalRegistrosExportacionExcel;
+  }
+
+  get LIMITE_REG_EXP_EXCEL() {
+    return this.modalData.limiteRegistrosExportacionExcel;
+  }
+
   constructor(
     matDialogRef: MatDialogRef<EjecucionPresupuestariaEstadoActualExportModalComponent>,
     translate: TranslateService,

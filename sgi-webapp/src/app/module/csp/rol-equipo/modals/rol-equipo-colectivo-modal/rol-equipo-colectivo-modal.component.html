@@ -1,0 +1,13 @@
+<sgi-action-dialog [title]="title">
+  <form [formGroup]="formGroup">
+    <div fxLayout="row">
+      <!-- Estado actual -->
+      <mat-form-field>
+        <mat-label>{{'csp.rol-equipo-colectivo' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+        <sgi-select-entity formControlName="colectivo" [options]="colectivos$ | async"
+          [displayWith]="displayerColectivo" required>
+        </sgi-select-entity>
+      </mat-form-field>
+    </div>
+  </form>
+</sgi-action-dialog>

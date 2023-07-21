@@ -12,4 +12,8 @@ export interface IConfiguracion {
   plantillaFormatoIdentificadorJustificacion: string;
   /** Dedicacion minima de un miembro de un grupo de investigacion */
   dedicacionMinimaGrupo: number;
+  /** Expresión regular para validar el formato del código interno de proyecto */
+  formatoCodigoInternoProyecto: string;
+  /** Plantilla informativa del formato del código interno de proyecto */
+  plantillaFormatoCodigoInternoProyecto: string;
 }

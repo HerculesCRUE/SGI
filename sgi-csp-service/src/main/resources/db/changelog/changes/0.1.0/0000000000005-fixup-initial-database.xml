@@ -1,0 +1,14 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000005-fixup-initial-database.xml">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet author="user (generated)" id="0000000000005-33">
+    <addNotNullConstraint columnDataType="timestamp" columnName="fecha_fin" tableName="notificacion_proyecto_externo_cvn" validate="true" />
+    <addNotNullConstraint columnDataType="timestamp" columnName="fecha_inicio" tableName="notificacion_proyecto_externo_cvn" validate="true" />
+    <addNotNullConstraint columnDataType="varchar(255)" columnName="proyecto_cvn_id" tableName="notificacion_proyecto_externo_cvn" validate="true" />
+    <addNotNullConstraint columnDataType="varchar(255)" columnName="solicitante_ref" tableName="notificacion_proyecto_externo_cvn" validate="true" />
+    <addNotNullConstraint columnDataType="varchar(250)" columnName="titulo" tableName="notificacion_proyecto_externo_cvn" validate="true" />
+  </changeSet>
+
+</databaseChangeLog>

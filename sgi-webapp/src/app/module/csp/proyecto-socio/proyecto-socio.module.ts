@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
+import { CspSharedModule } from '../shared/csp-shared.module';
 import { ProyectoSocioPeriodoPagoModalComponent } from './modals/proyecto-socio-periodo-pago-modal/proyecto-socio-periodo-pago-modal.component';
 import { ProyectoSocioCrearComponent } from './proyecto-socio-crear/proyecto-socio-crear.component';
 import { ProyectoSocioDataResolver } from './proyecto-socio-data.resolver';
@@ -19,23 +20,24 @@ import { ProyectoSocioRouting } from './proyecto-socio-routing.module';
 @NgModule({
   declarations: [
     ProyectoSocioCrearComponent,
-    ProyectoSocioEditarComponent,
     ProyectoSocioDatosGeneralesComponent,
+    ProyectoSocioEditarComponent,
     ProyectoSocioEquipoComponent,
+    ProyectoSocioPeriodoJustificacionComponent,
     ProyectoSocioPeriodoPagoComponent,
-    ProyectoSocioPeriodoPagoModalComponent,
-    ProyectoSocioPeriodoJustificacionComponent
+    ProyectoSocioPeriodoPagoModalComponent
   ],
   imports: [
-    SharedModule,
     CommonModule,
-    TranslateModule,
+    CspSharedModule,
+    FormsModule,
     MaterialDesignModule,
     ProyectoSocioRouting,
-    SgiAuthModule,
-    FormsModule,
     ReactiveFormsModule,
-    SgempSharedModule
+    SgempSharedModule,
+    SgiAuthModule,
+    SharedModule,
+    TranslateModule
   ],
   providers: [
     ProyectoSocioDataResolver

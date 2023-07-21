@@ -14,7 +14,7 @@ class DatosPersonalesResponseConverter extends
       paisNacimiento: value.paisNacimiento,
       fechaNacimiento: LuxonUtils.fromBackend(value.fechaNacimiento),
       ciudadNacimiento: value.ciudadNacimiento,
-      comAuntonomaNacimiento: value.comAuntonomaNacimiento
+      comAuntonomaNacimiento: value.comAutonomaNacimiento
     };
   }
   fromTarget(value: IDatosPersonales): IDatosPersonalesResponse {
@@ -26,7 +26,7 @@ class DatosPersonalesResponseConverter extends
       paisNacimiento: value.paisNacimiento,
       fechaNacimiento: LuxonUtils.toBackend(value.fechaNacimiento),
       ciudadNacimiento: value.ciudadNacimiento,
-      comAuntonomaNacimiento: value.comAuntonomaNacimiento
+      comAutonomaNacimiento: value.comAuntonomaNacimiento
     };
   }
 }

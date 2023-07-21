@@ -43,6 +43,198 @@
   "roles": {
     "realm": [
       {
+        "id": "287b76e8-07b2-4c3c-86b4-eb646bf0cd84",
+        "name": "CSP-ROLE-B",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "95c27b0f-b4ba-45c9-a3e0-4fa59b1529f0",
+        "name": "CSP-ROLE-C",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "d096d46c-06f6-4a4a-9c79-d7c5947cd071",
+        "name": "CSP-ROLE-E",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "62c12a2c-5511-41c5-a3eb-4910a6fe16f8",
+        "name": "CSP-ROLE-R",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "abad1c65-f012-4fb3-8910-eaa1f365fe1a",
+        "name": "CSP-ROLS-B",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "7ba52ffb-8137-45a8-b6ea-bef45759997b",
+        "name": "CSP-ROLS-C",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "153a6a12-a48a-49eb-86a4-f7220dcabee9",
+        "name": "CSP-ROLS-E",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "327bd6e1-1615-4383-8b94-348386b655e3",
+        "name": "CSP-ROLS-R",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "c9480f48-f939-48a4-ba2c-5c4d13f73c91",
+        "name": "CSP-TAGE-B",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "5bd8595a-851b-4f44-bb9d-4ca9cff7b957",
+        "name": "CSP-TAGE-C",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "acb3d84c-b2e7-4207-9b49-3ff862af0918",
+        "name": "CSP-TAGE-E",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "bc0b3d22-f68d-4102-906b-7073a28e47a8",
+        "name": "CSP-TAGE-R",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "0e976035-6342-4f26-8a80-a1cd4d9a169b",
+        "name": "CSP-TFAC-B",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "6f31c8c9-c4e0-4114-a5d0-74524e6bd502",
+        "name": "CSP-TFAC-C",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "7a837b42-2d4a-4a83-8001-eaeb4aa2336f",
+        "name": "CSP-TFAC-E",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "624ee782-a9a6-4d3f-9f1a-b54b5f14d711",
+        "name": "CSP-TFAC-R",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "89cad5eb-9402-4270-bc66-f1992662f2d1",
+        "name": "CSP-TOFF-B",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "30f2cfa7-929d-4100-b519-51608ea044e6",
+        "name": "CSP-TOFF-C",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "3d99bbac-c96e-4c42-9e74-aab4b6835f4b",
+        "name": "CSP-TOFF-E",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "50d1fa73-b498-4364-9254-a58c7d7eebc4",
+        "name": "CSP-TOFF-R",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "768b0f7b-d587-4977-ace4-709bed8da07e",
+        "name": "CSP-TRCO-B",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "8dfc44b3-3545-461f-8f99-7f311b18bea7",
+        "name": "CSP-TRCO-C",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "4c44d623-7e1f-452d-9164-6595965cd950",
+        "name": "CSP-TRCO-E",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
+        "id": "d60bd720-a345-441f-ad02-a870adde1f46",
+        "name": "CSP-TRCO-R",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "sgi",
+        "attributes": {}
+      },
+      {
         "id": "abe12328-d4ec-4d48-a036-bdb047038fca",
         "name": "ADM-CNF-E",
         "composite": false,
@@ -3666,6 +3858,40 @@
       "subGroups": []
     },
     {
+      "id": "f8fac9b5-9a2e-4684-af70-61b958561e0f",
+      "name": "SYSADM-CSP",
+      "path": "/SYSADM-CSP",
+      "attributes": {},
+      "realmRoles": [
+        "CSP-ROLE-B",
+        "CSP-ROLE-C",
+        "CSP-ROLE-E",
+        "CSP-ROLE-R",
+        "CSP-ROLS-B",
+        "CSP-ROLS-C",
+        "CSP-ROLS-E",
+        "CSP-ROLS-R",
+        "CSP-TAGE-B",
+        "CSP-TAGE-C",
+        "CSP-TAGE-E",
+        "CSP-TAGE-R",
+        "CSP-TFAC-B",
+        "CSP-TFAC-C",
+        "CSP-TFAC-E",
+        "CSP-TFAC-R",
+        "CSP-TOFF-B",
+        "CSP-TOFF-C",
+        "CSP-TOFF-E",
+        "CSP-TOFF-R",
+        "CSP-TRCO-B",
+        "CSP-TRCO-C",
+        "CSP-TRCO-E",
+        "CSP-TRCO-R"
+      ],
+      "clientRoles": {},
+      "subGroups": []
+    },
+    {
       "id": "9576fd74-3c67-411a-be7b-f0789d0f7fd3",
       "name": "TECNICO-ETICA",
       "path": "/TECNICO-ETICA",
@@ -3887,7 +4113,8 @@
         "/GESTOR-ETICA",
         "/GESTOR-PII",
         "/GESTOR-PRC",
-        "/INVESTIGADOR"
+        "/INVESTIGADOR",
+        "/SYSADM-CSP"
       ]
     },
     {

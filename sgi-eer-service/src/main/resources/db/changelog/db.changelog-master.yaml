@@ -1,8 +1,5 @@
 databaseChangeLog:
-  # HERCULES_0.0.10
   - include:
-      file: classpath*:db/changelog/changes/0000000000000-initial-database.xml
+      file: classpath*:db/changelog/changes/0.1.0/db.changelog-0.1.0.yaml
   - include:
-      file: classpath*:db/changelog/changes/0000000000000-initial-master-data.xml
-  - include:
-      file: classpath*:db/changelog/changes/0000000000000-sample-data.xml
+      file: classpath*:db/changelog/changes/0.2.0/db.changelog-0.2.0.yaml

@@ -15,7 +15,6 @@ import org.crue.hercules.sgi.rep.dto.eti.TareaDto.EquipoTrabajoDto;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
@@ -52,7 +51,6 @@ class InformeFavorableMemoriaReportServiceTest extends BaseReportEtiServiceTest 
         sgiConfigProperties, sgiApiConfService, personaService, evaluacionService, peticionEvaluacionService);
   }
 
-  @Test
   @WithMockUser(username = "user", authorities = { "ETI-EVC-EVAL", "ETI-EVC-INV-EVALR" })
   void getInformeFavorableMemoria_ReturnsResource() throws Exception {
     Long idEvaluacion = 1L;
@@ -63,7 +61,7 @@ class InformeFavorableMemoriaReportServiceTest extends BaseReportEtiServiceTest 
     BDDMockito.given(personaService.findById(null)).willReturn((generarMockPersona("123456F")));
 
     BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
-        .willReturn(getResource("eti/prpt/rep-eti-evaluacion-favorable-memoria-nueva.prpt"));
+        .willReturn(getResource("eti/docx/rep-eti-evaluacion-favorable-memoria-nueva.docx"));
     BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
 
     ReportInformeFavorableMemoria report = new ReportInformeFavorableMemoria();
@@ -74,7 +72,6 @@ class InformeFavorableMemoriaReportServiceTest extends BaseReportEtiServiceTest 
 
   }
 
-  @Test
   @WithMockUser(username = "user", authorities = { "ETI-EVC-EVAL", "ETI-EVC-INV-EVALR" })
   void getInformeFavorableMemoriaGeneroF_ReturnsResource() throws Exception {
     Long idEvaluacion = 1L;

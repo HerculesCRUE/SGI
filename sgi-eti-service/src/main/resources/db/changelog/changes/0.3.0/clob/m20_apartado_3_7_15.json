@@ -1,0 +1,117 @@
+[
+  {
+    "key": "ap3_7_15",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.15 Relación y protocolo de sustancias y agentes biológicos administradas incluidas anestesia y analgesia"
+    },
+    "fieldGroup": [
+      {
+        "template": "Especificar a continuación el principio activo y pautas de TODAS las sustancias administradas, incluidas anestesia, analgesia y protocolo de eutanasia programada y no programada (si procede)."
+      },
+      {
+        "type": "table-crud",
+        "key": "principioActivoTable",
+        "templateOptions": {
+          "entity": "principio activo",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Principio activo"
+          },
+          "fieldGroup": [
+            {
+              "key": "Tipo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Tipo",
+                "order": 10,
+                "options": [
+                  {
+                    "label": "Pre-anestesia para intervención quirúrgica",
+                    "value": "1"
+                  },
+                  {
+                    "label": "Anestesia",
+                    "value": "2"
+                  },
+                  {
+                    "label": "Anestesia intraoperatoria",
+                    "value": "3"
+                  },
+                  {
+                    "label": "Anestesia post-operatoria",
+                    "value": "4"
+                  },
+                  {
+                    "label": "Analgesia en intevención no quirúrgica",
+                    "value": "5"
+                  },
+                  {
+                    "label": "Otra sustancia del procedimiento de experimentación",
+                    "value": "6"
+                  },
+                  {
+                    "label": "Eutanasia programada",
+                    "value": "7"
+                  },
+                  {
+                    "label": "Eutanasia no programada",
+                    "value": "8"
+                  },
+                  {
+                    "label": "Eutanasia (programada y no programada)",
+                    "value": "9"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "producto",
+              "type": "input",
+              "templateOptions": {
+                "label": "Producto (principio activo)",
+                "order": 20
+              }
+            },
+            {
+              "key": "viaAdministracion",
+              "type": "input",
+              "templateOptions": {
+                "label": "Vía administración",
+                "order": 30
+              }
+            },
+            {
+              "key": "dosis",
+              "type": "input",
+              "templateOptions": {
+                "label": "Dosis",
+                "order": 40
+              }
+            },
+            {
+              "key": "volumen",
+              "type": "input",
+              "templateOptions": {
+                "label": "Volumen",
+                "order": 50
+              }
+            },
+            {
+              "key": "pauta",
+              "type": "input",
+              "templateOptions": {
+                "label": "Pauta",
+                "order": 60
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

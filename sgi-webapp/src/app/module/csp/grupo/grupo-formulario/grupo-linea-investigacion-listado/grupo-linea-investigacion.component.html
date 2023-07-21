@@ -37,12 +37,13 @@
             </a>
           </ng-container>
           <ng-container *ngIf="!formPart.readonly">
-            <button mat-button matTooltip="{{'btn.edit' | translate}}" [routerLink]="[wrapper.value.id]"
-              matTooltip="{{'btn.edit' | translate}}">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button mat-icon-button color="primary" matTooltip="{{'btn.edit' | translate}}"
+              [routerLink]="[wrapper.value.id]" matTooltip="{{'btn.edit' | translate}}">
+              <mat-icon>border_color</mat-icon>
             </button>
-            <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deleteEquipo(wrapper)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button mat-icon-button color="warn" matTooltip="{{'btn.delete' | translate}}"
+              (click)="deleteEquipo(wrapper)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>

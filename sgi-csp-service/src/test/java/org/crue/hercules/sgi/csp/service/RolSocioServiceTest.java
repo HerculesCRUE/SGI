@@ -8,30 +8,28 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.RolSocioNotFoundException;
 import org.crue.hercules.sgi.csp.model.RolSocio;
 import org.crue.hercules.sgi.csp.repository.RolSocioRepository;
-import org.crue.hercules.sgi.csp.service.impl.RolSocioServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+@Import({ RolSocioService.class })
 class RolSocioServiceTest extends BaseServiceTest {
 
-  @Mock
+  @MockBean
   private RolSocioRepository repository;
-  private RolSocioService service;
 
-  @BeforeEach
-  void setUp() throws Exception {
-    service = new RolSocioServiceImpl(repository);
-  }
+  @Autowired
+  private RolSocioService service;
 
   @Test
   void findById_WithExistingId_ReturnsRolSocio() throws Exception {

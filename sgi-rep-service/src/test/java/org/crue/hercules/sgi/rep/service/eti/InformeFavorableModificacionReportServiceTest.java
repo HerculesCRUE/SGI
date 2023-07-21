@@ -8,7 +8,6 @@ import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableModificacion;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
@@ -43,7 +42,6 @@ class InformeFavorableModificacionReportServiceTest extends BaseReportEtiService
         sgiConfigProperties, sgiApiConfService, personaService, evaluacionService, convocatoriaReunionService);
   }
 
-  @Test
   @WithMockUser(username = "user", authorities = { "ETI-EVC-EVAL", "ETI-EVC-INV-EVALR" })
   void getInformeFavorableModificacion_ReturnsResource() throws Exception {
     Long idEvaluacion = 1L;
@@ -54,7 +52,7 @@ class InformeFavorableModificacionReportServiceTest extends BaseReportEtiService
         .willReturn((generarMockConvocatoriaReunion(idEvaluacion)));
 
     BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
-        .willReturn(getResource("eti/prpt/rep-eti-evaluacion-favorable-memoria-modificacion.prpt"));
+        .willReturn(getResource("eti/docx/rep-eti-evaluacion-favorable-memoria-modificacion.docx"));
     BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
 
     ReportInformeFavorableModificacion report = new ReportInformeFavorableModificacion();

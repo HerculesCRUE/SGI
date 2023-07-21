@@ -372,6 +372,7 @@ public class ProyectoServiceImpl implements ProyectoService {
       data.setAmbitoGeografico(proyectoActualizar.getAmbitoGeografico());
       data.setAnualidades(proyectoActualizar.getAnualidades());
       data.setClasificacionCVN(proyectoActualizar.getClasificacionCVN());
+      data.setCodigoInterno(proyectoActualizar.getCodigoInterno());
       data.setCodigoExterno(proyectoActualizar.getCodigoExterno());
       data.setCoordinado(proyectoActualizar.getCoordinado());
       data.setColaborativo(proyectoActualizar.getColaborativo());

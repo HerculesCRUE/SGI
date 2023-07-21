@@ -31,21 +31,21 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let tipoProcedimiento">
           <ng-container *sgiHasAuthority="'PII-TPR-E'">
-            <button *ngIf="tipoProcedimiento.activo" mat-button matTooltip="{{'btn.edit' | translate}}"
+            <button *ngIf="tipoProcedimiento.activo" mat-icon-button matTooltip="{{'btn.edit' | translate}}"
               (click)="openModal(tipoProcedimiento)">
               <mat-icon color="primary">border_color</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'PII-TPR-B'">
-            <button *ngIf="tipoProcedimiento.activo" mat-button matTooltip="{{'btn.delete' | translate}}"
-              (click)="deactivateTipoProcedimiento(tipoProcedimiento)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" *ngIf="tipoProcedimiento.activo" mat-icon-button
+              matTooltip="{{'btn.delete' | translate}}" (click)="deactivateTipoProcedimiento(tipoProcedimiento)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'PII-TPR-R'">
-            <button *ngIf="!tipoProcedimiento.activo" mat-button matTooltip="{{'btn.recover' | translate}}"
-              (click)="activateTipoProcedimiento(tipoProcedimiento)">
-              <mat-icon color="accent">add_circle_outline</mat-icon>
+            <button color="accent" *ngIf="!tipoProcedimiento.activo" mat-icon-button
+              matTooltip="{{'btn.recover' | translate}}" (click)="activateTipoProcedimiento(tipoProcedimiento)">
+              <mat-icon>add_circle_outline</mat-icon>
             </button>
           </ng-container>
 

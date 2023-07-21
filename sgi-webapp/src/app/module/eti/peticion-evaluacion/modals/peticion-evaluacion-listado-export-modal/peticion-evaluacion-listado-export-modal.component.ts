@@ -3,19 +3,15 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { OutputReport } from '@core/models/rep/output-report.enum';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiRestFindOptions } from '@sgi/framework/http';
 import { IPeticionEvaluacionReportOptions, PeticionEvaluacionListadoExportService } from '../../peticion-evaluacion-listado-export.service';
 
 const REPORT_TITLE_KEY = marker('eti.peticion-evaluacion.report.title');
-
-export interface IPeticionEvaluacionListadoModalData {
-  findOptions: SgiRestFindOptions;
-}
 
 export const OUTPUT_REPORT_TYPE_EXCEL_CSV_MAP: Map<OutputReport, string> = new Map([
   [OutputReport.XLSX, marker('export.type.xlsx')],
@@ -36,11 +32,19 @@ export class PeticionEvaluacionListadoExportModalComponent extends
     return MSG_PARAMS;
   }
 
+  get TOTAL_REG_EXP_EXCEL() {
+    return this.modalData.totalRegistrosExportacionExcel;
+  }
+
+  get LIMITE_REG_EXP_EXCEL() {
+    return this.modalData.limiteRegistrosExportacionExcel;
+  }
+
   constructor(
     matDialogRef: MatDialogRef<PeticionEvaluacionListadoExportModalComponent>,
     translate: TranslateService,
     invencionListadoExportService: PeticionEvaluacionListadoExportService,
-    @Inject(MAT_DIALOG_DATA) private modalData: IPeticionEvaluacionListadoModalData
+    @Inject(MAT_DIALOG_DATA) private modalData: IBaseExportModalData
   ) {
     super(invencionListadoExportService, translate, matDialogRef);
   }

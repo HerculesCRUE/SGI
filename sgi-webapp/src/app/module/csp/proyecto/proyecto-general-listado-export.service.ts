@@ -22,6 +22,7 @@ const ID_KEY = marker('csp.proyecto.id-interno');
 const ID_SGE_KEY = marker('sge.proyecto.identificador');
 const TITULO_KEY = marker('csp.proyecto.titulo');
 const CODIGO_EXTERNO_KEY = marker('csp.proyecto-relacion.ref-entidad-convocante');
+const CODIGO_INTERNO_KEY = marker('csp.proyecto.codigo-interno');
 const ESTADO_KEY = marker('csp.proyecto.estado');
 const ACRONIMO_KEY = marker('csp.proyecto.acronimo');
 const FECHA_ESTADO_KEY = marker('csp.estado-validacion-ip.fecha-estado');
@@ -136,6 +137,11 @@ export class ProyectoGeneralListadoExportService extends AbstractTableExportFill
         type: ColumnType.STRING
       },
       {
+        title: this.translate.instant(CODIGO_INTERNO_KEY),
+        name: 'codigoInterno',
+        type: ColumnType.STRING
+      },
+      {
         title: this.translate.instant(ESTADO_KEY),
         name: 'estado',
         type: ColumnType.STRING
@@ -234,6 +240,7 @@ export class ProyectoGeneralListadoExportService extends AbstractTableExportFill
     elementsRow.push(proyecto.titulo);
     elementsRow.push(proyecto.acronimo);
     elementsRow.push(proyecto.codigoExterno);
+    elementsRow.push(proyecto.codigoInterno);
     elementsRow.push(proyecto.estado?.estado ? this.translate.instant(ESTADO_MAP.get(proyecto.estado?.estado)) : '');
     elementsRow.push(LuxonUtils.toBackend(proyecto.estado?.fechaEstado));
     elementsRow.push(proyecto.ambitoGeografico?.nombre);

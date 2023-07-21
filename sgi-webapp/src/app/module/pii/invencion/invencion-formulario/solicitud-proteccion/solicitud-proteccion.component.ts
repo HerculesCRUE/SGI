@@ -12,6 +12,7 @@ import { ESTADO_MAP, ISolicitudProteccion } from '@core/models/pii/solicitud-pro
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { DialogService } from '@core/services/dialog.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
@@ -91,6 +92,8 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
   public elementosPagina: number[];
   public totalElementos: number;
 
+  private limiteRegistrosExportacionExcel: string;
+
   public dataSource = new MatTableDataSource<ISolicitudProteccion>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -106,7 +109,8 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
     public actionService: InvencionActionService,
     private translate: TranslateService,
     private matDialog: MatDialog,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private readonly cnfService: ConfigService
   ) {
     super(actionService.FRAGMENT.SOLICITUDES_PROTECCION, actionService);
     this.formPart = this.fragment as SolicitudProteccionFragment;
@@ -131,6 +135,11 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
     this.dataSource.paginator = this.paginator;
     this.formGroup = this.setupSearchFormGroup();
     this.formGroup.controls.viaProteccion.valueChanges.subscribe(via => this.showPaisSelector.next(via?.paisEspecifico));
+
+    this.subscriptions.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('pii-exp-max-num-registros-excel-solicitud-proteccion').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   ngAfterViewInit() {
@@ -392,7 +401,9 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
   public openExportModal(): void {
     const data: ISolicitudProteccionListadoModalData = {
       findOptions: this.createFilterOptions(),
-      invencionId: this.formPart.getKey() as number
+      invencionId: this.formPart.getKey() as number,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

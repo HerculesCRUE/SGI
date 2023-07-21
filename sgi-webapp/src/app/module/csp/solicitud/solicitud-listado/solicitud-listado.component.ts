@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
@@ -16,6 +17,7 @@ import { ISolicitudGrupo } from '@core/models/csp/solicitud-grupo';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ProgramaService } from '@core/services/csp/programa.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
@@ -33,7 +35,7 @@ import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-pers
 import { CONVOCATORIA_ACTION_LINK_KEY } from '../../convocatoria/convocatoria.action.service';
 import { ISolicitudCrearProyectoModalData, SolicitudCrearProyectoModalComponent } from '../modals/solicitud-crear-proyecto-modal/solicitud-crear-proyecto-modal.component';
 import { SolicitudGrupoModalComponent } from '../modals/solicitud-grupo-modal/solicitud-grupo-modal.component';
-import { ISolicitudListadoDataExportModalData, SolicitudListadoExportModalComponent } from '../modals/solicitud-listado-export-modal/solicitud-listado-export-modal.component';
+import { SolicitudListadoExportModalComponent } from '../modals/solicitud-listado-export-modal/solicitud-listado-export-modal.component';
 
 const MSG_BUTTON_NEW = marker('btn.add.entity');
 const MSG_DEACTIVATE = marker('msg.deactivate.entity');
@@ -87,6 +89,8 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
 
   private convocatoriaId: number;
 
+  private limiteRegistrosExportacionExcel: string;
+
   get tipoColectivoSolicitante() {
     return TipoColectivo.SOLICITANTE_CSP;
   }
@@ -119,6 +123,7 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
     private convocatoriaService: ConvocatoriaService,
     private authService: SgiAuthService,
     route: ActivatedRoute,
+    private readonly cnfService: ConfigService
   ) {
     super();
     this.fxFlexProperties = new FxFlexProperties();
@@ -155,6 +160,11 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
         })
       ).subscribe();
     }
+
+    this.suscripciones.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-solicitud-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   private loadForm() {
@@ -587,8 +597,10 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
   }
 
   openExportModal(): void {
-    const data: ISolicitudListadoDataExportModalData = {
-      findOptions: this.findOptions
+    const data: IBaseExportModalData = {
+      findOptions: this.findOptions,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

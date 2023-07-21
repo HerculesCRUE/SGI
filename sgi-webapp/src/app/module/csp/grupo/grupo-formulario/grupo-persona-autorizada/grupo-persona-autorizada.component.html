@@ -48,11 +48,13 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let equipo; let i = index">
           <ng-container *ngIf="!formPart.readonly">
-            <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="openModal(equipo, i)">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button mat-icon-button color="primary" matTooltip="{{'btn.edit' | translate}}"
+              (click)="openModal(equipo, i)">
+              <mat-icon>border_color</mat-icon>
             </button>
-            <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deleteEquipo(equipo)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button mat-icon-button color="warn" matTooltip="{{'btn.delete' | translate}}"
+              (click)="deleteEquipo(equipo)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>

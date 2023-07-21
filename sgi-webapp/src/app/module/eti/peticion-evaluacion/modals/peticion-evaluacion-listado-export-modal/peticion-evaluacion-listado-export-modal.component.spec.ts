@@ -4,6 +4,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
@@ -17,7 +18,7 @@ import { PeticionEvaluacionEquipoInvestigadorListadoExportService } from '../../
 import { PeticionEvaluacionGeneralListadoExportService } from '../../peticion-evaluacion-general-listado-export.service';
 import { PeticionEvaluacionListadoExportService } from '../../peticion-evaluacion-listado-export.service';
 import { PeticionEvaluacionMemoriasListadoExportService } from '../../peticion-evaluacion-memorias-listado-export.service';
-import { IPeticionEvaluacionListadoModalData, PeticionEvaluacionListadoExportModalComponent } from './peticion-evaluacion-listado-export-modal.component';
+import { PeticionEvaluacionListadoExportModalComponent } from './peticion-evaluacion-listado-export-modal.component';
 describe('PeticionEvaluacionListadoExportModalComponent', () => {
   let component: PeticionEvaluacionListadoExportModalComponent;
   let fixture: ComponentFixture<PeticionEvaluacionListadoExportModalComponent>;
@@ -42,7 +43,7 @@ describe('PeticionEvaluacionListadoExportModalComponent', () => {
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
         { provide: MatDialogRef, useValue: TestUtils.buildDialogActionMatDialogRef() },
-        { provide: MAT_DIALOG_DATA, useValue: {} as IPeticionEvaluacionListadoModalData },
+        { provide: MAT_DIALOG_DATA, useValue: {} as IBaseExportModalData },
         SgiAuthService,
         PeticionEvaluacionListadoExportService,
         PeticionEvaluacionGeneralListadoExportService,

@@ -7,14 +7,9 @@ import { MSG_PARAMS } from '@core/i18n';
 import { OutputReport } from '@core/models/rep/output-report.enum';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiRestFindOptions } from '@sgi/framework/http';
 import { EvaluadorListadoExportService, IEvaluadorReportOptions } from '../../evaluador-listado-export.service';
 
 const REPORT_TITLE_KEY = marker('eti.evaluador.report.title');
-
-export interface IEvaluadorListadoModalData {
-  findOptions: SgiRestFindOptions;
-}
 
 export const OUTPUT_REPORT_TYPE_EXCEL_CSV_MAP: Map<OutputReport, string> = new Map([
   [OutputReport.XLSX, marker('export.type.xlsx')],
@@ -33,6 +28,14 @@ export class EvaluadorListadoExportModalComponent extends
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
+  }
+
+  get TOTAL_REG_EXP_EXCEL() {
+    return this.modalData.totalRegistrosExportacionExcel;
+  }
+
+  get LIMITE_REG_EXP_EXCEL() {
+    return this.modalData.limiteRegistrosExportacionExcel;
   }
 
   constructor(

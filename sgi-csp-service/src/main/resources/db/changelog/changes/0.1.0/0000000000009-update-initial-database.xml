@@ -1,0 +1,123 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000009-update-initial-database.xml">
+
+  <changeSet author="user (generated)" id="0000000000009-1">
+    <createSequence incrementBy="1" sequenceName="gasto_requerimiento_justificacion_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000009-2">
+    <createTable tableName="gasto_requerimiento_justificacion">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="gasto_requerimiento_justificacionPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="aceptado" type="BOOLEAN" />
+      <column name="alegacion" type="VARCHAR(2000)" />
+      <column name="gasto_ref" type="VARCHAR(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="identificador_justificacion" type="VARCHAR(255)" />
+      <column name="importe_aceptado" type="DECIMAL(19, 2)" />
+      <column name="importe_alegado" type="DECIMAL(19, 2)" />
+      <column name="importe_rechazado" type="DECIMAL(19, 2)" />
+      <column name="incidencia" type="VARCHAR(2000)" />
+      <column name="requerimiento_justificacion_id" type="BIGINT" />
+    </createTable>
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000009-3">
+    <addForeignKeyConstraint baseColumnNames="requerimiento_justificacion_id" baseTableName="gasto_requerimiento_justificacion" constraintName="FK_GASTOREQUERIMIENTOJUSTIFICACION_REQUERIMIENTOJUSTIFICACION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="requerimiento_justificacion" validate="true" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000009-4">
+    <modifyDataType tableName="linea_investigacion" columnName="nombre" newDataType="VARCHAR(1000)" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000009-5">
+    <addColumn tableName="proyecto_periodo_seguimiento">
+      <column name="fecha_presentacion_documentacion" type="timestamp" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000009-6">
+    <createSequence incrementBy="1" sequenceName="alegacion_requerimiento_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000009-7">
+    <createTable tableName="alegacion_requerimiento">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="alegacion_requerimientoPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="fecha_alegacion" type="TIMESTAMP" />
+      <column name="fecha_reintegro" type="TIMESTAMP" />
+      <column name="importe_alegado" type="DECIMAL(19, 2)" />
+      <column name="importe_alegado_cd" type="DECIMAL(19, 2)" />
+      <column name="importe_alegado_ci" type="DECIMAL(19, 2)" />
+      <column name="importe_reintegrado" type="DECIMAL(19, 2)" />
+      <column name="importe_reintegrado_cd" type="DECIMAL(19, 2)" />
+      <column name="importe_reintegrado_ci" type="DECIMAL(19, 2)" />
+      <column name="intereses_reintegrados" type="DECIMAL(19, 2)" />
+      <column name="justificante_reintegro" type="VARCHAR(250)" />
+      <column name="observaciones" type="VARCHAR(2000)" />
+      <column name="requerimiento_justificacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000009-8">
+    <addUniqueConstraint columnNames="requerimiento_justificacion_id" constraintName="UC_ALEGACION_REQUERIMIENTOREQUERIMIENTO_JUSTIFICACION_ID_COL" tableName="alegacion_requerimiento" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000009-9">
+    <addForeignKeyConstraint baseColumnNames="requerimiento_justificacion_id" baseTableName="alegacion_requerimiento" constraintName="FK_ALEGACIONREQUERIMIENTO_REQUERIMIENTOJUSTIFICACION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="requerimiento_justificacion" validate="true" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000009-10">
+    <createSequence incrementBy="1" sequenceName="proyecto_seguimiento_justificacion_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000009-11">
+    <createTable tableName="proyecto_seguimiento_justificacion">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="proyecto_seguimiento_justificacionPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="fecha_reintegro" type="TIMESTAMP" />
+      <column name="importe_aceptado" type="DECIMAL(19, 2)" />
+      <column name="importe_aceptado_cd" type="DECIMAL(19, 2)" />
+      <column name="importe_aceptado_ci" type="DECIMAL(19, 2)" />
+      <column name="importe_alegado" type="DECIMAL(19, 2)" />
+      <column name="importe_alegado_cd" type="DECIMAL(19, 2)" />
+      <column name="importe_alegado_ci" type="DECIMAL(19, 2)" />
+      <column name="importe_justificado" type="DECIMAL(19, 2)" />
+      <column name="importe_justificado_cd" type="DECIMAL(19, 2)" />
+      <column name="importe_justificado_ci" type="DECIMAL(19, 2)" />
+      <column name="importe_no_ejecutado" type="DECIMAL(19, 2)" />
+      <column name="importe_no_ejecutado_cd" type="DECIMAL(19, 2)" />
+      <column name="importe_no_ejecutado_ci" type="DECIMAL(19, 2)" />
+      <column name="importe_rechazado" type="DECIMAL(19, 2)" />
+      <column name="importe_rechazado_cd" type="DECIMAL(19, 2)" />
+      <column name="importe_rechazado_ci" type="DECIMAL(19, 2)" />
+      <column name="importe_reintegrado" type="DECIMAL(19, 2)" />
+      <column name="importe_reintegrado_cd" type="DECIMAL(19, 2)" />
+      <column name="importe_reintegrado_ci" type="DECIMAL(19, 2)" />
+      <column name="importe_reintegrar" type="DECIMAL(19, 2)" />
+      <column name="importe_reintegrar_cd" type="DECIMAL(19, 2)" />
+      <column name="importe_reintegrar_ci" type="DECIMAL(19, 2)" />
+      <column name="intereses_reintegrados" type="DECIMAL(19, 2)" />
+      <column name="intereses_reintegrar" type="DECIMAL(19, 2)" />
+      <column name="justificante_reintegro" type="VARCHAR(250)" />
+      <column name="proyecto_proyecto_sge_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000009-12">
+    <addForeignKeyConstraint baseColumnNames="proyecto_proyecto_sge_id" baseTableName="proyecto_seguimiento_justificacion" constraintName="FK_PROYECTOSEGUIMIENTOJUSTIFICACION_PROYECTOPROYECTOSGE" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="proyecto_proyecto_sge" validate="true" />
+  </changeSet>
+</databaseChangeLog>

@@ -68,15 +68,17 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let wrapper">
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-            <button mat-button matTooltip="{{'btn.edit' | translate}}" [routerLink]="[wrapper.value.id]"
+            <button color="primary" mat-icon-button matTooltip="{{'btn.edit' | translate}}"
+              [routerLink]="[wrapper.value.id]"
               *ngIf="lastProyectoProrroga.id === wrapper.value.id && !actionService.readonly">
-              <mat-icon color="primary">border_color</mat-icon>
+              <mat-icon>border_color</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-            <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deleteProyectoProrroga(wrapper)"
+            <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
+              (click)="deleteProyectoProrroga(wrapper)"
               *ngIf="lastProyectoProrroga.id === wrapper.value.id && !actionService.readonly">
-              <mat-icon color="warn">highlight_off</mat-icon>
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>

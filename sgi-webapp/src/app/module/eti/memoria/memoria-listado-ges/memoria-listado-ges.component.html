@@ -109,13 +109,13 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let memoria;let i=index;">
           <ng-container>
-            <a mat-button [routerLink]="[memoria.id]" matTooltip="{{'btn.view' | translate}}">
-              <mat-icon color="primary">visibility</mat-icon>
+            <a mat-icon-button color="primary" [routerLink]="[memoria.id]" matTooltip="{{'btn.view' | translate}}">
+              <mat-icon>visibility</mat-icon>
             </a>
-            <button *ngIf="memoria.estadoActual.id === 3 || memoria.estadoActual.id === 4 || 
-              memoria.estadoActual.id === 10 || memoria.estadoActual.id === 5" mat-button
+            <button color="primary" *ngIf="memoria.estadoActual.id === 3 || memoria.estadoActual.id === 4 || 
+              memoria.estadoActual.id === 10 || memoria.estadoActual.id === 5" mat-icon-button
               (click)="recuperarEstadoAnterior(memoria)" matTooltip="{{'btn.eti.memoria.estado-anterior' | translate}}">
-              <mat-icon color="primary">restore</mat-icon>
+              <mat-icon>restore</mat-icon>
             </button>
           </ng-container>
         </td>

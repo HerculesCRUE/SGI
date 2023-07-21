@@ -4,6 +4,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
@@ -15,7 +16,7 @@ import { EvaluadorConflictosInteresListadoExportService } from '../../evaluador-
 import { EvaluadorGeneralListadoExportService } from '../../evaluador-general-listado-export.service';
 import { EvaluadorListadoExportService } from '../../evaluador-listado-export.service';
 import { EstadoEvaluadorPipe } from '../../pipes/estado-evaluador.pipe';
-import { EvaluadorListadoExportModalComponent, IEvaluadorListadoModalData } from './evaluador-listado-export-modal.component';
+import { EvaluadorListadoExportModalComponent } from './evaluador-listado-export-modal.component';
 
 describe('EvaluadorListadoExportModalComponent', () => {
   let component: EvaluadorListadoExportModalComponent;
@@ -41,7 +42,7 @@ describe('EvaluadorListadoExportModalComponent', () => {
       ],
       providers: [
         { provide: MatDialogRef, useValue: TestUtils.buildDialogActionMatDialogRef() },
-        { provide: MAT_DIALOG_DATA, useValue: {} as IEvaluadorListadoModalData },
+        { provide: MAT_DIALOG_DATA, useValue: {} as IBaseExportModalData },
         SgiAuthService,
         EvaluadorListadoExportService,
         EvaluadorGeneralListadoExportService,

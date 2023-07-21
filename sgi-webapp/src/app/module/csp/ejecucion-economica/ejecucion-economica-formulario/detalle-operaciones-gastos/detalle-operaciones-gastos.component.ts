@@ -8,9 +8,10 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { Subscription } from 'rxjs';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
-import { RowTreeDesglose } from '../desglose-economico.fragment';
+import { IDesgloseEconomicoExportData, RowTreeDesglose } from '../desglose-economico.fragment';
 import { DetalleOperacionesGastosFragment } from './detalle-operaciones-gastos.fragment';
 import { DetalleOperacionesGastosExportModalComponent } from './export/detalle-operaciones-gastos-export-modal.component';
 
@@ -29,6 +30,9 @@ export class DetalleOperacionesGastosComponent extends FragmentComponent impleme
   msgParamEntity = {};
   textoDelete: string;
 
+  private totalElementos = 0;
+  private limiteRegistrosExportacionExcel: string;
+
   readonly dataSourceDesglose = new MatTableDataSource<RowTreeDesglose<IDatoEconomico>>();
 
   @ViewChild('anualSel') selectAnualidades: MatSelect;
@@ -39,7 +43,8 @@ export class DetalleOperacionesGastosComponent extends FragmentComponent impleme
 
   constructor(
     actionService: EjecucionEconomicaActionService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService
   ) {
     super(actionService.FRAGMENT.DETALLE_OPERACIONES_GASTOS, actionService);
 
@@ -51,7 +56,13 @@ export class DetalleOperacionesGastosComponent extends FragmentComponent impleme
 
     this.subscriptions.push(this.formPart.desglose$.subscribe(elements => {
       this.dataSourceDesglose.data = elements;
+      this.totalElementos = elements.length;
     }));
+
+    this.subscriptions.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-detalle-operaciones-gastos').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   public clearDesglose(): void {
@@ -63,8 +74,11 @@ export class DetalleOperacionesGastosComponent extends FragmentComponent impleme
 
     this.subscriptions.push(this.formPart.loadDataExport().subscribe(
       (exportData) => {
-        const config = {
-          data: exportData
+        const config: IDesgloseEconomicoExportData = {
+          data: exportData.data,
+          columns: exportData.columns,
+          totalRegistrosExportacionExcel: this.totalElementos,
+          limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
         };
         this.matDialog.open(DetalleOperacionesGastosExportModalComponent, config);
       },

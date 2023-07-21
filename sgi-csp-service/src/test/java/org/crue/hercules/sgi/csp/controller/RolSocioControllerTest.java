@@ -43,7 +43,7 @@ class RolSocioControllerTest extends BaseControllerTest {
   private static final String CONTROLLER_BASE_PATH = "/rolsocios";
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
+  @WithMockUser(username = "user", authorities = { "AUTH", "CSP-ROLS-E" })
   void findById_WithExistingId_ReturnsRolSocio() throws Exception {
     // given: existing id
     RolSocio rolSocioExistente = generarMockRolSocio(1L);
@@ -61,7 +61,7 @@ class RolSocioControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
+  @WithMockUser(username = "user", authorities = { "AUTH", "CSP-ROLS-E" })
   void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
@@ -78,7 +78,7 @@ class RolSocioControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
+  @WithMockUser(username = "user", authorities = { "CSP-ROLS-E" })
   void findAll_WithPaging_ReturnsRolSocioSubList() throws Exception {
     // given: One hundred RolSocio
     List<RolSocio> rolSocios = new ArrayList<>();
@@ -106,7 +106,8 @@ class RolSocioControllerTest extends BaseControllerTest {
 
     // when: get page=3 with pagesize=10
     MvcResult requestResult = mockMvc
-        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH).with(SecurityMockMvcRequestPostProcessors.csrf())
+        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH + "/todos")
+            .with(SecurityMockMvcRequestPostProcessors.csrf())
             .header("X-Page", "3").header("X-Page-Size", "10").accept(MediaType.APPLICATION_JSON))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: the asked RolSocio are returned with the right page information in
@@ -132,7 +133,7 @@ class RolSocioControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
+  @WithMockUser(username = "user", authorities = { "CSP-ROLS-E" })
   void findAll_EmptyList_Returns204() throws Exception {
     // given: no data RolSocio
     BDDMockito.given(service.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
@@ -146,7 +147,8 @@ class RolSocioControllerTest extends BaseControllerTest {
 
     // when: get page=3 with pagesize=10
     mockMvc
-        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH).with(SecurityMockMvcRequestPostProcessors.csrf())
+        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH + "/todos")
+            .with(SecurityMockMvcRequestPostProcessors.csrf())
             .header("X-Page", "3").header("X-Page-Size", "10").accept(MediaType.APPLICATION_JSON))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: returns 204

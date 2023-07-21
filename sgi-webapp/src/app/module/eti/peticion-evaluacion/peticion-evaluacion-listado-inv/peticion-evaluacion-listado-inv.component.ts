@@ -5,12 +5,14 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { MSG_PARAMS } from '@core/i18n';
 import { IMemoria } from '@core/models/eti/memoria';
 import { IPeticionEvaluacionWithIsEliminable } from '@core/models/eti/peticion-evaluacion-with-is-eliminable';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { DialogService } from '@core/services/dialog.service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -18,7 +20,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { IPeticionEvaluacionListadoModalData, PeticionEvaluacionListadoExportModalComponent } from '../modals/peticion-evaluacion-listado-export-modal/peticion-evaluacion-listado-export-modal.component';
+import { PeticionEvaluacionListadoExportModalComponent } from '../modals/peticion-evaluacion-listado-export-modal/peticion-evaluacion-listado-export-modal.component';
 
 const MSG_FOOTER = marker('btn.add.entity');
 const MSG_DELETE = marker('msg.delete.entity');
@@ -46,6 +48,8 @@ export class PeticionEvaluacionListadoInvComponent
   textoDelete: string;
   textoDeleteSuccess: string;
 
+  private limiteRegistrosExportacionExcel: string;
+
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
@@ -57,7 +61,8 @@ export class PeticionEvaluacionListadoInvComponent
     protected readonly snackBarService: SnackBarService,
     private readonly dialogService: DialogService,
     private readonly translate: TranslateService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService,
   ) {
     super();
 
@@ -87,6 +92,11 @@ export class PeticionEvaluacionListadoInvComponent
       titulo: new FormControl('', []),
       codigo: new FormControl('', [])
     });
+
+    this.suscripciones.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('eti-exp-max-num-registros-excel-peticion-evaluacion-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   private setupI18N(): void {
@@ -171,8 +181,10 @@ export class PeticionEvaluacionListadoInvComponent
   }
 
   public openExportModal() {
-    const data: IPeticionEvaluacionListadoModalData = {
-      findOptions: this.findOptions
+    const data: IBaseExportModalData = {
+      findOptions: this.findOptions,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IActaWithNumEvaluaciones } from '@core/models/eti/acta-with-num-evaluaciones';
@@ -21,9 +22,9 @@ import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { Observable, of, Subscription } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { ActaListadoExportModalComponent, IActaListadoModalData } from '../modals/acta-listado-export-modal/acta-listado-export-modal.component';
+import { ActaListadoExportModalComponent } from '../modals/acta-listado-export-modal/acta-listado-export-modal.component';
 
 const MSG_BUTTON_NEW = marker('btn.add.entity');
 const MSG_FINALIZAR_ERROR = marker('error.eti.acta.finalizar');
@@ -51,8 +52,6 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
 
   actas$: Observable<IActaWithNumEvaluaciones[]> = of();
 
-  finalizarSubscription: Subscription;
-
   textoCrear: string;
   private textoFinalizarError: string;
 
@@ -61,6 +60,8 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
   get ESTADO_ACTA_MAP() {
     return ESTADO_ACTA_MAP;
   }
+
+  private limiteRegistrosExportacionExcel: string;
 
   constructor(
     private readonly logger: NGXLogger,
@@ -96,10 +97,16 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
       numeroActa: new FormControl('', []),
       tipoEstadoActa: new FormControl(null, [])
     });
+
+    this.suscripciones.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('eti-exp-max-num-registros-excel-acta-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
+
   }
 
   private setupI18N(): void {
-    this.translate.get(
+    this.suscripciones.push(this.translate.get(
       ACTA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).pipe(
@@ -109,18 +116,18 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
           { entity: value }
         );
       })
-    ).subscribe((value) => this.textoCrear = value);
+    ).subscribe((value) => this.textoCrear = value));
 
-    this.translate.get(
+    this.suscripciones.push(this.translate.get(
       MSG_FINALIZAR_ERROR
-    ).subscribe((value) => this.textoFinalizarError = value);
+    ).subscribe((value) => this.textoFinalizarError = value));
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IActaWithNumEvaluaciones>> {
     const observable$ = this.actasService.findActivasWithEvaluaciones(this.getFindOptions(reset));
-    this.cnfService.isBlockchainEnable().subscribe(value => {
+    this.suscripciones.push(this.cnfService.isBlockchainEnable().subscribe(value => {
       this.blockchainEnable = value;
-    });
+    }));
     return observable$;
   }
 
@@ -171,7 +178,7 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
    * @param actaId id del acta a finalizar.
    */
   finishActa(actaId: number) {
-    this.finalizarSubscription = this.actasService.finishActa(actaId).subscribe((acta) => {
+    this.suscripciones.push(this.actasService.finishActa(actaId).subscribe((acta) => {
       this.snackBarService.showSuccess(MSG_FINALIZAR_SUCCESS);
       this.loadTable(false);
     },
@@ -187,7 +194,7 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
           this.processError(new SgiError(this.textoFinalizarError));
         }
         return of([]);
-      }));
+      })));
   }
 
   /**
@@ -215,16 +222,16 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
   visualizarInforme(acta: IActaWithNumEvaluaciones): void {
     const documento: IDocumento = {} as IDocumento;
     if (this.isFinalizada(acta)) {
-      this.documentoService.getInfoFichero(acta.documentoRef).pipe(
+      this.suscripciones.push(this.documentoService.getInfoFichero(acta.documentoRef).pipe(
         switchMap((documentoInfo: IDocumento) => {
           documento.nombre = documentoInfo.nombre;
           return this.documentoService.downloadFichero(acta.documentoRef);
         })
       ).subscribe(response => {
         triggerDownloadToUser(response, documento.nombre);
-      });
+      }));
     } else {
-      this.actasService.getDocumentoActa(acta.id).pipe(
+      this.suscripciones.push(this.actasService.getDocumentoActa(acta.id).pipe(
         switchMap((documentoInfo: IDocumento) => {
           documento.nombre = documentoInfo.nombre;
           return this.documentoService.downloadFichero(documentoInfo.documentoRef);
@@ -234,13 +241,15 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
           triggerDownloadToUser(response, documento.nombre);
         },
         this.processError
-      );
+      ));
     }
   }
 
   openExportModal(): void {
-    const data: IActaListadoModalData = {
-      findOptions: this.findOptions
+    const data: IBaseExportModalData = {
+      findOptions: this.findOptions,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

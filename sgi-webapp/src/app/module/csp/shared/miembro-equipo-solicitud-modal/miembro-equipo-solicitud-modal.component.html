@@ -7,8 +7,8 @@
         <mat-label>
           {{'csp.miembro-equipo-solicitud.rol-participacion' | translate}}
         </mat-label>
-        <sgi-select-entity formControlName="rolProyecto" required [options]="rolesProyecto$ | async">
-        </sgi-select-entity>
+        <sgi-select-rol-equipo formControlName="rolProyecto" required>
+        </sgi-select-rol-equipo>
         <mat-error *ngIf="formGroup.controls.rolProyecto.errors?.required">
           {{'error.required.entity' | translate:msgParamRolParticipacionEntity}}
         </mat-error>

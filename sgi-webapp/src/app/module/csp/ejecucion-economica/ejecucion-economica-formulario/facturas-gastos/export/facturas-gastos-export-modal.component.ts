@@ -19,6 +19,14 @@ const FACTURAS_JUSTIFICANTES_GASTOS = marker('menu.csp.ejecucion-economica.factu
 export class FacturasGastosExportModalComponent
   extends BaseExportModalComponent<IEjecucionPresupuestariaReportOptions> implements OnInit {
 
+  get TOTAL_REG_EXP_EXCEL() {
+    return this.modalData.totalRegistrosExportacionExcel;
+  }
+
+  get LIMITE_REG_EXP_EXCEL() {
+    return this.modalData.limiteRegistrosExportacionExcel;
+  }
+
   constructor(
     matDialogRef: MatDialogRef<FacturasGastosExportModalComponent>,
     translate: TranslateService,

@@ -8,11 +8,8 @@ import { CLASIFICACION_CVN_MAP } from '@core/enums/clasificacion-cvn';
 import { FORMULARIO_SOLICITUD_MAP } from '@core/enums/formulario-solicitud';
 import { MSG_PARAMS } from '@core/i18n';
 import { ESTADO_MAP, IConvocatoria } from '@core/models/csp/convocatoria';
-import { ITipoRegimenConcurrencia } from '@core/models/csp/tipo-regimen-concurrencia';
-import { TipoRegimenConcurrenciaService } from '@core/services/csp/tipo-regimen-concurrencia.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { ConvocatoriaPublicActionService } from '../../convocatoria-public.action.service';
 import { ConvocatoriaDatosGeneralesPublicFragment } from './convocatoria-datos-generales-public.fragment';
 
@@ -31,8 +28,6 @@ export interface AreaTematicaListadoPublic {
 })
 export class ConvocatoriaDatosGeneralesPublicComponent extends FormFragmentComponent<IConvocatoria> implements OnInit {
   formPart: ConvocatoriaDatosGeneralesPublicFragment;
-
-  regimenesConcurrencia$: Observable<ITipoRegimenConcurrencia[]>;
 
   private subscriptions = [] as Subscription[];
 
@@ -58,15 +53,10 @@ export class ConvocatoriaDatosGeneralesPublicComponent extends FormFragmentCompo
 
   constructor(
     protected actionService: ConvocatoriaPublicActionService,
-    private readonly translate: TranslateService,
-    tipoRegimenConcurrenciaService: TipoRegimenConcurrenciaService
+    private readonly translate: TranslateService
   ) {
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
     this.formPart = this.fragment as ConvocatoriaDatosGeneralesPublicFragment;
-
-    this.regimenesConcurrencia$ = tipoRegimenConcurrenciaService.findAll().pipe(
-      map(response => response.items)
-    );
   }
 
   ngOnInit() {

@@ -13,6 +13,8 @@
   <properties>
     <org.crue.hercules.sgi.esb.sgemp.endpoint_._sgemp-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgemp.endpoint_._sgemp-endpoint>
     <org.crue.hercules.sgi.esb.sgemp.sequence_._sgemp-add-x-api-key-sequence>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgemp.sequence_._sgemp-add-x-api-key-sequence>
+    <org.crue.hercules.sgi.esb.sgemp.sequence_._sgemp-remove-x-api-key-sequence>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgemp.sequence_._sgemp-remove-x-api-key-sequence>
+    <org.crue.hercules.sgi.esb.sgemp.sequence_._sgemp-remove-authorization-header-sequence>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgemp.sequence_._sgemp-remove-authorization-header-sequence>
     <org.crue.hercules.sgi.esb.sgemp.resource_._datos-contacto-response-converter-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgemp.resource_._datos-contacto-response-converter-mediator>
     <org.crue.hercules.sgi.esb.sgemp.resource_._empresa-sectores-industriales-response-converter-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgemp.resource_._empresa-sectores-industriales-response-converter-mediator>
     <org.crue.hercules.sgi.esb.sgemp.resource_._empresa-sectores-industriales-request-converter-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgemp.resource_._empresa-sectores-industriales-request-converter-mediator>
@@ -45,6 +47,18 @@
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgemp.sequence</groupId>
       <artifactId>sgemp-add-x-api-key-sequence</artifactId>
+      <version>${revision}</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgemp.sequence</groupId>
+      <artifactId>sgemp-remove-x-api-key-sequence</artifactId>
+      <version>${revision}</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgemp.sequence</groupId>
+      <artifactId>sgemp-remove-authorization-header-sequence</artifactId>
       <version>${revision}</version>
       <type>xml</type>
     </dependency>

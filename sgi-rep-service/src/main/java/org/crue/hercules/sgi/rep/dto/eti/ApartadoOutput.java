@@ -41,6 +41,6 @@ public class ApartadoOutput {
   private Boolean modificado;
 
   @JsonIgnore
-  private Integer numeroComentariosGestor;
+  private Integer numeroComentariosTotalesInforme;
 
 }

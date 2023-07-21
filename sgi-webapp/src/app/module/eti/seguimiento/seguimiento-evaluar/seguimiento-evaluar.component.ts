@@ -13,10 +13,10 @@ import { SeguimientoFormularioActionService } from '../../seguimiento-formulario
 import { SeguimientoEvaluarActionService } from '../seguimiento-evaluar.action.service';
 import { SEGUIMIENTO_ROUTE_NAMES } from '../seguimiento-route-names';
 
-const MSG_BUTTON_SAVE = marker('btn.ok');
-const MSG_SUCCESS = marker('msg.save.entity.success');
-const MSG_ERROR = marker('error.save.entity');
-const SEGUIMIENTO_KEY = marker('eti.seguimiento');
+const MSG_BUTTON_SAVE = marker('btn.save');
+const MSG_SUCCESS = marker('msg.update.entity.success');
+const MSG_ERROR = marker('error.update.entity');
+const EVALUACION_SEGUIMIENTO_KEY = marker('eti.evaluacion-seguimiento');
 
 @Component({
   selector: 'sgi-seguimiento-evaluar',
@@ -57,7 +57,7 @@ export class SeguimientoEvaluarComponent extends ActionComponent implements OnIn
   private setupI18N(): void {
 
     this.translate.get(
-      SEGUIMIENTO_KEY,
+      EVALUACION_SEGUIMIENTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).pipe(
       switchMap((value) => {
@@ -69,7 +69,7 @@ export class SeguimientoEvaluarComponent extends ActionComponent implements OnIn
     ).subscribe((value) => this.textoCrearSuccess = value);
 
     this.translate.get(
-      SEGUIMIENTO_KEY,
+      EVALUACION_SEGUIMIENTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).pipe(
       switchMap((value) => {

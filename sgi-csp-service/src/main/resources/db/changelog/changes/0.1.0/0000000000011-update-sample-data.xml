@@ -1,0 +1,19 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                                                                                                                                                                                                                                             http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                                                                                                                                                                                                                                                             http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+                                                                                                                                                                                                                                                             logicalFilePath="classpath*:db/changelog/changes/0000000000011-update-sample-data.xml">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="dev" author="user (generated)" id="00000000000011-proyecto_proyecto_sge">
+    <update tableName="proyecto_proyecto_sge">
+      <column name="proyecto_sge_ref" value="11345" />
+      <where>:name=:value AND :name=:value</where>
+      <whereParams>
+        <param name="proyecto_id" valueNumeric="1" />
+        <param name="proyecto_sge_ref" value="33939" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+</databaseChangeLog>

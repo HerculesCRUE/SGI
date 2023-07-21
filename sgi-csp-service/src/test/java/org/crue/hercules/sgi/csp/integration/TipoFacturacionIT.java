@@ -48,13 +48,15 @@ class TipoFacturacionIT extends BaseIT {
   @Test
   void findAll_SortingAndFiltering_ReturnsTipoFacturacionSubList() throws Exception {
 
-    // sorted by nombre asc and filter by tipoComunicado
-    String[] roles = { "CSP-PRO-V", "CSP-PRO-C", "CSP-PRO-E", "CSP-PRO-B", "CSP-PRO-MOD-V" };
-    String sort = "nombre, asc";
-    String filter = "tipoComunicado=ke=00";
+    // sorted by nombre asc and filter
+    String[] roles = { "CSP-TFAC-V", "CSP-TFAC-C", "CSP-TFAC-E", "CSP-TFAC-B", "CSP-TFAC-V" };
+    String sort = "nombre,asc";
+    // String filter = "tipoComunicado=ke=00";
+    String filter = "";
 
     // when: find TipoFacturacion
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + "/todos").queryParam("s", sort)
+        .queryParam("q", filter)
         .build(false).toUri();
 
     final ResponseEntity<List<TipoFacturacion>> response = restTemplate.exchange(uri, HttpMethod.GET,
@@ -77,13 +79,15 @@ class TipoFacturacionIT extends BaseIT {
   @Test
   void findAll_SortingAndFiltering_ReturnsStatusCode204() throws Exception {
 
-    // sorted by nombre asc and filter by tipoComunicado
-    String[] roles = { "CSP-PRO-V", "CSP-PRO-C", "CSP-PRO-E", "CSP-PRO-B", "CSP-PRO-MOD-V" };
-    String sort = "nombre, asc";
-    String filter = "tipoComunicado=ke=00";
+    // sorted by nombre asc and filter
+    String[] roles = { "CSP-TFAC-V", "CSP-TFAC-C", "CSP-TFAC-E", "CSP-TFAC-B", "CSP-TFAC-V" };
+    String sort = "nombre,asc";
+    // String filter = "tipoComunicado=ke=00";
+    String filter = "";
 
     // when: find TipoFacturacion
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + "/todos").queryParam("s", sort)
+        .queryParam("q", filter)
         .build(false).toUri();
 
     final ResponseEntity<List<TipoFacturacion>> response = restTemplate.exchange(uri, HttpMethod.GET,

@@ -1,23 +1,21 @@
 package org.crue.hercules.sgi.rep.service.eti;
 
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
+import java.util.stream.Collectors;
 
-import javax.swing.table.DefaultTableModel;
-
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableMemoria;
 import org.crue.hercules.sgi.rep.dto.eti.TareaDto;
-import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
+import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
-import org.pentaho.reporting.engine.classic.core.Band;
-import org.pentaho.reporting.engine.classic.core.MasterReport;
-import org.pentaho.reporting.engine.classic.core.SubReport;
-import org.pentaho.reporting.engine.classic.core.TableDataFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -29,113 +27,89 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Validated
-public class InformeFavorableMemoriaReportService extends InformeEvaluacionBaseReportService {
-  private final EvaluacionService evaluacionService;
+public class InformeFavorableMemoriaReportService extends InformeEvaluacionEvaluadorBaseReportService {
   private final PeticionEvaluacionService peticionEvaluacionService;
+  private final SgiApiSgpService personaService;
 
   public InformeFavorableMemoriaReportService(SgiConfigProperties sgiConfigProperties,
       SgiApiConfService sgiApiConfService, SgiApiSgpService personaService,
       EvaluacionService evaluacionService, PeticionEvaluacionService peticionEvaluacionService) {
 
-    super(sgiConfigProperties, sgiApiConfService, personaService, evaluacionService);
-    this.evaluacionService = evaluacionService;
-
+    super(sgiConfigProperties, sgiApiConfService, personaService, evaluacionService, null);
     this.peticionEvaluacionService = peticionEvaluacionService;
+    this.personaService = personaService;
   }
 
-  protected DefaultTableModel getTableModelGeneral(EvaluacionDto evaluacion) {
+  protected XWPFDocument getDocument(EvaluacionDto evaluacion, HashMap<String, Object> dataReport, InputStream path) {
 
-    Vector<Object> columnsData = new Vector<>();
-    Vector<Vector<Object>> rowsData = new Vector<>();
-    Vector<Object> elementsRow = new Vector<>();
+    dataReport.put("codigoMemoria", evaluacion.getMemoria().getNumReferencia());
 
-    columnsData.add("codigoMemoria");
-    elementsRow.add(evaluacion.getMemoria().getNumReferencia());
+    addDataPersona(evaluacion.getMemoria().getPeticionEvaluacion().getPersonaRef(),
+        dataReport);
 
-    addColumnAndRowDataInvestigador(evaluacion.getMemoria().getPeticionEvaluacion().getPersonaRef(), columnsData,
-        elementsRow);
-
-    columnsData.add("fechaDictamen");
     String i18nDe = ApplicationContextSupport.getMessage("common.de");
     String pattern = String.format("EEEE dd '%s' MMMM '%s' yyyy", i18nDe, i18nDe);
-    elementsRow.add(formatInstantToString(evaluacion.getConvocatoriaReunion().getFechaEvaluacion(), pattern));
+    dataReport.put("fechaDictamen",
+        formatInstantToString(evaluacion.getConvocatoriaReunion().getFechaEvaluacion(), pattern));
 
-    columnsData.add("numeroActa");
     String i18nActa = ApplicationContextSupport.getMessage("acta");
     String codigoActa = "(" + i18nActa + evaluacion.getConvocatoriaReunion().getNumeroActa() + "/"
         + formatInstantToString(evaluacion.getConvocatoriaReunion()
             .getFechaEvaluacion(), "YYYY")
         + "/" + evaluacion.getConvocatoriaReunion().getComite().getComite() + ")";
-    elementsRow.add(codigoActa);
+    dataReport.put("numeroActa", codigoActa);
 
-    fillCommonFieldsEvaluacion(evaluacion, columnsData, elementsRow);
+    addDataEvaluacion(evaluacion, dataReport);
 
-    columnsData.add("resourcesBaseURL");
-    elementsRow.add(getRepResourcesBaseURL());
+    addDataEquipoTrabajo(evaluacion, dataReport);
 
-    rowsData.add(elementsRow);
-
-    DefaultTableModel tableModel = new DefaultTableModel();
-    tableModel.setDataVector(rowsData, columnsData);
-    return tableModel;
+    return compileReportData(path, dataReport);
   }
 
-  private DefaultTableModel getTableModelEquipoInvestigador(EvaluacionDto evaluacion) {
-    Vector<Object> columnsData = new Vector<>();
-    Vector<Vector<Object>> rowsData = new Vector<>();
-
+  private void addDataEquipoTrabajo(EvaluacionDto evaluacion, HashMap<String, Object> dataReport) {
     List<TareaDto> tareas = peticionEvaluacionService
         .findTareasEquipoTrabajo(evaluacion.getMemoria().getPeticionEvaluacion().getId());
+    List<PersonaDto> personas = new ArrayList<>();
+    tareas.stream().filter(tarea -> tarea.getMemoria().getId().equals(evaluacion.getMemoria().getId()))
+        .forEach(tarea -> {
+          if (!personas.stream().map(persona -> persona.getId().toString()).collect(Collectors.toList())
+              .contains(tarea.getEquipoTrabajo().getPersonaRef())) {
+            PersonaDto persona = personaService.findById(tarea.getEquipoTrabajo().getPersonaRef());
+            if (tarea.getEquipoTrabajo().getPersonaRef()
+                .equals(evaluacion.getMemoria().getPeticionEvaluacion().getTutorRef())) {
+              String textoDirectorMasculino = "(Director " + dataReport.get("fieldDelActividad") + " "
+                  + dataReport.get("actividad") + ")";
+              String textoDirectorFemenino = "(Directora " + dataReport.get("fieldDelActividad") + " "
+                  + dataReport.get("actividad") + ")";
+              String textoDirector = (persona.getSexo().getId().equals("V") ? textoDirectorMasculino
+                  : textoDirectorFemenino);
+              persona.setApellidos(persona.getApellidos() + " " + textoDirector);
+            }
+            personas.add(persona);
 
-    columnsData.add("nombreInvestigador");
-    columnsData.add("articuloInvestigador");
-    List<String> personas = new ArrayList<>();
-    tareas.forEach(tarea -> {
-      Vector<Object> elementsRow = new Vector<>();
-      if (!personas.contains(tarea.getEquipoTrabajo().getPersonaRef())) {
-        personas.add(tarea.getEquipoTrabajo().getPersonaRef());
+          }
+        });
 
-        addRowDataInvestigador(tarea.getEquipoTrabajo().getPersonaRef(), elementsRow);
-
-        rowsData.add(elementsRow);
+    if (ObjectUtils.isNotEmpty(evaluacion.getMemoria().getPeticionEvaluacion().getTutorRef())) {
+      PersonaDto director = personaService.findById(evaluacion.getMemoria().getPeticionEvaluacion().getTutorRef());
+      if (!personas.stream().filter(persona -> persona.getNumeroDocumento().equals(director.getNumeroDocumento()))
+          .findAny().isPresent()) {
+        String textoDirectorMasculino = "(Director " + dataReport.get("fieldDelActividad") + " "
+            + dataReport.get("actividad") + ")";
+        String textoDirectorFemenino = "(Directora " + dataReport.get("fieldDelActividad") + " "
+            + dataReport.get("actividad") + ")";
+        String textoDirector = (director.getSexo().getId().equals("V") ? textoDirectorMasculino
+            : textoDirectorFemenino);
+        director.setApellidos(director.getApellidos() + " " + textoDirector);
+        personas.add(director);
       }
-    });
+    }
 
-    DefaultTableModel tableModel = new DefaultTableModel();
-    tableModel.setDataVector(rowsData, columnsData);
-    return tableModel;
+    dataReport.put("equipo", personas);
   }
 
   public byte[] getReportInformeFavorableMemoria(ReportInformeFavorableMemoria sgiReport, Long idEvaluacion) {
-    try {
-
-      final MasterReport report = getReportDefinition(sgiReport.getPath());
-
-      EvaluacionDto evaluacion = evaluacionService.findById(idEvaluacion);
-
-      String queryGeneral = QUERY_TYPE + SEPARATOR_KEY + NAME_GENERAL_TABLE_MODEL + SEPARATOR_KEY
-          + "informeFavorableMemoria";
-      DefaultTableModel tableModelGeneral = getTableModelGeneral(evaluacion);
-
-      TableDataFactory dataFactory = new TableDataFactory();
-      dataFactory.addTable(queryGeneral, tableModelGeneral);
-      report.setDataFactory(dataFactory);
-
-      String queryEquipoInvestigador = QUERY_TYPE + SEPARATOR_KEY + "equipoInvestigador";
-      DefaultTableModel tableModeEquipoInvestigador = getTableModelEquipoInvestigador(evaluacion);
-      TableDataFactory dataFactorySubReportEquipoInvestigador = new TableDataFactory();
-      dataFactorySubReportEquipoInvestigador.addTable(queryEquipoInvestigador, tableModeEquipoInvestigador);
-      Band bandEquipoInvestigador = (Band) report.getItemBand().getElement(1);
-      SubReport subreportEquipoInvestigador = (SubReport) bandEquipoInvestigador.getElement(0);
-      subreportEquipoInvestigador.setDataFactory(dataFactorySubReportEquipoInvestigador);
-
-      sgiReport.setContent(generateReportOutput(sgiReport.getOutputType(), report));
-
-    } catch (Exception e) {
-      log.error(e.getMessage(), e);
-      throw new GetDataReportException();
-    }
-
+    getReportFromIdEvaluacion(sgiReport, idEvaluacion);
     return sgiReport.getContent();
   }
 

@@ -372,6 +372,9 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
     getApartadoTituloProyecto(bloqueOutput, peticionEvaluacion.getTitulo());
     getApartadoTipoActividad(bloqueOutput, peticionEvaluacion.getTipoActividad(),
         peticionEvaluacion.getTipoInvestigacionTutelada());
+    if (ObjectUtils.isNotEmpty(peticionEvaluacion.getTutorRef())) {
+      getApartadoTutor(bloqueOutput, peticionEvaluacion.getTutorRef());
+    }
     getApartadoFinanciacion(bloqueOutput, peticionEvaluacion);
     getApartadoFechasClave(bloqueOutput, peticionEvaluacion);
     getApartadoResumen(bloqueOutput, peticionEvaluacion.getResumen());
@@ -441,6 +444,32 @@ public class MXXReportService extends BaseApartadosRespuestasReportService {
     ElementOutput tipoActividadElementOutput = generateTemplateElementOutput(question, answer);
 
     apartadoOutput.getElementos().add(tipoActividadElementOutput);
+    bloqueOutput.getApartados().add(apartadoOutput);
+  }
+
+  private void getApartadoTutor(BloqueOutput bloqueOutput, String tutorRef) {
+    int apartadoIndex = bloqueOutput.getApartados().size() + 1;
+    String apartadoTitleMasculino = "mxx.tutor";
+    String apartadoTitleFemenino = "mxx.tutora";
+    String apartadoTitle = "mxx.tutor-tutora";
+
+    String question = "";
+    PersonaDto persona = personaService.findById(tutorRef);
+
+    if (ObjectUtils.isNotEmpty(persona.getSexo())) {
+      if (persona.getSexo().getId().equals("V")) {
+        apartadoTitle = apartadoTitleMasculino;
+      } else {
+        apartadoTitle = apartadoTitleFemenino;
+      }
+    }
+
+    ApartadoOutput apartadoOutput = generateApartadoOutputBasic(apartadoIndex, apartadoTitle);
+
+    String tutor = persona.getNombre() + " " + persona.getApellidos();
+    ElementOutput tutorElementOutput = generateTemplateElementOutput(question, tutor);
+
+    apartadoOutput.getElementos().add(tutorElementOutput);
     bloqueOutput.getApartados().add(apartadoOutput);
   }
 

@@ -89,26 +89,18 @@
             <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}
             </th>
             <td mat-cell *matCellDef="let data">
-              <!-- Botón Seleccionar-->
-              <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E', 'CSP-PRO-C']">
-                <button color="accent" *ngIf="!data.areaTematicaProyecto" mat-button
-                  matTooltip="{{'csp.proyecto.select-area-tematica' | translate}}" (click)="openModal(data)">
-                  <mat-icon color="accent">add_circle</mat-icon>
-                  {{'csp.proyecto.select-area-tematica' | translate}}
-                </button>
-              </ng-container>
               <!-- Botón Editar-->
-              <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-                <button *ngIf="data.areaTematicaProyecto" mat-button
-                  matTooltip="{{'csp.proyecto.select-area-tematica' | translate}}" (click)="openModal(data)">
-                  <mat-icon color="primary">border_color</mat-icon>
+              <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E', 'CSP-PRO-C']">
+                <button color="primary" mat-icon-button matTooltip="{{'csp.proyecto.select-area-tematica' | translate}}"
+                  (click)="openModal(data)">
+                  <mat-icon>border_color</mat-icon>
                 </button>
               </ng-container>
               <!--Botón Borrar-->
               <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E', 'CSP-PRO-C']">
-                <button *ngIf="data.areaTematicaProyecto" mat-button matTooltip="{{'btn.delete' | translate}}"
-                  (click)="deleteAreaTematicaListado()">
-                  <mat-icon color="warn">highlight_off</mat-icon>
+                <button color="warn" *ngIf="data.areaTematicaProyecto" mat-icon-button
+                  matTooltip="{{'btn.delete' | translate}}" (click)="deleteAreaTematicaListado()">
+                  <mat-icon>highlight_off</mat-icon>
                 </button>
               </ng-container>
             </td>

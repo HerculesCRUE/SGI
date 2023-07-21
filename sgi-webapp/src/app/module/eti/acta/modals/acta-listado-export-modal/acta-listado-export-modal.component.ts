@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { OutputReport } from '@core/models/rep/output-report.enum';
@@ -12,10 +13,6 @@ import { ActaListadoExportService, IActaReportOptions } from '../../acta-listado
 
 const ACTA_KEY = marker('eti.acta');
 const REPORT_TITLE_KEY = marker('eti.acta.listado');
-
-export interface IActaListadoModalData {
-  findOptions: SgiRestFindOptions;
-}
 
 @Component({
   templateUrl: './acta-listado-export-modal.component.html',
@@ -28,13 +25,21 @@ export class ActaListadoExportModalComponent extends BaseExportModalComponent<IR
     matDialogRef: MatDialogRef<ActaListadoExportModalComponent>,
     translate: TranslateService,
     actaListadoExportService: ActaListadoExportService,
-    @Inject(MAT_DIALOG_DATA) private modalData: IActaListadoModalData
+    @Inject(MAT_DIALOG_DATA) private modalData: IBaseExportModalData
   ) {
     super(actaListadoExportService, translate, matDialogRef);
   }
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
+  }
+
+  get TOTAL_REG_EXP_EXCEL() {
+    return this.modalData.totalRegistrosExportacionExcel;
+  }
+
+  get LIMITE_REG_EXP_EXCEL() {
+    return this.modalData.limiteRegistrosExportacionExcel;
   }
 
   ngOnInit(): void {

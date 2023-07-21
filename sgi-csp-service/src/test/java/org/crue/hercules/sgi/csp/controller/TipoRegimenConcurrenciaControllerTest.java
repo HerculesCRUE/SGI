@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.TipoRegimenConcurrenciaNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
@@ -29,6 +27,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 /**
  * TipoRegimenConcurrenciaControllerTest
  */
@@ -42,7 +42,7 @@ class TipoRegimenConcurrenciaControllerTest extends BaseControllerTest {
   private static final String CONTROLLER_BASE_PATH = "/tiporegimenconcurrencias";
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
+  @WithMockUser(username = "user", authorities = { "CSP-TRCO-E" })
   void findById_WithExistingId_ReturnsTipoRegimenConcurrencia() throws Exception {
     // given: existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer(new Answer<TipoRegimenConcurrencia>() {
@@ -65,7 +65,7 @@ class TipoRegimenConcurrenciaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
+  @WithMockUser(username = "user", authorities = { "CSP-TRCO-E" })
   void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
@@ -82,7 +82,7 @@ class TipoRegimenConcurrenciaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
+  @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
   void findAll_WithPaging_ReturnsTipoRegimenConcurrenciaSubList() throws Exception {
     // given: One hundred TipoRegimenConcurrencia
     List<TipoRegimenConcurrencia> data = new ArrayList<>();
@@ -90,7 +90,7 @@ class TipoRegimenConcurrenciaControllerTest extends BaseControllerTest {
       data.add(generarMockTipoRegimenConcurrencia(Long.valueOf(i), Boolean.TRUE));
     }
 
-    BDDMockito.given(service.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
+    BDDMockito.given(service.findActivos(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<TipoRegimenConcurrencia>>() {
           @Override
           public Page<TipoRegimenConcurrencia> answer(InvocationOnMock invocation) throws Throwable {
@@ -133,10 +133,10 @@ class TipoRegimenConcurrenciaControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
+  @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
   void findAll_EmptyList_Returns204() throws Exception {
     // given: no data TipoRegimenConcurrencia
-    BDDMockito.given(service.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
+    BDDMockito.given(service.findActivos(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<TipoRegimenConcurrencia>>() {
           @Override
           public Page<TipoRegimenConcurrencia> answer(InvocationOnMock invocation) throws Throwable {

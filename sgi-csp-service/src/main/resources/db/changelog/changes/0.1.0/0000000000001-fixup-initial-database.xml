@@ -1,0 +1,18 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000001-fixup-initial-database.xml">
+
+  <!-- Eliminación de columnas de solicitud_proyecto_presupuesto que ya no son necesarias -->
+  <changeSet author="user (generated)" id="0000000000001-cleanup-solicitud_proyecto_presupuesto">
+    <validCheckSum>8:28a194452d993943bb5b4ed7f5c0dab5</validCheckSum>
+    <dropColumn columnName="entidad_ref" tableName="solicitud_proyecto_presupuesto" />
+    <dropDefaultValue columnDataType="boolean" columnName="financiacion_ajena" tableName="solicitud_proyecto_presupuesto" />
+    <dropColumn columnName="financiacion_ajena" tableName="solicitud_proyecto_presupuesto" />
+  </changeSet>
+
+  <!-- Eliminación de columna de configuracion_solicitud que ya no es necesaria -->
+  <changeSet author="user (generated)" id="0000000000001-cleanup-configuracion_solicitud">
+    <dropColumn columnName="formulario_solicitud" tableName="configuracion_solicitud" />
+  </changeSet>
+
+</databaseChangeLog>

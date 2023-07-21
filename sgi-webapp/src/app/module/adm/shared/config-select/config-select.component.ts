@@ -1,6 +1,6 @@
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { KeyValue } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { SelectValue } from '@core/component/select-common/select-common.component';
@@ -20,7 +20,7 @@ const MSG_SUCCESS = marker('msg.adm.config.update.success');
   styleUrls: ['./config-select.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ConfigSelectComponent implements OnInit, OnDestroy {
+export class ConfigSelectComponent implements OnInit, OnDestroy, AfterViewInit {
 
   configValue: IConfigValue;
 
@@ -85,6 +85,10 @@ export class ConfigSelectComponent implements OnInit, OnDestroy {
   @Output()
   readonly error = new EventEmitter<Error>();
 
+  /** Emitter fo the user selection */
+  @Output()
+  readonly selectionChange: EventEmitter<any> = new EventEmitter<any>();
+
   displayer = (keyValue: KeyValue<string, string>): string => keyValue.value ? this.translate.instant(keyValue.value) : '';
   comparer = (keyValue1: KeyValue<string, string>, keyValue2: KeyValue<string, string>): boolean => keyValue1?.key === keyValue2?.key;
   sorter = (keyValue1: SelectValue<KeyValue<string, string>>, keyValue2: SelectValue<KeyValue<string, string>>): number => keyValue1?.displayText.localeCompare(keyValue2?.displayText);
@@ -102,6 +106,12 @@ export class ConfigSelectComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(x => x.unsubscribe());
+  }
+
+  ngAfterViewInit(): void {
+    this.subscriptions.push(this.formGroup.valueChanges.subscribe(
+      (event) => this.selectionChange.next(event.configValue.value)
+    ));
   }
 
   save(): void {
@@ -164,6 +174,7 @@ export class ConfigSelectComponent implements OnInit, OnDestroy {
           };
 
           this.formGroup.controls.configValue.setValue(selectOption);
+          this.selectionChange.next(selectOption.value);
         },
         (error) => this.error.next(error)
       )

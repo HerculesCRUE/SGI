@@ -17,18 +17,19 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let documentacionMemoria">
-          <button *ngIf="documentacionMemoria.informe" mat-button matTooltip="{{'btn.show.file' | translate}}"
-            (click)="visualizarInforme(documentacionMemoria.informe?.documentoRef)">
-            <mat-icon color="primary">picture_as_pdf</mat-icon>
-          </button>
-          <button *ngIf="documentacionMemoria.fichaEvaluador" mat-button matTooltip="{{'btn.show.file' | translate}}"
-            (click)="visualizarInformeEvaluador()">
-            <mat-icon color="primary">picture_as_pdf</mat-icon>
-          </button>
-          <button *ngIf="!documentacionMemoria.fichaEvaluador && !documentacionMemoria.informe" mat-button
+          <button color="primary" *ngIf="documentacionMemoria.informe" mat-icon-button
             matTooltip="{{'btn.show.file' | translate}}"
+            (click)="visualizarInforme(documentacionMemoria.informe?.documentoRef)">
+            <mat-icon>picture_as_pdf</mat-icon>
+          </button>
+          <button color="primary" *ngIf="documentacionMemoria.fichaEvaluador" mat-icon-button
+            matTooltip="{{'btn.show.file' | translate}}" (click)="visualizarInformeEvaluador()">
+            <mat-icon>picture_as_pdf</mat-icon>
+          </button>
+          <button color="primary" *ngIf="!documentacionMemoria.fichaEvaluador && !documentacionMemoria.informe"
+            mat-icon-button matTooltip="{{'btn.show.file' | translate}}"
             (click)="visualizarInforme(documentacionMemoria.documento?.documentoRef)">
-            <mat-icon color="primary">picture_as_pdf</mat-icon>
+            <mat-icon>picture_as_pdf</mat-icon>
           </button>
         </td>
       </ng-container>

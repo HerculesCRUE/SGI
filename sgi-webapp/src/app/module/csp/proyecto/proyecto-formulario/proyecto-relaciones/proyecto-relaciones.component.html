@@ -39,15 +39,15 @@
         </th>
         <td mat-cell *matCellDef="let wrapper"> {{ wrapper.value.tipoEntidadRelacionada === TipoEntidad.PROYECTO ?
           wrapper.value.entidadConvocanteRef : '' }} </td>
-        </ng-container>
+      </ng-container>
 
-        <!-- Código SGE -->
-        <ng-container matColumnDef="codigoSGE">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>
-            {{'csp.proyecto-relacion.codigo-sge' | translate}}
-          </th>
-          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.tipoEntidadRelacionada === TipoEntidad.PROYECTO ?
-            wrapper.value.codigosSge : '' }} </td>
+      <!-- Código SGE -->
+      <ng-container matColumnDef="codigoSGE">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.proyecto-relacion.codigo-sge' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.tipoEntidadRelacionada === TipoEntidad.PROYECTO ?
+          wrapper.value.codigosSge : '' }} </td>
       </ng-container>
 
       <!-- Observaciones Column -->
@@ -64,17 +64,17 @@
         <td mat-cell *matCellDef="let relacion; let i = index">
           <ng-container>
             <div fxLayout="row">
-              <button *ngIf="!this.formPart.hasEditPerm() && isRelatedEntityReady(relacion)" mat-button
-                matTooltip="{{'btn.view' | translate}}" (click)="openModal(relacion, i)">
-                <mat-icon color="primary">visibility</mat-icon>
+              <button color="primary" *ngIf="!this.formPart.hasEditPerm() && isRelatedEntityReady(relacion)"
+                mat-icon-button matTooltip="{{'btn.view' | translate}}" (click)="openModal(relacion, i)">
+                <mat-icon>visibility</mat-icon>
               </button>
-              <button *ngIf="this.formPart.hasEditPerm() && isRelatedEntityReady(relacion)" mat-button
-                matTooltip="{{'btn.edit' | translate}}" (click)="openModal(relacion, i)">
-                <mat-icon color="primary">border_color</mat-icon>
+              <button color="primary" *ngIf="this.formPart.hasEditPerm() && isRelatedEntityReady(relacion)"
+                mat-icon-button matTooltip="{{'btn.edit' | translate}}" (click)="openModal(relacion, i)">
+                <mat-icon>border_color</mat-icon>
               </button>
-              <button *ngIf="formPart.hasEditPerm()" mat-button matTooltip="{{'btn.delete' | translate}}"
-                (click)="deleteRelacion(relacion)">
-                <mat-icon color="warn">highlight_off</mat-icon>
+              <button color="warn" *ngIf="formPart.hasEditPerm()" mat-icon-button
+                matTooltip="{{'btn.delete' | translate }}" (click)="deleteRelacion(relacion)">
+                <mat-icon>highlight_off</mat-icon>
               </button>
             </div>
           </ng-container>

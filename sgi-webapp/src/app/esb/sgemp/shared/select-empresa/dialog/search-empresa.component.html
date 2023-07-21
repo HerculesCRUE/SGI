@@ -55,19 +55,20 @@
         </th>
         <td mat-cell *matCellDef="let empresaListado">
           <ng-container>
-            <button mat-button *ngIf="!empresaListado.selected" (click)="closeModal(empresaListado.empresa)">
-              <mat-icon color="primary">done_outline</mat-icon>
+            <button mat-icon-button color="primary" *ngIf="!empresaListado.selected"
+              (click)="closeModal(empresaListado.empresa)">
+              <mat-icon>done_outline</mat-icon>
             </button>
             <ng-container *sgiHasAuthority="'ESB-EMP-E'">
-              <button mat-button matTooltip="{{'btn.edit' | translate}}"
+              <button mat-icon-button color="primary" matTooltip="{{'btn.edit' | translate}}"
                 (click)="openEmpresaEditModal(empresaListado.empresa)">
-                <mat-icon color="primary">border_color</mat-icon>
+                <mat-icon>border_color</mat-icon>
               </button>
             </ng-container>
             <ng-container *sgiHasAuthority="'ESB-EMP-V'">
-              <button mat-button matTooltip="{{'btn.view' | translate}}"
+              <button mat-icon-button color="primary" matTooltip="{{'btn.view' | translate}}"
                 (click)="openEmpresaViewModal(empresaListado.empresa)">
-                <mat-icon color="primary">visibility</mat-icon>
+                <mat-icon>visibility</mat-icon>
               </button>
             </ng-container>
             <span *ngIf="empresaListado.selected">

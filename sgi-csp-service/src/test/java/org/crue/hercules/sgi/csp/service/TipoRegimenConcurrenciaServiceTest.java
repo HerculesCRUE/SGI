@@ -8,31 +8,28 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.TipoRegimenConcurrenciaNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
 import org.crue.hercules.sgi.csp.repository.TipoRegimenConcurrenciaRepository;
-import org.crue.hercules.sgi.csp.service.impl.TipoRegimenConcurrenciaServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+@Import({ TipoRegimenConcurrenciaService.class })
 class TipoRegimenConcurrenciaServiceTest extends BaseServiceTest {
 
-  @Mock
+  @MockBean
   private TipoRegimenConcurrenciaRepository repository;
 
+  @Autowired
   private TipoRegimenConcurrenciaService service;
-
-  @BeforeEach
-  void setUp() throws Exception {
-    service = new TipoRegimenConcurrenciaServiceImpl(repository);
-  }
 
   @Test
   void findById_WithExistingId_ReturnsTipoRegimenConcurrencia() throws Exception {

@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
@@ -11,15 +12,16 @@ import { Estado, ESTADO_MAP } from '@core/models/csp/estado-proyecto';
 import { IPrograma } from '@core/models/csp/programa';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IRolProyecto } from '@core/models/csp/rol-proyecto';
-import { ITipoAmbitoGeografico } from '@core/models/csp/tipo-ambito-geografico';
+import { ITipoAmbitoGeografico } from '@core/models/csp/tipos-configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ProgramaService } from '@core/services/csp/programa.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
-import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
-import { TipoAmbitoGeograficoService } from '@core/services/csp/tipo-ambito-geografico.service';
+import { RolProyectoService } from '@core/services/csp/rol-proyecto/rol-proyecto.service';
+import { TipoAmbitoGeograficoService } from '@core/services/csp/tipo-ambito-geografico/tipo-ambito-geografico.service';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -33,7 +35,7 @@ import { BehaviorSubject, merge, Observable, of, Subscription } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { CONVOCATORIA_ACTION_LINK_KEY } from '../../convocatoria/convocatoria.action.service';
 import { SOLICITUD_ACTION_LINK_KEY } from '../../solicitud/solicitud.action.service';
-import { IProyectoListadoModalData, ProyectoListadoExportModalComponent } from '../modals/proyecto-listado-export-modal/proyecto-listado-export-modal.component';
+import { ProyectoListadoExportModalComponent } from '../modals/proyecto-listado-export-modal/proyecto-listado-export-modal.component';
 
 const MSG_ERROR = marker('error.load');
 const MSG_BUTTON_NEW = marker('btn.add.entity');
@@ -89,6 +91,8 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
 
   mapModificable: Map<number, boolean> = new Map();
 
+  private limiteRegistrosExportacionExcel: string;
+
   get ESTADO_MAP() {
     return ESTADO_MAP;
   }
@@ -114,6 +118,7 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
     private convocatoriaService: ConvocatoriaService,
     private matDialog: MatDialog,
     route: ActivatedRoute,
+    private readonly cnfService: ConfigService
   ) {
     super();
     this.fxFlexProperties = new FxFlexProperties();
@@ -157,6 +162,11 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
     if (this.solicitudId) {
       this.onSearch();
     }
+
+    this.suscripciones.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-proyecto-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   private loadForm() {
@@ -182,6 +192,7 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
       entidadFinanciadora: new FormControl(''),
       fuenteFinanciacion: new FormControl(''),
       codigoExterno: new FormControl(''),
+      codigoInterno: new FormControl(''),
       finalizado: new FormControl(''),
       prorrogado: new FormControl(''),
       palabrasClave: new FormControl(null),
@@ -337,9 +348,9 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
 
   protected initColumns(): void {
     if (this.authService.hasAuthorityForAnyUO('CSP-PRO-R')) {
-      this.columnas = ['id', 'codigoSGE', 'titulo', 'acronimo', 'codigoExterno', 'fechaInicio', 'fechaFin', 'fechaFinDefinitiva', 'finalizado', 'prorrogado', 'estado', 'activo', 'acciones'];
+      this.columnas = ['id', 'codigoSGE', 'titulo', 'codigoExterno', 'codigoInterno', 'fechaInicio', 'fechaFin', 'fechaFinDefinitiva', 'finalizado', 'prorrogado', 'estado', 'activo', 'acciones'];
     } else {
-      this.columnas = ['id', 'codigoSGE', 'titulo', 'acronimo', 'codigoExterno', 'fechaInicio', 'fechaFin', 'fechaFinDefinitiva', 'finalizado', 'prorrogado', 'estado', 'acciones'];
+      this.columnas = ['id', 'codigoSGE', 'titulo', 'codigoExterno', 'codigoInterno', 'fechaInicio', 'fechaFin', 'fechaFinDefinitiva', 'finalizado', 'prorrogado', 'estado', 'acciones'];
     }
   }
 
@@ -353,7 +364,8 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
     const filter = new RSQLSgiRestFilter('id', SgiRestFilterOperator.EQUALS, controls.id.value)
       .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
       .and('estado.estado', SgiRestFilterOperator.EQUALS, controls.estado.value)
-      .and('codigoExterno', SgiRestFilterOperator.LIKE_ICASE, controls.codigoExterno.value);
+      .and('codigoExterno', SgiRestFilterOperator.LIKE_ICASE, controls.codigoExterno.value)
+      .and('codigoInterno', SgiRestFilterOperator.LIKE_ICASE, controls.codigoInterno.value);
     if (controls.activo.value !== 'todos') {
       filter.and('activo', SgiRestFilterOperator.EQUALS, controls.activo.value);
     }
@@ -539,8 +551,10 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
   }
 
   openExportModal(): void {
-    const data: IProyectoListadoModalData = {
-      findOptions: this.findOptions
+    const data: IBaseExportModalData = {
+      findOptions: this.findOptions,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

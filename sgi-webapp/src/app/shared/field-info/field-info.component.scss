@@ -1,6 +1,12 @@
+@import "colors.scss";
+
 mat-icon {
   position: relative;
   top: .25em;
   cursor: default;
   pointer-events: initial;
+}
+
+.mat-icon.mat-warn {
+  color: map-get($sgi-custom-colors, warning);
 }

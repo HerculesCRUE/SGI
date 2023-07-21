@@ -153,10 +153,6 @@ public class PeticionEvaluacion extends BaseEntity {
   @Column(name = "dis_metodologico", length = 4000)
   private String disMetodologico;
 
-  /** Externo */
-  @Column(name = "externo", columnDefinition = "boolean default false")
-  private Boolean externo;
-
   /** Tiene fondos propios */
   @Column(name = "tiene_fondos_propios", columnDefinition = "boolean default false")
   private Boolean tieneFondosPropios;
@@ -168,6 +164,10 @@ public class PeticionEvaluacion extends BaseEntity {
   /** Referencia al Checklist asociado */
   @Column(name = "checklistId")
   private Long checklistId;
+
+  /** Referencia tutor */
+  @Column(name = "tutor_ref", length = 250, nullable = true)
+  private String tutorRef;
 
   /** Activo */
   @Column(name = "activo", columnDefinition = "boolean default true", nullable = false)

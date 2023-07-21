@@ -219,20 +219,20 @@
             <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-C', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER']">
               <button color="accent" *ngIf="!data.areaTematicaSolicitud && this.formPart.userCanEdit" mat-button
                 matTooltip="{{'csp.solicitud.select-area-tematica' | translate}}" (click)="openModal(data)">
-                <mat-icon color="accent">add_circle</mat-icon>
+                <mat-icon>add_circle</mat-icon>
                 {{ 'csp.solicitud.select-area-tematica' | translate}}
               </button>
             </ng-container>
             <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-C', 'CSP-SOL-INV-C' ,'CSP-SOL-INV-ER']">
-              <button *ngIf="data.areaTematicaSolicitud && this.formPart.userCanEdit" mat-button
+              <button color="primary" *ngIf="data.areaTematicaSolicitud && this.formPart.userCanEdit" mat-icon-button
                 matTooltip="{{'csp.solicitud.select-area-tematica' | translate}}" (click)="openModal(data)">
-                <mat-icon color="primary">border_color</mat-icon>
+                <mat-icon>border_color</mat-icon>
               </button>
             </ng-container>
             <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-C', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER']">
-              <button *ngIf="data.areaTematicaSolicitud && this.formPart.userCanEdit" mat-button
+              <button color="warn" *ngIf="data.areaTematicaSolicitud && this.formPart.userCanEdit" mat-icon-button
                 matTooltip="{{'btn.delete' | translate}}" (click)="deleteAreaTematicaListado()">
-                <mat-icon color="warn">highlight_off</mat-icon>
+                <mat-icon>highlight_off</mat-icon>
               </button>
             </ng-container>
           </td>

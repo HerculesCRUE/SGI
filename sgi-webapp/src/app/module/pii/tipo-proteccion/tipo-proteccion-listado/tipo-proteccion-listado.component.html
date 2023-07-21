@@ -39,21 +39,21 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let tipoProteccion">
           <ng-container *sgiHasAuthority="'PII-TPR-E'">
-            <a *ngIf="tipoProteccion.activo" [routerLink]="[tipoProteccion.id]" mat-button
+            <a color="primary" *ngIf="tipoProteccion.activo" [routerLink]="[tipoProteccion.id]" mat-icon-button
               matTooltip="{{'btn.edit' | translate}}">
-              <mat-icon color="primary">border_color</mat-icon>
+              <mat-icon>border_color</mat-icon>
             </a>
           </ng-container>
           <ng-container *sgiHasAuthority="'PII-TPR-B'">
-            <button *ngIf="tipoProteccion.activo" mat-button matTooltip="{{'btn.delete' | translate}}"
+            <button color="warn" *ngIf="tipoProteccion.activo" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
               (click)="deactivateTipoProteccion(tipoProteccion)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'PII-TPR-R'">
-            <button *ngIf="!tipoProteccion.activo" mat-button matTooltip="{{'btn.recover' | translate}}"
-              (click)="activateTipoProteccion(tipoProteccion)">
-              <mat-icon color="accent">add_circle_outline</mat-icon>
+            <button color="accent" *ngIf="!tipoProteccion.activo" mat-icon-button
+              matTooltip="{{'btn.recover' | translate}}" (click)="activateTipoProteccion(tipoProteccion)">
+              <mat-icon>add_circle_outline</mat-icon>
             </button>
           </ng-container>
 

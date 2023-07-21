@@ -73,21 +73,21 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let tipoEnlace">
           <ng-container *sgiHasAuthority="'CSP-TENL-E'">
-            <button *ngIf="tipoEnlace.activo === true" mat-button matTooltip="{{'btn.edit' | translate}}"
-              (click)="openModal(tipoEnlace)">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" *ngIf="tipoEnlace.activo === true" mat-icon-button
+              matTooltip="{{'btn.edit' | translate}}" (click)="openModal(tipoEnlace)">
+              <mat-icon>border_color</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'CSP-TENL-B'">
-            <button *ngIf="tipoEnlace.activo === true" mat-button matTooltip="{{'btn.delete' | translate}}"
-              (click)="deactivateTipoEnlace(tipoEnlace)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" *ngIf="tipoEnlace.activo === true" mat-icon-button
+              matTooltip="{{'btn.delete' | translate}}" (click)="deactivateTipoEnlace(tipoEnlace)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'CSP-TENL-R'">
-            <button *ngIf="tipoEnlace.activo === false" mat-button matTooltip="{{'btn.recover' | translate}}"
-              (click)="activateTipoEnlace(tipoEnlace)">
-              <mat-icon color="accent">add_circle_outline</mat-icon>
+            <button color="accent" *ngIf="tipoEnlace.activo === false" mat-icon-button
+              matTooltip="{{'btn.recover' | translate}}" (click)="activateTipoEnlace(tipoEnlace)">
+              <mat-icon>add_circle_outline</mat-icon>
             </button>
           </ng-container>
         </td>

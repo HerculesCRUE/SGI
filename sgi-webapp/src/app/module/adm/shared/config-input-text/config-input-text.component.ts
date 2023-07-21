@@ -70,6 +70,15 @@ export class ConfigInputTextComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line: variable-name
   private _required = false;
 
+  @Input()
+  set info(info: string) {
+    this._info = info ?? null;
+  }
+  get info(): string {
+    return this._info;
+  }
+  // tslint:disable-next-line: variable-name
+  private _info = null;
 
   @Output()
   readonly error = new EventEmitter<Error>();

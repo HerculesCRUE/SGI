@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiGroupReport } from '@core/models/rep/sgi-group.report';
@@ -29,7 +30,7 @@ export interface IConsultaPresupuestoReportOptions extends IReportOptions {
   columns: IColumnDefinition[];
 }
 
-export interface IConsultaPresupuestoExportData {
+export interface IConsultaPresupuestoExportData extends IBaseExportModalData {
   data: IAnualidadGasto[];
   columns: IColumnDefinition[];
 }

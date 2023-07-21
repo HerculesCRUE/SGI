@@ -7,6 +7,7 @@ import { FragmentComponent } from '@core/component/fragment.component';
 import { TIPO_JUSTIFICACION_MAP } from '@core/enums/tipo-justificacion';
 import { TIPO_SEGUIMIENTO_MAP } from '@core/enums/tipo-seguimiento';
 import { ISeguimientoJustificacionAnualidad } from '@core/models/csp/seguimiento-justificacion-anualidad';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { SgiRestFindOptions } from '@sgi/framework/http';
 import { Subscription } from 'rxjs';
@@ -31,6 +32,9 @@ import {
 export class SeguimientoJustificacionResumenComponent extends FragmentComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   formPart: SeguimientoJustificacionResumenFragment;
+
+  private totalElementos = 0;
+  private limiteRegistrosExportacionExcel: string;
 
   proyectosSGIElementosPagina = [5, 10, 25, 100];
   proyectosSGIDisplayedColumns = [
@@ -145,7 +149,8 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
 
   constructor(
     private readonly actionService: EjecucionEconomicaActionService,
-    private matDialog: MatDialog) {
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService) {
     super(actionService.FRAGMENT.SEGUIMIENTO_JUSTIFICACION_RESUMEN, actionService);
     this.formPart = this.fragment as SeguimientoJustificacionResumenFragment;
   }
@@ -157,6 +162,11 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
     this.initSeguimientoJustificacionAnualidadTable();
     this.initCalendarioJustificacionTable();
     this.initCalendarioSeguimientoTable();
+
+    this.subscriptions.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-seguimiento-justificacion-resumen').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   private initProyectosSGITable(): void {
@@ -181,6 +191,7 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
     this.seguimientosJustificacionDataSource.sort = this.seguimientosJustificacionSort;
     this.subscriptions.push(this.formPart.getSeguimientosJustificacion$().subscribe(elements => {
       this.seguimientosJustificacionDataSource.data = elements;
+      this.totalElementos = elements.length;
     }));
   }
 
@@ -342,7 +353,9 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
   public openExportModal(): void {
     const data: ISeguimientoGastosJustificadosResumenExportModalData = {
       findOptions: {},
-      proyectoSgeRef: this.formPart.proyectoSgeRef
+      proyectoSgeRef: this.formPart.proyectoSgeRef,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

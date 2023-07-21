@@ -1,0 +1,160 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000000-sample-data.xml">
+  <changeSet context="dev" author="master" id="0000000000000-empresa">
+    <insert tableName="empresa">
+      <column name="id" valueSequenceNext="empresa_seq" />
+      <column name="fecha_solicitud" valueDate="2022-01-01T23:00:00" />
+      <column name="fecha_constitucion" valueDate="2022-05-01T23:00:00" />
+      <column name="fecha_incorporacion" valueDate="2022-11-01T23:00:00" />
+      <column name="entidad_ref" value="00051494" />
+      <column name="tipo_empresa" value="EBT" />
+      <column name="estado" value="EN_TRAMITACION" />
+      <column name="objeto_social" value="Reforestación de la Selva Amazónica con técnica IAPE" />
+      <column name="conocimiento_tecnologia"
+        value="Reforestación de la Selva Amazónica con técnica IAPE" />
+    </insert>
+
+    <insert tableName="empresa">
+      <column name="id" valueSequenceNext="empresa_seq" />
+      <column name="fecha_solicitud" valueDate="2022-10-01T23:00:00" />
+      <column name="fecha_constitucion" valueDate="2022-12-01T23:00:00" />
+      <column name="fecha_incorporacion" valueDate="2022-14-01T23:00:00" />
+      <column name="tipo_empresa" value="EINCNT" />
+      <column name="estado" value="EN_TRAMITACION" />
+      <column name="nombre_razon_social" value="Empresa 2 SL" />
+      <column name="objeto_social" value="Clonación de células óseas" />
+      <column name="conocimiento_tecnologia" value="Tecnología para la clonación de células óseas" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000000-empresa-equipo-emprendedor">
+    <insert tableName="empresa_equipo_emprendedor">
+      <column name="id" valueSequenceNext="empresa_equipo_emprendedor_seq" />
+      <column name="empresa_id"
+        valueComputed="(select id from ${schemaPrefix}empresa where entidad_ref='00051494')" />
+      <column name="miembro_equipo_ref" value="22932567" />
+    </insert>
+
+    <insert tableName="empresa_equipo_emprendedor">
+      <column name="id" valueSequenceNext="empresa_equipo_emprendedor_seq" />
+      <column name="empresa_id"
+        valueComputed="(select id from ${schemaPrefix}empresa where nombre_razon_social='Empresa 2 SL')" />
+      <column name="miembro_equipo_ref" value="01889311" />
+    </insert>
+  </changeSet>
+
+  <!-- TODO: Tratarlos como datos de prueba si se llega a realizar el CRUD en la web -->
+  <changeSet context="!test" author="master" id="0000000000000-tipo_documento">
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="nombre" value="Documentos de procedimiento" />
+      <column name="descripcion" value="Documentos de procedimiento" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="nombre" value="Documentos corporativos" />
+      <column name="descripcion" value="Documentos corporativos" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="nombre" value="Estatutos sociales" />
+      <column name="descripcion" value="Estatutos sociales" />
+    </insert>
+
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="nombre" value="Solicitud de creación" />
+      <column name="descripcion" value="Solicitud de creación" />
+      <column name="tipo_documento_padre_id" valueNumeric="1" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="nombre" value="Solicitud de incorporación" />
+      <column name="descripcion" value="Solicitud de incorporación" />
+      <column name="tipo_documento_padre_id" valueNumeric="1" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="nombre" value="Informe viabilidad de la OTRI" />
+      <column name="descripcion" value="Informe viabilidad de la OTRI" />
+      <column name="tipo_documento_padre_id" valueNumeric="1" />
+    </insert>
+
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="nombre" value="Informe anual de cuentas" />
+      <column name="descripcion" value="Informe anual de cuentas" />
+      <column name="tipo_documento_padre_id" valueNumeric="2" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="nombre" value="Acta de reunión" />
+      <column name="descripcion" value="Acta de reunión" />
+      <column name="tipo_documento_padre_id" valueNumeric="2" />
+    </insert>
+
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="nombre" value="Modificación composición sociedad" />
+      <column name="descripcion" value="Modificación composición sociedad" />
+      <column name="tipo_documento_padre_id" valueNumeric="3" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000000-empresa-composicion-sociedad">
+    <insert tableName="empresa_composicion_sociedad">
+      <column name="id" valueSequenceNext="empresa_composicion_sociedad_seq" />
+      <column name="empresa_id"
+        valueComputed="(select id from ${schemaPrefix}empresa where entidad_ref='00051494')" />
+      <column name="miembro_sociedad_persona_ref" value="22932567" />
+      <column name="fecha_inicio" valueDate="2022-06-01T23:00:00" />
+      <column name="participacion" value="50" />
+      <column name="tipo_aportacion" value="DINERARIA" />
+    </insert>
+
+    <insert tableName="empresa_composicion_sociedad">
+      <column name="id" valueSequenceNext="empresa_composicion_sociedad_seq" />
+      <column name="empresa_id"
+        valueComputed="(select id from ${schemaPrefix}empresa where nombre_razon_social='Empresa 2 SL')" />
+      <column name="miembro_sociedad_empresa_ref" value="00051494" />
+      <column name="fecha_inicio" valueDate="2022-01-01T23:00:00" />
+      <column name="participacion" value="50" />
+      <column name="tipo_aportacion" value="NO_DINERARIA" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000000-empresa-administracion-sociedad">
+    <insert tableName="empresa_administracion_sociedad">
+      <column name="id" valueSequenceNext="empresa_administracion_sociedad_seq" />
+      <column name="empresa_id"
+        valueComputed="(select id from ${schemaPrefix}empresa where entidad_ref='00051494')" />
+      <column name="miembro_equipo_administracion_ref" value="22932567" />
+      <column name="fecha_inicio" valueDate="2022-06-01T23:00:00" />
+      <column name="tipo_administracion" value="ADMINISTRADOR_UNICO" />
+    </insert>
+
+    <insert tableName="empresa_administracion_sociedad">
+      <column name="id" valueSequenceNext="empresa_administracion_sociedad_seq" />
+      <column name="empresa_id"
+        valueComputed="(select id from ${schemaPrefix}empresa where nombre_razon_social='Empresa 2 SL')" />
+      <column name="miembro_equipo_administracion_ref" value="22932567" />
+      <column name="fecha_inicio" valueDate="2022-06-01T23:00:00" />
+      <column name="tipo_administracion" value="ADMINISTRADOR_SOLIDARIO" />
+    </insert>
+    <insert tableName="empresa_administracion_sociedad">
+      <column name="id" valueSequenceNext="empresa_administracion_sociedad_seq" />
+      <column name="empresa_id"
+        valueComputed="(select id from ${schemaPrefix}empresa where nombre_razon_social='Empresa 2 SL')" />
+      <column name="miembro_equipo_administracion_ref" value="01889311" />
+      <column name="fecha_inicio" valueDate="2022-01-01T23:00:00" />
+      <column name="tipo_administracion" value="ADMINISTRADOR_SOLIDARIO" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

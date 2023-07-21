@@ -1,7 +1,7 @@
 import { ClasificacionCVN } from '@core/enums/clasificacion-cvn';
 import { TipoSeguimiento } from '@core/enums/tipo-seguimiento';
 import { CausaExencion } from '../proyecto';
-import { ITipoAmbitoGeografico } from '../tipo-ambito-geografico';
+import { ITipoAmbitoGeografico } from '../tipos-configuracion';
 import { IModeloEjecucion, ITipoFinalidad } from '../tipos-configuracion';
 import { IEstadoProyectoBackend } from './estado-proyecto-backend';
 import { IProyectoIVABackend } from './proyecto-iva-backend';
@@ -15,6 +15,8 @@ export interface IProyectoBackend {
   titulo: string;
   /** Acronimo */
   acronimo: string;
+  /** codigoInterno */
+  codigoInterno: string;
   /** codigoExterno */
   codigoExterno: string;
   /** Fecha Inicio */

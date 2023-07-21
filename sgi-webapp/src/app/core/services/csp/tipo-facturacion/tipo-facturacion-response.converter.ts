@@ -7,14 +7,18 @@ class TipoFacturacionResponseConverter extends SgiBaseConverter<ITipoFacturacion
   toTarget(value: ITipoFacturacionResponse): ITipoFacturacion {
     return !value ? value as unknown as ITipoFacturacion : {
       id: value.id,
-      nombre: value.nombre
+      nombre: value.nombre,
+      incluirEnComunicado: value.incluirEnComunicado,
+      activo: value.activo
     };
   }
 
   fromTarget(value: ITipoFacturacion): ITipoFacturacionResponse {
     return !value ? value as unknown as ITipoFacturacionResponse : {
       id: value.id,
-      nombre: value.nombre
+      nombre: value.nombre,
+      incluirEnComunicado: value.incluirEnComunicado,
+      activo: value.activo
     };
   }
 }

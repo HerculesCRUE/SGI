@@ -73,10 +73,10 @@
 
       <div class="buttons-final">
         <div class="col filter-button">
-          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+          <button color="primary" mat-raised-button (click)="onSearch()">
             <mat-icon>search</mat-icon> {{'btn.search'| translate}}
           </button>
-          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+          <button color="warn" (click)="onClearFilters()" mat-button>{{'btn.clean'|
             translate}}
           </button>
         </div>
@@ -158,8 +158,9 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let evaluacion">
           <ng-container *sgiHasAuthorityForAnyUO="'ETI-EVC-EVAL'">
-            <a mat-button [routerLink]="evaluacion.id" matTooltip="{{'btn.eti.evaluar' | translate}}">
-              <mat-icon color="primary">border_color</mat-icon>
+            <a color="primary" mat-icon-button [routerLink]="evaluacion.id"
+              matTooltip="{{'btn.eti.evaluar' | translate}}">
+              <mat-icon>border_color</mat-icon>
             </a>
           </ng-container>
         </td>

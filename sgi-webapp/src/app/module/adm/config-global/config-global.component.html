@@ -4,7 +4,7 @@
     <ng-container [ngSwitch]="config.value.type">
       <ng-container *ngSwitchCase="ConfigType.TEXT">
         <sgi-config-input-text [key]="config.key" [label]="config.value.label" [required]="config.value.required"
-          (error)="handleErrors($event)">
+          (error)="handleErrors($event)" [info]="config.value.info">
         </sgi-config-input-text>
       </ng-container>
       <ng-container *ngSwitchCase="ConfigType.EMAILS">
@@ -21,12 +21,14 @@
         </ng-container>
       </ng-container>
       <ng-container *ngSwitchCase="ConfigType.FILE">
-        <sgi-config-input-file [key]="config.key" [label]="config.value.label" (error)="handleErrors($event)">
+        <sgi-config-input-file [key]="config.key" [label]="config.value.label" (error)="handleErrors($event)"
+          [disabled]="config.value.disabled">
         </sgi-config-input-file>
       </ng-container>
       <ng-container *ngSwitchCase="ConfigType.SELECT">
         <sgi-config-select [key]="config.key" [label]="config.value.label" [required]="config.value.required"
-          [options$]="config.value.options" (error)="handleErrors($event)">
+          [options$]="config.value.options" (error)="handleErrors($event)"
+          (selectionChange)="selectChange(config.key,$event)">
         </sgi-config-select>
       </ng-container>
       <ng-container *ngSwitchCase="ConfigType.CONFIG_GROUP_TITLE">

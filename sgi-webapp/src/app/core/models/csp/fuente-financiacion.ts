@@ -1,5 +1,4 @@
-import { ITipoAmbitoGeografico } from './tipo-ambito-geografico';
-import { ITipoOrigenFuenteFinanciacion } from './tipo-origen-fuente-financiacion';
+import { ITipoAmbitoGeografico, ITipoOrigenFuenteFinanciacion } from './tipos-configuracion';
 
 export interface IFuenteFinanciacion {
   id: number;

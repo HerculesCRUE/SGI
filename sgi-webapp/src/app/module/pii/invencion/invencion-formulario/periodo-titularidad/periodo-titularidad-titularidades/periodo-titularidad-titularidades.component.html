@@ -28,15 +28,15 @@
       <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
       <td mat-cell *matCellDef="let periodoTitularidad">
         <ng-container *sgiHasAuthority="'PII-INV-E'">
-          <button *ngIf="canEdit(periodoTitularidad)" mat-button matTooltip="{{'btn.edit' | translate}}"
-            (click)="openModal(periodoTitularidad)">
-            <mat-icon color="primary">border_color</mat-icon>
+          <button color="primary" *ngIf="canEdit(periodoTitularidad)" mat-icon-button
+            matTooltip="{{'btn.edit' | translate}}" (click)="openModal(periodoTitularidad)">
+            <mat-icon>border_color</mat-icon>
           </button>
         </ng-container>
         <ng-container *sgiHasAuthority="'PII-INV-B'">
-          <button *ngIf="canDelete(periodoTitularidad)" mat-button matTooltip="{{'btn.delete' | translate}}"
-            (click)="deletePeriodoTitularidad(periodoTitularidad)">
-            <mat-icon color="warn">highlight_off</mat-icon>
+          <button color="warn" *ngIf="canDelete(periodoTitularidad)" mat-icon-button
+            matTooltip="{{'btn.delete' | translate}}" (click)="deletePeriodoTitularidad(periodoTitularidad)">
+            <mat-icon>highlight_off</mat-icon>
           </button>
         </ng-container>
       </td>

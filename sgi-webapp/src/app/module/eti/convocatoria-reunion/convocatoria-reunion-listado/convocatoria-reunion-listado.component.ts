@@ -5,12 +5,14 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaReunion } from '@core/models/eti/convocatoria-reunion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { DialogService } from '@core/services/dialog.service';
 import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reunion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -20,7 +22,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { Observable, of, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { ConvocatoriaReunionListadoExportModalComponent, IConvocatoriaReunionListadoModalData } from '../modals/convocatoria-reunion-listado-export-modal/convocatoria-reunion-listado-export-modal.component';
+import { ConvocatoriaReunionListadoExportModalComponent } from '../modals/convocatoria-reunion-listado-export-modal/convocatoria-reunion-listado-export-modal.component';
 
 const MSG_BUTTON_NEW = marker('btn.add.entity');
 const MSG_CONFIRMATION_DELETE = marker('msg.delete.entity');
@@ -62,13 +64,16 @@ export class ConvocatoriaReunionListadoComponent
   mapEliminable: Map<number, boolean> = new Map();
   mapModificable: Map<number, boolean> = new Map();
 
+  private limiteRegistrosExportacionExcel: string;
+
   constructor(
     private readonly convocatoriaReunionService: ConvocatoriaReunionService,
     private readonly dialogService: DialogService,
     protected readonly snackBarService: SnackBarService,
     private formBuilder: FormBuilder,
     private readonly translate: TranslateService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService
   ) {
     super();
 
@@ -134,6 +139,11 @@ export class ConvocatoriaReunionListadoComponent
       fechaEvaluacionDesde: new FormControl(null, []),
       fechaEvaluacionHasta: new FormControl(null, [])
     });
+
+    this.suscripciones.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('eti-exp-max-num-registros-excel-convocatoria-reunion-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   private setupI18N(): void {
@@ -264,8 +274,10 @@ export class ConvocatoriaReunionListadoComponent
   }
 
   public openExportModal() {
-    const data: IConvocatoriaReunionListadoModalData = {
-      findOptions: this.findOptions
+    const data: IBaseExportModalData = {
+      findOptions: this.findOptions,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

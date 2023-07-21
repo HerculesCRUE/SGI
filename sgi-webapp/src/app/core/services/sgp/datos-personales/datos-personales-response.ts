@@ -5,5 +5,5 @@ export interface IDatosPersonalesResponse {
   paisNacimiento: IPais;
   fechaNacimiento: string;
   ciudadNacimiento: string;
-  comAuntonomaNacimiento: IComunidadAutonoma;
+  comAutonomaNacimiento: IComunidadAutonoma;
 }

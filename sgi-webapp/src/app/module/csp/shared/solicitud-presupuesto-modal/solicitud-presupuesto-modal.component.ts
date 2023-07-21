@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { ISolicitudProyectoPresupuesto } from '@core/models/csp/solicitud-proyecto-presupuesto';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { SolicitudProyectoEntidadService } from '@core/services/csp/solicitud-proyecto-entidad/solicitud-proyecto-entidad.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
@@ -90,6 +91,9 @@ export class SolicitiudPresupuestoModalComponent extends DialogCommonComponent {
 
   private mapTree = new Map<string, RowTreePresupuesto>();
 
+  private totalElementos = 0;
+  private limiteRegistrosExportacionExcel: string;
+
   constructor(
     matDialogRef: MatDialogRef<SolicitiudPresupuestoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public readonly data: SolicitudPresupuestoModalData,
@@ -97,6 +101,7 @@ export class SolicitiudPresupuestoModalComponent extends DialogCommonComponent {
     private readonly solicitudProyectoEntidadService: SolicitudProyectoEntidadService,
     private readonly empresaService: EmpresaService,
     private matDialog: MatDialog,
+    private readonly cnfService: ConfigService
   ) {
     super(matDialogRef);
     this.title = this.data.entidadId ? TITLE_PRESUPUESTO_ENTIDAD : TITLE_PRESUPUESTO_COMPLETO;
@@ -127,8 +132,14 @@ export class SolicitiudPresupuestoModalComponent extends DialogCommonComponent {
     ).subscribe(
       (presupuestos) => {
         this.dataSource.data = presupuestos;
+        this.totalElementos = presupuestos.length;
       }
     );
+
+    this.subscriptions.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-solicitud-presupuesto').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   private toEntidad(presupuestos: ISolicitudProyectoPresupuesto[]): RowTreePresupuesto[] {
@@ -252,7 +263,9 @@ export class SolicitiudPresupuestoModalComponent extends DialogCommonComponent {
 
   openExportModal(): void {
     const data: ISolicitudProyectoPresupuetoModalData = {
-      solicitudId: this.data.idSolicitudProyecto
+      solicitudId: this.data.idSolicitudProyecto,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

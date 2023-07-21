@@ -17,7 +17,7 @@
         <td mat-cell *matCellDef="let element">
           <mat-icon *ngIf="element.help" class="{{element.help.class}}"
             matTooltip="{{element.help.tooltip | translate}}">
-            help</mat-icon>
+            error</mat-icon>
         </td>
       </ng-container>
 
@@ -64,18 +64,18 @@
           {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let element;let i=index;">
           <ng-container>
-            <button mat-button matTooltip="{{'btn.view' | translate}}" *ngIf="formPart.readonly"
+            <button color="primary" mat-icon-button matTooltip="{{'btn.view' | translate}}" *ngIf="formPart.readonly"
               (click)="openModal(element)">
-              <mat-icon color="primary">visibility</mat-icon>
+              <mat-icon>visibility</mat-icon>
             </button>
-            <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!formPart.readonly"
+            <button color="primary" mat-icon-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!formPart.readonly"
               (click)="openModal(element, i)" [disabled]="actionService.blockAddCodigosEconomicos$ | async">
-              <mat-icon color="primary">border_color</mat-icon>
+              <mat-icon>border_color</mat-icon>
             </button>
-            <button mat-button matTooltip="{{'btn.delete' | translate}}"
+            <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
               *ngIf="element.proyectoCodigoEconomico && !formPart.readonly"
               (click)="deleteCodigoEconomico(element.proyectoCodigoEconomico)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>

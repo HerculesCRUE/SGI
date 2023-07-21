@@ -20,6 +20,8 @@ export interface IEvaluadorReportData extends IEvaluador {
 
 export interface IEvaluadorReportOptions extends IReportOptions {
   showConflictos: boolean;
+  totalRegistrosExportacionExcel?: number;
+  limiteRegistrosExportacionExcel?: number;
 }
 
 @Injectable()

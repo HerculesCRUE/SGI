@@ -11,7 +11,7 @@ import { IRolProyecto } from '@core/models/csp/rol-proyecto';
 import { IPersona } from '@core/models/sgp/persona';
 import { GrupoEquipoService } from '@core/services/csp/grupo-equipo/grupo-equipo.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
-import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
+import { RolProyectoService } from '@core/services/csp/rol-proyecto/rol-proyecto.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { IRange } from '@core/validators/range-validator';

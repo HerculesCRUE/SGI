@@ -10,7 +10,9 @@ import { map, share } from 'rxjs/operators';
 
 export enum ConfigPrc {
   PRC_COM_PROCESO_BAREMACION_DESTINATARIOS = 'prc-proceso-baremacion-destinatarios',
-  PRC_REP_DETALLE_GRUPO = 'rep-prc-detalle-grupo-prpt'
+  PRC_REP_DETALLE_GRUPO = 'rep-prc-detalle-grupo-prpt',
+  // Titulos
+  TITLE_COMUNICADO = 'title-comunicado',
 }
 
 @Component({
@@ -21,8 +23,9 @@ export enum ConfigPrc {
 export class ConfigPrcComponent extends AbstractMenuContentComponent {
 
   private readonly _CONFIG_MAP: Map<ConfigPrc, IConfigOptions> = new Map([
-    [ConfigPrc.PRC_COM_PROCESO_BAREMACION_DESTINATARIOS, { type: ConfigType.EMAILS, label: marker(`adm.config.prc.PRC_COM_PROCESO_BAREMACION_DESTINATARIOS`), required: true }],
-    [ConfigPrc.PRC_REP_DETALLE_GRUPO, { type: ConfigType.FILE, label: marker(`adm.config.prc.PRC_REP_DETALLE_GRUPO`) }]
+    [ConfigPrc.PRC_REP_DETALLE_GRUPO, { type: ConfigType.FILE, label: marker(`adm.config.prc.PRC_REP_DETALLE_GRUPO`) }],
+    [ConfigPrc.TITLE_COMUNICADO, { type: ConfigType.CONFIG_GROUP_TITLE, label: marker(`adm.config.group-title.comunicados`) }],
+    [ConfigPrc.PRC_COM_PROCESO_BAREMACION_DESTINATARIOS, { type: ConfigType.EMAILS, label: marker(`adm.config.prc.PRC_COM_PROCESO_BAREMACION_DESTINATARIOS`), required: true }]
   ]);
 
   get ConfigType() {

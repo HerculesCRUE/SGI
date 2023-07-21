@@ -35,7 +35,8 @@ class RolProyectoIT extends BaseIT {
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization",
         String.format("bearer %s",
-            tokenBuilder.buildToken("user", "AUTH", "CSP-SOL-E", "CSP-SOL-V", "CSP_PRO_C", "CSP-SOL-INV-ER")));
+            tokenBuilder.buildToken("user", "CSP-ROLE-E", "CSP-ROLE-V", "CSP-ROLE-C", "CSP-ROLE-R", "CSP-PRO-C",
+                "CSP-PRO-V", "CSP-PRO-E", "CSP-PRO-B", "CSP-PRO-R", "CSP-SOL-INV-ER")));
 
     HttpEntity<RolProyecto> request = new HttpEntity<>(entity, headers);
     return request;

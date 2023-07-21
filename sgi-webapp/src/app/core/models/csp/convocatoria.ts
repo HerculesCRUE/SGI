@@ -3,8 +3,8 @@ import { ClasificacionCVN } from '@core/enums/clasificacion-cvn';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { DateTime } from 'luxon';
 import { IUnidadGestion } from '../usr/unidad-gestion';
-import { ITipoAmbitoGeografico } from './tipo-ambito-geografico';
-import { ITipoRegimenConcurrencia } from './tipo-regimen-concurrencia';
+import { ITipoAmbitoGeografico } from './tipos-configuracion';
+import { ITipoRegimenConcurrencia } from './tipos-configuracion';
 import { IModeloEjecucion, ITipoFinalidad } from './tipos-configuracion';
 
 export interface IConvocatoria {

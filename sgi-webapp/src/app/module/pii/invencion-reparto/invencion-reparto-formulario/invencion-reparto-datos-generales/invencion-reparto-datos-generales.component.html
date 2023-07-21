@@ -74,9 +74,9 @@
         </th>
         <td mat-cell mat-cell *matCellDef="let gasto" (click)="$event.stopPropagation()">
           <ng-container *sgiHasAnyAuthority="['PII-INV-E', 'PII-INV-V']">
-            <button *ngIf="gastosSelection.isSelected(gasto)" mat-button matTooltip="{{'btn.edit' | translate}}"
-              (click)="openModalGasto(gasto)">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" *ngIf="gastosSelection.isSelected(gasto)" mat-icon-button
+              matTooltip="{{'btn.edit' | translate}}" (click)="openModalGasto(gasto)">
+              <mat-icon>border_color</mat-icon>
             </button>
           </ng-container>
         </td>
@@ -164,9 +164,9 @@
         </th>
         <td mat-cell mat-cell *matCellDef="let gasto" (click)="$event.stopPropagation()">
           <ng-container *sgiHasAnyAuthority="['PII-INV-E', 'PII-INV-V']">
-            <button *ngIf="ingresosSelection.isSelected(gasto)" mat-button matTooltip="{{'btn.edit' | translate}}"
-              (click)="openModalIngreso(gasto)">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" *ngIf="ingresosSelection.isSelected(gasto)" mat-icon-button
+              matTooltip="{{'btn.edit' | translate}}" (click)="openModalIngreso(gasto)">
+              <mat-icon>border_color</mat-icon>
             </button>
           </ng-container>
         </td>

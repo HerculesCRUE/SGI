@@ -53,14 +53,15 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let invencionInventor; let i = index;">
           <ng-container *sgiHasAnyAuthority="['PII-INV-E']">
-            <button (click)="openModal(invencionInventor)" mat-button matTooltip="{{'btn.edit' | translate}}">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" (click)="openModal(invencionInventor)" mat-icon-button
+              matTooltip="{{'btn.edit' | translate}}">
+              <mat-icon>border_color</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAnyAuthority="['PII-INV-B']">
-            <button *ngIf="!invencionInventor.value.id" mat-button matTooltip="{{'btn.delete' | translate}}"
-              (click)="deleteInventor(invencionInventor)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" *ngIf="!invencionInventor.value.id" mat-icon-button
+              matTooltip="{{'btn.delete' | translate}}" (click)="deleteInventor(invencionInventor)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>

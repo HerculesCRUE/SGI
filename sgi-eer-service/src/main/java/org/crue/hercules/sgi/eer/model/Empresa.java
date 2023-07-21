@@ -46,11 +46,11 @@ public class Empresa extends BaseActivableEntity {
   private static final String SEQUENCE_NAME = TABLE_NAME + "_seq";
 
   public static final int NOMBRE_RAZON_SOCIAL_LENGTH = 250;
-  public static final int OBJETO_SOCIAL_LENGTH = 250;
+  public static final int OBJETO_SOCIAL_LENGTH = 1000;
   public static final int DESCRIPCION_LENGTH = 250;
   public static final int REFERENCIAS_LENGTH = 50;
   public static final int TIPO_EMPRESA_LENGTH = 10;
-  public static final int CONOCIMIENTO_TECNOLOGIA_LENGTH = 250;
+  public static final int CONOCIMIENTO_TECNOLOGIA_LENGTH = 1000;
   public static final int NUMERO_PROTOCOLO_LENGTH = 50;
   public static final int NOTARIO_LENGTH = 250;
   public static final int OBSERVACIONES_LENGTH = 2000;

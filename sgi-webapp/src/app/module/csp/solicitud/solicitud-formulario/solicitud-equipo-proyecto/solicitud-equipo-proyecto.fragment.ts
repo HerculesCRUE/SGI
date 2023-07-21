@@ -13,7 +13,7 @@ import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocato
 import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-requisito-ip.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
-import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
+import { RolProyectoService } from '@core/services/csp/rol-proyecto/rol-proyecto.service';
 import { SolicitudProyectoEquipoService } from '@core/services/csp/solicitud-proyecto-equipo.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';

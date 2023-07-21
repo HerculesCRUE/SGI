@@ -169,7 +169,7 @@ export class EquipoInvestigadorListadoComponent extends FragmentComponent implem
         memoria.estadoActual.id === ESTADO_MEMORIA.PENDIENTE_CORRECCIONES ||
         memoria.estadoActual.id === ESTADO_MEMORIA.NO_PROCEDE_EVALUAR;
     });
-    return (this.listadoFragment.solicitantePeticionEvaluacion.id !== personaRef)
+    return (this.listadoFragment.solicitantePeticionEvaluacion?.id !== personaRef)
       && (memorias.length === this.listadoFragment.memorias.length);
   }
 

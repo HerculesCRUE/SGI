@@ -46,7 +46,7 @@ class RolProyectoControllerTest extends BaseControllerTest {
   private static final String CONTROLLER_BASE_PATH = "/rolproyectos";
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
+  @WithMockUser(username = "user", authorities = { "CSP-ROLE-E" })
   void findById_WithExistingId_ReturnsRolProyecto() throws Exception {
     // given: existing id
     RolProyecto rolProyectoExistente = generarMockRolProyecto(1L);
@@ -64,7 +64,7 @@ class RolProyectoControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
+  @WithMockUser(username = "user", authorities = { "CSP-ROLE-E" })
   void findById_WithNoExistingId_Returns404() throws Exception {
     // given: no existing id
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {

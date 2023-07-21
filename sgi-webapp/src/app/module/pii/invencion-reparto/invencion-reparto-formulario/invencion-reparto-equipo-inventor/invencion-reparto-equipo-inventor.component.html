@@ -346,9 +346,9 @@
           </th>
           <td mat-cell mat-cell *matCellDef="let wrapper">
             <ng-container *sgiHasAnyAuthority="['PII-INV-E']">
-              <button mat-button matTooltip="{{'btn.edit' | translate}}"
+              <button color="primary" mat-icon-button matTooltip="{{'btn.edit' | translate}}"
                 (click)="openModalRepartoEquipoInventor(wrapper)">
-                <mat-icon color="primary">border_color</mat-icon>
+                <mat-icon>border_color</mat-icon>
               </button>
             </ng-container>
           </td>

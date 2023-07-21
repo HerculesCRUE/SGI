@@ -1,4 +1,5 @@
-<sgi-export-dialog [title]="'eti.evaluacion.report.title' | translate">
+<sgi-export-dialog [title]="'eti.evaluacion.report.title' | translate"
+  [totalRegistrosExportacionExcel]="TOTAL_REG_EXP_EXCEL" [limiteRegistrosExportacionExcel]="LIMITE_REG_EXP_EXCEL">
   <form [formGroup]="formGroup">
     <!-- OutputReportType -->
     <mat-form-field>

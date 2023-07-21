@@ -9,12 +9,10 @@ import { CLASIFICACION_CVN_MAP } from '@core/enums/clasificacion-cvn';
 import { FORMULARIO_SOLICITUD_MAP } from '@core/enums/formulario-solicitud';
 import { MSG_PARAMS } from '@core/i18n';
 import { ESTADO_MAP, IConvocatoria } from '@core/models/csp/convocatoria';
-import { ITipoRegimenConcurrencia } from '@core/models/csp/tipo-regimen-concurrencia';
-import { TipoRegimenConcurrenciaService } from '@core/services/csp/tipo-regimen-concurrencia.service';
 import { DialogService } from '@core/services/dialog.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subscription } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { ConvocatoriaActionService } from '../../convocatoria.action.service';
 import { AreaTematicaModalData, ConvocatoriaAreaTematicaModalComponent } from '../../modals/convocatoria-area-tematica-modal/convocatoria-area-tematica-modal.component';
 import { ConvocatoriaDatosGeneralesFragment } from './convocatoria-datos-generales.fragment';
@@ -48,8 +46,6 @@ export interface AreaTematicaListado {
 })
 export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<IConvocatoria> implements OnInit {
   formPart: ConvocatoriaDatosGeneralesFragment;
-
-  regimenesConcurrencia$: Observable<ITipoRegimenConcurrencia[]>;
 
   private subscriptions = [] as Subscription[];
 
@@ -92,15 +88,10 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
     protected actionService: ConvocatoriaActionService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
-    private readonly translate: TranslateService,
-    tipoRegimenConcurrenciaService: TipoRegimenConcurrenciaService
+    private readonly translate: TranslateService
   ) {
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
     this.formPart = this.fragment as ConvocatoriaDatosGeneralesFragment;
-
-    this.regimenesConcurrencia$ = tipoRegimenConcurrenciaService.findAll().pipe(
-      map(response => response.items)
-    );
   }
 
   ngOnInit() {

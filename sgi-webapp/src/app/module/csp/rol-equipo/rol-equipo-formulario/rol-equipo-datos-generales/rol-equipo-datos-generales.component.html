@@ -1,0 +1,73 @@
+<sgi-fragment title="{{'label.datos-generales' | translate}}">
+  <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
+    [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+    <!-- Nombre -->
+    <div fxFlex="100" fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="70%">
+        <mat-label>{{'csp.rol-equipo.nombre' | translate}}</mat-label>
+        <input matInput formControlName="nombre" type="text" id="nombre"
+          placeholder="{{'csp.rol-equipo.nombre' | translate}}" required>
+        <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
+          {{'error.required.entity' | translate:msgParamNombreEntity}}
+        </mat-error>
+      </mat-form-field>
+      <!-- Abreviatura -->
+      <mat-form-field fxFlex="30%">
+        <mat-label>{{'csp.rol-equipo.abreviatura' | translate}}</mat-label>
+        <input matInput formControlName="abreviatura" type="text" id="abreviatura"
+          placeholder="{{'csp.rol-equipo.abreviatura' | translate}}" maxLength="5" required>
+        <mat-error *ngIf="formGroup.controls.abreviatura.errors?.required">
+          {{'error.required.entity' | translate:msgParamAbreviaturaEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div fxFlex="100" fxLayout="row" fxLayoutGap="10px">
+      <!-- Equipo -->
+      <mat-form-field fxFlex="25%">
+        <mat-label>{{'csp.rol-equipo.equipo' | translate}}</mat-label>
+        <sgi-select-enum formControlName="equipo" [enumMap]="EQUIPO_MAP" required>
+        </sgi-select-enum>
+        <mat-error *ngIf="formGroup.controls.equipo.errors?.required">
+          {{'error.required.entity' | translate:msgParamEquipoEntity}}
+        </mat-error>
+      </mat-form-field>
+      <!-- Principal -->
+      <mat-form-field fxFlex="25%">
+        <mat-label>{{'csp.rol-equipo.principal' | translate}}</mat-label>
+        <sgi-select-boolean formControlName="rolPrincipal" required>
+        </sgi-select-boolean>
+        <mat-error *ngIf="formGroup.controls.rolPrincipal.errors?.required">
+          {{'error.required.entity' | translate:msgParamPrincipalEntity}}
+        </mat-error>
+      </mat-form-field>
+      <!-- Orden -->
+      <mat-form-field fxFlex="25%">
+        <mat-label>{{'csp.rol-equipo.orden' | translate}}</mat-label>
+        <sgi-select-enum formControlName="orden" [enumMap]="ORDEN_MAP">
+        </sgi-select-enum>
+      </mat-form-field>
+      <!-- BaremablePRC -->
+      <mat-form-field fxFlex="25%">
+        <mat-label>{{'csp.rol-equipo.baremablePRC' | translate}}</mat-label>
+        <sgi-select-boolean formControlName="baremablePRC" required>
+        </sgi-select-boolean>
+        <mat-error *ngIf="formGroup.controls.baremablePRC.errors?.required">
+          {{'error.required.entity' | translate:msgParamBaremablePRCEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Descripción -->
+    <div fxFlex="100" fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="100%">
+        <mat-label>{{'csp.rol-equipo.descripcion' | translate}}</mat-label>
+        <textarea matInput #descripcion formControlName="descripcion" id="descripcion"
+          placeholder="{{'csp.rol-equipo.descripcion' | translate}}" maxLength="250"></textarea>
+        <mat-hint align="right">{{descripcion.value.length}} / 250</mat-hint>
+        <mat-error *ngIf="formGroup.controls.descripcion.errors?.maxlength">
+          {{ 'error.maxlength.entity' | translate:msgParamDescripcionEntity }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+  </form>
+</sgi-fragment>

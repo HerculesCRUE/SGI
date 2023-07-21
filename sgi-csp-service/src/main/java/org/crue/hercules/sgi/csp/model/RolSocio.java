@@ -10,25 +10,37 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import org.crue.hercules.sgi.csp.validation.UniqueAbreviaturaRolSocioActivo;
+import org.crue.hercules.sgi.csp.validation.UniqueNombreRolSocioActivo;
+import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "rol_socio")
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class RolSocio extends BaseEntity {
+@SuperBuilder
+@UniqueNombreRolSocioActivo(groups = {
+    RolSocio.OnActualizar.class, BaseActivableEntity.OnActivar.class,
+    RolSocio.OnCrear.class })
+@UniqueAbreviaturaRolSocioActivo(groups = {
+    RolSocio.OnActualizar.class, BaseActivableEntity.OnActivar.class,
+    RolSocio.OnCrear.class })
+@ActivableIsActivo(entityClass = RolSocio.class, groups = { RolSocio.OnActualizar.class })
+public class RolSocio extends BaseActivableEntity {
 
   /**
    * Serial version
    */
   private static final long serialVersionUID = 1L;
+  public static final int NOMBRE_LENGTH = 50;
+  public static final int DESCRIPCION_LENGTH = 250;
+  public static final int ABREVIATURA_LENGTH = 5;
 
   /** Id */
   @Id
@@ -38,19 +50,19 @@ public class RolSocio extends BaseEntity {
   private Long id;
 
   /** Abreviatura */
-  @Column(name = "abreviatura", length = 5, nullable = false)
+  @Column(name = "abreviatura", length = ABREVIATURA_LENGTH, nullable = false)
   @NotBlank
   @Size(max = 5)
   private String abreviatura;
 
   /** Nombre */
-  @Column(name = "nombre", length = 50, nullable = false)
+  @Column(name = "nombre", length = NOMBRE_LENGTH, nullable = false)
   @NotBlank
   @Size(max = 50)
   private String nombre;
 
   /** Descripción */
-  @Column(name = "descripcion", length = 250, nullable = true)
+  @Column(name = "descripcion", length = DESCRIPCION_LENGTH, nullable = true)
   @Size(max = 250)
   private String descripcion;
 
@@ -58,8 +70,16 @@ public class RolSocio extends BaseEntity {
   @Column(name = "coordinador", columnDefinition = "boolean default false", nullable = true)
   private Boolean coordinador;
 
-  /** Activo */
-  @Column(name = "activo", columnDefinition = "boolean default true", nullable = false)
-  private Boolean activo;
+  /**
+   * Interfaz para marcar validaciones en la creación de la entidad.
+   */
+  public interface OnCrear {
+  }
+
+  /**
+   * Interfaz para marcar validaciones en la actualizacion de la entidad.
+   */
+  public interface OnActualizar {
+  }
 
 }

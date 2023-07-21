@@ -1,0 +1,326 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000005-update-sample-data.xml">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="dev" author="master" id="0000000000005-convocatoria_documento">
+    <delete tableName="convocatoria_documento">
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="documento_ref" value="61f34b61-0e67-40a6-a581-2e188c1cbd78" />
+      </whereParams>
+    </delete>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000005-prorroga_documento">
+    <delete tableName="prorroga_documento">
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="documento_ref" value="79538260-d67e-44ed-ac6c-2aae5a33ac45" />
+      </whereParams>
+    </delete>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000005-notificacion_proyecto_externo_cvn">
+    <delete tableName="notificacion_proyecto_externo_cvn">
+      <where>proyecto_cvn_id is null</where>
+    </delete>
+
+    <insert tableName="notificacion_proyecto_externo_cvn">
+      <column name="id" valueSequenceNext="notificacion_proyecto_externo_cvn_seq" />
+      <column name="titulo" value="Notificación 1 con Entidad y Solicitante" />
+      <column name="fecha_inicio" valueDate="2021-10-07T14:00:00" />
+      <column name="fecha_fin" valueDate="2022-01-01T14:00:00" />
+      <column name="solicitante_ref" value="33870580" />
+      <column name="proyecto_cvn_id" value="00001" />
+      <column name="autorizacion_id" valueNumeric="1" />
+      <column name="responsable_ref" value="23302408" />
+      <column name="entidad_participacion_ref" value="00132245" />
+      <column name="responsable_ref" value="33870580" />
+      <column name="url_documento_acreditacion" value="https://www.um.es/documents/1073494/10194030/Acronimos.pdf/088d4eec-ffab-488b-b9db-941e9af55508"></column>
+      <column name="cod_externo" value="PCGFOPE1" />
+      <column name="ambito_geografico" value="Propio" />
+      <column name="grado_contribucion" value="Total" />
+      <column name="nombre_programa" value="Nombre del programa" />
+      <column name="porcentaje_subvencion" valueNumeric="73" />
+      <column name="importe_total" valueNumeric="900" />
+    </insert>
+
+    <insert tableName="notificacion_proyecto_externo_cvn">
+      <column name="id" valueSequenceNext="notificacion_proyecto_externo_cvn_seq" />
+      <column name="titulo" value="Notificación 2 con Entidad y Solicitante" />
+      <column name="fecha_inicio" valueDate="2021-11-07T14:00:00" />
+      <column name="fecha_fin" valueDate="2022-02-01T14:00:00" />
+      <column name="solicitante_ref" value="33870580" />
+      <column name="proyecto_cvn_id" value="00002" />
+      <column name="responsable_ref" value="23302408" />
+      <column name="documento_ref" value="sample-pdf" />
+      <column name="entidad_participacion_ref" value="00132245" />
+    </insert>
+    <insert tableName="notificacion_proyecto_externo_cvn">
+      <column name="id" valueSequenceNext="notificacion_proyecto_externo_cvn_seq" />
+      <column name="titulo" value="Notificación 3 con Entidad y Solicitante" />
+      <column name="fecha_inicio" valueDate="2021-12-07T14:00:00" />
+      <column name="fecha_fin" valueDate="2022-03-01T14:00:00" />
+      <column name="solicitante_ref" value="74439415" />
+      <column name="proyecto_cvn_id" value="00003" />
+      <column name="responsable_ref" value="74439415" />
+      <column name="entidad_participacion_ref" value="U0011919" />
+    </insert>
+
+    <insert tableName="notificacion_proyecto_externo_cvn">
+      <column name="id" valueSequenceNext="notificacion_proyecto_externo_cvn_seq" />
+      <column name="titulo" value="Notificación 1 sin Entidad y Solicitante" />
+      <column name="fecha_inicio" valueDate="2021-10-17T14:00:00" />
+      <column name="fecha_fin" valueDate="2022-01-21T14:00:00" />
+      <column name="solicitante_ref" value="22932567" />
+      <column name="proyecto_cvn_id" value="00004" />
+      <column name="datos_responsable" value="Responsable 1" />
+      <column name="datos_entidad_participacion" value="Brécol S.L." />
+    </insert>
+
+    <insert tableName="notificacion_proyecto_externo_cvn">
+      <column name="id" valueSequenceNext="notificacion_proyecto_externo_cvn_seq" />
+      <column name="titulo" value="Notificación 2 sin Entidad y Solicitante" />
+      <column name="fecha_inicio" valueDate="2021-11-17T14:00:00" />
+      <column name="fecha_fin" valueDate="2022-02-21T14:00:00" />
+      <column name="solicitante_ref" value="74439415" />
+      <column name="proyecto_cvn_id" value="00005" />
+      <column name="datos_responsable" value="Responsable 2" />
+      <column name="datos_entidad_participacion" value="Lomo S.A." />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000005-grupo">
+    <validCheckSum>8:a839611516e7310eb11d984bea3bdd9f</validCheckSum>
+    <insert tableName="grupo">
+      <column name="id" valueSequenceNext="grupo_seq" />
+      <column name="nombre" value="Grupo investigación 1" />
+      <column name="fecha_inicio" valueDate="2021-10-07T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-01-01T22:59:59" />
+      <column name="proyecto_sge_ref" value="34123" />
+      <column name="codigo" value="U006-1" />
+      <column name="departamento_origen_ref" value="U006" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="grupo">
+      <column name="id" valueSequenceNext="grupo_seq" />
+      <column name="nombre" value="Grupo investigación 2" />
+      <column name="fecha_inicio" valueDate="2022-02-14T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-11-01T22:59:59" />
+      <column name="proyecto_sge_ref" value="33939" />
+      <column name="codigo" value="E0B9-1" />
+      <column name="departamento_origen_ref" value="E0B9" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000005-grupo_especial_investigacion">
+    <insert tableName="grupo_especial_investigacion">
+      <column name="id" valueSequenceNext="grupo_especial_investigacion_seq" />
+      <column name="especial_investigacion" valueBoolean="true" />
+      <column name="fecha_inicio" valueDate="2021-10-07T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-01-01T22:59:59" />
+      <column name="grupo_id" valueNumeric="1" />
+    </insert>
+    <insert tableName="grupo_especial_investigacion">
+      <column name="id" valueSequenceNext="grupo_especial_investigacion_seq" />
+      <column name="especial_investigacion" valueBoolean="false" />
+      <column name="fecha_inicio" valueDate="2022-02-14T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-11-01T22:59:59" />
+      <column name="grupo_id" valueNumeric="2" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000005-grupo_tipo">
+    <insert tableName="grupo_tipo">
+      <column name="id" valueSequenceNext="grupo_tipo_seq" />
+      <column name="tipo" value="EMERGENTE" />
+      <column name="fecha_inicio" valueDate="2021-10-07T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-01-01T22:59:59" />
+      <column name="grupo_id" valueNumeric="1" />
+    </insert>
+    <insert tableName="grupo_tipo">
+      <column name="id" valueSequenceNext="grupo_tipo_seq" />
+      <column name="tipo" value="ALTO_RENDIMIENTO" />
+      <column name="fecha_inicio" valueDate="2022-02-14T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-11-01T22:59:59" />
+      <column name="grupo_id" valueNumeric="2" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000005-grupo_update">
+    <update tableName="grupo">
+      <column name="grupo_especial_investigacion_id" valueNumeric="1" />
+      <column name="grupo_tipo_id" valueNumeric="1" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="1" />
+      </whereParams>
+    </update>
+    <update tableName="grupo">
+      <column name="grupo_especial_investigacion_id" valueNumeric="2" />
+      <column name="grupo_tipo_id" valueNumeric="2" />
+      <where>:name=:value</where>
+      ç
+      <whereParams>
+        <param name="id" valueNumeric="2" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000005-grupo-equipo">
+    <insert tableName="grupo_equipo">
+      <column name="id" valueSequenceNext="proyecto_equipo_seq" />
+      <column name="grupo_id" valueNumeric="1" />
+      <column name="persona_ref" value="22932567" />
+      <column name="rol_proyecto_id" valueNumeric="1" />
+      <column name="fecha_inicio" valueDate="2021-10-07T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-01-01T22:59:59" />
+      <column name="dedicacion" value="COMPLETA" />
+      <column name="participacion" valueNumeric="100" />
+    </insert>
+    <insert tableName="grupo_equipo">
+      <column name="id" valueSequenceNext="proyecto_equipo_seq" />
+      <column name="grupo_id" valueNumeric="1" />
+      <column name="persona_ref" value="01889311" />
+      <column name="rol_proyecto_id" valueNumeric="2" />
+      <column name="fecha_inicio" valueDate="2021-10-07T23:00:00" />
+      <column name="fecha_fin" valueDate="2021-11-01T22:59:59" />
+      <column name="dedicacion" value="COMPLETA" />
+      <column name="participacion" valueNumeric="100" />
+    </insert>
+    <insert tableName="grupo_equipo">
+      <column name="id" valueSequenceNext="proyecto_equipo_seq" />
+      <column name="grupo_id" valueNumeric="1" />
+      <column name="persona_ref" value="01925489" />
+      <column name="rol_proyecto_id" valueNumeric="3" />
+      <column name="fecha_inicio" valueDate="2021-10-07T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-01-01T22:59:59" />
+      <column name="dedicacion" value="PARCIAL" />
+      <column name="participacion" valueNumeric="50" />
+    </insert>
+    <insert tableName="grupo_equipo">
+      <column name="id" valueSequenceNext="proyecto_equipo_seq" />
+      <column name="grupo_id" valueNumeric="2" />
+      <column name="persona_ref" value="02591317" />
+      <column name="rol_proyecto_id" valueNumeric="1" />
+      <column name="fecha_inicio" valueDate="2022-02-14T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-11-01T22:59:59" />
+      <column name="dedicacion" value="COMPLETA" />
+      <column name="participacion" valueNumeric="100" />
+    </insert>
+    <insert tableName="grupo_equipo">
+      <column name="id" valueSequenceNext="proyecto_equipo_seq" />
+      <column name="grupo_id" valueNumeric="2" />
+      <column name="persona_ref" value="22932567" />
+      <column name="rol_proyecto_id" valueNumeric="1" />
+      <column name="fecha_inicio" valueDate="2022-04-14T23:00:00" />
+      <column name="dedicacion" value="COMPLETA" />
+      <column name="participacion" valueNumeric="100" />
+    </insert>
+    <insert tableName="grupo_equipo">
+      <column name="id" valueSequenceNext="proyecto_equipo_seq" />
+      <column name="grupo_id" valueNumeric="2" />
+      <column name="persona_ref" value="01889311" />
+      <column name="rol_proyecto_id" valueNumeric="4" />
+      <column name="fecha_inicio" valueDate="2022-02-14T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-11-01T22:59:59" />
+      <column name="dedicacion" value="PARCIAL" />
+      <column name="participacion" valueNumeric="80" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000005-notificacion_cvn_entidad_financiadora">
+    <insert tableName="notificacion_cvn_entidad_financiadora">
+      <column name="id" valueSequenceNext="notificacion_cvn_entidad_financiadora_seq" />
+      <column name="entidad_financiadora_ref" value="U0011919" />
+      <column name="notificacion_proyecto_externo_cvn_id" valueNumeric="6" />
+    </insert>
+    <insert tableName="notificacion_cvn_entidad_financiadora">
+      <column name="id" valueSequenceNext="notificacion_cvn_entidad_financiadora_seq" />
+      <column name="entidad_financiadora_ref" value="U0011919" />
+      <column name="notificacion_proyecto_externo_cvn_id" valueNumeric="6" />
+    </insert>
+    <insert tableName="notificacion_cvn_entidad_financiadora">
+      <column name="id" valueSequenceNext="notificacion_cvn_entidad_financiadora_seq" />
+      <column name="datos_entidad_financiadora" value="Datos de la entidad" />
+      <column name="notificacion_proyecto_externo_cvn_id" valueNumeric="6" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000005-modelo_ejecucion">
+    <update tableName="modelo_ejecucion">
+      <column name="contrato" valueBoolean="true" />
+      <column name="externo" valueBoolean="false" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="nombre" value="Facturación" />
+      </whereParams>
+    </update>
+    <insert tableName="modelo_ejecucion">
+      <column name="id" valueSequenceNext="modelo_ejecucion_seq" />
+      <column name="nombre" value="Proyecto externo" />
+      <column name="descripcion" value="Proyecto externo" />
+      <column name="externo" valueBoolean="true" />
+      <column name="contrato" valueBoolean="false" />
+    </insert>
+  </changeSet>
+
+  <!-- TODO: Mover al fichero adecuado ya que no se trata de datos de prueba -->
+  <changeSet context="!test" author="master" id="0000000000005-rol_proyecto">
+    <update tableName="rol_proyecto">
+      <column name="baremable_prc" valueBoolean="true" />
+      <where>id=1</where>
+    </update>
+    <update tableName="rol_proyecto">
+      <column name="baremable_prc" valueBoolean="true" />
+      <where>id=2</where>
+    </update>
+    <update tableName="rol_proyecto">
+      <column name="baremable_prc" valueBoolean="true" />
+      <where>id=3</where>
+    </update>
+    <update tableName="rol_proyecto">
+      <column name="baremable_prc" valueBoolean="false" />
+      <where>id=4</where>
+    </update>
+    <update tableName="rol_proyecto">
+      <column name="baremable_prc" valueBoolean="true" />
+      <where>id=5</where>
+    </update>
+    <update tableName="rol_proyecto">
+      <column name="baremable_prc" valueBoolean="true" />
+      <where>id=6</where>
+    </update>
+    <update tableName="rol_proyecto">
+      <column name="baremable_prc" valueBoolean="true" />
+      <where>id=7</where>
+    </update>
+    <update tableName="rol_proyecto">
+      <column name="baremable_prc" valueBoolean="true" />
+      <where>id=8</where>
+    </update>
+    <update tableName="rol_proyecto">
+      <column name="baremable_prc" valueBoolean="false" />
+      <where>id=9</where>
+    </update>
+    <update tableName="rol_proyecto">
+      <column name="baremable_prc" valueBoolean="false" />
+      <where>id=10</where>
+    </update>
+    <update tableName="rol_proyecto">
+      <column name="baremable_prc" valueBoolean="false" />
+      <where>id=11</where>
+    </update>
+    <update tableName="rol_proyecto">
+      <column name="baremable_prc" valueBoolean="false" />
+      <where>id=12</where>
+    </update>
+    <update tableName="rol_proyecto">
+      <column name="baremable_prc" valueBoolean="true" />
+      <where>id=13</where>
+    </update>
+  </changeSet>
+
+</databaseChangeLog>

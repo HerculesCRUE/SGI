@@ -1,6 +1,5 @@
 import { IFuenteFinanciacion } from '@core/models/csp/fuente-financiacion';
-import { ITipoAmbitoGeografico } from '@core/models/csp/tipo-ambito-geografico';
-import { ITipoOrigenFuenteFinanciacion } from '@core/models/csp/tipo-origen-fuente-financiacion';
+import { ITipoAmbitoGeografico, ITipoOrigenFuenteFinanciacion } from '@core/models/csp/tipos-configuracion';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { IFuenteFinanciacionRequest } from './fuente-financiacion-request';
 

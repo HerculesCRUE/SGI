@@ -62,6 +62,19 @@ export class ConfigInputFileComponent implements OnInit, OnDestroy {
   // tslint:disable-next-line: variable-name
   private _labelParams = {};
 
+  @Input()
+  set disabled(disable: boolean) {
+    this._disabled = disable ?? false;
+    if (this.formGroup) {
+      this.controlDisableEnable(disable);
+    }
+  }
+  get disabled(): boolean {
+    return this._disabled;
+  }
+  // tslint:disable-next-line: variable-name
+  private _disabled = false;
+
   @Output()
   readonly error = new EventEmitter<Error>();
 
@@ -103,6 +116,7 @@ export class ConfigInputFileComponent implements OnInit, OnDestroy {
   }
 
   hasChanges(): boolean {
+    this.controlDisableEnable(this._disabled);
     return !!this.formGroup.controls.resource?.value;
   }
 
@@ -145,6 +159,14 @@ export class ConfigInputFileComponent implements OnInit, OnDestroy {
         (error) => this.error.next(error)
       )
     );
+  }
+
+  private controlDisableEnable(disable: boolean) {
+    if (disable) {
+      this.formGroup.disable();
+    } else if (this.formGroup.disabled) {
+      this.formGroup.enable();
+    }
   }
 
 }

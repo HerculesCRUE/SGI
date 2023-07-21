@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence name="sgo-remove-authorization-header-sequence" trace="disable" xmlns="http://ws.apache.org/ns/synapse">
+    <property name="Authorization" scope="transport" action="remove"/>
+</sequence>

@@ -39,14 +39,14 @@ export interface IPeticionEvaluacion {
   objetivos: string;
   /** Diseño metodológico */
   disMetodologico: string;
-  /** Externo */
-  externo: boolean;
   /** Tiene fondos propios */
   tieneFondosPropios: boolean;
   /** Referencia persona */
   solicitante: IPersona;
   /** Identificador checklist */
   checklistId: number;
+  /** Referencia tutor */
+  tutor: IPersona;
   /** Activo */
   activo: boolean;
 }

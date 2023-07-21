@@ -56,44 +56,45 @@
           {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let wrapper;let i=index;">
 
-          <button mat-button *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-ER'"
+          <button color="primary" mat-icon-button *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-ER'"
             [routerLink]="['../../..', MEMORIAS_ROUTE, wrapper.value.id]" matTooltip="{{'btn.edit' | translate}}">
-            <mat-icon color="primary">border_color</mat-icon>
+            <mat-icon>border_color</mat-icon>
           </button>
 
-          <button mat-button *sgiHasAuthorityForAnyUO="'ETI-MEM-V'"
+          <button color="primary" mat-icon-button *sgiHasAuthorityForAnyUO="'ETI-MEM-V'"
             [routerLink]="['../../..', MEMORIAS_ROUTE, wrapper.value.id]" matTooltip="{{'btn.view' | translate}}">
-            <mat-icon color="primary">visibility</mat-icon>
+            <mat-icon>visibility</mat-icon>
           </button>
 
 
           <ng-container *ngIf="hasPermisoEliminar(wrapper.value.estadoActual.id)">
-            <button mat-button *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-BR'" matTooltip="{{'btn.delete' | translate}}"
-              (click)="delete(wrapper)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" mat-icon-button *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-BR'"
+              matTooltip="{{'btn.delete' | translate}}" (click)="delete(wrapper)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
 
           <ng-container *sgiHasAuthorityForAnyUO="'ETI-MEM-CEST'">
-            <button *ngIf="wrapper.value.estadoActual.id === 3 || wrapper.value.estadoActual.id === 4 || 
-                              wrapper.value.estadoActual.id === 10 || wrapper.value.estadoActual.id === 5" mat-button
-              (click)="recuperarEstadoAnterior(wrapper.value)"
+            <button color="primary" *ngIf="wrapper.value.estadoActual.id === 3 || wrapper.value.estadoActual.id === 4 || 
+                              wrapper.value.estadoActual.id === 10 || wrapper.value.estadoActual.id === 5"
+              mat-icon-button (click)="recuperarEstadoAnterior(wrapper.value)"
               matTooltip="{{'btn.eti.memoria.estado-anterior' | translate}}">
-              <mat-icon color="primary">restore</mat-icon>
+              <mat-icon>restore</mat-icon>
             </button>
           </ng-container>
 
           <ng-container *ngIf="hasPermisoEnviarSecretaria(wrapper.value.estadoActual.id)">
-            <button mat-button *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-ESCR'" (click)="enviarSecretaria(wrapper.value)"
-              [disabled]="disableEnviarSecretaria" matTooltip="{{'btn.eti.memoria.enviar' | translate}}">
-              <mat-icon color="primary">send</mat-icon>
+            <button mat-icon-button color="primary" *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-ESCR'"
+              (click)="enviarSecretaria(wrapper.value)" [disabled]="disableEnviarSecretaria"
+              matTooltip="{{isMemoriaSeguimiento(wrapper.value.estadoActual?.id) ? ('btn.eti.memoria.enviar-seguimiento' | translate) : ('btn.eti.memoria.enviar' | translate)}}">
+              <mat-icon>send</mat-icon>
             </button>
           </ng-container>
           <ng-container *ngIf="hasPermisoEnviarSecretariaRetrospectiva(wrapper.value)">
-            <button mat-button *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-ERTR'"
+            <button mat-icon-button color="primary" *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-ERTR'"
               (click)="enviarSecretariaRetrospectiva(wrapper.value)" [disabled]="disableEnviarSecretaria"
               matTooltip="{{'btn.eti.memoria.enviar-retrospectiva' | translate}}">
-              <mat-icon color="primary">assignment</mat-icon>
+              <mat-icon>send_and_archive</mat-icon>
             </button>
           </ng-container>
         </td>

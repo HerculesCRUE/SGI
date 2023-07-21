@@ -94,19 +94,19 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let wrapper">
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-            <button *ngIf="!actionService.readonly" mat-button matTooltip="{{'btn.edit' | translate}}"
-              [routerLink]="[wrapper.value.id]">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" *ngIf="!actionService.readonly" mat-icon-button
+              matTooltip="{{'btn.edit' | translate}}" [routerLink]="[wrapper.value.id]">
+              <mat-icon>border_color</mat-icon>
             </button>
-            <button *ngIf="actionService.readonly" mat-button matTooltip="{{'btn.view' | translate}}"
-              [routerLink]="[wrapper.value.id]">
-              <mat-icon color="primary">visibility</mat-icon>
+            <button color="primary" *ngIf="actionService.readonly" mat-icon-button
+              matTooltip="{{'btn.view' | translate}}" [routerLink]="[wrapper.value.id]">
+              <mat-icon>visibility</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-            <button *ngIf="!actionService.readonly" mat-button matTooltip="{{'btn.delete' | translate}}"
-              (click)="deleteProyectoSocio(wrapper)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" *ngIf="!actionService.readonly" mat-icon-button
+              matTooltip="{{'btn.delete' | translate}}" (click)="deleteProyectoSocio(wrapper)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>

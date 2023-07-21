@@ -173,18 +173,19 @@
             <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
             <td mat-cell *matCellDef="let wrapper">
               <ng-container>
-                <button *ngIf="this.formPart.readonly" mat-button matTooltip="{{'btn.view' | translate}}"
-                  (click)="openModal(wrapper)">
-                  <mat-icon color="primary">visibility</mat-icon>
+                <button color="primary" *ngIf="this.formPart.readonly" mat-icon-button
+                  matTooltip="{{'btn.view' | translate}}" (click)="openModal(wrapper)">
+                  <mat-icon>visibility</mat-icon>
                 </button>
-                <button *ngIf="!this.formPart.readonly" mat-button matTooltip="{{'btn.edit' | translate}}"
-                  (click)="openModal(wrapper)">
-                  <mat-icon color="primary">border_color</mat-icon>
+                <button color="primary" *ngIf="!this.formPart.readonly" mat-icon-button
+                  matTooltip="{{'btn.edit' | translate}}" (click)="openModal(wrapper)">
+                  <mat-icon>border_color</mat-icon>
                 </button>
-                <button
+                <button color="warn"
                   *ngIf="!this.formPart.readonly && wrapper.value.hasDesglosePresupuesto != null && !wrapper.value.hasDesglosePresupuesto"
-                  mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deleteEntidadFinanciadora(wrapper)">
-                  <mat-icon color="warn">highlight_off</mat-icon>
+                  mat-icon-button matTooltip="{{'btn.delete' | translate}}"
+                  (click)="deleteEntidadFinanciadora(wrapper)">
+                  <mat-icon>highlight_off</mat-icon>
                 </button>
                 <span class="container-field-info">
                   <sgi-field-info matSuffix

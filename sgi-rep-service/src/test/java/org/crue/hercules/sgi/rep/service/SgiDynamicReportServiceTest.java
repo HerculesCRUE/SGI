@@ -11,8 +11,6 @@ import org.crue.hercules.sgi.rep.dto.OutputType;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentMatchers;
@@ -38,7 +36,6 @@ class SgiDynamicReportServiceTest extends BaseReportServiceTest {
     sgiDynamicReportService = new SgiDynamicReportService(sgiConfigProperties, sgiApiConfService);
   }
 
-  @ParameterizedTest
   @ValueSource(strings = { "PDF", "RTF", "XLS", "XLSX", "CSV", "HTML" })
   void getDynamicReport_ReturnsResource(String outputType) throws Exception {
     // given: data for report
@@ -55,7 +52,6 @@ class SgiDynamicReportServiceTest extends BaseReportServiceTest {
     assertNotNull(report);
   }
 
-  @Test
   void givenDynamicReportDto_ReturnReport() throws Exception {
     // given: data for report
 
@@ -97,7 +93,6 @@ class SgiDynamicReportServiceTest extends BaseReportServiceTest {
     assertNotNull(report);
   }
 
-  @ParameterizedTest
   @CsvSource({
       "'dynamic.json', 'PDF'",
       "'dynamic_with_colums_repeated.json', 'PDF'",

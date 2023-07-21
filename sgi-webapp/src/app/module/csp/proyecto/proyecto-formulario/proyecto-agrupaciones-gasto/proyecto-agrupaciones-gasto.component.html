@@ -20,13 +20,13 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let wrapper">
           <ng-container>
-            <button *ngIf="!this.formPart.readonly" mat-button matTooltip="{{'btn.view' | translate}}"
-              [routerLink]="[wrapper.value.id]">
-              <mat-icon color="primary">visibility</mat-icon>
+            <button color="primary" *ngIf="!this.formPart.readonly" mat-icon-button
+              matTooltip="{{'btn.view' | translate}}" [routerLink]="[wrapper.value.id]">
+              <mat-icon>visibility</mat-icon>
             </button>
-            <button *ngIf="!this.formPart.readonly && !this.formPart.isVisor" mat-button
+            <button color="warn" *ngIf="!this.formPart.readonly && !this.formPart.isVisor" mat-icon-button
               matTooltip="{{'btn.delete' | translate}}" (click)="deleteAgrupacion(wrapper)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>

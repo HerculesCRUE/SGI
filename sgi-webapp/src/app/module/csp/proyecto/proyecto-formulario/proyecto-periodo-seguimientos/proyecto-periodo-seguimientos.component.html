@@ -11,7 +11,7 @@
         <td mat-cell *matCellDef="let element">
           <mat-icon *ngIf="element.help" class="{{element.help.class}}"
             matTooltip="{{element.help.tooltip | translate}}">
-            help</mat-icon>
+            error</mat-icon>
         </td>
       </ng-container>
 
@@ -83,23 +83,24 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let element">
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-            <button mat-button matTooltip="{{'btn.edit' | translate}}"
+            <button color="primary" mat-icon-button matTooltip="{{'btn.edit' | translate}}"
               [routerLink]="['../', PROYECTO_ROUTE_NAMES.SEGUIMIENTO_CIENTIFICO, element.proyectoPeriodoSeguimiento?.value?.id]"
               *ngIf="!this.actionService.readonly && element.proyectoPeriodoSeguimiento?.value"
               [state]="getConvocatoriaPeriodoSeguimientoState(element.convocatoriaPeriodoSeguimiento?.id)">
-              <mat-icon color="primary">border_color</mat-icon>
+              <mat-icon>border_color</mat-icon>
             </button>
-            <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!element.proyectoPeriodoSeguimiento"
+            <button color="primary" mat-icon-button matTooltip="{{'btn.edit' | translate}}"
+              *ngIf="!element.proyectoPeriodoSeguimiento"
               [routerLink]="['../', PROYECTO_ROUTE_NAMES.SEGUIMIENTO_CIENTIFICO, ROUTE_NAMES.NEW]"
               [state]="getConvocatoriaPeriodoSeguimientoState(element.convocatoriaPeriodoSeguimiento?.id)">
-              <mat-icon color="primary">border_color</mat-icon>
+              <mat-icon>border_color</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-            <button mat-button matTooltip="{{'btn.delete' | translate}}"
+            <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
               *ngIf="element.proyectoPeriodoSeguimiento?.value"
               (click)="deleteProyectoPeriodoSeguimiento(element.proyectoPeriodoSeguimiento)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>

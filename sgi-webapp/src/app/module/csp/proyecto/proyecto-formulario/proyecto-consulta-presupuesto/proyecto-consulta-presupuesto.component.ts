@@ -7,6 +7,7 @@ import { FragmentComponent } from '@core/component/fragment.component';
 import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
 import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
 import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
 import { TranslateService } from '@ngx-translate/core';
 import { from, of, Subscription } from 'rxjs';
@@ -83,6 +84,9 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
   formPart: ProyectoConsultaPresupuestoFragment;
   msgParamAnualidadGenerica: string;
 
+  private totalElementos = 0;
+  private limiteRegistrosExportacionExcel: string;
+
   displayedColumns = [
     'anualidad',
     'conceptoGasto',
@@ -97,7 +101,8 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
     public actionService: ProyectoActionService,
     private matDialog: MatDialog,
     private readonly translate: TranslateService,
-    private codigoEconomicoGastoService: CodigoEconomicoGastoService
+    private codigoEconomicoGastoService: CodigoEconomicoGastoService,
+    private readonly cnfService: ConfigService
   ) {
     super(actionService.FRAGMENT.CONSULTA_PRESUPUESTO, actionService);
     this.formPart = this.fragment as ProyectoConsultaPresupuestoFragment;
@@ -135,6 +140,12 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
         })
       ).subscribe(presupuestos => {
         this.dataSource.data = presupuestos;
+        this.totalElementos = presupuestos.length;
+      }));
+
+    this.subscriptions.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-proyecto-consulta-presupuesto').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
       }));
   }
 
@@ -319,7 +330,9 @@ export class ProyectoConsultaPresupuestoComponent extends FragmentComponent impl
             columns: []
           };
           const config = {
-            data: exportData
+            data: exportData,
+            totalRegistrosExportacionExcel: this.totalElementos,
+            limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
           };
           this.matDialog.open(ProyectoConsultaPresupuestoExportModalComponent, config);
         },

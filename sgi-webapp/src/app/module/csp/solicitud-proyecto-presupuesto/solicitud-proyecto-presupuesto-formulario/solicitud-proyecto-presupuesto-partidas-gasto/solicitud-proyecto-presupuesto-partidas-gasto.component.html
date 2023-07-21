@@ -77,13 +77,15 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let wrapper">
           <ng-container *ngIf="!this.formPart.readonly">
-            <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="openModal(wrapper)">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" mat-icon-button matTooltip="{{'btn.edit' | translate}}"
+              (click)="openModal(wrapper)">
+              <mat-icon>border_color</mat-icon>
             </button>
           </ng-container>
           <ng-container *ngIf="!this.formPart.readonly">
-            <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deletePartidaGasto(wrapper)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
+              (click)="deletePartidaGasto(wrapper)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>

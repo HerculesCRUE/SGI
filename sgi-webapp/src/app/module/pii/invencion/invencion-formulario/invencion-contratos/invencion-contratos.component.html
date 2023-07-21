@@ -117,17 +117,17 @@
           <mat-header-cell mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </mat-header-cell>
           <mat-cell mat-cell *matCellDef="let wrapper; let i = index">
             <ng-container>
-              <button *ngIf="!this.formPart.candEdit" mat-button matTooltip="{{'btn.view' | translate}}"
-                (click)="openModal(wrapper, i)">
-                <mat-icon color="primary">visibility</mat-icon>
+              <button color="primary" *ngIf="!this.formPart.candEdit" mat-icon-button
+                matTooltip="{{'btn.view' | translate}}" (click)="openModal(wrapper, i)">
+                <mat-icon>visibility</mat-icon>
               </button>
-              <button *ngIf="this.formPart.candEdit" mat-button matTooltip="{{'btn.edit' | translate}}"
-                (click)="openModal(wrapper, i)">
-                <mat-icon color="primary">border_color</mat-icon>
+              <button color="primary" *ngIf="this.formPart.candEdit" mat-icon-button
+                matTooltip="{{'btn.edit' | translate}}" (click)="openModal(wrapper, i)">
+                <mat-icon>border_color</mat-icon>
               </button>
-              <button *ngIf="this.formPart.candEdit" mat-button matTooltip="{{'btn.delete' | translate}}"
-                (click)="deleteSectorLicenciado(wrapper)">
-                <mat-icon color="warn">highlight_off</mat-icon>
+              <button color="warn" *ngIf="this.formPart.candEdit" mat-icon-button
+                matTooltip="{{'btn.delete' | translate}}" (click)="deleteSectorLicenciado(wrapper)">
+                <mat-icon>highlight_off</mat-icon>
               </button>
             </ng-container>
           </mat-cell>

@@ -8,6 +8,7 @@
         <with-param name="requiredAuthorities" value=""/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
+      <sequence key="sgemp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgemp-endpoint"/>
       </send>
@@ -26,6 +27,7 @@
         <with-param name="requiredAuthorities" value="" />
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence" />
+      <sequence key="sgemp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgemp-endpoint" />
       </send>
@@ -44,6 +46,7 @@
         <with-param name="requiredAuthorities" value=""/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
+      <sequence key="sgemp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgemp-endpoint"/>
       </send>
@@ -62,6 +65,7 @@
         <with-param name="requiredAuthorities" value="ESB-EMP-C"/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
+      <sequence key="sgemp-remove-authorization-header-sequence" />
       <script key="gov:scripts/sgemp/empresa-sectores-industriales-request-converter-mediator.js" language="js"/>
       <send>
         <endpoint key="sgemp-endpoint"/>
@@ -81,6 +85,7 @@
         <with-param name="requiredAuthorities" value="ESB-EMP-E"/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
+      <sequence key="sgemp-remove-authorization-header-sequence" />
       <script key="gov:scripts/sgemp/empresa-sectores-industriales-request-converter-mediator.js" language="js"/>
       <send>
         <endpoint key="sgemp-endpoint"/>
@@ -100,6 +105,7 @@
         <with-param name="requiredAuthorities" value="ESB-EMP-E,ESB-EMP-V"/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
+      <sequence key="sgemp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgemp-endpoint"/>
       </send>
@@ -119,6 +125,7 @@
         <with-param name="requiredAuthorities" value="ESB-EMP-C"/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
+      <sequence key="sgemp-remove-authorization-header-sequence" />
 
       <!-- tipos via -->
       <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
@@ -169,6 +176,8 @@
         <source clone="false" type="body"/>
         <target type="property" property="tiposTercero"/>
       </enrich>
+
+      <sequence key="sgemp-remove-x-api-key-sequence" />
 
       <payloadFactory media-type="json">
         <format>
@@ -544,6 +553,7 @@
         <with-param name="requiredAuthorities" value="ESB-EMP-E"/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
+      <sequence key="sgemp-remove-authorization-header-sequence" />
 
       <!-- tipos via -->
       <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
@@ -594,6 +604,8 @@
         <source clone="false" type="body"/>
         <target type="property" property="tiposTercero"/>
       </enrich>
+
+      <sequence key="sgemp-remove-x-api-key-sequence" />
 
       <payloadFactory media-type="json">
         <format>
@@ -976,6 +988,7 @@
         <with-param name="requiredAuthorities" value="ESB-EMP-E,ESB-EMP-V"/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
+      <sequence key="sgemp-remove-authorization-header-sequence" />
 
       <!-- tipos via -->
       <property value="/tipos-via" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
@@ -1026,6 +1039,8 @@
         <source clone="false" type="body"/>
         <target type="property" property="tiposTercero"/>
       </enrich>
+
+      <sequence key="sgemp-remove-x-api-key-sequence" />
 
       <payloadFactory media-type="json">
         <format>
@@ -1393,6 +1408,7 @@
         <with-param name="requiredAuthorities" value=""/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
+      <sequence key="sgemp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgemp-endpoint"/>
       </send>
@@ -1413,6 +1429,7 @@
         <with-param name="requiredAuthorities" value=""/>
       </call-template>
       <sequence key="sgemp-add-x-api-key-sequence"/>
+      <sequence key="sgemp-remove-authorization-header-sequence" />
       <send>
         <endpoint key="sgemp-endpoint"/>
       </send>

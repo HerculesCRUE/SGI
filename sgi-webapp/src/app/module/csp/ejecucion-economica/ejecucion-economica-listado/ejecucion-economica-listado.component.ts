@@ -5,10 +5,11 @@ import { AbstractTablePaginationComponent } from '@core/component/abstract-table
 import { IRelacionEjecucionEconomica, TipoEntidad, TIPO_ENTIDAD_MAP } from '@core/models/csp/relacion-ejecucion-economica';
 import { IRolProyecto } from '@core/models/csp/rol-proyecto';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { RelacionEjecucionEconomicaService } from '@core/services/csp/relacion-ejecucion-economica/relacion-ejecucion-economica.service';
-import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
+import { RolProyectoService } from '@core/services/csp/rol-proyecto/rol-proyecto.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
@@ -39,6 +40,8 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
 
   private idsProyectoSge: string[];
 
+  private limiteRegistrosExportacionExcel: string;
+
   get TIPO_ENTIDAD_MAP() {
     return TIPO_ENTIDAD_MAP;
   }
@@ -58,7 +61,8 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
     private personaService: PersonaService,
     private relacionEjecucionEconomicaService: RelacionEjecucionEconomicaService,
     private grupoService: GrupoService,
-    private readonly matDialog: MatDialog
+    private readonly matDialog: MatDialog,
+    private readonly cnfService: ConfigService
   ) {
     super();
   }
@@ -67,6 +71,11 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
     super.ngOnInit();
     this.createFormGroup();
     this.loadColectivos();
+
+    this.subscriptions.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-ejecucion-economica-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IRelacionEjecucionEconomicaWithResponsables>> {
@@ -240,7 +249,9 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
   openExportModal(): void {
     const data: IRequerimientoJustificacionListadoModalData = {
       findOptions: this.findOptions,
-      idsProyectoSge: this.idsProyectoSge
+      idsProyectoSge: this.idsProyectoSge,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

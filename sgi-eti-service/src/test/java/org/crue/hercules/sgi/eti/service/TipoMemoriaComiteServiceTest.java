@@ -46,8 +46,7 @@ public class TipoMemoriaComiteServiceTest extends BaseServiceTest {
     BDDMockito.given(comiteRepository.findByIdAndActivoTrue(1L)).willReturn(Optional.of(new Comite()));
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
-        "articulo", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
     TipoMemoria tipoMemoria = new TipoMemoria(1L, "TipoMemoria1", Boolean.TRUE);
 
     List<TipoMemoriaComite> tipoMemoriasComite = new ArrayList<>();

@@ -3,21 +3,16 @@ import { AbstractControl } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IRolSocio } from '@core/models/csp/rol-socio';
 import { ISolicitudProyectoSocio } from '@core/models/csp/solicitud-proyecto-socio';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { RolSocioService } from '@core/services/csp/rol-socio.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { IRange } from '@core/validators/range-validator';
 import { TranslateService } from '@ngx-translate/core';
-import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, Subscription } from 'rxjs';
-import { map, startWith, tap } from 'rxjs/operators';
+import { Subscription, merge } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { SolicitudProyectoSocioActionService } from '../../solicitud-proyecto-socio.action.service';
 import { SolicitudProyectoSocioDatosGeneralesFragment } from './solicitud-proyecto-socio-datos-generales.fragment';
 
-const MSG_ERROR_INIT = marker('error.load');
 const SOLICITUD_PROYECTO_SOCIO_IMPORTE_SOLICITADO_KEY = marker('csp.proyecto-socio.importe-solicitado');
 const SOLICITUD_PROYECTO_SOCIO_IMPORTE_PRESUPUESTADO_KEY = marker('csp.proyecto-socio.importe-presupuestado');
 const SOLICITUD_PROYECTO_SOCIO_MES_FIN_KEY = marker('csp.proyecto-socio.mes-fin');
@@ -38,7 +33,6 @@ export class SolicitudProyectoSocioDatosGeneralesComponent extends FormFragmentC
   fxLayoutProperties: FxLayoutProperties;
   fxFlexProperties: FxFlexProperties;
   private subscriptions: Subscription[] = [];
-  rolSocios$: Observable<IRolSocio[]>;
 
   msgParamEntity = {};
   msgParamSocioEntity = {};
@@ -50,10 +44,7 @@ export class SolicitudProyectoSocioDatosGeneralesComponent extends FormFragmentC
   msgParamImportePresupuestadoEntity = {};
 
   constructor(
-    private readonly logger: NGXLogger,
     protected actionService: SolicitudProyectoSocioActionService,
-    private snackBarService: SnackBarService,
-    private rolSocioService: RolSocioService,
     private readonly translate: TranslateService
   ) {
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
@@ -72,8 +63,6 @@ export class SolicitudProyectoSocioDatosGeneralesComponent extends FormFragmentC
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.loadRolProyectos();
-
     this.setupI18N();
 
     this.subscriptions.push(
@@ -132,12 +121,6 @@ export class SolicitudProyectoSocioDatosGeneralesComponent extends FormFragmentC
       SOLICITUD_PROYECTO_SOCIO_IMPORTE_PRESUPUESTADO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamImportePresupuestadoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
-  }
-
-  private loadRolProyectos(): void {
-    this.rolSocios$ = this.rolSocioService.findAll().pipe(
-      map((response) => response.items)
-    )
   }
 
   ngOnDestroy(): void {

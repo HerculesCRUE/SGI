@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { Estado, ESTADO_MAP, IConvocatoria } from '@core/models/csp/convocatoria';
@@ -14,6 +15,7 @@ import { IEmpresa } from '@core/models/sgemp/empresa';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { ConfiguracionSolicitudService } from '@core/services/csp/configuracion-solicitud.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { DialogService } from '@core/services/dialog.service';
@@ -26,7 +28,7 @@ import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListRes
 import { NGXLogger } from 'ngx-logger';
 import { EMPTY, from, Observable, of } from 'rxjs';
 import { catchError, map, mergeAll, mergeMap, switchMap } from 'rxjs/operators';
-import { ConvocatoriaListadoExportModalComponent, IConvocatoriaListadoModalData } from '../modals/convocatoria-listado-export-modal/convocatoria-listado-export-modal.component';
+import { ConvocatoriaListadoExportModalComponent } from '../modals/convocatoria-listado-export-modal/convocatoria-listado-export-modal.component';
 
 const MSG_BUTTON_ADD = marker('btn.add.entity');
 const MSG_REACTIVE = marker('msg.csp.reactivate');
@@ -89,6 +91,8 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
   msgParamEntity = {};
   msgParamAreaTematicaEntity = {};
 
+  private limiteRegistrosExportacionExcel: string;
+
   constructor(
     private readonly logger: NGXLogger,
     protected snackBarService: SnackBarService,
@@ -100,7 +104,8 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
     private readonly translate: TranslateService,
     private router: Router,
     private matDialog: MatDialog,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private readonly cnfService: ConfigService
   ) {
     super();
     this.fxFlexProperties = new FxFlexProperties();
@@ -138,9 +143,13 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
       palabrasClave: new FormControl(null),
     });
 
-
-
     this.filter = this.createFilter();
+
+    this.suscripciones.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-convocatoria-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
+
   }
 
   private setupI18N(): void {
@@ -538,8 +547,10 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
   }
 
   openExportModal(): void {
-    const data: IConvocatoriaListadoModalData = {
-      findOptions: this.findOptions
+    const data: IBaseExportModalData = {
+      findOptions: this.findOptions,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

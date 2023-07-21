@@ -1,81 +1,40 @@
 package org.crue.hercules.sgi.rep.service.eti;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Vector;
+import java.io.InputStream;
+import java.util.HashMap;
 
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-
-import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
-import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
-import org.crue.hercules.sgi.rep.dto.eti.BloqueOutput;
-import org.crue.hercules.sgi.rep.dto.eti.BloquesReportInput;
-import org.crue.hercules.sgi.rep.dto.eti.BloquesReportOutput;
-import org.crue.hercules.sgi.rep.dto.eti.ComentarioDto;
+import org.crue.hercules.sgi.rep.dto.SgiReportDto;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
-import org.crue.hercules.sgi.rep.dto.eti.FormularioDto;
-import org.crue.hercules.sgi.rep.dto.eti.InformeEvaluacionEvaluadorReportOutput;
-import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
-import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
+import org.crue.hercules.sgi.rep.dto.eti.ReportInformeEvaluador;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Servicio de generación de informe de evaluador de ética
  */
 @Service
-@Slf4j
 @Validated
-public class InformeEvaluadorReportService extends BaseEvaluadorEvaluacionReportService {
-
-  private final SgiApiSgpService personaService;
-  private final EvaluacionService evaluacionService;
-
-  private static final Long TIPO_COMENTARIO_EVALUADOR = 2L;
+public class InformeEvaluadorReportService extends InformeEvaluacionEvaluadorBaseReportService {
 
   public InformeEvaluadorReportService(SgiConfigProperties sgiConfigProperties, SgiApiConfService sgiApiConfService,
-      SgiApiSgpService personaService,
-      BloqueService bloqueService, ApartadoService apartadoService, SgiFormlyService sgiFormlyService,
-      RespuestaService respuestaService, EvaluacionService evaluacionService) {
+      SgiApiSgpService personaService, EvaluacionService evaluacionService,
+      BaseApartadosRespuestasReportDocxService baseApartadosRespuestasService) {
 
-    super(sgiConfigProperties, sgiApiConfService, bloqueService, apartadoService, sgiFormlyService, respuestaService);
-    this.personaService = personaService;
-    this.evaluacionService = evaluacionService;
+    super(sgiConfigProperties, sgiApiConfService, personaService, evaluacionService, baseApartadosRespuestasService);
   }
 
-  protected void getBloque0(Map<String, TableModel> hmTableModel, EvaluacionDto evaluacion) {
+  protected XWPFDocument getDocument(EvaluacionDto evaluacion, HashMap<String, Object> dataReport, InputStream path) {
 
-    Vector<Object> columnsDataTitulo = new Vector<>();
-    Vector<Vector<Object>> rowsDataTitulo = new Vector<>();
-    Vector<Object> elementsRow = new Vector<>();
+    dataReport.put("referenciaMemoria", evaluacion.getMemoria().getNumReferencia());
+    dataReport.put("version", evaluacion.getVersion());
 
-    columnsDataTitulo.add("referenciaMemoria");
-    elementsRow.add(evaluacion.getMemoria().getNumReferencia());
+    addDataPersona(evaluacion.getMemoria().getPeticionEvaluacion().getPersonaRef(), dataReport, "Responsable");
 
-    columnsDataTitulo.add("version");
-    elementsRow.add(evaluacion.getVersion());
-
-    columnsDataTitulo.add("nombreResponsable");
-    try {
-      PersonaDto persona = personaService.findById(evaluacion.getMemoria().getPeticionEvaluacion().getPersonaRef());
-      elementsRow.add(persona.getNombre() + " " + persona.getApellidos());
-    } catch (Exception e) {
-      elementsRow.add(getErrorMessageToReport(e));
-    }
-
-    columnsDataTitulo.add("tipoActividad");
     String tipoActividad = "";
     if (null != evaluacion.getMemoria().getPeticionEvaluacion().getTipoInvestigacionTutelada() && StringUtils
         .hasText(evaluacion.getMemoria().getPeticionEvaluacion().getTipoInvestigacionTutelada().getNombre())) {
@@ -84,107 +43,31 @@ public class InformeEvaluadorReportService extends BaseEvaluadorEvaluacionReport
         && StringUtils.hasText(evaluacion.getMemoria().getPeticionEvaluacion().getTipoActividad().getNombre())) {
       tipoActividad = evaluacion.getMemoria().getPeticionEvaluacion().getTipoActividad().getNombre();
     }
-    elementsRow.add(tipoActividad);
+    dataReport.put("tipoActividad", tipoActividad);
+    dataReport.put("titulo", evaluacion.getMemoria().getPeticionEvaluacion().getTitulo());
+    dataReport.put("fechaInicio",
+        formatInstantToString(evaluacion.getMemoria().getPeticionEvaluacion().getFechaInicio()));
+    dataReport.put("fechaFin", formatInstantToString(evaluacion.getMemoria().getPeticionEvaluacion().getFechaFin()));
+    dataReport.put("financiacion", evaluacion.getMemoria().getPeticionEvaluacion().getFuenteFinanciacion());
+    dataReport.put("resumen", evaluacion.getMemoria().getPeticionEvaluacion().getResumen());
 
-    columnsDataTitulo.add("titulo");
-    elementsRow.add(evaluacion.getMemoria().getPeticionEvaluacion().getTitulo());
+    dataReport.put("comite", evaluacion.getMemoria().getComite().getComite());
+    dataReport.put("nombreInvestigacion", evaluacion.getMemoria().getComite().getNombreInvestigacion());
 
-    columnsDataTitulo.add("fechaInicio");
-    elementsRow.add(formatInstantToString(evaluacion.getMemoria().getPeticionEvaluacion().getFechaInicio()));
+    Long dictamenId = evaluacion.getDictamen() != null ? evaluacion.getDictamen().getId() : null;
 
-    columnsDataTitulo.add("fechaFin");
-    elementsRow.add(formatInstantToString(evaluacion.getMemoria().getPeticionEvaluacion().getFechaFin()));
+    dataReport.put("bloqueApartados", generarBloqueApartados(dictamenId, getInformeEvaluador(evaluacion.getId())));
 
-    columnsDataTitulo.add("financiacion");
-    elementsRow.add(evaluacion.getMemoria().getPeticionEvaluacion().getFuenteFinanciacion());
-
-    columnsDataTitulo.add("resumen");
-    elementsRow.add(evaluacion.getMemoria().getPeticionEvaluacion().getResumen());
-
-    columnsDataTitulo.add("numeroComentarios");
-    Integer numComentariosEvaluador = evaluacionService.countByEvaluacionIdAndTipoComentarioId(evaluacion.getId(),
-        TIPO_COMENTARIO_EVALUADOR);
-    elementsRow.add(numComentariosEvaluador);
-
-    columnsDataTitulo.add("comite");
-    elementsRow.add(evaluacion.getMemoria().getComite().getComite());
-
-    columnsDataTitulo.add("nombreInvestigacion");
-    elementsRow.add(evaluacion.getMemoria().getComite().getNombreInvestigacion());
-
-    rowsDataTitulo.add(elementsRow);
-
-    DefaultTableModel tableModelTitulo = new DefaultTableModel();
-    tableModelTitulo.setDataVector(rowsDataTitulo, columnsDataTitulo);
-    hmTableModel.put(QUERY_TYPE + SEPARATOR_KEY + BLOQUE_0 + SEPARATOR_KEY + "informeEvaluador", tableModelTitulo);
+    return compileReportData(path, dataReport);
   }
 
-  /**
-   * Devuelve un informe pdf del informe de evaluador
-   *
-   * @param idEvaluacion Id de la evaluación
-   * @return EtiInformeEvaluacionEvaluadorReportOutput Datos a presentar en el
-   *         informe
-   */
-  protected InformeEvaluacionEvaluadorReportOutput getInformeEvaluadorEvaluacion(Long idEvaluacion) {
-    log.debug("getInformeEvaluadorEvaluacion(idEvaluacion)- start");
+  private XWPFDocument getReportFromEvaluador(SgiReportDto sgiReport, Long idEvaluacion) {
+    return this.getReportFromIdEvaluacion(sgiReport, idEvaluacion);
 
-    Assert.notNull(idEvaluacion,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field", ApplicationContextSupport.getMessage("id"))
-            .parameter("entity", ApplicationContextSupport.getMessage(EvaluacionDto.class)).build());
-
-    InformeEvaluacionEvaluadorReportOutput iInformeEvaluacionEvaluadorReportOutput = new InformeEvaluacionEvaluadorReportOutput();
-    iInformeEvaluacionEvaluadorReportOutput.setBloques(new ArrayList<>());
-
-    try {
-
-      EvaluacionDto evaluacion = evaluacionService.findById(idEvaluacion);
-      iInformeEvaluacionEvaluadorReportOutput.setEvaluacion(evaluacion);
-
-      List<ComentarioDto> comentarios = evaluacionService.findByEvaluacionIdEvaluador(idEvaluacion);
-      if (null != comentarios && !comentarios.isEmpty()) {
-        final Set<Long> apartados = new HashSet<>();
-        comentarios.forEach(c -> getApartadoService().findTreeApartadosById(apartados, c.getApartado()));
-
-        Long idFormulario = 0L;
-
-        Optional<FormularioDto> formulario = comentarios.stream()
-            .map(c -> c.getApartado().getBloque().getFormulario())
-            .filter(f -> f != null)
-            .findFirst();
-
-        if (formulario.isPresent()) {
-          idFormulario = formulario.get().getId();
-        }
-
-        // @formatter:off
-        BloquesReportInput bloquesReportInput = BloquesReportInput.builder()
-          .idMemoria(idEvaluacion)
-          .idFormulario(idFormulario)
-          .mostrarRespuestas(false)
-          .mostrarContenidoApartado(false)
-          .comentarios(comentarios)
-          .apartados(apartados)
-          .build();
-        // @formatter:on
-
-        BloquesReportOutput reportOutput = getDataFromApartadosAndRespuestas(bloquesReportInput);
-
-        final int orden = iInformeEvaluacionEvaluadorReportOutput.getBloques().size();
-        for (BloqueOutput bloque : reportOutput.getBloques()) {
-          bloque.setOrden(bloque.getOrden() + orden);
-        }
-
-        iInformeEvaluacionEvaluadorReportOutput.getBloques().addAll(reportOutput.getBloques());
-      }
-    } catch (Exception e) {
-      log.error(e.getMessage(), e);
-      throw new GetDataReportException();
-    }
-
-    return iInformeEvaluacionEvaluadorReportOutput;
   }
 
+  public byte[] getReportInformeEvaluadorEvaluacion(ReportInformeEvaluador sgiReport, Long idEvaluacion) {
+    this.getReportFromEvaluador(sgiReport, idEvaluacion);
+    return sgiReport.getContent();
+  }
 }

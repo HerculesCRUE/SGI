@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
@@ -12,10 +13,6 @@ import { ConvocatoriaListadoExportService, IConvocatoriaReportOptions } from '..
 
 const CONVOCATORIA_KEY = marker('csp.convocatoria');
 const REPORT_TITLE_KEY = marker('csp.convocatoria.listado');
-
-export interface IConvocatoriaListadoModalData {
-  findOptions: SgiRestFindOptions;
-}
 
 @Component({
   templateUrl: './convocatoria-listado-export-modal.component.html',
@@ -28,13 +25,21 @@ export class ConvocatoriaListadoExportModalComponent extends BaseExportModalComp
     matDialogRef: MatDialogRef<ConvocatoriaListadoExportModalComponent>,
     translate: TranslateService,
     convocatoriaListadoExportService: ConvocatoriaListadoExportService,
-    @Inject(MAT_DIALOG_DATA) private modalData: IConvocatoriaListadoModalData
+    @Inject(MAT_DIALOG_DATA) private modalData: IBaseExportModalData
   ) {
     super(convocatoriaListadoExportService, translate, matDialogRef);
   }
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
+  }
+
+  get TOTAL_REG_EXP_EXCEL() {
+    return this.modalData.totalRegistrosExportacionExcel;
+  }
+
+  get LIMITE_REG_EXP_EXCEL() {
+    return this.modalData.limiteRegistrosExportacionExcel;
   }
 
   ngOnInit(): void {

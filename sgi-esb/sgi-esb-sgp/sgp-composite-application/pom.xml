@@ -22,6 +22,7 @@
     <org.crue.hercules.sgi.esb.sgp.resource_._vinculacion-categoria-profesional-response-converter-mediator>
       capp/EnterpriseIntegrator
     </org.crue.hercules.sgi.esb.sgp.resource_._vinculacion-categoria-profesional-response-converter-mediator>
+    <org.crue.hercules.sgi.esb.sgp.resource_._colectivo-findbyId-response-converter-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgp.resource_._colectivo-findbyId-response-converter-mediator>
     <org.crue.hercules.sgi.esb.sgp.api_._sgp-api>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgp.api_._sgp-api>
     <org.crue.hercules.sgi.esb.sgp.api_._sgp-public-api>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgp.api_._sgp-public-api>
     <org.crue.hercules.sgi.esb.sgp.endpoint_._sgo-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgp.endpoint_._sgo-endpoint>
@@ -93,6 +94,12 @@
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgp.resource</groupId>
       <artifactId>vinculacion-categoria-profesional-response-converter-mediator</artifactId>
+      <version>${revision}</version>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgp.resource</groupId>
+      <artifactId>colectivo-findbyId-response-converter-mediator</artifactId>
       <version>${revision}</version>
       <type>zip</type>
     </dependency>

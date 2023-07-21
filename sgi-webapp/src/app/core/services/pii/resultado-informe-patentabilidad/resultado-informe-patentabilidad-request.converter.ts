@@ -1,6 +1,3 @@
-import { IFuenteFinanciacion } from '@core/models/csp/fuente-financiacion';
-import { ITipoAmbitoGeografico } from '@core/models/csp/tipo-ambito-geografico';
-import { ITipoOrigenFuenteFinanciacion } from '@core/models/csp/tipo-origen-fuente-financiacion';
 import { IResultadoInformePatentibilidad } from '@core/models/pii/resultado-informe-patentabilidad';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { IResultadoInformePatentibilidadRequest } from './resultado-informe-patentabilidad-request';

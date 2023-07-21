@@ -11,6 +11,7 @@ import { SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
+import { CspSharedModule } from '../../../shared/csp-shared.module';
 import { PROYECTO_SOCIO_DATA_KEY } from '../../proyecto-socio-data.resolver';
 import { IProyectoSocioData, ProyectoSocioActionService } from '../../proyecto-socio.action.service';
 import { ProyectoSocioDatosGeneralesComponent } from './proyecto-socio-datos-generales.component';
@@ -33,6 +34,7 @@ describe('ProyectoSocioDatosGeneralesComponent', () => {
         ProyectoSocioDatosGeneralesComponent
       ],
       imports: [
+        CspSharedModule,
         TestUtils.getIdiomas(),
         MaterialDesignModule,
         BrowserAnimationsModule,

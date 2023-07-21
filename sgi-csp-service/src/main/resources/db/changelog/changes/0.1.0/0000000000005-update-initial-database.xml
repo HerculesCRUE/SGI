@@ -1,0 +1,245 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000005-update-initial-database.xml">
+
+  <changeSet author="user (generated)" id="0000000000005-1">
+    <addForeignKeyConstraint baseColumnNames="estado_id" baseTableName="autorizacion" constraintName="FK_AUTORIZACION_AUTORIZACIONESTADO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="estado_autorizacion" validate="true" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000005-2">
+    <addForeignKeyConstraint baseColumnNames="convocatoria_id" baseTableName="autorizacion" constraintName="FK_AUTORIZACION_CONVOCATORIA" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="convocatoria" validate="true" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000005-3">
+    <addForeignKeyConstraint baseColumnNames="autorizacion_id" baseTableName="certificado_autorizacion" constraintName="FK_CERTIFICADOAUTORIZACION_AUTORIZACION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="autorizacion" validate="true" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000005-4">
+    <addColumn tableName="notificacion_cvn_entidad_financiadora">
+      <column name="notificacion_proyecto_externo_cvn_id" type="bigint">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000005-5">
+    <addForeignKeyConstraint baseColumnNames="notificacion_proyecto_externo_cvn_id" baseTableName="notificacion_cvn_entidad_financiadora" constraintName="FK_NOTIFICACIONCVNENTIDADFINANCIADORA_NOTIFICACIONPROYECTOEXTERNOCVN" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="notificacion_proyecto_externo_cvn" validate="true" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000005-6">
+    <dropNotNullConstraint columnDataType="boolean" columnName="contrato" tableName="modelo_ejecucion" />
+    <dropNotNullConstraint columnDataType="boolean" columnName="externo" tableName="modelo_ejecucion" />
+  </changeSet>
+
+
+  <changeSet author="user (generated)" id="0000000000005-7">
+    <createSequence incrementBy="1" sequenceName="grupo_especial_investigacion_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-8">
+    <createSequence incrementBy="1" sequenceName="grupo_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-9">
+    <createSequence incrementBy="1" sequenceName="grupo_tipo_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-10">
+    <createSequence incrementBy="1" sequenceName="grupo_equipo_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-11">
+    <createTable tableName="grupo">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="grupoPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column defaultValueBoolean="true" name="activo" type="BOOLEAN">
+        <constraints nullable="false" />
+      </column>
+      <column name="codigo" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+      <column name="grupo_especial_investigacion_id" type="BIGINT" />
+      <column name="fecha_fin" type="TIMESTAMP" />
+      <column name="fecha_inicio" type="TIMESTAMP">
+        <constraints nullable="false" />
+      </column>
+      <column name="nombre" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+      <column name="proyecto_sge_ref" type="VARCHAR(50)" />
+      <column name="departamento_origen_ref" type="VARCHAR(50)" />
+      <column name="solicitud_id" type="BIGINT" />
+      <column name="grupo_tipo_id" type="BIGINT" />
+    </createTable>
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-12">
+    <createTable tableName="grupo_especial_investigacion">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="grupo_especial_investigacionPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column defaultValueBoolean="false" name="especial_investigacion" type="BOOLEAN" />
+      <column name="fecha_fin" type="TIMESTAMP" />
+      <column name="fecha_inicio" type="TIMESTAMP">
+        <constraints nullable="false" />
+      </column>
+      <column name="grupo_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-13">
+    <createTable tableName="grupo_tipo">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="grupo_tipoPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="fecha_fin" type="TIMESTAMP" />
+      <column name="fecha_inicio" type="TIMESTAMP">
+        <constraints nullable="false" />
+      </column>
+      <column name="grupo_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="tipo" type="VARCHAR(255)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-14">
+    <createTable tableName="grupo_equipo">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="grupo_equipoPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="dedicacion" type="VARCHAR(255)">
+        <constraints nullable="false" />
+      </column>
+      <column name="fecha_fin" type="TIMESTAMP" />
+      <column name="fecha_inicio" type="TIMESTAMP">
+        <constraints nullable="false" />
+      </column>
+      <column name="grupo_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="participacion" type="DECIMAL(19, 2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="persona_ref" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+      <column name="rol_proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-15">
+    <addForeignKeyConstraint baseColumnNames="autorizacion_id" baseTableName="estado_autorizacion" constraintName="FK_ESTADOAUTORIZACION_AUTORIZACION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="autorizacion" validate="true" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-16">
+    <addForeignKeyConstraint baseColumnNames="grupo_id" baseTableName="grupo_especial_investigacion" constraintName="FK_GRUPOESPECIALINVESTIGACION_GRUPO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="grupo" validate="true" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-17">
+    <addForeignKeyConstraint baseColumnNames="grupo_id" baseTableName="grupo_tipo" constraintName="FK_GRUPOTIPO_GRUPO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="grupo" validate="true" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-18">
+    <addForeignKeyConstraint baseColumnNames="grupo_especial_investigacion_id" baseTableName="grupo" constraintName="FK_GRUPO_GRUPOESPECIALINVESTIGACION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="grupo_especial_investigacion" validate="true" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-19">
+    <addForeignKeyConstraint baseColumnNames="grupo_tipo_id" baseTableName="grupo" constraintName="FK_GRUPO_GRUPOTIPO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="grupo_tipo" validate="true" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-20">
+    <addForeignKeyConstraint baseColumnNames="solicitud_id" baseTableName="grupo" constraintName="FK_GRUPO_SOLICITUD" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="solicitud" validate="true" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-21">
+    <addForeignKeyConstraint baseColumnNames="grupo_id" baseTableName="grupo_equipo" constraintName="FK_GRUPOEQUIPO_GRUPO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="grupo" validate="true" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-22">
+    <addForeignKeyConstraint baseColumnNames="rol_proyecto_id" baseTableName="grupo_equipo" constraintName="FK_GRUPOEQUIPO_ROLPROYECTO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="rol_proyecto" validate="true" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000005-23">
+    <createSequence incrementBy="1" sequenceName="convocatoria_hito_aviso_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-24">
+    <createTable tableName="convocatoria_hito_aviso">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="convocatoria_hito_avisoPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="comunicado_ref" type="VARCHAR(255)">
+        <constraints nullable="false" />
+      </column>
+      <column defaultValueBoolean="false" name="incluir_ips_proyecto" type="BOOLEAN">
+        <constraints nullable="false" />
+      </column>
+      <column defaultValueBoolean="false" name="incluir_ips_solicitud" type="BOOLEAN">
+        <constraints nullable="false" />
+      </column>
+      <column name="tarea_programada_ref" type="VARCHAR(255)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-25">
+    <addColumn tableName="convocatoria_hito">
+      <column name="convocatoria_hito_aviso_id" type="bigint" />
+    </addColumn>
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-26">
+    <addForeignKeyConstraint baseColumnNames="convocatoria_hito_aviso_id" baseTableName="convocatoria_hito" constraintName="FK_CONVOCATORIAHITO_CONVOCATORIAHITOAVISO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="convocatoria_hito_aviso" validate="true" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-27">
+    <validCheckSum>8:6130bc46caba499e5c4e875063aeb2b9</validCheckSum>
+    <dropDefaultValue columnDataType="boolean" columnName="genera_aviso" tableName="convocatoria_hito" />
+    <dropColumn columnName="genera_aviso" tableName="convocatoria_hito" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000005-28">
+    <createSequence incrementBy="1" sequenceName="grupo_palabra_clave_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-29">
+    <createTable tableName="grupo_palabra_clave">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="grupo_palabra_clavePK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="grupo_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="palabra_clave_ref" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-30">
+    <addForeignKeyConstraint baseColumnNames="grupo_id" baseTableName="grupo_palabra_clave" constraintName="FK_GRUPOPALABRACLAVE_GRUPO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="grupo" validate="true" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-31">
+    <addColumn tableName="rol_proyecto">
+      <column name="baremable_prc" defaultValueBoolean="false" type="boolean" />
+    </addColumn>
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000005-32">
+    <addColumn tableName="convocatoria">
+      <column name="excelencia" type="boolean" />
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

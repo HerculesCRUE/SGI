@@ -7,6 +7,7 @@ import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
+import { CspSharedModule } from '../shared/csp-shared.module';
 import { SolicitudProyectoSocioPeriodoJustificacionModalComponent } from './modals/solicitud-proyecto-socio-periodo-justificacion-modal/solicitud-proyecto-socio-periodo-justificacion-modal.component';
 import { SolicitudProyectoSocioPeriodoPagoModalComponent } from './modals/solicitud-proyecto-socio-periodo-pago-modal/solicitud-proyecto-socio-periodo-pago-modal.component';
 import { SolicitudProyectoSocioCrearComponent } from './solicitud-proyecto-socio-crear/solicitud-proyecto-socio-crear.component';
@@ -21,25 +22,26 @@ import { SolicitudProyectoSocioRouting } from './solicitud-proyecto-socio-routin
 @NgModule({
   declarations: [
     SolicitudProyectoSocioCrearComponent,
-    SolicitudProyectoSocioEditarComponent,
     SolicitudProyectoSocioDatosGeneralesComponent,
-    SolicitudProyectoSocioPeriodoPagoComponent,
-    SolicitudProyectoSocioPeriodoPagoModalComponent,
+    SolicitudProyectoSocioEditarComponent,
+    SolicitudProyectoSocioEquipoComponent,
     SolicitudProyectoSocioPeriodoJustificacionComponent,
     SolicitudProyectoSocioPeriodoJustificacionModalComponent,
-    SolicitudProyectoSocioEquipoComponent
+    SolicitudProyectoSocioPeriodoPagoComponent,
+    SolicitudProyectoSocioPeriodoPagoModalComponent
   ],
   imports: [
-    SharedModule,
     CommonModule,
-    TranslateModule,
-    MaterialDesignModule,
-    SolicitudProyectoSocioRouting,
-    SgiAuthModule,
+    CspSharedModule,
     FormsModule,
+    MaterialDesignModule,
     ReactiveFormsModule,
     SgempSharedModule,
-    SgpSharedModule
+    SgiAuthModule,
+    SgpSharedModule,
+    SharedModule,
+    SolicitudProyectoSocioRouting,
+    TranslateModule
   ],
   providers: [
     SolicitudProyectoSocioDataResolver

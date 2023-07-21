@@ -2,12 +2,13 @@
   <div fxLayout.xs="row wrap" fxLayout="row wrap">
     <!-- Columna menu movil (xs-sm) y logos-->
     <div class="logos" fxLayoutAlign="start center" fxFlex="initial" fxLayoutGap="5px">
-      <img [src]="getUrlResource('web-header-logo-ministerio')"
-        [srcset]="getUrlSetResource('web-header-logo-ministerio', ['2x', '3x'])" alt="" class="logo-ministerio">
-      <img [src]="getUrlResource('web-header-logo-feder')"
+      <img *ngIf="numLogosCabecera >=1" [src]="getUrlResource('web-header-logo-ministerio')"
+        [srcset]="getUrlSetResource('web-header-logo-ministerio', ['2x', '3x'])" alt=""
+        [class]="'logo-ministerio-'+numLogosCabecera">
+      <img *ngIf="numLogosCabecera >1" [src]="getUrlResource('web-header-logo-feder')"
         [srcset]="getUrlSetResource('web-header-logo-feder', ['2x', '3x'])" alt="" class="logo-feder">
-      <img [src]="getUrlResource('web-header-logo-ue')" [srcset]="getUrlSetResource('web-header-logo-ue', ['2x', '3x'])"
-        alt="" class="logo-ue">
+      <img *ngIf="numLogosCabecera >2" [src]="getUrlResource('web-header-logo-ue')"
+        [srcset]="getUrlSetResource('web-header-logo-ue', ['2x', '3x'])" alt="" class="logo-ue">
     </div>
     <div class="select-modulo" fxLayoutAlign="center center" fxFlex fxHide.xs fxHide.sm>
       <h2 *ngIf="module !== Module.INV">{{module?.title | translate}}</h2>

@@ -28,9 +28,9 @@ class PeticionEvaluacionWithIsEliminableConverter
       otroValorSocial: value.otroValorSocial,
       objetivos: value.objetivos,
       disMetodologico: value.disMetodologico,
-      externo: value.externo,
       tieneFondosPropios: value.tieneFondosPropios,
       solicitante: { id: value.personaRef } as IPersona,
+      tutor: { id: value.tutorRef } as IPersona,
       activo: value.activo,
       checklistId: value.checklistId,
       eliminable: value.eliminable
@@ -59,11 +59,11 @@ class PeticionEvaluacionWithIsEliminableConverter
       otroValorSocial: value.otroValorSocial,
       objetivos: value.objetivos,
       disMetodologico: value.disMetodologico,
-      externo: value.externo,
       tieneFondosPropios: value.tieneFondosPropios,
       personaRef: value.solicitante?.id,
       activo: value.activo,
       checklistId: value.checklistId,
+      tutorRef: value.tutor?.id,
       eliminable: value.eliminable
     };
   }

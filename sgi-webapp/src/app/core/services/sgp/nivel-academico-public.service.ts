@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { INivelAcademico } from '@core/models/sgp/nivel-academico';
 import { environment } from '@env';
-import { FindByIdCtor, mixinFindById, SgiRestBaseService, SgiRestService } from '@sgi/framework/http';
+import { FindByIdCtor, mixinFindById, SgiRestBaseService } from '@sgi/framework/http';
 
 // tslint:disable-next-line: variable-name
 const _NivelAcademicoMixinBase:

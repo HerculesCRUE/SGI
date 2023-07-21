@@ -13,6 +13,7 @@ import { IPersona } from '@core/models/sgp/persona';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { DialogService } from '@core/services/dialog.service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -55,6 +56,8 @@ export class MemoriaListadoGesComponent extends AbstractTablePaginationComponent
 
   memorias$: Observable<IMemoriaPeticionEvaluacion[]>;
 
+  private limiteRegistrosExportacionExcel: string;
+
   get tipoColectivoSolicitante() {
     return TipoColectivo.SOLICITANTE_ETICA;
   }
@@ -70,7 +73,8 @@ export class MemoriaListadoGesComponent extends AbstractTablePaginationComponent
     private readonly memoriaService: MemoriaService,
     private readonly translate: TranslateService,
     private readonly personaService: PersonaService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService,
   ) {
     super();
 
@@ -102,6 +106,11 @@ export class MemoriaListadoGesComponent extends AbstractTablePaginationComponent
       tipoEstadoMemoria: new FormControl(null, []),
       solicitante: new FormControl('', []),
     });
+
+    this.suscripciones.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('eti-exp-max-num-registros-excel-memoria-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   private setupI18N(): void {
@@ -230,7 +239,9 @@ export class MemoriaListadoGesComponent extends AbstractTablePaginationComponent
   public openExportModal() {
     const data: IMemoriaListadoModalData = {
       findOptions: this.findOptions,
-      isInvestigador: false
+      isInvestigador: false,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

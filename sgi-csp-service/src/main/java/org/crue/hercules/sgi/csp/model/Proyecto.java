@@ -89,6 +89,11 @@ public class Proyecto extends BaseEntity {
   @Size(max = 50)
   private String acronimo;
 
+  /** Codigo interno */
+  @Column(name = "codigo_interno", length = 50, nullable = true)
+  @Size(max = 50)
+  private String codigoInterno;
+
   /** Codigo externo */
   @Column(name = "codigo_externo", length = 50, nullable = true)
   @Size(max = 50)

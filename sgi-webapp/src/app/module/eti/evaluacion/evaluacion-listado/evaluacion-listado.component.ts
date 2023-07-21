@@ -11,6 +11,7 @@ import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { TIPO_CONVOCATORIA_REUNION } from '@core/models/eti/tipo-convocatoria-reunion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -49,6 +50,8 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
 
   buscadorFormGrou: FormGroup;
 
+  private limiteRegistrosExportacionExcel: string;
+
   get tipoColectivoSolicitante() {
     return TipoColectivo.SOLICITANTE_ETICA;
   }
@@ -62,7 +65,8 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
     protected readonly snackBarService: SnackBarService,
     protected readonly personaService: PersonaService,
     private readonly translate: TranslateService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService
   ) {
     super();
 
@@ -95,6 +99,11 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
       solicitante: new FormControl('', []),
       tipoEvaluacion: new FormControl(null, [])
     });
+
+    this.suscripciones.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('eti-exp-max-num-registros-excel-evaluacion-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   private setupI18N(): void {
@@ -182,7 +191,9 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
   public openExportModal() {
     const data: IEvaluacionListadoModalData = {
       findOptions: this.findOptions,
-      tipoComentario: TipoComentario.GESTOR
+      tipoComentario: TipoComentario.GESTOR,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

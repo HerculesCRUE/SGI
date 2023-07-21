@@ -9,13 +9,14 @@
     </mat-form-field>
 
     <ng-container *ngIf="!formGroup.valid || hasChanges() else download">
-      <button color="primary" mat-icon-button (click)="save()" matTooltip="{{'btn.save' | translate}}">
+      <button color="primary" mat-icon-button (click)="save()" matTooltip="{{'btn.save' | translate}}"
+        [disabled]="formGroup.disabled">
         <mat-icon>save</mat-icon>
       </button>
     </ng-container>
     <ng-template #download>
       <button color="primary" mat-icon-button (click)="downloadResource()"
-        matTooltip="{{'btn.download.file' | translate}}">
+        matTooltip="{{'btn.download.file' | translate}}" [disabled]="formGroup.disabled">
         <mat-icon>file_download</mat-icon>
       </button>
     </ng-template>

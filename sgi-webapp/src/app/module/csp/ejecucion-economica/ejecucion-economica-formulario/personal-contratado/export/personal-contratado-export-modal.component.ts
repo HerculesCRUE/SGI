@@ -19,6 +19,14 @@ const FACTURAS_JUSTIFICANTES_PERSONAL_CONTRATADO = marker('menu.csp.ejecucion-ec
 export class PersonalContratadoExportModalComponent
   extends BaseExportModalComponent<IEjecucionPresupuestariaReportOptions> implements OnInit {
 
+  get TOTAL_REG_EXP_EXCEL() {
+    return this.modalData.totalRegistrosExportacionExcel;
+  }
+
+  get LIMITE_REG_EXP_EXCEL() {
+    return this.modalData.limiteRegistrosExportacionExcel;
+  }
+
   constructor(
     matDialogRef: MatDialogRef<PersonalContratadoExportModalComponent>,
     translate: TranslateService,

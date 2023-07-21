@@ -3,6 +3,9 @@
   <artifact name="sgo-add-x-api-key-sequence" groupId="org.crue.hercules.sgi.esb.sgo.sequence" version="${revision}" type="synapse/sequence" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/sequences/sgo-add-x-api-key-sequence.xml</file>
   </artifact>
+  <artifact name="sgo-remove-authorization-header-sequence" groupId="org.crue.hercules.sgi.esb.sgo.sequence" version="${revision}" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+    <file>src/main/synapse-config/sequences/sgo-remove-authorization-header-sequence.xml</file>
+  </artifact>
   <artifact name="sgo-api" groupId="org.crue.hercules.sgi.esb.sgo.api" version="${revision}" type="synapse/api" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/api/sgo-api.xml</file>
   </artifact>

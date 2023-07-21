@@ -16,6 +16,14 @@ const TITLE = marker('csp.proyecto-consulta-presupuesto.export.title');
 export class ProyectoConsultaPresupuestoExportModalComponent
   extends BaseExportModalComponent<IConsultaPresupuestoReportOptions> implements OnInit {
 
+  get TOTAL_REG_EXP_EXCEL() {
+    return this.modalData.totalRegistrosExportacionExcel;
+  }
+
+  get LIMITE_REG_EXP_EXCEL() {
+    return this.modalData.limiteRegistrosExportacionExcel;
+  }
+
   constructor(
     matDialogRef: MatDialogRef<ProyectoConsultaPresupuestoExportModalComponent>,
     translate: TranslateService,

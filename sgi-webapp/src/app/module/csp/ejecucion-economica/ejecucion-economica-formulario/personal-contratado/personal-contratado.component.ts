@@ -8,6 +8,7 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economica.service';
 import { Subscription } from 'rxjs';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
@@ -34,6 +35,9 @@ export class PersonalContratadoComponent extends FragmentComponent implements On
   readonly dataSourceDesglose = new MatTableDataSource<RowTreeDesglose<IDesglose>>();
   @ViewChild('anualSel') selectAnualidades: MatSelect;
 
+  private totalElementos = 0;
+  private limiteRegistrosExportacionExcel: string;
+
   get MSG_PARAMS() {
     return MSG_PARAMS;
   }
@@ -41,7 +45,8 @@ export class PersonalContratadoComponent extends FragmentComponent implements On
   constructor(
     actionService: EjecucionEconomicaActionService,
     private ejecucionEconomicaService: EjecucionEconomicaService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService
   ) {
     super(actionService.FRAGMENT.PERSONAL_CONTRATADO, actionService);
 
@@ -53,7 +58,13 @@ export class PersonalContratadoComponent extends FragmentComponent implements On
 
     this.subscriptions.push(this.formPart.desglose$.subscribe(elements => {
       this.dataSourceDesglose.data = elements;
+      this.totalElementos = elements.length;
     }));
+
+    this.subscriptions.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-personal-contratado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   ngOnDestroy(): void {
@@ -76,7 +87,9 @@ export class PersonalContratadoComponent extends FragmentComponent implements On
     this.subscriptions.push(this.formPart.loadDataExport().subscribe(
       (exportData) => {
         const config = {
-          data: exportData
+          data: exportData,
+          totalRegistrosExportacionExcel: this.totalElementos,
+          limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
         };
         this.matDialog.open(PersonalContratadoExportModalComponent, config);
       },

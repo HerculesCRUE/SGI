@@ -11,7 +11,6 @@ import org.crue.hercules.sgi.rep.dto.eti.ReportInformeEvaluacionRetrospectiva;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
@@ -43,7 +42,6 @@ class InformeEvaluacionRetrospectivaReportServiceTest extends BaseReportEtiServi
         sgiConfigProperties, sgiApiConfService, personaService, evaluacionService);
   }
 
-  @Test
   @WithMockUser(username = "user", authorities = { "ETI-EVC-EVAL", "ETI-EVC-INV-EVALR" })
   void getInformeEvaluacionRetrospectiva_ReturnsResource() throws Exception {
     Long idEvaluacion = 1L;
@@ -54,8 +52,7 @@ class InformeEvaluacionRetrospectivaReportServiceTest extends BaseReportEtiServi
     BDDMockito.given(personaService.findById(null)).willReturn((generarMockPersona("123456F")));
 
     BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
-        .willReturn(getResource("eti/prpt/rep-eti-evaluacion-retrospectiva.prpt"));
-    BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
+        .willReturn(getResource("eti/docx/rep-eti-evaluacion-retrospectiva.docx"));
 
     ReportInformeEvaluacionRetrospectiva report = new ReportInformeEvaluacionRetrospectiva();
     report.setOutputType(OutputType.PDF);

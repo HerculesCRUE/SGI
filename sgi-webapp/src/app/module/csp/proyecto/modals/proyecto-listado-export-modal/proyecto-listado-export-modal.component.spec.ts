@@ -5,6 +5,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
@@ -35,7 +36,7 @@ import { ProyectoRelacionListadoExportService } from '../../proyecto-relacion-li
 import { ProyectoResponsableEconomicoListadoExportService } from '../../proyecto-responsable-economico-listado-export.service';
 import { ProyectoSocioListadoExportService } from '../../proyecto-socio-listado-export.service';
 import { ProyectoSolicitudListadoExportService } from '../../proyecto-solicitud-listado-export.service';
-import { IProyectoListadoModalData, ProyectoListadoExportModalComponent } from './proyecto-listado-export-modal.component';
+import { ProyectoListadoExportModalComponent } from './proyecto-listado-export-modal.component';
 
 describe('ProyectoListadoExportModalComponent', () => {
   let component: ProyectoListadoExportModalComponent;
@@ -62,7 +63,7 @@ describe('ProyectoListadoExportModalComponent', () => {
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
         { provide: MatDialogRef, useValue: TestUtils.buildDialogActionMatDialogRef() },
-        { provide: MAT_DIALOG_DATA, useValue: {} as IProyectoListadoModalData },
+        { provide: MAT_DIALOG_DATA, useValue: {} as IBaseExportModalData },
         SgiAuthService,
         ProyectoListadoExportService,
         ProyectoGeneralListadoExportService,

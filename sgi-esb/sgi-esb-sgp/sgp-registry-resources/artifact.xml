@@ -28,4 +28,11 @@
       <mediaType>application/javascript</mediaType>
     </item>
   </artifact>
+  <artifact name="colectivo-findbyId-response-converter-mediator" groupId="org.crue.hercules.sgi.esb.sgp.resource" version="${revision}" type="registry/resource" serverRole="EnterpriseIntegrator">
+    <item>
+      <file>colectivo-findbyId-response-converter-mediator.js</file>
+      <path>/_system/governance/scripts/sgp</path>
+      <mediaType>application/javascript</mediaType>
+    </item>
+  </artifact>
 </artifacts>

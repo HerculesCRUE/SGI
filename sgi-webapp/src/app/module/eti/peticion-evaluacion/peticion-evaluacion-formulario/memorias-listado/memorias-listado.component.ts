@@ -291,4 +291,13 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
     return this.listadoFragment.solicitantePeticionEvaluacion?.id === this.authService.authStatus$.value.userRefId;
   }
 
+  isMemoriaSeguimiento(estadoMemoriaId: number): boolean {
+    if (estadoMemoriaId === ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_ANUAL
+      || estadoMemoriaId === ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_FINAL
+      || estadoMemoriaId === ESTADO_MEMORIA.EN_ACLARACION_SEGUIMIENTO_FINAL) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

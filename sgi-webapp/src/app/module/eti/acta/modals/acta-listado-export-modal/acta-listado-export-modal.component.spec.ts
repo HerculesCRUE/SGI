@@ -5,6 +5,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
@@ -16,7 +17,7 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { ActaGeneralListadoExportService } from '../../acta-general-listado-export.service';
 import { ActaListadoExportService } from '../../acta-listado-export.service';
 import { ActaMemoriaListadoExportService } from '../../acta-memoria-listado-export.service';
-import { ActaListadoExportModalComponent, IActaListadoModalData } from './acta-listado-export-modal.component';
+import { ActaListadoExportModalComponent } from './acta-listado-export-modal.component';
 
 describe('ActaListadoExportModalComponent', () => {
   let component: ActaListadoExportModalComponent;
@@ -43,7 +44,7 @@ describe('ActaListadoExportModalComponent', () => {
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
         { provide: MatDialogRef, useValue: TestUtils.buildDialogActionMatDialogRef() },
-        { provide: MAT_DIALOG_DATA, useValue: {} as IActaListadoModalData },
+        { provide: MAT_DIALOG_DATA, useValue: {} as IBaseExportModalData },
         SgiAuthService,
         ActaListadoExportService,
         ActaGeneralListadoExportService,

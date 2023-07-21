@@ -9,7 +9,7 @@ import { IPersona } from '@core/models/sgp/persona';
 import { FormFragment } from '@core/services/action-service';
 import { GrupoEquipoService } from '@core/services/csp/grupo-equipo/grupo-equipo.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
-import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
+import { RolProyectoService } from '@core/services/csp/rol-proyecto/rol-proyecto.service';
 import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { DateValidator } from '@core/validators/date-validator';

@@ -1,7 +1,7 @@
 interface TipoConfiguracion {
   id: number;
   nombre: string;
-  descripcion: string;
+  descripcion?: string;
   activo: boolean;
 }
 
@@ -30,4 +30,13 @@ export interface ITipoFinanciacion extends TipoConfiguracion {
 }
 
 export interface ITipoUnidadGestion extends TipoConfiguracion {
+}
+
+export interface ITipoAmbitoGeografico extends TipoConfiguracion {
+}
+
+export interface ITipoRegimenConcurrencia extends TipoConfiguracion {
+}
+
+export interface ITipoOrigenFuenteFinanciacion extends TipoConfiguracion {
 }

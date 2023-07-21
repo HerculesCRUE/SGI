@@ -43,7 +43,6 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ProyectoFacturacionComService {
   private static final String CONFIG_CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_DESTINATARIOS = "csp-com-cal-fact-validarip-destinatarios-";
-  private static final String SIN_REQUISITO = "Sin requisito";
 
   private final ProyectoRepository proyectoRepository;
   private final ProyectoProyectoSgeRepository proyectoProyectoSgeRepository;
@@ -134,9 +133,7 @@ public class ProyectoFacturacionComService {
         && isTheLastFactura(proyectoFacturacion)) {
       EmailOutput output = null;
       if (proyectoFacturacion.getTipoFacturacion() == null
-          || StringUtils.isEmpty(proyectoFacturacion.getTipoFacturacion()
-              .getNombre())
-          || proyectoFacturacion.getTipoFacturacion().getNombre().equals(SIN_REQUISITO)) {
+          || !proyectoFacturacion.getTipoFacturacion().isIncluirEnComunicado()) {
         output = this.emailService.createComunicadoCalendarioFacturacionNotificarFacturaUnicaNoProrrogaNoRequisito(data,
             Collections.singletonList(recipient));
       } else {
@@ -169,9 +166,7 @@ public class ProyectoFacturacionComService {
 
       EmailOutput output = null;
       if (proyectoFacturacion.getTipoFacturacion() == null
-          || StringUtils.isEmpty(proyectoFacturacion.getTipoFacturacion()
-              .getNombre())
-          || SIN_REQUISITO.equals(proyectoFacturacion.getTipoFacturacion().getNombre())) {
+          || !proyectoFacturacion.getTipoFacturacion().isIncluirEnComunicado()) {
         output = this.emailService
             .createComunicadoCalendarioFacturacionNotificarFacturaNotFirstOrInProrrogaAndIsLastNoRequisitos(data,
                 Collections.singletonList(recipient));
@@ -191,10 +186,7 @@ public class ProyectoFacturacionComService {
         && !isTheLastFactura(proyectoFacturacion)) {
       EmailOutput output = null;
       if (proyectoFacturacion.getTipoFacturacion() == null
-          || StringUtils.isEmpty(proyectoFacturacion.getTipoFacturacion()
-              .getNombre())
-          || SIN_REQUISITO.equals(proyectoFacturacion.getTipoFacturacion().getNombre())) {
-
+          || !proyectoFacturacion.getTipoFacturacion().isIncluirEnComunicado()) {
         output = this.emailService
             .createComunicadoCalendarioFacturacionNotificarFacturaNotFirstOrInProrrogaAndIsNotLastNoRequisito(data,
                 Collections.singletonList(recipient));

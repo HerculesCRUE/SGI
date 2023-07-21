@@ -57,20 +57,20 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let equipo; let i = index">
-          <button *ngIf="this.formPart.readonly" mat-button matTooltip="{{'btn.view' | translate}}"
+          <button color="primary" *ngIf="this.formPart.readonly" mat-icon-button matTooltip="{{'btn.view' | translate}}"
             (click)="openModal(equipo)">
-            <mat-icon color="primary">visibility</mat-icon>
+            <mat-icon>visibility</mat-icon>
           </button>
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-            <button *ngIf="!this.formPart.readonly" mat-button matTooltip="{{'btn.edit' | translate}}"
-              (click)="openModal(equipo)">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" *ngIf="!this.formPart.readonly" mat-icon-button
+              matTooltip="{{'btn.edit' | translate}}" (click)="openModal(equipo)">
+              <mat-icon>border_color</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-            <button *ngIf="!this.formPart.readonly" mat-button matTooltip="{{'btn.delete' | translate}}"
-              (click)="deleteResponsableEconomico(equipo)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" *ngIf="!this.formPart.readonly" mat-icon-button
+              matTooltip="{{'btn.delete' | translate}}" (click)="deleteResponsableEconomico(equipo)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>

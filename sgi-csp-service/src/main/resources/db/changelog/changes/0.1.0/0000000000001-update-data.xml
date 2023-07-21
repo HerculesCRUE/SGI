@@ -1,0 +1,234 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                                                                                                                                                                                                                                                             http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                                                                                                                                                                                                                                                             http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+                                                                                                                                                                                                                                                             logicalFilePath="classpath*:db/changelog/changes/0000000000001-update-data.xml">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="0000000000001-solicitud_proyecto_entidad">
+    <validCheckSum>8:c0a14bd41175cf9b365a0d762d56869f</validCheckSum>
+    <validCheckSum>8:d100f54fe5f5bf2ef38dc05c171e03ec</validCheckSum>
+    <validCheckSum>8:2a72d1ff128bbc335675df7a43d8782e</validCheckSum>
+    <!-- Carga de la nueva tabla solicitud_proyecto_entidad a partir de datos existentes en convocatoria_entidad_financiadora -->
+    <sql dbms="!postgresql, !mssql">INSERT INTO ${schemaPrefix}solicitud_proyecto_entidad(id, created_by, creation_date, last_modified_by, last_modified_date, solicitud_proyecto_id, convocatoria_entidad_financiadora_id, convocatoria_entidad_gestora_id, solicitud_proyecto_entidad_financiadora_ajena_id) 
+      SELECT 
+        ${schemaPrefix}solicitud_proyecto_entidad_seq.NEXTVAL AS id,
+        s.created_by,
+        s.creation_date,
+        s.last_modified_by,
+        s.last_modified_date,
+        s.id AS solicitud_proyecto_id,
+        cef.id AS convocatoria_entidad_financiadora_id,
+        null AS convocatoria_entidad_gestora_id,
+        null AS solicitud_proyecto_entidad_financiadora_ajena_id
+      FROM ${schemaPrefix}convocatoria_entidad_financiadora cef 
+        JOIN ${schemaPrefix}solicitud s ON s.convocatoria_id = cef.convocatoria_id
+        JOIN ${schemaPrefix}solicitud_proyecto sp ON sp.id = s.id
+    </sql>
+    <sql dbms="postgresql">INSERT INTO ${schemaPrefix}solicitud_proyecto_entidad(id, created_by, creation_date, last_modified_by, last_modified_date, solicitud_proyecto_id, convocatoria_entidad_financiadora_id, convocatoria_entidad_gestora_id, solicitud_proyecto_entidad_financiadora_ajena_id) 
+      SELECT 
+        nextval('${schemaPrefix}solicitud_proyecto_entidad_seq') AS id,
+        s.created_by,
+        s.creation_date,
+        s.last_modified_by,
+        s.last_modified_date,
+        s.id AS solicitud_proyecto_id,
+        cef.id AS convocatoria_entidad_financiadora_id,
+        null AS convocatoria_entidad_gestora_id,
+        null AS solicitud_proyecto_entidad_financiadora_ajena_id
+      FROM ${schemaPrefix}convocatoria_entidad_financiadora cef 
+        JOIN ${schemaPrefix}solicitud s ON s.convocatoria_id = cef.convocatoria_id
+        JOIN ${schemaPrefix}solicitud_proyecto sp ON sp.id = s.id
+    </sql>
+    <sql dbms="mssql">INSERT INTO ${schemaPrefix}solicitud_proyecto_entidad(id, created_by, creation_date, last_modified_by, last_modified_date, solicitud_proyecto_id, convocatoria_entidad_financiadora_id, convocatoria_entidad_gestora_id, solicitud_proyecto_entidad_financiadora_ajena_id) 
+      SELECT 
+        NEXT VALUE FOR ${schemaPrefix}solicitud_proyecto_entidad_seq AS id,
+        s.created_by,
+        s.creation_date,
+        s.last_modified_by,
+        s.last_modified_date,
+        s.id AS solicitud_proyecto_id,
+        cef.id AS convocatoria_entidad_financiadora_id,
+        null AS convocatoria_entidad_gestora_id,
+        null AS solicitud_proyecto_entidad_financiadora_ajena_id
+      FROM ${schemaPrefix}convocatoria_entidad_financiadora cef 
+        JOIN ${schemaPrefix}solicitud s ON s.convocatoria_id = cef.convocatoria_id
+        JOIN ${schemaPrefix}solicitud_proyecto sp ON sp.id = s.id
+    </sql>
+    <!-- Carga de la nueva tabla solicitud_proyecto_entidad a partir de datos existentes en convocatoria_entidad_gestora -->
+    <sql dbms="!postgresql, !mssql">INSERT INTO ${schemaPrefix}solicitud_proyecto_entidad(id, created_by, creation_date, last_modified_by, last_modified_date, solicitud_proyecto_id, convocatoria_entidad_financiadora_id, convocatoria_entidad_gestora_id, solicitud_proyecto_entidad_financiadora_ajena_id) 
+      SELECT 
+        ${schemaPrefix}solicitud_proyecto_entidad_seq.NEXTVAL AS id,
+        s.created_by,
+        s.creation_date,
+        s.last_modified_by,
+        s.last_modified_date,
+        s.id AS solicitud_proyecto_id,
+        null AS convocatoria_entidad_financiadora_id,
+        ceg.id AS convocatoria_entidad_gestora_id,
+        null AS solicitud_proyecto_entidad_financiadora_ajena_id
+      FROM ${schemaPrefix}convocatoria_entidad_gestora ceg 
+        JOIN ${schemaPrefix}solicitud s ON s.convocatoria_id = ceg.convocatoria_id
+        JOIN ${schemaPrefix}solicitud_proyecto sp ON sp.id = s.id
+    </sql>
+    <sql dbms="postgresql">INSERT INTO ${schemaPrefix}solicitud_proyecto_entidad(id, created_by, creation_date, last_modified_by, last_modified_date, solicitud_proyecto_id, convocatoria_entidad_financiadora_id, convocatoria_entidad_gestora_id, solicitud_proyecto_entidad_financiadora_ajena_id) 
+      SELECT 
+        nextval('${schemaPrefix}solicitud_proyecto_entidad_seq') AS id,
+        s.created_by,
+        s.creation_date,
+        s.last_modified_by,
+        s.last_modified_date,
+        s.id AS solicitud_proyecto_id,
+        null AS convocatoria_entidad_financiadora_id,
+        ceg.id AS convocatoria_entidad_gestora_id,
+        null AS solicitud_proyecto_entidad_financiadora_ajena_id
+      FROM ${schemaPrefix}convocatoria_entidad_gestora ceg 
+        JOIN ${schemaPrefix}solicitud s ON s.convocatoria_id = ceg.convocatoria_id
+        JOIN ${schemaPrefix}solicitud_proyecto sp ON sp.id = s.id
+    </sql>
+    <sql dbms="mssql">INSERT INTO ${schemaPrefix}solicitud_proyecto_entidad(id, created_by, creation_date, last_modified_by, last_modified_date, solicitud_proyecto_id, convocatoria_entidad_financiadora_id, convocatoria_entidad_gestora_id, solicitud_proyecto_entidad_financiadora_ajena_id) 
+      SELECT 
+        NEXT VALUE FOR ${schemaPrefix}solicitud_proyecto_entidad_seq AS id,
+        s.created_by,
+        s.creation_date,
+        s.last_modified_by,
+        s.last_modified_date,
+        s.id AS solicitud_proyecto_id,
+        null AS convocatoria_entidad_financiadora_id,
+        ceg.id AS convocatoria_entidad_gestora_id,
+        null AS solicitud_proyecto_entidad_financiadora_ajena_id
+      FROM ${schemaPrefix}convocatoria_entidad_gestora ceg 
+        JOIN ${schemaPrefix}solicitud s ON s.convocatoria_id = ceg.convocatoria_id
+        JOIN ${schemaPrefix}solicitud_proyecto sp ON sp.id = s.id
+    </sql>
+    <!-- Carga de la nueva tabla solicitud_proyecto_entidad a partir de datos existentes en solicitud_proyecto_entidad_financiadora_ajena -->
+    <sql dbms="!postgresql, !mssql">INSERT INTO ${schemaPrefix}solicitud_proyecto_entidad(id, created_by, creation_date, last_modified_by, last_modified_date, solicitud_proyecto_id, convocatoria_entidad_financiadora_id, convocatoria_entidad_gestora_id, solicitud_proyecto_entidad_financiadora_ajena_id) 
+      SELECT 
+        ${schemaPrefix}solicitud_proyecto_entidad_seq.NEXTVAL AS id,
+        spefa.created_by,
+        spefa.creation_date,
+        spefa.last_modified_by,
+        spefa.last_modified_date,
+        spefa.solicitud_proyecto_id AS solicitud_proyecto_id,
+        null AS convocatoria_entidad_financiadora_id,
+        null AS convocatoria_entidad_gestora_id,
+        spefa.id AS solicitud_proyecto_entidad_financiadora_ajena_id
+      FROM ${schemaPrefix}solicitud_proyecto_entidad_financiadora_ajena spefa
+    </sql>
+    <sql dbms="postgresql">INSERT INTO ${schemaPrefix}solicitud_proyecto_entidad(id, created_by, creation_date, last_modified_by, last_modified_date, solicitud_proyecto_id, convocatoria_entidad_financiadora_id, convocatoria_entidad_gestora_id, solicitud_proyecto_entidad_financiadora_ajena_id) 
+      SELECT 
+        nextval('${schemaPrefix}solicitud_proyecto_entidad_seq') AS id,
+        spefa.created_by,
+        spefa.creation_date,
+        spefa.last_modified_by,
+        spefa.last_modified_date,
+        spefa.solicitud_proyecto_id AS solicitud_proyecto_id,
+        null AS convocatoria_entidad_financiadora_id,
+        null AS convocatoria_entidad_gestora_id,
+        spefa.id AS solicitud_proyecto_entidad_financiadora_ajena_id
+      FROM ${schemaPrefix}solicitud_proyecto_entidad_financiadora_ajena spefa
+    </sql>
+    <sql dbms="mssql">INSERT INTO ${schemaPrefix}solicitud_proyecto_entidad(id, created_by, creation_date, last_modified_by, last_modified_date, solicitud_proyecto_id, convocatoria_entidad_financiadora_id, convocatoria_entidad_gestora_id, solicitud_proyecto_entidad_financiadora_ajena_id) 
+      SELECT 
+        NEXT VALUE FOR ${schemaPrefix}solicitud_proyecto_entidad_seq AS id,
+        s.created_by,
+        s.creation_date,
+        s.last_modified_by,
+        s.last_modified_date,
+        s.id AS solicitud_proyecto_id,
+        null AS convocatoria_entidad_financiadora_id,
+        ceg.id AS convocatoria_entidad_gestora_id,
+        null AS solicitud_proyecto_entidad_financiadora_ajena_id
+      FROM ${schemaPrefix}convocatoria_entidad_gestora ceg 
+        JOIN ${schemaPrefix}solicitud s ON s.convocatoria_id = ceg.convocatoria_id
+        JOIN ${schemaPrefix}solicitud_proyecto sp ON sp.id = s.id
+    </sql>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000001-solicitud_proyecto_presupuesto">
+    <validCheckSum>8:24676541849f3ccb51f34d61496923ee</validCheckSum>
+    <validCheckSum>8:56134c1b6306895fcc3a8b262b571653</validCheckSum>
+    <validCheckSum>8:94593869370d90fdc937d19784d193a9</validCheckSum>
+    <!-- Actualizar solicitud_proyecto_entidad_id en solicitud_proyecto_presupuesto -->
+    <sql>
+      UPDATE ${schemaPrefix}solicitud_proyecto_presupuesto SET solicitud_proyecto_entidad_id=(
+        SELECT
+          spe.id
+        FROM ${schemaPrefix}solicitud_proyecto_entidad spe
+          JOIN ${schemaPrefix}solicitud_proyecto_entidad_financiadora_ajena spefa ON spe.solicitud_proyecto_entidad_financiadora_ajena_id = spefa.id
+        WHERE 
+          ${schemaPrefix}solicitud_proyecto_presupuesto.solicitud_proyecto_id = spefa.solicitud_proyecto_id
+          AND ${schemaPrefix}solicitud_proyecto_presupuesto.financiacion_ajena = '1' 
+          AND ${schemaPrefix}solicitud_proyecto_presupuesto.entidad_ref = spefa.entidad_ref
+      )
+      WHERE ${schemaPrefix}solicitud_proyecto_presupuesto.financiacion_ajena = '1' 
+    </sql>
+    <sql>
+      UPDATE ${schemaPrefix}solicitud_proyecto_presupuesto SET solicitud_proyecto_entidad_id=(
+        SELECT
+          spe.id
+        FROM ${schemaPrefix}solicitud_proyecto_entidad spe
+          JOIN ${schemaPrefix}convocatoria_entidad_financiadora cef ON spe.convocatoria_entidad_financiadora_id = cef.id
+          JOIN ${schemaPrefix}solicitud s ON s.convocatoria_id = cef.convocatoria_id
+          JOIN ${schemaPrefix}solicitud_proyecto sp ON sp.id = s.id
+        WHERE 
+          ${schemaPrefix}solicitud_proyecto_presupuesto.solicitud_proyecto_id = sp.id
+          AND ${schemaPrefix}solicitud_proyecto_presupuesto.financiacion_ajena = '0' 
+          AND ${schemaPrefix}solicitud_proyecto_presupuesto.entidad_ref = cef.entidad_ref
+          AND sp.tipo_presupuesto = 'POR_ENTIDAD'
+      )
+      WHERE ${schemaPrefix}solicitud_proyecto_presupuesto.financiacion_ajena = '0'
+    </sql>
+    <sql>
+      UPDATE ${schemaPrefix}solicitud_proyecto_presupuesto SET solicitud_proyecto_entidad_id=(
+        SELECT
+          spe.id
+        FROM ${schemaPrefix}solicitud_proyecto_entidad spe
+          JOIN ${schemaPrefix}convocatoria_entidad_gestora ceg ON spe.convocatoria_entidad_gestora_id = ceg.id
+          JOIN ${schemaPrefix}solicitud s ON s.convocatoria_id = ceg.convocatoria_id
+          JOIN ${schemaPrefix}solicitud_proyecto sp ON sp.id = s.id
+        WHERE 
+          ${schemaPrefix}solicitud_proyecto_presupuesto.solicitud_proyecto_id = sp.id
+          AND ${schemaPrefix}solicitud_proyecto_presupuesto.financiacion_ajena = '0' 
+          AND ${schemaPrefix}solicitud_proyecto_presupuesto.entidad_ref = ceg.entidad_ref
+          AND sp.tipo_presupuesto = 'MIXTO'
+      )
+      WHERE ${schemaPrefix}solicitud_proyecto_presupuesto.financiacion_ajena = '0' 
+      AND ${schemaPrefix}solicitud_proyecto_presupuesto.solicitud_proyecto_entidad_id IS NULL 
+    </sql>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000001-solicitud">
+    <update tableName="solicitud">
+      <column name="formulario_solicitud" value="PROYECTO" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="formulario_solicitud" value="ESTANDAR" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000001-configuracion_solicitud">
+    <update tableName="configuracion_solicitud">
+      <column name="formulario_solicitud" value="PROYECTO" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="formulario_solicitud" value="ESTANDAR" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000001-convocatoria">
+    <validCheckSum>8:fbcd1779113311fa3273eabd5c173f1d</validCheckSum>
+    <validCheckSum>8:bdc2773335b8c2a53e622efe99eab6c8</validCheckSum>
+    <validCheckSum>8:dba449da46be8f468cac0459154f212b</validCheckSum>
+    <sql>
+      UPDATE ${schemaPrefix}convocatoria SET formulario_solicitud=(
+        SELECT
+          conf.formulario_solicitud
+        FROM ${schemaPrefix}configuracion_solicitud conf WHERE 
+          conf.convocatoria_id=${schemaPrefix}convocatoria.id 
+      )
+    </sql>
+  </changeSet>
+</databaseChangeLog>

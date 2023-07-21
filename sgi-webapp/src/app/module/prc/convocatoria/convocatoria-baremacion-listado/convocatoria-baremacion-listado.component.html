@@ -103,15 +103,15 @@
             </ng-container>
           </ng-container>
           <ng-container *sgiHasAuthority="'PRC-CON-B'">
-            <button *ngIf="isConvocatoriaEditable(convocatoriaBaremacion)" mat-button
+            <button color="warn" *ngIf="isConvocatoriaEditable(convocatoriaBaremacion)" mat-icon-button
               matTooltip="{{'btn.delete' | translate}}" (click)="deactivate(convocatoriaBaremacion)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'PRC-CON-R'">
-            <button *ngIf="!convocatoriaBaremacion.activo" mat-button matTooltip="{{'btn.recover' | translate}}"
-              (click)="activate(convocatoriaBaremacion)">
-              <mat-icon color="accent">add_circle_outline</mat-icon>
+            <button color="accent" *ngIf="!convocatoriaBaremacion.activo" mat-icon-button
+              matTooltip="{{'btn.recover' | translate}}" (click)="activate(convocatoriaBaremacion)">
+              <mat-icon>add_circle_outline</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'PRC-CON-C'">
@@ -127,13 +127,15 @@
             </button>
           </ng-container>
           <ng-template #editButton>
-            <a mat-button matTooltip="{{'btn.edit' | translate}}" [routerLink]="[convocatoriaBaremacion.id]">
-              <mat-icon color="primary">border_color</mat-icon>
+            <a mat-icon-button color="primary" matTooltip="{{'btn.edit' | translate}}"
+              [routerLink]="[convocatoriaBaremacion.id]">
+              <mat-icon>border_color</mat-icon>
             </a>
           </ng-template>
           <ng-template #viewButton>
-            <a mat-button matTooltip="{{'btn.view' | translate}}" [routerLink]="[convocatoriaBaremacion.id]">
-              <mat-icon color="primary">visibility</mat-icon>
+            <a mat-icon-button color="primary" matTooltip="{{'btn.view' | translate}}"
+              [routerLink]="[convocatoriaBaremacion.id]">
+              <mat-icon>visibility</mat-icon>
             </a>
           </ng-template>
         </td>

@@ -3,8 +3,6 @@ package org.crue.hercules.sgi.csp.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.TipoAmbitoGeograficoNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
@@ -27,6 +25,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 /**
  * TipoAmbitoGeograficoControllerTest
  */
@@ -40,7 +40,7 @@ class TipoAmbitoGeograficoControllerTest extends BaseControllerTest {
   private static final String CONTROLLER_BASE_PATH = "/tipoambitogeograficos";
 
   @Test
-  @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
+  @WithMockUser(username = "user", authorities = { "CSP-TAGE-V" })
   void findAll_ReturnsPage() throws Exception {
     // given: Una lista con 37 TipoAmbitoGeografico
     List<TipoAmbitoGeografico> tipoAmbitoGeograficos = new ArrayList<>();
@@ -66,7 +66,8 @@ class TipoAmbitoGeograficoControllerTest extends BaseControllerTest {
 
     // when: Get page=3 with pagesize=10
     MvcResult requestResult = mockMvc
-        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH).with(SecurityMockMvcRequestPostProcessors.csrf())
+        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH + "/todos")
+            .with(SecurityMockMvcRequestPostProcessors.csrf())
             .header("X-Page", page).header("X-Page-Size", pageSize).accept(MediaType.APPLICATION_JSON))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Devuelve la pagina 3 con los TipoAmbitoGeografico del 31 al 37
@@ -90,7 +91,7 @@ class TipoAmbitoGeograficoControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
+  @WithMockUser(username = "user", authorities = { "CSP-TAGE-V" })
   void findAll_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de TipoAmbitoGeografico
     List<TipoAmbitoGeografico> tipoAmbitoGeograficos = new ArrayList<>();
@@ -107,7 +108,8 @@ class TipoAmbitoGeograficoControllerTest extends BaseControllerTest {
 
     // when: Get page=0 with pagesize=10
     mockMvc
-        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH).with(SecurityMockMvcRequestPostProcessors.csrf())
+        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH + "/todos")
+            .with(SecurityMockMvcRequestPostProcessors.csrf())
             .header("X-Page", page).header("X-Page-Size", pageSize).accept(MediaType.APPLICATION_JSON))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Devuelve un 204

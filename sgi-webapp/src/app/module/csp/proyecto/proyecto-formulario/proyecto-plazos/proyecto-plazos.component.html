@@ -40,15 +40,15 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let plazo">
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-            <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!actionService.readonly"
-              (click)="openModalPlazos(plazo)">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" mat-icon-button matTooltip="{{'btn.edit' | translate}}"
+              *ngIf="!actionService.readonly" (click)="openModalPlazos(plazo)">
+              <mat-icon>border_color</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-            <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="!actionService.readonly"
-              (click)="deleteFase(plazo)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
+              *ngIf="!actionService.readonly" (click)="deleteFase(plazo)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>

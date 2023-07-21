@@ -12,7 +12,7 @@ import { GrupoPersonaAutorizadaService } from '@core/services/csp/grupo-persona-
 import { GrupoResponsableEconomicoService } from '@core/services/csp/grupo-responsable-economico/grupo-responsable-economico.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { LineaInvestigacionService } from '@core/services/csp/linea-investigacion/linea-investigacion.service';
-import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
+import { RolProyectoService } from '@core/services/csp/rol-proyecto/rol-proyecto.service';
 import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';

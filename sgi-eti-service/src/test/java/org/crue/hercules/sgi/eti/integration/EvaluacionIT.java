@@ -800,7 +800,6 @@ public class EvaluacionIT extends BaseIT {
     peticionEvaluacion.setId(2L);
     peticionEvaluacion.setCodigo("Codigo1");
     peticionEvaluacion.setDisMetodologico("DiseñoMetodologico1");
-    peticionEvaluacion.setExterno(Boolean.FALSE);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
@@ -815,8 +814,7 @@ public class EvaluacionIT extends BaseIT {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "CEI", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
-        "articulo", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "CEI", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);

@@ -3,6 +3,9 @@
   <artifact name="sge-add-x-api-key-sequence" groupId="org.crue.hercules.sgi.esb.sge.sequence" version="${revision}" type="synapse/sequence" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/sequences/sge-add-x-api-key-sequence.xml</file>
   </artifact>
+    <artifact name="sge-remove-authorization-header-sequence" groupId="org.crue.hercules.sgi.esb.sgp.sequence" version="${revision}" type="synapse/sequence" serverRole="EnterpriseServiceBus">
+    <file>src/main/synapse-config/sequences/sge-remove-authorization-header-sequence.xml</file>
+  </artifact>
   <artifact name="sge-endpoint" groupId="org.crue.hercules.sgi.esb.sge.endpoint" version="${revision}" type="synapse/endpoint" serverRole="EnterpriseServiceBus">
     <file>src/main/synapse-config/endpoints/sge-endpoint.xml</file>
   </artifact>

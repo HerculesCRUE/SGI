@@ -72,21 +72,21 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let tipoFase">
           <ng-container *sgiHasAuthority="'CSP-TFASE-E'">
-            <button *ngIf="tipoFase.activo === true" mat-button matTooltip="{{'btn.edit' | translate}}"
-              (click)="openModal(tipoFase)">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" *ngIf="tipoFase.activo === true" mat-icon-button
+              matTooltip="{{'btn.edit' | translate}}" (click)="openModal(tipoFase)">
+              <mat-icon>border_color</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'CSP-TFASE-B'">
-            <button *ngIf="tipoFase.activo === true" mat-button matTooltip="{{'btn.delete' | translate}}"
-              (click)="deactivateTipoFase(tipoFase)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" *ngIf="tipoFase.activo === true" mat-icon-button
+              matTooltip="{{'btn.delete' | translate}}" (click)="deactivateTipoFase(tipoFase)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'CSP-TFASE-R'">
-            <button *ngIf="tipoFase.activo === false" mat-button matTooltip="{{'btn.recover' | translate}}"
-              (click)="activateTipoFase(tipoFase)">
-              <mat-icon color="accent">add_circle_outline</mat-icon>
+            <button color="accent" *ngIf="tipoFase.activo === false" mat-icon-button
+              matTooltip="{{'btn.recover' | translate}}" (click)="activateTipoFase(tipoFase)">
+              <mat-icon>add_circle_outline</mat-icon>
             </button>
           </ng-container>
         </td>

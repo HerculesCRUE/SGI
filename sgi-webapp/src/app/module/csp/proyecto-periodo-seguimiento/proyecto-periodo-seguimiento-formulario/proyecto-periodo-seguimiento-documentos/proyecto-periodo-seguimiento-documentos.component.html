@@ -4,17 +4,17 @@
     <div class="arbol" fxFlex>
       <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
-          <button mat-icon-button *ngIf="(node.level === 1 && viewMode === 'new')">
+          <button mat-button *ngIf="(node.level === 1 && viewMode === 'new')">
             {{node.title}}
           </button>
-          <button mat-icon-button *ngIf="(node.level === 1 && viewMode !== 'new' && node !== viewingNode)"
+          <button mat-button *ngIf="(node.level === 1 && viewMode !== 'new' && node !== viewingNode)"
             (click)="showNodeDetails(node)">
             {{node.title}}
             <mat-icon color="primary" class="mat-icon-rtl-mirror">
               {{ 'visibility'}}
             </mat-icon>
           </button>
-          <button mat-icon-button *ngIf="(node.level === 1 && viewMode !== 'new' && node === viewingNode)"
+          <button mat-button *ngIf="(node.level === 1 && viewMode !== 'new' && node === viewingNode)"
             (click)="hideNodeDetails()">
             {{node.title}}
             <mat-icon color="primary" class="mat-icon-rtl-mirror">
@@ -23,7 +23,7 @@
           </button>
         </mat-tree-node>
         <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
-          <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.documento?.value?.nombre">
+          <button mat-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.documento?.value?.nombre">
             <mat-icon color="primary" class="mat-icon-rtl-mirror">
               {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
             </mat-icon>

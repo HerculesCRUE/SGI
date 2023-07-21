@@ -133,27 +133,28 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let convocatoriaReunion;let i=index;">
           <ng-container *ngIf="!mapModificable.get(convocatoriaReunion.id)">
-            <a mat-button matTooltip="{{'btn.view' | translate}}" *sgiHasAuthorityForAnyUO="'ETI-CNV-E'"
-              [routerLink]="[convocatoriaReunion.id]">
-              <mat-icon color="primary">visibility</mat-icon>
+            <a color="primary" mat-icon-button matTooltip="{{'btn.view' | translate}}"
+              *sgiHasAuthorityForAnyUO="'ETI-CNV-E'" [routerLink]="[convocatoriaReunion.id]">
+              <mat-icon>visibility</mat-icon>
             </a>
           </ng-container>
           <ng-container *ngIf="mapModificable.get(convocatoriaReunion.id)">
-            <a mat-button *sgiHasAuthorityForAnyUO="'ETI-CNV-E'" [routerLink]="[convocatoriaReunion.id]"
-              matTooltip="{{'btn.edit' | translate}}">
-              <mat-icon color="primary">border_color</mat-icon>
+            <a color="primary" mat-icon-button *sgiHasAuthorityForAnyUO="'ETI-CNV-E'"
+              [routerLink]="[convocatoriaReunion.id]" matTooltip="{{'btn.edit' | translate}}">
+              <mat-icon>border_color</mat-icon>
             </a>
           </ng-container>
           <span *ngIf="mapEliminable.get(convocatoriaReunion.id)">
-            <button color="warn" mat-button *sgiHasAuthorityForAnyUO="'ETI-CNV-B'"
+            <button color="warn" mat-icon-button *sgiHasAuthorityForAnyUO="'ETI-CNV-B'"
               matTooltip="{{'btn.delete' | translate}}" (click)="borrar(convocatoriaReunion.id, $event)">
               <mat-icon>highlight_off</mat-icon>
             </button>
           </span>
           <ng-container>
-            <button color="accent" *ngIf="!convocatoriaReunion.fechaEnvio" mat-button
-              matTooltip="{{'btn.send' | translate}}" (click)="enviar(convocatoriaReunion.id, $event)">
-              <mat-icon>send</mat-icon>
+            <button color="primary" *ngIf="!convocatoriaReunion.fechaEnvio" mat-icon-button
+              matTooltip="{{'btn.notificar-convocatoria' | translate}}"
+              (click)="enviar(convocatoriaReunion.id, $event)">
+              <mat-icon>notification_add</mat-icon>
             </button>
           </ng-container>
         </td>

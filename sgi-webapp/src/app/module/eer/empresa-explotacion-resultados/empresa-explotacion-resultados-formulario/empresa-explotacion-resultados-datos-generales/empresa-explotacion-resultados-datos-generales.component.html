@@ -71,8 +71,11 @@
         <!--Objeto social -->
         <mat-form-field>
           <mat-label>{{'eer.empresa-explotacion-resultados.objeto-social' | translate}}</mat-label>
-          <input matInput type="text" placeholder="{{'eer.empresa-explotacion-resultados.objeto-social' | translate}}"
-            formControlName="objetoSocial" required>
+          <textarea matInput type="text" #objSocial
+            placeholder="{{'eer.empresa-explotacion-resultados.objeto-social' | translate}}"
+            formControlName="objetoSocial" maxLength="1000" required>
+            </textarea>
+          <mat-hint align="end">{{objSocial.value.length}} / 1000</mat-hint>
           <mat-error *ngIf="formGroup.controls.objetoSocial.errors?.required">
             {{ 'error.required.entity' | translate:msgParamObjetoSocialEntity }}
           </mat-error>
@@ -88,10 +91,11 @@
           <mat-label>{{(formGroup.controls.tipoEmpresa.value === TIPO_EMPRESA.EBT ?
             'eer.empresa-explotacion-resultados.tecnologia' :'eer.empresa-explotacion-resultados.conocimiento') |
             translate}}</mat-label>
-          <textarea matInput formControlName="conocimientoTecnologia" type="text"
+          <textarea matInput formControlName="conocimientoTecnologia" type="text" #tecnologia
             placeholder="{{(formGroup.controls.tipoEmpresa.value === TIPO_EMPRESA.EBT ? 'eer.empresa-explotacion-resultados.tecnologia' :'eer.empresa-explotacion-resultados.conocimiento') | translate}}"
-            required>
+            maxLength="1000" required>
                   </textarea>
+          <mat-hint align="end">{{tecnologia.value.length}} / 1000</mat-hint>
           <mat-error
             *ngIf="formGroup.controls.conocimientoTecnologia.errors?.maxlength && formGroup.controls.tipoEmpresa.value === TIPO_EMPRESA.EBT">
             {{ 'error.maxlength.entity' | translate:msgParamTecnologiaEntity }}

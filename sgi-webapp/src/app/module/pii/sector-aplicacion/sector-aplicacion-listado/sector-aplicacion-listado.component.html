@@ -31,21 +31,21 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let sectorAplicacion">
           <ng-container *sgiHasAuthority="'PII-SEA-E'">
-            <button *ngIf="sectorAplicacion.activo" mat-button matTooltip="{{'btn.edit' | translate}}"
-              (click)="openModal(sectorAplicacion)">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" *ngIf="sectorAplicacion.activo" mat-icon-button
+              matTooltip="{{'btn.edit' | translate}}" (click)="openModal(sectorAplicacion)">
+              <mat-icon>border_color</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'PII-SEA-B'">
-            <button *ngIf="sectorAplicacion.activo" mat-button matTooltip="{{'btn.delete' | translate}}"
-              (click)="deactivateSectorAplicacion(sectorAplicacion)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" *ngIf="sectorAplicacion.activo" mat-icon-button
+              matTooltip="{{'btn.delete' | translate}}" (click)="deactivateSectorAplicacion(sectorAplicacion)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'PII-SEA-R'">
-            <button *ngIf="!sectorAplicacion.activo" mat-button matTooltip="{{'btn.recover' | translate}}"
-              (click)="activateSectorAplicacion(sectorAplicacion)">
-              <mat-icon color="accent">add_circle_outline</mat-icon>
+            <button color="accent" *ngIf="!sectorAplicacion.activo" mat-icon-button
+              matTooltip="{{'btn.recover' | translate}}" (click)="activateSectorAplicacion(sectorAplicacion)">
+              <mat-icon>add_circle_outline</mat-icon>
             </button>
           </ng-container>
         </td>

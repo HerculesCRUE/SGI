@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.OutputType;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeEvaluacion;
+import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,56 +41,44 @@ class InformeEvaluacionReportServiceTest extends BaseReportEtiServiceTest {
   private SgiApiSgpService personaService;
 
   @Mock
-  private BloqueService bloqueService;
-
-  @Mock
-  private ApartadoService apartadoService;
-
-  @Mock
-  private SgiFormlyService sgiFormlyService;
-
-  @Mock
-  private RespuestaService respuestaService;
+  private BaseApartadosRespuestasReportDocxService baseApartadosrespuestasService;
 
   @BeforeEach
   public void setUp() throws Exception {
     informeEvaluacionReportService = new InformeEvaluacionReportService(sgiConfigProperties,
-        sgiApiConfService, personaService, bloqueService,
-        apartadoService, sgiFormlyService, respuestaService, evaluacionService, configuracionService);
+        sgiApiConfService, personaService, evaluacionService, configuracionService,
+        baseApartadosrespuestasService);
   }
 
   @Test
-  void getInformeEvaluacion_ReturnsMemoriaValidationException() throws Exception {
+  void getInformeEvaluacion_ReturnsEvaluacionMemoriaValidationException() throws Exception {
 
     ReportInformeEvaluacion report = new ReportInformeEvaluacion();
     report.setOutputType(OutputType.PDF);
 
+    BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
+        .willReturn(getResource("eti/docx/rep-eti-evaluacion.docx"));
+
     Assertions
-        .assertThatThrownBy(() -> informeEvaluacionReportService.getReportInformeEvaluadorEvaluacion(report, null))
-        .isInstanceOf(IllegalArgumentException.class);
+        .assertThatThrownBy(() -> informeEvaluacionReportService.getReportInformeEvaluacion(report, null))
+        .isInstanceOf(GetDataReportException.class);
   }
 
-  @Test
   @WithMockUser(username = "user", authorities = { "ETI-EVC-EVAL", "ETI-EVC-INV-EVALR" })
   void getInformeEvaluacion_ReturnsResource() throws Exception {
     Long idEvaluacion = 1L;
 
     BDDMockito.given(evaluacionService.findById(idEvaluacion)).willReturn((generarMockEvaluacion(idEvaluacion)));
-    BDDMockito.given(personaService.findById(null)).willReturn((generarMockPersona("123456F")));
+    BDDMockito.given(personaService.findById("123456F")).willReturn((generarMockPersona("123456F")));
     BDDMockito.given(configuracionService.findConfiguracion()).willReturn((generarMockConfiguracion()));
-    BDDMockito.given(
-        evaluacionService.findByEvaluacionIdGestor(idEvaluacion)).willReturn((generarMockComentarios()));
-    BDDMockito.given(bloqueService.getBloqueComentariosGenerales())
-        .willReturn(generarMockBloque(idEvaluacion, 0L));
 
     BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
-        .willReturn(getResource("eti/prpt/rep-eti-evaluacion.prpt"));
-    BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
+        .willReturn(getResource("eti/docx/rep-eti-evaluacion.docx"));
 
     ReportInformeEvaluacion report = new ReportInformeEvaluacion();
     report.setOutputType(OutputType.PDF);
 
-    byte[] reportContent = informeEvaluacionReportService.getReportInformeEvaluadorEvaluacion(report, idEvaluacion);
+    byte[] reportContent = informeEvaluacionReportService.getReportInformeEvaluacion(report, idEvaluacion);
 
     assertNotNull(reportContent);
   }

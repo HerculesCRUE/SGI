@@ -33,7 +33,9 @@ class TipoRegimenConcurrenciaIT extends BaseIT {
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization",
-        String.format("bearer %s", tokenBuilder.buildToken("user", "AUTH", "CSP-CON-C", "CSP-CON-V", "CSP-CON-E")));
+        String.format("bearer %s",
+            tokenBuilder.buildToken("user", "AUTH", "CSP-TRCO-C", "CSP-TRCO-V", "CSP-TRCO-E", "CSP-TRCO-R",
+                "CSP-CON-C")));
 
     HttpEntity<TipoRegimenConcurrencia> request = new HttpEntity<>(entity, headers);
     return request;
@@ -71,7 +73,8 @@ class TipoRegimenConcurrenciaIT extends BaseIT {
     String filter = "nombre=ke=-0";
 
     // when: find TipoRegimenConcurrencia
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort)
+        .queryParam("q", filter)
         .build(false).toUri();
     final ResponseEntity<List<TipoRegimenConcurrencia>> response = restTemplate.exchange(uri, HttpMethod.GET,
         buildRequest(headers, null), new ParameterizedTypeReference<List<TipoRegimenConcurrencia>>() {

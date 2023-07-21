@@ -30,7 +30,7 @@ export abstract class BaseExportModalComponent<T> extends DialogCommonComponent 
 
   readonly OUTPUT_REPORT_TYPE_MAP = OUTPUT_REPORT_TYPE_MAP;
   readonly OUTPUT_REPORT_XLS_TYPE_MAP = OUTPUT_REPORT_XLS_TYPE_MAP;
-  readonly outputType: OutputReport = OutputReport.PDF;
+  readonly outputType: OutputReport = OutputReport.XLSX;
 
   public readonly problems$ = new BehaviorSubject<SgiProblem[]>([]);
 

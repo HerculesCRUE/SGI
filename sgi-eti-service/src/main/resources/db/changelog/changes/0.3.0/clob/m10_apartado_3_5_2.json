@@ -1,0 +1,94 @@
+[
+  {
+    "key": "ap3_5_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "3.5.2 Destino de las muestras de origen humano"
+    },
+    "hideExpression": "!formState.mainModel.ap3_5.muestrasBiologicasRadio || formState.mainModel.ap3_5.muestrasBiologicasRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "¿Qué va a hacer con las muestras de origen humano una vez que ya no sean necesarias para este proyecto?"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "destinoMuestrasCheck",
+        "templateOptions": {
+          "label": "Destino",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "destruccion",
+              "label": "Destrucción"
+            },
+            {
+              "value": "conservacion",
+              "label": "Conservación anonimizada para utilización posterior"
+            },
+            {
+              "value": "cesionBiobanco",
+              "label": "Cesión gratuita a Biobanco"
+            },
+            {
+              "value": "usoColeccionMuestras",
+              "label": "Uso integrado en colección de muestras"
+            },
+            {
+              "value": "incorporacionColeccionMuestras",
+              "label": "Incorporación a una colección de muestras"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarCesionBiobanco",
+        "type": "textarea",
+        "hideExpression": "!model.destinoMuestrasCheck || !model.destinoMuestrasCheck.some(destino => destino === 'cesionBiobanco')",
+        "templateOptions": {
+          "label": "Especificar cesión a Biobanco",
+          "placeholder": "Especificar cesión a Biobanco",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "especificarUsoColeccionMuestras",
+        "type": "textarea",
+        "hideExpression": "!model.destinoMuestrasCheck || !model.destinoMuestrasCheck.some(destino => destino === 'usoColeccionMuestras')",
+        "templateOptions": {
+          "label": "Especificar colección y registro",
+          "placeholder": "Especificar colección y registro",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "especificarIncorporacionColeccionMuestras",
+        "type": "textarea",
+        "hideExpression": "!model.destinoMuestrasCheck || !model.destinoMuestrasCheck.some(destino => destino === 'incorporacionColeccionMuestras')",
+        "templateOptions": {
+          "label": "Especificar incorporación a colección",
+          "placeholder": "Especificar incorporación a colección",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: Recuerde que el/la participante tiene derecho a conocer y decidir el destino de sus muestras y debe ser informado de ello en el <strong>documento de consentimiento</strong> (apartado 4.4.8 Derecho a decidir sobre el destino de las muestras').</p><p>Para obtener más información sobre la información mínima exigida consulta el <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a59' target='_blank'>articulo 59</a> de la LIB 14/2007.</p>"
+      }
+    ]
+  }
+]

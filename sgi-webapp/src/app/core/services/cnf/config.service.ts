@@ -1,11 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { MatListIconCssMatStyler } from '@angular/material/list';
 import { IConfigValue } from '@core/models/cnf/config-value';
 import { IRecipient } from '@core/models/com/recipient';
 import { environment } from '@env';
 import { CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate, mixinFindAll, mixinFindById, mixinUpdate, SgiRestBaseService, UpdateCtor } from '@sgi/framework/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, switchMap, catchError } from 'rxjs/operators';
 import { TimeZoneConfigService } from '../timezone.service';
 import { IConfigValueRequest } from './config-value-request';
 import { CONFIG_VALUE_REQUEST_CONVERTER } from './config-value-request.converter';
@@ -94,6 +95,33 @@ export class ConfigService extends _ConfigServiceMixinBase implements TimeZoneCo
 
   getUrlSistemaGestionExterno(): Observable<string> {
     return this.findById('url-sistema-gestion-externo').pipe(map(value => value?.value ?? null));
+  }
+
+  getLimiteRegistrosExportacionExcel(key?: string): Observable<string> {
+    if (key) {
+      return this.findById(key).pipe(
+        map(value => {
+          return value?.value ?? null;
+        }
+        ),
+        switchMap(limit => {
+          if (!limit) {
+            return this.findById('exp-max-num-registros-excel').pipe(
+              map(value => {
+                return value?.value ?? null;
+              })
+            );
+          } else {
+            return of(limit);
+          }
+        }),
+        catchError(error => {
+          return this.findById('exp-max-num-registros-excel').pipe(map(value => value?.value ?? null));
+        })
+      );
+    } else {
+      return this.findById('exp-max-num-registros-excel').pipe(map(value => value?.value ?? null));
+    }
   }
 
 }

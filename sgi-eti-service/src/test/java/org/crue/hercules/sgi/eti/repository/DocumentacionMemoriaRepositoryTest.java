@@ -61,8 +61,7 @@ public class DocumentacionMemoriaRepositoryTest extends BaseRepositoryTest {
    * @return el objeto Comite
    */
   public Comite generarMockComite(Formulario formulario) {
-    return new Comite(null, "Comite1", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto", "articulo",
-        formulario, Boolean.TRUE);
+    return new Comite(null, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
   }
 
   /**
@@ -84,7 +83,7 @@ public class DocumentacionMemoriaRepositoryTest extends BaseRepositoryTest {
     return new PeticionEvaluacion(null, "Referencia solicitud convocatoria", "Codigo", "PeticionEvaluacion",
         tipoActividad, null, false, "Fuente financiación", null, null, Instant.now(), Instant.now(), "Resumen",
         TipoValorSocial.ENSENIANZA_SUPERIOR, "otro valor social", "Objetivos", "DiseñoMetodologico", Boolean.FALSE,
-        Boolean.FALSE, "user-001", null, Boolean.TRUE);
+        "user-001", null, null, Boolean.TRUE);
   }
 
   /**

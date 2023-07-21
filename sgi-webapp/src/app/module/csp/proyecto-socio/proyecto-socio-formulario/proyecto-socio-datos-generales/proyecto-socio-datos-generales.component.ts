@@ -3,19 +3,15 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
-import { IRolSocio } from '@core/models/csp/rol-socio';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { RolSocioService } from '@core/services/csp/rol-socio.service';
-import { SnackBarService } from '@core/services/snack-bar.service';
+import { RolSocioService } from '@core/services/csp/rol-socio/rol-socio.service';
 import { TranslateService } from '@ngx-translate/core';
-import { NGXLogger } from 'ngx-logger';
-import { merge, Observable, Subscription } from 'rxjs';
-import { map, startWith, tap } from 'rxjs/operators';
+import { Subscription, merge } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { ProyectoSocioActionService } from '../../proyecto-socio.action.service';
 import { ProyectoSocioDatosGeneralesFragment } from './proyecto-socio-datos-generales.fragment';
 
-const MSG_ERROR_INIT = marker('error.load');
 const PROYECTO_SOCIO_IMPORTE_CONCEDIDO_KEY = marker('csp.proyecto-socio.importe-concedido');
 const PROYECTO_SOCIO_IMPORTE_PRESUPUESTO_KEY = marker('csp.proyecto-socio.importe-presupuesto');
 const PROYECTO_SOCIO_FECHA_FIN_KEY = marker('csp.proyecto-socio.fecha-fin');
@@ -36,7 +32,6 @@ export class ProyectoSocioDatosGeneralesComponent extends FormFragmentComponent<
   fxLayoutProperties: FxLayoutProperties;
   fxFlexProperties: FxFlexProperties;
   private subscriptions: Subscription[] = [];
-  rolSocios$: Observable<IRolSocio[]>;
 
   msgParamEntity = {};
   msgParamRolSocioEntity = {};
@@ -52,9 +47,7 @@ export class ProyectoSocioDatosGeneralesComponent extends FormFragmentComponent<
   }
 
   constructor(
-    private readonly logger: NGXLogger,
     protected actionService: ProyectoSocioActionService,
-    private snackBarService: SnackBarService,
     private rolSocioService: RolSocioService,
     private readonly translate: TranslateService
   ) {
@@ -74,7 +67,6 @@ export class ProyectoSocioDatosGeneralesComponent extends FormFragmentComponent<
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.loadRolProyectos();
 
     this.setupI18N();
 
@@ -134,12 +126,6 @@ export class ProyectoSocioDatosGeneralesComponent extends FormFragmentComponent<
       PROYECTO_SOCIO_PERIODO_PARTICIPACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamPeriodoParticipacionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
-  }
-
-  private loadRolProyectos(): void {
-    this.rolSocios$ = this.rolSocioService.findAll().pipe(
-      map((response) => response.items)
-    )
   }
 
   ngOnDestroy(): void {

@@ -11,6 +11,7 @@ import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
 import { Module } from '@core/module';
 import { ActionService } from '@core/services/action-service';
+import { ConfiguracionService } from '@core/services/csp/configuracion.service';
 import { ContextoProyectoService } from '@core/services/csp/contexto-proyecto.service';
 import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo.service';
 import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-requisito-ip.service';
@@ -41,7 +42,6 @@ import { ProyectoSocioPeriodoJustificacionService } from '@core/services/csp/pro
 import { ProyectoSocioService } from '@core/services/csp/proyecto-socio.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
-import { TipoAmbitoGeograficoService } from '@core/services/csp/tipo-ambito-geografico.service';
 import { TipoFinalidadService } from '@core/services/csp/tipo-finalidad.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { DialogService } from '@core/services/dialog.service';
@@ -96,6 +96,7 @@ import { ProyectoRelacionFragment } from './proyecto-formulario/proyecto-relacio
 import { ProyectoResponsableEconomicoFragment } from './proyecto-formulario/proyecto-responsable-economico/proyecto-responsable-economico.fragment';
 import { ProyectoSociosFragment } from './proyecto-formulario/proyecto-socios/proyecto-socios.fragment';
 import { PROYECTO_ROUTE_PARAMS } from './proyecto-route-params';
+import { TipoAmbitoGeograficoService } from '@core/services/csp/tipo-ambito-geografico/tipo-ambito-geografico.service';
 
 const MSG_SOLICITUDES = marker('csp.solicitud');
 const MSG_CONVOCATORIAS = marker('csp.convocatoria');
@@ -293,7 +294,8 @@ export class ProyectoActionService extends ActionService {
     proyectoPeriodoAmortizacionService: ProyectoPeriodoAmortizacionService,
     periodoAmortizacionService: PeriodoAmortizacionService,
     datosContactoService: DatosContactoService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private configuracionService: ConfiguracionService
   ) {
     super();
     this.data = route.snapshot.data[PROYECTO_DATA_KEY];
@@ -319,7 +321,8 @@ export class ProyectoActionService extends ActionService {
       this.data?.isInvestigador,
       relacionService,
       palabraClaveService,
-      sgiAuthService
+      sgiAuthService,
+      configuracionService
     );
     this.addFragment(this.FRAGMENT.FICHA_GENERAL, this.fichaGeneral);
 

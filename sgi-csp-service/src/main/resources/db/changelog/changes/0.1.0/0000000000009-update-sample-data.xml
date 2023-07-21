@@ -1,0 +1,81 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000009-update-sample-data.xml">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="dev" author="master" id="0000000000009-requerimiento_justificacion">
+    <insert tableName="requerimiento_justificacion">
+      <column name="id" valueSequenceNext="requerimiento_justificacion_seq" />
+      <column name="tipo_requerimiento_id" valueComputed="(select id from ${schemaPrefix}tipo_requerimiento where nombre='Requerimiento documental')" />
+      <column name="proyecto_proyecto_sge_id" valueComputed="(select id from ${schemaPrefix}proyecto_proyecto_sge where proyecto_sge_ref='34123')" />
+      <column name="num_requerimiento" valueNumeric="1" />
+      <column name="fecha_notificacion" valueDate="2022-07-14T23:00:00" />
+      <column name="fecha_fin_alegacion" valueDate="2022-08-01T22:59:59" />
+      <column name="importe_aceptado" valueNumeric="500.53" />
+      <column name="importe_rechazado" valueNumeric="600.34" />
+      <column name="importe_reintegrar" valueNumeric="700.32" />
+      <column name="observaciones" value="Requerimiento con gastos" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000009-gasto_requerimiento_justificacion">
+    <insert tableName="gasto_requerimiento_justificacion">
+      <column name="id" valueSequenceNext="gasto_requerimiento_justificacion_seq" />
+      <column name="gasto_ref" value="OK-12682-2021-458-677-2021" />
+      <column name="requerimiento_justificacion_id" valueComputed="(select id from ${schemaPrefix}requerimiento_justificacion where observaciones='Requerimiento con gastos')" />
+      <column name="importe_aceptado" valueNumeric="2443.46" />
+      <column name="importe_rechazado" valueNumeric="0.00" />
+      <column name="importe_alegado" valueNumeric="0.00" />
+      <column name="aceptado" valueBoolean="true" />
+      <column name="incidencia" value="" />
+      <column name="alegacion" value="" />
+      <column name="identificador_justificacion" value="677/2021" />
+    </insert>
+    <insert tableName="gasto_requerimiento_justificacion">
+      <column name="id" valueSequenceNext="gasto_requerimiento_justificacion_seq" />
+      <column name="gasto_ref" value="OK-12682-2021-458-653-2021" />
+      <column name="requerimiento_justificacion_id" valueComputed="(select id from ${schemaPrefix}requerimiento_justificacion where observaciones='Requerimiento con gastos')" />
+      <column name="importe_aceptado" valueNumeric="0.00" />
+      <column name="importe_rechazado" valueNumeric="2443.46" />
+      <column name="importe_alegado" valueNumeric="0.00" />
+      <column name="aceptado" valueBoolean="false" />
+      <column name="incidencia" value="" />
+      <column name="alegacion" value="" />
+      <column name="identificador_justificacion" value="653-2021" />
+    </insert>
+    <insert tableName="gasto_requerimiento_justificacion">
+      <column name="id" valueSequenceNext="gasto_requerimiento_justificacion_seq" />
+      <column name="gasto_ref" value="OK-1755-2021-530-677-2021" />
+      <column name="requerimiento_justificacion_id" valueComputed="(select id from ${schemaPrefix}requerimiento_justificacion where observaciones='Requerimiento con gastos')" />
+      <column name="importe_aceptado" valueNumeric="0.00" />
+      <column name="importe_rechazado" valueNumeric="0.00" />
+      <column name="importe_alegado" valueNumeric="2443.46" />
+      <column name="aceptado" valueBoolean="" />
+      <column name="incidencia" value="" />
+      <column name="alegacion" value="" />
+      <column name="identificador_justificacion" value="677/2021" />
+    </insert>
+    <insert tableName="gasto_requerimiento_justificacion">
+      <column name="id" valueSequenceNext="gasto_requerimiento_justificacion_seq" />
+      <column name="gasto_ref" value="OK-1755-2021-530-653-2021" />
+      <column name="requerimiento_justificacion_id" valueComputed="(select id from ${schemaPrefix}requerimiento_justificacion where observaciones='Requerimiento con gastos')" />
+      <column name="importe_aceptado" valueNumeric="1443.46" />
+      <column name="importe_rechazado" valueNumeric="0.00" />
+      <column name="importe_alegado" valueNumeric="1000" />
+      <column name="aceptado" valueBoolean="true" />
+      <column name="incidencia" value="" />
+      <column name="alegacion" value="" />
+      <column name="identificador_justificacion" value="653-2021" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000009-gasto_requerimiento_justificacion_identificador_justificacion">
+    <update tableName="gasto_requerimiento_justificacion">
+      <column name="identificador_justificacion" value="653/2021" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="identificador_justificacion" value="653-2021" />
+      </whereParams>
+    </update>
+  </changeSet>
+</databaseChangeLog>

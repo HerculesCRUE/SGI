@@ -1,0 +1,45 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <changeSet author="master" id="0.3.0-1">
+    <addColumn tableName="proyecto">
+      <column name="codigo_interno" type="VARCHAR(50)" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.3.0-2">
+    <addColumn tableName="configuracion">
+      <column name="formato_codigo_interno_proyecto" type="varchar(255)" />
+    </addColumn>
+    <addColumn tableName="configuracion">
+      <column name="plantilla_formato_codigo_interno_proyecto" type="varchar(255)" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.3.0-3">
+    <dropUniqueConstraint constraintName="UK_TIPOORIGENFUENTEFINANCIACION_NOMBRE"
+      tableName="tipo_origen_fuente_financiacion" />
+    <dropUniqueConstraint constraintName="UK_TIPOREGIMENCONCURRENCIA_NOMBRE"
+      tableName="tipo_regimen_concurrencia" />
+    <dropUniqueConstraint constraintName="UK_TIPOAMBITOGEOGRAFICO_NOMBRE"
+      tableName="tipo_ambito_geografico" />
+  </changeSet>
+
+  <changeSet id="0.3.0-4" author="master">
+    <dropColumn tableName="tipo_facturacion">
+      <column name="tipo_comunicado" />
+    </dropColumn>
+    <addColumn tableName="tipo_facturacion">
+      <column name="incluir_en_comunicado" type="boolean" defaultValueBoolean="false">
+        <constraints nullable="false" />
+      </column>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

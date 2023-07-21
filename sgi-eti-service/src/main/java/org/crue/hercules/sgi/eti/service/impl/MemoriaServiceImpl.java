@@ -1215,53 +1215,12 @@ public class MemoriaServiceImpl implements MemoriaService {
         .and(
             MemoriaSpecifications.estadoActualIn(Arrays.asList(Constantes.TIPO_ESTADO_MEMORIA_PENDIENTE_CORRECCIONES)));
 
-    return memoriaRepository.findAll(specsMemoriasByMesesArchivadaPendienteCorrecciones).stream().filter(memoria -> {
-      EstadoMemoria lastEstado = this.estadoMemoriaRepository.findTopByMemoriaIdOrderByFechaEstadoDesc(memoria.getId());
-
-      return lastEstado.getFechaEstado().isBefore(Instant.now().atZone(ZoneOffset.UTC)
-          .minus(Period.ofMonths(configuracion.getMesesArchivadaPendienteCorrecciones())).toInstant());
-    }).map(memoria -> {
-      try {
-        this.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO);
-        sendComunicadoMemoriaRevisionMinimaArchivada(memoria);
-      } catch (Exception e) {
-        log.error(e.getMessage(), e);
-        return null;
-      }
-      return memoria.getId();
-    }).filter(Objects::nonNull)
-        .collect(Collectors.toList());
-  }
-
-  /**
-   * Se actualiza el estado de la memoria a "Archivado" de {@link Memoria} que han
-   * pasado "diasArchivadaInactivo" meses desde la fecha de estado de una memoria
-   * cuyo estados son "Favorable Pendiente de Modificaciones Mínimas" o "No
-   * procede evaluar" o "Solicitud modificación"
-   * 
-   * @return Los ids de memorias que pasan al estado "Archivado"
-   */
-  @Transactional
-  public List<Long> archivarInactivos() {
-    log.debug("archivarInactivos() - start");
-    Configuracion configuracion = configuracionService.findConfiguracion();
-    // Devuelve un listado de {@link Memoria} que han pasado
-    // "diasArchivadaInactivo" meses desde la fecha de estado de una memoria cuyo
-    // estados son "Favorable Pendiente de Modificaciones Mínimas" o "No procede
-    // evaluar" o "Solicitud modificación"
-    Specification<Memoria> specsMemoriasByDiasArchivadaInactivo = MemoriaSpecifications.activos()
-        .and(MemoriaSpecifications.estadoActualIn(Arrays.asList(
-            Constantes.TIPO_ESTADO_MEMORIA_FAVORABLE_PENDIENTE_MOD_MINIMAS,
-            Constantes.TIPO_ESTADO_MEMORIA_NO_PROCEDE_EVALUAR,
-            Constantes.TIPO_ESTADO_MEMORIA_SOLICITUD_MODIFICACION)));
-
-    List<Memoria> memorias = memoriaRepository.findAll(specsMemoriasByDiasArchivadaInactivo).stream()
+    List<Memoria> memorias = memoriaRepository.findAll(specsMemoriasByMesesArchivadaPendienteCorrecciones).stream()
         .filter(memoria -> {
           EstadoMemoria lastEstado = this.estadoMemoriaRepository
               .findTopByMemoriaIdOrderByFechaEstadoDesc(memoria.getId());
-
           return lastEstado.getFechaEstado().isBefore(Instant.now().atZone(ZoneOffset.UTC)
-              .minus(Period.ofDays(configuracion.getDiasArchivadaInactivo())).toInstant());
+              .minus(Period.ofMonths(configuracion.getMesesArchivadaPendienteCorrecciones())).toInstant());
         }).map(memoria -> {
           try {
             this.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO);
@@ -1277,8 +1236,52 @@ public class MemoriaServiceImpl implements MemoriaService {
       this.sendComunicadoMemoriaArchivadaAutomaticamentePorInactividad(memorias);
     }
 
-    log.debug("archivarInactivos() - end");
+    log.debug("archivarNoPresentados() - end");
     return memorias.stream().map(Memoria::getId).collect(Collectors.toList());
+
+  }
+
+  /**
+   * Se actualiza el estado de la memoria a "Archivado" de {@link Memoria} que han
+   * pasado "diasArchivadaInactivo" meses desde la fecha de estado de una memoria
+   * cuyo estados son "Favorable Pendiente de Modificaciones Mínimas" o "No
+   * procede evaluar" o "Solicitud modificación"
+   * 
+   * @return Los ids de memorias que pasan al estado "Archivado"
+   */
+  @Transactional
+  public List<Long> archivarInactivos() {
+    log.debug("archivarInactivos() - start - end");
+    Configuracion configuracion = configuracionService.findConfiguracion();
+    // Devuelve un listado de {@link Memoria} que han pasado
+    // "diasArchivadaInactivo" meses desde la fecha de estado de una memoria cuyo
+    // estados son "Favorable Pendiente de Modificaciones Mínimas" o "No procede
+    // evaluar" o "Solicitud modificación"
+    Specification<Memoria> specsMemoriasByDiasArchivadaInactivo = MemoriaSpecifications.activos()
+        .and(MemoriaSpecifications.estadoActualIn(Arrays.asList(
+            Constantes.TIPO_ESTADO_MEMORIA_FAVORABLE_PENDIENTE_MOD_MINIMAS,
+            Constantes.TIPO_ESTADO_MEMORIA_NO_PROCEDE_EVALUAR,
+            Constantes.TIPO_ESTADO_MEMORIA_SOLICITUD_MODIFICACION)));
+
+    return memoriaRepository.findAll(specsMemoriasByDiasArchivadaInactivo).stream()
+        .filter(memoria -> {
+          EstadoMemoria lastEstado = this.estadoMemoriaRepository
+              .findTopByMemoriaIdOrderByFechaEstadoDesc(memoria.getId());
+
+          return lastEstado.getFechaEstado().isBefore(Instant.now().atZone(ZoneOffset.UTC)
+              .minus(Period.ofDays(configuracion.getDiasArchivadaInactivo())).toInstant());
+        }).map(memoria -> {
+          try {
+            this.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO);
+            this.sendComunicadoMemoriaRevisionMinimaArchivada(memoria);
+          } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return null;
+          }
+          return memoria.getId();
+        }).filter(Objects::nonNull)
+        .collect(Collectors.toList());
+
   }
 
   public void sendComunicadoMemoriaRevisionMinimaArchivada(Memoria memoria) {

@@ -102,25 +102,27 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let memoria;let i=index;">
           <ng-container>
-            <a mat-button [routerLink]="[memoria.id]" matTooltip="{{'btn.edit' | translate}}">
-              <mat-icon color="primary">border_color</mat-icon>
+            <a color="primary" mat-icon-button [routerLink]="[memoria.id]" matTooltip="{{'btn.edit' | translate}}">
+              <mat-icon>border_color</mat-icon>
             </a>
             <ng-container *ngIf="hasPermisoEliminar(memoria.estadoActual.id, memoria.solicitanteRef)">
-              <button mat-button (click)="delete(memoria.id)" matTooltip="{{'btn.delete' | translate}}">
-                <mat-icon color="warn">highlight_off</mat-icon>
+              <button color="warn" mat-icon-button (click)="delete(memoria.id)"
+                matTooltip="{{'btn.delete' | translate}}">
+                <mat-icon>highlight_off</mat-icon>
               </button>
             </ng-container>
             <ng-container *ngIf="hasPermisoEnviarSecretaria(memoria.estadoActual.id, memoria.solicitante.id)">
-              <button mat-button *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-ESCR'" (click)="enviarSecretaria(memoria)"
-                matTooltip="{{'btn.eti.memoria.enviar' | translate}}">
-                <mat-icon color="primary">send</mat-icon>
+              <button color="primary" mat-icon-button *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-ESCR'"
+                (click)="enviarSecretaria(memoria)"
+                matTooltip="{{isMemoriaSeguimiento(memoria.estadoActual?.id) ? ('btn.eti.memoria.enviar-seguimiento' | translate) : ('btn.eti.memoria.enviar' | translate)}}">
+                <mat-icon>send</mat-icon>
               </button>
             </ng-container>
             <ng-container *ngIf="hasPermisoEnviarSecretariaRetrospectiva(memoria, memoria.solicitante.id)">
-              <button mat-button *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-ERTR'"
+              <button color="primary" mat-icon-button *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-ERTR'"
                 (click)="enviarSecretariaRetrospectiva(memoria)"
                 matTooltip="{{'btn.eti.memoria.enviar-retrospectiva' | translate}}">
-                <mat-icon color="primary">assignment</mat-icon>
+                <mat-icon>send_and_archive</mat-icon>
               </button>
             </ng-container>
           </ng-container>

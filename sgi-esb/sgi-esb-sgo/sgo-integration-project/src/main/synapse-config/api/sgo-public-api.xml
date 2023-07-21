@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <api context="/sgo/public" name="sgo-public-api" xmlns="http://ws.apache.org/ns/synapse">
 
+  <!-- departamentos -->
+  <resource methods="GET" url-mapping="/departamentos">
+    <inSequence>
+      <sequence key="sgo-add-x-api-key-sequence" />
+      <send>
+        <endpoint key="sgo-endpoint"/>
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond/>
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence"/>
+    </faultSequence>
+  </resource>
+
   <!-- paises -->
   <resource methods="GET" url-mapping="/paises">
     <inSequence>

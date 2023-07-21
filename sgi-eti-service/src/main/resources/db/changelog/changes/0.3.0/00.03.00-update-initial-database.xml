@@ -1,0 +1,25 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet author="user (generated)" id="00.03.00-comite">
+    <dropColumn columnName="nombre_secretario" tableName="comite" />
+    <dropColumn columnName="nombre_decreto" tableName="comite" />
+    <dropColumn columnName="articulo" tableName="comite" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="00.03.00-peticion-evaluacion">
+    <dropDefaultValue columnDataType="boolean" columnName="externo" tableName="peticion_evaluacion" />
+    <dropColumn columnName="externo" tableName="peticion_evaluacion" />
+    <addColumn tableName="peticion_evaluacion">
+      <column name="tutor_ref" type="VARCHAR(255)" />
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

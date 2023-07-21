@@ -881,7 +881,6 @@ public class EvaluacionControllerTest extends BaseControllerTest {
     peticionEvaluacion.setId(id);
     peticionEvaluacion.setCodigo("Codigo1");
     peticionEvaluacion.setDisMetodologico("DiseñoMetodologico1");
-    peticionEvaluacion.setExterno(Boolean.FALSE);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
@@ -896,8 +895,7 @@ public class EvaluacionControllerTest extends BaseControllerTest {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
-        "articulo", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);
@@ -1006,7 +1004,6 @@ public class EvaluacionControllerTest extends BaseControllerTest {
     peticionEvaluacion.setId(id);
     peticionEvaluacion.setCodigo("Codigo1");
     peticionEvaluacion.setDisMetodologico("DiseñoMetodologico1");
-    peticionEvaluacion.setExterno(Boolean.FALSE);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
@@ -1021,8 +1018,7 @@ public class EvaluacionControllerTest extends BaseControllerTest {
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto",
-        "articulo", formulario, Boolean.TRUE);
+    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
 
     TipoMemoria tipoMemoria = new TipoMemoria();
     tipoMemoria.setId(1L);

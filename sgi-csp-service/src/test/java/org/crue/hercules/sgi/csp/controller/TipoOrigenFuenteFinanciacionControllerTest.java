@@ -3,8 +3,6 @@ package org.crue.hercules.sgi.csp.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.TipoOrigenFuenteFinanciacion;
 import org.crue.hercules.sgi.csp.service.TipoOrigenFuenteFinanciacionService;
@@ -27,10 +25,12 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 /**
  * TipoOrigenFuenteFinanciacionControllerTest
  */
-@WebMvcTest(TipoOrigenFuenteFinanciacionController.class)
+@WebMvcTest({ TipoOrigenFuenteFinanciacionController.class })
 class TipoOrigenFuenteFinanciacionControllerTest extends BaseControllerTest {
 
   @MockBean
@@ -39,7 +39,7 @@ class TipoOrigenFuenteFinanciacionControllerTest extends BaseControllerTest {
   private static final String TIPO_ORIGEN_FUENTE_FINANCIACION_CONTROLLER_BASE_PATH = "/tipoorigenfuentefinanciaciones";
 
   @Test
-  @WithMockUser(username = "user")
+  @WithMockUser(username = "user", authorities = { "CSP-FNT-E" })
   void findAll_ReturnsPage() throws Exception {
     // given: Una lista con 37 TipoOrigenFuenteFinaciacion
     List<TipoOrigenFuenteFinanciacion> tiposOrigenFuenteFinaciacion = new ArrayList<>();
@@ -52,7 +52,8 @@ class TipoOrigenFuenteFinanciacionControllerTest extends BaseControllerTest {
     Integer pageSize = 10;
 
     BDDMockito.given(
-        tipoOrigenFuenteFinanciacionService.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
+        tipoOrigenFuenteFinanciacionService.findActivos(ArgumentMatchers.<String>any(),
+            ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<TipoOrigenFuenteFinanciacion>>() {
           @Override
           public Page<TipoOrigenFuenteFinanciacion> answer(InvocationOnMock invocation) throws Throwable {
@@ -97,14 +98,15 @@ class TipoOrigenFuenteFinanciacionControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user")
+  @WithMockUser(username = "user", authorities = { "CSP-FNT-E" })
   void findAll_EmptyList_Returns204() throws Exception {
     // given: Una lista vacia de TipoOrigenFuenteFinanciacion
     List<TipoOrigenFuenteFinanciacion> tiposOrigenFuenteFinanciacion = new ArrayList<>();
     Integer page = 0;
     Integer pageSize = 10;
     BDDMockito.given(
-        tipoOrigenFuenteFinanciacionService.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
+        tipoOrigenFuenteFinanciacionService.findActivos(ArgumentMatchers.<String>any(),
+            ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<TipoOrigenFuenteFinanciacion>>() {
           @Override
           public Page<TipoOrigenFuenteFinanciacion> answer(InvocationOnMock invocation) throws Throwable {

@@ -1,0 +1,42 @@
+<sgi-action-dialog [title]="title">
+  <form [formGroup]="formGroup" fxLayout="column" fxLayoutGap="20px">
+
+    <!-- Nombre -->
+    <mat-form-field fxFlex>
+      <mat-label>{{'csp.rol-socio.nombre' | translate}}</mat-label>
+      <input matInput formControlName="nombre" type="text" placeholder="{{'csp.rol-socio.nombre' | translate}}"
+        required>
+      <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
+        {{'error.required.entity' | translate:msgParamNombreEntity}}
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Abreviatura -->
+    <div fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="50%">
+        <input matInput formControlName="abreviatura" type="text" maxlength="5"
+          placeholder="{{'csp.rol-socio.abreviatura' | translate}}" required>
+        <mat-error *ngIf="formGroup.controls.abreviatura.errors?.required">
+          {{'error.required.entity' | translate:msgParamAbreviaturaEntity}}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field fxFlex="50%">
+        <mat-label>{{'csp.rol-socio.coordinador' | translate}}</mat-label>
+        <mat-select matNativeControl formControlName="coordinador" required>
+          <mat-option [value]="true" selected>{{'label.si' | translate}}</mat-option>
+          <mat-option [value]="false">{{'label.no' | translate}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="formGroup.controls.abreviatura.errors?.required">
+          {{'error.required.entity' | translate:msgParamCoordinadorEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field fxFlex>
+      <textarea matInput placeholder="Descripción" formControlName="descripcion" rows="5"></textarea>
+    </mat-form-field>
+
+  </form>
+
+</sgi-action-dialog>

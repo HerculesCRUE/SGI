@@ -40,7 +40,7 @@
     </div>
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Nombre razón social -->
-      <mat-form-field fxFlex="35%">
+      <mat-form-field fxFlex="50%">
         <mat-label>{{'eer.empresa-explotacion-resultados.nombre-razon-social' | translate}}</mat-label>
         <input matInput type="text"
           placeholder="{{'eer.empresa-explotacion-resultados.nombre-razon-social' | translate}}"
@@ -48,7 +48,7 @@
       </mat-form-field>
 
       <!-- Entidad -->
-      <div fxLayout="row" fxFlex="30%">
+      <div fxLayout="row" fxFlex="50%">
         <mat-form-field fxFlex>
           <mat-label>{{ 'eer.empresa-explotacion-resultados.entidad' | translate }}</mat-label>
           <sgi-select-empresa placeholder="{{'eer.empresa-explotacion-resultados.entidad' | translate}}"
@@ -56,15 +56,16 @@
           </sgi-select-empresa>
         </mat-form-field>
       </div>
-
-      <!-- Objeto social -->
-      <mat-form-field fxFlex="35%">
-        <mat-label>{{'eer.empresa-explotacion-resultados.objeto-social' | translate}}</mat-label>
-        <input matInput type="text" placeholder="{{'eer.empresa-explotacion-resultados.objeto-social' | translate}}"
-          formControlName="objetoSocial">
-      </mat-form-field>
     </div>
 
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Objeto social -->
+      <mat-form-field fxFlex="100%">
+        <mat-label>{{'eer.empresa-explotacion-resultados.objeto-social' | translate}}</mat-label>
+        <textarea matInput type="text" placeholder="{{'eer.empresa-explotacion-resultados.objeto-social' | translate}}"
+          formControlName="objetoSocial"></textarea>
+      </mat-form-field>
+    </div>
     <!-- Acciones -->
     <div class="buttons-final">
       <div class="col filter-button">

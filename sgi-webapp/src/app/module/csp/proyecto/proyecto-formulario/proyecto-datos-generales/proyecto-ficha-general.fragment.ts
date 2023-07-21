@@ -7,17 +7,17 @@ import { IProyectoPalabraClave } from '@core/models/csp/proyecto-palabra-clave';
 import { IProyectoProrroga, Tipo } from '@core/models/csp/proyecto-prorroga';
 import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
-import { ITipoAmbitoGeografico } from '@core/models/csp/tipo-ambito-geografico';
+import { ITipoAmbitoGeografico } from '@core/models/csp/tipos-configuracion';
 import { IModeloEjecucion, ITipoFinalidad } from '@core/models/csp/tipos-configuracion';
 import { IRelacion, TipoEntidad } from '@core/models/rel/relacion';
 import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
 import { FormFragment } from '@core/services/action-service';
+import { ConfiguracionService } from '@core/services/csp/configuracion.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { ProyectoIVAService } from '@core/services/csp/proyecto-iva.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
-import { TipoAmbitoGeograficoService } from '@core/services/csp/tipo-ambito-geografico.service';
 import { TipoFinalidadService } from '@core/services/csp/tipo-finalidad.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { RelacionService } from '@core/services/rel/relaciones/relacion.service';
@@ -31,6 +31,7 @@ import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, from, merge, Observable, of, Subject, Subscription } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { IProyectoRelacionTableData } from '../proyecto-relaciones/proyecto-relaciones.fragment';
+import { TipoAmbitoGeograficoService } from '@core/services/csp/tipo-ambito-geografico/tipo-ambito-geografico.service';
 
 interface IProyectoDatosGenerales extends IProyecto {
   convocatoria: IConvocatoria;
@@ -104,6 +105,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
     private relacionService: RelacionService,
     private readonly palabraClaveService: PalabraClaveService,
     public authService: SgiAuthService,
+    public configuracionService: ConfiguracionService
   ) {
     super(key);
     // TODO: Eliminar la declaración de activo, ya que no debería ser necesaria
@@ -227,6 +229,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       titulo: new FormControl('', [
         Validators.required, Validators.maxLength(200)]),
       acronimo: new FormControl('', [Validators.maxLength(50)]),
+      codigoInterno: new FormControl(null, [Validators.maxLength(50)]),
       codigoExterno: new FormControl(null, [Validators.maxLength(50)]),
       fechaInicio: new FormControl(null, [
         Validators.required]),
@@ -432,6 +435,15 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
         }));
     }
 
+    this.subscriptions.push(
+      this.configuracionService.getConfiguracion().subscribe(configuracion => {
+        form.controls.codigoInterno.setValidators([
+          form.controls.codigoInterno.validator,
+          Validators.pattern(configuracion.formatoCodigoInternoProyecto)
+        ]);
+      })
+    );
+
     return form;
   }
 
@@ -478,6 +490,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       id: proyecto.id,
       titulo: proyecto.titulo,
       acronimo: proyecto.acronimo,
+      codigoInterno: proyecto.codigoInterno,
       codigoExterno: proyecto.codigoExterno,
       fechaInicio: proyecto.fechaInicio,
       fechaFin: proyecto.fechaFin,
@@ -536,6 +549,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
     const form = this.getFormGroup().controls;
     this.proyecto.titulo = form.titulo.value;
     this.proyecto.acronimo = form.acronimo.value;
+    this.proyecto.codigoInterno = form.codigoInterno.value;
     this.proyecto.codigoExterno = form.codigoExterno.value;
     this.proyecto.fechaInicio = form.fechaInicio.value;
     this.proyecto.fechaFin = form.fechaFin.value;

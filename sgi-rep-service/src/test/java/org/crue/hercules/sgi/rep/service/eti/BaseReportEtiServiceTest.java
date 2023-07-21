@@ -92,9 +92,7 @@ abstract class BaseReportEtiServiceTest extends BaseReportServiceTest {
     return ComiteDto.builder()
         .id(idComite)
         .comite(comite)
-        .nombreDecreto("nombreDecreto")
         .nombreInvestigacion("nombreInvestigacion")
-        .nombreSecretario("nombreSecretario")
         .genero(Genero.M)
         .formulario(generarMockFormulario(1L))
         .activo(Boolean.TRUE)
@@ -133,7 +131,7 @@ abstract class BaseReportEtiServiceTest extends BaseReportServiceTest {
         .apellidos("apellidos")
         .numeroDocumento(numeroDocumento)
         .tipoDocumento(TipoDocumentoDto.builder().nombre("NIF").build())
-        .sexo(SexoDto.builder().nombre("V").build())
+        .sexo(SexoDto.builder().id("V").nombre("Varon").build())
         .emails(generarMockEmails())
         .build();
   }

@@ -5,8 +5,8 @@
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
 
           <ng-container *ngIf="!node.documento">
-            <button mat-icon-button matTreeNodeToggle>
-              <mat-icon color="primary" class="mat-icon-rtl-mirror">
+            <button color="primary" mat-button matTreeNodeToggle>
+              <mat-icon class="mat-icon-rtl-mirror">
                 {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
               </mat-icon>
               {{node.title}}{{node.required ? '\*' : ''}}
@@ -14,29 +14,30 @@
           </ng-container>
 
           <ng-container *ngIf="!!node.documento">
-            <button mat-icon-button *ngIf="viewMode === VIEW_MODE.NEW">
+            <button mat-button *ngIf="viewMode === VIEW_MODE.NEW">
               {{node.title}}{{node.required ? '\*' : ''}}
             </button>
 
-            <button mat-icon-button *ngIf="(viewMode !== VIEW_MODE.NEW && node !== viewingNode)"
+            <button color="primary" mat-button *ngIf="(viewMode !== VIEW_MODE.NEW && node !== viewingNode)"
               (click)="showNodeDetails(node)">
               {{node.title}}{{node.required ? '\*' : ''}}
-              <mat-icon color="primary" class="mat-icon-rtl-mirror">
+              <mat-icon class="mat-icon-rtl-mirror">
                 {{ 'visibility'}}
               </mat-icon>
             </button>
-            <button mat-icon-button *ngIf="(viewMode !== VIEW_MODE.NEW && node === viewingNode)"
+            <button color="primary" mat-button *ngIf="(viewMode !== VIEW_MODE.NEW && node === viewingNode)"
               (click)="hideNodeDetails()">
               {{node.title}}{{node.required ? '\*' : ''}}
-              <mat-icon color="primary" class="mat-icon-rtl-mirror">
+              <mat-icon class="mat-icon-rtl-mirror">
                 {{ 'visibility_off'}}
               </mat-icon>
             </button>
           </ng-container>
         </mat-tree-node>
         <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
-          <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.documento?.value?.nombre">
-            <mat-icon color="primary" class="mat-icon-rtl-mirror">
+          <button color="primary" mat-button matTreeNodeToggle
+            [attr.aria-label]="'Toggle ' + node.documento?.value?.nombre">
+            <mat-icon class="mat-icon-rtl-mirror">
               {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
             {{node.title | translate}}{{node.required ? '\*' : ''}}

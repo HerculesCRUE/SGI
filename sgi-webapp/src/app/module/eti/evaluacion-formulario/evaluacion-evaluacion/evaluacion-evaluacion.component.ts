@@ -150,7 +150,8 @@ export class EvaluacionEvaluacionComponent extends FormFragmentComponent<IMemori
       const tipoDictamenConInforme = [
         DICTAMEN.FAVORABLE,
         DICTAMEN.PDTE_CORRECCIONES,
-        DICTAMEN.FAVORABLE_PDTE_REV_MINIMA
+        DICTAMEN.FAVORABLE_PDTE_REV_MINIMA,
+        DICTAMEN.NO_PROCEDE_EVALUAR
       ].includes(this.formGroup.controls.dictamen.value?.id);
       return hasDictamenAndNotEdited && tipoMemoriaWithInforme && tipoDictamenConInforme;
     } else if (this.formPart.evaluacion?.tipoEvaluacion?.id === TIPO_EVALUACION.RETROSPECTIVA) {

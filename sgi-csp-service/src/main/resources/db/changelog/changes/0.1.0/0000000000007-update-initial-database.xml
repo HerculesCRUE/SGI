@@ -1,0 +1,145 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000007-update-initial-database.xml">
+
+  <changeSet author="user (generated)" id="0000000000007-1">
+    <createSequence incrementBy="1" sequenceName="grupo_responsable_economico_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000007-2">
+    <createTable tableName="grupo_responsable_economico">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="grupo_responsable_economicoPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="fecha_fin" type="TIMESTAMP" />
+      <column name="fecha_inicio" type="TIMESTAMP" />
+      <column name="grupo_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="persona_ref" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000007-3">
+    <addForeignKeyConstraint baseColumnNames="grupo_id" baseTableName="grupo_responsable_economico" constraintName="FK_GRUPORESPONSABLEECONOMICO_GRUPO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="grupo" validate="true" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000007-4">
+    <createSequence incrementBy="1" sequenceName="grupo_equipo_instrumental_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000007-5">
+    <createTable tableName="grupo_equipo_instrumental">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="grupo_equipo_instrumentalPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="grupo_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="nombre" type="VARCHAR(100)">
+        <constraints nullable="false" />
+      </column>
+      <column name="num_registro" type="VARCHAR(50)" />
+      <column name="descripcion" type="VARCHAR(250)" />
+    </createTable>
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000007-6">
+    <addForeignKeyConstraint baseColumnNames="grupo_id" baseTableName="grupo_equipo_instrumental" constraintName="FK_GRUPOEQUIPOINSTRUMENTAL_GRUPO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="grupo" validate="true" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000007-7">
+    <createSequence incrementBy="1" sequenceName="grupo_enlace_seq" startValue="1" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000007-8">
+    <createTable tableName="grupo_enlace">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="grupo_enlacePK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="grupo_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="enlace" type="VARCHAR(100)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000007-9">
+    <addForeignKeyConstraint baseColumnNames="grupo_id" baseTableName="grupo_enlace" constraintName="FK_GRUPOENLACE_GRUPO" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="grupo" validate="true" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000007-10">
+    <dropNotNullConstraint columnDataType="TIMESTAMP" columnName="fecha_inicio" tableName="grupo_persona_autorizada" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000007-11">
+    <createSequence incrementBy="1" sequenceName="grupo_linea_clasificacion_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000007-12">
+    <createTable tableName="grupo_linea_clasificacion">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="grupo_linea_clasificacionPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="clasificacion_ref" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+      <column name="grupo_linea_investigacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000007-13">
+    <addUniqueConstraint columnNames="grupo_linea_investigacion_id, clasificacion_ref" constraintName="UK_GRUPOLINEACLASIFICACION_GRUPOLINEAINVESTIGACION_CLASIFICACION" tableName="grupo_linea_clasificacion" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000007-14">
+    <addForeignKeyConstraint baseColumnNames="grupo_linea_investigacion_id" baseTableName="grupo_linea_clasificacion" constraintName="FK_GRUPOLINEACLASIFICACION_GRUPOLINEAINVESTIGACION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="grupo_linea_investigacion" validate="true" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000007-15">
+    <createSequence incrementBy="1" sequenceName="grupo_linea_equipo_instrumental_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000007-16">
+    <createTable tableName="grupo_linea_equipo_instrumental">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="grupo_linea_equipo_instrumentalPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="grupo_linea_investigacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="grupo_equipo_instrumental_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000007-17">
+    <addForeignKeyConstraint baseColumnNames="grupo_linea_investigacion_id" baseTableName="grupo_linea_equipo_instrumental" constraintName="FK_GRUPOLINEAEQUIPOINSTRUMENTAL_GRUPOLINEAINVESTIGACION" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="grupo_linea_investigacion" validate="true" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000007-18">
+    <addForeignKeyConstraint baseColumnNames="grupo_equipo_instrumental_id" baseTableName="grupo_linea_equipo_instrumental" constraintName="FK_GRUPOLINEAEQUIPOINSTRUMENTAL_GRUPOEQUIPOINSTRUMENTAL" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="grupo_equipo_instrumental" validate="true" />
+  </changeSet>
+
+</databaseChangeLog>

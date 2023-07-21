@@ -34,17 +34,17 @@
         </th>
         <td mat-cell *matCellDef="let wrapper">
           <ng-container>
-            <button mat-button matTooltip="{{'btn.view' | translate}}" (click)="openModal(wrapper)"
+            <button color="primary" mat-icon-button matTooltip="{{'btn.view' | translate}}" (click)="openModal(wrapper)"
               *ngIf="this.formPart.readonly">
-              <mat-icon color="primary">visibility</mat-icon>
+              <mat-icon>visibility</mat-icon>
             </button>
-            <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="openModal(wrapper)"
+            <button color="primary" mat-icon-button matTooltip="{{'btn.edit' | translate}}" (click)="openModal(wrapper)"
               *ngIf="!this.formPart.readonly">
-              <mat-icon color="primary">border_color</mat-icon>
+              <mat-icon>border_color</mat-icon>
             </button>
-            <button mat-button matTooltip="{{'btn.delete' | translate}}" (click)="deleteProyectoEquipo(wrapper)"
-              *ngIf="!this.formPart.readonly">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
+              (click)="deleteProyectoEquipo(wrapper)" *ngIf="!this.formPart.readonly">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>

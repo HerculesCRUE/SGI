@@ -47,9 +47,12 @@ public class MemoriaPeticionEvaluacion implements Serializable {
 
   private String solicitanteRef;
 
+  private String tutorRef;
+
   public MemoriaPeticionEvaluacion(Long id, String responsableRef, String numReferencia, String titulo, Comite comite,
       TipoEstadoMemoria estadoActual, Instant fechaEvaluacion, Instant fechaLimite, boolean isResponsable,
-      boolean activo, boolean requiereRetrospectiva, Retrospectiva retrospectiva, String solicitanteRef) {
+      boolean activo, boolean requiereRetrospectiva, Retrospectiva retrospectiva, String solicitanteRef,
+      String tutorRef) {
 
     this.id = id;
     this.responsableRef = responsableRef;
@@ -64,6 +67,7 @@ public class MemoriaPeticionEvaluacion implements Serializable {
     this.requiereRetrospectiva = requiereRetrospectiva;
     this.retrospectiva = retrospectiva;
     this.solicitanteRef = solicitanteRef;
+    this.tutorRef = tutorRef;
   }
 
 }

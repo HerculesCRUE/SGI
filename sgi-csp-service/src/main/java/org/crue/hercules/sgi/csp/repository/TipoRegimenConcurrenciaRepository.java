@@ -15,4 +15,14 @@ public interface TipoRegimenConcurrenciaRepository
    * @return el {@link TipoRegimenConcurrencia} con el nombre indicado
    */
   Optional<TipoRegimenConcurrencia> findByNombre(String nombre);
+
+  /**
+   * Obtiene la entidad {@link TipoRegimenConcurrencia} activo con el nombre
+   * indicado
+   *
+   * @param nombre el nombre de {@link TipoRegimenConcurrencia}.
+   * @return el {@link TipoRegimenConcurrencia} con el nombre indicado
+   */
+  Optional<TipoRegimenConcurrencia> findByNombreAndActivoIsTrue(String nombre);
+
 }

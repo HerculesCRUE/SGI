@@ -1,0 +1,157 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000007-update-sample-data.xml">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="dev" author="master" id="0000000000007-grupo-responsable-economico">
+    <insert tableName="grupo_responsable_economico">
+      <column name="id" valueSequenceNext="grupo_responsable_economico_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1')" />
+      <column name="persona_ref" value="22932567" />
+      <column name="fecha_inicio" valueDate="2021-10-07T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-01-01T22:59:59" />
+    </insert>
+    <insert tableName="grupo_responsable_economico">
+      <column name="id" valueSequenceNext="grupo_responsable_economico_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1')" />
+      <column name="persona_ref" value="01889311" />
+      <column name="fecha_inicio" valueDate="2021-10-07T23:00:00" />
+      <column name="fecha_fin" valueDate="2021-11-01T22:59:59" />
+    </insert>
+    <insert tableName="grupo_responsable_economico">
+      <column name="id" valueSequenceNext="grupo_responsable_economico_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1')" />
+      <column name="persona_ref" value="01925489" />
+      <column name="fecha_inicio" valueDate="2021-10-07T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-01-01T22:59:59" />
+    </insert>
+    <insert tableName="grupo_responsable_economico">
+      <column name="id" valueSequenceNext="grupo_responsable_economico_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 2')" />
+      <column name="persona_ref" value="02591317" />
+      <column name="fecha_inicio" valueDate="2022-02-14T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-11-01T22:59:59" />
+    </insert>
+    <insert tableName="grupo_responsable_economico">
+      <column name="id" valueSequenceNext="grupo_responsable_economico_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 2')" />
+      <column name="persona_ref" value="22932567" />
+      <column name="fecha_inicio" valueDate="2022-04-14T23:00:00" />
+    </insert>
+    <insert tableName="grupo_responsable_economico">
+      <column name="id" valueSequenceNext="grupo_responsable_economico_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 3')" />
+      <column name="persona_ref" value="01889311" />
+      <column name="fecha_inicio" valueDate="2022-04-14T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-11-01T22:59:59" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000007-grupo-equipo-instrumental">
+    <insert tableName="grupo_equipo_instrumental">
+      <column name="id" valueSequenceNext="grupo_equipo_instrumental_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1')" />
+      <column name="nombre" value="Prueba 1" />
+      <column name="num_registro" value="REG-1" />
+      <column name="descripcion" value="Descripción prueba 1, registro 1 del grupo 1" />
+    </insert>
+
+    <insert tableName="grupo_equipo_instrumental">
+      <column name="id" valueSequenceNext="grupo_equipo_instrumental_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1')" />
+      <column name="nombre" value="Prueba 2" />
+      <column name="num_registro" value="REG-2" />
+      <column name="descripcion" value="Descripción prueba 2, registro 2 del grupo 1" />
+    </insert>
+
+    <insert tableName="grupo_equipo_instrumental">
+      <column name="id" valueSequenceNext="grupo_equipo_instrumental_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 2')" />
+      <column name="nombre" value="Prueba 1" />
+      <column name="num_registro" value="REG-1" />
+      <column name="descripcion" value="Descripción prueba 1, registro 1 del grupo 2" />
+    </insert>
+
+    <insert tableName="grupo_equipo_instrumental">
+      <column name="id" valueSequenceNext="grupo_equipo_instrumental_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 3')" />
+      <column name="nombre" value="Prueba 1" />
+      <column name="num_registro" value="REG-1" />
+      <column name="descripcion" value="Descripción prueba 1, registro 1 del grupo 3" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000007-grupo-enlace">
+    <insert tableName="grupo_enlace">
+      <column name="id" valueSequenceNext="grupo_enlace_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1')" />
+      <column name="enlace" value="www.enlace1.com" />
+    </insert>
+
+    <insert tableName="grupo_enlace">
+      <column name="id" valueSequenceNext="grupo_enlace_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1')" />
+      <column name="enlace" value="www.enlace2.com" />
+    </insert>
+
+    <insert tableName="grupo_enlace">
+      <column name="id" valueSequenceNext="grupo_enlace_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 2')" />
+      <column name="enlace" value="www.enlace1.com" />
+    </insert>
+
+    <insert tableName="grupo_enlace">
+      <column name="id" valueSequenceNext="grupo_enlace_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 3')" />
+      <column name="enlace" value="www.enlace1.com" />
+    </insert>
+  </changeSet>
+
+  <!-- Eliminación de columna de configuracion.codigoUniversidad -->
+  <changeSet author="user (generated)" id="0000000000007-configuracion">
+    <dropColumn columnName="cod_universidad" tableName="configuracion" />
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000007-grupo-persona-autorizada">
+    <insert tableName="grupo_persona_autorizada">
+      <column name="id" valueSequenceNext="grupo_persona_autorizada_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1')" />
+      <column name="persona_ref" value="22932567" />
+      <column name="fecha_inicio" valueDate="2021-10-07T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-01-01T22:59:59" />
+    </insert>
+    <insert tableName="grupo_persona_autorizada">
+      <column name="id" valueSequenceNext="grupo_persona_autorizada_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 2')" />
+      <column name="persona_ref" value="02591317" />
+      <column name="fecha_inicio" valueDate="2022-02-14T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-11-01T22:59:59" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000007-grupo-linea-investigacion">
+    <insert tableName="grupo_linea_investigacion">
+      <column name="id" valueSequenceNext="grupo_linea_investigacion_seq" />
+      <column name="grupo_id" valueComputed="(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 3')" />
+      <column name="linea_investigacion_id" valueComputed="(select id from ${schemaPrefix}linea_investigacion where nombre='Psicología Laboral u Organizacional')" />
+      <column name="fecha_inicio" valueDate="2022-04-14T23:00:00" />
+      <column name="fecha_fin" valueDate="2022-11-01T22:59:59" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000007-grupo-linea-clasificacion">
+    <insert tableName="grupo_linea_clasificacion">
+      <column name="id" valueSequenceNext="grupo_linea_clasificacion_seq" />
+      <column name="grupo_linea_investigacion_id" valueComputed="(select gl.id from ${schemaPrefix}grupo_linea_investigacion gl join ${schemaPrefix}grupo g on gl.grupo_id=g.id where nombre='Grupo investigación 1')" />
+      <column name="clasificacion_ref" value="666" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="0000000000007-grupo-linea-equipo-instrumental">
+    <insert tableName="grupo_linea_equipo_instrumental">
+      <column name="id" valueSequenceNext="grupo_linea_equipo_instrumental_seq" />
+      <column name="grupo_linea_investigacion_id" valueComputed="(select id from ${schemaPrefix}grupo_linea_investigacion where grupo_id =(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1') and linea_investigacion_id=(select id from ${schemaPrefix}linea_investigacion where nombre='Psicología Laboral u Organizacional'))" />
+      <column name="grupo_equipo_instrumental_id" valueComputed="(select id from ${schemaPrefix}grupo_equipo_instrumental where grupo_id =(select id from ${schemaPrefix}grupo where nombre='Grupo investigación 1') and num_registro='REG-1')" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

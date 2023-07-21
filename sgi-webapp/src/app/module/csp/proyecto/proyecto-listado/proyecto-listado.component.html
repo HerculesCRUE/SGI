@@ -41,9 +41,17 @@
           </mat-form-field>
         </div>
 
+        <!-- Código Interno -->
+        <div class="col" fxFlex="1 1.4 auto">
+          <mat-form-field>
+            <mat-label>{{'csp.proyecto.codigo-interno' | translate}}</mat-label>
+            <input matInput placeholder="{{'csp.proyecto.codigo-interno' | translate}}" formControlName="codigoInterno">
+          </mat-form-field>
+        </div>
+
         <!-- Estado -->
         <ng-container>
-          <div class="col">
+          <div class="col" fxFlex="15%">
             <mat-form-field>
               <mat-label>{{'csp.proyecto.estado' | translate}}</mat-label>
               <mat-select matNativeControl formControlName="estado">
@@ -350,19 +358,20 @@
         <td mat-cell *matCellDef="let proyecto">{{proyecto.titulo}}</td>
       </ng-container>
 
-      <!-- Acronimo -->
-      <ng-container matColumnDef="acronimo">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header scope="header"> {{'csp.proyecto.acronimo' | translate}}
-        </th>
-        <td mat-cell *matCellDef="let proyecto">{{proyecto.acronimo}}</td>
-      </ng-container>
-
       <!-- Referencia en entidad convocante -->
       <ng-container matColumnDef="codigoExterno">
         <th mat-header-cell *matHeaderCellDef mat-sort-header scope="header"> {{'csp.proyecto.ref-codigo-externo' |
           translate}}
         </th>
         <td mat-cell *matCellDef="let proyecto">{{proyecto.codigoExterno}}</td>
+      </ng-container>
+
+      <!-- Código interno de proyecto -->
+      <ng-container matColumnDef="codigoInterno">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header scope="header"> {{'csp.proyecto.codigo-interno' |
+          translate}}
+        </th>
+        <td mat-cell *matCellDef="let proyecto">{{proyecto.codigoInterno}}</td>
       </ng-container>
 
       <!-- Fecha inicio -->

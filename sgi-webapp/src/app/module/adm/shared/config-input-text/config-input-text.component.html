@@ -10,7 +10,8 @@
         {{ 'error.required.field' | translate:msgParamLabel }}
       </mat-error>
     </mat-form-field>
-
+    <sgi-field-info [visible]="info" matSuffix message="{{info | translate}}">
+    </sgi-field-info>
     <button [disabled]="!formGroup.valid || !hasChanges()" color="primary" mat-icon-button (click)="save()"
       matTooltip="{{'btn.save' | translate}}">
       <mat-icon>save</mat-icon>

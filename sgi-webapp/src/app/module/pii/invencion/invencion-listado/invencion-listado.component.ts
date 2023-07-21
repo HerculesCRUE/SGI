@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IInvencion } from '@core/models/pii/invencion';
@@ -14,6 +15,7 @@ import { IPais } from '@core/models/sgo/pais';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { DialogService } from '@core/services/dialog.service';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
 import { SectorAplicacionService } from '@core/services/pii/sector-aplicacion/sector-aplicacion.service';
@@ -28,7 +30,7 @@ import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
-import { IInvencionListadoModalData, InvencionListadoExportModalComponent } from '../modals/invencion-listado-export-modal/invencion-listado-export-modal.component';
+import { InvencionListadoExportModalComponent } from '../modals/invencion-listado-export-modal/invencion-listado-export-modal.component';
 
 const MSG_BUTTON_NEW = marker('btn.add.entity');
 const MSG_REACTIVE = marker('msg.reactivate.entity');
@@ -62,6 +64,8 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
   invencion$: Observable<IInvencion[]>;
   private busquedaAvanzada = false;
 
+  private limiteRegistrosExportacionExcel: string;
+
   readonly sectoresAplicacion$: Observable<ISectorAplicacion[]>;
   readonly tiposProteccion$: Observable<ITipoProteccion[]>;
   readonly viasProteccion$ = new BehaviorSubject<IViaProteccion[]>([]);
@@ -90,7 +94,8 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
     tipoProteccionService: TipoProteccionService,
     private viaProteccionService: ViaProteccionService,
     private paisService: PaisService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService
 
   ) {
     super();
@@ -148,6 +153,11 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
         }
       }
     ));
+
+    this.suscripciones.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('pii-exp-max-num-registros-excel-invencion-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IInvencion>> {
@@ -397,8 +407,10 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
   }
 
   openExportModal(): void {
-    const data: IInvencionListadoModalData = {
-      findOptions: this.findOptions
+    const data: IBaseExportModalData = {
+      findOptions: this.findOptions,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

@@ -73,21 +73,21 @@
         </th>
         <td mat-cell *matCellDef="let conceptoGasto">
           <ng-container *sgiHasAuthority="'CSP-TGTO-E'">
-            <button mat-button matTooltip="{{'btn.edit' | translate}}" (click)="openModal(conceptoGasto)"
-              *ngIf="conceptoGasto.activo">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" mat-icon-button matTooltip="{{'btn.edit' | translate}}"
+              (click)="openModal(conceptoGasto)" *ngIf="conceptoGasto.activo">
+              <mat-icon>border_color</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'CSP-TGTO-B'">
-            <button *ngIf="conceptoGasto.activo === true" mat-button matTooltip="{{'btn.delete' | translate}}"
-              (click)="deactivateConceptoGasto(conceptoGasto)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" *ngIf="conceptoGasto.activo === true" mat-icon-button
+              matTooltip="{{'btn.delete' | translate}}" (click)="deactivateConceptoGasto(conceptoGasto)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'CSP-TGTO-R'">
-            <button *ngIf="conceptoGasto.activo === false" mat-button matTooltip="{{'btn.recover' | translate}}"
-              (click)="activateConceptoGasto(conceptoGasto)">
-              <mat-icon color="accent">add_circle_outline</mat-icon>
+            <button color="accent" *ngIf="conceptoGasto.activo === false" mat-icon-button
+              matTooltip="{{'btn.recover' | translate}}" (click)="activateConceptoGasto(conceptoGasto)">
+              <mat-icon>add_circle_outline</mat-icon>
             </button>
           </ng-container>
         </td>

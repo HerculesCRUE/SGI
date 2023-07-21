@@ -12,6 +12,10 @@ export enum ConfigPii {
   PII_COM_FIN_PLAZO_FASES_NAC_REG_SOLICITUD_PROTECCION_DESTINATARIOS = 'fin-plaz-fases-nac-reg-sol-prot-destinatarios',
   PII_COM_FECHA_FIN_PRIMERA_SOLICITUD_PROTECCION_DESTINATARIOS = 'pii-com-fecha-fin-pri-sol-prot-destinatarios',
   PII_COM_FECHA_LIMITE_PROCEDIMIENTO_DESTINATARIOS = 'pii-fecha-limite-procedimiento-destinatarios',
+  PII_EXP_MAX_NUM_REGISTROS_EXCEL_INVENCION_LISTADO = 'pii-exp-max-num-registros-excel-invencion-listado',
+  PII_EXP_MAX_NUM_REGISTROS_EXCEL_SOLICITUD_PROTECCION = 'pii-exp-max-num-registros-excel-solicitud-proteccion',
+  // Títulos
+  TITLE_EXPORTACIÓN = 'title-exportacion',
 }
 
 @Component({
@@ -24,7 +28,11 @@ export class ConfigPiiComponent extends AbstractMenuContentComponent {
   private readonly _CONFIG_MAP: Map<ConfigPii, IConfigOptions> = new Map([
     [ConfigPii.PII_COM_FIN_PLAZO_FASES_NAC_REG_SOLICITUD_PROTECCION_DESTINATARIOS, { type: ConfigType.EMAILS, label: marker(`adm.config.pii.PII_COM_FIN_PLAZO_FASES_NAC_REG_SOLICITUD_PROTECCION_DESTINATARIOS`), required: true }],
     [ConfigPii.PII_COM_FECHA_FIN_PRIMERA_SOLICITUD_PROTECCION_DESTINATARIOS, { type: ConfigType.EMAILS, label: marker(`adm.config.pii.PII_COM_FECHA_FIN_PRIMERA_SOLICITUD_PROTECCION_DESTINATARIOS`), required: true }],
-    [ConfigPii.PII_COM_FECHA_LIMITE_PROCEDIMIENTO_DESTINATARIOS, { type: ConfigType.EMAILS, label: marker(`adm.config.pii.PII_COM_FECHA_LIMITE_PROCEDIMIENTO_DESTINATARIOS`), required: true }]
+    [ConfigPii.PII_COM_FECHA_LIMITE_PROCEDIMIENTO_DESTINATARIOS, { type: ConfigType.EMAILS, label: marker(`adm.config.pii.PII_COM_FECHA_LIMITE_PROCEDIMIENTO_DESTINATARIOS`), required: true }],
+    //Límite exportación excel
+    [ConfigPii.TITLE_EXPORTACIÓN, { type: ConfigType.CONFIG_GROUP_TITLE, label: marker(`adm.config.group-title.exportacion`) }],
+    [ConfigPii.PII_EXP_MAX_NUM_REGISTROS_EXCEL_INVENCION_LISTADO, { type: ConfigType.TEXT, label: marker(`adm.config.eti.PII_EXP_MAX_NUM_REGISTROS_EXCEL_INVENCION_LISTADO`), required: false }],
+    [ConfigPii.PII_EXP_MAX_NUM_REGISTROS_EXCEL_SOLICITUD_PROTECCION, { type: ConfigType.TEXT, label: marker(`adm.config.eti.PII_EXP_MAX_NUM_REGISTROS_EXCEL_SOLICITUD_PROTECCION`), required: false }],
   ]);
 
   get ConfigType() {

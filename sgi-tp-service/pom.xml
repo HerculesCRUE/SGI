@@ -12,7 +12,7 @@
 
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-tp-service</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <packaging>jar</packaging>
   <name>sgi-tp-service</name>
   <description>Tareas Programadas SGI HERCULES</description>

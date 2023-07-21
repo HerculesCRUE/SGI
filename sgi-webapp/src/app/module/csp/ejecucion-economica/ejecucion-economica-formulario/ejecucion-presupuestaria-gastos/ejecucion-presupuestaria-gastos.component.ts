@@ -8,6 +8,7 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { Subscription } from 'rxjs';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
 import { RowTreeDesglose } from '../desglose-economico.fragment';
@@ -32,13 +33,17 @@ export class EjecucionPresupuestariaGastosComponent extends FragmentComponent im
   readonly dataSourceDesglose = new MatTableDataSource<RowTreeDesglose<IDatoEconomico>>();
   @ViewChild('anualSel') selectAnualidades: MatSelect;
 
+  private totalElementos = 0;
+  private limiteRegistrosExportacionExcel: string;
+
   get MSG_PARAMS() {
     return MSG_PARAMS;
   }
 
   constructor(
     actionService: EjecucionEconomicaActionService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService
   ) {
     super(actionService.FRAGMENT.EJECUCION_PRESUPUESTARIA_GASTOS, actionService);
 
@@ -50,7 +55,13 @@ export class EjecucionPresupuestariaGastosComponent extends FragmentComponent im
 
     this.subscriptions.push(this.formPart.desglose$.subscribe(elements => {
       this.dataSourceDesglose.data = elements;
+      this.totalElementos = elements.length;
     }));
+
+    this.subscriptions.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-ejecucion-presupuestaria-gastos').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   public clearDesglose(): void {
@@ -62,7 +73,9 @@ export class EjecucionPresupuestariaGastosComponent extends FragmentComponent im
     this.subscriptions.push(this.formPart.loadDataExport().subscribe(
       (exportData) => {
         const config = {
-          data: exportData
+          data: exportData,
+          totalRegistrosExportacionExcel: this.totalElementos,
+          limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
         };
         this.matDialog.open(EjecucionPresupuestariaGastosExportModalComponent, config);
       },

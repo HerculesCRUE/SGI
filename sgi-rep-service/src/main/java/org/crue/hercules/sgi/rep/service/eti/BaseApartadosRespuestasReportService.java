@@ -30,7 +30,6 @@ import org.crue.hercules.sgi.rep.dto.eti.RespuestaDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.crue.hercules.sgi.rep.service.SgiDynamicReportService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
-import org.pentaho.reporting.engine.classic.core.Band;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
 import org.pentaho.reporting.engine.classic.core.SubReport;
 import org.pentaho.reporting.engine.classic.core.TableDataFactory;
@@ -218,7 +217,7 @@ public abstract class BaseApartadosRespuestasReportService extends SgiDynamicRep
       .comentarios(comentarios)
       .mostrarContenidoApartado(input.getMostrarContenidoApartado())
       .modificado(this.isRespuestaModificada(respuestaDto, respuestaAnteriorDto))
-      .numeroComentariosGestor(input.getNumeroComentariosGestor())
+      .numeroComentariosTotalesInforme(input.getNumeroComentarios())
       .build();
     // @formatter:on
 
@@ -227,13 +226,10 @@ public abstract class BaseApartadosRespuestasReportService extends SgiDynamicRep
     return apartadoOutput;
   }
 
-  private Boolean isRespuestaModificada(RespuestaDto respuestaDto, RespuestaDto respuestaAnteriorDto) {
-    Boolean respuestaModificada = Boolean.FALSE;
-    if (ObjectUtils.isNotEmpty(respuestaDto) && ObjectUtils.isNotEmpty(respuestaAnteriorDto) && !respuestaDto.getValor()
-        .equals(respuestaAnteriorDto.getValor())) {
-      respuestaModificada = Boolean.TRUE;
-    }
-    return respuestaModificada;
+  private boolean isRespuestaModificada(RespuestaDto respuestaDto, RespuestaDto respuestaAnteriorDto) {
+    return ObjectUtils.isNotEmpty(respuestaDto) && ObjectUtils.isNotEmpty(respuestaAnteriorDto)
+        && !respuestaDto.getValor()
+            .equals(respuestaAnteriorDto.getValor());
   }
 
   /**
@@ -310,7 +306,7 @@ public abstract class BaseApartadosRespuestasReportService extends SgiDynamicRep
 
     // @formatter:off
     return new Object[] { 
-      apartado.getNumeroComentariosGestor(), null,
+      apartado.getNumeroComentariosTotalesInforme(), null,
       bloque.getId(), bloque.getNombre(), bloque.getOrden(), 
       apartado.getId(), apartado.getTitulo(), apartado.getOrden(),  apartado.getModificado(),
       apartado.getId(), apartadoHijo.getId(), apartadoHijo.getTitulo(), apartadoHijo.getOrden(),

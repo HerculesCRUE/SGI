@@ -146,8 +146,9 @@
         </mat-header-cell>
         <mat-cell mat-cell *matCellDef="let value">
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-SJUS-E'">
-            <button mat-button matTooltip="{{'btn.view' | translate}}" (click)="openModalDetalle(value)">
-              <mat-icon color="primary">visibility</mat-icon>
+            <button color="primary" mat-icon-button matTooltip="{{'btn.view' | translate}}"
+              (click)="openModalDetalle(value)">
+              <mat-icon>visibility</mat-icon>
             </button>
           </ng-container>
         </mat-cell>

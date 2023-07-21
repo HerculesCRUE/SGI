@@ -23,4 +23,5 @@ public interface RolSocioRepository extends JpaRepository<RolSocio, Long>, JpaSp
    * @return el {@link RolSocio} activo con el nombre indicado
    */
   Optional<RolSocio> findByNombreAndActivoIsTrue(String nombre);
+
 }

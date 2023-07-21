@@ -13,5 +13,7 @@ export enum ConfigType {
 export interface IConfigOptions {
   type: ConfigType,
   label: string,
-  options?: Observable<KeyValue<string, string>[]>
+  options?: Observable<KeyValue<string, string>[]>,
+  disabled?: boolean,
+  info?: string
 }

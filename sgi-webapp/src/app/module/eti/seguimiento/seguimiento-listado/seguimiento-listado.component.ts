@@ -6,6 +6,7 @@ import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { IPersona } from '@core/models/sgp/persona';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -24,10 +25,13 @@ export class SeguimientoListadoComponent extends AbstractTablePaginationComponen
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
 
+  private limiteRegistrosExportacionExcel: string;
+
   constructor(
     private readonly personaService: PersonaService,
     private readonly evaluadorService: EvaluadorService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService,
   ) {
     super();
     this.fxFlexProperties = new FxFlexProperties();
@@ -52,6 +56,11 @@ export class SeguimientoListadoComponent extends AbstractTablePaginationComponen
       tipoConvocatoria: new FormControl(''),
       tipoEvaluacion: new FormControl(null)
     });
+
+    this.suscripciones.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('eti-exp-max-num-registros-excel-seguimiento-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   protected resetFilters(): void {
@@ -126,7 +135,9 @@ export class SeguimientoListadoComponent extends AbstractTablePaginationComponen
   public openExportModal() {
     const data: ISeguimientoListadoModalData = {
       findOptions: this.findOptions,
-      rolPersona: RolPersona.EVALUADOR
+      rolPersona: RolPersona.EVALUADOR,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

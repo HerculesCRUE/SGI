@@ -14,6 +14,7 @@
     <org.crue.hercules.sgi.esb.sgo.endpoint_._sgo-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgo.endpoint_._sgo-endpoint>
     <org.crue.hercules.sgi.esb.sgo.endpoint_._sgo-standalone-endpoint>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgo.endpoint_._sgo-standalone-endpoint>
     <org.crue.hercules.sgi.esb.sgo.sequence_._sgo-add-x-api-key-sequence>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgo.sequence_._sgo-add-x-api-key-sequence>
+    <org.crue.hercules.sgi.esb.sgo.sequence_._sgo-remove-authorization-header-sequence>capp/EnterpriseServiceBus</org.crue.hercules.sgi.esb.sgo.sequence_._sgo-remove-authorization-header-sequence>
     <org.crue.hercules.sgi.esb.sgo.resource_._clasificacion-ids-transformer-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgo.resource_._clasificacion-ids-transformer-mediator>
     <org.crue.hercules.sgi.esb.sgo.resource_._get-clasificacion-prefix-query-param-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgo.resource_._get-clasificacion-prefix-query-param-mediator>
     <org.crue.hercules.sgi.esb.sgo.resource_._remove-clasificacion-prefix-query-param-mediator>capp/EnterpriseIntegrator</org.crue.hercules.sgi.esb.sgo.resource_._remove-clasificacion-prefix-query-param-mediator>
@@ -51,6 +52,12 @@
     <dependency>
       <groupId>org.crue.hercules.sgi.esb.sgo.sequence</groupId>
       <artifactId>sgo-add-x-api-key-sequence</artifactId>
+      <version>${revision}</version>
+      <type>xml</type>
+    </dependency>
+    <dependency>
+      <groupId>org.crue.hercules.sgi.esb.sgo.sequence</groupId>
+      <artifactId>sgo-remove-authorization-header-sequence</artifactId>
       <version>${revision}</version>
       <type>xml</type>
     </dependency>

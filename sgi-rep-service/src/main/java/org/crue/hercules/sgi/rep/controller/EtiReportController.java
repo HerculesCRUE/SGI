@@ -115,7 +115,7 @@ public class EtiReportController {
     ReportInformeEvaluacion report = new ReportInformeEvaluacion();
     report.setOutputType(OUTPUT_TYPE_PDF);
 
-    byte[] reportContent = informeEvaluacionReportService.getReportInformeEvaluadorEvaluacion(report, idEvaluacion);
+    byte[] reportContent = informeEvaluacionReportService.getReportInformeEvaluacion(report, idEvaluacion);
     ByteArrayResource archivo = new ByteArrayResource(reportContent);
 
     HttpHeaders headers = new HttpHeaders();

@@ -1,0 +1,11 @@
+<sgi-action [actionService]="actionService">
+  <ng-container menu>
+    <sgi-action-fragment-menu-item [route]="[ROL_EQUIPO_ROUTE_NAMES.DATOS_GENERALES]" *sgiHasAuthority="'CSP-ROLE-C'"
+      [title]="'label.datos-generales' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DATOS_GENERALES)">
+    </sgi-action-fragment-menu-item>
+  </ng-container>
+  <ng-container footer>
+    <sgi-action-footer [texto]="textoCrear" [actionService]="actionService"></sgi-action-footer>
+  </ng-container>
+</sgi-action>

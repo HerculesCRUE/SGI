@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -19,6 +19,7 @@ import { ProyectoFichaGeneralFragment } from './proyecto-ficha-general.fragment'
 
 const PROYECTO_ACRONIMO_KEY = marker('csp.proyecto.acronimo');
 const PROYECTO_AMBITO_GEOGRAFICO_KEY = marker('csp.proyecto.ambito-geografico');
+const PROYECTO_CODIGO_INTERNO_KEY = marker('csp.proyecto.codigo-interno');
 const PROYECTO_CODIGO_EXTERNO_KEY = marker('csp.proyecto.codigo-externo');
 const PROYECTO_CONFIDENCIAL_KEY = marker('csp.proyecto.confidencial');
 const PROYECTO_COORDINADOR_EXTERNO_KEY = marker('csp.proyecto.coordinador-externo');
@@ -36,6 +37,7 @@ const PROYECTO_PROYECTO_COORDINADO_KEY = marker('csp.proyecto.proyecto-coordinad
 const PROYECTO_TITULO_KEY = marker('csp.proyecto.titulo');
 const PROYECTO_UNIDAD_GESTION_KEY = marker('csp.proyecto.unidad-gestion');
 const MSG_PROYECTO_VALUE_CONVOCATORIA = marker('msg.csp.proyecto.value-convocatoria');
+const PROYECTO_CODIGO_INTERNO_FORMATO_KEY = marker('csp.proyecto.codigo-interno.formato-tooltip');
 
 @Component({
   selector: 'sgi-proyecto-ficha-general',
@@ -59,6 +61,8 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
 
   msgParamAmbitoGeograficoEntity = {};
   msgParamAcronimoEntity = {};
+  msgParamCodigoInternoEntity = {};
+  msgParamCodigoInternoFormato = {};
   msgParamCodigoExternoEntity = {};
   msgParamConfidencialEntity = {};
   msgParamCoordinadorExternoEntity = {};
@@ -180,6 +184,21 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
       PROYECTO_TITULO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamTituloEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      PROYECTO_CODIGO_INTERNO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamCodigoInternoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+
+    this.formPart.configuracionService.getConfiguracion().subscribe(
+      configuracion => {
+        this.translate.get(
+          PROYECTO_CODIGO_INTERNO_FORMATO_KEY,
+          MSG_PARAMS.CARDINALIRY.SINGULAR
+        ).subscribe(() => this.msgParamCodigoInternoFormato = {
+          formato: configuracion.plantillaFormatoCodigoInternoProyecto,
+        });
+      });
 
     this.translate.get(
       PROYECTO_CODIGO_EXTERNO_KEY,

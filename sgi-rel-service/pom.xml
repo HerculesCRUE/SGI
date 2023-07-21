@@ -11,7 +11,7 @@
 
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-rel-service</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <packaging>jar</packaging>
   <name>sgi-rel-service</name>
   <description>Servicio de relaciones entre módulos SGI HERCULES</description>

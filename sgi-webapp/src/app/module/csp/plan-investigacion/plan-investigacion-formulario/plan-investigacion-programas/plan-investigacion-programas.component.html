@@ -15,16 +15,16 @@
               (change)="onCheckNode(node, $event)" matTooltip="{{node.programa.value.descripcion}}">
               <span class="break-spaces">{{node.programa.value.nombre}}</span>
             </mat-checkbox>
-            <button class="break-spaces" mat-icon-button *ngIf="(viewMode !== 'new' && node !== viewingNode)"
+            <button color="primary" class="break-spaces" mat-button *ngIf="(viewMode !== 'new' && node !== viewingNode)"
               (click)="showNodeDetails(node)" matTooltip="{{node.programa.value.descripcion}}">
-              <mat-icon color="primary" class="mat-icon-rtl-mirror">
+              <mat-icon class="mat-icon-rtl-mirror">
                 {{ 'visibility'}}
               </mat-icon>
               {{node.programa.value.nombre}}
             </button>
-            <button class="break-spaces" mat-icon-button *ngIf="(viewMode !== 'new' && node === viewingNode)"
+            <button color="primary" class="break-spaces" mat-button *ngIf="(viewMode !== 'new' && node === viewingNode)"
               (click)="hideNodeDetails()" matTooltip="{{node.programa.value.descripcion}}">
-              <mat-icon color="primary" class="mat-icon-rtl-mirror">
+              <mat-icon class="mat-icon-rtl-mirror">
                 {{ 'visibility_off'}}
               </mat-icon>
               {{node.programa.value.nombre}}
@@ -34,8 +34,9 @@
         <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
           <li>
             <div class="mat-tree-node">
-              <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.programa.value.nombre">
-                <mat-icon color="primary" class="mat-icon-rtl-mirror">
+              <button color="primary" mat-icon-button matTreeNodeToggle
+                [attr.aria-label]="'Toggle ' + node.programa.value.nombre">
+                <mat-icon class="mat-icon-rtl-mirror">
                   {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                 </mat-icon>
               </button>
@@ -43,16 +44,17 @@
                 (change)="onCheckNode(node, $event)" matTooltip="{{node.programa.value.descripcion}}">
                 <span class="break-spaces">{{node.programa.value.nombre}}</span>
               </mat-checkbox>
-              <button class="break-spaces" mat-icon-button *ngIf="(viewMode !== 'new' && node !== viewingNode)"
+              <button class="break-spaces" mat-button *ngIf="(viewMode !== 'new' && node !== viewingNode)"
                 (click)="showNodeDetails(node)" matTooltip="{{node.programa.value.descripcion}}">
                 <mat-icon color="primary" class="mat-icon-rtl-mirror">
                   {{ 'visibility'}}
                 </mat-icon>
                 {{node.programa.value.nombre}}
               </button>
-              <button class="break-spaces" mat-icon-button *ngIf="(viewMode !== 'new' && node === viewingNode)"
-                (click)="hideNodeDetails()" matTooltip="{{node.programa.value.descripcion}}">
-                <mat-icon color="primary" class="mat-icon-rtl-mirror">
+              <button color="primary" class="break-spaces" mat-button
+                *ngIf="(viewMode !== 'new' && node === viewingNode)" (click)="hideNodeDetails()"
+                matTooltip="{{node.programa.value.descripcion}}">
+                <mat-icon class="mat-icon-rtl-mirror">
                   {{ 'visibility_off'}}
                 </mat-icon>
                 {{node.programa.value.nombre}}

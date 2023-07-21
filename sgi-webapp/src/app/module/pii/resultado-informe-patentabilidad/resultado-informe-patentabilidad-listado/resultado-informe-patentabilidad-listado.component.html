@@ -33,21 +33,23 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let resultadoInformePatentabilidad">
           <ng-container *sgiHasAuthority="'PII-RIP-E'">
-            <button *ngIf="resultadoInformePatentabilidad.activo" mat-button matTooltip="{{'btn.edit' | translate}}"
-              (click)="openModal(resultadoInformePatentabilidad)">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" *ngIf="resultadoInformePatentabilidad.activo" mat-icon-button
+              matTooltip="{{'btn.edit' | translate}}" (click)="openModal(resultadoInformePatentabilidad)">
+              <mat-icon>border_color</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'PII-RIP-B'">
-            <button *ngIf="resultadoInformePatentabilidad.activo" mat-button matTooltip="{{'btn.delete' | translate}}"
+            <button color="warn" *ngIf="resultadoInformePatentabilidad.activo" mat-icon-button
+              matTooltip="{{'btn.delete' | translate}}"
               (click)="deactivateResultadoInformePatentabilidad(resultadoInformePatentabilidad)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'PII-RIP-R'">
-            <button *ngIf="!resultadoInformePatentabilidad.activo" mat-button matTooltip="{{'btn.recover' | translate}}"
+            <button color="accent" *ngIf="!resultadoInformePatentabilidad.activo" mat-icon-button
+              matTooltip="{{'btn.recover' | translate}}"
               (click)="activateResultadoInformePatentabilidad(resultadoInformePatentabilidad)">
-              <mat-icon color="accent">add_circle_outline</mat-icon>
+              <mat-icon>add_circle_outline</mat-icon>
             </button>
           </ng-container>
         </td>

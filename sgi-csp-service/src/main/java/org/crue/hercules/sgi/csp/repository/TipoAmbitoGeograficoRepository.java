@@ -22,4 +22,13 @@ public interface TipoAmbitoGeograficoRepository
    */
   Optional<TipoAmbitoGeografico> findByNombre(String nombre);
 
+  /**
+   * Obtiene la entidad {@link TipoAmbitoGeografico} activo con el nombre
+   * indicado
+   *
+   * @param nombre el nombre de {@link TipoAmbitoGeografico}.
+   * @return el {@link TipoAmbitoGeografico} con el nombre indicado
+   */
+  Optional<TipoAmbitoGeografico> findByNombreAndActivoIsTrue(String nombre);
+
 }

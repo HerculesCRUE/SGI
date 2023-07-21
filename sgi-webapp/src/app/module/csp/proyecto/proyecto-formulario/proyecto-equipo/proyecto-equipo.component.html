@@ -13,9 +13,9 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
         </th>
         <td mat-cell *matCellDef="let wrapper">
-          <mat-icon *ngIf="wrapper.value.help?.class" class="{{wrapper.value.help?.class}}"
-            matTooltip="{{VALIDACION_REQUISITOS_EQUIPO_IP_MAP.get(wrapper.value.help?.tooltip) | translate}}">
-            help</mat-icon>
+          <sgi-field-info matSuffix [visible]="wrapper.value.help?.tooltip" color="warn" icon="error"
+            [message]="VALIDACION_REQUISITOS_EQUIPO_IP_MAP.get(wrapper.value.help?.tooltip) | translate">
+          </sgi-field-info>
         </td>
       </ng-container>
       <!-- nº identificacion Column -->
@@ -64,19 +64,19 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let equipo; let i = index">
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-            <button *ngIf="!actionService.readonly" mat-button matTooltip="{{'btn.edit' | translate}}"
-              (click)="openModal(equipo, i)">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" *ngIf="!actionService.readonly" mat-icon-button
+              matTooltip="{{'btn.edit' | translate}}" (click)="openModal(equipo, i)">
+              <mat-icon>border_color</mat-icon>
             </button>
-            <button *ngIf="actionService.readonly" mat-button matTooltip="{{'btn.view' | translate}}"
-              (click)="openModal(equipo, i)">
-              <mat-icon color="primary">visibility</mat-icon>
+            <button color="primary" *ngIf="actionService.readonly" mat-icon-button
+              matTooltip="{{'btn.view' | translate}}" (click)="openModal(equipo, i)">
+              <mat-icon>visibility</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-            <button *ngIf="!actionService.readonly" mat-button matTooltip="{{'btn.delete' | translate}}"
-              (click)="deleteEquipo(equipo)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" *ngIf="!actionService.readonly" mat-icon-button
+              matTooltip="{{'btn.delete' | translate}}" (click)="deleteEquipo(equipo)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>

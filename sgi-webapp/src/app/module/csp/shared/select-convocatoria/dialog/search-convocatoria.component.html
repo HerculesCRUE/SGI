@@ -127,8 +127,9 @@
           {{'label.actions' | translate}}
         </th>
         <td mat-cell *matCellDef="let row">
-          <button mat-button matTooltip="{{'btn.select' | translate}}" (click)="closeModal(row.convocatoria)">
-            <mat-icon color="primary">done_outline</mat-icon>
+          <button mat-icon-button color="primary" matTooltip="{{'btn.select' | translate}}"
+            (click)="closeModal(row.convocatoria)">
+            <mat-icon>done_outline</mat-icon>
           </button>
         </td>
       </ng-container>

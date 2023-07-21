@@ -24,7 +24,7 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'csp.proyecto-socio.rol-socio' | translate}}</mat-label>
-          <sgi-select-entity formControlName="rolSocio" required [options]="rolSocios$ | async"></sgi-select-entity>
+          <sgi-select-rol-socio formControlName="rolSocio" required></sgi-select-rol-socio>
           <mat-error *ngIf="formGroup.controls.rolSocio.errors?.required">
             {{'error.required.entity' | translate:msgParamRolSocioEntity}}
           </mat-error>

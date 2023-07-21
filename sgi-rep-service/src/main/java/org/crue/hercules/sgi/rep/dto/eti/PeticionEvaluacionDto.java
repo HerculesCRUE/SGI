@@ -72,5 +72,6 @@ public class PeticionEvaluacionDto extends BaseRestDto {
   private Boolean tieneFondosPropios;
   private String personaRef;
   private Long checklistId;
+  private String tutorRef;
   private Boolean activo;
 }

@@ -15,6 +15,7 @@ import { FormGroupUtil } from '@core/utils/form-group-util';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { PeticionEvaluacionActionService } from '../../peticion-evaluacion.action.service';
 import { PeticionEvaluacionDatosGeneralesFragment } from './peticion-evaluacion-datos-generales.fragment';
 
@@ -34,6 +35,7 @@ const PETICION_EVALUACION_ESTADO_FINANCIACION_KEY = marker('eti.peticion-evaluac
 const PETICION_EVALUACION_IMPORTE_FINANCIACION_KEY = marker('eti.peticion-evaluacion.importe-financiacion');
 const PETICION_EVALUACION_OTRO_VALOR_SOCIAL_KEY = marker('eti.peticion-evaluacion.otro-valor-social');
 const PETICION_EVALUACION_TIENE_FONDOS_PROPIOS_KEY = marker('eti.peticion-evaluacion.tiene-fondos-propios');
+const PETICION_EVALUACION_TUTOR_KEY = marker('eti.peticion-evaluacion.tutor');
 
 @Component({
   selector: 'sgi-peticion-evaluacion-datos-generales',
@@ -71,6 +73,7 @@ export class PeticionEvaluacionDatosGeneralesComponent extends FormFragmentCompo
   msgParamImporteFinanciacionEntity = {};
   msgParamOtroValorSocialEntity = {};
   msgParamTieneFondosPropiosEntity = {};
+  msgParamTutorEntity = {};
 
   get ESTADO_FINANCIACION_MAP() {
     return ESTADO_FINANCIACION_MAP;
@@ -78,6 +81,10 @@ export class PeticionEvaluacionDatosGeneralesComponent extends FormFragmentCompo
 
   get TIPO_VALOR_SOCIAL_MAP() {
     return TIPO_VALOR_SOCIAL_MAP;
+  }
+
+  get tipoColectivoTutor() {
+    return TipoColectivo.TUTOR_CSP;
   }
 
   constructor(
@@ -198,17 +205,25 @@ export class PeticionEvaluacionDatosGeneralesComponent extends FormFragmentCompo
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamTieneFondosPropiosEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
 
+    this.translate.get(
+      PETICION_EVALUACION_TUTOR_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamTutorEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
   }
 
   selectTipoActividad(tipoActividad: ITipoActividad): void {
     if (tipoActividad?.id === 3) {
       this.isInvestigacionTutelada$.next(true);
       this.formGroup.controls.tipoInvestigacionTutelada.setValidators([Validators.required]);
+      this.formGroup.controls.tutor.setValidators([Validators.required]);
     } else {
       this.isInvestigacionTutelada$.next(false);
       this.formGroup.controls.tipoInvestigacionTutelada.clearValidators();
+      this.formGroup.controls.tutor.clearValidators();
     }
     this.formGroup.controls.tipoInvestigacionTutelada.updateValueAndValidity();
+    this.formGroup.controls.tutor.updateValueAndValidity();
   }
 
   ngOnDestroy(): void {

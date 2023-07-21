@@ -308,7 +308,6 @@ public class EstadoMemoriaIT extends BaseIT {
     peticionEvaluacion.setId(id);
     peticionEvaluacion.setCodigo("Codigo" + id);
     peticionEvaluacion.setDisMetodologico("DiseñoMetodologico" + id);
-    peticionEvaluacion.setExterno(Boolean.FALSE);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
@@ -334,8 +333,7 @@ public class EstadoMemoriaIT extends BaseIT {
    */
   private Comite generarMockComite(Long id, String comite, Boolean activo) {
     Formulario formulario = new Formulario(id, "M" + id + "0", "Descripcion");
-    return new Comite(id, comite, "nombreSecretario", "nombreInvestigacion", Genero.M, "nombreDecreto", "articulo",
-        formulario, activo);
+    return new Comite(id, comite, "nombreInvestigacion", Genero.M, formulario, activo);
 
   }
 

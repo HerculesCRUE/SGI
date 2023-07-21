@@ -300,13 +300,13 @@
           <td mat-cell *matCellDef="let wrapper; let i = index">
             <ng-container>
               <div fxLayout="row">
-                <button *sgiHasAuthorityForAnyUO="'CSP-SJUS-E'" mat-button matTooltip="{{'btn.edit' | translate}}"
-                  (click)="openModal(wrapper, i)">
-                  <mat-icon color="primary">border_color</mat-icon>
+                <button color="primary" *sgiHasAuthorityForAnyUO="'CSP-SJUS-E'" mat-icon-button
+                  matTooltip="{{'btn.edit' | translate}}" (click)="openModal(wrapper, i)">
+                  <mat-icon>border_color</mat-icon>
                 </button>
-                <button *sgiHasAuthorityForAnyUO="'CSP-SJUS-E'" mat-button matTooltip="{{'btn.delete' | translate}}"
-                  (click)="deleteIncidenciaDocumentacion(wrapper)">
-                  <mat-icon color="warn">highlight_off</mat-icon>
+                <button color="warn" *sgiHasAuthorityForAnyUO="'CSP-SJUS-E'" mat-icon-button
+                  matTooltip="{{'btn.delete' | translate}}" (click)="deleteIncidenciaDocumentacion(wrapper)">
+                  <mat-icon>highlight_off</mat-icon>
                 </button>
               </div>
             </ng-container>

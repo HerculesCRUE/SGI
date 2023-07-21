@@ -19,7 +19,7 @@ import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocato
 import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-requisito-ip.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
-import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
+import { RolProyectoService } from '@core/services/csp/rol-proyecto/rol-proyecto.service';
 import { SolicitanteExternoService } from '@core/services/csp/solicitante-externo/solicitante-externo.service';
 import { SolicitudDocumentoService } from '@core/services/csp/solicitud-documento.service';
 import { SolicitudGrupoService } from '@core/services/csp/solicitud-grupo/solicitud-grupo.service';

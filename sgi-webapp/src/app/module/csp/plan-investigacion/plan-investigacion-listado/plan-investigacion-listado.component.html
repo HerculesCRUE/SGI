@@ -74,21 +74,21 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let programa">
           <ng-container *sgiHasAuthority="'CSP-PRG-E'">
-            <a *ngIf="programa.activo === true" mat-button matTooltip="{{'btn.edit' | translate}}"
+            <a color="primary" *ngIf="programa.activo === true" mat-icon-button matTooltip="{{'btn.edit' | translate}}"
               [routerLink]="[programa.id]">
-              <mat-icon color="primary">border_color</mat-icon>
+              <mat-icon>border_color</mat-icon>
             </a>
           </ng-container>
           <ng-container *sgiHasAuthority="'CSP-PRG-B'">
-            <button *ngIf="programa.activo === true" mat-button matTooltip="{{'btn.delete' | translate}}"
-              (click)="desactivePlan(programa)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" *ngIf="programa.activo === true" mat-icon-button
+              matTooltip="{{'btn.delete' | translate}}" (click)="desactivePlan(programa)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'CSP-PRG-R'">
-            <button *ngIf="programa.activo === false" (click)="activePlan(programa)" mat-button
+            <button color="accent" *ngIf="programa.activo === false" (click)="activePlan(programa)" mat-icon-button
               matTooltip="{{'btn.recover' | translate}}">
-              <mat-icon color="accent">add_circle_outline</mat-icon>
+              <mat-icon>add_circle_outline</mat-icon>
             </button>
           </ng-container>
         </td>

@@ -23,13 +23,29 @@
 
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- ID -->
-      <mat-form-field fxFlex="25%">
+      <mat-form-field fxFlex="33%">
         <mat-label>{{'csp.proyecto.id' | translate}}</mat-label>
         <input type="text" placeholder="{{'csp.proyecto.id' | translate}}" matInput formControlName="id" required>
       </mat-form-field>
-      <!-- Identificadores Sge -->
 
-      <mat-form-field fxFlex="25%" *ngIf="this.formPart.isEdit()">
+      <!-- Código interno-->
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.proyecto.codigo-interno' | translate}}</mat-label>
+        <input type="text" placeholder="{{'csp.proyecto.codigo-interno' | translate}}" matInput
+          formControlName="codigoInterno">
+        <sgi-field-info matSuffix visible="true"
+          message="{{'csp.proyecto.codigo-interno.formato-tooltip' | translate:msgParamCodigoInternoFormato}}">
+        </sgi-field-info>
+        <mat-error *ngIf="formGroup.controls.codigoInterno.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamCodigoInternoEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.codigoInterno.errors?.pattern">
+          {{'error.csp.proyecto.codigo-interno.invalid-format' | translate}}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Identificadores Sge -->
+      <mat-form-field fxFlex="33%" *ngIf="this.formPart.isEdit()">
         <mat-label>{{'csp.proyecto.codigos-sge' | translate}}</mat-label>
         <mat-select matNativeControl formControlName="codigosSge" multiple>
           <mat-option *ngFor="let proyecto of this.proyectosSge" [value]="proyecto">
@@ -71,7 +87,7 @@
         </sgi-select-tipo-ambito-geografico>
         <sgi-field-info matSuffix
           [visible]="!formPart.readonly && !formPart.isInvestigador && !formPart.isVisor && (formPart.ambitoGeograficoConvocatoria$ | async)"
-          message="{{textoInfoAmbitoGeograficoConvocatoria}}">
+          message="{{textoInfoAmbitoGeograficoConvocatoria}}" color="warn" icon="error">
         </sgi-field-info>
         <mat-error *ngIf="formGroup.controls.ambitoGeografico.errors?.required">
           {{'error.required.entity' | translate:msgParamAmbitoGeograficoEntity}}
@@ -148,7 +164,7 @@
         </sgi-field-info>
         <sgi-field-info matSuffix
           [visible]="!formPart.readonly && !formPart.isInvestigador && !formPart.isVisor && (formPart.unidadGestionConvocatoria$ | async)"
-          message="{{textoInfoUnidadGestionConvocatoria}}">
+          message="{{textoInfoUnidadGestionConvocatoria}}" color="warn" icon="error">
         </sgi-field-info>
         <mat-error *ngIf="formGroup.controls.unidadGestion.errors?.required">
           {{'error.required.entity' | translate:msgParamUnidadGestionEntity}}
@@ -169,7 +185,7 @@
         </sgi-field-info>
         <sgi-field-info matSuffix
           [visible]="!formPart.readonly && !formPart.isInvestigador && !formPart.isVisor && (formPart.modeloEjecucionConvocatoria$ | async)"
-          message="{{textoInfoModeloEjecucionConvocatoria}}">
+          message="{{textoInfoModeloEjecucionConvocatoria}}" color="warn" icon="error">
         </sgi-field-info>
         <mat-error *ngIf="formGroup.controls.modeloEjecucion.errors?.required">
           {{'error.required.entity' | translate:msgParamModeloEjecucionEntity}}
@@ -185,7 +201,7 @@
         </sgi-select-tipo-finalidad>
         <sgi-field-info matSuffix
           [visible]="!formPart.readonly && !formPart.isInvestigador && !formPart.isVisor && (formPart.finalidadConvocatoria$ | async)"
-          message="{{textoInfoFinalidadConvocatoria}}">
+          message="{{textoInfoFinalidadConvocatoria}}" color="warn" icon="error">
         </sgi-field-info>
         <mat-error *ngIf="formGroup.controls.finalidad.errors?.required">
           {{'error.required.entity' | translate:msgParamFinalidadEntity}}
@@ -312,7 +328,7 @@
           <mat-option [value]="true">{{'label.si' | translate}}</mat-option>
           <mat-option [value]="false">{{'label.no' | translate}}</mat-option>
         </mat-select>
-        <sgi-field-info matSuffix [visible]="paquetesTrabajo.disabled"
+        <sgi-field-info matSuffix [visible]="!formPart.readonly && paquetesTrabajo.disabled"
           message="{{'msg.csp.proyecto.paquetes-trabajo.existentes' | translate}}">
         </sgi-field-info>
         <mat-error *ngIf="formGroup.controls.permitePaquetesTrabajo.errors?.required">

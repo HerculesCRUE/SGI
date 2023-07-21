@@ -105,12 +105,12 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let evaluador;let i=index;">
           <ng-container *sgiHasAuthorityForAnyUO="'ETI-EVR-E'">
-            <a mat-button [routerLink]="[evaluador.id]" matTooltip="{{'btn.edit' | translate}}">
-              <mat-icon color="primary">border_color</mat-icon>
+            <a color="primary" mat-icon-button [routerLink]="[evaluador.id]" matTooltip="{{'btn.edit' | translate}}">
+              <mat-icon>border_color</mat-icon>
             </a>
-            <button mat-button *sgiHasAuthorityForAnyUO="'ETI-EVR-B'" matTooltip="{{'btn.delete' | translate}}"
-              (click)="borrar(evaluador.id, $event)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" mat-icon-button *sgiHasAuthorityForAnyUO="'ETI-EVR-B'"
+              matTooltip="{{'btn.delete' | translate}}" (click)="borrar(evaluador.id, $event)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>

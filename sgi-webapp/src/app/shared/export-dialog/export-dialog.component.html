@@ -2,11 +2,13 @@
 </sgi-dialog-header>
 
 <sgi-dialog-content>
+  <sgi-info-message matSuffix *ngIf="showExportWarning" message="{{msgExportWarning}}" color="warn" icon="error">
+  </sgi-info-message>
   <ng-content></ng-content>
 </sgi-dialog-content>
 
 <sgi-dialog-footer>
-  <button color="accent" (click)="modal.export()" mat-raised-button type="submit">
+  <button color="accent" (click)="modal.export()" mat-raised-button type="submit" [disabled]="showExportWarning">
     <mat-icon>insert_chart_outlined</mat-icon>{{'btn.export' | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' | translate}}</button>

@@ -117,8 +117,9 @@
           <mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}
           </mat-header-cell>
           <mat-cell *matCellDef="let element">
-            <button mat-button (click)="showDetail(element.item)" *ngIf="element.childs.length === 0">
-              <mat-icon color="primary">visibility</mat-icon>
+            <button mat-icon-button color="primary" (click)="showDetail(element.item)"
+              *ngIf="element.childs.length === 0">
+              <mat-icon>visibility</mat-icon>
             </button>
           </mat-cell>
         </ng-container>

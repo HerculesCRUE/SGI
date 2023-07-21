@@ -34,7 +34,8 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.fuente-financiacion.origen' | translate}}</mat-label>
-        <sgi-select-entity formControlName="origen" [options]="origenes | async" required></sgi-select-entity>
+        <sgi-select-tipo-origen-fuente-financiacion formControlName="origen" required>
+        </sgi-select-tipo-origen-fuente-financiacion>
         <mat-error *ngIf="formGroup.controls.origen.errors?.required">
           {{'error.required.entity' | translate:msgParamOrigenEntity}}
         </mat-error>

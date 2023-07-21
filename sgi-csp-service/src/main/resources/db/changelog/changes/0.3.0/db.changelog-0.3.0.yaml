@@ -1,0 +1,8 @@
+databaseChangeLog:
+  # HERCULES_0.3.0
+  - include:
+      file: classpath*:db/changelog/changes/0.3.0/0.3.0-update-initial-database.xml
+  - include:
+      file: classpath*:db/changelog/changes/0.3.0/0.3.0-update-initial-master-data.xml
+  - include:
+      file: classpath*:db/changelog/changes/0.3.0/0.3.0-update-sample-data.xml

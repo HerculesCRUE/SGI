@@ -72,21 +72,21 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let tipoDocumento">
           <ng-container *sgiHasAuthority="'CSP-TDOC-E'">
-            <button *ngIf="tipoDocumento.activo === true" mat-button matTooltip="{{'btn.edit' | translate}}"
-              (click)="openModal(tipoDocumento)">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" *ngIf="tipoDocumento.activo === true" mat-icon-button
+              matTooltip="{{'btn.edit' | translate}}" (click)="openModal(tipoDocumento)">
+              <mat-icon>border_color</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'CSP-TDOC-B'">
-            <button *ngIf="tipoDocumento.activo === true" mat-button matTooltip="{{'btn.delete' | translate}}"
-              (click)="deactivateTipoDocumento(tipoDocumento)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" *ngIf="tipoDocumento.activo === true" mat-icon-button
+              matTooltip="{{'btn.delete' | translate}}" (click)="deactivateTipoDocumento(tipoDocumento)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthority="'CSP-TDOC-R'">
-            <button *ngIf="tipoDocumento.activo === false" mat-button matTooltip="{{'btn.recover' | translate}}"
-              (click)="activateTipoDocumento(tipoDocumento)">
-              <mat-icon color="accent">add_circle_outline</mat-icon>
+            <button color="accent" *ngIf="tipoDocumento.activo === false" mat-icon-button
+              matTooltip="{{'btn.recover' | translate}}" (click)="activateTipoDocumento(tipoDocumento)">
+              <mat-icon>add_circle_outline</mat-icon>
             </button>
           </ng-container>
         </td>

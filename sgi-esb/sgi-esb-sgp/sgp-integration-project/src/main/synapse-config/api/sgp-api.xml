@@ -99,6 +99,27 @@
     </faultSequence>
   </resource>
 
+  <resource methods="GET" uri-template="/colectivos/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sgp-add-x-api-key-sequence" />
+      <sequence key="sgp-remove-authorization-header-sequence" />
+      <property name="colectivoId" expression="get-property('uri.var.id')" />
+      <property name="REST_URL_POSTFIX" scope="axis2" type="STRING" value="/colectivos" />
+      <send>
+        <endpoint key="sgp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <script key="gov:scripts/sgp/colectivo-findbyId-response-converter-mediator.js" language="js"/>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
 
   <!-- datos-academicos -->
   <resource methods="GET" uri-template="/datos-academicos/persona/{id}">

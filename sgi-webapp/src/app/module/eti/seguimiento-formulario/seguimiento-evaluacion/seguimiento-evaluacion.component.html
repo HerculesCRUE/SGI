@@ -12,6 +12,15 @@
       </mat-form-field>
     </div>
 
+    <!--Solicitante-->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field>
+        <mat-label>{{'eti.solicitante' | translate}}</mat-label>
+        <input matInput formControlName="solicitante" placeholder="{{'eti.solicitante' | translate}}">
+      </mat-form-field>
+    </div>
+
     <!--Fecha Evaluación-->
     <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
       [fxFlexOrder]="fxFlexProperties.order">
@@ -29,15 +38,6 @@
       <mat-form-field>
         <mat-label>{{'eti.memoria.referencia' | translate}}</mat-label>
         <input matInput formControlName="referenciaMemoria" placeholder="{{'eti.memoria.referencia' | translate}}">
-      </mat-form-field>
-    </div>
-
-    <!--Solicitante-->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field>
-        <mat-label>{{'eti.solicitante' | translate}}</mat-label>
-        <input matInput formControlName="solicitante" placeholder="{{'eti.solicitante' | translate}}">
       </mat-form-field>
     </div>
 

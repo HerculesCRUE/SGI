@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { MSG_PARAMS } from '@core/i18n';
 import { IMemoria } from '@core/models/eti/memoria';
 import { IPeticionEvaluacion } from '@core/models/eti/peticion-evaluacion';
@@ -12,6 +13,7 @@ import { ESTADO_MEMORIA_MAP } from '@core/models/eti/tipo-estado-memoria';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -20,7 +22,7 @@ import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
-import { IPeticionEvaluacionListadoModalData, PeticionEvaluacionListadoExportModalComponent } from '../modals/peticion-evaluacion-listado-export-modal/peticion-evaluacion-listado-export-modal.component';
+import { PeticionEvaluacionListadoExportModalComponent } from '../modals/peticion-evaluacion-listado-export-modal/peticion-evaluacion-listado-export-modal.component';
 
 const MSG_BUTTON_SAVE = marker('btn.add.entity');
 const PETICION_EVALUACION_KEY = marker('eti.peticion-evaluacion');
@@ -48,6 +50,8 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
   peticionesEvaluacion$: Observable<IPeticionEvaluacion[]> = of();
   memorias$: Observable<IMemoria[]> = of();
 
+  private limiteRegistrosExportacionExcel: string;
+
   get tipoColectivoSolicitante() {
     return TipoColectivo.SOLICITANTE_ETICA;
   }
@@ -61,7 +65,8 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
     private readonly peticionesEvaluacionService: PeticionEvaluacionService,
     private readonly personaService: PersonaService,
     private readonly translate: TranslateService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService,
   ) {
     super();
 
@@ -91,6 +96,11 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
       tipoEstadoMemoria: new FormControl(null, []),
       solicitante: new FormControl('', [])
     });
+
+    this.suscripciones.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('eti-exp-max-num-registros-excel-peticion-evaluacion-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   private setupI18N(): void {
@@ -170,8 +180,10 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
   }
 
   public openExportModal() {
-    const data: IPeticionEvaluacionListadoModalData = {
-      findOptions: this.findOptions
+    const data: IBaseExportModalData = {
+      findOptions: this.findOptions,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

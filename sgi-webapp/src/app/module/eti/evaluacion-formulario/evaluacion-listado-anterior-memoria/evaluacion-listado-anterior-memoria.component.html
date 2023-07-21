@@ -43,8 +43,8 @@
         <th mat-header-cell *matHeaderCellDef>
           {{'eti.evaluacion-evaluador.memoria.pdf' | translate}}</th>
         <td mat-cell *matCellDef="let evaluacion">
-          <button mat-icon-button (click)="visualizarInforme(evaluacion?.evaluacion?.id)">
-            <mat-icon color="primary">picture_as_pdf</mat-icon>
+          <button color="primary" mat-icon-button (click)="visualizarInforme(evaluacion?.evaluacion?.id)">
+            <mat-icon>picture_as_pdf</mat-icon>
           </button>
         </td>
       </ng-container>

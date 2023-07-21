@@ -77,14 +77,18 @@ export class EmpresaExplotacionResultadosDatosGeneralesComponent extends FormFra
   }
 
   private getEstadosWithoutActiva(): Map<EstadoEmpresa, string> {
-    const estadosNew = new Map<EstadoEmpresa, string>();
-    ESTADO_EMPRESA_EXPLOTACION_RESULTADOS_MAP.forEach((value, key) => {
-      if (key !== EstadoEmpresa.ACTIVA) {
-        estadosNew.set(key, value);
+    let estadosNew = new Map<EstadoEmpresa, string>();
+    if (!this.formGroup.controls.entidad.value?.id) {
+      ESTADO_EMPRESA_EXPLOTACION_RESULTADOS_MAP.forEach((value, key) => {
+        if (key !== EstadoEmpresa.ACTIVA) {
+          estadosNew.set(key, value);
+        }
+      });
+      if (this.formGroup.controls.estado.value === EstadoEmpresa.ACTIVA) {
+        this.formGroup.controls.estado.setValue(null);
       }
-    });
-    if (this.formGroup.controls.estado.value === EstadoEmpresa.ACTIVA) {
-      this.formGroup.controls.estado.setValue(null);
+    } else {
+      estadosNew = ESTADO_EMPRESA_EXPLOTACION_RESULTADOS_MAP;
     }
     return estadosNew;
   }

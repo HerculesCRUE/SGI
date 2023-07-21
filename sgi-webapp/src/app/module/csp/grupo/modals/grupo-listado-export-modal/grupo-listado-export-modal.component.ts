@@ -3,19 +3,15 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiRestFindOptions } from '@sgi/framework/http';
 import { GrupoListadoExportService, IGrupoReportOptions } from '../../grupo-listado-export.service';
 
 const GRUPO_KEY = marker('csp.grupo');
 const REPORT_TITLE_KEY = marker('csp.grupo.listado');
-
-export interface IGrupoListadoModalData {
-  findOptions: SgiRestFindOptions;
-}
 
 @Component({
   templateUrl: './grupo-listado-export-modal.component.html',
@@ -28,11 +24,19 @@ export class GrupoListadoExportModalComponent extends BaseExportModalComponent<I
     return MSG_PARAMS;
   }
 
+  get TOTAL_REG_EXP_EXCEL() {
+    return this.modalData.totalRegistrosExportacionExcel;
+  }
+
+  get LIMITE_REG_EXP_EXCEL() {
+    return this.modalData.limiteRegistrosExportacionExcel;
+  }
+
   constructor(
     matDialogRef: MatDialogRef<GrupoListadoExportModalComponent>,
     translate: TranslateService,
     grupoListadoExportService: GrupoListadoExportService,
-    @Inject(MAT_DIALOG_DATA) private modalData: IGrupoListadoModalData
+    @Inject(MAT_DIALOG_DATA) private modalData: IBaseExportModalData
   ) {
     super(grupoListadoExportService, translate, matDialogRef);
   }

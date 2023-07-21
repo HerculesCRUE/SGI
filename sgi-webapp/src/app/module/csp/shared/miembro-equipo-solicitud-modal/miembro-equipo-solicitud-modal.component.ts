@@ -1,18 +1,18 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IMiembroEquipoSolicitud } from '@core/models/csp/miembro-equipo-solicitud';
 import { IRolProyecto } from '@core/models/csp/rol-proyecto';
-import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
+import { RolProyectoService } from '@core/services/csp/rol-proyecto/rol-proyecto.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { GLOBAL_CONSTANTS } from '@core/utils/global-constants';
 import { NumberValidator } from '@core/validators/number-validator';
 import { IRange } from '@core/validators/range-validator';
 import { TranslateService } from '@ngx-translate/core';
-import { merge, Observable, of } from 'rxjs';
+import { Observable, merge, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 
 const MSG_ANADIR = marker('btn.add');
@@ -39,8 +39,6 @@ export interface MiembroEquipoSolicitudModalData {
 export class MiembroEquipoSolicitudModalComponent extends DialogFormComponent<MiembroEquipoSolicitudModalData> implements OnInit {
 
   textSaveOrUpdate: string;
-
-  rolesProyecto$: Observable<IRolProyecto[]>;
   colectivosIdRolParticipacion: string[];
 
   msgParamRolParticipacionEntity = {};
@@ -58,10 +56,6 @@ export class MiembroEquipoSolicitudModalComponent extends DialogFormComponent<Mi
     super(matDialogRef, !!data.entidad?.id);
 
     this.textSaveOrUpdate = this.data.entidad?.id ? MSG_ACEPTAR : MSG_ANADIR;
-
-    this.rolesProyecto$ = this.rolProyectoService.findAll().pipe(
-      map(result => result.items)
-    );
   }
 
   ngOnInit(): void {

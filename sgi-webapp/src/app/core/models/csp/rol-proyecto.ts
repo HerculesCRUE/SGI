@@ -7,6 +7,7 @@ export interface IRolProyecto {
   nombre: string;
   descripcion: string;
   rolPrincipal: boolean;
+  baremablePRC: boolean;
   orden: Orden;
   equipo: Equipo;
   activo: boolean;

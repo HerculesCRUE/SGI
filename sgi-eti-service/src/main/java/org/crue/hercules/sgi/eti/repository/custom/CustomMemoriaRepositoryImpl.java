@@ -223,7 +223,8 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
             .alias("isResponsable"),
         root.get(Memoria_.activo),
         root.get(Memoria_.requiereRetrospectiva), joinMemoriaRetrospectiva.alias("retrospectiva"),
-        root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.personaRef)).distinct(true);
+        root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.personaRef),
+        root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.tutorRef)).distinct(true);
 
     cq.where(cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id), idPeticionEvaluacion),
         cb.isTrue(root.get(Memoria_.activo)));
@@ -299,7 +300,8 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
             .alias("isResponsable"),
         root.get(Memoria_.activo),
         root.get(Memoria_.requiereRetrospectiva), joinMemoriaRetrospectiva.alias("retrospectiva"),
-        root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.personaRef)).distinct(true);
+        root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.personaRef),
+        root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.tutorRef)).distinct(true);
 
     cq.where(predicates.toArray(new Predicate[] {}));
 

@@ -36,17 +36,19 @@
           <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
           <td mat-cell *matCellDef="let wrapper;let i=index;">
             <ng-container *ngIf="!readonly">
-              <button (click)="openUpdateModal(wrapper)" mat-button matTooltip="{{'btn.edit' | translate}}">
-                <mat-icon color="primary">border_color</mat-icon>
+              <button color="primary" (click)="openUpdateModal(wrapper)" mat-icon-button
+                matTooltip="{{'btn.edit' | translate}}">
+                <mat-icon>border_color</mat-icon>
               </button>
-              <button *ngIf="wrapper.value.eliminable" mat-button matTooltip="{{'btn.delete' | translate}}"
-                (click)="borrar(wrapper)">
-                <mat-icon color="warn">highlight_off</mat-icon>
+              <button color="warn" *ngIf="wrapper.value.eliminable" mat-icon-button
+                matTooltip="{{'btn.delete' | translate}}" (click)="borrar(wrapper)">
+                <mat-icon>highlight_off</mat-icon>
               </button>
             </ng-container>
             <ng-container *ngIf="readonly">
-              <button (click)="openUpdateModal(wrapper)" mat-button matTooltip="{{'btn.view' | translate}}">
-                <mat-icon color="primary">visibility</mat-icon>
+              <button color="primary" (click)="openUpdateModal(wrapper)" mat-icon-button
+                matTooltip="{{'btn.view' | translate}}">
+                <mat-icon>visibility</mat-icon>
               </button>
             </ng-container>
           </td>

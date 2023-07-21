@@ -35,7 +35,8 @@ class TipoAmbitoGeograficoIT extends BaseIT {
     headers.set("Authorization",
         String.format("bearer %s",
             tokenBuilder.buildToken("user", "AUTH", "CSP-CON-V", "CSP-CON-INV-V", "CSP-CON-C", "CSP-CON-E", "CSP-CON-B",
-                "CSP-CON-R", "CSP-PRO-V", "CSP-PRO-C", "CSP-PRO-E", "CSP-PRO-B", "CSP-PRO-R", "AUTH")));
+                "CSP-CON-R", "CSP-PRO-V", "CSP-PRO-C", "CSP-PRO-E", "CSP-PRO-B", "CSP-PRO-R", "AUTH", "CSP-TAGE-V",
+                "CSP-TAGE-", "CSP-TAGE-E", "CSP-TAGE-B", "CSP-TAGE-R")));
 
     HttpEntity<TipoAmbitoGeografico> request = new HttpEntity<>(entity, headers);
     return request;
@@ -69,7 +70,8 @@ class TipoAmbitoGeograficoIT extends BaseIT {
     String sort = "nombre,desc";
     String filter = "nombre=ke=00";
 
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort)
+        .queryParam("q", filter)
         .build(false).toUri();
 
     final ResponseEntity<List<TipoAmbitoGeografico>> response = restTemplate.exchange(uri, HttpMethod.GET,

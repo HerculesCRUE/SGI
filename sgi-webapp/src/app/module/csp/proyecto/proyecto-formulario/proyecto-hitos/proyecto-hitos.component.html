@@ -33,19 +33,19 @@
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let hito">
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-            <button mat-button matTooltip="{{'btn.edit' | translate}}" *ngIf="!actionService.readonly"
-              (click)="openModal(hito)">
-              <mat-icon color="primary">border_color</mat-icon>
+            <button color="primary" mat-icon-button matTooltip="{{'btn.edit' | translate}}"
+              *ngIf="!actionService.readonly" (click)="openModal(hito)">
+              <mat-icon>border_color</mat-icon>
             </button>
-            <button mat-button matTooltip="{{'btn.view' | translate}}" *ngIf="actionService.readonly"
-              (click)="openModal(hito)">
-              <mat-icon color="primary">visibility</mat-icon>
+            <button color="primary" mat-icon-button matTooltip="{{'btn.view' | translate}}"
+              *ngIf="actionService.readonly" (click)="openModal(hito)">
+              <mat-icon>visibility</mat-icon>
             </button>
           </ng-container>
           <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
-            <button mat-button matTooltip="{{'btn.delete' | translate}}" *ngIf="!actionService.readonly"
-              (click)="deleteHito(hito)">
-              <mat-icon color="warn">highlight_off</mat-icon>
+            <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
+              *ngIf="!actionService.readonly" (click)="deleteHito(hito)">
+              <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
         </td>

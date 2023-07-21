@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { OutputReport } from '@core/models/rep/output-report.enum';
@@ -13,8 +14,7 @@ import { IMemoriaReportOptions, MemoriaListadoExportService } from '../../memori
 
 const REPORT_TITLE_KEY = marker('eti.memoria.report.title');
 
-export interface IMemoriaListadoModalData {
-  findOptions: SgiRestFindOptions;
+export interface IMemoriaListadoModalData extends IBaseExportModalData {
   isInvestigador: boolean;
 }
 
@@ -35,6 +35,14 @@ export class MemoriaListadoExportModalComponent extends
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
+  }
+
+  get TOTAL_REG_EXP_EXCEL() {
+    return this.modalData.totalRegistrosExportacionExcel;
+  }
+
+  get LIMITE_REG_EXP_EXCEL() {
+    return this.modalData.limiteRegistrosExportacionExcel;
   }
 
   constructor(

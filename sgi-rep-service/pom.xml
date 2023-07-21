@@ -3,28 +3,24 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>org.crue.hercules.sgi</groupId>
     <artifactId>sgi-starter-parent</artifactId>
     <version>0.1.0</version>
   </parent>
-
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-rep-service</artifactId>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
   <packaging>jar</packaging>
   <name>sgi-rep-service</name>
   <description>Informes SGI HERCULES</description>
   <url>https://github.com/HerculesCRUE/SGI</url>
-
   <licenses>
     <license>
       <name>GNU General Public License, Version 3</name>
       <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
     </license>
   </licenses>
-
   <developers>
     <developer>
       <name>Treelogic</name>
@@ -33,18 +29,21 @@
       <organizationUrl>https://www.treelogic.com</organizationUrl>
     </developer>
   </developers>
-
   <scm>
     <url>https://github.com/HerculesCRUE/SGI</url>
   </scm>
-
   <properties>
     <!-- Manifest data for the Apache Maven JAR Plugin -->
     <manifest.name>org/crue/hercules/sgi/csp</manifest.name>
     <!-- Versions -->
     <sgi-framework-spring.version>0.1.0</sgi-framework-spring.version>
+    <!-- Última versión compatible con librería pentaho report -->
+    <com-deepoove-poi-tl.version>1.10.5</com-deepoove-poi-tl.version>
+    <!-- Última versión compatible con librería pentaho report -->
+    <org-apache-poi.version>4.1.2</org-apache-poi.version>
+    <!-- Última versión compatible con librería pentaho report -->
+    <fr-opensagres-xdocreport.version>2.0.2</fr-opensagres-xdocreport.version>
   </properties>
-
   <profiles>
     <profile>
       <!-- dev profile. This is the default profile -->
@@ -71,7 +70,6 @@
       </properties>
     </profile>
   </profiles>
-
   <dependencyManagement>
     <dependencies>
       <!--
@@ -85,8 +83,29 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <dependencies>
+
+    <dependency>
+      <groupId>com.deepoove</groupId>
+      <artifactId>poi-tl</artifactId>
+      <version>${com-deepoove-poi-tl.version}</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>${org-apache-poi.version}</version>
+    </dependency>
+
+    <!--
+    https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.poi.xwpf.converter.pdf -->
+    <dependency>
+      <groupId>fr.opensagres.xdocreport</groupId>
+      <artifactId>fr.opensagres.poi.xwpf.converter.pdf</artifactId>
+      <version>${fr-opensagres-xdocreport.version}</version>
+    </dependency>
+
     <!-- 
         Pentaho Reporting Engine Classic Core - Java class library for generating reports
         https://github.com/pentaho/pentaho-reporting
@@ -338,7 +357,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <!--
@@ -399,7 +417,6 @@
       </plugin>
     </plugins>
   </build>
-
   <reporting>
     <plugins>
       <!--

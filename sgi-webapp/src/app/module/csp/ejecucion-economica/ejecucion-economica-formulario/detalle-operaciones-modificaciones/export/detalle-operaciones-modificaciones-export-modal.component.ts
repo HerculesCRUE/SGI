@@ -19,6 +19,14 @@ const DETALLE_OPERACIONES_MODIFICACIONES = marker('menu.csp.ejecucion-economica.
 export class DetalleOperacionesModificacionesExportModalComponent
   extends BaseExportModalComponent<IEjecucionPresupuestariaReportOptions> implements OnInit {
 
+  get TOTAL_REG_EXP_EXCEL() {
+    return this.modalData.totalRegistrosExportacionExcel;
+  }
+
+  get LIMITE_REG_EXP_EXCEL() {
+    return this.modalData.limiteRegistrosExportacionExcel;
+  }
+
   constructor(
     matDialogRef: MatDialogRef<DetalleOperacionesModificacionesExportModalComponent>,
     translate: TranslateService,

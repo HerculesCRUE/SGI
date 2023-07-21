@@ -42,6 +42,8 @@ export abstract class SelectCommonComponent<T>
   readonly stateChanges = new Subject<void>();
   readonly controlType = 'sgi-select';
 
+  private isInitialValue = true;
+
   get tabIndex(): number { return -1; }
 
   /** Value of the select control. */
@@ -52,9 +54,17 @@ export abstract class SelectCommonComponent<T>
   set value(newValue: T) {
     if (this.ready) {
       this.matSelect.value = newValue;
+
+      if (this.isInitialValue) {
+        this.addMissingOptionIfNeccesary();
+      }
     }
     else {
       this._value = newValue;
+    }
+
+    if (this.isInitialValue && !!newValue) {
+      this.isInitialValue = false;
     }
   }
   // tslint:disable-next-line: variable-name

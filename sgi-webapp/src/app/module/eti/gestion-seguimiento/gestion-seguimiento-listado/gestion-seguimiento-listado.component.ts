@@ -7,6 +7,7 @@ import { AbstractTablePaginationComponent } from '@core/component/abstract-table
 import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -35,6 +36,8 @@ export class GestionSeguimientoListadoComponent extends AbstractTablePaginationC
 
   evaluaciones$: Observable<IEvaluacion[]> = of();
 
+  private limiteRegistrosExportacionExcel: string;
+
   get tipoColectivoSolicitante() {
     return TipoColectivo.SOLICITANTE_ETICA;
   }
@@ -43,7 +46,8 @@ export class GestionSeguimientoListadoComponent extends AbstractTablePaginationC
     private readonly logger: NGXLogger,
     private readonly evaluacionesService: EvaluacionService,
     protected readonly personaService: PersonaService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService,
   ) {
     super();
 
@@ -73,6 +77,11 @@ export class GestionSeguimientoListadoComponent extends AbstractTablePaginationC
       solicitante: new FormControl('', []),
       tipoEvaluacion: new FormControl(null, [])
     });
+
+    this.suscripciones.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('eti-exp-max-num-registros-excel-seguimiento-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IEvaluacion>> {
@@ -150,7 +159,9 @@ export class GestionSeguimientoListadoComponent extends AbstractTablePaginationC
   public openExportModal() {
     const data: ISeguimientoListadoModalData = {
       findOptions: this.findOptions,
-      rolPersona: RolPersona.GESTOR
+      rolPersona: RolPersona.GESTOR,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

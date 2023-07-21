@@ -104,6 +104,7 @@ export class PeticionEvaluacionActionService extends ActionService {
       checklistService,
       solicitudService,
       this.checklist,
+      this.personaService,
       this.readonly
     );
     this.equipoInvestigadorListado = new EquipoInvestigadorListadoFragment(
@@ -127,14 +128,14 @@ export class PeticionEvaluacionActionService extends ActionService {
 
     this.datosGenerales.initialize();
 
-    this.equipoInvestigadorListado.equiposTrabajo$.subscribe(list => {
+    this.subscriptions.push(this.equipoInvestigadorListado.equiposTrabajo$.subscribe(list => {
       this.tareas.setEquiposTrabajo(list.map((equipoTrabajo) => equipoTrabajo.value));
-    });
+    }));
 
-    this.memoriasListado.memorias$.subscribe(list => {
+    this.subscriptions.push(this.memoriasListado.memorias$.subscribe(list => {
       this.tareas.setMemorias(list.map((memoria) => memoria.value));
       this.equipoInvestigadorListado.setMemorias(list.map((memoria) => memoria.value));
-    });
+    }));
 
     this.subscriptions.push(
       this.datosGenerales.solicitantePeticionEvaluacion$.subscribe((value) => {

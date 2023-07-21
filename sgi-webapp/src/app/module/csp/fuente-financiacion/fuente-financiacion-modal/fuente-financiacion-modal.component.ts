@@ -1,16 +1,14 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IFuenteFinanciacion } from '@core/models/csp/fuente-financiacion';
-import { ITipoOrigenFuenteFinanciacion } from '@core/models/csp/tipo-origen-fuente-financiacion';
 import { FuenteFinanciacionService } from '@core/services/csp/fuente-financiacion/fuente-financiacion.service';
-import { TipoOrigenFuenteFinanciacionService } from '@core/services/csp/tipo-origen-fuente-financiacion.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 
 const FUENTE_FINANCIACION_KEY = marker('csp.fuente-financiacion');
 const FUENTE_FINANCIACION_NOMBRE_KEY = marker('csp.fuente-financiacion.nombre');
@@ -27,7 +25,6 @@ export class FuenteFinanciacionModalComponent
   extends DialogActionComponent<IFuenteFinanciacion> implements OnInit, OnDestroy {
 
   private readonly fuenteFinanciacion: IFuenteFinanciacion;
-  public readonly origenes: Observable<ITipoOrigenFuenteFinanciacion[]>;
 
   msgParamAmbitoEntity = {};
   msgParamNombreEntity = {};
@@ -38,12 +35,10 @@ export class FuenteFinanciacionModalComponent
   constructor(
     matDialogRef: MatDialogRef<FuenteFinanciacionModalComponent, IFuenteFinanciacion>,
     @Inject(MAT_DIALOG_DATA) data: IFuenteFinanciacion,
-    tipoOrigenFuenteFinanciacionService: TipoOrigenFuenteFinanciacionService,
     private readonly fuenteFinanciacionService: FuenteFinanciacionService,
     private readonly translate: TranslateService
   ) {
     super(matDialogRef, !!data?.id);
-    this.origenes = tipoOrigenFuenteFinanciacionService.findAll().pipe(map(result => result.items));
 
     if (this.isEdit()) {
       this.fuenteFinanciacion = { ...data };

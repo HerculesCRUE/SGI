@@ -1,19 +1,19 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IMiembroEquipoProyecto } from '@core/models/csp/miembro-equipo-proyecto';
 import { IRolProyecto } from '@core/models/csp/rol-proyecto';
-import { RolProyectoService } from '@core/services/csp/rol-proyecto.service';
+import { RolProyectoService } from '@core/services/csp/rol-proyecto/rol-proyecto.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { DateValidator } from '@core/validators/date-validator';
 import { IRange } from '@core/validators/range-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
-import { merge, Observable, of } from 'rxjs';
+import { Observable, merge, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 
 const MSG_ANADIR = marker('btn.add');
@@ -44,8 +44,6 @@ export class MiembroEquipoProyectoModalComponent extends DialogFormComponent<Mie
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
   textSaveOrUpdate: string;
-
-  rolesProyecto$: Observable<IRolProyecto[]>;
   colectivosIdRolParticipacion: string[];
 
   msgParamFechaFinEntity = {};
@@ -62,10 +60,6 @@ export class MiembroEquipoProyectoModalComponent extends DialogFormComponent<Mie
     private rolProyectoService: RolProyectoService,
     private readonly translate: TranslateService) {
     super(matDialogRef, !!data?.entidad?.rolProyecto);
-
-    this.rolesProyecto$ = this.rolProyectoService.findAll().pipe(
-      map(result => result.items)
-    );
   }
 
   ngOnInit(): void {

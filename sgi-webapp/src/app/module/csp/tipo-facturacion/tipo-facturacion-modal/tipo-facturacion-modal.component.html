@@ -1,0 +1,24 @@
+<sgi-action-dialog [title]="title">
+  <form [formGroup]="formGroup">
+    <!-- Nombre -->
+    <div fxLayout="row">
+      <mat-form-field>
+        <mat-label>{{'csp.tipo-facturacion.nombre' | translate}}</mat-label>
+        <input matInput formControlName="nombre" type="text" placeholder="{{'csp.tipo-facturacion.nombre' | translate}}"
+          required>
+        <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
+          {{'error.required.entity' | translate:msgParamNombreEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- Tipo de comunicado -->
+    <div fxLayout="row">
+      <sgi-field-info matSuffix visible="true" style="vertical-align: middle"
+        message="{{'csp.tipo-facturacion.incluir-en-comunicado.tooltip' | translate }}">
+      </sgi-field-info>
+      <mat-checkbox class="checkbox" color="primary" formControlName="incluirEnComunicado">
+        {{'csp.tipo-facturacion.incluir-en-comunicado' | translate}}
+      </mat-checkbox>
+    </div>
+  </form>
+</sgi-action-dialog>

@@ -1,9 +1,12 @@
+@import "colors.scss";
+
 :host {
   .label {
     width: 450px;
     text-align: right;
     line-height: 3.5em;
   }
+
   .cabecera {
     width: 180px;
     text-align: center;

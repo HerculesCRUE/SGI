@@ -957,7 +957,6 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
       List<Predicate> predicates = new ArrayList<>();
       Predicate pJoinComite = cb.equal(joinEComite.get(Comite_.id), joinCRComite.get(Comite_.id));
       Predicate pIdEvaluacionEq = cb.equal(rootEvaluacion.get(Evaluacion_.id), idEvaluacion);
-      Predicate pComiteCEEA = cb.equal(joinEComite.get(Comite_.id), ID_COMITE_CEEA);
       Predicate pComiteActivo = cb.equal(joinEComite.get(Comite_.activo), true);
       Predicate pEvaluadorActivo = cb.equal(root.get(Evaluador_.activo), true);
       Predicate pCargoComiteActivo = cb.equal(joinCargoComite.get(CargoComite_.activo), true);
@@ -977,7 +976,6 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
 
       predicates.add(pJoinComite);
       predicates.add(pIdEvaluacionEq);
-      predicates.add(pComiteCEEA);
       predicates.add(pComiteActivo);
       predicates.add(pCargoComitePresidente);
       predicates.add(pCargoComiteActivo);

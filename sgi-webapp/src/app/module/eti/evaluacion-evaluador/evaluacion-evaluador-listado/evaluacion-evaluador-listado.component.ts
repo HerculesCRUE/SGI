@@ -8,6 +8,7 @@ import { TIPO_CONVOCATORIA_REUNION } from '@core/models/eti/tipo-convocatoria-re
 import { IPersona } from '@core/models/sgp/persona';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { ConfiguracionService } from '@core/services/eti/configuracion.service';
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -31,6 +32,8 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
 
   private numLimiteDiasEvaluar = null;
 
+  private limiteRegistrosExportacionExcel: string;
+
   get TIPO_CONVOCATORIA() {
     return TIPO_CONVOCATORIA_REUNION;
   }
@@ -39,7 +42,8 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
     private readonly evaluadorService: EvaluadorService,
     private readonly personaService: PersonaService,
     private readonly configuracionService: ConfiguracionService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly cnfService: ConfigService,
   ) {
     super();
 
@@ -66,6 +70,11 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
       tipoEvaluacion: new FormControl(null)
     });
     this.loadNumDiasLimiteEvaluar();
+
+    this.suscripciones.push(
+      this.cnfService.getLimiteRegistrosExportacionExcel('eti-exp-max-num-registros-excel-evaluador-listado').subscribe(value => {
+        this.limiteRegistrosExportacionExcel = value;
+      }));
   }
 
   protected resetFilters(): void {
@@ -171,7 +180,9 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
   public openExportModal() {
     const data: IEvaluacionListadoModalData = {
       findOptions: this.findOptions,
-      tipoComentario: TipoComentario.EVALUADOR
+      tipoComentario: TipoComentario.EVALUADOR,
+      totalRegistrosExportacionExcel: this.totalElementos,
+      limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
     };
 
     const config = {

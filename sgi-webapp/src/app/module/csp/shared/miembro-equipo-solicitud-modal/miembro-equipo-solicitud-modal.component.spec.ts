@@ -1,7 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DialogComponent } from '@block/dialog/dialog.component';
@@ -9,9 +9,11 @@ import { HeaderComponent } from '@block/header/header.component';
 import { IMiembroEquipoSolicitud } from '@core/models/csp/miembro-equipo-solicitud';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
+import { CspSharedModule } from '../csp-shared.module';
 import { MiembroEquipoSolicitudModalComponent, MiembroEquipoSolicitudModalData } from './miembro-equipo-solicitud-modal.component';
 
 describe('MiembroEquipoSolicitudModalComponent', () => {
@@ -37,6 +39,7 @@ describe('MiembroEquipoSolicitudModalComponent', () => {
         HeaderComponent
       ],
       imports: [
+        CspSharedModule,
         SharedModule,
         BrowserAnimationsModule,
         MaterialDesignModule,
@@ -50,6 +53,7 @@ describe('MiembroEquipoSolicitudModalComponent', () => {
       providers: [
         { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: data },
+        SgiAuthService
       ]
     })
       .compileComponents();

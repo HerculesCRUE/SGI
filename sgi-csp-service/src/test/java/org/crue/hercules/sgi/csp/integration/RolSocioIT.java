@@ -31,7 +31,8 @@ class RolSocioIT extends BaseIT {
     headers = (headers != null ? headers : new HttpHeaders());
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-PRO-E", "AUTH")));
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-PRO-E", "AUTH",
+        "CSP-ROLS-V", "CSP-ROLS-C", "CSP-ROLS-E", "CSP-ROLS-B", "CSP-ROLS-R", "CSP-SOL-E", "CSP-SOL-V")));
 
     HttpEntity<RolSocio> request = new HttpEntity<>(entity, headers);
     return request;
@@ -71,7 +72,8 @@ class RolSocioIT extends BaseIT {
     String filter = "descripcion=ke=00";
 
     // when: find RolSocio
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort)
+        .queryParam("q", filter)
         .build(false).toUri();
     final ResponseEntity<List<RolSocio>> response = restTemplate.exchange(uri, HttpMethod.GET,
         buildRequest(headers, null), new ParameterizedTypeReference<List<RolSocio>>() {

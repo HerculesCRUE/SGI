@@ -18,6 +18,7 @@ import { from, merge, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { ACTION_MODAL_MODE } from 'src/app/esb/shared/formly-forms/core/base-formly-modal.component';
 import { IPersonaFormlyData, PersonaFormlyModalComponent } from '../../../formly-forms/persona-formly-modal/persona-formly-modal.component';
+import { PersonaFormlyPublicModalComponent } from '../../../formly-forms/persona-formly-public-modal/persona-formly-public-modal.component';
 
 const TIPO_PERSONA_KEY = marker('sgp.persona');
 const MSG_SAVE_SUCCESS = marker('msg.save.request.entity.success');
@@ -250,7 +251,7 @@ export class SearchPersonaPublicModalComponent extends DialogCommonComponent imp
       panelClass: 'sgi-dialog-container',
       data: personaData
     };
-    const dialogRef = this.personaCreateMatDialog.open(PersonaFormlyModalComponent, config);
+    const dialogRef = this.personaCreateMatDialog.open(PersonaFormlyPublicModalComponent, config);
 
     dialogRef.afterClosed().subscribe(
       (persona) => {
