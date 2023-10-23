@@ -63,6 +63,7 @@ public class ConfiguracionServiceImpl implements ConfiguracionService {
           .setMesesArchivadaPendienteCorrecciones(configuracionActualizar.getMesesArchivadaPendienteCorrecciones());
       configuracion.setDiasLimiteEvaluador(configuracionActualizar.getDiasLimiteEvaluador());
       configuracion.setDiasArchivadaInactivo(configuracionActualizar.getDiasArchivadaInactivo());
+      configuracion.setDuracionProyectoEvaluacion(configuracionActualizar.getDuracionProyectoEvaluacion());
 
       Configuracion returnValue = configuracionRepository.save(configuracion);
       log.debug("update(Configuracion configuracionActualizar) - end");

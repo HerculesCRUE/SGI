@@ -4,15 +4,15 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
-import { ConfiguracionService } from '@core/services/csp/configuracion.service';
-import { RelacionEjecucionEconomicaService } from '@core/services/csp/relacion-ejecucion-economica/relacion-ejecucion-economica.service';
+import { ConfigService } from '@core/services/csp/config.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { RelacionEjecucionEconomicaService } from '@core/services/csp/relacion-ejecucion-economica/relacion-ejecucion-economica.service';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { NGXLogger } from 'ngx-logger';
-import { EMPTY, from, Observable, of, throwError } from 'rxjs';
+import { EMPTY, Observable, from, of, throwError } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { EJECUCION_ECONOMICA_ROUTE_PARAMS } from './ejecucion-economica-route-params';
 import { IEjecucionEconomicaData } from './ejecucion-economica.action.service';
@@ -34,7 +34,7 @@ export class EjecucionEconomicaDataResolver extends SgiResolverResolver<IEjecuci
     private personaService: PersonaService,
     private proyectoService: ProyectoService,
     private proyectoSgeService: ProyectoSgeService,
-    private configuracionService: ConfiguracionService,
+    private configuracionService: ConfigService,
   ) {
     super(logger, router, snackBar, MSG_NOT_FOUND);
   }

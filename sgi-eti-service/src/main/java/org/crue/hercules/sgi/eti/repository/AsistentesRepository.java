@@ -1,6 +1,9 @@
 package org.crue.hercules.sgi.eti.repository;
 
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+
+import java.util.List;
+
 import org.crue.hercules.sgi.eti.model.Asistentes;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,4 +27,13 @@ public interface AsistentesRepository extends JpaRepository<Asistentes, Long>, J
    * @return la lista de entidades {@link Asistentes} paginadas.
    */
   Page<Asistentes> findAllByConvocatoriaReunionId(Long id, Pageable pageable);
+
+  /**
+   * Obtener listado de {@link Asistentes} activos para una
+   * determinada {@link ConvocatoriaReunion}.
+   *
+   * @param id Id de {@link ConvocatoriaReunion}.
+   * @return la lista de entidades {@link Asistentes}.
+   */
+  List<Asistentes> findAllByConvocatoriaReunionId(Long id);
 }

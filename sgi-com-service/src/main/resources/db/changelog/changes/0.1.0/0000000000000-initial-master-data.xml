@@ -1,0 +1,387 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000000-initial-master-data.xml">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="0000000000000-param">
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="GENERIC_SUBJECT" />
+      <column name="description" value="Asunto genérico" />
+      <column name="type" value="STRING" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="GENERIC_CONTENT_TEXT" />
+      <column name="description" value="Contenido textual genérico" />
+      <column name="type" value="STRING" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="GENERIC_CONTENT_HTML" />
+      <column name="description" value="Contenido HTML genérico" />
+      <column name="type" value="STRING" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Convocatoria Hito -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_HITO_FECHA" />
+      <column name="description" value="Fecha del Hito" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_HITO_TIPO" />
+      <column name="description" value="Tipo del Hito" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_CONVOCATORIA_TITULO" />
+      <column name="description" value="Titulo de la Convocatoria" />
+      <column name="type" value="STRING" />
+    </insert>
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="CSP_COM_INICIO_PRESENTACION_GASTO_DATA" />
+      <column name="description" value="JSON con formato: {&quot;fecha&quot;:&quot;2022-01-01&quot;,&quot;proyectos&quot;:[{&quot;titulo&quot;:&quot;Proyecto1&quot;,&quot;fechaInicio&quot;:&quot;2022-01-01T00:00:00Z&quot;,&quot;fechaFin&quot;:&quot;2022-01-31T23:59:59Z&quot;},{&quot;titulo&quot;:&quot;Proyecto2&quot;,&quot;fechaInicio&quot;:&quot;2022-01-01T00:00:00Z&quot;,&quot;fechaFin&quot;:&quot;2022-01-31T23:59:59Z&quot;}]}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-subject_tpl">
+    <validCheckSum>8:595c30ef4e75d66155419c56a62c571b</validCheckSum>
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="GENERIC_SUBJECT" />
+      <column name="description" value="Plantilla de asunto genérico" />
+      <column name="tpl" value=" " />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/GENERIC_SUBJECT.ftl" />
+      <where>name='GENERIC_SUBJECT'</where>
+    </update>
+    <!-- CSP Convocatoria Hito -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_CONVOCATORIA_HITO_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para Convocatorias-Hitos" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/CSP_CONVOCATORIA_HITO_SUBJECT.ftl" />
+      <where>name='CSP_CONVOCATORIA_HITO_SUBJECT'</where>
+    </update>
+
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_INICIO_PRESENTACION_GASTO_SUBJECT" />
+      <column name="description" value="Asunto del aviso de inicio del período de presentación de justificación de gastos" />
+      <column name="tpl" value=" " />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/CSP_COM_INICIO_PRESENTACION_GASTO_SUBJECT.ftl" />
+      <where>name='CSP_COM_INICIO_PRESENTACION_GASTO_SUBJECT'</where>
+    </update>
+
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="CSP_COM_INICIO_PRESENTACION_GASTO_SUBJECT_en" />
+      <column name="description" value="Subject of the notification of the start of the period for submitting justification of expenses" />
+      <column name="tpl" value=" " />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/CSP_COM_INICIO_PRESENTACION_GASTO_SUBJECT_en.ftl" />
+      <where>name='CSP_COM_INICIO_PRESENTACION_GASTO_SUBJECT_en'</where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-subjecttpl_param">
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='GENERIC_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='GENERIC_SUBJECT')" />
+    </insert>
+    <!-- CSP Convocatoria Hito -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_CONVOCATORIA_HITO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_HITO_TIPO')" />
+    </insert>
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_CONVOCATORIA_HITO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_CONVOCATORIA_TITULO')" />
+    </insert>
+
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_INICIO_PRESENTACION_GASTO_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_INICIO_PRESENTACION_GASTO_DATA')" />
+    </insert>
+
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_INICIO_PRESENTACION_GASTO_SUBJECT_en')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_INICIO_PRESENTACION_GASTO_DATA')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-content_tpl">
+    <validCheckSum>8:3c6e24f77eb7ca77656e4b1885387cde</validCheckSum>
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="GENERIC_CONTENT" />
+      <column name="description" value="Plantilla de contenido genérico (texto + HTML)" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/GENERIC_CONTENT_text.ftl" />
+      <where>name='GENERIC_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/GENERIC_CONTENT_html.ftl" />
+      <where>name='GENERIC_CONTENT'</where>
+    </update>
+
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="GENERIC_CONTENT_TEXT" />
+      <column name="description" value="Plantilla de contenido genérico (solo texto)" />
+      <column name="tpl_text" value=" " />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/GENERIC_CONTENT_text.ftl" />
+      <where>name='GENERIC_CONTENT_TEXT'</where>
+    </update>
+    <!-- CSP Convocatoria Hito -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_CONVOCATORIA_HITO_CONTENT" />
+      <column name="description" value="Plantilla de contenido para Convocatorias-Hitos" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/CSP_CONVOCATORIA_HITO_CONTENT_text.ftl" />
+      <where>name='CSP_CONVOCATORIA_HITO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/CSP_CONVOCATORIA_HITO_CONTENT_html.ftl" />
+      <where>name='CSP_CONVOCATORIA_HITO_CONTENT'</where>
+    </update>
+
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_INICIO_PRESENTACION_GASTO_CONTENT" />
+      <column name="description" value="Contenido del aviso de inicio del período de presentación de justificación de gastos (texto + HTML)" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/CSP_COM_INICIO_PRESENTACION_GASTO_CONTENT_text.ftl" />
+      <where>name='CSP_COM_INICIO_PRESENTACION_GASTO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/CSP_COM_INICIO_PRESENTACION_GASTO_CONTENT_html.ftl" />
+      <where>name='CSP_COM_INICIO_PRESENTACION_GASTO_CONTENT'</where>
+    </update>
+
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="CSP_COM_INICIO_PRESENTACION_GASTO_CONTENT_en" />
+      <column name="description" value="Content of the notice of the start of the period for submitting justification of expenses (text + HTML) " />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/CSP_COM_INICIO_PRESENTACION_GASTO_CONTENT_text_en.ftl" />
+      <where>name='CSP_COM_INICIO_PRESENTACION_GASTO_CONTENT_en'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/CSP_COM_INICIO_PRESENTACION_GASTO_CONTENT_html_en.ftl" />
+      <where>name='CSP_COM_INICIO_PRESENTACION_GASTO_CONTENT_en'</where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-contenttpl_param">
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='GENERIC_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='GENERIC_CONTENT_TEXT')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='GENERIC_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='GENERIC_CONTENT_HTML')" />
+    </insert>
+
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='GENERIC_CONTENT_TEXT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='GENERIC_CONTENT_TEXT')" />
+    </insert>
+    <!-- CSP Convocatoria Hito -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_CONVOCATORIA_HITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_HITO_FECHA')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_CONVOCATORIA_HITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_HITO_TIPO')" />
+    </insert>
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_CONVOCATORIA_HITO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_CONVOCATORIA_TITULO')" />
+    </insert>
+
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_INICIO_PRESENTACION_GASTO_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_INICIO_PRESENTACION_GASTO_DATA')" />
+    </insert>
+
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_INICIO_PRESENTACION_GASTO_CONTENT_en')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='CSP_COM_INICIO_PRESENTACION_GASTO_DATA')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-email_tpl">
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="GENERIC_EMAIL" />
+      <column name="description" value="Email genérico (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="GENERIC_EMAIL_TEXT" />
+      <column name="description" value="Email genérico (solo texto)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+    <!-- CSP Convocatoria Hito -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_CONVOCATORIA_HITO_EMAIL" />
+      <column name="description" value="Email de Convocatoria-Hito" />
+    </insert>
+
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_INICIO_PRESENTACION_GASTO" />
+      <column name="description" value="Aviso de inicio del período de presentación de justificación de gastos (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="CSP_COM_INICIO_PRESENTACION_GASTO_en" />
+      <column name="description" value="Notice of the beginning of the period for submitting justification of expenses (text + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-emailtpl_subjecttpl">
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='GENERIC_EMAIL')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='GENERIC_SUBJECT')" />
+    </insert>
+
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='GENERIC_EMAIL_TEXT')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='GENERIC_SUBJECT')" />
+    </insert>
+    <!-- CSP Convocatoria Hito -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_CONVOCATORIA_HITO_EMAIL')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_CONVOCATORIA_HITO_SUBJECT')" />
+    </insert>
+
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_INICIO_PRESENTACION_GASTO')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_INICIO_PRESENTACION_GASTO_SUBJECT')" />
+    </insert>
+
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_INICIO_PRESENTACION_GASTO_en')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='CSP_COM_INICIO_PRESENTACION_GASTO_SUBJECT_en')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000000-emailtpl_contenttpl">
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='GENERIC_EMAIL')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='GENERIC_CONTENT')" />
+    </insert>
+
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='GENERIC_EMAIL_TEXT')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='GENERIC_CONTENT_TEXT')" />
+    </insert>
+    <!-- CSP Convocatoria Hito -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_CONVOCATORIA_HITO_EMAIL')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_CONVOCATORIA_HITO_CONTENT')" />
+    </insert>
+
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_INICIO_PRESENTACION_GASTO')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_INICIO_PRESENTACION_GASTO_CONTENT')" />
+    </insert>
+
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='CSP_COM_INICIO_PRESENTACION_GASTO_en')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='CSP_COM_INICIO_PRESENTACION_GASTO_CONTENT_en')" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

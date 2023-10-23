@@ -2,11 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ACTA_WITH_NUM_EVALUACIONES_CONVERTER } from '@core/converters/eti/acta-with-num-evaluaciones.converter';
 import { ACTA_CONVERTER } from '@core/converters/eti/acta.converter';
+import { COMENTARIO_CONVERTER } from '@core/converters/eti/comentario.converter';
 import { DOCUMENTO_CONVERTER } from '@core/converters/sgdoc/documento.converter';
 import { IActa } from '@core/models/eti/acta';
 import { IActaWithNumEvaluaciones } from '@core/models/eti/acta-with-num-evaluaciones';
 import { IActaBackend } from '@core/models/eti/backend/acta-backend';
 import { IActaWithNumEvaluacionesBackend } from '@core/models/eti/backend/acta-with-num-evaluaciones-backend';
+import { IComentarioBackend } from '@core/models/eti/backend/comentario-backend';
+import { IComentario } from '@core/models/eti/comentario';
 import { IDocumentoBackend } from '@core/models/sgdoc/backend/documento-backend';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { environment } from '@env';
@@ -82,6 +85,58 @@ export class ActaService extends SgiMutableRestService<number, IActaBackend, IAc
     return this.http.head(url, { observe: 'response' }).pipe(
       map(x => x.status === 200)
     );
+  }
+
+  /**
+   * Comprueba si los comentarios del acta están en estado cerrado
+   *
+   */
+  isComentariosEnviados(idEvaluacion: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${idEvaluacion}/comentarios-enviados`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  /**
+  * Comprueba si existen comentarios de otro usuario abiertos
+  *
+  */
+  isPosibleEnviarComentarios(idEvaluacion: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${idEvaluacion}/posible-enviar-comentarios`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  /**
+* Permite enviar comentarios del acta
+* 
+* * @param idActa id Acta
+*/
+  enviarComentarios(idActa: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${idActa}/enviar-comentarios`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  /**
+ * Devuelve los comentarios de tipo EVALUADOR de una evaluación
+ *
+ * @param id Id del Acta
+ * @param options Opciones de paginación
+ */
+  getComentariosPersonaEvaluador(id: number, personaRef: string): Observable<IComentario[]> {
+    return this.http.get<IComentarioBackend[]>(`${this.endpointUrl}/${id}/comentarios-evaluador/${personaRef}/persona`)
+      .pipe(
+        map(r => {
+          if (r == null) {
+            return [];
+          }
+          return COMENTARIO_CONVERTER.toTargetArray(r);
+        })
+      );
   }
 
 }

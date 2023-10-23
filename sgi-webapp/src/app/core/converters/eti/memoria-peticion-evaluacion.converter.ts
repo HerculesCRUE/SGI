@@ -23,7 +23,8 @@ class MemoriaPeticionEvaluacionConverter extends SgiBaseConverter<IMemoriaPetici
       fechaLimite: LuxonUtils.fromBackend(value.fechaLimite),
       isResponsable: value.isResponsable,
       activo: value.activo,
-      solicitante: { id: value.solicitanteRef } as IPersona
+      solicitante: { id: value.solicitanteRef } as IPersona,
+      version: value.version
     };
   }
 
@@ -44,7 +45,8 @@ class MemoriaPeticionEvaluacionConverter extends SgiBaseConverter<IMemoriaPetici
       fechaLimite: LuxonUtils.toBackend(value.fechaLimite),
       isResponsable: value.isResponsable,
       activo: value.activo,
-      solicitanteRef: value.solicitante.id
+      solicitanteRef: value.solicitante.id,
+      version: value.version
     };
   }
 }

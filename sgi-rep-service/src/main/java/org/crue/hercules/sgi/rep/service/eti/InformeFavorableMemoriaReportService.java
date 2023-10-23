@@ -15,24 +15,21 @@ import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableMemoria;
 import org.crue.hercules.sgi.rep.dto.eti.TareaDto;
 import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
-import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Servicio de generación de informe favorable memoria de ética
  */
 @Service
-@Slf4j
 @Validated
 public class InformeFavorableMemoriaReportService extends InformeEvaluacionEvaluadorBaseReportService {
   private final PeticionEvaluacionService peticionEvaluacionService;
-  private final SgiApiSgpService personaService;
+  private final PersonaService personaService;
 
   public InformeFavorableMemoriaReportService(SgiConfigProperties sgiConfigProperties,
-      SgiApiConfService sgiApiConfService, SgiApiSgpService personaService,
+      SgiApiConfService sgiApiConfService, PersonaService personaService,
       EvaluacionService evaluacionService, PeticionEvaluacionService peticionEvaluacionService) {
 
     super(sgiConfigProperties, sgiApiConfService, personaService, evaluacionService, null);
@@ -68,7 +65,7 @@ public class InformeFavorableMemoriaReportService extends InformeEvaluacionEvalu
 
   private void addDataEquipoTrabajo(EvaluacionDto evaluacion, HashMap<String, Object> dataReport) {
     List<TareaDto> tareas = peticionEvaluacionService
-        .findTareasEquipoTrabajo(evaluacion.getMemoria().getPeticionEvaluacion().getId());
+        .getTareasEquipoTrabajo(evaluacion.getMemoria().getPeticionEvaluacion().getId());
     List<PersonaDto> personas = new ArrayList<>();
     tareas.stream().filter(tarea -> tarea.getMemoria().getId().equals(evaluacion.getMemoria().getId()))
         .forEach(tarea -> {
@@ -92,8 +89,7 @@ public class InformeFavorableMemoriaReportService extends InformeEvaluacionEvalu
 
     if (ObjectUtils.isNotEmpty(evaluacion.getMemoria().getPeticionEvaluacion().getTutorRef())) {
       PersonaDto director = personaService.findById(evaluacion.getMemoria().getPeticionEvaluacion().getTutorRef());
-      if (!personas.stream().filter(persona -> persona.getNumeroDocumento().equals(director.getNumeroDocumento()))
-          .findAny().isPresent()) {
+      if (personas.stream().noneMatch(persona -> persona.getNumeroDocumento().equals(director.getNumeroDocumento()))) {
         String textoDirectorMasculino = "(Director " + dataReport.get("fieldDelActividad") + " "
             + dataReport.get("actividad") + ")";
         String textoDirectorFemenino = "(Directora " + dataReport.get("fieldDelActividad") + " "
@@ -109,7 +105,7 @@ public class InformeFavorableMemoriaReportService extends InformeEvaluacionEvalu
   }
 
   public byte[] getReportInformeFavorableMemoria(ReportInformeFavorableMemoria sgiReport, Long idEvaluacion) {
-    getReportFromIdEvaluacion(sgiReport, idEvaluacion);
+    getReportFromEvaluacionId(sgiReport, idEvaluacion);
     return sgiReport.getContent();
   }
 

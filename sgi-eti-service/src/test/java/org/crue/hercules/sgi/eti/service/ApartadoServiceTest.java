@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.eti.converter.ApartadoTreeConverter;
 import org.crue.hercules.sgi.eti.exceptions.ApartadoNotFoundException;
 import org.crue.hercules.sgi.eti.model.Apartado;
 import org.crue.hercules.sgi.eti.model.Bloque;
@@ -30,11 +31,14 @@ public class ApartadoServiceTest extends BaseServiceTest {
   @Mock
   private ApartadoRepository repository;
 
+  @Mock
+  private ApartadoTreeConverter apartadoTreeConverter;
+
   private ApartadoService service;
 
   @BeforeEach
   public void setUp() throws Exception {
-    service = new ApartadoServiceImpl(repository);
+    service = new ApartadoServiceImpl(repository, apartadoTreeConverter);
   }
 
   @Test
@@ -97,7 +101,7 @@ public class ApartadoServiceTest extends BaseServiceTest {
     Page<Apartado> result = service.findAll(null, Pageable.unpaged());
 
     // then: Se recupera lista vacía
-    Assertions.assertThat(result.isEmpty());
+    Assertions.assertThat(result).isEmpty();
   }
 
   @Test

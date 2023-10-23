@@ -10,6 +10,7 @@ import { EvaluacionComentarioFragment } from '../evaluacion-formulario/evaluacio
 import { EvaluacionDocumentacionFragment } from '../evaluacion-formulario/evaluacion-documentacion/evaluacion-documentacion.fragment';
 import { EvaluacionEvaluacionFragment } from '../evaluacion-formulario/evaluacion-evaluacion/evaluacion-evaluacion.fragment';
 import { EvaluacionFormularioActionService, Rol } from '../evaluacion-formulario/evaluacion-formulario.action.service';
+import { IEvaluacionWithComentariosEnviados } from '../evaluacion-evaluador/evaluacion-evaluador-listado/evaluacion-evaluador-listado.component';
 
 @Injectable()
 export class EvaluacionActionService extends EvaluacionFormularioActionService {
@@ -22,7 +23,7 @@ export class EvaluacionActionService extends EvaluacionFormularioActionService {
     personaService: PersonaService,
     authService: SgiAuthService) {
     super();
-    this.evaluacion = {} as IEvaluacion;
+    this.evaluacion = {} as IEvaluacionWithComentariosEnviados;
     if (route.snapshot.data.evaluacion) {
       this.evaluacion = route.snapshot.data.evaluacion;
       this.enableEdit();

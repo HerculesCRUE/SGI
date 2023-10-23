@@ -5,6 +5,7 @@ import org.crue.hercules.sgi.eti.exceptions.MemoriaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.Formulario.Tipo;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.repository.FormularioRepository;
 import org.crue.hercules.sgi.eti.service.FormularioService;
 import org.crue.hercules.sgi.eti.service.MemoriaService;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -170,13 +172,13 @@ public class FormularioServiceImpl implements FormularioService {
 
     switch (Tipo.fromId(tipoFormularioId)) {
       case SEGUIMIENTO_ANUAL:
-        if (memoria.getEstadoActual().getId() < Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_ANUAL) {
-          memoriaService.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_ANUAL);
+        if (memoria.getEstadoActual().getId() < TipoEstadoMemoria.Tipo.COMPLETADA_SEGUIMIENTO_ANUAL.getId()) {
+          memoriaService.updateEstadoMemoria(memoria, TipoEstadoMemoria.Tipo.COMPLETADA_SEGUIMIENTO_ANUAL.getId());
         }
         break;
       case SEGUIMIENTO_FINAL:
-        if (memoria.getEstadoActual().getId() < Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_FINAL) {
-          memoriaService.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA_SEGUIMIENTO_FINAL);
+        if (memoria.getEstadoActual().getId() < TipoEstadoMemoria.Tipo.COMPLETADA_SEGUIMIENTO_FINAL.getId()) {
+          memoriaService.updateEstadoMemoria(memoria, TipoEstadoMemoria.Tipo.COMPLETADA_SEGUIMIENTO_FINAL.getId());
         }
         break;
       case RETROSPECTIVA:
@@ -188,9 +190,9 @@ public class FormularioServiceImpl implements FormularioService {
         }
         break;
       default:
-        if (memoria.getEstadoActual().getId() < Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA) {
-          memoriaService.updateEstadoMemoria(memoria,
-              Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA);
+        if (memoria.getEstadoActual().getId() < TipoEstadoMemoria.Tipo.COMPLETADA.getId()
+            || Objects.equals(memoria.getEstadoActual().getId(), TipoEstadoMemoria.Tipo.SUBSANACION.getId())) {
+          memoriaService.updateEstadoMemoria(memoria, Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA);
         }
         break;
     }

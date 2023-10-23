@@ -1,0 +1,41 @@
+[
+  {
+    "key": "ap3_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.2 Diseño metodológico del proyecto"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Esta sección se cumplimenta automáticamente a partir de los datos introducidos en el campo <b>Diseño metodológico</b> del apartado <a href='#MODULE_PATH#/peticiones-evaluacion/#PETICION_EVALUACION_ID#/datos-generales' target='_blank'><b>Datos generales</b></a> de la <b>Solicitud de Evaluación</b>. Acceda a este punto del menú para realizar las modificaciones necesarias.",
+        "templateOptions": {
+          "replaceTemplatePlaceholders": true
+        }
+      },
+      {
+        "key": "disenoMetodologico",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Diseño metodológico",
+          "disabled": true,
+          "required": true,
+          "expressionModelValue": "formState.memoria.peticionEvaluacion.disMetodologico"
+        }
+      },
+      {
+        "template": "<h5>Proceso de experimentación</h5><p>Los apartados que vienen a continuación ayudarán a precisar el proceso de experimentación al que es sometido el animal. En los casos que la complejidad del proyecto lo requiera (por ejemplo si se utilizan varias especies distintas de animales o si existen varios grupos de animales sometidos a distintos procesos de experimentación) pueden utilizarse varias memorias.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Para añadir una nueva memoria debe de acceder al apartado <b>Memorias</b> de la <b>Solicitud de evaluación</b>"
+      }
+    ]
+  }
+]

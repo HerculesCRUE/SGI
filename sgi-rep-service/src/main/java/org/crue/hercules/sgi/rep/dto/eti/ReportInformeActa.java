@@ -7,7 +7,7 @@ import org.crue.hercules.sgi.rep.dto.SgiReportDto;
  */
 public class ReportInformeActa extends SgiReportDto {
   public ReportInformeActa() {
-    this.setPath("rep-eti-acta-prpt");
+    this.setPath("rep-eti-acta-docx");
     this.setName("informeActa");
   }
 }

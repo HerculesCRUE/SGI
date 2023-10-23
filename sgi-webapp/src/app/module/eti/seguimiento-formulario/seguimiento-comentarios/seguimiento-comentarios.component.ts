@@ -6,7 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IComentario } from '@core/models/eti/comentario';
+import { IComentario, TipoEstadoComentario } from '@core/models/eti/comentario';
 import { TipoComentario } from '@core/models/eti/tipo-comentario';
 import { DialogService } from '@core/services/dialog.service';
 import { TipoComentarioService } from '@core/services/eti/tipo-comentario.service';
@@ -18,6 +18,7 @@ import { ComentarioModalComponent, ComentarioModalData } from '../../comentario/
 import { getApartadoNombre, getSubApartadoNombre } from '../../shared/pipes/bloque-apartado.pipe';
 import { Rol, SeguimientoFormularioActionService } from '../seguimiento-formulario.action.service';
 import { SeguimientoComentarioFragment } from './seguimiento-comentarios.fragment';
+import { SgiAuthService } from '@sgi/framework/auth';
 
 const MSG_DELETE = marker('msg.delete.entity');
 const COMENTARIO_KEY = marker('eti.comentario');
@@ -28,7 +29,7 @@ const COMENTARIO_KEY = marker('eti.comentario');
   styleUrls: ['./seguimiento-comentarios.component.scss']
 })
 export class SeguimientoComentariosComponent extends FragmentComponent implements OnInit, OnDestroy {
-  private formPart: SeguimientoComentarioFragment;
+  public formPart: SeguimientoComentarioFragment;
   private subscriptions: Subscription[] = [];
   tipoComentario$: Observable<TipoComentario>;
 
@@ -36,6 +37,9 @@ export class SeguimientoComentariosComponent extends FragmentComponent implement
   elementosPagina: number[];
 
   msgParamEntity: {};
+
+  public personaId: string;
+  public disabledCreate = false;
 
   dataSource: MatTableDataSource<StatusWrapper<IComentario>>;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -47,17 +51,23 @@ export class SeguimientoComentariosComponent extends FragmentComponent implement
     return MSG_PARAMS;
   }
 
+  get TIPO_ESTADO_COMENTARIO() {
+    return TipoEstadoComentario;
+  }
+
   constructor(
     private readonly dialogService: DialogService,
     private tipoComentarioService: TipoComentarioService,
     private matDialog: MatDialog,
     private actionService: SeguimientoFormularioActionService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly authService: SgiAuthService
   ) {
     super(actionService.FRAGMENT.COMENTARIOS, actionService);
     this.dataSource = new MatTableDataSource<StatusWrapper<IComentario>>();
     this.formPart = this.fragment as SeguimientoComentarioFragment;
     this.elementosPagina = [5, 10, 25, 100];
+    this.personaId = this.authService.authStatus$.value.userRefId;
     this.columnas = ['evaluador.nombre', 'apartado.bloque', 'apartado.padre',
       'apartado', 'texto', 'acciones'];
   }
@@ -69,6 +79,9 @@ export class SeguimientoComentariosComponent extends FragmentComponent implement
     this.dataSource.sort = this.sort;
     this.subscriptions.push(this.formPart.comentarios$.subscribe(elements => {
       this.dataSource.data = elements;
+      if (elements.length > 0 && elements.filter(comentario => comentario.value.evaluador.id === this.personaId).length > 0) {
+        this.disabledCreate = !elements.some(comentario => comentario.value.estado ? (comentario.value.estado === this.TIPO_ESTADO_COMENTARIO.ABIERTO || comentario.value.estado === null) : true);
+      }
     }));
 
     this.dataSource.sortingDataAccessor =

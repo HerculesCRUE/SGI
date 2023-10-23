@@ -38,7 +38,7 @@
         <mat-form-field fxFill>
           <mat-label>{{'csp.convocatoria-elegibilidad.concepto-gasto.importe-maximo' | translate}}
           </mat-label>
-          <input matInput formControlName="importeMaximo" type="number" id="importeMaximo" min="0"
+          <input matInput formControlName="importeMaximo" type="text" id="importeMaximo" sgiInputWithThousandSeparator
             placeholder="{{'csp.convocatoria-elegibilidad.concepto-gasto.importe-maximo' | translate}}">
           <mat-error *ngIf="formGroup.controls.importeMaximo.hasError('max')">
             {{'error.max.digit' | translate}}

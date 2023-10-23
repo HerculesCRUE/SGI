@@ -71,14 +71,23 @@ public class RespuestaController {
   /**
    * Crea nuevo {@link Respuesta}.
    * 
-   * @param nuevoRespuesta {@link Respuesta}. que se quiere crear.
+   * @param nuevaRespuesta {@link Respuesta}. que se quiere crear.
    * @return Nuevo {@link Respuesta} creado.
    */
   @PostMapping
-  public ResponseEntity<Respuesta> newRespuesta(@Valid @RequestBody Respuesta nuevoRespuesta) {
-    log.debug("newRespuesta(Respuesta nuevoRespuesta) - start");
-    Respuesta returnValue = service.create(nuevoRespuesta);
-    log.debug("newRespuesta(Respuesta nuevoRespuesta) - end");
+  public ResponseEntity<Respuesta> newRespuesta(@Valid @RequestBody Respuesta nuevaRespuesta) {
+    log.debug("newRespuesta(Respuesta nuevaRespuesta) - start");
+    Respuesta returnValue = null;
+    try {
+      returnValue = service.create(nuevaRespuesta);
+    } catch (Exception e) {
+      // Se captura el error de unicidad (memoria_id, apartado_id)
+      Respuesta respuestaBD = service.findByMemoriaIdAndApartadoId(nuevaRespuesta.getMemoria().getId(),
+          nuevaRespuesta.getApartado().getId());
+      nuevaRespuesta.setId(respuestaBD.getId());
+      returnValue = service.update(nuevaRespuesta);
+    }
+    log.debug("newRespuesta(Respuesta nuevaRespuesta) - end");
     return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
   }
 

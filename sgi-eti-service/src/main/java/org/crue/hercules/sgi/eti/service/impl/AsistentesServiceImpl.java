@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.eti.service.impl;
 
+import java.util.List;
+
 import org.crue.hercules.sgi.eti.exceptions.AsistentesNotFoundException;
 import org.crue.hercules.sgi.eti.model.Asistentes;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
@@ -143,6 +145,20 @@ public class AsistentesServiceImpl implements AsistentesService {
       log.debug("update(Asistentes asistentesActualizar) - end");
       return returnValue;
     }).orElseThrow(() -> new AsistentesNotFoundException(asistentesActualizar.getId()));
+  }
+
+  /**
+   * Obtener todos los {@link Asistentes} activos para una
+   * determinada {@link ConvocatoriaReunion}.
+   *
+   * @param convocatoriaReunionId Id de {@link ConvocatoriaReunion}.
+   * @return la lista de entidades {@link Asistentes}.
+   */
+  public List<Asistentes> findAllByConvocatoriaReunionId(Long convocatoriaReunionId) {
+    log.debug("findAllByConvocatoriaReunionId(Long convocatoriaReunionId) - start");
+    List<Asistentes> returnValue = asistentesRepository.findAllByConvocatoriaReunionId(convocatoriaReunionId);
+    log.debug("findAllByConvocatoriaReunionId(Long convocatoriaReunionId) - end");
+    return returnValue;
   }
 
 }

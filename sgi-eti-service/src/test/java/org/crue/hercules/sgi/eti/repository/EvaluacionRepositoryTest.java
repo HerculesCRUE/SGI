@@ -507,7 +507,7 @@ public class EvaluacionRepositoryTest extends BaseRepositoryTest {
   public Memoria generarMockMemoria(PeticionEvaluacion peticionEvaluacion, Comite comite, TipoMemoria tipoMemoria,
       TipoEstadoMemoria tipoEstadoMemoria, Retrospectiva retrospectiva) {
     return new Memoria(null, "numRef-001", peticionEvaluacion, comite, "Memoria", "user-001", tipoMemoria,
-        tipoEstadoMemoria, Instant.now(), Boolean.TRUE, retrospectiva, 3, "CodOrganoCompetente", Boolean.TRUE, null);
+        tipoEstadoMemoria, Instant.now(), Boolean.TRUE, retrospectiva, 3, Boolean.TRUE, null);
   }
 
   /**

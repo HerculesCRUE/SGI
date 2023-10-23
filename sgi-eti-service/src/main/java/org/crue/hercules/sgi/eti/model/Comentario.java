@@ -1,7 +1,11 @@
 package org.crue.hercules.sgi.eti.model;
 
+import java.time.Instant;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,6 +33,10 @@ public class Comentario extends BaseEntity {
    * Serial version
    */
   private static final long serialVersionUID = 1L;
+
+  public enum TipoEstadoComentario {
+    ABIERTO, CERRADO
+  }
 
   /** Id. */
   @Id
@@ -64,5 +72,14 @@ public class Comentario extends BaseEntity {
   @Column(name = "texto", length = 2000, nullable = false)
   @NotNull
   private String texto;
+
+  /** Estado */
+  @Column(name = "estado", nullable = true)
+  @Enumerated(EnumType.STRING)
+  private TipoEstadoComentario estado;
+
+  /** Fecha Estado */
+  @Column(name = "fecha_estado", nullable = true)
+  private Instant fechaEstado;
 
 }

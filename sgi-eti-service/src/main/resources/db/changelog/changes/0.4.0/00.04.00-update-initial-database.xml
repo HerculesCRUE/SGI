@@ -1,0 +1,50 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet author="user (generated)" id="00.04.00-1">
+    <addColumn tableName="estado_memoria">
+      <column name="comentario" type="varchar(2000)" />
+    </addColumn>
+  </changeSet>
+
+  <!-- Se añade parametro para configurar la duración en años de los proyectos de evaluación en la
+  tabla de configuración -->
+  <changeSet author="user (generated)" id="00.04.00-2">
+    <addColumn tableName="configuracion">
+      <column name="duracion_proyecto_evaluacion" type="bigint"></column>
+    </addColumn>
+    <addUniqueConstraint columnNames="duracion_proyecto_evaluacion"
+      constraintName="UC_CONFIGURACION_DURACION_PROYECTO_EVALUACION_COL" tableName="configuracion" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="00.04.00-3">
+    <dropColumn columnName="cod_organo_competente" tableName="memoria" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="00.04.00-4">
+    <dropNotNullConstraint columnDataType="TIMESTAMP" columnName="fecha_retrospectiva"
+      tableName="retrospectiva" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="00.04.00-5">
+    <addColumn tableName="comentario">
+      <column name="estado" type="VARCHAR(50)" />
+      <column name="fecha_estado" type="TIMESTAMP" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="user (generated)" id="00.04.00-6">
+    <addUniqueConstraint columnNames="memoria_id, apartado_id"
+      constraintName="UK_RESPUESTA_MEMORIA_ID_APARTADO_ID"
+      tableName="respuesta" />
+  </changeSet>
+
+
+</databaseChangeLog>

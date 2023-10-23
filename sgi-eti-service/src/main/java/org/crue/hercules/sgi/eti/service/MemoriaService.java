@@ -6,9 +6,12 @@ import org.crue.hercules.sgi.eti.dto.MemoriaPeticionEvaluacion;
 import org.crue.hercules.sgi.eti.exceptions.MemoriaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.EstadoMemoria;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
+import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria.Tipo;
+import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -145,7 +148,9 @@ public interface MemoriaService {
       String query, Pageable pageable, String personaRef);
 
   /**
-   * Actualiza la memoria a su estado anterior
+   * Actualiza el estado de la memoria a su estado anterior, baja la version de la
+   * memoria y elimina la evaluacion si la memoria se encuentra en el estado
+   * EN_EVALUACION
    * 
    * @param id identificador del objeto {@link Memoria}
    * @return la {@link Memoria} si se ha podido actualizar el estado
@@ -154,20 +159,24 @@ public interface MemoriaService {
 
   /**
    * Recupera la memoria con su estado anterior seteado ya sea memoria o
-   * retrospectiva
+   * retrospectiva, devuelve la memoria a la version anterior y elimina el estado
+   * actual de la memoria
    * 
    * @param memoria el objeto {@link Memoria}
    * @return la memoria o retrospectiva con su estado anterior
    */
-  Memoria getEstadoAnteriorMemoria(Memoria memoria);
+  Memoria getMemoriaWithEstadoAnterior(Memoria memoria);
 
   /**
+   * Actualiza el estado de la {@link Memoria} al estado en secretaria
+   * correspondiente al {@link TipoEvaluacion} y {@link TipoEstadoMemoria}
+   * actuales de la {@link Memoria}.
    * 
-   * Actualiza el estado de la {@link Memoria} a 'En Secretaria' o 'En Secretaría
-   * Revisión Mínima'
+   * Se crea el informe asociado a la version actual de la memoria y si esta en un
+   * estado de revision minima se crea tambien la evaluacion de revision minima.
    * 
-   * @param id         del estado de la memoria nuevo.
-   * @param personaRef Usuario logueado.
+   * @param id         identificador de la {@link Memoria}.
+   * @param personaRef Identificador de la persona que realiza la accion
    */
   void enviarSecretaria(Long id, String personaRef);
 
@@ -229,12 +238,14 @@ public interface MemoriaService {
   List<Long> archivarNoPresentados();
 
   /**
-   * Se actualiza el estado de la memoria a "Archivado" de {@link Memoria} que han
-   * pasado "diasArchivadaInactivo" meses desde la fecha de estado de una memoria
-   * cuyo estados son "Favorable Pendiente de Modificaciones Mínimas" o "No
-   * procede evaluar" o "Solicitud modificación"
+   * Se actualiza el estado de la memoria a "Archivado" de las {@link Memoria}
+   * para las que han pasado "diasArchivadaInactivo" dias desde la fecha desde el
+   * ultimo cambio de estado si esta en alguno de los siguientes estados:
+   * FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS, NO_PROCEDE_EVALUAR,
+   * SOLICITUD_MODIFICACION, EN_ACLARACION_SEGUIMIENTO_FINAL, DESFAVORABLE y
+   * PENDIENTE_CORRECCIONES
    * 
-   * @return Los ids de memorias que pasan al estado "Archivado"
+   * @return Los ids de las memorias que pasan al estado "Archivado"
    */
   List<Long> archivarInactivos();
 
@@ -274,4 +285,40 @@ public interface MemoriaService {
    * @return Entidad {@link Memoria} persistida desactivada.
    */
   Memoria desactivar(Long id);
+
+  /**
+   * Cambia el estado de la memoria a {@link Tipo#SUBSANACION} con el comentario
+   * 
+   * @param id         Id de la {@link Memoria}.
+   * @param comentario comentario subsanacion
+   */
+  void indicarSubsanacion(Long id, String comentario);
+
+  /**
+   * Devuelve el estado actual de la memoria
+   * 
+   * @param id Id de la {@link Memoria}.
+   * @return el estado de la memoria
+   */
+  EstadoMemoria getEstadoActualMemoria(Long id);
+
+  /**
+   * Devuelve una lista paginada de {@link Memoria} asignables para una
+   * convocatoria determinada
+   * 
+   * Si la convocatoria es de tipo "Seguimiento" devuelve las memorias en estado
+   * "En secretaría seguimiento anual" y "En secretaría seguimiento final" con la
+   * fecha de envío es igual o menor a la fecha límite de la convocatoria de
+   * reunión.
+   * 
+   * Si la convocatoria es de tipo "Ordinaria" o "Extraordinaria" devuelve las
+   * memorias en estado "En secretaria" con la fecha de envío es igual o menor a
+   * la fecha límite de la convocatoria de reunión y las que tengan una
+   * retrospectiva en estado "En secretaría".
+   * 
+   * @param idPeticionEvaluacion Identificador del {@link PeticionEvaluacion}
+   * @return lista de memorias asignables a la petición de evaluación.
+   */
+  List<Memoria> findAllMemoriasAsignablesPeticionEvaluacion(Long idPeticionEvaluacion);
+
 }

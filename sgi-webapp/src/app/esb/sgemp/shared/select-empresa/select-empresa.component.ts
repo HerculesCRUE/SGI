@@ -70,21 +70,17 @@ export class SelectEmpresaComponent extends SelectDialogComponent<SearchEmpresaM
   }
 
   protected search(term: string): Observable<SearchResult<IEmpresa>> {
-    const options: SgiRestFindOptions = {
-      page: {
-        index: 0,
-        size: 10
-      },
-      sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC),
-      filter: new RSQLSgiRestFilter('numeroIdentificacion', SgiRestFilterOperator.LIKE_ICASE, term)
-        .or('nombre', SgiRestFilterOperator.LIKE_ICASE, term)
-        .or('razonSocial', SgiRestFilterOperator.LIKE_ICASE, term)
-    };
-    return this.empresaService.findAll(options).pipe(
+    return this.empresaService.findAutocomplete(term).pipe(
       map(response => {
+        if (response.length > 10) {
+          return {
+            items: response.slice(0, 9),
+            more: true
+          };
+        }
         return {
-          items: response.items,
-          more: response.total > response.items.length
+          items: response,
+          more: false
         };
       })
     );

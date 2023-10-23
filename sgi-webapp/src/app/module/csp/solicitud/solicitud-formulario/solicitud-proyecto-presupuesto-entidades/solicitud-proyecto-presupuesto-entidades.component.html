@@ -101,7 +101,8 @@
           <mat-form-field>
             <input
               attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-calculado' | translate}}: {{'csp.solicitud-desglose-presupuesto.importe-presupuestado-entidades-convocatoria' | translate}}"
-              matInput type="text" [value]="this.valoresCalculadosData.totales?.importeTotalPresupuestadoNoAjeno"
+              matInput type="text"
+              [value]="this.valoresCalculadosData.totales?.importeTotalPresupuestadoNoAjeno | number: '1.2-2'"
               disabled />
           </mat-form-field>
         </div>
@@ -116,8 +117,8 @@
           <mat-form-field>
             <input
               attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-calculado' | translate}}: {{'csp.solicitud-desglose-presupuesto.importe-solicitado-entidades-convocatoria' | translate}}"
-              matInput type="text" [value]="this.valoresCalculadosData.totales?.importeTotalSolicitadoNoAjeno"
-              disabled />
+              matInput type="text"
+              [value]="this.valoresCalculadosData.totales?.importeTotalSolicitadoNoAjeno | number: '1.2-2'" disabled />
           </mat-form-field>
         </div>
       </div>
@@ -131,8 +132,8 @@
           <mat-form-field>
             <input
               attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-calculado' | translate}}: {{'csp.solicitud-desglose-presupuesto.importe-presupuestado-entidades-ajenas' | translate}}"
-              matInput type="text" [value]="this.valoresCalculadosData.totales?.importeTotalPresupuestadoAjeno"
-              disabled />
+              matInput type="text"
+              [value]="this.valoresCalculadosData.totales?.importeTotalPresupuestadoAjeno | number: '1.2-2'" disabled />
           </mat-form-field>
         </div>
       </div>
@@ -146,7 +147,8 @@
           <mat-form-field>
             <input
               attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-calculado' | translate}}: {{'csp.solicitud-desglose-presupuesto.importe-solicitado-entidades-ajenas' | translate}}"
-              matInput type="text" [value]="this.valoresCalculadosData.totales?.importeTotalSolicitadoAjeno" disabled />
+              matInput type="text"
+              [value]="this.valoresCalculadosData.totales?.importeTotalSolicitadoAjeno | number: '1.2-2'" disabled />
           </mat-form-field>
         </div>
       </div>
@@ -160,14 +162,15 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-calculado' | translate}}:
              {{'csp.solicitud-desglose-presupuesto.importe-presupuestado-universidad' | translate}}" matInput
-              type="text" [value]="this.valoresCalculadosData.importePresupuestadoUniversidad" disabled />
+              type="text" [value]="this.valoresCalculadosData.importePresupuestadoUniversidad | number: '1.2-2'"
+              disabled />
           </mat-form-field>
         </div>
         <div>
           <mat-form-field>
             <input attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-manual' | translate}}:
              {{'csp.solicitud-desglose-presupuesto.importe-presupuestado-universidad' | translate}}" matInput
-              type="number" formControlName="importePresupuestadoUniversidad">
+              type="text" formControlName="importePresupuestadoUniversidad" sgiInputWithThousandSeparator>
             <sgi-field-info matSuffix icon="error"
               [visible]="!formPart.readonly && this.formGroup.controls.importePresupuestadoUniversidad.value 
                   && this.valoresCalculadosData.importePresupuestadoUniversidad !== this.formGroup.controls.importePresupuestadoUniversidad.value"
@@ -188,7 +191,8 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-calculado' | translate}}:
               {{'csp.solicitud-desglose-presupuesto.importe-presupuestado-universidad-costes-indirectos' | translate}}"
-              matInput type="text" [value]="this.valoresCalculadosData.importePresupuestadoUniversidadCostesIndirectos"
+              matInput type="text"
+              [value]="this.valoresCalculadosData.importePresupuestadoUniversidadCostesIndirectos | number: '1.2-2'"
               disabled />
           </mat-form-field>
         </div>
@@ -196,7 +200,8 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-manual' | translate}}:
              {{'csp.solicitud-desglose-presupuesto.importe-presupuestado-universidad-costes-indirectos' | translate}}"
-              matInput type="number" formControlName="importePresupuestadoUniversidadCostesIndirectos">
+              matInput type="text" formControlName="importePresupuestadoUniversidadCostesIndirectos"
+              sgiInputWithThousandSeparator>
             <sgi-field-info matSuffix icon="error"
               [visible]="!formPart.readonly && this.formGroup.controls.importePresupuestadoUniversidadCostesIndirectos.value 
                   && this.valoresCalculadosData.importeSolicitadoUniversidadCostesIndirectos !== this.formGroup.controls.importePresupuestadoUniversidadCostesIndirectos.value"
@@ -216,14 +221,15 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-calculado' | translate}}:
              {{'csp.solicitud-desglose-presupuesto.total-importe-presupuestado-universidad' | translate}}" matInput
-              type="text" [value]="this.valoresCalculadosData.totalImportePresupuestadoUniversidad" disabled />
+              type="text" [value]="this.valoresCalculadosData.totalImportePresupuestadoUniversidad | number: '1.2-2'"
+              disabled />
           </mat-form-field>
         </div>
         <div>
           <mat-form-field>
             <input attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-manual' | translate}}:
              {{'csp.solicitud-desglose-presupuesto.total-importe-presupuestado-universidad' | translate}}" matInput
-              type="number" formControlName="totalImportePresupuestadoUniversidad">
+              type="text" formControlName="totalImportePresupuestadoUniversidad" sgiInputWithThousandSeparator>
             <sgi-field-info matSuffix icon="error"
               [visible]="!formPart.readonly && this.formGroup.controls.totalImportePresupuestadoUniversidad.value 
                     && this.valoresCalculadosData.totalImportePresupuestadoUniversidad !== this.formGroup.controls.totalImportePresupuestadoUniversidad.value"
@@ -243,14 +249,14 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-calculado' | translate}}:
              {{'csp.solicitud-desglose-presupuesto.importe-solicitado-universidad' | translate}}" matInput type="text"
-              [value]="this.valoresCalculadosData.importeSolicitadoUniversidad" disabled>
+              [value]="this.valoresCalculadosData.importeSolicitadoUniversidad | number: '1.2-2'" disabled>
           </mat-form-field>
         </div>
         <div>
           <mat-form-field>
             <input matInput attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-manual' | translate}}:
-             {{'csp.solicitud-desglose-presupuesto.importe-solicitado-universidad' | translate}}" type="number"
-              formControlName="importeSolicitadoUniversidad">
+             {{'csp.solicitud-desglose-presupuesto.importe-solicitado-universidad' | translate}}" type="text"
+              formControlName="importeSolicitadoUniversidad" sgiInputWithThousandSeparator>
             <sgi-field-info matSuffix icon="error"
               [visible]="!formPart.readonly && this.formGroup.controls.importeSolicitadoUniversidad.value 
                     && this.valoresCalculadosData.importeSolicitadoUniversidad !== this.formGroup.controls.importeSolicitadoUniversidad.value"
@@ -271,7 +277,8 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-calculado' | translate}}:
              {{'csp.solicitud-desglose-presupuesto.importe-solicitado-universidad-costes-indirectos' | translate}}"
-              matInput type="text" [value]="this.valoresCalculadosData.importeSolicitadoUniversidadCostesIndirectos"
+              matInput type="text"
+              [value]="this.valoresCalculadosData.importeSolicitadoUniversidadCostesIndirectos | number: '1.2-2'"
               disabled>
           </mat-form-field>
         </div>
@@ -279,7 +286,7 @@
           <mat-form-field>
             <input matInput attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-manual' | translate}}:
              {{'csp.solicitud-desglose-presupuesto.importe-solicitado-universidad-costes-indirectos' | translate}}"
-              type="number" formControlName="importeSolicitadoUniversidadCostesIndirectos">
+              type="text" formControlName="importeSolicitadoUniversidadCostesIndirectos" sgiInputWithThousandSeparator>
             <sgi-field-info matSuffix icon="error"
               [visible]="!formPart.readonly && this.formGroup.controls.importeSolicitadoUniversidadCostesIndirectos.value 
                     && this.valoresCalculadosData.importeSolicitadoUniversidadCostesIndirectos !== this.formGroup.controls.importeSolicitadoUniversidadCostesIndirectos.value"
@@ -299,14 +306,15 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-calculado' | translate}}:
              {{'csp.solicitud-desglose-presupuesto.total-importe-solicitado-universidad' | translate}}" matInput
-              type="text" [value]="this.valoresCalculadosData.totalImporteSolicitadoUniversidad" disabled>
+              type="text" [value]="this.valoresCalculadosData.totalImporteSolicitadoUniversidad | number: '1.2-2'"
+              disabled>
           </mat-form-field>
         </div>
         <div>
           <mat-form-field>
             <input matInput attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-manual' | translate}}:
-             {{'csp.solicitud-desglose-presupuesto.total-importe-solicitado-universidad' | translate}}" type="number"
-              formControlName="totalImporteSolicitadoUniversidad">
+             {{'csp.solicitud-desglose-presupuesto.total-importe-solicitado-universidad' | translate}}" type="text"
+              formControlName="totalImporteSolicitadoUniversidad" sgiInputWithThousandSeparator>
             <sgi-field-info matSuffix icon="error"
               [visible]="!formPart.readonly && this.formGroup.controls.totalImporteSolicitadoUniversidad.value 
                           && this.valoresCalculadosData.totalImporteSolicitadoUniversidad !== this.formGroup.controls.totalImporteSolicitadoUniversidad.value"
@@ -326,14 +334,14 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-calculado' | translate}}:
              {{'csp.solicitud-desglose-presupuesto.importe-presupuestado-socios' | translate}}" matInput type="text"
-              [value]="this.valoresCalculadosData.totalPresupuestadoSocios" disabled>
+              [value]="this.valoresCalculadosData.totalPresupuestadoSocios | number: '1.2-2'" disabled>
           </mat-form-field>
         </div>
         <div>
           <mat-form-field>
             <input
               attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-manual' | translate}}: {{'csp.solicitud-desglose-presupuesto.importe-presupuestado-socios' | translate}}"
-              matInput type="number" formControlName="importePresupuestadoSocios">
+              matInput type="text" formControlName="importePresupuestadoSocios" sgiInputWithThousandSeparator>
             <sgi-field-info matSuffix icon="error"
               [visible]="!formPart.readonly && this.formGroup.controls.importePresupuestadoSocios.value && this.valoresCalculadosData.totalPresupuestadoSocios !== this.formGroup.controls.importePresupuestadoSocios.value"
               message="{{'msg.csp.solicitud-desglose-presupuesto.warn' | translate}}" color="warn">
@@ -351,14 +359,14 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-calculado' | translate}}:
              {{'csp.solicitud-desglose-presupuesto.importe-solicitado-socios' | translate}}" matInput type="text"
-              [value]="this.valoresCalculadosData.totalSolicitadoSocios" disabled>
+              [value]="this.valoresCalculadosData.totalSolicitadoSocios | number: '1.2-2'" disabled>
           </mat-form-field>
         </div>
         <div>
           <mat-form-field>
             <input attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-manual' | translate}}:
-             {{'csp.solicitud-desglose-presupuesto.importe-solicitado-socios' | translate}}" matInput type="number"
-              formControlName="importeSolicitadoSocios">
+             {{'csp.solicitud-desglose-presupuesto.importe-solicitado-socios' | translate}}" matInput type="text"
+              formControlName="importeSolicitadoSocios" sgiInputWithThousandSeparator>
             <sgi-field-info matSuffix icon="error"
               [visible]="!formPart.readonly && this.formGroup.controls.importeSolicitadoSocios.value && this.valoresCalculadosData.totalSolicitadoSocios !== this.formGroup.controls.importeSolicitadoSocios.value"
               message="{{'msg.csp.solicitud-desglose-presupuesto.warn' | translate}}" color="warn">
@@ -376,14 +384,14 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-calculado' | translate}}:
              {{'csp.solicitud-desglose-presupuesto.total-importe-presupuestado' | translate}}" matInput type="text"
-              [value]="this.valoresCalculadosData.totalPresupuestado" disabled>
+              [value]="this.valoresCalculadosData.totalPresupuestado | number: '1.2-2'" disabled>
           </mat-form-field>
         </div>
         <div>
           <mat-form-field>
             <input attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-manual' | translate}}: 
-             {{'csp.solicitud-desglose-presupuesto.total-importe-presupuestado' | translate}}" matInput type="number"
-              formControlName="totalImportePresupuestado">
+             {{'csp.solicitud-desglose-presupuesto.total-importe-presupuestado' | translate}}" matInput type="text"
+              formControlName="totalImportePresupuestado" sgiInputWithThousandSeparator>
             <sgi-field-info matSuffix icon="error"
               [visible]="!formPart.readonly && this.formGroup.controls.totalImportePresupuestado.value && this.valoresCalculadosData.totalPresupuestado !== this.formGroup.controls.totalImportePresupuestado.value"
               message="{{'msg.csp.solicitud-desglose-presupuesto.warn' | translate}}" color="warn">
@@ -401,14 +409,14 @@
           <mat-form-field>
             <input attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-calculado' | translate}}:
              {{'csp.solicitud-desglose-presupuesto.total-importe-solicitado' | translate}}" matInput type="text"
-              [value]="this.valoresCalculadosData.totalSolicitado" disabled>
+              [value]="this.valoresCalculadosData.totalSolicitado | number: '1.2-2'" disabled>
           </mat-form-field>
         </div>
         <div>
           <mat-form-field>
             <input attr.aria-label="{{'csp.solicitud-desglose-presupuesto.valor-manual' | translate}}:
-             {{'csp.solicitud-desglose-presupuesto.total-importe-solicitado' | translate}}" matInput type="number"
-              formControlName="totalImporteSolicitado">
+             {{'csp.solicitud-desglose-presupuesto.total-importe-solicitado' | translate}}" matInput type="text"
+              formControlName="totalImporteSolicitado" sgiInputWithThousandSeparator>
             <sgi-field-info matSuffix icon="error"
               [visible]="!formPart.readonly && this.formGroup.controls.totalImporteSolicitado.value && this.valoresCalculadosData.totalSolicitado !== this.formGroup.controls.totalImporteSolicitado.value"
               message="{{'msg.csp.solicitud-desglose-presupuesto.warn' | translate}}" color="warn">

@@ -1,0 +1,7 @@
+# Ignore everything
+**
+
+# Exceptions
+!class-mediators/target/*.jar
+!esb-composite-application/target/*.car
+!docker/sgi-esb-entrypoint.sh

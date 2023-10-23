@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.eti.converter.RespuestaConverter;
 import org.crue.hercules.sgi.eti.dto.EvaluacionWithNumComentario;
 import org.crue.hercules.sgi.eti.dto.MemoriaPeticionEvaluacion;
 import org.crue.hercules.sgi.eti.exceptions.MemoriaNotFoundException;
@@ -80,6 +81,9 @@ public class MemoriaControllerTest extends BaseControllerTest {
 
   @MockBean
   private RespuestaService respuestaService;
+
+  @MockBean
+  private RespuestaConverter respuestaConverter;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_ASIGNABLES = "/asignables/{idConvocatoria}";
@@ -1259,7 +1263,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
         generarMockComite(id, "comite" + id, true), titulo, "user-00" + id,
         generarMockTipoMemoria(1L, "TipoMemoria1", true),
         generarMockTipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.now(), Boolean.TRUE,
-        generarMockRetrospectiva(1L), version, "CodOrganoCompetente", Boolean.TRUE, null);
+        generarMockRetrospectiva(1L), version, Boolean.TRUE, null);
   }
 
   /**
@@ -1278,7 +1282,7 @@ public class MemoriaControllerTest extends BaseControllerTest {
     return new MemoriaPeticionEvaluacion(id, responsableRef, numReferencia, titulo,
         generarMockComite(id, "comite" + id, true),
         generarMockTipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), false, null,
-        Instant.parse("2020-05-15T00:00:00Z"), Instant.now(), false, true, "1111", null);
+        Instant.parse("2020-05-15T00:00:00Z"), Instant.now(), false, true, "1111", null, 1);
   }
 
   /**
@@ -1434,8 +1438,8 @@ public class MemoriaControllerTest extends BaseControllerTest {
 
     Memoria memoria = new Memoria(1L, "numRef-001", peticionEvaluacion, comite, "Memoria" + sufijoStr, "user-00" + id,
         tipoMemoria, new TipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.now(), Boolean.FALSE,
-        new Retrospectiva(id, new EstadoRetrospectiva(1L, "Pendiente", Boolean.TRUE), Instant.now()), 3,
-        "CodOrganoCompetente", Boolean.TRUE, null);
+        new Retrospectiva(id, new EstadoRetrospectiva(1L, "Pendiente", Boolean.TRUE), Instant.now()), 3, Boolean.TRUE,
+        null);
 
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
 

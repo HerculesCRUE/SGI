@@ -5,8 +5,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.crue.hercules.sgi.eti.exceptions.DictamenNotFoundException;
+import org.crue.hercules.sgi.eti.exceptions.EvaluacionNotFoundException;
 import org.crue.hercules.sgi.eti.model.Dictamen;
+import org.crue.hercules.sgi.eti.model.Evaluacion;
+import org.crue.hercules.sgi.eti.model.TipoMemoria;
 import org.crue.hercules.sgi.eti.repository.DictamenRepository;
+import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.specification.DictamenSpecifications;
 import org.crue.hercules.sgi.eti.service.DictamenService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -17,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -25,12 +30,10 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class DictamenServiceImpl implements DictamenService {
   private final DictamenRepository dictamenRepository;
-
-  public DictamenServiceImpl(DictamenRepository dictamenRepository) {
-    this.dictamenRepository = dictamenRepository;
-  }
+  private final EvaluacionRepository evaluacionRepository;
 
   /**
    * Guarda la entidad {@link Dictamen}.
@@ -143,7 +146,8 @@ public class DictamenServiceImpl implements DictamenService {
     log.debug("findAllByMemoriaRevisionMinima - start");
 
     // Favorable (1) y Favorable pendiente de revisión mínima (2)
-    List<Long> ids = new ArrayList<Long>(Arrays.asList(1L, 2L));
+    List<Long> ids = new ArrayList<>(
+        Arrays.asList(Dictamen.Tipo.FAVORABLE.getId(), Dictamen.Tipo.FAVORABLE_PENDIENTE_REVISION_MINIMA.getId()));
     List<Dictamen> listaDictamenes = dictamenRepository.findByIdIn(ids);
 
     log.debug("findAllByMemoriaRevisionMinima - end");
@@ -180,6 +184,47 @@ public class DictamenServiceImpl implements DictamenService {
     List<Dictamen> listaDictamenes = dictamenRepository.findByTipoEvaluacionId(1L);
 
     log.debug("findAllByRetrospectiva - end");
+    return listaDictamenes;
+  }
+
+  @Override
+  public List<Dictamen> findAllDictamenByEvaluacionId(Long evaluacionId) {
+    log.debug("findAllDictamenByEvaluacionId(Long evaluacionId) - start");
+
+    Evaluacion evaluacion = evaluacionRepository.findById(evaluacionId)
+        .orElseThrow(() -> new EvaluacionNotFoundException(evaluacionId));
+
+    List<Dictamen> listaDictamenes = new ArrayList<>();
+
+    switch (evaluacion.getTipoEvaluacion().getTipo()) {
+      case MEMORIA:
+        if (Boolean.TRUE.equals(evaluacion.getEsRevMinima())) {
+          List<Long> ids = Arrays.asList(
+              Dictamen.Tipo.FAVORABLE.getId(),
+              Dictamen.Tipo.FAVORABLE_PENDIENTE_REVISION_MINIMA.getId());
+          listaDictamenes = dictamenRepository.findByIdIn(ids);
+        } else {
+          listaDictamenes = dictamenRepository.findByTipoEvaluacionId(evaluacion.getTipoEvaluacion().getId());
+
+          if (evaluacion.getMemoria().getTipoMemoria().getTipo().equals(TipoMemoria.Tipo.RATIFICACION)
+              || evaluacion.getVersion() > 1) {
+            listaDictamenes.removeIf(dictamen -> dictamen.getId().equals(Dictamen.Tipo.DESFAVORABLE.getId()));
+          }
+        }
+
+        break;
+
+      case RETROSPECTIVA:
+      case SEGUIMIENTO_ANUAL:
+      case SEGUIMIENTO_FINAL:
+        listaDictamenes = dictamenRepository.findByTipoEvaluacionId(evaluacion.getTipoEvaluacion().getId());
+        break;
+
+      default:
+        break;
+    }
+
+    log.debug("findAllDictamenByEvaluacionId(Long evaluacionId) - end");
     return listaDictamenes;
   }
 

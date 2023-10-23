@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap4_2_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.2 No aplicación de medidas correctoras"
+    },
+    "fieldGroup": [
+      {
+        "template": "En caso de no aplicar medidas correctoras en algún procedimiento/intervención justifique la razón"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Para más información sobre medidas correctoras (anestesia y analgesia) ver Art. 26 del RD 53/13."
+      },
+      {
+        "key": "justificarRazon",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Justificar",
+          "required": true
+        }
+      }
+    ]
+  }
+]

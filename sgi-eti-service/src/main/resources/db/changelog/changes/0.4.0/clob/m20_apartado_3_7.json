@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap3_7",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.7 Proceso de experimentación al que va a ser sometido el animal"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Denominamos 'proceso de experimentación' al conjunto o sucesión de procedimientos/intervenciones a las que es sometido el animal desde el momento en que se inicia la preparación del animal para su utilización hasta que 'ya no vayan a hacerse observaciones ulteriores sobre él' y 'haya sido sacrificado, realojado o reintegrado a un hábitat o sistema zootécnico conveniente'.</p>"
+      }
+    ]
+  }
+]

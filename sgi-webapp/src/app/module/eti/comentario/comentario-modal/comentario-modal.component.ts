@@ -9,7 +9,7 @@ import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IApartado } from '@core/models/eti/apartado';
 import { IBloque } from '@core/models/eti/bloque';
-import { IComentario } from '@core/models/eti/comentario';
+import { IComentario, TipoEstadoComentario } from '@core/models/eti/comentario';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { resolveFormularioByTipoEvaluacionAndComite } from '@core/models/eti/formulario';
 import { ActionService } from '@core/services/action-service';
@@ -23,6 +23,7 @@ import { NGXLogger } from 'ngx-logger';
 import { forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
 import { EvaluacionFormularioActionService } from '../../evaluacion-formulario/evaluacion-formulario.action.service';
+import { SgiAuthService } from '@sgi/framework/auth';
 
 const TITLE_NEW_ENTITY = marker('title.new.entity');
 const COMENTARIO_KEY = marker('eti.comentario');
@@ -96,6 +97,8 @@ export class ComentarioModalComponent extends DialogFormComponent<ComentarioModa
   dataSource = new MatTreeNestedDataSource<NodeApartado>();
   private nodeMap = new Map<number, NodeApartado>();
 
+  public readonly = false;
+
   // tslint:disable-next-line: variable-name
   private _checkedNode: NodeApartado;
   get checkedNode(): NodeApartado {
@@ -124,9 +127,13 @@ export class ComentarioModalComponent extends DialogFormComponent<ComentarioModa
     private apartadoService: ApartadoService,
     matDialogRef: MatDialogRef<ComentarioModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ComentarioModalData,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private authService: SgiAuthService
   ) {
     super(matDialogRef, !!data.comentario);
+    if (this.data?.comentario) {
+      this.readonly = this.data.comentario?.estado === TipoEstadoComentario.CERRADO || this.data.comentario?.evaluador?.id !== this.authService.authStatus$.value.userRefId;
+    }
   }
 
   ngOnInit(): void {
@@ -314,6 +321,10 @@ export class ComentarioModalComponent extends DialogFormComponent<ComentarioModa
         Validators.required, Validators.maxLength(2000)]),
       evaluacion: new FormControl(this.data?.evaluaciones?.length === 1 ? this.data?.evaluaciones[0] : this.data?.comentario ? this.data?.evaluaciones.filter(ev => ev.memoria.id === this.data.comentario?.memoria?.id)[0] : null, [Validators.required, IsEntityValidator.isValid()])
     });
+
+    if (this.readonly) {
+      formGroup.disable();
+    }
 
     return formGroup;
   }

@@ -27,4 +27,17 @@
     align-items: center;
     justify-content: space-between;
   }
+
+  .peticion-evaluacion {
+
+    .mat-cell.mat-column-memoriaComite1,
+    .mat-cell.mat-column-memoriaComite2,
+    .mat-cell.mat-column-memoriaComite3 {
+      max-width: 20vw;
+      overflow: hidden;
+      padding-right: 10px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
 }

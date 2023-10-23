@@ -1,0 +1,48 @@
+[
+  {
+    "key": "ap4_2_3_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.3.2 Medidas de reducción de la exposición"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>¿Se contemplan medidas para limitar y reducir al mínimo el número de personas expuestas?</p>"
+      },
+      {
+        "key": "limitarPersonasExpuestas",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Especificar qué medidas o justificar en caso negativo"
+      },
+      {
+        "key": "especificarLimitar",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Especificar:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

@@ -14,11 +14,14 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "retrospectiva")
@@ -45,8 +48,13 @@ public class Retrospectiva extends BaseEntity {
   private EstadoRetrospectiva estadoRetrospectiva;
 
   /** Fecha Retrospectiva. */
-  @Column(name = "fecha_retrospectiva", nullable = false)
-  @NotNull
+  @Column(name = "fecha_retrospectiva")
   private Instant fechaRetrospectiva;
+
+  // Relations mapping, only for JPA metamodel generation
+  @Column(name = "estado_retrospectiva_id", insertable = false, updatable = false)
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final Long estadoRetrospectivaId = null;
 
 }

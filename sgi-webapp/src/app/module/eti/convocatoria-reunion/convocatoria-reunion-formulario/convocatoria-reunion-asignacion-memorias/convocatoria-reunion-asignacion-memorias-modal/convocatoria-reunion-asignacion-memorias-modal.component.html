@@ -16,6 +16,16 @@
       </div>
       <!-- Evaluador 1 -->
       <div>
+        <ng-container *ngIf="!!msgParamEvaludador1Asignacion.evaluador">
+          <sgi-info-message *ngIf="!msgParamEvaludador1Asignacion.activo"
+            message="{{'info.eti.convocatoria-reunion.asignancion-memoria.evaluador-no-activo' | translate:msgParamEvaludador1Asignacion}}">
+          </sgi-info-message>
+          <sgi-info-message
+            *ngIf="msgParamEvaludador1Asignacion.activo && !msgParamEvaludador1Asignacion.conflictoIntereses"
+            message="{{'info.eti.convocatoria-reunion.asignancion-memoria.evaluador-conflicto-intereses' | translate:msgParamEvaludador1Asignacion}}">
+          </sgi-info-message>
+        </ng-container>
+
         <mat-form-field>
           <mat-label>
             {{'eti.convocatoria-reunion.memoria.evaludador-1' | translate}}
@@ -23,7 +33,8 @@
           <sgi-select-evaluador formControlName="evaluador1"
             [fechaEvaluacion]="this.data.evaluacion.convocatoriaReunion.fechaEvaluacion"
             [memoria]="formGroup.controls.memoria.value" [resetOnChange]="memoria.selectionChange"
-            [excludeOnChange]="evaluador2$" required>
+            [excludeOnChange]="evaluador2$"
+            (selectValuesChange)="selectEvaluador1IfLastEvaluacionMemoriaPendienteCorrecciones($event)" required>
           </sgi-select-evaluador>
           <mat-error *ngIf="formGroup.controls.evaluador1.errors?.required">
             {{'error.required.entity' | translate:msgParamEvaludador1Entity}}
@@ -32,12 +43,23 @@
       </div>
       <!-- Evaluador 2 -->
       <div>
+        <ng-container *ngIf="!!msgParamEvaludador2Asignacion.evaluador">
+          <sgi-info-message *ngIf="!msgParamEvaludador2Asignacion.activo"
+            message="{{'info.eti.convocatoria-reunion.asignancion-memoria.evaluador-no-activo' | translate:msgParamEvaludador2Asignacion}}">
+          </sgi-info-message>
+          <sgi-info-message
+            *ngIf="msgParamEvaludador2Asignacion.activo && !msgParamEvaludador2Asignacion.conflictoIntereses"
+            message="{{'info.eti.convocatoria-reunion.asignancion-memoria.evaluador-conflicto-intereses' | translate:msgParamEvaludador2Asignacion}}">
+          </sgi-info-message>
+        </ng-container>
+
         <mat-form-field>
           <mat-label>{{'eti.convocatoria-reunion.memoria.evaludador-2' | translate}}
           </mat-label>
           <sgi-select-evaluador formControlName="evaluador2" [memoria]="formGroup.controls.memoria.value"
             [resetOnChange]="memoria.selectionChange" [excludeOnChange]="evaluador1$"
-            [fechaEvaluacion]="this.data.evaluacion.convocatoriaReunion.fechaEvaluacion" required>
+            [fechaEvaluacion]="this.data.evaluacion.convocatoriaReunion.fechaEvaluacion"
+            (selectValuesChange)="selectEvaluador2IfLastEvaluacionMemoriaPendienteCorrecciones($event)" required>
           </sgi-select-evaluador>
           <mat-error *ngIf="formGroup.controls.evaluador2.errors?.required">
             {{'error.required.entity' | translate:msgParamEvaludador2Entity}}

@@ -1,0 +1,25 @@
+[
+  {
+    "key": "ap3_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "3.3 Referencias de publicaciones científicas"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Citar de forma completa (autor, título, publicación, fecha, etc) las referencias más relevantes utilizadas para la redacción del proyecto (máximo 10 referencias)</p>"
+      },
+      {
+        "key": "referenciasPublicaciones",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Referencias",
+          "required": true
+        }
+      }
+    ]
+  }
+]

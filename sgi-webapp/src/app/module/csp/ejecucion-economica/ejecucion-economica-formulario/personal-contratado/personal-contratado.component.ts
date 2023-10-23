@@ -13,7 +13,7 @@ import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economic
 import { Subscription } from 'rxjs';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
 import { PersonalContratadoModalComponent } from '../../modals/personal-contratado-modal/personal-contratado-modal.component';
-import { RowTreeDesglose } from '../desglose-economico.fragment';
+import { IDesgloseEconomicoExportData, RowTreeDesglose } from '../desglose-economico.fragment';
 import { IDesglose } from '../facturas-justificantes.fragment';
 import { PersonalContratadoExportModalComponent } from './export/personal-contratado-export-modal.component';
 import { PersonalContratadoFragment } from './personal-contratado.fragment';
@@ -86,11 +86,17 @@ export class PersonalContratadoComponent extends FragmentComponent implements On
 
     this.subscriptions.push(this.formPart.loadDataExport().subscribe(
       (exportData) => {
-        const config = {
-          data: exportData,
+        const data: IDesgloseEconomicoExportData = {
+          columns: exportData?.columns,
+          data: exportData?.data,
           totalRegistrosExportacionExcel: this.totalElementos,
           limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
         };
+
+        const config = {
+          data
+        };
+
         this.matDialog.open(PersonalContratadoExportModalComponent, config);
       },
       this.formPart.processError

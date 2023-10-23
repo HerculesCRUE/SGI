@@ -1,18 +1,17 @@
 package org.crue.hercules.sgi.eti.repository;
 
+import java.util.List;
+
 import org.crue.hercules.sgi.eti.model.Apartado;
 import org.crue.hercules.sgi.eti.model.Bloque;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.stereotype.Repository;
 
 /**
  * Spring Data JPA repository para {@link Apartado}.
  */
-
-@Repository
 public interface ApartadoRepository extends JpaRepository<Apartado, Long>, JpaSpecificationExecutor<Apartado> {
 
   /**
@@ -35,5 +34,14 @@ public interface ApartadoRepository extends JpaRepository<Apartado, Long>, JpaSp
    * @return el listado de entidades {@link Apartado} paginadas y filtradas.
    */
   Page<Apartado> findByPadreId(Long id, Pageable pageable);
+
+  /**
+   * Obtiene las entidades {@link Apartado} filtradaspor el id
+   * de su padre {@link Apartado}.
+   *
+   * @param id id del {@link Apartado}.
+   * @return el listado de entidades {@link Apartado} hijas.
+   */
+  List<Apartado> findByPadreIdOrderByOrdenDesc(Long id);
 
 }

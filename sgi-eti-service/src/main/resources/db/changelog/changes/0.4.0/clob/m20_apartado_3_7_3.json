@@ -1,0 +1,54 @@
+[
+  {
+    "key": "ap3_7_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.3 Referencias de publicaciones científicas"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿Los procedimientos/intervenciones siguen alguna línea directriz oficial?"
+      },
+      {
+        "key": "siguenDirectrizOficialRadio",
+        "type": "radio",
+        "className": "vertical-radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "si",
+              "label": "Sí, se especifica a continuación"
+            },
+            {
+              "value": "noConDisenioSimilar",
+              "label": "No, pero se facilitan referencias de publicaciones científicas con diseño similar"
+            },
+            {
+              "value": "noSinDisenioSimilar",
+              "label": "No, no existen publicaciones con un diseño similar"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: citar las referencias más relevantes (máximo 10 líneas) de forma completa (autor, título, publicación, fecha etc.) y facilitar los documentos en el apartado '5.6 Documentación adicional'.</p>"
+      },
+      {
+        "key": "especificarDirectriz",
+        "type": "ckeditor",
+        "hideExpression": "!model.siguenDirectrizOficialRadio || model.siguenDirectrizOficialRadio === 'noSinDisenioSimilar'",
+        "templateOptions": {
+          "name": "Especificar",
+          "required": true
+        }
+      }
+    ]
+  }
+]

@@ -8,6 +8,7 @@ import { IComentarioBackend } from '@core/models/eti/backend/comentario-backend'
 import { IEvaluacionBackend } from '@core/models/eti/backend/evaluacion-backend';
 import { IEvaluacionWithIsEliminableBackend } from '@core/models/eti/backend/evaluacion-with-is-eliminable-backend';
 import { IComentario } from '@core/models/eti/comentario';
+import { IDictamen } from '@core/models/eti/dictamen';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { IEvaluacionWithIsEliminable } from '@core/models/eti/evaluacion-with-is-eliminable';
 import { IDocumentoBackend } from '@core/models/sgdoc/backend/documento-backend';
@@ -51,12 +52,16 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    * @param id Id de la evaluación
    * @param options Opciones de paginación
    */
-  getComentariosGestor(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IComentario>> {
-    return this.find<IComentarioBackend, IComentario>(
-      `${this.endpointUrl}/${id}/comentarios-gestor`,
-      options,
-      COMENTARIO_CONVERTER
-    );
+  getComentariosGestor(id: number, options?: SgiRestFindOptions): Observable<IComentario[]> {
+    return this.http.get<IComentarioBackend[]>(
+      `${this.endpointUrl}/${id}/comentarios-gestor`).pipe(
+        map(r => {
+          if (r == null) {
+            return [];
+          }
+          return COMENTARIO_CONVERTER.toTargetArray(r);
+        })
+      );
   }
 
   /**
@@ -65,12 +70,16 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    * @param id Id de la evaluación
    * @param options Opciones de paginación
    */
-  getComentariosEvaluador(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IComentario>> {
-    return this.find<IComentarioBackend, IComentario>(
-      `${this.endpointUrl}/${id}/comentarios-evaluador`,
-      options,
-      COMENTARIO_CONVERTER
-    );
+  getComentariosEvaluador(id: number, options?: SgiRestFindOptions): Observable<IComentario[]> {
+    return this.http.get<IComentarioBackend[]>(
+      `${this.endpointUrl}/${id}/comentarios-evaluador`).pipe(
+        map(r => {
+          if (r == null) {
+            return [];
+          }
+          return COMENTARIO_CONVERTER.toTargetArray(r);
+        })
+      );
   }
 
   /**
@@ -79,11 +88,16 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    * @param id Id de la evaluación
    * @param options Opciones de paginación
    */
-  getComentariosActa(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IComentario>> {
-    return this.find<IComentarioBackend, IComentario>(
-      `${this.endpointUrl}/${id}/comentarios-acta`,
-      options,
-      COMENTARIO_CONVERTER
+  getComentariosActa(id: number, isRolGestor: boolean): Observable<IComentario[]> {
+    const urlGestor = 'comentarios-acta-gestor';
+    const urlEvaluador = 'comentarios-acta-evaluador';
+    return this.http.get<IComentarioBackend[]>(`${this.endpointUrl}/${id}/${isRolGestor ? urlGestor : urlEvaluador}`).pipe(
+      map(r => {
+        if (r == null) {
+          return [];
+        }
+        return COMENTARIO_CONVERTER.toTargetArray(r);
+      })
     );
   }
 
@@ -123,9 +137,11 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    * @param id Id de la evaluación
    * @param comentario Comentario a crear
    */
-  createComentarioActa(id: number, comentario: IComentario): Observable<IComentario> {
+  createComentarioActa(id: number, comentario: IComentario, isRolGestor: boolean): Observable<IComentario> {
+    const urlGestor = 'comentario-acta-gestor';
+    const urlEvaluador = 'comentario-acta-evaluador';
     return this.http.post<IComentarioBackend>(
-      `${this.endpointUrl}/${id}/comentario-acta`,
+      `${this.endpointUrl}/${id}/${isRolGestor ? urlGestor : urlEvaluador}`,
       COMENTARIO_CONVERTER.fromTarget(comentario)
     ).pipe(
       map(response => COMENTARIO_CONVERTER.toTarget(response))
@@ -192,9 +208,11 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    * @param id Id de la evaluación
    * @param idComentario Id del comentario
    */
-  deleteComentarioActa(id: number, idComentario: number): Observable<void> {
+  deleteComentarioActa(id: number, idComentario: number, isRolGestor: boolean): Observable<void> {
+    const urlGestor = 'comentario-acta-gestor';
+    const urlEvaluador = 'comentario-acta-evaluador';
     const params = new HttpParams().set('idComentario', idComentario.toString());
-    return this.http.delete<void>(`${this.endpointUrl}/${id}/comentario-acta/${idComentario}`, { params });
+    return this.http.delete<void>(`${this.endpointUrl}/${id}/${isRolGestor ? urlGestor : urlEvaluador}/${idComentario}`, { params });
   }
 
   /**
@@ -298,6 +316,86 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
     return this.http.head(url, { observe: 'response' }).pipe(
       map(response => response.status === 200)
     );
+  }
+
+  /**
+   * Devuelve los dictamenes que se pueden asignar a la evaluacion
+   * 
+   * @param evaluacionId identificador de la evaluacion
+   * @return el listado de dictamenes
+   */
+  findAllDictamenEvaluacion(evaluacionId: number): Observable<SgiRestListResult<IDictamen>> {
+    return this.find<IDictamen, IDictamen>(`${this.endpointUrl}/${evaluacionId}/dictamenes`, null);
+  }
+
+  /**
+   * Comprueba si los comentarios del evaluador están en estado cerrado
+   *
+   */
+  isComentariosEvaluadorEnviados(idEvaluacion: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${idEvaluacion}/comentarios-evaluador-enviados`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  /**
+  * Comprueba si existen comentarios de otro evaluador abiertos
+  *
+  */
+  isPosibleEnviarComentarios(idEvaluacion: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${idEvaluacion}/posible-enviar-comentarios`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  /**
+ * Permite enviar comentarios de la evaluación
+ * 
+ * * @param idEvaluacion id evaluación
+ */
+  enviarComentarios(idEvaluacion: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${idEvaluacion}/enviar-comentarios`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  /**
+   * Devuelve los comentarios de tipo EVALUADOR de una evaluación
+   *
+   * @param id Id de la evaluación
+   * @param options Opciones de paginación
+   */
+  getComentariosPersonaEvaluador(id: number, personaRef: string): Observable<IComentario[]> {
+    return this.http.get<IComentarioBackend[]>(`${this.endpointUrl}/${id}/comentarios-evaluador/${personaRef}/persona`)
+      .pipe(
+        map(r => {
+          if (r == null) {
+            return [];
+          }
+          return COMENTARIO_CONVERTER.toTargetArray(r);
+        })
+      );
+  }
+
+  /**
+  * Devuelve los comentarios de tipo ACTA de una evaluación
+  *
+  * @param id Id de la evaluación
+  * @param options Opciones de paginación
+  */
+  getComentariosPersonaActa(id: number, personaRef: string): Observable<IComentario[]> {
+    return this.http.get<IComentarioBackend[]>(`${this.endpointUrl}/${id}/comentarios-acta-evaluador/${personaRef}/persona`)
+      .pipe(
+        map(r => {
+          if (r == null) {
+            return [];
+          }
+          return COMENTARIO_CONVERTER.toTargetArray(r);
+        })
+      );
   }
 
 }

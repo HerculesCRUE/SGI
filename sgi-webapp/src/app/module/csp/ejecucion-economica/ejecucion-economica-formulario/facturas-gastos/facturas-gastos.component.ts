@@ -13,7 +13,7 @@ import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economic
 import { Subscription } from 'rxjs';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
 import { FacturasGastosModalComponent } from '../../modals/facturas-gastos-modal/facturas-gastos-modal.component';
-import { RowTreeDesglose } from '../desglose-economico.fragment';
+import { IDesgloseEconomicoExportData, RowTreeDesglose } from '../desglose-economico.fragment';
 import { IDesglose } from '../facturas-justificantes.fragment';
 import { FacturasGastosExportModalComponent } from './export/facturas-gastos-export-modal.component';
 import { FacturasGastosFragment } from './facturas-gastos.fragment';
@@ -86,11 +86,17 @@ export class FacturasGastosComponent extends FragmentComponent implements OnInit
 
     this.subscriptions.push(this.formPart.loadDataExport().subscribe(
       (exportData) => {
-        const config = {
-          data: exportData,
+        const data: IDesgloseEconomicoExportData = {
+          columns: exportData?.columns,
+          data: exportData?.data,
           totalRegistrosExportacionExcel: this.totalElementos,
           limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
         };
+
+        const config = {
+          data
+        };
+
         this.matDialog.open(FacturasGastosExportModalComponent, config);
       },
       this.formPart.processError

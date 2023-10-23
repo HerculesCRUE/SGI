@@ -1401,6 +1401,26 @@
     </faultSequence>
   </resource>
 
+  <!-- empresas autocomplete -->
+  <resource methods="GET" url-mapping="/empresasFast">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sgemp-add-x-api-key-sequence" />
+      <sequence key="sgemp-remove-authorization-header-sequence" />
+      <send>
+        <endpoint key="sgemp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
   <!-- datos contacto -->
   <resource methods="GET" uri-template="/datos-contacto/empresa/{id}">
     <inSequence>

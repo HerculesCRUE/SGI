@@ -28,7 +28,6 @@ public class MemoriaDto extends BaseRestDto {
   private Boolean requiereRetrospectiva;
   private RetrospectivaDto retrospectiva;
   private Integer version;
-  private String codOrganoCompetente;
   private Boolean activo;
   private MemoriaDto memoriaOriginal;
 

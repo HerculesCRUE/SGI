@@ -87,7 +87,7 @@
           <mat-header-cell *matHeaderCellDef>{{'csp.proyecto-consulta-presupuesto.label.importe-presupuesto' |
             translate}}
           </mat-header-cell>
-          <mat-cell *matCellDef="let element">{{ element.item.importePresupuesto | number:'2.2-2':'es'}}</mat-cell>
+          <mat-cell *matCellDef="let element">{{ element.item.importePresupuesto | number:'1.2-2'}}</mat-cell>
         </ng-container>
 
         <!-- Importe concedido -->
@@ -95,7 +95,7 @@
           <mat-header-cell *matHeaderCellDef>{{'csp.proyecto-consulta-presupuesto.label.importe-concedido' |
             translate}}
           </mat-header-cell>
-          <mat-cell *matCellDef="let element">{{element.item.importeConcedido | number:'2.2-2':'es'}}
+          <mat-cell *matCellDef="let element">{{element.item.importeConcedido | number:'1.2-2'}}
           </mat-cell>
         </ng-container>
 

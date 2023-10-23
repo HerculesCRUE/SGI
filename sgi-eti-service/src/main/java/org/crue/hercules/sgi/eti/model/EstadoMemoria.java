@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +27,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EstadoMemoria extends BaseEntity {
+
+  public static final int COMENTARIO_MAX_LENGTH = 2000;
 
   /**
    * Serial version
@@ -54,6 +57,11 @@ public class EstadoMemoria extends BaseEntity {
   @Column(name = "fecha_estado", nullable = false)
   @NotNull
   private Instant fechaEstado;
+
+  /** Comentario. */
+  @Column(name = "comentario", length = EstadoMemoria.COMENTARIO_MAX_LENGTH, nullable = true)
+  @Size(max = EstadoMemoria.COMENTARIO_MAX_LENGTH)
+  private String comentario;
 
   public EstadoMemoria(Long id, @NotNull Instant fechaEstado) {
     this.id = id;

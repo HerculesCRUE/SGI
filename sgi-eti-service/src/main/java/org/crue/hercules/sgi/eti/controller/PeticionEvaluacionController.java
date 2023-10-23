@@ -225,7 +225,7 @@ public class PeticionEvaluacionController {
    * @return la lista de entidades {@link Tarea} paginadas.
    */
   @GetMapping("/{id}/tareas-equipo-trabajo")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR', 'ETI-EVC-EVALR')")
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-eti')) or hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-INV-EVALR', 'ETI-EVC-EVALR')")
   public Page<Tarea> findTareasEquipoTrabajo(@PathVariable Long id, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findTareasEquipoTrabajo(Long id, Pageable paging) - start");
     Page<Tarea> result = tareaService.findAllByEquipoTrabajoPeticionEvaluacionId(id, paging);
@@ -241,7 +241,7 @@ public class PeticionEvaluacionController {
    * @return la lista de entidades {@link Memoria} paginadas.
    */
   @GetMapping("/{id}/memorias")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-PEV-INV-C', 'ETI-PEV-INV-ER', 'ETI-PEV-V')")
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-eti')) or hasAnyAuthorityForAnyUO('ETI-PEV-INV-C', 'ETI-PEV-INV-ER', 'ETI-PEV-V')")
   public ResponseEntity<List<MemoriaPeticionEvaluacion>> findMemorias(@PathVariable Long id) {
     log.debug("findMemorias(Long id) - start");
 

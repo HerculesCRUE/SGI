@@ -10,10 +10,13 @@ import { EvaluacionComentarioFragment } from '../evaluacion-formulario/evaluacio
 import { EvaluacionDatosMemoriaFragment } from '../evaluacion-formulario/evaluacion-datos-memoria/evaluacion-datos-memoria.fragment';
 import { EvaluacionDocumentacionFragment } from '../evaluacion-formulario/evaluacion-documentacion/evaluacion-documentacion.fragment';
 import { EvaluacionFormularioActionService, Rol } from '../evaluacion-formulario/evaluacion-formulario.action.service';
+import { IEvaluacionWithComentariosEnviados } from './evaluacion-evaluador-listado/evaluacion-evaluador-listado.component';
 
 
 @Injectable()
 export class EvaluacionEvaluadorActionService extends EvaluacionFormularioActionService {
+
+  private readonly: boolean;
 
   constructor(
     fb: FormBuilder,
@@ -23,7 +26,7 @@ export class EvaluacionEvaluadorActionService extends EvaluacionFormularioAction
     authService: SgiAuthService
   ) {
     super();
-    this.evaluacion = {} as IEvaluacion;
+    this.evaluacion = {} as IEvaluacionWithComentariosEnviados;
     if (route.snapshot.data.evaluacion) {
       this.evaluacion = route.snapshot.data.evaluacion;
       this.enableEdit();
@@ -42,7 +45,7 @@ export class EvaluacionEvaluadorActionService extends EvaluacionFormularioAction
     });
   }
 
-  getEvaluacion(): IEvaluacion {
+  getEvaluacion(): IEvaluacionWithComentariosEnviados {
     return this.evaluacion;
   }
 

@@ -1,0 +1,64 @@
+[
+  {
+    "key": "ap4_2_3_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.3.1 Control de la exposición"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Además de para las personas que realizan las tareas con agentes biológicos, organismos modificados genéticamente, sustancias químicas peligrosas, sustancias radiactivas y/o nanopartículas, ¿hay riesgo de exposición para otras personas?</p>"
+      },
+      {
+        "key": "riesgoExposicion",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Especificar quienes (equipo de mantenimiento, personal de limpieza, personal del animalario, etc.)",
+        "hideExpression": "!model.riesgoExposicion || model.riesgoExposicion === 'no'"
+      },
+      {
+        "key": "especificarQuienes",
+        "type": "textarea",
+        "hideExpression": "!model.riesgoExposicion || model.riesgoExposicion === 'no'",
+        "templateOptions": {
+          "label": "Especificar:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "Especificar qué medidas y justificar en caso negativo"
+      },
+      {
+        "key": "especificarMedidas",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Especificar:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

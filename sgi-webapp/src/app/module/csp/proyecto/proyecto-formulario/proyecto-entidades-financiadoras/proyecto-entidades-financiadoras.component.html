@@ -56,7 +56,7 @@
             <th mat-header-cell *matHeaderCellDef>
               {{'csp.proyecto-entidad-financiadora.importe-financiacion' | translate}}
             </th>
-            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importeFinanciacion}} </td>
+            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importeFinanciacion | number:'1.2-2'}} </td>
           </ng-container>
 
           <!-- Acciones Column -->
@@ -158,7 +158,7 @@
             <th mat-header-cell *matHeaderCellDef>
               {{'csp.proyecto-entidad-financiadora.importe-financiacion' | translate}}
             </th>
-            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importeFinanciacion}} </td>
+            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importeFinanciacion | number:'1.2-2'}} </td>
           </ng-container>
 
           <!-- Acciones Column -->

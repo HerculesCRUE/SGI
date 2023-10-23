@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
@@ -13,17 +14,21 @@ import { ESTADO_ACTA_MAP } from '@core/models/eti/tipo-estado-acta';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { Module } from '@core/module';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ConfigService } from '@core/services/cnf/config.service';
+import { DialogService } from '@core/services/dialog.service';
 import { ActaService } from '@core/services/eti/acta.service';
+import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { ActaListadoExportModalComponent } from '../modals/acta-listado-export-modal/acta-listado-export-modal.component';
 
 const MSG_BUTTON_NEW = marker('btn.add.entity');
@@ -32,6 +37,14 @@ const MSG_FINALIZAR_SUCCESS = marker('msg.eti.acta.finalizar.success');
 const ACTA_KEY = marker('eti.acta');
 const MSG_REGISTRO_BLOCKCHAIN_OK = marker('msg.eti.acta.registro-blockchain.ok');
 const MSG_REGISTRO_BLOCKCHAIN_ALTERADO = marker('msg.eti.acta.registro-blockchain.alterado');
+
+export interface IActaWithNumEvaluacionesAndComentariosEnviados extends IActaWithNumEvaluaciones {
+  enviada: boolean;
+  permitirEnviarComentarios: boolean;
+}
+
+const MSG_ENVIAR_COMENTARIO = marker('msg.enviar.comentario');
+const MSG_ENVIAR_COMENTARIO_SUCCESS = marker('msg.enviar.comentario.success');
 
 @Component({
   selector: 'sgi-acta-listado',
@@ -57,11 +70,28 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
 
   blockchainEnable: boolean;
 
+  actas: IActaWithNumEvaluacionesAndComentariosEnviados[];
+
+  private textoEnviarComentario: string;
+  private textoEnviarComentarioSuccess: string;
+
+  private usuarioRef: string;
+
   get ESTADO_ACTA_MAP() {
     return ESTADO_ACTA_MAP;
   }
 
+  get showAddAndFinishActa(): boolean {
+    return !this.isModuleInv;
+  }
+
+  get showActaComentariosEnviados(): boolean {
+    return this.isRolEvaluador;
+  }
+
   private limiteRegistrosExportacionExcel: string;
+  private isModuleInv: boolean;
+  private isRolEvaluador: boolean;
 
   constructor(
     private readonly logger: NGXLogger,
@@ -70,9 +100,17 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
     private readonly translate: TranslateService,
     private readonly documentoService: DocumentoService,
     private readonly matDialog: MatDialog,
-    private readonly cnfService: ConfigService
+    private readonly cnfService: ConfigService,
+    private readonly route: ActivatedRoute,
+    private readonly evaluacionService: EvaluacionService,
+    private readonly dialogService: DialogService,
+    private readonly authService: SgiAuthService
   ) {
     super();
+
+    this.isModuleInv = route.snapshot.data.module === Module.INV;
+    this.usuarioRef = this.authService.authStatus$.value.userRefId;
+    this.isRolEvaluador = authService.hasAuthority('ETI-ACT-V') ? false : true;
 
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
@@ -121,6 +159,14 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
     this.suscripciones.push(this.translate.get(
       MSG_FINALIZAR_ERROR
     ).subscribe((value) => this.textoFinalizarError = value));
+
+    this.translate.get(
+      MSG_ENVIAR_COMENTARIO
+    ).subscribe((value) => this.textoEnviarComentario = value);
+
+    this.translate.get(
+      MSG_ENVIAR_COMENTARIO_SUCCESS
+    ).subscribe((value) => this.textoEnviarComentarioSuccess = value);
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IActaWithNumEvaluaciones>> {
@@ -132,8 +178,13 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
   }
 
   protected initColumns(): void {
-    this.displayedColumns = ['convocatoriaReunion.comite', 'convocatoriaReunion.fechaEvaluacion', 'numero', 'convocatoriaReunion.tipoConvocatoriaReunion',
-      'numeroIniciales', 'numeroRevisiones', 'numeroTotal', 'estadoActual.nombre', 'acciones'];
+    if (this.isRolEvaluador) {
+      this.displayedColumns = ['convocatoriaReunion.comite', 'convocatoriaReunion.fechaEvaluacion', 'numero', 'convocatoriaReunion.tipoConvocatoriaReunion',
+        'numeroIniciales', 'numeroRevisiones', 'numeroTotal', 'estadoActual.nombre', 'comentariosEnviados', 'acciones'];
+    } else {
+      this.displayedColumns = ['convocatoriaReunion.comite', 'convocatoriaReunion.fechaEvaluacion', 'numero', 'convocatoriaReunion.tipoConvocatoriaReunion',
+        'numeroIniciales', 'numeroRevisiones', 'numeroTotal', 'estadoActual.nombre', 'acciones'];
+    }
   }
 
   protected createFilter(): SgiRestFilter {
@@ -171,6 +222,51 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
 
   protected loadTable(reset?: boolean) {
     this.actas$ = this.getObservableLoadTable(reset);
+    this.suscripciones.push(
+      this.actas$.subscribe(
+        (actas: IActaWithNumEvaluaciones[]) => {
+          if (actas) {
+            this.actas = actas as IActaWithNumEvaluacionesAndComentariosEnviados[];
+            this.loadActaWithComentariosEnviados();
+            this.loadExistsActaWithComentarioAbiertos();
+          } else {
+            this.actas = [];
+          }
+        },
+        (error) => {
+          this.processError(error);
+        })
+    );
+  }
+
+  private loadActaWithComentariosEnviados(): void {
+    this.actas.forEach((acta) => {
+      this.suscripciones.push(
+        this.actasService.isComentariosEnviados(acta.id).subscribe(
+          (res: boolean) => {
+            acta.enviada = res;
+          },
+          (error) => {
+            this.processError(error);
+          }
+        )
+      );
+    })
+  }
+
+  private loadExistsActaWithComentarioAbiertos(): void {
+    this.actas.forEach((acta) => {
+      this.suscripciones.push(
+        this.actasService.isPosibleEnviarComentarios(acta.id).subscribe(
+          (res: boolean) => {
+            acta.permitirEnviarComentarios = res;
+          },
+          (error) => {
+            this.processError(error);
+          }
+        )
+      );
+    })
   }
 
   /**
@@ -178,23 +274,23 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
    * @param actaId id del acta a finalizar.
    */
   finishActa(actaId: number) {
-    this.suscripciones.push(this.actasService.finishActa(actaId).subscribe((acta) => {
-      this.snackBarService.showSuccess(MSG_FINALIZAR_SUCCESS);
-      this.loadTable(false);
-    },
-      catchError((error) => {
-        this.logger.error(error);
-        // On error reset pagination values
-        this.paginator.firstPage();
-        this.totalElementos = 0;
-        if (error instanceof SgiError) {
-          this.processError(error);
-        }
-        else {
-          this.processError(new SgiError(this.textoFinalizarError));
-        }
-        return of([]);
-      })));
+    this.suscripciones.push(
+      this.actasService.finishActa(actaId).subscribe(() => {
+        this.snackBarService.showSuccess(MSG_FINALIZAR_SUCCESS);
+        this.loadTable(false);
+      },
+        (error) => {
+          this.logger.error(error);
+          // On error reset pagination values
+          if (error instanceof SgiError) {
+            this.processError(error);
+          }
+          else {
+            this.processError(new SgiError(this.textoFinalizarError));
+          }
+          return of([]);
+        })
+    );
   }
 
   /**
@@ -275,6 +371,26 @@ export class ActaListadoComponent extends AbstractTablePaginationComponent<IActa
         this.processError
       )
     );
+  }
+
+  public enviarComentarios(idActa: number) {
+    const enviarComentariosDialogSubscription = this.dialogService.showConfirmation(this.textoEnviarComentario).subscribe(
+      (aceptado: boolean) => {
+        if (aceptado) {
+          const enviarComentariosSubscription = this.actasService
+            .enviarComentarios(idActa)
+            .pipe(
+              map(() => {
+                return this.loadTable();
+              })
+            ).subscribe(() => {
+              this.snackBarService.showSuccess(this.textoEnviarComentarioSuccess);
+            });
+          this.suscripciones.push(enviarComentariosSubscription);
+        }
+        aceptado = false;
+      });
+    this.suscripciones.push(enviarComentariosDialogSubscription);
   }
 
 }

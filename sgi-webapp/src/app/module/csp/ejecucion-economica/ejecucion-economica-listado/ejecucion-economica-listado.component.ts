@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
-import { IRelacionEjecucionEconomica, TipoEntidad, TIPO_ENTIDAD_MAP } from '@core/models/csp/relacion-ejecucion-economica';
+import { IRelacionEjecucionEconomica, TIPO_ENTIDAD_MAP, TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
 import { IRolProyecto } from '@core/models/csp/rol-proyecto';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ConfigService } from '@core/services/cnf/config.service';
@@ -14,7 +14,7 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { EMPTY, from, Observable, Subscription } from 'rxjs';
+import { EMPTY, Observable, Subscription, from } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { EJECUCION_ECONOMICA_ROUTE_NAMES } from '../ejecucion-economica-route-names';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../ejecucion-economica.action.service';
@@ -37,6 +37,8 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
 
   colectivosResponsable: string[];
   tipoEntidadSelected: TipoEntidad;
+  columnasTipoEntidadGrupo: string[];
+  columnasTipoEntidadProyecto: string[];
 
   private idsProyectoSge: string[];
 
@@ -129,7 +131,7 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
   }
 
   protected initColumns(): void {
-    this.columnas = [
+    this.columnasTipoEntidadGrupo = [
       'id',
       'proyectoSgeRef',
       'nombre',
@@ -138,6 +140,20 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
       'fechaFin',
       'acciones'
     ];
+
+    this.columnasTipoEntidadProyecto = [
+      'id',
+      'proyectoSgeRef',
+      'nombre',
+      'codigoExterno',
+      'codigoInterno',
+      'responsable',
+      'fechaInicio',
+      'fechaFin',
+      'acciones'
+    ];
+
+    this.columnas = this.columnasTipoEntidadProyecto;
   }
 
   protected loadTable(reset?: boolean): void {
@@ -148,6 +164,7 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
     const controls = this.formGroup.controls;
 
     this.tipoEntidadSelected = this.formGroup.controls.tipoEntidad?.value;
+    this.columnas = this.tipoEntidadSelected === TipoEntidad.PROYECTO ? this.columnasTipoEntidadProyecto : this.columnasTipoEntidadGrupo;
 
     const restFilter = new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.nombre.value)
       .and('proyectoSgeRef', SgiRestFilterOperator.EQUALS, controls.identificadorSge.value)
@@ -160,13 +177,16 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
       .and('fechaFin',
         SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinHasta.value));
 
+    if (this.tipoEntidadSelected === TipoEntidad.PROYECTO) {
+      restFilter
+        .and('codigoExterno', SgiRestFilterOperator.EQUALS, controls.referenciaEntidadConvocante.value);
+    }
+
     if (this.busquedaAvanzada) {
       if (this.tipoEntidadSelected === TipoEntidad.PROYECTO) {
         restFilter
-          .and('proyecto.convocatoria.id', SgiRestFilterOperator.EQUALS, controls.convocatoria.value?.id?.toString());
-        restFilter
-          .and('entidadConvocante', SgiRestFilterOperator.EQUALS, controls.entidadConvocante.value?.id?.toString());
-        restFilter
+          .and('proyecto.convocatoria.id', SgiRestFilterOperator.EQUALS, controls.convocatoria.value?.id?.toString())
+          .and('entidadConvocante', SgiRestFilterOperator.EQUALS, controls.entidadConvocante.value?.id?.toString())
           .and('entidadFinanciadora', SgiRestFilterOperator.EQUALS, controls.entidadFinanciadora.value?.id?.toString());
       }
 
@@ -194,6 +214,7 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
       tipoEntidad: new FormControl(null),
       nombre: new FormControl(null),
       identificadorSge: new FormControl(null),
+      referenciaEntidadConvocante: new FormControl(null),
       fechaInicioDesde: new FormControl(null),
       fechaInicioHasta: new FormControl(null),
       fechaFinDesde: new FormControl(null),

@@ -66,7 +66,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 })
 @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
 @SqlMergeMode(MergeMode.MERGE)
-public class MemoriaIT extends BaseIT {
+class MemoriaIT extends BaseIT {
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_ASIGNABLES = "/asignables/{idConvocatoria}";
@@ -117,7 +117,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void getMemoria_WithId_ReturnsMemoria() throws Exception {
+  void getMemoria_WithId_ReturnsMemoria() throws Exception {
 
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization",
@@ -136,7 +136,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void addMemoria_ReturnsMemoria() throws Exception {
+  void addMemoria_ReturnsMemoria() throws Exception {
 
     Memoria nuevaMemoria = generarMockMemoria(1L, "ref-5588", "Memoria1", 1);
 
@@ -148,7 +148,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void removeMemoria_Success() throws Exception {
+  void removeMemoria_Success() throws Exception {
 
     // when: Delete con id existente
     long id = 3L;
@@ -165,7 +165,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void removeMemoria_DoNotGetMemoria() throws Exception {
+  void removeMemoria_DoNotGetMemoria() throws Exception {
 
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-MEM-INV-BR")));
@@ -178,7 +178,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void replaceMemoria_ReturnsMemoria() throws Exception {
+  void replaceMemoria_ReturnsMemoria() throws Exception {
 
     Memoria replaceMemoria = generarMockMemoria(2L, "ref-5588", "Memoria1", 1);
 
@@ -198,7 +198,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void findAll_WithPaging_ReturnsMemoriaSubList() throws Exception {
+  void findAll_WithPaging_ReturnsMemoriaSubList() throws Exception {
     // when: Obtiene la page=3 con pagesize=10
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization",
@@ -223,7 +223,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void findAll_WithSearchQuery_ReturnsFilteredMemoriaList() throws Exception {
+  void findAll_WithSearchQuery_ReturnsFilteredMemoriaList() throws Exception {
     // when: Búsqueda por titulo like e id equals
     Long id = 5L;
     String query = "titulo=ke=Memoria;id==" + id;
@@ -251,7 +251,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void findAll_WithSortQuery_ReturnsOrderedMemoriaList() throws Exception {
+  void findAll_WithSortQuery_ReturnsOrderedMemoriaList() throws Exception {
     // when: Ordenación por titulo desc
     String query = "titulo,desc";
 
@@ -280,7 +280,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void findAll_WithPagingSortingAndFiltering_ReturnsMemoriaSubList() throws Exception {
+  void findAll_WithPagingSortingAndFiltering_ReturnsMemoriaSubList() throws Exception {
     // when: Obtiene page=3 con pagesize=10
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization",
@@ -318,7 +318,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void findAllMemoriasAsignablesConvocatoriaOrdExt_Unlimited_ReturnsMemoriaSubList() throws Exception {
+  void findAllMemoriasAsignablesConvocatoriaOrdExt_Unlimited_ReturnsMemoriaSubList() throws Exception {
 
     // given: idConvocatoria que es de tipo 1 (ordinaria) o 2 (extraordinaria)
     Long idConvocatoria = 2L;
@@ -354,7 +354,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void findAllMemoriasAsignablesConvocatoriaOrdExt_WithPaging_ReturnsMemoriaSubList() throws Exception {
+  void findAllMemoriasAsignablesConvocatoriaOrdExt_WithPaging_ReturnsMemoriaSubList() throws Exception {
 
     // given: idConvocatoria que es de tipo 1 (ordinaria) o 2 (extraordinaria)
     Long idConvocatoria = 2L;
@@ -378,7 +378,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void findAllMemoriasAsignablesConvocatoriaSeg_WithPaging_ReturnsMemoriaSubList() throws Exception {
+  void findAllMemoriasAsignablesConvocatoriaSeg_WithPaging_ReturnsMemoriaSubList() throws Exception {
 
     // given: idConvocatoria que es de tipo 3 (Seguimiento)
     Long idConvocatoria = 3L;
@@ -402,7 +402,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void findAllMemoriasAsignablesConvocatoriaSeg_Unlimited_ReturnsMemoriaSubList() throws Exception {
+  void findAllMemoriasAsignablesConvocatoriaSeg_Unlimited_ReturnsMemoriaSubList() throws Exception {
 
     // given: idConvocatoria que es de tipo 3 (Seguimiento)
     Long idConvocatoria = 3L;
@@ -424,7 +424,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void findAllAsignablesTipoConvocatoriaOrdExt_Unlimited_ReturnsMemoriaSubList() throws Exception {
+  void findAllAsignablesTipoConvocatoriaOrdExt_Unlimited_ReturnsMemoriaSubList() throws Exception {
 
     // given: search query with comité y fecha límite de una convocatoria de tipo
     // ordinario o extraordinario
@@ -462,7 +462,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void findAllAsignablesTipoConvocatoriaSeguimiento_Unlimited_ReturnsMemoriaSubList() throws Exception {
+  void findAllAsignablesTipoConvocatoriaSeguimiento_Unlimited_ReturnsMemoriaSubList() throws Exception {
 
     // given: search query with comité y fecha límite de una convocatoria de tipo
     // seguimiento
@@ -503,7 +503,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void getDocumentacionFormulario_Unlimited_ReturnsDocumentacion() throws Exception {
+  void getDocumentacionFormulario_Unlimited_ReturnsDocumentacion() throws Exception {
 
     // when: find unlimited asignables para la memoria
     HttpHeaders headers = new HttpHeaders();
@@ -527,7 +527,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void getDocumentacionFormulario_Unlimited_ReturnsEmptyDocumentacion() throws Exception {
+  void getDocumentacionFormulario_Unlimited_ReturnsEmptyDocumentacion() throws Exception {
 
     // when: find unlimited asignables para la memoria
     HttpHeaders headers = new HttpHeaders();
@@ -545,7 +545,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void getDocumentacionSeguimientoAnual_Unlimited_ReturnsDocumentacion() throws Exception {
+  void getDocumentacionSeguimientoAnual_Unlimited_ReturnsDocumentacion() throws Exception {
 
     // when: find unlimited asignables para la memoria
     HttpHeaders headers = new HttpHeaders();
@@ -566,7 +566,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void getDocumentacionSeguimientoAnual_Unlimited_ReturnsEmptyDocumentacion() throws Exception {
+  void getDocumentacionSeguimientoAnual_Unlimited_ReturnsEmptyDocumentacion() throws Exception {
 
     // when: find unlimited asignables para la memoria
     HttpHeaders headers = new HttpHeaders();
@@ -584,7 +584,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void getDocumentacionSeguimientoFinal_Unlimited_ReturnsDocumentacion() throws Exception {
+  void getDocumentacionSeguimientoFinal_Unlimited_ReturnsDocumentacion() throws Exception {
 
     // when: find unlimited asignables para la memoria
     HttpHeaders headers = new HttpHeaders();
@@ -605,7 +605,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void getDocumentacionSeguimientoFinal_Unlimited_ReturnsEmptyDocumentacion() throws Exception {
+  void getDocumentacionSeguimientoFinal_Unlimited_ReturnsEmptyDocumentacion() throws Exception {
 
     // when: find unlimited asignables para la memoria
     HttpHeaders headers = new HttpHeaders();
@@ -623,7 +623,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void getDocumentacionRetrospectiva_Unlimited_ReturnsDocumentacion() throws Exception {
+  void getDocumentacionRetrospectiva_Unlimited_ReturnsDocumentacion() throws Exception {
 
     // when: find unlimited asignables para la memoria
     HttpHeaders headers = new HttpHeaders();
@@ -645,7 +645,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void getDocumentacionRetrospectiva_Unlimited_ReturnsEmptyDocumentacion() throws Exception {
+  void getDocumentacionRetrospectiva_Unlimited_ReturnsEmptyDocumentacion() throws Exception {
 
     // when: find unlimited asignables para la memoria
     HttpHeaders headers = new HttpHeaders();
@@ -663,7 +663,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void addDocumentacioSeguimientoAnual_ReturnsDcoumentacionMemoria() throws Exception {
+  void addDocumentacioSeguimientoAnual_ReturnsDcoumentacionMemoria() throws Exception {
 
     DocumentacionMemoria nuevaDocumentacionMemoria = generarMockDocumentacionMemoria(1L,
         generarMockMemoria(1L, "001", "Memoria1", 1), generarMockTipoDocumento(1L));
@@ -676,7 +676,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void addDocumentacioRetrospectiva_ReturnsDcoumentacionMemoria() throws Exception {
+  void addDocumentacioRetrospectiva_ReturnsDcoumentacionMemoria() throws Exception {
 
     DocumentacionMemoria nuevaDocumentacionMemoria = generarMockDocumentacionMemoria(1L,
         generarMockMemoria(1L, "001", "Memoria1", 1), generarMockTipoDocumento(1L));
@@ -689,7 +689,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void getEvaluacionesMemoria_ReturnsEvaluadorSubList() throws Exception {
+  void getEvaluacionesMemoria_ReturnsEvaluadorSubList() throws Exception {
 
     // given: idMemoria
     Long idMemoria = 2L;
@@ -718,7 +718,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void deleteDocumentacionSeguimientoAnual_ReturnsMemoria() throws Exception {
+  void deleteDocumentacionSeguimientoAnual_ReturnsMemoria() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-MEM-INV-ER")));
 
@@ -731,7 +731,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void deleteDocumentacionSeguimientoFinal_ReturnsMemoria() throws Exception {
+  void deleteDocumentacionSeguimientoFinal_ReturnsMemoria() throws Exception {
 
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-MEM-INV-ER")));
@@ -745,7 +745,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void getEvaluacionesMemoria_ReturnsEmptyList() throws Exception {
+  void getEvaluacionesMemoria_ReturnsEmptyList() throws Exception {
 
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-MEM-INV-ER")));
@@ -760,7 +760,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void deleteDocumentacionRetrospectiva_ReturnsMemoria() throws Exception {
+  void deleteDocumentacionRetrospectiva_ReturnsMemoria() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-MEM-INV-ER")));
 
@@ -773,7 +773,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void deleteDocumentacionInicial_ReturnsMemoria() throws Exception {
+  void deleteDocumentacionInicial_ReturnsMemoria() throws Exception {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-MEM-INV-ER")));
 
@@ -822,7 +822,7 @@ public class MemoriaIT extends BaseIT {
     return tipoDocumento;
   }
 
-  public void enviarSecretaria_Success() throws Exception {
+  void enviarSecretaria_Success() throws Exception {
     // Authorization
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-MEM-INV-ER")));
@@ -838,7 +838,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void enviarSecretaria_DoNotGetMemoria() throws Exception {
+  void enviarSecretaria_DoNotGetMemoria() throws Exception {
     // Authorization
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-MEM-INV-ESCR")));
@@ -850,7 +850,7 @@ public class MemoriaIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
-  public void enviarSecretariaRetrospectiva_Success() throws Exception {
+  void enviarSecretariaRetrospectiva_Success() throws Exception {
     // Authorization
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-MEM-INV-ERTR")));
@@ -866,7 +866,7 @@ public class MemoriaIT extends BaseIT {
   }
 
   @Test
-  public void enviarSecretariaRetrospectiva_DoNotGetMemoria() throws Exception {
+  void enviarSecretariaRetrospectiva_DoNotGetMemoria() throws Exception {
     // Authorization
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-MEM-INV-ERTR")));
@@ -894,7 +894,7 @@ public class MemoriaIT extends BaseIT {
         generarMockComite(id, "comite" + id, true), titulo, "user-00" + id,
         generarMockTipoMemoria(1L, "TipoMemoria1", true),
         generarMockTipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.now(), Boolean.TRUE,
-        generarMockRetrospectiva(3L), version, "codOrganoCompetente", Boolean.TRUE, null);
+        generarMockRetrospectiva(3L), version, Boolean.TRUE, null);
   }
 
   /**

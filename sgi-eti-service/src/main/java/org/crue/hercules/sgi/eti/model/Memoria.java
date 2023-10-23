@@ -101,10 +101,6 @@ public class Memoria extends BaseEntity {
   @NotNull(groups = { Update.class })
   private Integer version;
 
-  /** Código órgano competente */
-  @Column(name = "cod_organo_competente", length = 250, nullable = true)
-  private String codOrganoCompetente;
-
   /** Activo */
   @Column(name = "activo", columnDefinition = "boolean default true", nullable = false)
   private Boolean activo;

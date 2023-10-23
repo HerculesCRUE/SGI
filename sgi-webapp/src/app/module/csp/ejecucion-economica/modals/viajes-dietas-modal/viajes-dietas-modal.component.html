@@ -47,7 +47,7 @@
                 <mat-label>
                   {{'csp.ejecucion-economica.facturas-justificantes.importe-inscripcion' | translate}}
                 </mat-label>
-                <input matInput formControlName="importeInscripcion" type="number" min="0" step="1"
+                <input matInput formControlName="importeInscripcion" type="text" sgiInputWithThousandSeparator
                   placeholder="{{'csp.ejecucion-economica.facturas-justificantes.importe-inscripcion' | translate}}">
                 <mat-error *ngIf="formGroup.controls.importeInscripcion.errors?.min">
                   {{'error.min.entity' | translate:msgParamImporteInscripcion}}

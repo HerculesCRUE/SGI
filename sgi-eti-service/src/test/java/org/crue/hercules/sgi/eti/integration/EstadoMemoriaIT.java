@@ -158,7 +158,7 @@ public class EstadoMemoriaIT extends BaseIT {
     // correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<EstadoMemoria> estadoMemorias = response.getBody();
-    Assertions.assertThat(estadoMemorias.size()).isEqualTo(1);
+    Assertions.assertThat(estadoMemorias).hasSize(1);
     Assertions.assertThat(response.getHeaders().getFirst("X-Page")).isEqualTo("1");
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("6");
@@ -186,7 +186,7 @@ public class EstadoMemoriaIT extends BaseIT {
     // correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<EstadoMemoria> estadoMemorias = response.getBody();
-    Assertions.assertThat(estadoMemorias.size()).isEqualTo(1);
+    Assertions.assertThat(estadoMemorias).hasSize(1);
     Assertions.assertThat(estadoMemorias.get(0).getId()).isEqualTo(id);
     Assertions.assertThat(estadoMemorias.get(0).getMemoria().getTitulo()).startsWith("Memoria");
     Assertions.assertThat(estadoMemorias.get(0).getTipoEstadoMemoria().getNombre()).startsWith("En evaluación");
@@ -209,7 +209,7 @@ public class EstadoMemoriaIT extends BaseIT {
     // correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<EstadoMemoria> estadoMemorias = response.getBody();
-    Assertions.assertThat(estadoMemorias.size()).isEqualTo(6);
+    Assertions.assertThat(estadoMemorias).hasSize(6);
     for (int i = 0; i < 6; i++) {
       EstadoMemoria estadoMemoria = estadoMemorias.get(i);
       Assertions.assertThat(estadoMemoria.getId()).isEqualTo(8 - i);
@@ -239,7 +239,7 @@ public class EstadoMemoriaIT extends BaseIT {
     // correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<EstadoMemoria> estadoMemorias = response.getBody();
-    Assertions.assertThat(estadoMemorias.size()).isEqualTo(3);
+    Assertions.assertThat(estadoMemorias).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).isEqualTo("3");
@@ -268,7 +268,7 @@ public class EstadoMemoriaIT extends BaseIT {
             1),
         generarMockTipoEstadoMemoria(idDatosEstadoMemoria,
             "TipoEstadoMemoria" + String.format("%03d", idDatosEstadoMemoria), Boolean.TRUE),
-        Instant.now());
+        Instant.now(), null);
 
   }
 
@@ -288,7 +288,7 @@ public class EstadoMemoriaIT extends BaseIT {
         generarMockComite(id, "comite" + id, true), titulo, "user-00" + id,
         generarMockTipoMemoria(1L, "TipoMemoria1", true),
         generarMockTipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.now(), Boolean.TRUE,
-        generarMockRetrospectiva(1L), version, "CodOrganoCompetente", Boolean.TRUE, null);
+        generarMockRetrospectiva(1L), version, Boolean.TRUE, null);
   }
 
   /**

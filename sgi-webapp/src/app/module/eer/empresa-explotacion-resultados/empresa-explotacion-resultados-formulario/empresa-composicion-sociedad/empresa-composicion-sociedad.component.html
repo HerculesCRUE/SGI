@@ -41,7 +41,7 @@
       <ng-container matColumnDef="capitalSocial">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'eer.empresa-composicion-sociedad.capital-social' | translate}} </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.capitalSocial}} </td>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.capitalSocial | number: '1.2-2'}} </td>
       </ng-container>
 
       <!-- Tipo aportación Column -->

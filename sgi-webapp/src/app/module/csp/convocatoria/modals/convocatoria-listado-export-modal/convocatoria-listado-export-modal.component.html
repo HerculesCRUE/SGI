@@ -1,26 +1,11 @@
 <sgi-export-dialog [title]="title" [totalRegistrosExportacionExcel]="TOTAL_REG_EXP_EXCEL"
   [limiteRegistrosExportacionExcel]="LIMITE_REG_EXP_EXCEL">
   <form [formGroup]=" formGroup">
-    <!-- Title -->
-    <mat-form-field>
-      <mat-label>{{'csp.convocatoria.titulo' | translate}}</mat-label>
-      <input matInput placeholder="{{'csp.convocatoria.titulo' | translate}}" formControlName="reportTitle">
-    </mat-form-field>
-
     <!-- OutputReportType -->
     <mat-form-field>
       <mat-label>{{'export.type' | translate}}</mat-label>
       <sgi-select-enum formControlName="outputType" required [enumMap]="OUTPUT_REPORT_XLS_TYPE_MAP">
       </sgi-select-enum>
-    </mat-form-field>
-
-    <!-- hideBlocksIfNoData -->
-    <mat-form-field>
-      <mat-label>{{'label.report.headers.visible' | translate}}</mat-label>
-      <mat-select matNativeControl formControlName="hideBlocksIfNoData">
-        <mat-option [value]="true">{{'label.si' | translate}}</mat-option>
-        <mat-option [value]="false">{{'label.no' | translate}}</mat-option>
-      </mat-select>
     </mat-form-field>
 
     <!-- Columns visibility -->

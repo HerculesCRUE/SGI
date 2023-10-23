@@ -1,25 +1,22 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiRestFindOptions } from '@sgi/framework/http';
 import { ConvocatoriaListadoExportService, IConvocatoriaReportOptions } from '../../convocatoria-listado-export.service';
 
 const CONVOCATORIA_KEY = marker('csp.convocatoria');
-const REPORT_TITLE_KEY = marker('csp.convocatoria.listado');
 
 @Component({
   templateUrl: './convocatoria-listado-export-modal.component.html',
   styleUrls: ['./convocatoria-listado-export-modal.component.scss']
 })
 export class ConvocatoriaListadoExportModalComponent extends BaseExportModalComponent<IReportOptions> implements OnInit {
-  private reportTitle: string;
 
   constructor(
     matDialogRef: MatDialogRef<ConvocatoriaListadoExportModalComponent>,
@@ -44,7 +41,6 @@ export class ConvocatoriaListadoExportModalComponent extends BaseExportModalComp
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.reportTitle = this.translate.instant(REPORT_TITLE_KEY);
     this.formGroup = this.buildFormGroup();
   }
 
@@ -59,9 +55,6 @@ export class ConvocatoriaListadoExportModalComponent extends BaseExportModalComp
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       outputType: new FormControl(this.outputType, Validators.required),
-      reportTitle: new FormControl(this.reportTitle, Validators.required),
-
-      hideBlocksIfNoData: new FormControl(true),
       showTodos: new FormControl(true),
       showAreasTematicas: new FormControl(true),
       showEntidadesConvocantes: new FormControl(true),
@@ -99,9 +92,7 @@ export class ConvocatoriaListadoExportModalComponent extends BaseExportModalComp
 
   protected getReportOptions(): IReportConfig<IConvocatoriaReportOptions> {
     const reportModalData: IReportConfig<IConvocatoriaReportOptions> = {
-      title: this.formGroup.controls.reportTitle.value,
       outputType: this.formGroup.controls.outputType.value,
-      hideBlocksIfNoData: this.formGroup.controls.hideBlocksIfNoData.value,
       reportOptions: {
         findOptions: this.modalData.findOptions,
         showAreasTematicas: this.formGroup.controls.showAreasTematicas.value,
@@ -130,6 +121,5 @@ export class ConvocatoriaListadoExportModalComponent extends BaseExportModalComp
   protected getGender() {
     return MSG_PARAMS.GENDER.FEMALE;
   }
-
 
 }

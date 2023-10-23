@@ -5,25 +5,21 @@ import java.util.HashMap;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.eti.ComiteDto.Genero;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeEvaluacion;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
-import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
+import org.crue.hercules.sgi.rep.util.AssertHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Servicio de generación de informe de evaluación de ética
  */
 @Service
-@Slf4j
 @Validated
 public class InformeEvaluacionReportService extends InformeEvaluacionEvaluadorBaseReportService {
 
@@ -31,15 +27,15 @@ public class InformeEvaluacionReportService extends InformeEvaluacionEvaluadorBa
 
   private static final Long DICTAMEN_PENDIENTE_CORRECCIONES = 3L;
   private static final Long DICTAMEN_NO_PROCEDE_EVALUAR = 4L;
-  public static final Long DICTAMEN_FAVORABLE_PENDIENTE_REVISION_MINIMA = 2L;
-  public static final Long TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_ANUAL = 13L;
-  public static final Long TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_FINAL = 19L;
-  public static final Long TIPO_EVALUACION_RETROSPECTIVA = 1L;
-  public static final Long TIPO_EVALUACION_SEGUIMIENTO_ANUAL = 3L;
-  public static final Long TIPO_EVALUACION_SEGUIMIENTO_FINAL = 4L;
+  private static final Long DICTAMEN_FAVORABLE_PENDIENTE_REVISION_MINIMA = 2L;
+  private static final Long TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_ANUAL = 13L;
+  private static final Long TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_FINAL = 19L;
+  private static final Long TIPO_EVALUACION_RETROSPECTIVA = 1L;
+  private static final Long TIPO_EVALUACION_SEGUIMIENTO_ANUAL = 3L;
+  private static final Long TIPO_EVALUACION_SEGUIMIENTO_FINAL = 4L;
 
   public InformeEvaluacionReportService(SgiConfigProperties sgiConfigProperties,
-      SgiApiConfService sgiApiConfService, SgiApiSgpService personaService,
+      SgiApiConfService sgiApiConfService, PersonaService personaService,
       EvaluacionService evaluacionService,
       ConfiguracionService configuracionService,
       BaseApartadosRespuestasReportDocxService baseApartadosRespuestasService) {
@@ -50,15 +46,7 @@ public class InformeEvaluacionReportService extends InformeEvaluacionEvaluadorBa
 
   protected XWPFDocument getDocument(EvaluacionDto evaluacion, HashMap<String, Object> dataReport, InputStream path) {
 
-    Assert.notNull(
-        evaluacion,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, "notNull")
-            .parameter("field",
-                ApplicationContextSupport.getMessage("org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto.message"))
-            .parameter("entity",
-                ApplicationContextSupport.getMessage(EvaluacionDto.class))
-            .build());
+    AssertHelper.entityNotNull(evaluacion, EvaluacionDto.class, EvaluacionDto.class);
 
     dataReport.put("referenciaMemoria", evaluacion.getMemoria().getNumReferencia());
 
@@ -129,7 +117,8 @@ public class InformeEvaluacionReportService extends InformeEvaluacionEvaluadorBa
 
     dataReport.put("dictamen", evaluacion.getDictamen().getNombre());
 
-    dataReport.put("comentarioNoProcedeEvaluar", null != evaluacion.getComentario() ? evaluacion.getComentario() : "");
+    dataReport.put("comentarioNoProcedeEvaluar",
+        !ObjectUtils.isEmpty(evaluacion.getComentario()) ? evaluacion.getComentario() : null);
 
     Integer mesesArchivadaPendienteCorrecciones = configuracionService.findConfiguracion()
         .getMesesArchivadaPendienteCorrecciones();
@@ -148,7 +137,7 @@ public class InformeEvaluacionReportService extends InformeEvaluacionEvaluadorBa
   }
 
   public byte[] getReportInformeEvaluacion(ReportInformeEvaluacion sgiReport, Long idEvaluacion) {
-    getReportFromIdEvaluacion(sgiReport, idEvaluacion);
+    getReportFromEvaluacionId(sgiReport, idEvaluacion);
     return sgiReport.getContent();
   }
 

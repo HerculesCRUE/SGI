@@ -10,6 +10,8 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reunion.service';
 import { TranslateService } from '@ngx-translate/core';
+import { SgiCkEditorConfig } from '@shared/sgi-ckeditor-config';
+import Editor from 'ckeditor5-custom-build/build/ckeditor';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ActaActionService } from '../../acta.action.service';
@@ -29,6 +31,9 @@ const ACTA_RESUMEN_KEY = marker('eti.acta.resumen');
 export class ActaDatosGeneralesComponent extends FormFragmentComponent<IActa> implements OnInit {
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
+  public readonly CkEditor = Editor;
+  public readonly configCkEditor = SgiCkEditorConfig.defaultConfig;
+
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
   fxFlexPropertiesInline: FxFlexProperties;
@@ -44,11 +49,11 @@ export class ActaDatosGeneralesComponent extends FormFragmentComponent<IActa> im
   msgParamHoraFinEntity = {};
   msgParamResumenEntity = {};
 
-  private formPart: ActaDatosGeneralesFragment;
+  public formPart: ActaDatosGeneralesFragment;
 
   constructor(
     private readonly convocatoriaReunionService: ConvocatoriaReunionService,
-    private actionService: ActaActionService,
+    public actionService: ActaActionService,
     public router: Router,
     private readonly translate: TranslateService
   ) {

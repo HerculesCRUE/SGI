@@ -61,37 +61,6 @@ class EtiReportControllerTest extends BaseControllerTest {
   private final static String CONTENT_REPORT_TEST = "TEST";
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-MEM-INV-ESCR", "ETI-MEM-INV-ERTR" })
-  void getMXX_ReturnsResource() throws Exception {
-    Long idMemoria = 26L;
-    Long idFormulario = 3L;
-
-    final String url = new StringBuffer(EtiReportController.MAPPING).append("/informe-mxx/{idMemoria}/{idFormulario}")
-        .toString();
-
-    BDDMockito.given(mxxReportService.getReportMXX(
-        ArgumentMatchers.<ReportMXX>any(), ArgumentMatchers
-            .<Long>any(),
-        ArgumentMatchers
-            .<Long>any()))
-        .willAnswer((InvocationOnMock invocation) -> {
-          return CONTENT_REPORT_TEST.getBytes();
-        });
-
-    // when: Se genera el informe
-    MvcResult requestResult = mockMvc.perform(MockMvcRequestBuilders.get(url,
-        idMemoria, idFormulario).with(SecurityMockMvcRequestPostProcessors.csrf()))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Se recupera el informe
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andReturn();
-
-    Assertions.assertEquals(CONTENT_REPORT_TEST,
-        requestResult.getResponse().getContentAsString(Charset.forName("UTF-8")));
-
-  }
-
-  @Test
   @WithMockUser(username = "user", authorities = { "ETI-EVC-EVAL",
       "ETI-EVC-INV-EVALR" })
   void getReportInformeEvaluacion_ReturnsResource() throws Exception {

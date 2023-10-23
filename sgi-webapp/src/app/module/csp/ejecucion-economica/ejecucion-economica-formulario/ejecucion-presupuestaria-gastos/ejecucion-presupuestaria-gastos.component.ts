@@ -11,7 +11,7 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { ConfigService } from '@core/services/cnf/config.service';
 import { Subscription } from 'rxjs';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
-import { RowTreeDesglose } from '../desglose-economico.fragment';
+import { IDesgloseEconomicoExportData, RowTreeDesglose } from '../desglose-economico.fragment';
 import { EjecucionPresupuestariaGastosFragment } from './ejecucion-presupuestaria-gastos.fragment';
 import { EjecucionPresupuestariaGastosExportModalComponent } from './export/ejecucion-presupuestaria-gastos-export-modal.component';
 
@@ -72,11 +72,17 @@ export class EjecucionPresupuestariaGastosComponent extends FragmentComponent im
   openExportModal(): void {
     this.subscriptions.push(this.formPart.loadDataExport().subscribe(
       (exportData) => {
-        const config = {
-          data: exportData,
+        const data: IDesgloseEconomicoExportData = {
+          columns: exportData?.columns,
+          data: exportData?.data,
           totalRegistrosExportacionExcel: this.totalElementos,
           limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
         };
+
+        const config = {
+          data
+        };
+
         this.matDialog.open(EjecucionPresupuestariaGastosExportModalComponent, config);
       },
       this.formPart.processError

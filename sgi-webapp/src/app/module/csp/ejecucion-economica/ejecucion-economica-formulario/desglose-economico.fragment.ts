@@ -1,6 +1,6 @@
 import { FormControl } from '@angular/forms';
 import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
-import { TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
+import { IRelacionEjecucionEconomica, TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
 import { IColumna } from '@core/models/sge/columna';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
@@ -75,17 +75,13 @@ export class RowTreeDesglose<T extends IDatoEconomico> extends RowTree<T> {
   }
 }
 
-export interface IRelacionEjecucionEconomicaWithCodigoExterno extends IRelacionEjecucionEconomicaWithResponsables {
-  codigoExterno: string;
-}
-
 export interface IDesgloseEconomicoExportData extends IBaseExportModalData {
   data: IDatoEconomico[];
   columns: IColumnDefinition[];
 }
 
 export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extends Fragment {
-  readonly relaciones$ = new BehaviorSubject<IRelacionEjecucionEconomicaWithCodigoExterno[]>([]);
+  readonly relaciones$ = new BehaviorSubject<IRelacionEjecucionEconomica[]>([]);
   readonly anualidades$ = new BehaviorSubject<string[]>([]);
 
   displayColumns: string[] = [];
@@ -105,29 +101,7 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
   }
 
   protected onInitialize(): void {
-
-    this.subscriptions.push(
-      from(this.relaciones as IRelacionEjecucionEconomicaWithCodigoExterno[]).pipe(
-        mergeMap(relacion => {
-          if (relacion.tipoEntidad === TipoEntidad.PROYECTO) {
-            return this.proyectoService.findById(relacion.id).pipe(
-              map(proyecto => {
-                relacion.codigoExterno = proyecto.codigoExterno;
-                return relacion;
-              })
-            )
-          }
-
-          return of(relacion);
-        })
-      ).subscribe(
-        (relacion) => {
-          const current = this.relaciones$.value;
-          current.push(relacion);
-          this.relaciones$.next([...current]);
-        }
-      )
-    );
+    this.relaciones$.next([...this.relaciones]);
 
     this.subscriptions.push(this.getAnualidades().subscribe(
       (anios) => this.anualidades$.next(anios)

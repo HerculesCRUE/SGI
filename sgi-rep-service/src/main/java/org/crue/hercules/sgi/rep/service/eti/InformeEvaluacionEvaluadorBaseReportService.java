@@ -30,7 +30,7 @@ import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.crue.hercules.sgi.rep.service.SgiReportDocxService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
-import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -52,7 +52,7 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class InformeEvaluacionEvaluadorBaseReportService extends SgiReportDocxService {
 
   private final EvaluacionService evaluacionService;
-  private final SgiApiSgpService personaService;
+  private final PersonaService personaService;
   private final BaseApartadosRespuestasReportDocxService baseApartadosRespuestasService;
 
   private static final Long TIPO_ACTIVIDAD_PROYECTO_DE_INVESTIGACION = 1L;
@@ -63,7 +63,7 @@ public abstract class InformeEvaluacionEvaluadorBaseReportService extends SgiRep
   private static final Long DICTAMEN_NO_PROCEDE_EVALUAR = 4L;
 
   protected InformeEvaluacionEvaluadorBaseReportService(SgiConfigProperties sgiConfigProperties,
-      SgiApiConfService sgiApiConfService, SgiApiSgpService personaService,
+      SgiApiConfService sgiApiConfService, PersonaService personaService,
       EvaluacionService evaluacionService, BaseApartadosRespuestasReportDocxService baseApartadosRespuestasService) {
 
     super(sgiConfigProperties, sgiApiConfService);
@@ -72,7 +72,7 @@ public abstract class InformeEvaluacionEvaluadorBaseReportService extends SgiRep
     this.baseApartadosRespuestasService = baseApartadosRespuestasService;
   }
 
-  protected XWPFDocument getReportFromIdEvaluacion(SgiReportDto sgiReport, Long idEvaluacion) {
+  protected XWPFDocument getReportFromEvaluacionId(SgiReportDto sgiReport, Long idEvaluacion) {
     try {
       HashMap<String, Object> dataReport = new HashMap<>();
       EvaluacionDto evaluacion = evaluacionService.findById(idEvaluacion);
@@ -364,8 +364,8 @@ public abstract class InformeEvaluacionEvaluadorBaseReportService extends SgiRep
         numComentarios = evaluacionService.countByEvaluacionIdAndTipoComentarioId(evaluacion.getId(),
             TIPO_COMENTARIO_GESTOR);
       } else {
-        comentarios = evaluacionService.findByEvaluacionIdEvaluador(idEvaluacion);
-        numComentarios = evaluacionService.countByEvaluacionIdAndTipoComentarioId(evaluacion.getId(),
+        comentarios = evaluacionService.findByEvaluacionEvaluadorEstadoCerrado(idEvaluacion);
+        numComentarios = evaluacionService.countByEvaluacionIdAndTipoComentarioIdAndEstadoCerrado(evaluacion.getId(),
             TIPO_COMENTARIO_EVALUADOR);
       }
 

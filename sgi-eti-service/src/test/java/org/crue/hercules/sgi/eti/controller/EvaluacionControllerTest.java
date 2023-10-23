@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.dto.EvaluacionWithIsEliminable;
 import org.crue.hercules.sgi.eti.exceptions.ComentarioNotFoundException;
@@ -15,6 +13,7 @@ import org.crue.hercules.sgi.eti.exceptions.EvaluacionNotFoundException;
 import org.crue.hercules.sgi.eti.model.Apartado;
 import org.crue.hercules.sgi.eti.model.Comentario;
 import org.crue.hercules.sgi.eti.model.Comite;
+import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Dictamen;
 import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva;
@@ -31,8 +30,8 @@ import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.model.TipoMemoria;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.service.ComentarioService;
+import org.crue.hercules.sgi.eti.service.DictamenService;
 import org.crue.hercules.sgi.eti.service.EvaluacionService;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
@@ -53,6 +52,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 /**
  * EvaluacionControllerTest
  */
@@ -64,6 +65,9 @@ public class EvaluacionControllerTest extends BaseControllerTest {
 
   @MockBean
   private ComentarioService comentarioService;
+
+  @MockBean
+  private DictamenService dictamenService;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String EVALUACION_CONTROLLER_BASE_PATH = "/evaluaciones";
@@ -435,8 +439,8 @@ public class EvaluacionControllerTest extends BaseControllerTest {
         .append("/comentarios-gestor").toString();
 
     BDDMockito
-        .given(comentarioService.findByEvaluacionIdGestor(ArgumentMatchers.anyLong(), ArgumentMatchers.<Pageable>any()))
-        .willReturn(new PageImpl<>(Collections.emptyList()));
+        .given(comentarioService.findByEvaluacionIdGestor(ArgumentMatchers.anyLong()))
+        .willReturn(Collections.emptyList());
 
     // when: Se buscan todos los datos
     mockMvc.perform(MockMvcRequestBuilders.get(url, id).with(SecurityMockMvcRequestPostProcessors.csrf()))
@@ -458,8 +462,8 @@ public class EvaluacionControllerTest extends BaseControllerTest {
     response.add(generarMockComentario(Long.valueOf(3), "texto2", 1L));
 
     BDDMockito
-        .given(comentarioService.findByEvaluacionIdGestor(ArgumentMatchers.anyLong(), ArgumentMatchers.<Pageable>any()))
-        .willReturn(new PageImpl<>(response));
+        .given(comentarioService.findByEvaluacionIdGestor(ArgumentMatchers.anyLong()))
+        .willReturn(response);
 
     // when: Se buscan todos los comentarios
     MvcResult result = mockMvc
@@ -484,9 +488,8 @@ public class EvaluacionControllerTest extends BaseControllerTest {
         .append("/comentarios-evaluador").toString();
 
     BDDMockito
-        .given(comentarioService.findByEvaluacionIdEvaluador(ArgumentMatchers.anyLong(),
-            ArgumentMatchers.<Pageable>any(), ArgumentMatchers.anyString()))
-        .willReturn(new PageImpl<>(Collections.emptyList()));
+        .given(comentarioService.findByEvaluacionIdEvaluador(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        .willReturn(Collections.emptyList());
 
     // when: Se buscan todos los datos
     mockMvc.perform(MockMvcRequestBuilders.get(url, id).with(SecurityMockMvcRequestPostProcessors.csrf()))
@@ -507,8 +510,9 @@ public class EvaluacionControllerTest extends BaseControllerTest {
     response.add(generarMockComentario(Long.valueOf(1), "texto", 2L));
     response.add(generarMockComentario(Long.valueOf(3), "texto2", 2L));
 
-    BDDMockito.given(comentarioService.findByEvaluacionIdEvaluador(ArgumentMatchers.anyLong(),
-        ArgumentMatchers.<Pageable>any(), ArgumentMatchers.anyString())).willReturn(new PageImpl<>(response));
+    BDDMockito
+        .given(comentarioService.findByEvaluacionIdEvaluador(ArgumentMatchers.anyLong(), ArgumentMatchers.anyString()))
+        .willReturn(response);
 
     // when: Se buscan los comentarios de tipo Evaluador
     MvcResult result = mockMvc
@@ -812,7 +816,7 @@ public class EvaluacionControllerTest extends BaseControllerTest {
       evaluaciones.add(generarMockEvaluacion(Long.valueOf(i), String.format("%03d", i)));
     }
 
-    BDDMockito.given(evaluacionService.findByEvaluacionesEnSeguimientoFinal(ArgumentMatchers.<String>any(),
+    BDDMockito.given(evaluacionService.findByEvaluacionesEnSeguimientoAnualOrFinal(ArgumentMatchers.<String>any(),
         ArgumentMatchers.<Pageable>any())).willReturn(new PageImpl<>(evaluaciones));
 
     // when: find unlimited
@@ -832,7 +836,7 @@ public class EvaluacionControllerTest extends BaseControllerTest {
     List<Evaluacion> evaluaciones = new ArrayList<>();
     evaluaciones.isEmpty();
 
-    BDDMockito.given(evaluacionService.findByEvaluacionesEnSeguimientoFinal(ArgumentMatchers.<String>any(),
+    BDDMockito.given(evaluacionService.findByEvaluacionesEnSeguimientoAnualOrFinal(ArgumentMatchers.<String>any(),
         ArgumentMatchers.<Pageable>any())).willReturn(new PageImpl<>(evaluaciones));
 
     mockMvc
@@ -904,8 +908,8 @@ public class EvaluacionControllerTest extends BaseControllerTest {
 
     Memoria memoria = new Memoria(1L, "numRef-001", peticionEvaluacion, comite, "Memoria" + sufijoStr, "user-00" + id,
         tipoMemoria, new TipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.now(), Boolean.FALSE,
-        new Retrospectiva(id, new EstadoRetrospectiva(1L, "Pendiente", Boolean.TRUE), Instant.now()), 3,
-        "CodOrganoCompetente", Boolean.TRUE, null);
+        new Retrospectiva(id, new EstadoRetrospectiva(1L, "Pendiente", Boolean.TRUE), Instant.now()), 3, Boolean.TRUE,
+        null);
 
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
 
@@ -1027,8 +1031,8 @@ public class EvaluacionControllerTest extends BaseControllerTest {
 
     Memoria memoria = new Memoria(1L, "numRef-001", peticionEvaluacion, comite, "Memoria" + sufijoStr, "user-00" + id,
         tipoMemoria, new TipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.now(), Boolean.FALSE,
-        new Retrospectiva(id, new EstadoRetrospectiva(1L, "Pendiente", Boolean.TRUE), Instant.now()), 3,
-        "CodOrganoCompetente", Boolean.TRUE, null);
+        new Retrospectiva(id, new EstadoRetrospectiva(1L, "Pendiente", Boolean.TRUE), Instant.now()), 3, Boolean.TRUE,
+        null);
 
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
 

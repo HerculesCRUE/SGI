@@ -226,6 +226,29 @@ public class ConvocatoriaReunionController {
   }
 
   /**
+   * Obtener todas las entidades paginadas {@link Evaluacion} para una
+   * determinada {@link ConvocatoriaReunion}.
+   *
+   * @param id       Id de {@link ConvocatoriaReunion}.
+   * @param pageable la información de la paginación.
+   * @return la lista de entidades {@link Evaluacion} paginadas.
+   */
+  @GetMapping("/{id}/evaluaciones/todas")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-C','ETI-ACT-E','ETI-ACT-INV-ER','ETI-ACT-ER')")
+  public ResponseEntity<Page<Evaluacion>> findEvaluaciones(@PathVariable Long id,
+      @RequestPageable(sort = "s") Pageable pageable) {
+    log.debug("findEvaluaciones(Long id, Pageable pageable) - start");
+    Page<Evaluacion> page = evaluacionService.findAllByConvocatoriaReunionId(id, pageable);
+
+    if (page.isEmpty()) {
+      log.debug("findEvaluaciones(Long id, Pageable pageable) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    log.debug("findEvaluaciones(Long id, Pageable pageable) - end");
+    return new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  /**
    * Obtener todas las entidades paginadas {@link Evaluacion} activas para una
    * determinada {@link ConvocatoriaReunion}.
    *

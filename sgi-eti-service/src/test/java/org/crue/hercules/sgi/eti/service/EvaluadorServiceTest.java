@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.exceptions.EvaluadorNotFoundException;
 import org.crue.hercules.sgi.eti.model.CargoComite;
 import org.crue.hercules.sgi.eti.model.Comite;
@@ -37,11 +38,12 @@ public class EvaluadorServiceTest extends BaseServiceTest {
   @Mock
   private EvaluadorRepository evaluadorRepository;
 
+  private SgiConfigProperties sgiConfigProperties;
   private EvaluadorService evaluadorService;
 
   @BeforeEach
   public void setUp() throws Exception {
-    evaluadorService = new EvaluadorServiceImpl(evaluadorRepository);
+    evaluadorService = new EvaluadorServiceImpl(evaluadorRepository, sgiConfigProperties);
   }
 
   @Test

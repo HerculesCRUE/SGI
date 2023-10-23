@@ -12,7 +12,7 @@ import org.crue.hercules.sgi.rep.dto.eti.EvaluadorDto;
 import org.crue.hercules.sgi.rep.dto.eti.MemoriaEvaluadaDto;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeActa;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
-import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -35,7 +35,7 @@ class InformeActaReportServiceTest extends BaseReportEtiServiceTest {
   private SgiApiConfService sgiApiConfService;
 
   @Mock
-  private SgiApiSgpService personaService;
+  private PersonaService personaService;
 
   @Mock
   private ConvocatoriaReunionService convocatoriaReunionService;
@@ -67,8 +67,7 @@ class InformeActaReportServiceTest extends BaseReportEtiServiceTest {
         .willReturn((generarMockMemoriasEvaluadas(idActa)));
 
     BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
-        .willReturn(getResource("eti/prpt/rep-eti-acta.prpt"));
-    BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
+        .willReturn(getResource("eti/docx/rep-eti-acta.docx"));
 
     BDDMockito.given(personaService.findById(null)).willReturn((generarMockPersona("123456F")));
     BDDMockito.given(convocatoriaReunionService

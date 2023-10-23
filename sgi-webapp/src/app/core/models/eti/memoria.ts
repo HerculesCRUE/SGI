@@ -33,8 +33,6 @@ export interface IMemoria {
   isResponsable: boolean;
   /** Retrospectiva */
   retrospectiva: IRetrospectiva;
-  /** Código organo */
-  codOrganoCompetente: string;
   /** Memoria original */
   memoriaOriginal: IMemoria;
   /** Activo */

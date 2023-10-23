@@ -60,7 +60,7 @@ public class CustomGrupoEquipoRepositoryImpl implements CustomGrupoEquipoReposit
    */
   @Override
   public List<String> findPersonaRefInvestigadoresPrincipalesWithMaxParticipacion(Long grupoId, Instant fecha) {
-    log.debug("findPersonaRefInvestigadoresPrincipales(Long grupoId, Instant fecha) - start");
+    log.debug("findPersonaRefInvestigadoresPrincipalesWithMaxParticipacion(Long grupoId, Instant fecha) - start");
 
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<String> cq = cb.createQuery(String.class);
@@ -80,7 +80,7 @@ public class CustomGrupoEquipoRepositoryImpl implements CustomGrupoEquipoReposit
 
     List<String> returnValue = entityManager.createQuery(cq).getResultList();
 
-    log.debug("findPersonaRefInvestigadoresPrincipales(Long grupoId, Instant fecha) - end");
+    log.debug("findPersonaRefInvestigadoresPrincipalesWithMaxParticipacion(Long grupoId, Instant fecha) - end");
     return returnValue;
   }
 
@@ -105,30 +105,38 @@ public class CustomGrupoEquipoRepositoryImpl implements CustomGrupoEquipoReposit
     CriteriaQuery<String> cq = cb.createQuery(String.class);
     Root<GrupoEquipo> root = cq.from(GrupoEquipo.class);
 
-    Join<GrupoEquipo, Grupo> joinGrupo = root.join(GrupoEquipo_.grupo);
-
-    Predicate grupoEquals = cb.equal(root.get(GrupoEquipo_.grupoId), grupoId);
-    Predicate greaterThanFechaInicio = cb.or(
-        cb.lessThanOrEqualTo(root.get(GrupoEquipo_.fechaInicio), fecha),
-        cb.and(
-            cb.isNull(root.get(GrupoEquipo_.fechaInicio)),
-            cb.or(
-                cb.lessThanOrEqualTo(joinGrupo.get(Grupo_.fechaInicio), fecha))));
-
-    Predicate lowerThanFechaFin = cb.or(
-        cb.greaterThanOrEqualTo(root.get(GrupoEquipo_.fechaFin),
-            fecha),
-        cb.and(
-            cb.isNull(root.get(GrupoEquipo_.fechaFin)),
-            cb.or(
-                cb.isNull(joinGrupo.get(Grupo_.fechaFin)),
-                cb.greaterThanOrEqualTo(joinGrupo.get(Grupo_.fechaFin), fecha))));
-
-    cq.select(root.get(GrupoEquipo_.personaRef))
+    Subquery<String> queryRolPrincipalFechaFinNull = cq.subquery(String.class);
+    Root<GrupoEquipo> subqRolPrincipalFechaFinNull = queryRolPrincipalFechaFinNull.from(GrupoEquipo.class);
+    Join<GrupoEquipo, RolProyecto> joinRolProyectoFechaFinNull = subqRolPrincipalFechaFinNull.join(GrupoEquipo_.rol);
+    Predicate rolPrincipalFechaFinNull = cb
+        .equal(joinRolProyectoFechaFinNull.get(RolProyecto_.rolPrincipal), true);
+    Predicate grupoEqualsFechaFinNull = cb.equal(subqRolPrincipalFechaFinNull.get(GrupoEquipo_.grupoId), grupoId);
+    queryRolPrincipalFechaFinNull.select(subqRolPrincipalFechaFinNull.get(GrupoEquipo_.personaRef))
         .where(cb.and(
-            grupoEquals,
-            greaterThanFechaInicio,
-            lowerThanFechaFin))
+            rolPrincipalFechaFinNull,
+            grupoEqualsFechaFinNull,
+            cb.isNull(subqRolPrincipalFechaFinNull.get(GrupoEquipo_.fechaFin))));
+
+    Subquery<Instant> queryMaxFechaFin = cq.subquery(Instant.class);
+    Root<GrupoEquipo> subqRootMaxFechaFin = queryMaxFechaFin.from(GrupoEquipo.class);
+    Join<GrupoEquipo, RolProyecto> joinRolProyectoMaxFechaFin = subqRootMaxFechaFin.join(GrupoEquipo_.rol);
+    Predicate rolPrincipalMaxFechaFin = cb.equal(joinRolProyectoMaxFechaFin.get(RolProyecto_.rolPrincipal), true);
+    Predicate grupoEqualsMaxFechaFin = cb.equal(subqRootMaxFechaFin.get(GrupoEquipo_.grupoId), grupoId);
+
+    queryMaxFechaFin.select(cb.greatest(subqRootMaxFechaFin.get(GrupoEquipo_.fechaFin)))
+        .where(cb.and(
+            rolPrincipalMaxFechaFin,
+            grupoEqualsMaxFechaFin));
+
+    cq.select(root.get(GrupoEquipo_.personaRef)).where(cb.and(
+        getPredicateRolPrincipalFecha(root, cb, grupoId, fecha),
+        cb.or(
+            cb.and(
+                root.get(GrupoEquipo_.personaRef).in(queryRolPrincipalFechaFinNull)),
+            cb.and(
+                cb.exists(queryRolPrincipalFechaFinNull).not(),
+                cb.equal(root.get(GrupoEquipo_.fechaFin),
+                    queryMaxFechaFin)))))
         .distinct(true);
 
     List<String> returnValue = entityManager.createQuery(cq).getResultList();
@@ -139,15 +147,18 @@ public class CustomGrupoEquipoRepositoryImpl implements CustomGrupoEquipoReposit
 
   private Predicate getPredicateRolPrincipalFecha(Root<GrupoEquipo> root, CriteriaBuilder cb, Long grupoId,
       Instant fecha) {
+    Join<GrupoEquipo, Grupo> joinGrupo = root.join(GrupoEquipo_.grupo);
+    Join<GrupoEquipo, RolProyecto> joinRolProyecto = root.join(GrupoEquipo_.rol);
+
     Predicate grupoEquals = cb.equal(root.get(GrupoEquipo_.grupoId), grupoId);
-    Predicate rolPrincipal = cb.equal(root.get(GrupoEquipo_.rol).get(RolProyecto_.rolPrincipal), true);
+    Predicate rolPrincipal = cb.equal(joinRolProyecto.get(RolProyecto_.rolPrincipal), true);
     Predicate greaterThanFechaInicio = cb.lessThanOrEqualTo(root.get(GrupoEquipo_.fechaInicio), fecha);
     Predicate lowerThanFechaFin = cb.or(cb.isNull(root.get(GrupoEquipo_.fechaFin)),
         cb.greaterThanOrEqualTo(root.get(GrupoEquipo_.fechaFin), fecha));
 
-    Predicate fechaLowerThanFechaInicioGrupo = cb.greaterThan(root.get(GrupoEquipo_.grupo).get(Grupo_.fechaInicio),
+    Predicate fechaLowerThanFechaInicioGrupo = cb.greaterThan(joinGrupo.get(Grupo_.fechaInicio),
         fecha);
-    Predicate fechaGreaterThanFechaFinGrupo = cb.lessThan(root.get(GrupoEquipo_.grupo).get(Grupo_.fechaFin), fecha);
+    Predicate fechaGreaterThanFechaFinGrupo = cb.lessThan(joinGrupo.get(Grupo_.fechaFin), fecha);
 
     return cb.and(
         grupoEquals,
@@ -281,7 +292,7 @@ public class CustomGrupoEquipoRepositoryImpl implements CustomGrupoEquipoReposit
         rootGrupoEspecialInvestigacion.get(GrupoEspecialInvestigacion_.grupoId), joinGrupo.get(Grupo_.id));
 
     Predicate predicateGrupoIsActivo = cb.equal(joinGrupo.get(Activable_.activo), Boolean.TRUE);
-    Predicate predicateRolProyectoIsActivo = cb.equal(joinRolProyecto.get(RolProyecto_.activo), Boolean.TRUE);
+    Predicate predicateRolProyectoIsActivo = cb.equal(joinRolProyecto.get(Activable_.activo), Boolean.TRUE);
     Predicate predicateRolProyectoIsBaremable = cb.equal(joinRolProyecto.get(RolProyecto_.baremablePRC), Boolean.TRUE);
     Predicate predicateGrupoEspecialInvestigacionIsFalse = cb.equal(
         rootGrupoEspecialInvestigacion.get(GrupoEspecialInvestigacion_.especialInvestigacion), Boolean.FALSE);

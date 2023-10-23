@@ -12,4 +12,6 @@ export interface IEstadoMemoria {
   tipoEstadoMemoria: TipoEstadoMemoria;
   /** Fecha Estado */
   fechaEstado: DateTime;
+  /** Comentario */
+  comentario: string;
 }

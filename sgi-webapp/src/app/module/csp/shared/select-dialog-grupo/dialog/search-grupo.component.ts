@@ -172,7 +172,7 @@ export class SearchGrupoModalComponent extends DialogCommonComponent implements 
   }
 
   private fillInvestigadorPrincipal(grupo: IGrupoListado): Observable<IGrupoListado> {
-    return this.grupoService.findPersonaRefInvestigadoresPrincipalesWithMaxParticipacion(grupo.id).pipe(
+    return this.grupoService.findPersonaRefInvestigadoresPrincipales(grupo.id).pipe(
       filter(investigadoresPrincipales => !!investigadoresPrincipales),
       switchMap(investigadoresPrincipales => this.personaService.findAllByIdIn(investigadoresPrincipales)),
       map(investigadoresPrincipales => {

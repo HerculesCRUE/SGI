@@ -1,26 +1,21 @@
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { KeyValue } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Directive, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { SelectValue } from '@core/component/select-common/select-common.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConfigValue } from '@core/models/cnf/config-value';
-import { ConfigService } from '@core/services/cnf/config.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of, Subscription } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 const MSG_SUCCESS = marker('msg.adm.config.update.success');
 
-@Component({
-  selector: 'sgi-config-select',
-  templateUrl: './config-select.component.html',
-  styleUrls: ['./config-select.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
-})
-export class ConfigSelectComponent implements OnInit, OnDestroy, AfterViewInit {
+@Directive()
+// tslint:disable-next-line: directive-class-suffix
+export abstract class ConfigSelectComponent implements OnInit, OnDestroy, AfterViewInit {
 
   configValue: IConfigValue;
 
@@ -94,9 +89,8 @@ export class ConfigSelectComponent implements OnInit, OnDestroy, AfterViewInit {
   sorter = (keyValue1: SelectValue<KeyValue<string, string>>, keyValue2: SelectValue<KeyValue<string, string>>): number => keyValue1?.displayText.localeCompare(keyValue2?.displayText);
 
   constructor(
-    private readonly translate: TranslateService,
-    private readonly snackBarService: SnackBarService,
-    private readonly configService: ConfigService
+    protected readonly translate: TranslateService,
+    protected readonly snackBarService: SnackBarService
   ) { }
 
   ngOnInit(): void {
@@ -117,7 +111,7 @@ export class ConfigSelectComponent implements OnInit, OnDestroy, AfterViewInit {
   save(): void {
     const newValue = this.formGroup.controls.configValue.value?.key;
     this.subscriptions.push(
-      this.configService.updateValue(this.key, newValue)
+      this.updateValue(this.key, newValue)
         .subscribe(
           (configValue) => {
             this.configValue = configValue;
@@ -165,7 +159,7 @@ export class ConfigSelectComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private loadConfigValue(key: string): void {
     this.subscriptions.push(
-      this.configService.findById(key).subscribe(
+      this.getValue(key).subscribe(
         (configValue) => {
           this.configValue = configValue;
           const selectOption: KeyValue<string, string> = {
@@ -180,5 +174,9 @@ export class ConfigSelectComponent implements OnInit, OnDestroy, AfterViewInit {
       )
     );
   }
+
+
+  protected abstract getValue(key: string): Observable<IConfigValue>;
+  protected abstract updateValue(key: string, newValue: string): Observable<IConfigValue>;
 
 }

@@ -5,11 +5,13 @@ import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContext
 import org.springframework.util.Assert;
 
 public class AssertHelper {
-  public static final String PROBLEM_MESSAGE_PARAMETER_FIELD = "field";
+  public static final String MESSAGE_KEY_ID = "id";
+  public static final String MESSAGE_KEY_NAME = "name";
   public static final String PROBLEM_MESSAGE_PARAMETER_ENTITY = "entity";
+  public static final String PROBLEM_MESSAGE_PARAMETER_FIELD = "field";
+
   private static final String PROBLEM_MESSAGE_NOTNULL = "notNull";
   private static final String PROBLEM_MESSAGE_ISNULL = "isNull";
-  private static final String MESSAGE_KEY_ID = "id";
 
   private AssertHelper() {
   }

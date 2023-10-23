@@ -58,7 +58,7 @@
           <th mat-header-cell *matHeaderCellDef>
             {{'csp.proyecto-amortizacion-fondos.entidad-financiadora.importe-financiacion' | translate}}
           </th>
-          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importeFinanciacion}} </td>
+          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importeFinanciacion | number:'1.2-2'}} </td>
         </ng-container>
 
         <!-- Entidad Ajena a la convocatoria -->
@@ -150,7 +150,7 @@
           <th mat-header-cell *matHeaderCellDef>
             {{'csp.proyecto-amortizacion-fondos.periodo-amortizacion.importe' | translate}}
           </th>
-          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importe}} </td>
+          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importe | number:'1.2-2'}} </td>
         </ng-container>
 
         <!-- Acciones Column -->

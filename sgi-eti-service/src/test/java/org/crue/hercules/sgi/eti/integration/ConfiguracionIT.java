@@ -87,6 +87,7 @@ public class ConfiguracionIT extends BaseIT {
     configuracion.setDiasLimiteEvaluador(1);
     configuracion.setDiasArchivadaInactivo(2);
     configuracion.setDiasAvisoRetrospectiva(3);
+    configuracion.setDuracionProyectoEvaluacion(5);
 
     return configuracion;
   }

@@ -288,7 +288,7 @@ public class InformeServiceTest extends BaseServiceTest {
 
     Assertions.assertThatCode(
         // when: Delete con id existente
-        () -> informeService.deleteInformeMemoria(1L))
+        () -> informeService.deleteLastInformeMemoria(1L))
         // then: No se lanza ninguna excepción
         .doesNotThrowAnyException();
 
@@ -302,7 +302,7 @@ public class InformeServiceTest extends BaseServiceTest {
 
     Assertions.assertThatCode(
         // when: Delete con id existente
-        () -> informeService.deleteInformeMemoria(1L))
+        () -> informeService.deleteLastInformeMemoria(1L))
         // then: No se lanza ninguna excepción
         .doesNotThrowAnyException();
 
@@ -349,8 +349,8 @@ public class InformeServiceTest extends BaseServiceTest {
 
     Memoria memoria = new Memoria(1L, "numRef-001", peticionEvaluacion, comite, "Memoria1", "user-001", tipoMemoria,
         new TipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.now(), Boolean.FALSE,
-        new Retrospectiva(id, new EstadoRetrospectiva(1L, "Pendiente", Boolean.TRUE), Instant.now()), 3,
-        "codOrganoCompetente", Boolean.TRUE, null);
+        new Retrospectiva(id, new EstadoRetrospectiva(1L, "Pendiente", Boolean.TRUE), Instant.now()), 3, Boolean.TRUE,
+        null);
 
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion();
     tipoEvaluacion.setId(1L);

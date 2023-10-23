@@ -40,7 +40,6 @@ export class SeguimientoEvaluacionComponent extends FormFragmentComponent<IMemor
 
   constructor(
     public actionService: SeguimientoFormularioActionService,
-    private tipoEvaluacionService: TipoEvaluacionService,
     private readonly evaluacionService: EvaluacionService,
     private readonly documentoService: DocumentoService
   ) {
@@ -67,9 +66,8 @@ export class SeguimientoEvaluacionComponent extends FormFragmentComponent<IMemor
     this.dictamenes$ = this.formPart.evaluacion$.pipe(
       switchMap(evaluacion => {
         if (evaluacion) {
-          return tipoEvaluacionService.findAllDictamenByTipoEvaluacionAndRevisionMinima(
-            evaluacion.tipoEvaluacion.id,
-            evaluacion.esRevMinima
+          return evaluacionService.findAllDictamenEvaluacion(
+            evaluacion.id
           ).pipe(
             map(response => response.items)
           );

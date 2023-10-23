@@ -2,7 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { IRelacionEjecucionEconomicaWithCodigoExterno } from '../../ejecucion-economica-formulario/desglose-economico.fragment';
+import { IRelacionEjecucionEconomicaWithResponsables } from '../../ejecucion-economica.action.service';
 
 @Component({
   selector: 'sgi-ejecucion-economica-table-proyectos-relacionados',
@@ -22,12 +22,12 @@ export class TableProyectosRelacionadosComponent implements OnInit {
     'fechaFin'
   ];
 
-  readonly dataSource = new MatTableDataSource<IRelacionEjecucionEconomicaWithCodigoExterno>();
+  readonly dataSource = new MatTableDataSource<IRelacionEjecucionEconomicaWithResponsables>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   @Input()
-  set data(value: IRelacionEjecucionEconomicaWithCodigoExterno[]) {
+  set data(value: IRelacionEjecucionEconomicaWithResponsables[]) {
     this.dataSource.data = value;
   }
 

@@ -111,10 +111,10 @@
                 <mat-icon>highlight_off</mat-icon>
               </button>
             </ng-container>
-            <ng-container *ngIf="hasPermisoEnviarSecretaria(memoria.estadoActual.id, memoria.solicitante.id)">
+            <ng-container *ngIf="hasPermisoEnviarSecretaria(memoria, memoria.solicitante.id)">
               <button color="primary" mat-icon-button *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-ESCR'"
                 (click)="enviarSecretaria(memoria)"
-                matTooltip="{{isMemoriaSeguimiento(memoria.estadoActual?.id) ? ('btn.eti.memoria.enviar-seguimiento' | translate) : ('btn.eti.memoria.enviar' | translate)}}">
+                matTooltip="{{isMemoriaSeguimiento(memoria) ? ('btn.eti.memoria.enviar-seguimiento' | translate) : ('btn.eti.memoria.enviar' | translate)}}">
                 <mat-icon>send</mat-icon>
               </button>
             </ng-container>

@@ -1,0 +1,20 @@
+<sgi-action-dialog title="{{'title.eti.memoria.indicar-subsanacion' | translate}}">
+  <form [formGroup]="formGroup">
+    <!-- Comentario -->
+    <div fxLayout="row">
+      <mat-form-field>
+        <mat-label>{{'eti.memoria.indicar-subsanacion.comentario' | translate}}</mat-label>
+        <textarea matInput #comentario formControlName="comentario" type="text" cdkTextareaAutosize
+          #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="10" maxlength="2000" required>
+        </textarea>
+        <mat-hint align="right">{{comentario.value.length}} / 2000</mat-hint>
+        <mat-error *ngIf="formGroup.controls.comentario?.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamComentarioEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.comentario?.errors?.required">
+          {{'error.required.entity' | translate:msgParamComentarioEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</sgi-action-dialog>

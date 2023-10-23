@@ -33,7 +33,7 @@
       <ng-container matColumnDef="importeMaximo">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.convocatoria-concepto-gasto.importe-maximo' | translate}} </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importeMaximo}}
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importeMaximo | number: '1.2-2'}}
         </td>
       </ng-container>
 

@@ -21,6 +21,7 @@ export class MemoriaSeguimientoAnualFragment extends MemoriaFormlyFormFragment {
     readonly: boolean,
     key: number,
     comite: IComite,
+    moduloInv: boolean,
     formularioService: FormularioService,
     bloqueService: BloqueService,
     apartadoService: ApartadoService,
@@ -38,6 +39,7 @@ export class MemoriaSeguimientoAnualFragment extends MemoriaFormlyFormFragment {
       comite,
       readonly,
       TIPO_EVALUACION.SEGUIMIENTO_ANUAL,
+      moduloInv,
       formularioService,
       memoriaService,
       evaluacionService,
@@ -59,6 +61,7 @@ export class MemoriaSeguimientoAnualFragment extends MemoriaFormlyFormFragment {
     switch (+estado) {
       case ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_ANUAL:
       case ESTADO_MEMORIA.FIN_EVALUACION:
+      case ESTADO_MEMORIA.SOLICITUD_MODIFICACION_SEGUIMIENTO_ANUAL:
         // Un año o más de diferencia entre la fecha actual y la fecha de inicio.
         return this.memoria.peticionEvaluacion.fechaInicio.diffNow('years').years <= -1;
       default:

@@ -2,7 +2,7 @@ import { KeyValue } from '@angular/common';
 import { Component } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractMenuContentComponent } from '@core/component/abstract-menu-content.component';
-import { ConfigType, IConfigOptions } from '@core/models/cnf/config-options';
+import { ConfigModule, ConfigType, IConfigOptions } from '@core/models/cnf/config-options';
 import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { Observable } from 'rxjs';
@@ -26,13 +26,13 @@ export enum ConfigPii {
 export class ConfigPiiComponent extends AbstractMenuContentComponent {
 
   private readonly _CONFIG_MAP: Map<ConfigPii, IConfigOptions> = new Map([
-    [ConfigPii.PII_COM_FIN_PLAZO_FASES_NAC_REG_SOLICITUD_PROTECCION_DESTINATARIOS, { type: ConfigType.EMAILS, label: marker(`adm.config.pii.PII_COM_FIN_PLAZO_FASES_NAC_REG_SOLICITUD_PROTECCION_DESTINATARIOS`), required: true }],
-    [ConfigPii.PII_COM_FECHA_FIN_PRIMERA_SOLICITUD_PROTECCION_DESTINATARIOS, { type: ConfigType.EMAILS, label: marker(`adm.config.pii.PII_COM_FECHA_FIN_PRIMERA_SOLICITUD_PROTECCION_DESTINATARIOS`), required: true }],
-    [ConfigPii.PII_COM_FECHA_LIMITE_PROCEDIMIENTO_DESTINATARIOS, { type: ConfigType.EMAILS, label: marker(`adm.config.pii.PII_COM_FECHA_LIMITE_PROCEDIMIENTO_DESTINATARIOS`), required: true }],
+    [ConfigPii.PII_COM_FIN_PLAZO_FASES_NAC_REG_SOLICITUD_PROTECCION_DESTINATARIOS, { type: ConfigType.EMAILS, label: marker(`adm.config.pii.PII_COM_FIN_PLAZO_FASES_NAC_REG_SOLICITUD_PROTECCION_DESTINATARIOS`), required: true, module: ConfigModule.CNF }],
+    [ConfigPii.PII_COM_FECHA_FIN_PRIMERA_SOLICITUD_PROTECCION_DESTINATARIOS, { type: ConfigType.EMAILS, label: marker(`adm.config.pii.PII_COM_FECHA_FIN_PRIMERA_SOLICITUD_PROTECCION_DESTINATARIOS`), required: true, module: ConfigModule.CNF }],
+    [ConfigPii.PII_COM_FECHA_LIMITE_PROCEDIMIENTO_DESTINATARIOS, { type: ConfigType.EMAILS, label: marker(`adm.config.pii.PII_COM_FECHA_LIMITE_PROCEDIMIENTO_DESTINATARIOS`), required: true, module: ConfigModule.CNF }],
     //Límite exportación excel
-    [ConfigPii.TITLE_EXPORTACIÓN, { type: ConfigType.CONFIG_GROUP_TITLE, label: marker(`adm.config.group-title.exportacion`) }],
-    [ConfigPii.PII_EXP_MAX_NUM_REGISTROS_EXCEL_INVENCION_LISTADO, { type: ConfigType.TEXT, label: marker(`adm.config.eti.PII_EXP_MAX_NUM_REGISTROS_EXCEL_INVENCION_LISTADO`), required: false }],
-    [ConfigPii.PII_EXP_MAX_NUM_REGISTROS_EXCEL_SOLICITUD_PROTECCION, { type: ConfigType.TEXT, label: marker(`adm.config.eti.PII_EXP_MAX_NUM_REGISTROS_EXCEL_SOLICITUD_PROTECCION`), required: false }],
+    [ConfigPii.TITLE_EXPORTACIÓN, { type: ConfigType.CONFIG_GROUP_TITLE, label: marker(`adm.config.group-title.exportacion`), module: ConfigModule.NONE }],
+    [ConfigPii.PII_EXP_MAX_NUM_REGISTROS_EXCEL_INVENCION_LISTADO, { type: ConfigType.TEXT, label: marker(`adm.config.eti.PII_EXP_MAX_NUM_REGISTROS_EXCEL_INVENCION_LISTADO`), required: false, module: ConfigModule.CNF }],
+    [ConfigPii.PII_EXP_MAX_NUM_REGISTROS_EXCEL_SOLICITUD_PROTECCION, { type: ConfigType.TEXT, label: marker(`adm.config.eti.PII_EXP_MAX_NUM_REGISTROS_EXCEL_SOLICITUD_PROTECCION`), required: false, module: ConfigModule.CNF }],
   ]);
 
   get ConfigType() {

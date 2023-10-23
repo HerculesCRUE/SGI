@@ -31,6 +31,8 @@ import { EquipoInvestigadorListadoFragment } from './peticion-evaluacion-formula
 import { MemoriasListadoFragment } from './peticion-evaluacion-formulario/memorias-listado/memorias-listado.fragment';
 import { PeticionEvaluacionDatosGeneralesFragment } from './peticion-evaluacion-formulario/peticion-evaluacion-datos-generales/peticion-evaluacion-datos-generales.fragment';
 import { PeticionEvaluacionTareasFragment } from './peticion-evaluacion-formulario/peticion-evaluacion-tareas/peticion-evaluacion-tareas-listado/peticion-evaluacion-tareas-listado.fragment';
+import { ConfiguracionService } from '@core/services/eti/configuracion.service';
+import { Module } from '@core/module';
 
 @Injectable()
 export class PeticionEvaluacionActionService extends ActionService {
@@ -52,6 +54,8 @@ export class PeticionEvaluacionActionService extends ActionService {
   private checklist: IChecklist;
 
   private formlyFormBuilder: FormlyFormBuilder;
+
+  private isInvestigador: boolean;
 
 
   constructor(
@@ -75,7 +79,8 @@ export class PeticionEvaluacionActionService extends ActionService {
     protected readonly evaluacionService: EvaluacionService,
     formlyConfig: FormlyConfig,
     componentFactoryResolver: ComponentFactoryResolver,
-    injector: Injector
+    injector: Injector,
+    protected readonly configuracionService: ConfiguracionService,
   ) {
     super();
 
@@ -96,6 +101,8 @@ export class PeticionEvaluacionActionService extends ActionService {
       }
     });
 
+    this.isInvestigador = route.snapshot.data.module === Module.INV;
+
     this.datosGenerales = new PeticionEvaluacionDatosGeneralesFragment(
       fb,
       this.peticionEvaluacion?.id,
@@ -105,11 +112,16 @@ export class PeticionEvaluacionActionService extends ActionService {
       solicitudService,
       this.checklist,
       this.personaService,
+      this.configuracionService,
       this.readonly
     );
     this.equipoInvestigadorListado = new EquipoInvestigadorListadoFragment(
       this.peticionEvaluacion?.id, personaService, peticionEvaluacionService, sgiAuthService, datosAcademicosService, vinculacionService);
-    this.memoriasListado = new MemoriasListadoFragment(this.peticionEvaluacion?.id, peticionEvaluacionService, memoriaService);
+    this.memoriasListado = new MemoriasListadoFragment(
+      this.peticionEvaluacion?.id,
+      peticionEvaluacionService,
+      memoriaService,
+      this.isInvestigador);
     this.tareas = new PeticionEvaluacionTareasFragment(this.peticionEvaluacion?.id, personaService, tareaService,
       peticionEvaluacionService, this.equipoInvestigadorListado, this.memoriasListado);
 
@@ -207,6 +219,7 @@ export class PeticionEvaluacionActionService extends ActionService {
               this.readonly,
               memoria.id,
               memoria.comite,
+              false,
               this.formularioService,
               this.bloqueService,
               this.apartadoService,

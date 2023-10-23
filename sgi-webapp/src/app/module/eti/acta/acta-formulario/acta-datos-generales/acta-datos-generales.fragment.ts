@@ -11,6 +11,10 @@ export class ActaDatosGeneralesFragment extends FormFragment<IActa> {
 
   private acta: IActa;
 
+  public isRolGestor(): boolean {
+    return this.rol === Rol.GESTOR;
+  }
+
   constructor(private fb: FormBuilder, key: number, private rol: Rol, private service: ActaService) {
     super(key);
     this.acta = {} as IActa;
@@ -25,7 +29,7 @@ export class ActaDatosGeneralesFragment extends FormFragment<IActa> {
       fechaFin: [null],
       horaInicio: [null],
       horaFin: [null],
-      resumen: ['', Validators.required]
+      resumen: ['', [Validators.required, Validators.maxLength(4000)]]
     });
 
     const horaInicio = fb.controls.horaInicio;
@@ -50,7 +54,7 @@ export class ActaDatosGeneralesFragment extends FormFragment<IActa> {
       )
     );
 
-    if (this.rol === Rol.EVALUADOR) {
+    if (!this.isRolGestor()) {
       fb.disable();
     }
 
@@ -112,5 +116,10 @@ export class ActaDatosGeneralesFragment extends FormFragment<IActa> {
         return this.acta.id;
       })
     );
+  }
+
+  handleErrors(errors: Error[]): void {
+    this.clearProblems();
+    errors.forEach(this.processError);
   }
 }

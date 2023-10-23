@@ -123,7 +123,6 @@ public class InformeServiceImpl implements InformeService {
     return informeRepository.findById(informeActualizar.getId()).map(informe -> {
       informe.setDocumentoRef(informeActualizar.getDocumentoRef());
       informe.setMemoria(informeActualizar.getMemoria());
-      informe.setVersion(informeActualizar.getVersion());
 
       Informe returnValue = informeRepository.save(informe);
       log.debug("update(Informe informeActualizar) - end");
@@ -132,13 +131,12 @@ public class InformeServiceImpl implements InformeService {
   }
 
   /**
-   * Devuelve un listado paginado de {@link Informe} filtrado por la
-   * {@link Memoria}
+   * Elimina el ultimo {@link Informe} asociado a la {@link Memoria}
    * 
    * @param idMemoria identificador de la {@link Memoria}
    */
   @Override
-  public void deleteInformeMemoria(Long idMemoria) {
+  public void deleteLastInformeMemoria(Long idMemoria) {
     Optional<Informe> informe = informeRepository.findFirstByMemoriaIdOrderByVersionDesc(idMemoria);
 
     if (informe.isPresent()) {

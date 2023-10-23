@@ -44,7 +44,6 @@ public class InformePatentabilidadInput {
   @Size(max = InformePatentabilidad.REF_LENGTH)
   private String entidadCreadoraRef;
 
-  @NotEmpty
   @Size(max = InformePatentabilidad.CONTACTO_LENGTH)
   private String contactoEntidadCreadora;
 

@@ -64,6 +64,7 @@ public class SgiFormlyService {
   private static final String ANSWER_NO = "No";
   private static final String INFO_DIV = "info-div";
   private static final String WRAPPERS = "wrappers";
+  private static final String CKEDITOR = "ckeditor";
 
   /**
    * Instancia un SgiFormlyService
@@ -357,6 +358,7 @@ public class SgiFormlyService {
           respuestaFieldConfig = respuestaFieldConfig.equals("true") ? ANSWER_YES : ANSWER_NO;
         }
         break;
+      case CKEDITOR:
       default:
         log.debug("respuestaFieldConfig generic");
     }

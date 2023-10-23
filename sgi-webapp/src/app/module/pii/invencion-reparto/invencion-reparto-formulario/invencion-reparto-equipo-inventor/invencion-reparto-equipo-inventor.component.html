@@ -191,8 +191,9 @@
             [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
             <mat-form-field appearance="fill">
               <mat-label>{{'pii.reparto.equipo-inventor.importe-universidad' | translate}}</mat-label>
-              <input matInput formControlName="importeRepartoUniversidad" type="number" id="importeRepartoUniversidad"
-                placeholder="{{'pii.reparto.equipo-inventor.importe-universidad' | translate}}">
+              <input matInput formControlName="importeRepartoUniversidad" type="text" id="importeRepartoUniversidad"
+                placeholder="{{'pii.reparto.equipo-inventor.importe-universidad' | translate}}"
+                sgiInputWithThousandSeparator>
             </mat-form-field>
           </div>
           <!-- Importe de reparto a equipo inventor -->
@@ -200,8 +201,8 @@
             [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
             <mat-form-field appearance="fill">
               <mat-label>{{'pii.reparto.equipo-inventor.importe-equipo-inventor' | translate}}</mat-label>
-              <input matInput formControlName="importeRepartoEquipoInventor" type="number"
-                id="importeRepartoEquipoInventor"
+              <input matInput formControlName="importeRepartoEquipoInventor" type="text"
+                id="importeRepartoEquipoInventor" sgiInputWithThousandSeparator
                 placeholder="{{'pii.reparto.equipo-inventor.importe-equipo-inventor' | translate}}">
               <mat-error *ngIf="tramoRepartoFormGroup.controls.importeRepartoEquipoInventor.errors?.required">
                 {{'error.required.entity' | translate:msgParamImporteRepartoEquipoInventorEntity}}

@@ -1,5 +1,10 @@
 package org.crue.hercules.sgi.eti.service.impl;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.crue.hercules.sgi.eti.converter.ApartadoTreeConverter;
+import org.crue.hercules.sgi.eti.dto.ApartadoTreeOutput;
 import org.crue.hercules.sgi.eti.exceptions.ApartadoNotFoundException;
 import org.crue.hercules.sgi.eti.model.Apartado;
 import org.crue.hercules.sgi.eti.model.Bloque;
@@ -24,9 +29,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ApartadoServiceImpl implements ApartadoService {
 
   private final ApartadoRepository repository;
+  private final ApartadoTreeConverter apartadoTreeConverter;
 
-  public ApartadoServiceImpl(ApartadoRepository repository) {
+  public ApartadoServiceImpl(ApartadoRepository repository, ApartadoTreeConverter apartadoTreeConverter) {
     this.repository = repository;
+    this.apartadoTreeConverter = apartadoTreeConverter;
   }
 
   /**
@@ -100,6 +107,37 @@ public class ApartadoServiceImpl implements ApartadoService {
     Assert.notNull(id, "Id no puede ser null para buscar un apartado por el Id de su padre");
     final Page<Apartado> apartado = repository.findByPadreId(id, pageable);
     log.debug("findByPadreId(Long id, Pageable pageable) - end");
+    return apartado;
+  }
+
+  /**
+   * Obtiene las entidades {@link ApartadoTreeOutput} paginadas por el id
+   * de su {@link Bloque}. Se devuelven los Apartados de primer nivel
+   * (sin padre) con sus arboles de apartados hijos.
+   *
+   * @param id       id del {@link Bloque}.
+   * @param pageable pageable
+   * @return el listado de entidades {@link ApartadoTreeOutput} paginadas.
+   */
+  public Page<ApartadoTreeOutput> findApartadosTreeByBloqueId(Long id, Pageable pageable) {
+    log.debug("findByPadreId(Long id, Pageable pageable) - start");
+    Assert.notNull(id, "Id no puede ser null para buscar un apartado por el Id de su padre");
+    final Page<ApartadoTreeOutput> apartados = repository.findByBloqueIdAndPadreIsNull(id, pageable)
+        .map(apartadoTreeConverter::convert)
+        .map(this::fillApartadoTreeHijosRecursive);
+
+    log.debug("findByPadreId(Long id, Pageable pageable) - end");
+    return apartados;
+  }
+
+  private ApartadoTreeOutput fillApartadoTreeHijosRecursive(ApartadoTreeOutput apartado) {
+    List<ApartadoTreeOutput> hijos = apartadoTreeConverter.convertList(
+        repository.findByPadreIdOrderByOrdenDesc(apartado.getId()))
+        .stream()
+        .map(this::fillApartadoTreeHijosRecursive)
+        .collect(Collectors.toList());
+    apartado.setHijos(hijos);
+
     return apartado;
   }
 

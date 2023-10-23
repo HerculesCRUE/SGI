@@ -1,0 +1,24 @@
+[
+  {
+    "key": "ap4_1_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.3 Elección de la especie"
+    },
+    "fieldGroup": [
+      {
+        "template": "Explicar los motivos de elección de la especie, incluyendo las razones por las que no se plantea su sustitución por otra especie con menor capacidad de sentir dolor, sufrimiento, angustia o daño duradero (art. 24 RD 53/2013)"
+      },
+      {
+        "key": "motivosEleccion",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Motivos de elección",
+          "required": true
+        }
+      }
+    ]
+  }
+]

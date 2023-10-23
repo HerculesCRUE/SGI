@@ -10,6 +10,7 @@ import { SeguimientoComentarioFragment } from '../seguimiento-formulario/seguimi
 import { SeguimientoDocumentacionFragment } from '../seguimiento-formulario/seguimiento-documentacion/seguimiento-documentacion.fragment';
 import { SeguimientoEvaluacionFragment } from '../seguimiento-formulario/seguimiento-evaluacion/seguimiento-evaluacion.fragment';
 import { Rol, SeguimientoFormularioActionService } from '../seguimiento-formulario/seguimiento-formulario.action.service';
+import { IEvaluacionWithComentariosEnviados } from '../evaluacion-evaluador/evaluacion-evaluador-listado/evaluacion-evaluador-listado.component';
 
 @Injectable()
 export class GestionSeguimientoActionService extends SeguimientoFormularioActionService {
@@ -23,7 +24,7 @@ export class GestionSeguimientoActionService extends SeguimientoFormularioAction
     personaService: PersonaService,
     authService: SgiAuthService) {
     super();
-    this.evaluacion = {} as IEvaluacion;
+    this.evaluacion = {} as IEvaluacionWithComentariosEnviados;
     if (route.snapshot.data.evaluacion) {
       this.evaluacion = route.snapshot.data.evaluacion;
       this.enableEdit();
@@ -44,7 +45,7 @@ export class GestionSeguimientoActionService extends SeguimientoFormularioAction
     });
   }
 
-  getEvaluacion(): IEvaluacion {
+  getEvaluacion(): IEvaluacionWithComentariosEnviados {
     return this.evaluacion;
   }
 

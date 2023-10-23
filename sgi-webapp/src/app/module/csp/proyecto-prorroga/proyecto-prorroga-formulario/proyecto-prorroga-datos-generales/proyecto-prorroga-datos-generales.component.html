@@ -82,9 +82,9 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'csp.proyecto-prorroga.importe' | translate}}</mat-label>
-          <input matInput formControlName="importe" type="number"
+          <input matInput formControlName="importe" type="text" sgiInputWithThousandSeparator
             placeholder="{{'csp.proyecto-prorroga.importe' | translate}}"
-            [required]="FormGroupUtil.hasValidator(this.formGroup,'importe','required')" min="0">
+            [required]="FormGroupUtil.hasValidator(this.formGroup,'importe','required')">
           <mat-error *ngIf="formGroup.controls.importe.errors?.min">
             {{'error.min.digit' | translate}}
           </mat-error>

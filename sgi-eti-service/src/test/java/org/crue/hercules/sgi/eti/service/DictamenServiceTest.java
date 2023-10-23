@@ -10,6 +10,7 @@ import org.crue.hercules.sgi.eti.exceptions.DictamenNotFoundException;
 import org.crue.hercules.sgi.eti.model.Dictamen;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.repository.DictamenRepository;
+import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
 import org.crue.hercules.sgi.eti.service.impl.DictamenServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,11 +33,14 @@ public class DictamenServiceTest extends BaseServiceTest {
   @Mock
   private DictamenRepository dictamenRepository;
 
+  @Mock
+  private EvaluacionRepository evaluacionRepository;
+
   private DictamenService dictamenService;
 
   @BeforeEach
   public void setUp() throws Exception {
-    dictamenService = new DictamenServiceImpl(dictamenRepository);
+    dictamenService = new DictamenServiceImpl(dictamenRepository, evaluacionRepository);
   }
 
   @Test

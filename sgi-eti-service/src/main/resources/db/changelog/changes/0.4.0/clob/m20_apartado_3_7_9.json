@@ -1,0 +1,61 @@
+[
+  {
+    "key": "ap3_7_9",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.9 Administración de isótopos radiactivos"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿El proceso de experimentación incluye la administración de isótopos radiactivos al animal?"
+      },
+      {
+        "key": "administracionIsotoposRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Se requiere informe del CBE",
+        "hideExpression": "!model.administracionIsotoposRadio || model.administracionIsotoposRadio === 'no'"
+      },
+      {
+        "key": "tipoIsotopo",
+        "type": "input",
+        "hideExpression": "!model.administracionIsotoposRadio || model.administracionIsotoposRadio === 'no'",
+        "templateOptions": {
+          "label": "Tipo de isótopo",
+          "required": true,
+          "placeholder": "Tipo"
+        }
+      },
+      {
+        "key": "administracionIsotopo",
+        "type": "input",
+        "hideExpression": "!model.administracionIsotoposRadio || model.administracionIsotoposRadio === 'no'",
+        "templateOptions": {
+          "label": "Dosis y vía de administración",
+          "required": true,
+          "placeholder": "Dosis"
+        }
+      }
+    ]
+  }
+]

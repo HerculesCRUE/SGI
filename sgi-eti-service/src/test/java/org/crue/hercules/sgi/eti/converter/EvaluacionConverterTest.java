@@ -196,7 +196,7 @@ public class EvaluacionConverterTest extends BaseServiceTest {
 
     Memoria memoria = new Memoria(1L, "numRef-001", peticionEvaluacion, comite, "Memoria" + sufijoStr, "user-00" + id,
         tipoMemoria, tipoEstadoMemoria, Instant.now(), Boolean.TRUE,
-        new Retrospectiva(id, estadoRetrospectiva, Instant.now()), 3, "CodOrganoCompetente", Boolean.TRUE, null);
+        new Retrospectiva(id, estadoRetrospectiva, Instant.now()), 3, Boolean.TRUE, null);
 
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
 

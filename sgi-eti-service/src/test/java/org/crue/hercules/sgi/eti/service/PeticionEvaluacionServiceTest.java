@@ -397,7 +397,7 @@ public class PeticionEvaluacionServiceTest extends BaseServiceTest {
         generarMockComite(id, "comite" + id, true), titulo, "user-00" + id,
         generarMockTipoMemoria(1L, "TipoMemoria1", true),
         generarMockTipoEstadoMemoria(idTipoEstadoMemoria, "Estado", Boolean.TRUE), Instant.now(), Boolean.TRUE,
-        generarMockRetrospectiva(1L), version, "CodOrganoCompetente", Boolean.TRUE, null);
+        generarMockRetrospectiva(1L), version, Boolean.TRUE, null);
   }
 
   /**

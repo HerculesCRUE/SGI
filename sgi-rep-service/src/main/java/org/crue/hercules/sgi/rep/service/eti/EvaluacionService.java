@@ -34,8 +34,8 @@ public class EvaluacionService extends BaseRestTemplateService<EvaluacionDto> {
     return findComentarios(idEvaluacion, endPoint);
   }
 
-  public List<ComentarioDto> findByEvaluacionIdEvaluador(Long idEvaluacion) {
-    String endPoint = "/comentarios-evaluador";
+  public List<ComentarioDto> findByEvaluacionEvaluadorEstadoCerrado(Long idEvaluacion) {
+    String endPoint = "/comentarios-evaluador-cerrados";
     return findComentarios(idEvaluacion, endPoint);
   }
 
@@ -64,7 +64,26 @@ public class EvaluacionService extends BaseRestTemplateService<EvaluacionDto> {
     Integer numComentarios = null;
     try {
       final ResponseEntity<Integer> responseFormulario = getRestTemplate().exchange(
-          getUrlBase() + URL_API + "/" + idEvaluacion + "/" + tipoComentario + "/numero-comentarios", HttpMethod.GET,
+          getUrlBase() + URL_API + "/" + idEvaluacion + "/" + tipoComentario + "/numero-comentarios",
+          HttpMethod.GET,
+          new HttpEntityBuilder<>().withCurrentUserAuthorization().build(), Integer.class);
+
+      numComentarios = responseFormulario.getBody();
+
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      throw new GetDataReportException();
+    }
+
+    return numComentarios;
+  }
+
+  public Integer countByEvaluacionIdAndTipoComentarioIdAndEstadoCerrado(Long idEvaluacion, Long tipoComentario) {
+    Integer numComentarios = null;
+    try {
+      final ResponseEntity<Integer> responseFormulario = getRestTemplate().exchange(
+          getUrlBase() + URL_API + "/" + idEvaluacion + "/numero-comentarios-cerrados-tipo/" + tipoComentario,
+          HttpMethod.GET,
           new HttpEntityBuilder<>().withCurrentUserAuthorization().build(), Integer.class);
 
       numComentarios = responseFormulario.getBody();

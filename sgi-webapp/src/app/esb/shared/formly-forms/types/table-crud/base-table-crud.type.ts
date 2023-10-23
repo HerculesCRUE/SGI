@@ -102,6 +102,12 @@ export abstract class BaseTableCRUDTypeComponent extends FieldArrayType implemen
 
   getOptionSelected(value: string, options: any[]): string {
     let optionSelected = '';
+    if (!options.length) {
+      options = [{
+        label: value,
+        value: value
+      }]
+    }
     if (value) {
       optionSelected = options.filter(option => option.value === value)[0].label;
     }

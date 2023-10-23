@@ -3,7 +3,6 @@ package org.crue.hercules.sgi.eti.service;
 import java.util.List;
 
 import org.crue.hercules.sgi.eti.exceptions.TipoEvaluacionNotFoundException;
-import org.crue.hercules.sgi.eti.model.Dictamen;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,17 +55,6 @@ public interface TipoEvaluacionService {
    * Elimina todos los {@link TipoEvaluacion}.
    */
   void deleteAll();
-
-  /**
-   * Devuelve el listado de dictamenes dependiendo del tipo de Evaluación y si es
-   * Revisión mínima
-   * 
-   * @param esRevisionMinima Boolean para saber si la evaluación es revisión
-   *                         mínima
-   * @param idTipoEvaluacion Identificador {@link TipoEvaluacion}.
-   * @return listado de dictamenes.
-   */
-  List<Dictamen> findAllDictamenByTipoEvaluacionAndRevisionMinima(Long idTipoEvaluacion, Boolean esRevisionMinima);
 
   /**
    * Devuelve el listado de tipo de evaluaciones: Memoria y Retrospectiva.

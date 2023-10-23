@@ -1,0 +1,76 @@
+[
+  {
+    "key": "ap4_2_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.1 Valoración de la severidad y medidas correctoras ante el dolor, sufrimiento o la angustia del animal"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Teniendo en cuenta los procedimientos/intervenciones enumeradas en el apartado 'Procedimientos/Intervenciones que se realizarán al animal' señale las medidas correctoras previstas (p.ej anestesia, analgesia) para minimizar el posible dolor, sufrimiento o ansiedad causados:<ul><li><strong>Efecto buscado</strong>: efecto que se busca en el animal con el procedimiento/intervención realizado: extracción del bazo, subida de un parámetro determinado, anestesiar al animal para la cirugía.</li><li><strong>Efectos colaterales, secundarios o reacciones adversas</strong>: cualquier efecto, diferente al buscado, que pueda provocar que el animal experimente dolor, sufrimiento, angustia o daño duradero equivalente o superior al causado por la introducción de una aguja.</li><li><strong>Medida correctora</strong>: cualquier medida destinada a paliar el sufrimiento del animal y/o los efectos colaterales que se apliquen, sin interferir en el efecto buscado'.</li></ul></p>"
+      },
+      {
+        "type": "table-crud",
+        "key": "valoracionSeveridadTable",
+        "templateOptions": {
+          "entity": "medida correctora",
+          "gender": "female"
+        },
+        "expressionProperties": {
+          "templateOptions.required": "formState.bloques[3].ap3_7?.ap3_7_1?.procedimientoIntervencionMedidaCorrectoraTable.length > 0"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Medida correctora"
+          },
+          "fieldGroup": [
+            {
+              "key": "intervencion",
+              "type": "select",
+              "templateOptions": {
+                "label": "Procedimiento/Intervención (categoría de severidad)",
+                "options": [],
+                "order": 10
+              },
+              "expressionProperties": {
+                "templateOptions.options": "formState.bloques[3].ap3_7?.ap3_7_1?.procedimientoIntervencionMedidaCorrectoraTable.map(pi => {return {label: pi.descripcionProcedimientoIntervencion +' ('+ pi.categoriaSeveridad+')', value: pi.descripcionProcedimientoIntervencion +' ('+ pi.categoriaSeveridad+')'};})"
+              }
+            },
+            {
+              "key": "efectoBuscado",
+              "type": "textarea",
+              "templateOptions": {
+                "label": "Efecto buscado",
+                "order": 30
+              }
+            },
+            {
+              "key": "efectoColateral",
+              "type": "textarea",
+              "templateOptions": {
+                "label": "Efecto colateral",
+                "order": 40
+              }
+            },
+            {
+              "key": "medidasCorrectoras",
+              "type": "input",
+              "templateOptions": {
+                "label": "Medidas correctoras",
+                "order": 50
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: Recuerde que las excepciones requieren aportar el documento correspondiente en el apartado '5.4 Situaciones especiales' anexo IX del RD 53/2013.</p>"
+      }
+    ]
+  }
+]

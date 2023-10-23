@@ -18,6 +18,7 @@ import org.crue.hercules.sgi.eti.model.EstadoActa;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoActa;
 import org.crue.hercules.sgi.eti.repository.ActaRepository;
+import org.crue.hercules.sgi.eti.repository.ComentarioRepository;
 import org.crue.hercules.sgi.eti.repository.EstadoActaRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.MemoriaRepository;
@@ -75,6 +76,12 @@ public class ActaServiceTest extends BaseServiceTest {
   private SgiApiCnfService configService;
   @Mock
   private SgiApiBlockchainService blockchainService;
+  @Mock
+  private AsistentesService asistentesService;
+  @Mock
+  private ComentarioRepository comentarioRepository;
+  @Mock
+  private ComentarioService comentarioService;
 
   private ActaService actaService;
   private MemoriaService memoriaService;
@@ -83,7 +90,8 @@ public class ActaServiceTest extends BaseServiceTest {
   public void setUp() throws Exception {
     actaService = new ActaServiceImpl(actaRepository, estadoActaRepository, tipoEstadoActaRepository,
         evaluacionRepository, retrospectivaRepository, memoriaService, retrospectivaService, reportService,
-        sgdocService, comunicadosService, configService, blockchainService);
+        sgdocService, comunicadosService, configService, blockchainService, asistentesService, comentarioRepository,
+        comentarioService);
   }
 
   @Test

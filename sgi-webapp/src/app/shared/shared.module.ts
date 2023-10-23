@@ -20,6 +20,7 @@ import { DialogFooterComponent } from './dialog-footer/dialog-footer.component';
 import { DialogHeaderComponent } from './dialog-header/dialog-header.component';
 import { FormAutocompleteOffDirective } from './directives/form-autocomplete-off.directive';
 import { NotFoundErrorDirective } from './directives/not-found-error.directive';
+import { SgiInputWithThousandSeparator } from './directives/sgi-input-number-separator.directive';
 import { SgiTooltipDirective } from './directives/sgi-tooltip.directive';
 import { ErrorMessageComponent } from './error-message/error-message.component';
 import { ExportDialogComponent } from './export-dialog/export-dialog.component';
@@ -98,7 +99,8 @@ import { SelectComponent } from './select/select.component';
     SgiTooltipDirective,
     InputEmailsComponent,
     NotFoundErrorComponent,
-    NotFoundErrorDirective
+    NotFoundErrorDirective,
+    SgiInputWithThousandSeparator,
   ],
   imports: [
     CommonModule,
@@ -107,7 +109,7 @@ import { SelectComponent } from './select/select.component';
     TranslateModule,
     FormsModule,
     ReactiveFormsModule,
-    FormlyFormsModule
+    FormlyFormsModule,
   ],
   exports: [
     BreadcrumbComponent,
@@ -151,7 +153,8 @@ import { SelectComponent } from './select/select.component';
     SgiTooltipDirective,
     InputEmailsComponent,
     NotFoundErrorComponent,
-    NotFoundErrorDirective
+    NotFoundErrorDirective,
+    SgiInputWithThousandSeparator
   ]
 })
 export class SharedModule { }

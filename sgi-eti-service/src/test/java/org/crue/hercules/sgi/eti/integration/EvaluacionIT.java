@@ -503,11 +503,6 @@ public class EvaluacionIT extends BaseIT {
     final List<Comentario> comentarios = response.getBody();
 
     Assertions.assertThat(comentarios.size()).isEqualTo(2);
-    Assertions.assertThat(response.getHeaders().getFirst("X-Page")).isEqualTo("0");
-    Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
-    Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("2");
-
-    // Contiene de comentario.id=4L
 
     Assertions.assertThat(comentarios.get(0).getId()).isEqualTo(4L);
   }
@@ -525,17 +520,7 @@ public class EvaluacionIT extends BaseIT {
         buildRequest(headers, null), new ParameterizedTypeReference<List<Comentario>>() {
         }, 3L);
 
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-    final List<Comentario> comentarios = response.getBody();
-
-    Assertions.assertThat(comentarios.size()).isEqualTo(1);
-    Assertions.assertThat(response.getHeaders().getFirst("X-Page")).isEqualTo("0");
-    Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
-    Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("1");
-
-    // Contiene de comentario.id=3L
-    Assertions.assertThat(comentarios.get(0).getId()).isEqualTo(3L);
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
   @Test
@@ -824,7 +809,7 @@ public class EvaluacionIT extends BaseIT {
     Memoria memoria = new Memoria(11L, "numRef-001", peticionEvaluacion, comite, "Memoria" + sufijoStr, "user-00" + id,
         tipoMemoria, new TipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.now(), Boolean.FALSE,
         new Retrospectiva(3L, new EstadoRetrospectiva(3L, "En evaluación", Boolean.TRUE), Instant.now()), 3,
-        "CodOrganoCompetente", Boolean.TRUE, null);
+        Boolean.TRUE, null);
 
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
 

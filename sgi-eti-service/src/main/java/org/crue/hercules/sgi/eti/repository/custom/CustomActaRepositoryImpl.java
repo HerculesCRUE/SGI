@@ -304,6 +304,7 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
         JoinType.LEFT);
 
     cq.multiselect(
+        joinMemoria.get(Memoria_.id),
         root.get(Evaluacion_.id),
         joinMemoria.get(Memoria_.numReferencia), joinPeticionEvaluacion.get(PeticionEvaluacion_.personaRef),
         root.get(Evaluacion_.dictamen).get(Dictamen_.nombre), root.get(Evaluacion_.version),

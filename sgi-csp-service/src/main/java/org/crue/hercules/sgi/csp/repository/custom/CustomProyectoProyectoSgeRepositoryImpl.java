@@ -74,12 +74,18 @@ public class CustomProyectoProyectoSgeRepositoryImpl implements CustomProyectoPr
     String[] selectionNames = new String[] {
         ProyectoProyectoSgePredicateResolver.Property.NOMBRE_PROYECTO.getCode(),
         ProyectoProyectoSgePredicateResolver.Property.FECHA_INICIO_PROYECTO.getCode(),
-        ProyectoProyectoSgePredicateResolver.Property.FECHA_FIN_PROYECTO.getCode()
+        ProyectoProyectoSgePredicateResolver.Property.FECHA_FIN_PROYECTO.getCode(),
+        ProyectoProyectoSgePredicateResolver.Property.CODIGO_EXTERNO.getCode(),
+        ProyectoProyectoSgePredicateResolver.Property.CODIGO_INTERNO.getCode()
     };
 
     cq.multiselect(root.get(ProyectoProyectoSge_.proyecto).get(Proyecto_.id).alias(Proyecto_.ID),
         root.get(ProyectoProyectoSge_.proyecto).get(Proyecto_.titulo).alias(
             ProyectoProyectoSgePredicateResolver.Property.NOMBRE_PROYECTO.getCode()),
+        root.get(ProyectoProyectoSge_.proyecto).get(Proyecto_.codigoExterno).alias(
+            ProyectoProyectoSgePredicateResolver.Property.CODIGO_EXTERNO.getCode()),
+        root.get(ProyectoProyectoSge_.proyecto).get(Proyecto_.codigoInterno).alias(
+            ProyectoProyectoSgePredicateResolver.Property.CODIGO_INTERNO.getCode()),
         root.get(ProyectoProyectoSge_.proyecto).get(Proyecto_.fechaInicio).alias(
             ProyectoProyectoSgePredicateResolver.Property.FECHA_INICIO_PROYECTO.getCode()),
         root.get(ProyectoProyectoSge_.proyecto).get(Proyecto_.fechaFin).alias(

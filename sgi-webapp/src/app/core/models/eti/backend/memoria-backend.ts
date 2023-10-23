@@ -31,8 +31,6 @@ export interface IMemoriaBackend {
   isResponsable: boolean;
   /** Retrospectiva */
   retrospectiva: IRetrospectivaBackend;
-  /** Código organo */
-  codOrganoCompetente: string;
   /** Memoria original */
   memoriaOriginal: IMemoriaBackend;
   /** Activo */

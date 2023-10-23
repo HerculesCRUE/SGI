@@ -17,7 +17,7 @@ import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.crue.hercules.sgi.rep.service.SgiReportService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgempService;
-import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
 import org.pentaho.reporting.engine.classic.core.MasterReport;
 import org.pentaho.reporting.engine.classic.core.TableDataFactory;
 import org.springframework.stereotype.Service;
@@ -33,13 +33,13 @@ import lombok.extern.slf4j.Slf4j;
 @Validated
 public class AutorizacionProyectoExternoReportService extends SgiReportService {
 
-  private final SgiApiSgpService personaService;
+  private final PersonaService personaService;
   private final AutorizacionProyectoExternoService autorizacionProyectoExternoService;
   private final ConvocatoriaService convocatoriaService;
   private final SgiApiSgempService empresaService;
 
   public AutorizacionProyectoExternoReportService(SgiConfigProperties sgiConfigProperties,
-      SgiApiConfService sgiApiConfService, SgiApiSgpService personaService,
+      SgiApiConfService sgiApiConfService, PersonaService personaService,
       AutorizacionProyectoExternoService autorizacionProyectoExternoService, ConvocatoriaService convocatoriaService,
       SgiApiSgempService empresaService) {
 
@@ -135,7 +135,7 @@ public class AutorizacionProyectoExternoReportService extends SgiReportService {
     columnsData.add("centro");
     try {
       VinculacionDto vinculacionPersona = personaService
-          .findVinculacionByPersonaId(autorizacionProyectoExterno.getSolicitanteRef());
+          .getVinculacion(autorizacionProyectoExterno.getSolicitanteRef());
       elementsRow.add(vinculacionPersona.getCategoriaProfesional() != null
           ? vinculacionPersona.getCategoriaProfesional().getNombre()
           : '-');

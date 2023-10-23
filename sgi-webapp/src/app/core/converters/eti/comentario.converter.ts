@@ -4,6 +4,7 @@ import { IPersona } from '@core/models/sgp/persona';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { EVALUACION_CONVERTER } from './evaluacion.converter';
 import { MEMORIA_CONVERTER } from './memoria.converter';
+import { LuxonUtils } from '@core/utils/luxon-utils';
 
 class ComentarioConverter extends SgiBaseConverter<IComentarioBackend, IComentario> {
   toTarget(value: IComentarioBackend): IComentario {
@@ -17,7 +18,9 @@ class ComentarioConverter extends SgiBaseConverter<IComentarioBackend, IComentar
       evaluacion: EVALUACION_CONVERTER.toTarget(value.evaluacion),
       tipoComentario: value.tipoComentario,
       texto: value.texto,
-      evaluador: { id: value.lastModifiedBy ?? value.createdBy } as IPersona
+      evaluador: { id: value.lastModifiedBy ?? value.createdBy } as IPersona,
+      estado: value.estado,
+      fechaEstado: LuxonUtils.fromBackend(value.fechaEstado)
     };
   }
 
@@ -33,7 +36,9 @@ class ComentarioConverter extends SgiBaseConverter<IComentarioBackend, IComentar
       tipoComentario: value.tipoComentario,
       texto: value.texto,
       createdBy: null,
-      lastModifiedBy: null
+      lastModifiedBy: null,
+      estado: value.estado,
+      fechaEstado: LuxonUtils.toBackend(value.fechaEstado)
     };
   }
 }

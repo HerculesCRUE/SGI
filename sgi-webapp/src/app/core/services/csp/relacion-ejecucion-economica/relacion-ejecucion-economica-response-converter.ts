@@ -1,4 +1,4 @@
-import { IRelacionEjecucionEconomica as IRelacionEjecucionEconomica } from '@core/models/csp/relacion-ejecucion-economica';
+import { IRelacionEjecucionEconomica } from '@core/models/csp/relacion-ejecucion-economica';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';
@@ -13,6 +13,8 @@ class RelacionEjecucionEconomicaResponseConverter
     return {
       id: value.id,
       nombre: value.nombre,
+      codigoExterno: value.codigoExterno,
+      codigoInterno: value.codigoInterno,
       fechaInicio: LuxonUtils.fromBackend(value.fechaInicio),
       fechaFin: LuxonUtils.fromBackend(value.fechaFin),
       proyectoSge: value.proyectoSgeRef ? { id: value.proyectoSgeRef } as IProyectoSge : null,
@@ -27,6 +29,8 @@ class RelacionEjecucionEconomicaResponseConverter
     return {
       id: value.id,
       nombre: value.nombre,
+      codigoExterno: value.codigoExterno,
+      codigoInterno: value.codigoInterno,
       fechaInicio: LuxonUtils.toBackend(value.fechaInicio),
       fechaFin: LuxonUtils.toBackend(value.fechaFin),
       proyectoSgeRef: value.proyectoSge?.id,

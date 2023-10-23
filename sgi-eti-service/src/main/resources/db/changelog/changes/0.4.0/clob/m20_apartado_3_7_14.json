@@ -1,0 +1,31 @@
+[
+  {
+    "key": "ap3_7_14",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.14 Mantenimiento con vida"
+    },
+    "hideExpression": "!formState.mainModel.ap3_7.ap3_7_12.destinoFinalCheck || !formState.mainModel.ap3_7.ap3_7_12.destinoFinalCheck.some(destino => destino === 'mantenimiento')",
+    "fieldGroup": [
+      {
+        "template": "Describir las condiciones para su realojamiento o reintegro a un hábitat o sistema zootécnico conveniente."
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Para que un animal que ha sido utilizado en experimentación pueda ser mantenido con vida deben darse las condiciones descritas en el artículo 30 del RD 53/2013:</p><ul><li>a) Que su estado de salud lo permita.</li><li>b) Que no suponga un peligro para la salud pública, la sanidad animal ni el medio ambiente.</li><li>c) Que se hayan tomado las medidas adecuadas para salvaguardar el buen estado del animal.</li><li>d) Que en el caso de realojamiento o adopción, los criadores, suministradores y usuarios tengan un programa adecuado que garantice su socialización.</li><li>e) Que en el caso de liberación de animales silvestres en su hábitat, se disponga de un programa de adaptación adecuado.</li></ul>"
+      },
+      {
+        "key": "mantenimientoConVida",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Descripción",
+          "required": true
+        }
+      }
+    ]
+  }
+]

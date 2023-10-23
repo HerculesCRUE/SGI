@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IGrupo } from '@core/models/csp/grupo';
 import { Module } from '@core/module';
 import { ActionService } from '@core/services/action-service';
-import { ConfiguracionService } from '@core/services/csp/configuracion.service';
+import { ConfigService } from '@core/services/csp/config.service';
 import { GrupoEnlaceService } from '@core/services/csp/grupo-enlace/grupo-enlace.service';
 import { GrupoEquipoInstrumentalService } from '@core/services/csp/grupo-equipo-instrumental/grupo-equipo-instrumental.service';
 import { GrupoEquipoService } from '@core/services/csp/grupo-equipo/grupo-equipo.service';
@@ -87,7 +87,7 @@ export class GrupoActionService extends ActionService implements OnDestroy {
     grupoPersonaAutorizadaService: GrupoPersonaAutorizadaService,
     grupoLineaInvestigacionService: GrupoLineaInvestigacionService,
     lineaInvestigacionService: LineaInvestigacionService,
-    configuracionService: ConfiguracionService
+    configuracionService: ConfigService
   ) {
     super();
     this.id = Number(route.snapshot.paramMap.get(GRUPO_ROUTE_PARAMS.ID));

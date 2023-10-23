@@ -56,7 +56,11 @@ export class EmpresaExplotacionResultadosDatosGeneralesComponent extends FormFra
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
     this.formPart = this.fragment as EmpresaExplotacionResultadosDatosGeneralesFragment;
 
-    this.estados = this.getEstadosWithoutActiva();
+    if (this.formPart.isEdit()) {
+      this.estados = ESTADO_EMPRESA_EXPLOTACION_RESULTADOS_MAP;
+    } else {
+      this.estados = this.getEstadosWithoutActiva();
+    }
 
     this.subscriptions.push(
       this.formPart.getFormGroup().controls.entidad.valueChanges.subscribe(

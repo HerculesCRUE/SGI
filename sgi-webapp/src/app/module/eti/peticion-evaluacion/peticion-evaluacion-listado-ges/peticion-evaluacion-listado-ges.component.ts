@@ -9,7 +9,7 @@ import { IBaseExportModalData } from '@core/component/base-export/base-export-mo
 import { MSG_PARAMS } from '@core/i18n';
 import { IMemoria } from '@core/models/eti/memoria';
 import { IPeticionEvaluacion } from '@core/models/eti/peticion-evaluacion';
-import { ESTADO_MEMORIA_MAP } from '@core/models/eti/tipo-estado-memoria';
+import { ESTADO_MEMORIA, ESTADO_MEMORIA_MAP } from '@core/models/eti/tipo-estado-memoria';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
@@ -17,22 +17,33 @@ import { ConfigService } from '@core/services/cnf/config.service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { TranslateService } from '@ngx-translate/core';
-import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
+import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { Observable, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { Observable, from, of } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { PeticionEvaluacionListadoExportModalComponent } from '../modals/peticion-evaluacion-listado-export-modal/peticion-evaluacion-listado-export-modal.component';
+import { ComiteService } from '@core/services/eti/comite.service';
+import { IComite } from '@core/models/eti/comite';
+import { StatusWrapper } from '@core/utils/status-wrapper';
+import { IMemoriaPeticionEvaluacionWithLastEvaluacion } from '../peticion-evaluacion-formulario/memorias-listado/memorias-listado.fragment';
+import { MemoriaService } from '@core/services/eti/memoria.service';
+import { IMemoriaPeticionEvaluacion } from '@core/models/eti/memoria-peticion-evaluacion';
 
 const MSG_BUTTON_SAVE = marker('btn.add.entity');
-const PETICION_EVALUACION_KEY = marker('eti.peticion-evaluacion');
+const PETICION_EVALUACION_KEY = marker('eti.peticion-evaluacion-etica-proyecto');
+
+export interface IPeticionEvaluacionWithMemorias extends IPeticionEvaluacion {
+  memorias: IMemoriaPeticionEvaluacion[],
+  memoriasAsignables: IMemoria[];
+}
 
 @Component({
   selector: 'sgi-peticion-evaluacion-listado-ges',
   templateUrl: './peticion-evaluacion-listado-ges.component.html',
   styleUrls: ['./peticion-evaluacion-listado-ges.component.scss']
 })
-export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginationComponent<IPeticionEvaluacion> implements OnInit {
+export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginationComponent<IPeticionEvaluacionWithMemorias> implements OnInit {
 
   ROUTE_NAMES = ROUTE_NAMES;
 
@@ -47,10 +58,11 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
-  peticionesEvaluacion$: Observable<IPeticionEvaluacion[]> = of();
-  memorias$: Observable<IMemoria[]> = of();
+  peticionesEvaluacion$: Observable<IPeticionEvaluacionWithMemorias[]> = of();
 
   private limiteRegistrosExportacionExcel: string;
+
+  private comites: IComite[];
 
   get tipoColectivoSolicitante() {
     return TipoColectivo.SOLICITANTE_ETICA;
@@ -67,6 +79,8 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
     private readonly translate: TranslateService,
     private matDialog: MatDialog,
     private readonly cnfService: ConfigService,
+    private readonly comiteService: ComiteService,
+    private readonly memoriaService: MemoriaService
   ) {
     super();
 
@@ -83,6 +97,14 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
 
+    const findOptions: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('activo', SgiRestFilterOperator.EQUALS, 'true')
+    };
+
+    this.comiteService.findAll(findOptions).subscribe(comites => {
+      this.comites = comites.items;
+    });
+
   }
 
   ngOnInit(): void {
@@ -92,7 +114,7 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
     this.formGroup = new FormGroup({
       comite: new FormControl(null, []),
       titulo: new FormControl('', []),
-      codigo: new FormControl('', []),
+      referenciaMemoria: new FormControl('', []),
       tipoEstadoMemoria: new FormControl(null, []),
       solicitante: new FormControl('', [])
     });
@@ -117,7 +139,7 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
     ).subscribe((value) => this.textoCrear = value);
   }
 
-  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IPeticionEvaluacion>> {
+  protected createObservable(reset?: boolean): Observable<SgiRestListResult<IPeticionEvaluacionWithMemorias>> {
     return this.peticionesEvaluacionService.findAll(this.getFindOptions(reset)).pipe(
       map((response) => {
         // Return the values
@@ -125,17 +147,48 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
       }),
       switchMap((response) => {
         if (!response.items || response.items.length === 0) {
-          return of({} as SgiRestListResult<IPeticionEvaluacion>);
+          return of({} as SgiRestListResult<IPeticionEvaluacionWithMemorias>);
         }
         const personaIdsEvaluadores = new Set<string>();
 
-        response.items.forEach((peticionEvaluacion: IPeticionEvaluacion) => {
+        const items = response.items as unknown as IPeticionEvaluacionWithMemorias[];
+
+        items.forEach((peticionEvaluacion: IPeticionEvaluacionWithMemorias) => {
           personaIdsEvaluadores.add(peticionEvaluacion?.solicitante?.id);
+          this.peticionesEvaluacionService
+            .findMemorias(
+              peticionEvaluacion.id
+            ).pipe(
+              map((response) => {
+                // Return the values
+                return response.items as IMemoriaPeticionEvaluacion[];
+              }),
+              catchError(() => {
+                return of([]);
+              })
+            ).subscribe((memorias: IMemoriaPeticionEvaluacion[]) => {
+              peticionEvaluacion.memorias = memorias;
+            });
+
+          this.memoriaService
+            .findAllMemoriasAsignablesPeticionEvaluacion(
+              peticionEvaluacion.id
+            ).pipe(
+              map((response) => {
+                // Return the values
+                return response.items as IMemoria[];
+              }),
+              catchError(() => {
+                return of([]);
+              })
+            ).subscribe((memorias: IMemoria[]) => {
+              peticionEvaluacion.memoriasAsignables = memorias;
+            });
         });
 
         const personaSubscription = this.personaService.findAllByIdIn([...personaIdsEvaluadores]).subscribe((result) => {
           const personas = result.items;
-          response.items.forEach((peticionEvaluacion: IPeticionEvaluacion) => {
+          items.forEach((peticionEvaluacion: IPeticionEvaluacionWithMemorias) => {
             const datosPersona = personas.find((persona) =>
               peticionEvaluacion.solicitante.id === persona.id);
             peticionEvaluacion.solicitante = datosPersona;
@@ -147,28 +200,28 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
           }
         );
         this.suscripciones.push(personaSubscription);
-        let peticionesListado: SgiRestListResult<IPeticionEvaluacion>;
+        let peticionesListado: SgiRestListResult<IPeticionEvaluacionWithMemorias>;
         return of(peticionesListado = {
           page: response.page,
           total: response.total,
-          items: response.items
+          items: items
         });
       }),
       catchError((error) => {
         this.logger.error(error);
         this.processError(error);
-        return of({} as SgiRestListResult<IPeticionEvaluacion>);
+        return of({} as SgiRestListResult<IPeticionEvaluacionWithMemorias>);
       })
     );
   }
 
   protected initColumns(): void {
-    this.displayedColumns = ['solicitante', 'codigo', 'titulo', 'fuenteFinanciacion', 'fechaInicio', 'fechaFin', 'acciones'];
+    this.displayedColumns = ['helpIcon', 'solicitante', 'titulo', 'memoriaComite1', 'memoriaComite2', 'memoriaComite3', 'acciones'];
   }
 
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
-    return new RSQLSgiRestFilter('peticionEvaluacion.codigo', SgiRestFilterOperator.LIKE_ICASE, controls.codigo.value)
+    return new RSQLSgiRestFilter('numReferencia', SgiRestFilterOperator.LIKE_ICASE, controls.referenciaMemoria.value)
       .and('peticionEvaluacion.titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
       .and('comite.id', SgiRestFilterOperator.EQUALS, controls.comite.value?.id?.toString())
       .and('estadoActual.id', SgiRestFilterOperator.EQUALS, controls.tipoEstadoMemoria.value?.toString())
@@ -191,4 +244,34 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
     };
     this.matDialog.open(PeticionEvaluacionListadoExportModalComponent, config);
   }
+
+  public getComite(idComite: number): string {
+    return this.comites?.find(comite => comite.id === idComite).comite;
+  }
+
+  public getMemoriasComite(memorias: IMemoriaPeticionEvaluacion[], idComite: number): string {
+    const memoriasComite = memorias?.filter(memoria => memoria.comite.id === idComite);
+    return this.fillMemorias(memoriasComite);
+  }
+
+  public getMemoriasAsignables(memorias: IMemoria[]): string {
+    return this.fillMemorias(memorias);
+  }
+
+  private fillMemorias(memorias: IMemoria[] | IMemoriaPeticionEvaluacion[]): string {
+    const memoriasColumn = [];
+    if (memorias?.length > 0) {
+      memorias.forEach(memoria => {
+        if (memoria.retrospectiva && memoria.retrospectiva?.estadoRetrospectiva.id > 1) {
+          memoriasColumn.push(memoria.numReferencia + '-' + memoria.estadoActual.nombre + '-' + memoria.version + '-Ret.');
+        } else {
+          memoriasColumn.push(memoria.numReferencia + '-' + memoria.estadoActual.nombre + '-' + (memoria.version === 0 ? '1' : memoria.version));
+        }
+      });
+      return memoriasColumn.join(', ');
+    } else {
+      return '';
+    }
+  }
+
 }

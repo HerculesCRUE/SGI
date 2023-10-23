@@ -1,0 +1,114 @@
+[
+  {
+    "key": "ap4_2_1_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.1.1 Laboratorio de la Universidad"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>A continuación especificar en qué local de la Universidad se realizarán las tareas con agentes, material biológico, organismos modificados genéticamente, sustancias químicas peligrosas , sustancias radiactivas y/o nanopartículas</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "No necesita rellenar el código patrimonial en caso de haber indicado un laboratorio de los servicios y secciones del Área Científica y Técnica de Investigación (ACTI).</p>"
+      },
+      {
+        "type": "table-crud",
+        "key": "laboratorioLocalTable",
+        "templateOptions": {
+          "entity": "local",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Local"
+          },
+          "fieldGroup": [
+            {
+              "key": "codPatrimonial",
+              "type": "input",
+              "templateOptions": {
+                "label": "Código Patrimonial",
+                "order": 10
+              }
+            },
+            {
+              "key": "nivelContencion",
+              "type": "select",
+              "templateOptions": {
+                "label": "Nivel contención",
+                "order": 20,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "C1"
+                  },
+                  {
+                    "value": "2",
+                    "label": "C2"
+                  },
+                  {
+                    "value": "3",
+                    "label": "C3"
+                  },
+                  {
+                    "value": "4",
+                    "label": "C4"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "ubicacion",
+              "type": "input",
+              "templateOptions": {
+                "label": "Ubicación",
+                "order": 30
+              }
+            },
+            {
+              "key": "certificadoIdoneidad",
+              "type": "select",
+              "templateOptions": {
+                "label": "Certificado idoneidad",
+                "order": 40,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "Sí"
+                  },
+                  {
+                    "value": "2",
+                    "label": "No"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "numeroRegistroServicioPrevencion",
+              "type": "input",
+              "templateOptions": {
+                "label": "No. Reg. Servicio Prevención",
+                "order": 50
+              }
+            },
+            {
+              "key": "fecha",
+              "type": "datepicker",
+              "templateOptions": {
+                "label": "Fecha",
+                "luxonFormat": "shortDate",
+                "order": 60
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

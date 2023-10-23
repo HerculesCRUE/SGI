@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IEmpresa } from '@core/models/sgemp/empresa';
 import { environment } from '@env';
@@ -54,4 +54,11 @@ export class EmpresaService extends SgiRestService<string, IEmpresa> {
 
     return this.findAll(options);
   }
+
+  findAutocomplete(term: string): Observable<IEmpresa[]> {
+    let params: HttpParams = new HttpParams();
+    params = params.append('busqueda', term);
+    return this.http.get<IEmpresa[]>(`${this.endpointUrl}Fast`, { params });
+  }
+
 }

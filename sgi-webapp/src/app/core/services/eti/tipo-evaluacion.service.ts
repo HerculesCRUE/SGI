@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { IDictamen } from '@core/models/eti/dictamen';
 import { TipoEvaluacion } from '@core/models/eti/tipo-evaluacion';
 import { environment } from '@env';
 import { SgiRestListResult, SgiRestService } from '@sgi/framework/http';
@@ -19,16 +18,6 @@ export class TipoEvaluacionService extends SgiRestService<number, TipoEvaluacion
       `${environment.serviceServers.eti}${TipoEvaluacionService.MAPPING}`,
       http
     );
-  }
-
-  /**
-   * Devuelve el listado de dictamenes dependiendo
-   * del tipo de Evaluación y si la Evaluación es de revisión mínima
-   */
-
-  findAllDictamenByTipoEvaluacionAndRevisionMinima(
-    idTipoEvaluacion: number, esRevisionMinima: boolean): Observable<SgiRestListResult<IDictamen>> {
-    return this.find<IDictamen, IDictamen>(`${this.endpointUrl}/${idTipoEvaluacion}/dictamenes-revision-minima/${esRevisionMinima}`, null);
   }
 
   /**

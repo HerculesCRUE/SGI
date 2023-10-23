@@ -65,12 +65,12 @@
     <ng-container matColumnDef="importePresupuestado">
       <mat-header-cell *matHeaderCellDef>{{'csp.solicitud-proyecto-presupuesto.importe-presupuestado' | translate}}
       </mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.item.importePresupuestado}}</mat-cell>
+      <mat-cell *matCellDef="let element">{{element.item.importePresupuestado | number: '1.2-2'}}</mat-cell>
     </ng-container>
     <ng-container matColumnDef="importeSolicitado">
       <mat-header-cell *matHeaderCellDef>{{'csp.solicitud-proyecto-presupuesto.importe-solicitado' | translate}}
       </mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.item.importeSolicitado}}</mat-cell>
+      <mat-cell *matCellDef="let element">{{element.item.importeSolicitado | number: '1.2-2'}}</mat-cell>
     </ng-container>
 
     <mat-header-row *matHeaderRowDef="columnas"></mat-header-row>

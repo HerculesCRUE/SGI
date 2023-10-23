@@ -99,7 +99,7 @@
             <mat-label>
               {{'csp.proyecto-amortizacion-fondos.periodo-amortizacion.importe' | translate}}
             </mat-label>
-            <input matInput formControlName="importe" type="number" min="0" step="1" required
+            <input matInput formControlName="importe" type="text" sgiInputWithThousandSeparator required
               placeholder="{{'csp.proyecto-amortizacion-fondos.periodo-amortizacion.importe' | translate}}">
             <mat-error *ngIf="formGroup.controls.importe.errors?.min">
               {{'error.min.entity' | translate:msgParamImporte}}

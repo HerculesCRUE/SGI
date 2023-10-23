@@ -11,11 +11,11 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { ConfigService } from '@core/services/cnf/config.service';
 import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
 import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economica.service';
-import { of, Subscription } from 'rxjs';
+import { Subscription, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
 import { DatoEconomicoDetalleModalData, ViajesDietasModalComponent } from '../../modals/viajes-dietas-modal/viajes-dietas-modal.component';
-import { RowTreeDesglose } from '../desglose-economico.fragment';
+import { IDesgloseEconomicoExportData, RowTreeDesglose } from '../desglose-economico.fragment';
 import { IDesglose } from '../facturas-justificantes.fragment';
 import { ViajesDietasExportModalComponent } from './export/viajes-dietas-export-modal.component';
 import { ViajesDietasFragment } from './viajes-dietas.fragment';
@@ -115,11 +115,17 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
 
     this.subscriptions.push(this.formPart.loadDataExport().subscribe(
       (exportData) => {
-        const config = {
-          data: exportData,
+        const data: IDesgloseEconomicoExportData = {
+          columns: exportData?.columns,
+          data: exportData?.data,
           totalRegistrosExportacionExcel: this.totalElementos,
           limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
         };
+
+        const config = {
+          data
+        };
+
         this.matDialog.open(ViajesDietasExportModalComponent, config);
       },
       this.formPart.processError

@@ -59,11 +59,11 @@ public interface InformeService {
   void deleteAll();
 
   /**
-   * Elimina el informe relacionado a una memoria
+   * Elimina el ultimo {@link Informe} asociado a la {@link Memoria}
    * 
    * @param idMemoria identificador de la {@link Memoria}
    */
-  void deleteInformeMemoria(Long idMemoria);
+  void deleteLastInformeMemoria(Long idMemoria);
 
   /**
    * Devuelve un listado paginado de {@link Informe} filtrado por la

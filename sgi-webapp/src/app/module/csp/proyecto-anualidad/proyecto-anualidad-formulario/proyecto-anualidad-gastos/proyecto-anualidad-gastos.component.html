@@ -47,7 +47,7 @@
           {{'csp.proyecto-anualidad.partida-gasto.importe-presupuesto' |
           translate}}
         </th>
-        <td mat-cell *matCellDef="let wrapper">{{wrapper.value.importePresupuesto }}</td>
+        <td mat-cell *matCellDef="let wrapper">{{wrapper.value.importePresupuesto | number: '1.2-2'}}</td>
       </ng-container>
 
       <!-- importeConcedido Column -->
@@ -56,7 +56,7 @@
           {{'csp.proyecto-anualidad.partida-gasto.importe-concedido' |
           translate}}
         </th>
-        <td mat-cell *matCellDef="let wrapper">{{wrapper.value.importeConcedido }}</td>
+        <td mat-cell *matCellDef="let wrapper">{{wrapper.value.importeConcedido | number: '1.2-2'}}</td>
       </ng-container>
 
       <!-- Acciones Column -->

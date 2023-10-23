@@ -6,7 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IComentario } from '@core/models/eti/comentario';
+import { IComentario, TipoEstadoComentario } from '@core/models/eti/comentario';
 import { TipoComentario } from '@core/models/eti/tipo-comentario';
 import { DialogService } from '@core/services/dialog.service';
 import { TipoComentarioService } from '@core/services/eti/tipo-comentario.service';
@@ -18,6 +18,7 @@ import { ComentarioModalComponent, ComentarioModalData } from '../../comentario/
 import { getApartadoNombre, getSubApartadoNombre } from '../../shared/pipes/bloque-apartado.pipe';
 import { EvaluacionFormularioActionService, Rol } from '../evaluacion-formulario.action.service';
 import { EvaluacionComentarioFragment } from './evaluacion-comentarios.fragment';
+import { SgiAuthService } from '@sgi/framework/auth';
 
 const MSG_DELETE = marker('msg.delete.entity');
 const COMENTARIO_KEY = marker('eti.comentario');
@@ -28,12 +29,14 @@ const COMENTARIO_KEY = marker('eti.comentario');
 })
 export class EvaluacionComentariosComponent extends FragmentComponent implements OnInit, OnDestroy {
 
-  private formPart: EvaluacionComentarioFragment;
+  formPart: EvaluacionComentarioFragment;
   private subscriptions: Subscription[] = [];
 
   columnas: string[];
   elementosPagina: number[];
   tipoComentario$: Observable<TipoComentario>;
+  public personaId: string;
+  public disabledCreate = false;
 
   dataSource: MatTableDataSource<StatusWrapper<IComentario>> = new MatTableDataSource<StatusWrapper<IComentario>>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -46,16 +49,22 @@ export class EvaluacionComentariosComponent extends FragmentComponent implements
     return MSG_PARAMS;
   }
 
+  get TIPO_ESTADO_COMENTARIO() {
+    return TipoEstadoComentario;
+  }
+
   constructor(
     private readonly dialogService: DialogService,
     private tipoComentarioService: TipoComentarioService,
     private matDialog: MatDialog,
     private actionService: EvaluacionFormularioActionService,
     private readonly translate: TranslateService,
+    private readonly authService: SgiAuthService
   ) {
     super(actionService.FRAGMENT.COMENTARIOS, actionService);
     this.formPart = this.fragment as EvaluacionComentarioFragment;
     this.elementosPagina = [5, 10, 25, 100];
+    this.personaId = this.authService.authStatus$.value.userRefId;
     this.columnas = ['evaluador.nombre', 'apartado.bloque', 'apartado.padre',
       'apartado', 'texto', 'acciones'];
   }
@@ -67,6 +76,9 @@ export class EvaluacionComentariosComponent extends FragmentComponent implements
     this.dataSource.sort = this.sort;
     this.subscriptions.push(this.formPart.comentarios$.subscribe(elements => {
       this.dataSource.data = elements;
+      if (elements.length > 0 && elements.filter(comentario => comentario.value.evaluador.id === this.personaId).length > 0) {
+        this.disabledCreate = !elements.some(comentario => comentario.value.estado ? (comentario.value.estado === this.TIPO_ESTADO_COMENTARIO.ABIERTO || comentario.value.estado === null) : true);
+      }
     }));
 
     this.dataSource.sortingDataAccessor =

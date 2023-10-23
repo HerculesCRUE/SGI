@@ -78,7 +78,7 @@ export class InformePatentabilidadModalComponent extends DialogFormComponent<IIn
       documento: new FormControl(this.informePatentabilidad?.documento, Validators.required),
       resultadoInformePatentabilidad: new FormControl(this.informePatentabilidad?.resultadoInformePatentabilidad, Validators.required),
       entidadCreadora: new FormControl(this.informePatentabilidad?.entidadCreadora, Validators.required),
-      contactoEntidadCreadora: new FormControl(this.informePatentabilidad?.contactoEntidadCreadora, [Validators.required, Validators.maxLength(50)]),
+      contactoEntidadCreadora: new FormControl(this.informePatentabilidad?.contactoEntidadCreadora, Validators.maxLength(50)),
       contactoExaminador: new FormControl(this.informePatentabilidad?.contactoExaminador, [Validators.required, Validators.maxLength(50)]),
       comentarios: new FormControl(this.informePatentabilidad?.comentarios, Validators.maxLength(250)),
     });

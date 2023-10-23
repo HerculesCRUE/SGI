@@ -1,11 +1,11 @@
 import { IComentario } from '@core/models/eti/comentario';
-import { IDictamen } from '@core/models/eti/dictamen';
+import { DICTAMEN, IDictamen } from '@core/models/eti/dictamen';
 import { Fragment } from '@core/services/action-service';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { SgiAuthService } from '@sgi/framework/auth';
-import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, from, merge, of } from 'rxjs';
 import { endWith, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 import { Rol } from '../evaluacion-formulario.action.service';
 
@@ -21,7 +21,8 @@ export class EvaluacionComentarioFragment extends Fragment {
     private rol: Rol,
     private service: EvaluacionService,
     private readonly personaService: PersonaService,
-    private readonly authService: SgiAuthService) {
+    private readonly authService: SgiAuthService
+  ) {
     super(key);
   }
 
@@ -35,8 +36,8 @@ export class EvaluacionComentarioFragment extends Fragment {
       }
 
       this.subscriptions.push(evaluacionComentarios$.pipe(
-        switchMap(result => {
-          return from(result.items).pipe(
+        switchMap(results => {
+          return from(results).pipe(
             mergeMap(element => {
               return this.personaService.findById(element.evaluador.id).pipe(
                 map(persona => {
@@ -45,10 +46,9 @@ export class EvaluacionComentarioFragment extends Fragment {
                 })
               );
             }),
-            map(() => result)
+            map(() => results)
           );
         }),
-        map(response => response.items)
       ).subscribe((comentarios) => {
         this.comentarios$.next(comentarios.map(comentario => new StatusWrapper<IComentario>(comentario)));
       }));
@@ -101,8 +101,7 @@ export class EvaluacionComentarioFragment extends Fragment {
       this.comentarios$.next(current);
       this.setChanges(true);
     }
-    if (this.comentarios$.value.length === 0 &&
-      (this.dictamen?.id === 2 || this.dictamen?.id === 3)) {
+    if (this.comentarios$.value.length === 0 && this.dictamenRequireComentarios()) {
       this.setErrors(true);
     } else {
       this.setErrors(false);
@@ -229,6 +228,14 @@ export class EvaluacionComentarioFragment extends Fragment {
 
   setDictamen(dictamen: IDictamen) {
     this.dictamen = dictamen;
-    this.setErrors((this.dictamen?.id === 2 || this.dictamen?.id === 3) && this.comentarios$.value.length === 0);
+    this.setErrors(this.dictamenRequireComentarios() && this.comentarios$.value.length === 0);
+  }
+
+  private dictamenRequireComentarios(): boolean {
+    return [
+      DICTAMEN.FAVORABLE_PDTE_REV_MINIMA,
+      DICTAMEN.PDTE_CORRECCIONES,
+      DICTAMEN.DESFAVORABLE
+    ].includes(this.dictamen?.id)
   }
 }

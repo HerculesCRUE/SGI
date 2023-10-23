@@ -58,7 +58,7 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * EvaluacionServiceTest
  */
-public class EvaluacionServiceTest extends BaseServiceTest {
+class EvaluacionServiceTest extends BaseServiceTest {
 
   @Mock
   private EvaluacionRepository evaluacionRepository;
@@ -98,14 +98,14 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   private EvaluadorService evaluadorService;
 
   @BeforeEach
-  public void setUp() throws Exception {
+  void setUp() throws Exception {
     evaluacionService = new EvaluacionServiceImpl(evaluacionRepository, estadoMemoriaRepository,
         retrospectivaRepository, memoriaService, comentarioRepository, convocatoriaReunionRepository, memoriaRepository,
         evaluacionConverter, reportService, sgdocService, comunicadosService, sgiConfigProperties, evaluadorService);
   }
 
   @Test
-  public void find_WithId_ReturnsEvaluacion() {
+  void find_WithId_ReturnsEvaluacion() {
     BDDMockito.given(evaluacionRepository.findById(1L))
         .willReturn(Optional.of(generarMockEvaluacion(1L, null, 1L, 1L)));
 
@@ -120,14 +120,14 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void find_NotFound_ThrowsEvaluacionNotFoundException() throws Exception {
+  void find_NotFound_ThrowsEvaluacionNotFoundException() throws Exception {
     BDDMockito.given(evaluacionRepository.findById(1L)).willReturn(Optional.empty());
 
     Assertions.assertThatThrownBy(() -> evaluacionService.findById(1L)).isInstanceOf(EvaluacionNotFoundException.class);
   }
 
   @Test
-  public void create_ReturnsEvaluacion() {
+  void create_ReturnsEvaluacion() {
     List<Memoria> memorias = new ArrayList<>();
     for (int i = 1; i <= 2; i++) {
       memorias.add(generarMockMemoria(Long.valueOf(i), "numRef-5" + String.format("%03d", i),
@@ -162,7 +162,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_MemoriaEnSecretariaRevMinima_ReturnsEvaluacion() {
+  void create_MemoriaEnSecretariaRevMinima_ReturnsEvaluacion() {
     List<Memoria> memorias = new ArrayList<>();
     for (int i = 1; i <= 2; i++) {
       memorias.add(generarMockMemoria(Long.valueOf(i), "numRef-5" + String.format("%03d", i),
@@ -197,7 +197,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_MemoriaEnSecretariaSegAnual_ReturnsEvaluacion() {
+  void create_MemoriaEnSecretariaSegAnual_ReturnsEvaluacion() {
     List<Memoria> memorias = new ArrayList<>();
     for (int i = 1; i <= 2; i++) {
       memorias.add(generarMockMemoria(Long.valueOf(i), "numRef-5" + String.format("%03d", i),
@@ -233,7 +233,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_EvaluacionWithId_ThrowsIllegalArgumentException() {
+  void create_EvaluacionWithId_ThrowsIllegalArgumentException() {
     // given: Una nueva evaluacion que ya tiene id
     Evaluacion evaluacionNew = generarMockEvaluacion(1L, " New", 1L, 1L);
     // when: Creamos la evaluacion
@@ -243,7 +243,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_EvaluacionWithId_ThrowsConvocatoriaReunionNotFoundException() {
+  void create_EvaluacionWithId_ThrowsConvocatoriaReunionNotFoundException() {
     // given: Una nueva evaluacion que ya tiene id
     Evaluacion evaluacionNew = generarMockEvaluacion(null, " New", 1L, 1L);
 
@@ -254,7 +254,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_EvaluacionWithId_ThrowsMemoriaNotFoundException() {
+  void create_EvaluacionWithId_ThrowsMemoriaNotFoundException() {
     // given: Una nueva evaluacion que ya tiene id
     Evaluacion evaluacionNew = generarMockEvaluacion(null, " New", 1L, 1L);
 
@@ -267,7 +267,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ReturnsEvaluacion() {
+  void update_ReturnsEvaluacion() {
     // given: Una nueva evaluacion con el servicio actualizado
     Evaluacion evaluacionServicioActualizado = generarMockEvaluacion(1L, " actualizado", 1L, 1L);
 
@@ -288,7 +288,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_IsRevMinima_ReturnsEvaluacion() {
+  void update_IsRevMinima_ReturnsEvaluacion() {
     // La Evaluación es de Revisión Mínima y el dictamen es "Favorable"
     final Evaluacion evaluacionServicioActualizado = generarMockEvaluacion(1L, " actualizado", 1L, 1L);
     evaluacionServicioActualizado.setEsRevMinima(Boolean.TRUE);
@@ -310,7 +310,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_MemoriaRevMin_ReturnsEvaluacion() {
+  void update_MemoriaRevMin_ReturnsEvaluacion() {
     // La Evaluación es de Revisión Mínima y el dictamen es "Favorable"
     final Evaluacion evaluacionServicioActualizado = generarMockEvaluacion(1L, " actualizado", 4L, 1L);
 
@@ -333,7 +333,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_MemoriaEnEval_ReturnsEvaluacion() {
+  void update_MemoriaEnEval_ReturnsEvaluacion() {
     // La Evaluación es de Revisión Mínima y el dictamen es "Favorable"
     final Evaluacion evaluacionServicioActualizado = generarMockEvaluacion(1L, " actualizado", 5L, 1L);
 
@@ -356,7 +356,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_ThrowsEvaluacionNotFoundException() {
+  void update_ThrowsEvaluacionNotFoundException() {
     // given: Una nueva evaluacion a actualizar
     Evaluacion evaluacion = generarMockEvaluacion(1L, null, 1L, 1L);
 
@@ -367,7 +367,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void update_WithoutId_ThrowsIllegalArgumentException() {
+  void update_WithoutId_ThrowsIllegalArgumentException() {
 
     // given: Una Evaluacion que venga sin id
     Evaluacion evaluacion = generarMockEvaluacion(null, "1", 1L, 1L);
@@ -380,7 +380,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithoutId_ThrowsIllegalArgumentException() {
+  void delete_WithoutId_ThrowsIllegalArgumentException() {
     // given: Sin id
     Assertions.assertThatThrownBy(
         // when: Delete sin id
@@ -390,7 +390,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_NonExistingId_ThrowsEvaluacionNotFoundException() {
+  void delete_NonExistingId_ThrowsEvaluacionNotFoundException() {
     // given: Id no existe
     BDDMockito.given(evaluacionRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.FALSE);
 
@@ -402,7 +402,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void delete_WithExistingId_DeletesEvaluacion() {
+  void delete_WithExistingId_DeletesEvaluacion() {
     // given: Id existente
     BDDMockito.given(evaluacionRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
     BDDMockito.doNothing().when(evaluacionRepository).deleteById(ArgumentMatchers.anyLong());
@@ -415,7 +415,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAll_Unlimited_ReturnsFullEvaluacionList() {
+  void findAll_Unlimited_ReturnsFullEvaluacionList() {
     // given: One hundred Evaluacion
     List<Evaluacion> evaluaciones = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -429,14 +429,14 @@ public class EvaluacionServiceTest extends BaseServiceTest {
     Page<Evaluacion> page = evaluacionService.findAll(null, Pageable.unpaged());
 
     // then: Get a page with one hundred Evaluaciones
-    Assertions.assertThat(page.getContent().size()).isEqualTo(100);
+    Assertions.assertThat(page.getContent()).hasSize(100);
     Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(100);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
   }
 
   @Test
-  public void findAll_WithPaging_ReturnsPage() {
+  void findAll_WithPaging_ReturnsPage() {
     // given: One hundred Evaluaciones
     List<Evaluacion> evaluaciones = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -464,7 +464,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
 
     // then: A Page with ten Evaluaciones are returned containing
     // resumen='Evaluacion031' to 'Evaluacion040'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
     Assertions.assertThat(page.getSize()).isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
@@ -477,7 +477,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllActivasByConvocatoriaReunionId_Unlimited_ReturnsFullEvaluacionList() {
+  void findAllActivasByConvocatoriaReunionId_Unlimited_ReturnsFullEvaluacionList() {
 
     // given: Datos existentes con convocatoriaReunionId = 1
     Long convocatoriaReunionId = 1L;
@@ -500,7 +500,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllActivasByConvocatoriaReunionId_Unlimited_ReturnEmptyPage() {
+  void findAllActivasByConvocatoriaReunionId_Unlimited_ReturnEmptyPage() {
 
     // given: No hay datos con convocatoriaReunionId = 1
     Long convocatoriaReunionId = 1L;
@@ -518,7 +518,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllActivasByConvocatoriaReunionId_WithPaging_ReturnsPage() {
+  void findAllActivasByConvocatoriaReunionId_WithPaging_ReturnsPage() {
 
     // given: Datos existentes con convocatoriaReunionId = 1
     Long convocatoriaReunionId = 1L;
@@ -546,7 +546,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllActivasByConvocatoriaReunionId_WithPaging_ReturnEmptyPage() {
+  void findAllActivasByConvocatoriaReunionId_WithPaging_ReturnEmptyPage() {
 
     // given: No hay datos con convocatoriaReunionId = 1
     Long convocatoriaReunionId = 1L;
@@ -566,7 +566,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findEvaluacionesAnterioresByMemoriaMemoriaIdNull() {
+  void findEvaluacionesAnterioresByMemoriaMemoriaIdNull() {
     // given: EL id de la memoria sea null
     Long memoriaId = null;
     Long evaluacionId = 1L;
@@ -584,7 +584,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findEvaluacionesAnterioresByMemoriaEvaluacionIdNull() {
+  void findEvaluacionesAnterioresByMemoriaEvaluacionIdNull() {
     // given: EL id de la evaluación sea null
     Long memoriaId = 1L;
     Long evaluacionId = null;
@@ -602,7 +602,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findEvaluacionesAnterioresByMemoriaIdValid() {
+  void findEvaluacionesAnterioresByMemoriaIdValid() {
     // given: EL id de la memoria es valido
     Long evaluacionId = 12L;
     Long memoriaId = 1L;
@@ -640,7 +640,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByMemoriaAndRetrospectivaEnEvaluacion_ReturnsFiltratedEvaluacionList() {
+  void findAllByMemoriaAndRetrospectivaEnEvaluacion_ReturnsFiltratedEvaluacionList() {
     // given: One hundred Evaluacion
     List<Evaluacion> evaluaciones = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -654,14 +654,14 @@ public class EvaluacionServiceTest extends BaseServiceTest {
     Page<Evaluacion> page = evaluacionService.findAllByMemoriaAndRetrospectivaEnEvaluacion(null, Pageable.unpaged());
 
     // then: Get a page with one hundred Evaluaciones
-    Assertions.assertThat(page.getContent().size()).isEqualTo(100);
+    Assertions.assertThat(page.getContent()).hasSize(100);
     Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(100);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
   }
 
   @Test
-  public void findAllByMemoriaAndRetrospectivaEnEvaluacion_WithPaging_ReturnsPage() {
+  void findAllByMemoriaAndRetrospectivaEnEvaluacion_WithPaging_ReturnsPage() {
     // given: One hundred Evaluaciones
     List<Evaluacion> evaluaciones = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -689,7 +689,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
 
     // then: A Page with ten Evaluaciones are returned containing
     // resumen='Evaluacion031' to 'Evaluacion040'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
     Assertions.assertThat(page.getSize()).isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
@@ -701,7 +701,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findByEvaluadorPersonaRef_IdNull() {
+  void findByEvaluadorPersonaRef_IdNull() {
     // given: Es personaRef es null
     String personaRef = null;
     try {
@@ -716,7 +716,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findByEvaluador_IdValid() {
+  void findByEvaluador_IdValid() {
     // given: El personRef no es null
     String personaRef = "user-001";
     List<Evaluacion> response = new LinkedList<Evaluacion>();
@@ -737,7 +737,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findEvaluacionesEnSeguimientosByEvaluador_PersonaRefNull() {
+  void findEvaluacionesEnSeguimientosByEvaluador_PersonaRefNull() {
     // given: Es personaRef es null
     String personaRef = null;
     try {
@@ -752,7 +752,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findEvaluacionesEnSeguimientosByEvaluador_Success() {
+  void findEvaluacionesEnSeguimientosByEvaluador_Success() {
     // given: El personRef no es null
     String personaRef = "user-001";
     List<Evaluacion> response = new LinkedList<Evaluacion>();
@@ -774,7 +774,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findByEvaluacionesEnSeguimientoFinal_ReturnsList() {
+  void findByEvaluacionesEnSeguimientoFinal_ReturnsList() {
     // given: Ten Evaluacion
     List<Evaluacion> evaluaciones = new ArrayList<>();
     for (int i = 1; i <= 3; i++) {
@@ -787,30 +787,26 @@ public class EvaluacionServiceTest extends BaseServiceTest {
       evaluaciones.add(generarMockEvaluacion(Long.valueOf(i), String.format("%03d", i), 18L, 1L));
     }
 
-    BDDMockito.given(evaluacionRepository.findByEvaluacionesEnSeguimientoFinal(ArgumentMatchers.<String>any(),
+    BDDMockito.given(evaluacionRepository.findByEvaluacionesEnSeguimientoAnualOrFinal(ArgumentMatchers.<String>any(),
         ArgumentMatchers.<Pageable>any())).willReturn(new PageImpl<>(evaluaciones));
 
     // when: find unlimited
-    Page<Evaluacion> page = evaluacionService.findByEvaluacionesEnSeguimientoFinal(null, Pageable.unpaged());
+    Page<Evaluacion> page = evaluacionService.findByEvaluacionesEnSeguimientoAnualOrFinal(null, Pageable.unpaged());
 
     // then: Get a page with ten Evaluaciones
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(10);
   }
 
   @Test
-  public void deleteEvaluacion_fecha_anterior() {
+  void deleteEvaluacion_fecha_anterior() {
 
     Evaluacion evaluacion = generarMockEvaluacion(Long.valueOf(1), String.format("%03d", 1), 1L, 2L);
-    Memoria memoria = evaluacion.getMemoria();
 
     Optional<Evaluacion> response = Optional.of(evaluacion);
-    Optional<Memoria> responseMemo = Optional.of(memoria);
     BDDMockito.given(evaluacionRepository.findById(ArgumentMatchers.anyLong())).willReturn(response);
-    BDDMockito.given(memoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(responseMemo);
-    BDDMockito.given(memoriaService.getEstadoAnteriorMemoria(ArgumentMatchers.<Memoria>any())).willReturn(memoria);
 
     try {
 
@@ -824,7 +820,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void deleteEvaluacion_ConvocatoriaReunionIsNotValid() {
+  void deleteEvaluacion_ConvocatoriaReunionIsNotValid() {
     // given: idConvocatoriaReunion = 2L
     Long idConvocatoriaReunion = 2L;
     final Evaluacion evaluacion = generarMockEvaluacion(Long.valueOf(1), String.format("%03d", 1), 1L, 2L);
@@ -843,11 +839,11 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByMemoriaId_ReturnsFullEvaluacionList() {
+  void findAllByMemoriaId_ReturnsFullEvaluacionList() {
 
     // given: Datos existentes con memoriaId = 1
     Memoria memoria = new Memoria(1L, "numRef-001", null, null, "Memoria", "user-001", null, null, Instant.now(),
-        Boolean.TRUE, null, 3, "CodOrganoCompetente", Boolean.TRUE, null);
+        Boolean.TRUE, null, 3, Boolean.TRUE, null);
 
     Long memoriaId = 1L;
     List<Evaluacion> response = new LinkedList<Evaluacion>();
@@ -870,10 +866,10 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByMemoriaId_ReturnEmptyPage() {
+  void findAllByMemoriaId_ReturnEmptyPage() {
 
     Memoria memoria = new Memoria(1L, "numRef-001", null, null, "Memoria", "user-001", null, null, Instant.now(),
-        Boolean.TRUE, null, 3, "CodOrganoCompetente", Boolean.TRUE, null);
+        Boolean.TRUE, null, 3, Boolean.TRUE, null);
     // given: No hay datos con memoriaId = 1
     Long memoriaId = 1L;
 
@@ -894,7 +890,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void findAllByMemoriaId_IdNull() {
+  void findAllByMemoriaId_IdNull() {
     // given: Es memoriaId es null
     Long memoriaId = null;
     try {
@@ -966,7 +962,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
 
     final Memoria memoria = new Memoria(1L, "numRef-001", peticionEvaluacion, comite, "Memoria" + sufijoStr,
         "user-00" + id, tipoMemoria, tipoEstadoMemoria, Instant.now(), Boolean.TRUE,
-        new Retrospectiva(id, estadoRetrospectiva, Instant.now()), 3, "CodOrganoCompetente", Boolean.TRUE, null);
+        new Retrospectiva(id, estadoRetrospectiva, Instant.now()), 3, Boolean.TRUE, null);
 
     final TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
 
@@ -1060,7 +1056,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
 
     Memoria memoria = new Memoria(1L, "numRef-001", peticionEvaluacion, comite, "Memoria" + sufijoStr, "user-00" + id,
         tipoMemoria, tipoEstadoMemoria, Instant.now(), Boolean.TRUE,
-        new Retrospectiva(id, estadoRetrospectiva, Instant.now()), 3, "CodOrganoCompetente", Boolean.TRUE, null);
+        new Retrospectiva(id, estadoRetrospectiva, Instant.now()), 3, Boolean.TRUE, null);
 
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(3L, "Seguimiento", Boolean.TRUE);
 
@@ -1140,7 +1136,7 @@ public class EvaluacionServiceTest extends BaseServiceTest {
         generarMockComite(id, "comite" + id, true), titulo, "user-00" + id,
         generarMockTipoMemoria(1L, "TipoMemoria1", true),
         generarMockTipoEstadoMemoria(idTipoEstadoMemoria, "Estado", Boolean.TRUE), Instant.now(), Boolean.TRUE,
-        generarMockRetrospectiva(1L), version, "CodOrganoCompetente", Boolean.TRUE, null);
+        generarMockRetrospectiva(1L), version, Boolean.TRUE, null);
   }
 
   /**

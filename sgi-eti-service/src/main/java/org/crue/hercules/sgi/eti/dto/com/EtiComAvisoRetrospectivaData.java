@@ -23,5 +23,4 @@ public class EtiComAvisoRetrospectivaData implements Serializable {
   private String tipoActividad;
   private String tituloSolicitudEvaluacion;
   private String enlaceAplicacion;
-  private String codigoOrganoCompetente;
 }

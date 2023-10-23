@@ -1,0 +1,26 @@
+[
+  {
+    "key": "ap1_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "1.2 Justificación del uso de seres humanos"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Exponer brevemente la necesidad de utilizar seres humanos, sus muestras o sus datos, relacionándola con los beneficios que se esperan respecto al aumento del conocimiento o mejora de las condiciones de vida.</p><p>Si además se espera que beneficie a la población estudiada, explicar cómo lo hará.</p>"
+      },
+      {
+        "key": "justificacion",
+        "className": "descripcion",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Justificación",
+          "required": true
+        }
+      }
+    ]
+  }
+]

@@ -9,7 +9,7 @@ import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.InformeEvaluacionReportInput;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeEvaluacionRetrospectiva;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
-import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -22,7 +22,7 @@ public class InformeEvaluacionRetrospectivaReportService extends InformeEvaluaci
 
   public InformeEvaluacionRetrospectivaReportService(SgiConfigProperties sgiConfigProperties,
       SgiApiConfService sgiApiConfService,
-      SgiApiSgpService personaService, EvaluacionService evaluacionService) {
+      PersonaService personaService, EvaluacionService evaluacionService) {
 
     super(sgiConfigProperties, sgiApiConfService, personaService, evaluacionService, null);
   }
@@ -35,8 +35,6 @@ public class InformeEvaluacionRetrospectivaReportService extends InformeEvaluaci
 
     dataReport.put("lugar", evaluacion.getConvocatoriaReunion().getNumeroActa());
 
-    dataReport.put("codigoOrgano", evaluacion.getMemoria().getCodOrganoCompetente());
-
     dataReport.put("nombreInvestigacion", evaluacion.getMemoria().getComite().getNombreInvestigacion());
 
     dataReport.put("comite", evaluacion.getMemoria().getComite().getComite());
@@ -48,7 +46,7 @@ public class InformeEvaluacionRetrospectivaReportService extends InformeEvaluaci
 
   public byte[] getReportInformeEvaluacionRetrospectiva(ReportInformeEvaluacionRetrospectiva sgiReport,
       InformeEvaluacionReportInput input) {
-    getReportFromIdEvaluacion(sgiReport, input.getIdEvaluacion());
+    getReportFromEvaluacionId(sgiReport, input.getIdEvaluacion());
     return sgiReport.getContent();
   }
 

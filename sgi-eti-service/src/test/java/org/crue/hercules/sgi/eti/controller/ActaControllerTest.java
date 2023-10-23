@@ -16,6 +16,7 @@ import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoActa;
 import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.service.ActaService;
+import org.crue.hercules.sgi.eti.service.ComentarioService;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,8 @@ public class ActaControllerTest extends BaseControllerTest {
 
   @MockBean
   private ActaService actaService;
+  @MockBean
+  private ComentarioService comentariosService;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String ACTA_CONTROLLER_BASE_PATH = "/actas";

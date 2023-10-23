@@ -1,0 +1,61 @@
+[
+  {
+    "key": "ap3_7",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.7 Trayectoria completa de los agentes biológicos, organismos modificados genéticamente, sustancias químicas peligrosas, sustancias radiactivas y/o nanopartículas"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Describir a continuación el recorrido que siguen los agentes biológicos, organismos modificados genéticamente, sustancias químicas peligrosas, sustancias radiactivas y/o nanopartícula desde su obtención hasta su eliminación:</p>"
+      },
+      {
+        "key": "mododeObtencion",
+        "className": "descripcion",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Modo de obtención",
+          "required": true
+        }
+      },
+      {
+        "key": "transporte",
+        "className": "descripcion",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Transporte",
+          "required": true
+        }
+      },
+      {
+        "key": "recepcion",
+        "className": "descripcion",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Recepción",
+          "required": true
+        }
+      },
+      {
+        "key": "almacenamiento",
+        "className": "descripcion",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Almacenamiento",
+          "required": true
+        }
+      },
+      {
+        "key": "eliminacion",
+        "className": "descripcion",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Eliminación",
+          "required": true
+        }
+      }
+    ]
+  }
+]

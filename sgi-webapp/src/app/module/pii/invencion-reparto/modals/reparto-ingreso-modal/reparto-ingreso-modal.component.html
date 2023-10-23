@@ -5,15 +5,16 @@
       <!-- Importe pendiente de repartir -->
       <mat-form-field class="first-row-input" fxFlex="0 1 calc(50% - 5px)">
         <mat-label>{{'pii.reparto.ingreso.importe-pendiente-repartir' | translate}}</mat-label>
-        <input matInput formControlName="importePendienteRepartir" id="importePendienteRepartir" type="number"
-          placeholder="{{'pii.reparto.ingreso.importe-pendiente-repartir' | translate}}">
+        <input matInput formControlName="importePendienteRepartir" id="importePendienteRepartir" type="text"
+          placeholder="{{'pii.reparto.ingreso.importe-pendiente-repartir' | translate}}" sgiInputWithThousandSeparator>
       </mat-form-field>
 
       <!-- Importe a repartir -->
       <mat-form-field fxFlex="0 1 calc(50% - 5px)">
         <mat-label>{{'pii.reparto.ingreso.importe-repartir' | translate}}</mat-label>
-        <input matInput formControlName="importeARepartir" id="importeARepartir" type="number"
-          placeholder="{{'pii.reparto.ingreso.importe-repartir' | translate}}" required cdkFocusInitial>
+        <input matInput formControlName="importeARepartir" id="importeARepartir" type="text"
+          placeholder="{{'pii.reparto.ingreso.importe-repartir' | translate}}" required cdkFocusInitial
+          sgiInputWithThousandSeparator>
         <mat-error *ngIf="formGroup.controls.importeARepartir.errors?.required">
           {{'error.required.entity' | translate:msgParamImporteARepartirEntity}}
         </mat-error>

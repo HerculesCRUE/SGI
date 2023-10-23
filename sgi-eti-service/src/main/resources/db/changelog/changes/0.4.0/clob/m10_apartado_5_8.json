@@ -1,0 +1,23 @@
+[
+  {
+    "key": "ap5_8",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.8 Aclaraciones al comité"
+    },
+    "fieldGroup": [
+      {
+        "template": "Incluir a continuación cualquier otra aclaración que se considere necesaria para el comité"
+      },
+      {
+        "key": "aclaracionesComite",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Aclaraciones"
+        }
+      }
+    ]
+  }
+]

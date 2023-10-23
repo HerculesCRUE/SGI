@@ -15,9 +15,9 @@ export class ExportDialogComponent<T> {
   @Input()
   title = '';
   @Input()
-  totalRegistrosExportacionExcel = null;
+  totalRegistrosExportacionExcel: number;
   @Input()
-  limiteRegistrosExportacionExcel: number = null;
+  limiteRegistrosExportacionExcel: number;
 
   msgExportWarning: string;
 
@@ -27,16 +27,16 @@ export class ExportDialogComponent<T> {
 
   get showExportWarning(): boolean {
     if (this.totalRegistrosExportacionExcel && this.limiteRegistrosExportacionExcel) {
+      this.msgExportWarning = this.translate.instant(
+        WARN_EXPORT_EXCEL_KEY,
+        { max: this.limiteRegistrosExportacionExcel }
+      );
       return this.totalRegistrosExportacionExcel > this.limiteRegistrosExportacionExcel;
     }
   }
 
   constructor(private dialogRef: MatDialogRef<any, any>, private readonly translate: TranslateService) {
     dialogRef.addPanelClass('sgi-dialog-container');
-
-    this.translate.get(
-      WARN_EXPORT_EXCEL_KEY
-    ).subscribe((value) => this.msgExportWarning = value);
   }
 
 }

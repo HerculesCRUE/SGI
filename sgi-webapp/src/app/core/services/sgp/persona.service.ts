@@ -83,22 +83,6 @@ export class PersonaService extends SgiMutableRestService<string, IPersonaBacken
     return this.http.get<FormlyFieldConfig[]>(`${this.endpointUrl}/formly/view`);
   }
 
-  /**
-   * Busca la persona que tenga el numero de documento
-   *
-   * @param numeroDocumento Numero de documento
-   * @returns la persona con ese numero de documento
-   */
-  findByNumeroDocumento(numeroDocumento: string): Observable<IPersona> {
-    const options: SgiRestFindOptions = {
-      filter: new RSQLSgiRestFilter('numeroDocumento', SgiRestFilterOperator.EQUALS, numeroDocumento)
-    };
-
-    return this.findAll(options).pipe(
-      map(result => result.items[0])
-    );
-  }
-
   findAutocomplete(term: string, tipoColectivo?: TipoColectivo, colectivos: string[] = []): Observable<IPersona[]> {
     let params: HttpParams = new HttpParams();
     params = params.append('busqueda', term);

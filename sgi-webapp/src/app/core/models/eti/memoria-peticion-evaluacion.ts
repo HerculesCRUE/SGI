@@ -31,4 +31,6 @@ export interface IMemoriaPeticionEvaluacion {
   activo: boolean;
   /** Solicitante peticion evaluacion */
   solicitante: IPersona;
+  /** versión */
+  version: number;
 }

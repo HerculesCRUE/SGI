@@ -834,7 +834,7 @@ public class ConvocatoriaReunionIT extends BaseIT {
         new TipoEstadoMemoria(12L, "En secretaría seguimiento anual", Boolean.TRUE),
         Instant.parse("2020-08-01T00:00:00Z"), Boolean.FALSE, new Retrospectiva(3L,
             new EstadoRetrospectiva(1L, "EstadoRetrospectiva01", Boolean.TRUE), Instant.parse("2020-07-03T00:00:00Z")),
-        versionMemoria, null, Boolean.TRUE, null);
+        versionMemoria, Boolean.TRUE, null);
 
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion();
     tipoEvaluacion.setId(2L);
@@ -907,7 +907,7 @@ public class ConvocatoriaReunionIT extends BaseIT {
         new TipoEstadoMemoria(12L, "En secretaría seguimiento anual", Boolean.TRUE),
         Instant.parse("2020-08-01T00:00:00Z"), Boolean.FALSE, new Retrospectiva(3L,
             new EstadoRetrospectiva(1L, "EstadoRetrospectiva01", Boolean.TRUE), Instant.parse("2020-07-03T00:00:00Z")),
-        7, null, Boolean.TRUE, null);
+        7, Boolean.TRUE, null);
 
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion();
     tipoEvaluacion.setId(1L);
@@ -985,7 +985,7 @@ public class ConvocatoriaReunionIT extends BaseIT {
         new TipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.parse("2020-08-01T00:00:00Z"), Boolean.FALSE,
         new Retrospectiva(1L, new EstadoRetrospectiva(1L, "EstadoRetrospectiva01", Boolean.TRUE),
             Instant.parse("2020-08-01T00:00:00Z")),
-        3, "CodOrganoCompetente", Boolean.TRUE, null);
+        3, Boolean.TRUE, null);
 
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
 

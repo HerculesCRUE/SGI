@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap3_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.1 Objetivos científicos del proyecto"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Describir brevemente los principales objetivos que se pretenden alcanzar con esta experimentación con agentes biológicos, organismos modificados genéticamente, sustancias químicas peligrosas, sustancias radiactivas y/o nanopartículas</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Esta sección se cumplimenta automáticamente a partir de los datos introducidos en el campo <b>Objetivos científicos</b> del apartado <a href='#MODULE_PATH#/peticiones-evaluacion/#PETICION_EVALUACION_ID#/datos-generales' target='_blank'><b>Datos generales</b></a> de la <b>Solicitud de Evaluación</b>. Acceda a este punto del menú para realizar las modificaciones necesarias.",
+        "templateOptions": {
+          "replaceTemplatePlaceholders": true
+        }
+      },
+      {
+        "key": "objetivosCientificos",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Descripción objetivos científicos del proyecto",
+          "disabled": true,
+          "required": true,
+          "expressionModelValue": "formState.memoria.peticionEvaluacion.objetivos"
+        }
+      }
+    ]
+  }
+]

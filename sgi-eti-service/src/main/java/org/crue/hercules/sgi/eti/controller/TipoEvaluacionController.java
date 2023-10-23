@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.crue.hercules.sgi.eti.model.Dictamen;
-import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.service.TipoEvaluacionService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
@@ -124,25 +122,6 @@ public class TipoEvaluacionController {
     tipoEvaluacion.setActivo(Boolean.FALSE);
     service.update(tipoEvaluacion);
     log.debug("delete(Long id) - end");
-  }
-
-  /**
-   * Devuelve el listado de dictamenes dependiendo del tipo de Evaluación y el
-   * flag de Revision Minima de la Evaluación.
-   * 
-   * @param idTipoEvaluacion Identificador de {@link TipoEvaluacion}.
-   * @param esRevisionMinima Flag de Revision Mínima de {@link Evaluacion}.
-   * @return Lista de dictamenes
-   */
-  @GetMapping("/{idTipoEvaluacion}/dictamenes-revision-minima/{esRevisionMinima}")
-  List<Dictamen> findAllDictamenByTipoEvaluacionAndRevisionMinima(@PathVariable Long idTipoEvaluacion,
-      @PathVariable Boolean esRevisionMinima) {
-    log.debug("findAllDictamenByTipoEvaluacionAndRevisionMinima - start");
-
-    List<Dictamen> returnValues = service.findAllDictamenByTipoEvaluacionAndRevisionMinima(idTipoEvaluacion,
-        esRevisionMinima);
-    log.debug("findAllDictamenByTipoEvaluacionAndRevisionMinima - end");
-    return returnValues;
   }
 
   /**

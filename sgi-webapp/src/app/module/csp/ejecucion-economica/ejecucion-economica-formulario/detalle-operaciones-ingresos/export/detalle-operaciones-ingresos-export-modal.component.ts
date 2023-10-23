@@ -50,7 +50,6 @@ export class DetalleOperacionesIngresosExportModalComponent
 
   protected getReportOptions(): IReportConfig<IEjecucionPresupuestariaReportOptions> {
     const reportModalData: IReportConfig<IEjecucionPresupuestariaReportOptions> = {
-      title: this.formGroup.controls.reportTitle.value,
       outputType: this.formGroup.controls.outputType.value,
       reportOptions: {
         data: this.modalData.data,

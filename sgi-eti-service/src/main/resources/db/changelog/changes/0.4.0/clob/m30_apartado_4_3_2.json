@@ -1,0 +1,48 @@
+[
+  {
+    "key": "ap4_3_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.3.2 Medidas especiales de protección"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>¿Se contemplan medidas especiales de protección para las personas vulnerables expuestas que lo requieran? (ej. mujeres embarazadas, enfermos crónicos etc..)</p>"
+      },
+      {
+        "key": "medidasEspeciales",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Elige opción:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Especificar las medidas especiales de protección o justificar en caso negativo"
+      },
+      {
+        "key": "especificar",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Especificar:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

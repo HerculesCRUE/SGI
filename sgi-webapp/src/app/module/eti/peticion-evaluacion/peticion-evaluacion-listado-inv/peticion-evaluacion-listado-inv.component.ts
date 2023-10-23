@@ -25,7 +25,7 @@ import { PeticionEvaluacionListadoExportModalComponent } from '../modals/peticio
 const MSG_FOOTER = marker('btn.add.entity');
 const MSG_DELETE = marker('msg.delete.entity');
 const MSG_DELETE_SUCCESS = marker('msg.delete.entity.success');
-const PETICION_EVALUACION_KEY = marker('eti.peticion-evaluacion');
+const PETICION_EVALUACION_KEY = marker('eti.peticion-evaluacion-etica-proyecto');
 
 @Component({
   selector: 'sgi-peticion-evaluacion-listado-inv',

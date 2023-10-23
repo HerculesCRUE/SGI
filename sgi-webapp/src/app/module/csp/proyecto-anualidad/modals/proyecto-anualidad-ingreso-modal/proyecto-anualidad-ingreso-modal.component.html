@@ -47,8 +47,9 @@
 
       <mat-form-field fxFill>
         <mat-label>{{'csp.proyecto-anualidad.partida-ingreso.importe-concedido' | translate}}</mat-label>
-        <input matInput formControlName="importeConcedido" type="number"
-          placeholder="{{'csp.proyecto-anualidad.partida-ingreso.importe-concedido' | translate}}" required min="0">
+        <input matInput formControlName="importeConcedido" type="string"
+          placeholder="{{'csp.proyecto-anualidad.partida-ingreso.importe-concedido' | translate}}" required
+          sgiInputWithThousandSeparator>
         <mat-error *ngIf="formGroup.controls.importeConcedido.errors?.min">
           {{'error.min.digit' | translate}}
         </mat-error>

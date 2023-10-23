@@ -8,6 +8,7 @@ import { EvaluacionComentarioFragment } from '../evaluacion-formulario/evaluacio
 import { EvaluacionDatosMemoriaFragment } from '../evaluacion-formulario/evaluacion-datos-memoria/evaluacion-datos-memoria.fragment';
 import { EvaluacionDocumentacionFragment } from '../evaluacion-formulario/evaluacion-documentacion/evaluacion-documentacion.fragment';
 import { EvaluacionEvaluacionFragment } from './evaluacion-evaluacion/evaluacion-evaluacion.fragment';
+import { IEvaluacionWithComentariosEnviados } from '../evaluacion-evaluador/evaluacion-evaluador-listado/evaluacion-evaluador-listado.component';
 
 export enum Rol { EVALUADOR = TIPO_COMENTARIO.EVALUADOR, GESTOR = TIPO_COMENTARIO.GESTOR }
 
@@ -20,14 +21,14 @@ export abstract class EvaluacionFormularioActionService extends ActionService {
     DOCUMENTACION: 'documentarion'
   };
 
-  protected evaluacion: IEvaluacion;
+  protected evaluacion: IEvaluacionWithComentariosEnviados;
   protected comentarios: EvaluacionComentarioFragment;
   protected datosMemoria: EvaluacionDatosMemoriaFragment;
   protected documentacion: EvaluacionDocumentacionFragment;
   protected evaluaciones: EvaluacionEvaluacionFragment;
 
 
-  getEvaluacion(): IEvaluacion {
+  getEvaluacion(): IEvaluacionWithComentariosEnviados {
     return this.evaluacion;
   }
 

@@ -5,8 +5,8 @@
       <!-- Importe Total -->
       <mat-form-field>
         <mat-label>{{'pii.reparto.equipo-inventor-modal.importe-total' | translate}}</mat-label>
-        <input matInput formControlName="importeTotal" id="importeTotal" type="number"
-          placeholder="{{'pii.reparto.equipo-inventor-modal.importe-total' | translate}}">
+        <input matInput formControlName="importeTotal" id="importeTotal" type="text"
+          placeholder="{{'pii.reparto.equipo-inventor-modal.importe-total' | translate}}" sgiInputWithThousandSeparator>
         <mat-error *ngIf="formGroup.controls.importeTotal.errors?.required">
           {{'error.required.entity' | translate:msgParamImporteTotalEntity}}
         </mat-error>
@@ -20,8 +20,9 @@
       <!-- Importe Nómina -->
       <mat-form-field>
         <mat-label>{{'pii.reparto.equipo-inventor-modal.importe-nomina' | translate}}</mat-label>
-        <input matInput formControlName="importeNomina" id="importeNomina" type="number"
-          placeholder="{{'pii.reparto.equipo-inventor-modal.importe-nomina' | translate}}">
+        <input matInput formControlName="importeNomina" id="importeNomina" type="text"
+          placeholder="{{'pii.reparto.equipo-inventor-modal.importe-nomina' | translate}}"
+          sgiInputWithThousandSeparator>
         <mat-error *ngIf="formGroup.controls.importeNomina.errors?.required">
           {{'error.required.entity' | translate:msgParamImporteNominaEntity}}
         </mat-error>
@@ -35,8 +36,9 @@
       <!-- Importe Proyecto -->
       <mat-form-field>
         <mat-label>{{'pii.reparto.equipo-inventor-modal.importe-proyecto' | translate}}</mat-label>
-        <input matInput formControlName="importeProyecto" id="importeProyecto" type="number"
-          placeholder="{{'pii.reparto.equipo-inventor-modal.importe-proyecto' | translate}}">
+        <input matInput formControlName="importeProyecto" id="importeProyecto" type="text"
+          placeholder="{{'pii.reparto.equipo-inventor-modal.importe-proyecto' | translate}}"
+          sgiInputWithThousandSeparator>
         <mat-error *ngIf="formGroup.controls.importeProyecto.errors?.required">
           {{'error.required.entity' | translate:msgParamImporteProyectoEntity}}
         </mat-error>
@@ -60,8 +62,9 @@
       <div fxFlex="0 1 calc(33% - 5px)">
         <mat-form-field>
           <mat-label>{{'pii.reparto.equipo-inventor-modal.importe-otros' | translate}}</mat-label>
-          <input matInput formControlName="importeOtros" id="importeOtros" type="number"
-            placeholder="{{'pii.reparto.equipo-inventor-modal.importe-otros' | translate}}">
+          <input matInput formControlName="importeOtros" id="importeOtros" type="text"
+            placeholder="{{'pii.reparto.equipo-inventor-modal.importe-otros' | translate}}"
+            sgiInputWithThousandSeparator>
           <mat-error *ngIf="formGroup.controls.importeOtros.errors?.required">
             {{'error.required.entity' | translate:msgParamImporteOtrosEntity}}
           </mat-error>

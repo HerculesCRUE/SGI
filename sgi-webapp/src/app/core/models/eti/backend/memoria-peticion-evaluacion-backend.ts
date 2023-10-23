@@ -29,4 +29,6 @@ export interface IMemoriaPeticionEvaluacionBackend {
   activo: boolean;
   /** Solicitante peticion evaluacion */
   solicitanteRef;
+  /** versión */
+  version: number;
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { IConfiguracion } from '@core/models/eti/configuracion';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
@@ -9,15 +10,29 @@ import { IPersona } from '@core/models/sgp/persona';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConfigService } from '@core/services/cnf/config.service';
+import { DialogService } from '@core/services/dialog.service';
 import { ConfiguracionService } from '@core/services/eti/configuracion.service';
+import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
+import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
+import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { TipoComentario } from '../../evaluacion/evaluacion-listado-export.service';
 import { EvaluacionListadoExportModalComponent, IEvaluacionListadoModalData } from '../../evaluacion/modals/evaluacion-listado-export-modal/evaluacion-listado-export-modal.component';
+import { SgiAuthService } from '@sgi/framework/auth';
+
+export interface IEvaluacionWithComentariosEnviados extends IEvaluacion {
+  enviada: boolean;
+  permitirEnviarComentarios: boolean;
+}
+
+const MSG_ENVIAR_COMENTARIO = marker('msg.enviar.comentario');
+const MSG_ENVIAR_COMENTARIO_SUCCESS = marker('msg.enviar.comentario.success');
 
 @Component({
   selector: 'sgi-evaluacion-evaluador-listado',
@@ -26,13 +41,18 @@ import { EvaluacionListadoExportModalComponent, IEvaluacionListadoModalData } fr
 })
 export class EvaluacionEvaluadorListadoComponent extends AbstractTablePaginationComponent<IEvaluacion> implements OnInit {
 
-  evaluaciones: IEvaluacion[];
+  evaluaciones: IEvaluacionWithComentariosEnviados[];
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
 
   private numLimiteDiasEvaluar = null;
 
   private limiteRegistrosExportacionExcel: string;
+
+  private textoEnviarComentario: string;
+  private textoEnviarComentarioSuccess: string;
+
+  private usuarioRef: string;
 
   get TIPO_CONVOCATORIA() {
     return TIPO_CONVOCATORIA_REUNION;
@@ -44,6 +64,11 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
     private readonly configuracionService: ConfiguracionService,
     private matDialog: MatDialog,
     private readonly cnfService: ConfigService,
+    private readonly evaluacionService: EvaluacionService,
+    private readonly dialogService: DialogService,
+    private readonly snackBarService: SnackBarService,
+    private readonly translate: TranslateService,
+    private readonly authService: SgiAuthService
   ) {
     super();
 
@@ -61,6 +86,7 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
 
   ngOnInit() {
     super.ngOnInit();
+    this.setupI18N();
     this.formGroup = new FormGroup({
       comite: new FormControl(null),
       fechaEvaluacionInicio: new FormControl(null),
@@ -71,10 +97,22 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
     });
     this.loadNumDiasLimiteEvaluar();
 
+    this.usuarioRef = this.authService.authStatus$.value.userRefId;
+
     this.suscripciones.push(
       this.cnfService.getLimiteRegistrosExportacionExcel('eti-exp-max-num-registros-excel-evaluador-listado').subscribe(value => {
         this.limiteRegistrosExportacionExcel = value;
       }));
+  }
+
+  private setupI18N(): void {
+    this.translate.get(
+      MSG_ENVIAR_COMENTARIO
+    ).subscribe((value) => this.textoEnviarComentario = value);
+
+    this.translate.get(
+      MSG_ENVIAR_COMENTARIO_SUCCESS
+    ).subscribe((value) => this.textoEnviarComentarioSuccess = value);
   }
 
   protected resetFilters(): void {
@@ -88,8 +126,8 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
   }
 
   protected initColumns() {
-    this.columnas = ['memoria.comite.comite', 'tipoEvaluacion', 'memoria.tipoMemoria.nombre', 'convocatoriaReunion.fechaEvaluacion',
-      'memoria.numReferencia', 'solicitante', 'version', 'acciones'];
+    this.columnas = ['memoria.comite.comite', 'tipoEvaluacion', 'memoria.tipoMemoria.nombre',
+      'memoria.numReferencia', 'version', 'solicitante', 'convocatoriaReunion.fechaEvaluacion', 'enviada', 'acciones'];
   }
 
   protected loadTable(reset?: boolean) {
@@ -98,8 +136,11 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
       evaluaciones$.subscribe(
         (evaluaciones: IEvaluacion[]) => {
           if (evaluaciones) {
-            this.evaluaciones = evaluaciones;
+            this.evaluaciones = this.sortByIsEvaluador1orEvaluador2(evaluaciones) as IEvaluacionWithComentariosEnviados[];
+
             this.loadSolicitantes();
+            this.loadEvaluacionWithComentariosEnviados();
+            this.loadExistsEvaluacionWithComentarioAbiertos();
           } else {
             this.evaluaciones = [];
           }
@@ -108,6 +149,20 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
           this.processError(error);
         })
     );
+  }
+
+  private sortByIsEvaluador1orEvaluador2(evaluaciones: IEvaluacion[]): IEvaluacion[] {
+    return evaluaciones.sort((a, b) => {
+      if ((a.evaluador1.persona.id !== this.usuarioRef && b.evaluador1.persona.id === this.usuarioRef)
+        || (a.evaluador2.persona.id !== this.usuarioRef && b.evaluador2.persona.id === this.usuarioRef)) {
+        return 1;
+      }
+      if ((a.evaluador1.persona.id === this.usuarioRef && b.evaluador1.persona.id !== this.usuarioRef)
+        || (a.evaluador2.persona.id === this.usuarioRef && b.evaluador2.persona.id !== this.usuarioRef)) {
+        return -1;
+      }
+      return 0;
+    });
   }
 
   /**
@@ -129,6 +184,36 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
         );
       }
     });
+  }
+
+  private loadEvaluacionWithComentariosEnviados(): void {
+    this.evaluaciones.forEach((evaluacion) => {
+      this.suscripciones.push(
+        this.evaluacionService.isComentariosEvaluadorEnviados(evaluacion.id).subscribe(
+          (res: boolean) => {
+            evaluacion.enviada = res;
+          },
+          (error) => {
+            this.processError(error);
+          }
+        )
+      );
+    })
+  }
+
+  private loadExistsEvaluacionWithComentarioAbiertos(): void {
+    this.evaluaciones.forEach((evaluacion) => {
+      this.suscripciones.push(
+        this.evaluacionService.isPosibleEnviarComentarios(evaluacion.id).subscribe(
+          (res: boolean) => {
+            evaluacion.permitirEnviarComentarios = res;
+          },
+          (error) => {
+            this.processError(error);
+          }
+        )
+      );
+    })
   }
 
   protected createFilter(): SgiRestFilter {
@@ -189,5 +274,25 @@ export class EvaluacionEvaluadorListadoComponent extends AbstractTablePagination
       data
     };
     this.matDialog.open(EvaluacionListadoExportModalComponent, config);
+  }
+
+  public enviarComentarios(idEvaluacion: number) {
+    const enviarComentariosDialogSubscription = this.dialogService.showConfirmation(this.textoEnviarComentario).subscribe(
+      (aceptado: boolean) => {
+        if (aceptado) {
+          const enviarComentariosSubscription = this.evaluacionService
+            .enviarComentarios(idEvaluacion)
+            .pipe(
+              map(() => {
+                return this.loadTable();
+              })
+            ).subscribe(() => {
+              this.snackBarService.showSuccess(this.textoEnviarComentarioSuccess);
+            });
+          this.suscripciones.push(enviarComentariosSubscription);
+        }
+        aceptado = false;
+      });
+    this.suscripciones.push(enviarComentariosDialogSubscription);
   }
 }

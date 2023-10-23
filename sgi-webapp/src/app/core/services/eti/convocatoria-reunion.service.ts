@@ -140,4 +140,16 @@ export class ConvocatoriaReunionService extends SgiMutableRestService<number, IC
       map(response => response.status === 200)
     );
   }
+
+  /**
+ * Devuelve todos las evaluaciones por convocatoria id.
+ * @param idConvocatoria id convocatoria.
+ */
+  findEvaluacionesTodas(idConvocatoria: number): Observable<SgiRestListResult<IEvaluacion>> {
+    return this.find<IEvaluacionBackend, IEvaluacion>(
+      `${this.endpointUrl}/${idConvocatoria}/evaluaciones/todas`,
+      null,
+      EVALUACION_CONVERTER
+    );
+  }
 }

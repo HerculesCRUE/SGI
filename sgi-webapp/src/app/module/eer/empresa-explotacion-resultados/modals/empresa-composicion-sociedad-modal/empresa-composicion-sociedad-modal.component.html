@@ -88,8 +88,8 @@
       <!-- Capital social -->
       <mat-form-field fxFlex="25%">
         <mat-label>{{'eer.empresa-composicion-sociedad.capital-social' | translate}}</mat-label>
-        <input matInput formControlName="capitalSocial" type="number"
-          placeholder="{{'eer.empresa-composicion-sociedad.capital-social' | translate}}" min="0">
+        <input matInput formControlName="capitalSocial" type="text" sgiInputWithThousandSeparator
+          placeholder="{{'eer.empresa-composicion-sociedad.capital-social' | translate}}">
         <mat-error *ngIf="formGroup.controls.capitalSocial.errors?.min">
           {{'error.min.digit' | translate}}
         </mat-error>

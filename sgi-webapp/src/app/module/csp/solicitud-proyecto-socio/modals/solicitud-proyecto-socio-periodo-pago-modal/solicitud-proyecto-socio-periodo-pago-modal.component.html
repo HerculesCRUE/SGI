@@ -33,8 +33,8 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.proyecto-socio.periodo-pago.importe' | translate}}</mat-label>
-        <input matInput formControlName="importe" type="number"
-          placeholder="{{'csp.proyecto-socio.periodo-pago.importe' | translate}}" min="1" step="1">
+        <input matInput formControlName="importe" type="text" sgiInputWithThousandSeparator
+          placeholder="{{'csp.proyecto-socio.periodo-pago.importe' | translate}}">
         <mat-error *ngIf="formGroup.controls.importe.errors?.min">
           {{'error.min.entity' | translate:msgParamImporteEntity}}
         </mat-error>

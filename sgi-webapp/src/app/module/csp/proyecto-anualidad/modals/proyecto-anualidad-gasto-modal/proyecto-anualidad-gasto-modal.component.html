@@ -57,7 +57,7 @@
               <th mat-header-cell *matHeaderCellDef mat-sort-header>
                 {{'csp.proyecto-anualidad.partida-gasto.concepto-gasto.codigo-economico.importe-maximo' | translate}}
               </th>
-              <td mat-cell *matCellDef="let data">{{data.proyectoConceptoGasto.importeMaximo}}</td>
+              <td mat-cell *matCellDef="let data">{{data.proyectoConceptoGasto.importeMaximo | number: '1.2-2'}}</td>
             </ng-container>
             <ng-container matColumnDef="permitidoDesde">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -168,8 +168,9 @@
       <!-- Importe presupuesto -->
       <mat-form-field fxFlex="50">
         <mat-label>{{'csp.proyecto-anualidad.partida-gasto.importe-presupuesto' | translate}}</mat-label>
-        <input matInput formControlName="importePresupuesto" type="number"
-          placeholder="{{'csp.proyecto-anualidad.partida-gasto.importe-presupuesto' | translate}}" required min="0">
+        <input matInput formControlName="importePresupuesto" type="text"
+          placeholder="{{'csp.proyecto-anualidad.partida-gasto.importe-presupuesto' | translate}}" required
+          sgiInputWithThousandSeparator>
         <mat-error *ngIf="formGroup.controls.importePresupuesto.errors?.min">
           {{'error.min.digit' | translate}}
         </mat-error>
@@ -181,8 +182,9 @@
       <!-- Importe concedido -->
       <mat-form-field fxFlex="50">
         <mat-label>{{'csp.proyecto-anualidad.partida-gasto.importe-concedido' | translate}}</mat-label>
-        <input matInput formControlName="importeConcedido" type="number"
-          placeholder="{{'csp.proyecto-anualidad.partida-gasto.importe-concedido' | translate}}" required min="0">
+        <input matInput formControlName="importeConcedido" type="text"
+          placeholder="{{'csp.proyecto-anualidad.partida-gasto.importe-concedido' | translate}}" required
+          sgiInputWithThousandSeparator>
         <mat-error *ngIf="formGroup.controls.importeConcedido.errors?.min">
           {{'error.min.digit' | translate}}
         </mat-error>
@@ -195,8 +197,8 @@
   </form>
 </sgi-dialog-content>
 <mat-dialog-actions>
-  <button *ngIf="!data.readonly" color="accent" (click)="doAction()" [disabled]="this.actionDisabled || formGroup.controls.conceptoGasto.disabled" mat-raised-button
-    type="submit">
+  <button *ngIf="!data.readonly" color="accent" (click)="doAction()"
+    [disabled]="this.actionDisabled || formGroup.controls.conceptoGasto.disabled" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>

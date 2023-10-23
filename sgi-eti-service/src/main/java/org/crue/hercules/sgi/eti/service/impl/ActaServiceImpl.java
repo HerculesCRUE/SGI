@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.eti.service.impl;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,20 +11,31 @@ import org.crue.hercules.sgi.eti.dto.ActaWithNumEvaluaciones;
 import org.crue.hercules.sgi.eti.dto.DocumentoOutput;
 import org.crue.hercules.sgi.eti.dto.MemoriaEvaluada;
 import org.crue.hercules.sgi.eti.exceptions.ActaNotFoundException;
+import org.crue.hercules.sgi.eti.exceptions.DictamenNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.TareaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Acta;
+import org.crue.hercules.sgi.eti.model.Comentario;
+import org.crue.hercules.sgi.eti.model.Comentario.TipoEstadoComentario;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.Dictamen;
 import org.crue.hercules.sgi.eti.model.EstadoActa;
+import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
+import org.crue.hercules.sgi.eti.model.TipoComentario;
 import org.crue.hercules.sgi.eti.model.TipoEstadoActa;
+import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
+import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.repository.ActaRepository;
+import org.crue.hercules.sgi.eti.repository.ComentarioRepository;
 import org.crue.hercules.sgi.eti.repository.EstadoActaRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.RetrospectivaRepository;
 import org.crue.hercules.sgi.eti.repository.TipoEstadoActaRepository;
 import org.crue.hercules.sgi.eti.repository.specification.ActaSpecifications;
 import org.crue.hercules.sgi.eti.service.ActaService;
+import org.crue.hercules.sgi.eti.service.AsistentesService;
+import org.crue.hercules.sgi.eti.service.ComentarioService;
 import org.crue.hercules.sgi.eti.service.ComunicadosService;
 import org.crue.hercules.sgi.eti.service.MemoriaService;
 import org.crue.hercules.sgi.eti.service.RetrospectivaService;
@@ -31,10 +43,8 @@ import org.crue.hercules.sgi.eti.service.SgdocService;
 import org.crue.hercules.sgi.eti.service.sgi.SgiApiBlockchainService;
 import org.crue.hercules.sgi.eti.service.sgi.SgiApiCnfService;
 import org.crue.hercules.sgi.eti.service.sgi.SgiApiRepService;
-import org.crue.hercules.sgi.eti.util.Constantes;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,6 +53,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+
+import com.nimbusds.oauth2.sdk.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -89,6 +101,14 @@ public class ActaServiceImpl implements ActaService {
   /** Blockchain service */
   private final SgiApiBlockchainService blockchainService;
 
+  private final AsistentesService asistentesService;
+
+  /** Comentario Repository. */
+  private final ComentarioRepository comentarioRepository;
+
+  /** Comentario Service. */
+  private final ComentarioService comentarioService;
+
   private static final String TIPO_ACTIVIDAD_INVESTIGACION_TUTELADA = "Investigación tutelada";
 
   /**
@@ -106,14 +126,17 @@ public class ActaServiceImpl implements ActaService {
    * @param comunicadosService       {@link ComunicadosService}
    * @param configService            {@link SgiApiCnfService}
    * @param blockchainService        {@link SgiApiBlockchainService}
+   * @param asistentesService        {@link AsistentesService}
+   * @param comentarioRepository     {@link ComentarioRepository}
+   * @param comentarioService        {@link ComentarioService}
    */
-  @Autowired
   public ActaServiceImpl(ActaRepository actaRepository, EstadoActaRepository estadoActaRepository,
       TipoEstadoActaRepository tipoEstadoActaRepository, EvaluacionRepository evaluacionRepository,
       RetrospectivaRepository retrospectivaRepository, MemoriaService memoriaService,
       RetrospectivaService retrospectivaService, SgiApiRepService reportService, SgdocService sgdocService,
       ComunicadosService comunicadosService, SgiApiCnfService configService,
-      SgiApiBlockchainService blockchainService) {
+      SgiApiBlockchainService blockchainService, AsistentesService asistentesService,
+      ComentarioRepository comentarioRepository, ComentarioService comentarioService) {
     this.actaRepository = actaRepository;
     this.estadoActaRepository = estadoActaRepository;
     this.tipoEstadoActaRepository = tipoEstadoActaRepository;
@@ -125,6 +148,9 @@ public class ActaServiceImpl implements ActaService {
     this.comunicadosService = comunicadosService;
     this.configService = configService;
     this.blockchainService = blockchainService;
+    this.asistentesService = asistentesService;
+    this.comentarioRepository = comentarioRepository;
+    this.comentarioService = comentarioService;
   }
 
   /**
@@ -151,6 +177,13 @@ public class ActaServiceImpl implements ActaService {
     EstadoActa estadoActa = estadoActaRepository
         .save(new EstadoActa(null, returnValue, tipoEstadoActa.get(), Instant.now()));
     Assert.notNull(estadoActa, "No se ha podido crear el EstadoActa inicial");
+
+    try {
+      this.comunicadosService.enviarComunicadoRevisionActa(acta,
+          asistentesService.findAllByConvocatoriaReunionId(acta.getConvocatoriaReunion().getId()));
+    } catch (Exception e) {
+      log.error("enviarComunicadoRevisionActa(actaId: {}) - Error al enviar el comunicado", acta.getId(), e);
+    }
 
     return returnValue;
   }
@@ -298,46 +331,35 @@ public class ActaServiceImpl implements ActaService {
 
     // Tipo evaluación memoria
     List<Evaluacion> listEvaluacionesMemoria = evaluacionRepository
-        .findByActivoTrueAndTipoEvaluacionIdAndEsRevMinimaAndConvocatoriaReunionId(Constantes.TIPO_EVALUACION_MEMORIA,
+        .findByActivoTrueAndTipoEvaluacionIdAndEsRevMinimaAndConvocatoriaReunionId(TipoEvaluacion.Tipo.MEMORIA.getId(),
             Boolean.FALSE, acta.getConvocatoriaReunion().getId());
 
     for (Evaluacion evaluacion : listEvaluacionesMemoria) {
-      switch (evaluacion.getDictamen().getId().intValue()) {
-        case Constantes.DICTAMEN_FAVORABLE: {
-          // Dictamen "Favorable"-
-          // Se actualiza memoria a estado 9: "Fin evaluación"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_FIN_EVALUACION);
+      TipoEstadoMemoria.Tipo tipoEstadoMemoriaUpdate = null;
+      switch (Dictamen.Tipo.fromId(evaluacion.getDictamen().getId())) {
+        case DESFAVORABLE:
+          tipoEstadoMemoriaUpdate = TipoEstadoMemoria.Tipo.DESFAVORABLE;
           break;
-        }
-        case Constantes.DICTAMEN_FAVORABLE_PENDIENTE_REVISION_MINIMA: {
-          // Dictamen "Favorable pendiente de revisión mínima"-
-          // Se actualiza memoria a estado 6: "Favorable Pendiente de Modificaciones
-          // Mínimas"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
-              Constantes.ESTADO_MEMORIA_FAVORABLE_PENDIENTE_MOD_MINIMAS);
+        case FAVORABLE:
+          tipoEstadoMemoriaUpdate = TipoEstadoMemoria.Tipo.FIN_EVALUACION;
           break;
-        }
-        case Constantes.DICTAMEN_PENDIENTE_CORRECCIONES: {
-          // Dictamen "Pendiente de correcciones"
-          // Se actualiza memoria a estado 7: "Pendiente de correcciones"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_PENDIENTE_CORRECCIONES);
+        case FAVORABLE_PENDIENTE_REVISION_MINIMA:
+          tipoEstadoMemoriaUpdate = TipoEstadoMemoria.Tipo.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS;
           break;
-        }
-        case Constantes.DICTAMEN_NO_PROCEDE_EVALUAR: {
-          // Dictamen "No procede evaluar"
-          // Se actualiza memoria a estado 8: "No procede evaluar"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_NO_PROCEDE_EVALUAR);
+        case PENDIENTE_CORRECCIONES:
+          tipoEstadoMemoriaUpdate = TipoEstadoMemoria.Tipo.PENDIENTE_CORRECCIONES;
           break;
-        }
-        case Constantes.DICTAMEN_SOLICITUD_MODIFICACIONES: {
-          // Dictamen "Solicitud modificaciones"
-          // Se actualiza memoria a estado 15: "Solicitud modificacion"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_SOLICITUD_MODIFICACION);
+        case NO_PROCEDE_EVALUAR:
+          tipoEstadoMemoriaUpdate = TipoEstadoMemoria.Tipo.NO_PROCEDE_EVALUAR;
           break;
-        }
+        case SOLICITUD_MODIFICACIONES:
+          tipoEstadoMemoriaUpdate = TipoEstadoMemoria.Tipo.SOLICITUD_MODIFICACION;
+          break;
         default:
-          break;
+          throw new DictamenNotFoundException(id);
       }
+
+      memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), tipoEstadoMemoriaUpdate.getId());
 
       // Enviar comunicado de cada evaluación al finalizar un acta
       if (!evaluacion.getEsRevMinima().booleanValue()) {
@@ -349,20 +371,17 @@ public class ActaServiceImpl implements ActaService {
     // Tipo evaluación retrospectiva
     List<Evaluacion> listEvaluacionesRetrospectiva = evaluacionRepository
         .findByActivoTrueAndTipoEvaluacionIdAndEsRevMinimaAndConvocatoriaReunionId(
-            Constantes.TIPO_EVALUACION_RETROSPECTIVA, Boolean.FALSE, acta.getConvocatoriaReunion().getId());
+            TipoEvaluacion.Tipo.RETROSPECTIVA.getId(), Boolean.FALSE, acta.getConvocatoriaReunion().getId());
 
     listEvaluacionesRetrospectiva.forEach(evaluacion -> {
 
-      switch (evaluacion.getDictamen().getId().intValue()) {
-        case Constantes.DICTAMEN_DESFAVORABLE_RETROSPECTIVA:
-        case Constantes.DICTAMEN_FAVORABLE_RETROSPECTIVA:
-        default: {
-          // Dictamen "Favorable y desfavorable retrospectiva"
-          // Se actualiza memoria a estado 5: "Fin evaluación retrospectiva"
+      switch (Dictamen.Tipo.fromId(evaluacion.getDictamen().getId())) {
+        case DESFAVORABLE_RETROSPECTIVA:
+        case FAVORABLE_RETROSPECTIVA:
+        default:
           retrospectivaService.updateEstadoRetrospectiva(evaluacion.getMemoria().getRetrospectiva(),
-              Constantes.ESTADO_RETROSPECTIVA_FIN_EVALUACION);
+              EstadoRetrospectiva.Tipo.FIN_EVALUACION.getId());
           break;
-        }
       }
 
     });
@@ -370,57 +389,50 @@ public class ActaServiceImpl implements ActaService {
     // Tipo evaluación seguimiento final
     List<Evaluacion> listEvaluacionesSegFinal = evaluacionRepository
         .findByActivoTrueAndTipoEvaluacionIdAndEsRevMinimaAndConvocatoriaReunionId(
-            Constantes.TIPO_EVALUACION_SEGUIMIENTO_FINAL, Boolean.FALSE, acta.getConvocatoriaReunion().getId());
+            TipoEvaluacion.Tipo.SEGUIMIENTO_FINAL.getId(), Boolean.FALSE, acta.getConvocatoriaReunion().getId());
 
     listEvaluacionesSegFinal.forEach(evaluacion -> {
+      TipoEstadoMemoria.Tipo tipoEstadoMemoriaUpdate = null;
 
-      switch (evaluacion.getDictamen().getId().intValue()) {
-        case Constantes.DICTAMEN_FAVORABLE_SEGUIMIENTO_FINAL: {
-          // Dictamen "Favorable - seguimiento anual"-
-          // Se actualiza memoria a estado 9: "Fin evaluación"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
-              Constantes.ESTADO_MEMORIA_FIN_EVALUACION_SEGUIMIENTO_FINAL);
+      switch (Dictamen.Tipo.fromId(evaluacion.getDictamen().getId())) {
+        case FAVORABLE_SEGUIMIENTO_FINAL:
+          tipoEstadoMemoriaUpdate = TipoEstadoMemoria.Tipo.FIN_EVALUACION_SEGUIMIENTO_FINAL;
           break;
-        }
-        case Constantes.DICTAMEN_SOLICITUD_ACLARACIONES_SEGUIMIENTO_FINAL: {
-          // Dictamen "Solicitud aclaraciones seguimiento final"
-          // Se actualiza memoria a estado 21: "En aclaración seguimiento final"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
-              Constantes.TIPO_ESTADO_MEMORIA_EN_ACLARACION_SEGUIMIENTO_FINAL);
+        case SOLICITUD_ACLARACIONES_SEGUIMIENTO_FINAL:
+          tipoEstadoMemoriaUpdate = TipoEstadoMemoria.Tipo.EN_ACLARACION_SEGUIMIENTO_FINAL;
           break;
-        }
         default:
-          break;
+          throw new DictamenNotFoundException(id);
       }
+
+      memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), tipoEstadoMemoriaUpdate.getId());
+
       // Enviar comunicado de cada evaluación al finalizar un acta
       sendComunicadoActaFinalizada(evaluacion);
-
     });
 
     // Tipo evaluación seguimiento anual
     List<Evaluacion> listEvaluacionesSegAnual = evaluacionRepository
         .findByActivoTrueAndTipoEvaluacionIdAndEsRevMinimaAndConvocatoriaReunionId(
-            Constantes.TIPO_EVALUACION_SEGUIMIENTO_ANUAL, Boolean.FALSE, acta.getConvocatoriaReunion().getId());
+            TipoEvaluacion.Tipo.SEGUIMIENTO_ANUAL.getId(), Boolean.FALSE, acta.getConvocatoriaReunion().getId());
 
     listEvaluacionesSegAnual.forEach(evaluacion -> {
+      TipoEstadoMemoria.Tipo tipoEstadoMemoriaUpdate = null;
 
-      switch (evaluacion.getDictamen().getId().intValue()) {
-        case Constantes.DICTAMEN_FAVORABLE_SEGUIMIENTO_ANUAL: {
-          // Dictamen "Favorable - seguimiento anual"-
-          // Se actualiza memoria a estado 9: "Fin evaluación"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(),
-              Constantes.ESTADO_MEMORIA_FIN_EVALUACION_SEGUIMIENTO_ANUAL);
+      switch (Dictamen.Tipo.fromId(evaluacion.getDictamen().getId())) {
+        case FAVORABLE_SEGUIMIENTO_ANUAL: {
+          tipoEstadoMemoriaUpdate = TipoEstadoMemoria.Tipo.FIN_EVALUACION_SEGUIMIENTO_ANUAL;
           break;
         }
-        case Constantes.DICTAMEN_SOLICITUD_MODIFICACIONES: {
-          // Dictamen "Solicitud modificaciones"
-          // Se actualiza memoria a estado 15: "Solicitud modificacion"
-          memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), Constantes.ESTADO_MEMORIA_SOLICITUD_MODIFICACION);
+        case SOLICITUD_MODIFICACIONES: {
+          tipoEstadoMemoriaUpdate = TipoEstadoMemoria.Tipo.SOLICITUD_MODIFICACION_SEGUIMIENTO_ANUAL;
           break;
         }
         default:
-          break;
+          throw new DictamenNotFoundException(id);
       }
+
+      memoriaService.updateEstadoMemoria(evaluacion.getMemoria(), tipoEstadoMemoriaUpdate.getId());
 
       // Enviar comunicado de cada evaluación al finalizar un acta
       sendComunicadoActaFinalizada(evaluacion);
@@ -530,7 +542,8 @@ public class ActaServiceImpl implements ActaService {
           evaluacion.getMemoria().getPeticionEvaluacion().getPersonaRef());
       log.debug("sendComunicadoActaFinalizada(Evaluacion evaluacion) - End");
     } catch (Exception e) {
-      log.debug("sendComunicadoActaFinalizada(Evaluacion evaluacion) - Error al enviar el comunicado", e);
+      log.error("sendComunicadoActaFinalizada(evaluacionId: {}) - Error al enviar el comunicado", evaluacion.getId(),
+          e);
     }
   }
 
@@ -563,5 +576,84 @@ public class ActaServiceImpl implements ActaService {
     String hash = blockchainService.confirmarRegistro(acta.getTransaccionRef());
     log.debug("confirmarRegistroBlockchain(Long idActa) - end");
     return (documento.getHash().equals(hash));
+  }
+
+  /**
+   * Identifica si los {@link Comentario} en el {@link Acta} han sido
+   * enviados
+   * 
+   * @param idActa     identificador del {@link Acta}
+   * @param personaRef El usuario de la petición
+   * @return true/false
+   */
+  @Override
+  public boolean isComentariosActaEnviados(Long idActa, String personaRef) {
+    log.debug("isComentariosActaEnviados(Long idActa, String personaRef) - start");
+    Acta acta = actaRepository.findById(idActa).orElseThrow(() -> new ActaNotFoundException(idActa));
+    Page<Evaluacion> evaluaciones = evaluacionRepository
+        .findAllByActivoTrueAndConvocatoriaReunionIdAndEsRevMinimaFalse(acta.getConvocatoriaReunion().getId(), null);
+    List<Long> enviados = new ArrayList<>();
+    if (CollectionUtils.isNotEmpty(evaluaciones.getContent())) {
+      evaluaciones.getContent().forEach(evaluacion -> {
+        boolean comentariosEnviados = comentarioRepository.existsByEvaluacionIdAndTipoComentarioIdAndEstadoAndCreatedBy(
+            evaluacion.getId(),
+            TipoComentario.Tipo.ACTA_EVALUADOR.getId(),
+            TipoEstadoComentario.CERRADO, personaRef);
+        if (comentariosEnviados) {
+          enviados.add(evaluacion.getId());
+          return;
+        }
+      });
+    }
+    log.debug("isComentariosActaEnviados(Long idActa, String personaRef) - end");
+    return !enviados.isEmpty();
+  }
+
+  @Override
+  public boolean isPosibleEnviarComentariosActa(Long idActa, String personaRef) {
+    log.debug("isPosibleEnviarComentariosActa(Long idActa, String personaRef) - start");
+    Acta acta = actaRepository.findById(idActa).orElseThrow(() -> new ActaNotFoundException(idActa));
+    Page<Evaluacion> evaluaciones = evaluacionRepository
+        .findAllByActivoTrueAndConvocatoriaReunionIdAndEsRevMinimaFalse(acta.getConvocatoriaReunion().getId(), null);
+    List<Long> idsEvsComentariosAbiertos = new ArrayList<Long>();
+    List<Long> idsEvsComentariosCerrados = new ArrayList<Long>();
+    if (CollectionUtils.isNotEmpty(evaluaciones.getContent())) {
+      evaluaciones.getContent().forEach(evaluacion -> {
+
+        if (comentarioRepository.countByEvaluacionIdAndTipoComentarioIdAndCreatedByAndEstado(evaluacion.getId(),
+            TipoComentario.Tipo.ACTA_EVALUADOR.getId(), personaRef, TipoEstadoComentario.CERRADO) > 0) {
+          idsEvsComentariosCerrados.add(evaluacion.getId());
+        }
+        if (comentarioRepository.countByEvaluacionIdAndTipoComentarioIdAndCreatedByAndEstado(evaluacion.getId(),
+            TipoComentario.Tipo.ACTA_EVALUADOR.getId(), personaRef, TipoEstadoComentario.ABIERTO) > 0) {
+          idsEvsComentariosAbiertos.add(evaluacion.getId());
+        }
+      });
+    }
+
+    log.debug("isPosibleEnviarComentariosActa(Long idActa, String personaRef) - end");
+    return !idsEvsComentariosAbiertos.isEmpty() && idsEvsComentariosCerrados.isEmpty();
+  }
+
+  @Override
+  @Transactional
+  public boolean enviarComentariosEvaluacion(Long idActa, String personaRef) {
+    log.debug("enviarComentariosEvaluacion(Long idActa, String personaRef) - start");
+    try {
+      Acta acta = actaRepository.findById(idActa).orElseThrow(() -> new ActaNotFoundException(idActa));
+      Page<Evaluacion> evaluaciones = evaluacionRepository
+          .findAllByActivoTrueAndConvocatoriaReunionIdAndEsRevMinimaFalse(acta.getConvocatoriaReunion().getId(), null);
+      if (CollectionUtils.isNotEmpty(evaluaciones.getContent())) {
+        evaluaciones.getContent()
+            .forEach(evaluacion -> this.comentarioService.enviarByEvaluacionActa(evaluacion.getId(), personaRef));
+      } else {
+        return false;
+      }
+    } catch (Exception e) {
+      log.error("enviarComentariosEvaluacion(Long idActa, String personaRef)", e);
+      return false;
+    }
+    log.debug("enviarComentariosEvaluacion(Long idActa, String personaRef) - end");
+    return true;
   }
 }

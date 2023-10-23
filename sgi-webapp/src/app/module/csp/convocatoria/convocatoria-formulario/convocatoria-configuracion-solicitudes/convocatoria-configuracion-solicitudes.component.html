@@ -139,8 +139,9 @@
       [fxFlexOrder]="fxFlexProperties.order">
       <mat-form-field class="input-form">
         <mat-label>{{'csp.convocatoria-configuracion-solicitud.importe-maximo' | translate}}</mat-label>
-        <input matInput formControlName="importeMaximoSolicitud" type="number" id="importeMaximoSolicitud" min="0"
-          placeholder="{{'csp.convocatoria-configuracion-solicitud.importe-maximo' | translate}}" maxlength="50">
+        <input matInput formControlName="importeMaximoSolicitud" type="text" id="importeMaximoSolicitud"
+          placeholder="{{'csp.convocatoria-configuracion-solicitud.importe-maximo' | translate}}"
+          sgiInputWithThousandSeparator>
       </mat-form-field>
     </div>
 

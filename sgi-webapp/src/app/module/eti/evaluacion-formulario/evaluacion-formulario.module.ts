@@ -22,6 +22,7 @@ import {
 } from '../evaluacion-formulario/evaluacion-listado-anterior-memoria/evaluacion-listado-anterior-memoria.component';
 import { BloqueApartadoPipe } from '../shared/pipes/bloque-apartado.pipe';
 import { EvaluacionEvaluacionComponent } from './evaluacion-evaluacion/evaluacion-evaluacion.component';
+import { EvaluacionListadoComentariosEquipoEvaluadorComponent } from './evaluacion-listado-comentarios-equipo-evaluador/evaluacion-listado-comentarios-equipo-evaluador.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { EvaluacionEvaluacionComponent } from './evaluacion-evaluacion/evaluacio
     EvaluacionDocumentacionComponent,
     EvaluacionListadoAnteriorMemoriaComponent,
     EvaluacionEvaluacionComponent,
+    EvaluacionListadoComentariosEquipoEvaluadorComponent
   ],
   imports: [
     SharedModule,
@@ -47,7 +49,8 @@ import { EvaluacionEvaluacionComponent } from './evaluacion-evaluacion/evaluacio
     EvaluacionDatosMemoriaComponent,
     EvaluacionDocumentacionComponent,
     EvaluacionListadoAnteriorMemoriaComponent,
-    EvaluacionEvaluacionComponent
+    EvaluacionEvaluacionComponent,
+    EvaluacionListadoComentariosEquipoEvaluadorComponent
   ]
 })
 export class EvaluacionFormularioModule { }

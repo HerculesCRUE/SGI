@@ -13,7 +13,7 @@ import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableMemoria;
 import org.crue.hercules.sgi.rep.dto.eti.TareaDto;
 import org.crue.hercules.sgi.rep.dto.eti.TareaDto.EquipoTrabajoDto;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
-import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
@@ -40,7 +40,7 @@ class InformeFavorableMemoriaReportServiceTest extends BaseReportEtiServiceTest 
   private EvaluacionService evaluacionService;
 
   @Mock
-  private SgiApiSgpService personaService;
+  private PersonaService personaService;
 
   @Mock
   private PeticionEvaluacionService peticionEvaluacionService;
@@ -56,7 +56,7 @@ class InformeFavorableMemoriaReportServiceTest extends BaseReportEtiServiceTest 
     Long idEvaluacion = 1L;
 
     BDDMockito.given(evaluacionService.findById(idEvaluacion)).willReturn((generarMockEvaluacion(idEvaluacion)));
-    BDDMockito.given(peticionEvaluacionService.findTareasEquipoTrabajo(idEvaluacion))
+    BDDMockito.given(peticionEvaluacionService.getTareasEquipoTrabajo(idEvaluacion))
         .willReturn((generarMockTareas(idEvaluacion)));
     BDDMockito.given(personaService.findById(null)).willReturn((generarMockPersona("123456F")));
 
@@ -82,7 +82,7 @@ class InformeFavorableMemoriaReportServiceTest extends BaseReportEtiServiceTest 
           evaluacion.getMemoria().getComite().setGenero(Genero.F);
           return evaluacion;
         });
-    BDDMockito.given(peticionEvaluacionService.findTareasEquipoTrabajo(idEvaluacion))
+    BDDMockito.given(peticionEvaluacionService.getTareasEquipoTrabajo(idEvaluacion))
         .willReturn((generarMockTareas(idEvaluacion)));
     BDDMockito.given(personaService.findById(null)).willReturn((generarMockPersona("123456F")));
 

@@ -165,7 +165,7 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'csp.proyecto-socio-periodo-justificacion.importe-justificado' | translate}}</mat-label>
-          <input matInput formControlName="importeJustificado" type="number" min="0" step="1"
+          <input matInput formControlName="importeJustificado" type="text" sgiInputWithThousandSeparator
             placeholder="{{'csp.proyecto-socio-periodo-justificacion.importe-justificado' | translate}}">
           <mat-error *ngIf="formGroup.controls.importeJustificado.errors?.min">
             {{'error.min.entity' | translate:msgParamImporteJustificadoEntity}}

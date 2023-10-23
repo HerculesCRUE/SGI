@@ -51,7 +51,6 @@ export class EvaluacionEvaluacionComponent extends FormFragmentComponent<IMemori
 
   constructor(
     public actionService: EvaluacionFormularioActionService,
-    protected tipoEvaluacionService: TipoEvaluacionService,
     private readonly translate: TranslateService,
     private readonly evaluacionService: EvaluacionService,
     private readonly documentoService: DocumentoService
@@ -79,9 +78,8 @@ export class EvaluacionEvaluacionComponent extends FormFragmentComponent<IMemori
     this.dictamenes$ = this.formPart.evaluacion$.pipe(
       switchMap(evaluacion => {
         if (evaluacion) {
-          return tipoEvaluacionService.findAllDictamenByTipoEvaluacionAndRevisionMinima(
-            evaluacion.tipoEvaluacion.id,
-            evaluacion.esRevMinima
+          return evaluacionService.findAllDictamenEvaluacion(
+            evaluacion.id
           ).pipe(
             map(response => response.items)
           );
@@ -148,6 +146,7 @@ export class EvaluacionEvaluacionComponent extends FormFragmentComponent<IMemori
         TIPO_MEMORIA.MODIFICACION,
       ].includes(this.formPart.evaluacion?.memoria?.tipoMemoria?.id);
       const tipoDictamenConInforme = [
+        DICTAMEN.DESFAVORABLE,
         DICTAMEN.FAVORABLE,
         DICTAMEN.PDTE_CORRECCIONES,
         DICTAMEN.FAVORABLE_PDTE_REV_MINIMA,

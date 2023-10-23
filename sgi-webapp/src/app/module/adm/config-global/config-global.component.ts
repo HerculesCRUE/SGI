@@ -2,7 +2,7 @@ import { KeyValue } from '@angular/common';
 import { Component } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractMenuContentComponent } from '@core/component/abstract-menu-content.component';
-import { ConfigType, IConfigOptions } from '@core/models/cnf/config-options';
+import { ConfigModule, ConfigType, IConfigOptions } from '@core/models/cnf/config-options';
 import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { Observable, of } from 'rxjs';
@@ -36,23 +36,23 @@ export enum ConfigGlobal {
 export class ConfigGlobalComponent extends AbstractMenuContentComponent {
 
   private readonly _CONFIG_MAP: Map<ConfigGlobal, IConfigOptions> = new Map([
-    [ConfigGlobal.ENTIDAD_IMPLANTACION, { type: ConfigType.TEXT, label: marker(`adm.config.global.ENTIDAD_IMPLANTACION`), required: true }],
-    [ConfigGlobal.ID_ENTIDAD_SGEMP, { type: ConfigType.TEXT, label: marker(`adm.config.global.ID_ENTIDAD_SGEMP`), required: true }],
-    [ConfigGlobal.WEB_NUM_LOGOS_HEADER, { type: ConfigType.SELECT, label: marker(`adm.config.global.WEB_NUM_LOGOS_HEADER`), options: of([{ key: '1', value: '1' }, { key: '2', value: '2' }, { key: '3', value: '3' }]), required: true }],
-    [ConfigGlobal.EXP_MAX_NUM_REGISTROS_EXCEL, { type: ConfigType.TEXT, label: marker(`adm.config.global.EXP_MAX_NUM_REGISTROS_EXCEL`), required: false, info: marker(`adm.config.global.EXP_MAX_NUM_REGISTROS_EXCEL_INFO`) }],
-    [ConfigGlobal.WEB_HEADER_LOGO_MINISTERIO, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_MINISTERIO`) }],
-    [ConfigGlobal.WEB_HEADER_LOGO_MINISTERIO_2X, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_MINISTERIO_2X`) }],
-    [ConfigGlobal.WEB_HEADER_LOGO_MINISTERIO_3X, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_MINISTERIO_3X`) }],
-    [ConfigGlobal.WEB_HEADER_LOGO_FEDER, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_FEDER`) }],
-    [ConfigGlobal.WEB_HEADER_LOGO_FEDER_2X, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_FEDER_2X`) }],
-    [ConfigGlobal.WEB_HEADER_LOGO_FEDER_3X, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_FEDER_3X`) }],
-    [ConfigGlobal.WEB_HEADER_LOGO_UE, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_UE`) }],
-    [ConfigGlobal.WEB_HEADER_LOGO_UE_2X, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_UE_2X`) }],
-    [ConfigGlobal.WEB_HEADER_LOGO_UE_3X, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_UE_3X`) }],
-    [ConfigGlobal.REP_COMMON_HEADER_LOGO, { type: ConfigType.FILE, label: marker(`adm.config.global.REP_COMMON_HEADER_LOGO`) }],
-    [ConfigGlobal.REP_COMMON_DYNAMIC_LANDSCAPE, { type: ConfigType.FILE, label: marker(`adm.config.global.REP_COMMON_DYNAMIC_LANDSCAPE`) }],
-    [ConfigGlobal.REP_COMMON_DYNAMIC_PORTRAIT, { type: ConfigType.FILE, label: marker(`adm.config.global.REP_COMMON_DYNAMIC_PORTRAIT`) }],
-    [ConfigGlobal.WEB_I18N_ES, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_I18N_ES`) }]
+    [ConfigGlobal.ENTIDAD_IMPLANTACION, { type: ConfigType.TEXT, label: marker(`adm.config.global.ENTIDAD_IMPLANTACION`), required: true, module: ConfigModule.CNF }],
+    [ConfigGlobal.ID_ENTIDAD_SGEMP, { type: ConfigType.TEXT, label: marker(`adm.config.global.ID_ENTIDAD_SGEMP`), required: true, module: ConfigModule.CNF }],
+    [ConfigGlobal.WEB_NUM_LOGOS_HEADER, { type: ConfigType.SELECT, label: marker(`adm.config.global.WEB_NUM_LOGOS_HEADER`), options: of([{ key: '1', value: '1' }, { key: '2', value: '2' }, { key: '3', value: '3' }]), required: true, module: ConfigModule.CNF }],
+    [ConfigGlobal.EXP_MAX_NUM_REGISTROS_EXCEL, { type: ConfigType.TEXT, label: marker(`adm.config.global.EXP_MAX_NUM_REGISTROS_EXCEL`), required: false, info: marker(`adm.config.global.EXP_MAX_NUM_REGISTROS_EXCEL_INFO`), module: ConfigModule.CNF }],
+    [ConfigGlobal.WEB_HEADER_LOGO_MINISTERIO, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_MINISTERIO`), module: ConfigModule.CNF }],
+    [ConfigGlobal.WEB_HEADER_LOGO_MINISTERIO_2X, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_MINISTERIO_2X`), module: ConfigModule.CNF }],
+    [ConfigGlobal.WEB_HEADER_LOGO_MINISTERIO_3X, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_MINISTERIO_3X`), module: ConfigModule.CNF }],
+    [ConfigGlobal.WEB_HEADER_LOGO_FEDER, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_FEDER`), module: ConfigModule.CNF }],
+    [ConfigGlobal.WEB_HEADER_LOGO_FEDER_2X, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_FEDER_2X`), module: ConfigModule.CNF }],
+    [ConfigGlobal.WEB_HEADER_LOGO_FEDER_3X, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_FEDER_3X`), module: ConfigModule.CNF }],
+    [ConfigGlobal.WEB_HEADER_LOGO_UE, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_UE`), module: ConfigModule.CNF }],
+    [ConfigGlobal.WEB_HEADER_LOGO_UE_2X, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_UE_2X`), module: ConfigModule.CNF }],
+    [ConfigGlobal.WEB_HEADER_LOGO_UE_3X, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_HEADER_LOGO_UE_3X`), module: ConfigModule.CNF }],
+    [ConfigGlobal.REP_COMMON_HEADER_LOGO, { type: ConfigType.FILE, label: marker(`adm.config.global.REP_COMMON_HEADER_LOGO`), module: ConfigModule.CNF }],
+    [ConfigGlobal.REP_COMMON_DYNAMIC_LANDSCAPE, { type: ConfigType.FILE, label: marker(`adm.config.global.REP_COMMON_DYNAMIC_LANDSCAPE`), module: ConfigModule.CNF }],
+    [ConfigGlobal.REP_COMMON_DYNAMIC_PORTRAIT, { type: ConfigType.FILE, label: marker(`adm.config.global.REP_COMMON_DYNAMIC_PORTRAIT`), module: ConfigModule.CNF }],
+    [ConfigGlobal.WEB_I18N_ES, { type: ConfigType.FILE, label: marker(`adm.config.global.WEB_I18N_ES`), module: ConfigModule.CNF }]
   ]);
 
   get ConfigType() {

@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap3_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.5 Datos referentes a los agentes biológicos, sustancias químicas peligrosas, sustancias radiactivas y/o nanopartículas"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "La clasificación del tipo de los agentes biológicos susceptibles de originar cualquier tipo de infección, alergia o toxicidad en humanos a los que estén o pueda estar expuesto el personal se hace de acuerdo con la tabla y criterios de clasificación contenidos en el <a href='https://www.boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#anii' target='_blank'>anexo II del Real Decreto 664/1997</a> y sus actualizaciones. <p>Si un agente no consta en la tabla se deberá estimar su riesgo de infección teniendo en cuenta las siguientes definiciones:</p><br><ul><li><b>Grupo 1:</b> aquél que resulta poco probable que cause una enfermedad en el ser humano, los animales y/o el medio ambiente.</li><li><b>Grupo 2:</b> aquél que puede causar una enfermedad en el ser humano, los animales y/o el medio ambiente y puede suponer un peligro para las personas expuestas, pero es poco probable que se propague a la colectividad y existe una profilaxis o un tratamiento eficaz.</li><li><b>Grupo 3:</b> aquél que puede causar una enfermedad grave en el ser humano, los animales y/o el medio ambiente y presenta un serio peligro para las personas expuestas, con riesgo de que se propague a la colectividad y existe una profilaxis o un tratamiento eficaz.</li><li><b>Grupo 4:</b> aquél que causa una enfermedad grave en el ser humano, los animales y/o el medio ambiente, supone un serio peligro para las personas expuestas, con muchas probabilidades de que se propague a la colectividad y sin que exista una profilaxis o un tratamiento eficaz.</li></ul>En caso de duda entre dos grupos deberá clasificarse en el grupo de <b>peligrosidad superior</b>.<p>La clasificación de los agentes patógenos animales no zoonóticos se hace de acuerdo a los criterios de la Organización Mundial de Sanidad Animal (OIE, 2010a,b).</p><p>La clasificación de los agentes patógenos vegetales se hace de acuerdo a los criterios del RD 739/2021 sobre medidas de protección contra plagas vegetales.</p><p>OIE (WORLD ORGANISATION FOR ANIMAL HEALTH) (2010a). Handbook on Import Risk Analysis for Animals and Animal Products. Volume 1: Introduction and qualitative risk analysis, Second Edition. OIE, Paris, France.</p><p>OIE (WORLD ORGANISATION FOR ANIMAL HEALTH) (2010b). Handbook on Import Risk Analysis for Animals and Animal Products. Volume 2: Quantitative Risk Assessment, Second Edition. OIE, Paris, France.</p>"
+      }
+    ]
+  }
+]

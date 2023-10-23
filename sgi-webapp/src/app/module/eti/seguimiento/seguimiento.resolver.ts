@@ -9,12 +9,13 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, throwError } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
+import { IEvaluacionWithComentariosEnviados } from '../evaluacion-evaluador/evaluacion-evaluador-listado/evaluacion-evaluador-listado.component';
 
 const MSG_NOT_FOUND = marker('error.load');
 
 @Injectable()
-export class SeguimientoResolver extends SgiResolverResolver<IEvaluacion> {
+export class SeguimientoResolver extends SgiResolverResolver<IEvaluacionWithComentariosEnviados> {
 
   constructor(
     logger: NGXLogger,
@@ -26,19 +27,44 @@ export class SeguimientoResolver extends SgiResolverResolver<IEvaluacion> {
     super(logger, router, snackBar, MSG_NOT_FOUND);
   }
 
-  protected resolveEntity(route: ActivatedRouteSnapshot): Observable<IEvaluacion> {
+  protected resolveEntity(route: ActivatedRouteSnapshot): Observable<IEvaluacionWithComentariosEnviados> {
     const peticion = this.service.findById(Number(route.paramMap.get('id')));
     if (this.authService.hasAuthorityForAnyUO('ETI-EVC-INV-VR,')) {
       return this.service.isSeguimientoEvaluable(Number(route.paramMap.get('id'))).pipe(
         switchMap(response => {
           if (response) {
-            return peticion;
+            return peticion as Observable<IEvaluacionWithComentariosEnviados>;
           } else {
             return throwError('NOT_FOUND');
           }
-        }));
+        }),
+        switchMap(response => {
+          return this.service.isComentariosEvaluadorEnviados(Number(route.paramMap.get('id'))).pipe(
+            map(value => {
+              response.enviada = value
+              return response;
+            })
+          );
+        })
+      );
     } else {
-      return peticion;
+      return peticion.pipe(
+        switchMap(response => {
+          if (response) {
+            return peticion as Observable<IEvaluacionWithComentariosEnviados>;
+          } else {
+            return throwError('NOT_FOUND');
+          }
+        }),
+        switchMap(response => {
+          return this.service.isComentariosEvaluadorEnviados(Number(route.paramMap.get('id'))).pipe(
+            map(value => {
+              response.enviada = value
+              return response;
+            })
+          );
+        })
+      );
     }
   }
 }

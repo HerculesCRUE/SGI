@@ -7,7 +7,10 @@ import org.crue.hercules.sgi.eti.dto.DocumentoOutput;
 import org.crue.hercules.sgi.eti.dto.MemoriaEvaluada;
 import org.crue.hercules.sgi.eti.exceptions.ActaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Acta;
+import org.crue.hercules.sgi.eti.model.Comentario;
+import org.crue.hercules.sgi.eti.model.Comentario.TipoEstadoComentario;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -138,4 +141,35 @@ public interface ActaService {
    * @return true/false
    */
   Boolean confirmarRegistroBlockchain(Long id);
+
+  /**
+   * Identifica si los {@link Comentario} en el {@link Acta} han sido
+   * enviados
+   * 
+   * @param idActa     identificador de la {@link Acta}
+   * @param personaRef El usuario de la petición
+   * @return true/false
+   */
+  boolean isComentariosActaEnviados(Long idActa, String personaRef);
+
+  /**
+   * Obtiene el número total de {@link Comentario} de otros usuarios distintos
+   * al que realiza la petición para un determinado {@link Acta} y un
+   * {@link TipoEstadoComentario} Abierto
+   * 
+   * @param id         Id de {@link Acta}.
+   * @param personaRef Persona creadora del comentario
+   * @return true/false
+   */
+  boolean isPosibleEnviarComentariosActa(Long id, String personaRef);
+
+  /**
+   * Permite enviar los comentarios de las {@link Evaluacion} del {@link Acta} y
+   * persona
+   *
+   * @param id         Id del {@link Acta}.
+   * @param personaRef referencia de la persona de los {@link Comentario}
+   * @return true si puede ser enviado / false si no puede ser enviado
+   */
+  boolean enviarComentariosEvaluacion(Long id, String personaRef);
 }

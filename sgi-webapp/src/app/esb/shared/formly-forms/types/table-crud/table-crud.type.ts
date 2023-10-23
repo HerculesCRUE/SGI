@@ -39,6 +39,7 @@ export class TableCRUDTypeComponent extends BaseTableCRUDTypeComponent implement
       fieldGroup: [...this.field.fieldArray.fieldGroup],
       validateEmptyRow: this.to.validateEmptyRow || true,
       formModel: editItemModel,
+      formState: this.options?.formState,
       entity: {
         name: this.to.entity,
         gender: this.to.gender,

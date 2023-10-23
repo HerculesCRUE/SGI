@@ -21,4 +21,6 @@ export interface IComite {
 
   /** nombreInvestigacion */
   nombreInvestigacion: string;
+
+  genero: string;
 }

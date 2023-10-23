@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.eti.service;
 
+import org.crue.hercules.sgi.eti.dto.ApartadoTreeOutput;
 import org.crue.hercules.sgi.eti.exceptions.ApartadoNotFoundException;
 import org.crue.hercules.sgi.eti.model.Apartado;
 import org.crue.hercules.sgi.eti.model.Bloque;
@@ -52,4 +53,16 @@ public interface ApartadoService {
    * @return el listado de entidades {@link Apartado} paginadas y filtradas.
    */
   Page<Apartado> findByPadreId(Long id, Pageable pageable);
+
+  /**
+   * Obtiene las entidades {@link ApartadoTreeOutput} paginadas por el id
+   * de su {@link Bloque}. Se devuelven los Apartados de primer nivel
+   * (sin padre) con sus arboles de apartados hijos.
+   *
+   * @param id       id del {@link Bloque}.
+   * @param pageable pageable
+   * @return el listado de entidades {@link ApartadoTreeOutput} paginadas.
+   */
+  Page<ApartadoTreeOutput> findApartadosTreeByBloqueId(Long id, Pageable pageable);
+
 }

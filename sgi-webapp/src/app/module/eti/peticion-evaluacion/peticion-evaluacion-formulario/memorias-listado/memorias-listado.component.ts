@@ -9,8 +9,8 @@ import { MSG_PARAMS } from '@core/i18n';
 import { COMITE } from '@core/models/eti/comite';
 import { ESTADO_RETROSPECTIVA } from '@core/models/eti/estado-retrospectiva';
 import { IMemoria } from '@core/models/eti/memoria';
-import { IMemoriaPeticionEvaluacion } from '@core/models/eti/memoria-peticion-evaluacion';
 import { ESTADO_MEMORIA } from '@core/models/eti/tipo-estado-memoria';
+import { TIPO_EVALUACION } from '@core/models/eti/tipo-evaluacion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
@@ -21,11 +21,11 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
-import { of, Subscription } from 'rxjs';
+import { Subscription, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { MEMORIAS_ROUTE } from '../../../memoria/memoria-route-names';
 import { PeticionEvaluacionActionService } from '../../peticion-evaluacion.action.service';
-import { MemoriasListadoFragment } from './memorias-listado.fragment';
+import { IMemoriaPeticionEvaluacionWithLastEvaluacion, MemoriasListadoFragment } from './memorias-listado.fragment';
 
 const MSG_CONFIRM_DELETE = marker('msg.delete.entity');
 const MSG_ESTADO_ANTERIOR_OK = marker('msg.eti.memoria.estado-anterior.success');
@@ -55,8 +55,8 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
   displayedColumns: string[] = ['numReferencia', 'comite', 'estadoActual', 'fechaEvaluacion', 'fechaLimite', 'acciones'];
   disableEnviarSecretaria = true;
 
-  datasource: MatTableDataSource<StatusWrapper<IMemoriaPeticionEvaluacion>>
-    = new MatTableDataSource<StatusWrapper<IMemoriaPeticionEvaluacion>>();
+  datasource: MatTableDataSource<StatusWrapper<IMemoriaPeticionEvaluacionWithLastEvaluacion>>
+    = new MatTableDataSource<StatusWrapper<IMemoriaPeticionEvaluacionWithLastEvaluacion>>();
 
   private subscriptions: Subscription[] = [];
   private listadoFragment: MemoriasListadoFragment;
@@ -69,6 +69,10 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
+  }
+
+  get isModuleInv(): boolean {
+    return this.listadoFragment.isModuleInv;
   }
 
   constructor(
@@ -100,7 +104,7 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
     ));
 
     this.datasource.sortingDataAccessor =
-      (wrapper: StatusWrapper<IMemoriaPeticionEvaluacion>, property: string) => {
+      (wrapper: StatusWrapper<IMemoriaPeticionEvaluacionWithLastEvaluacion>, property: string) => {
         switch (property) {
           case 'comite':
             return wrapper.value.comite?.comite;
@@ -136,7 +140,7 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
    *
    * @param wrappedMemoria la memoria a eliminar.
    */
-  delete(wrappedMemoria: StatusWrapper<IMemoriaPeticionEvaluacion>): void {
+  delete(wrappedMemoria: StatusWrapper<IMemoriaPeticionEvaluacionWithLastEvaluacion>): void {
     this.subscriptions.push(this.dialogService.showConfirmation(
       this.textoDelete
     ).subscribe((aceptado) => {
@@ -150,7 +154,7 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
    * Se recupera el estado anterior de la memoria
    * @param memoria la memoria a reestablecer el estado
    */
-  private recuperarEstadoAnteriorMemoria(memoria: IMemoriaPeticionEvaluacion) {
+  private recuperarEstadoAnteriorMemoria(memoria: IMemoriaPeticionEvaluacionWithLastEvaluacion) {
     const recuperarEstadoMemoria = this.memoriaService.recuperarEstadoAnterior(memoria.id).pipe(
       map((response: IMemoria) => {
         if (response) {
@@ -171,7 +175,7 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
    * Confirmación para recuperar el estado de la memoria
    * @param memoria la memoria a reestablecer el estado
    */
-  public recuperarEstadoAnterior(memoria: IMemoriaPeticionEvaluacion) {
+  public recuperarEstadoAnterior(memoria: IMemoriaPeticionEvaluacionWithLastEvaluacion) {
     const dialogServiceSubscription = this.dialogService.showConfirmation(MSG_RECUPERAR_ESTADO).pipe(
       map((aceptado: boolean) => {
         if (aceptado) {
@@ -183,21 +187,21 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
     this.subscriptions.push(dialogServiceSubscription);
   }
 
-  hasPermisoEnviarSecretaria(estadoMemoriaId: number): boolean {
-    // Si el estado es 'Completada', 'Favorable pendiente de modificaciones mínima',
-    // 'Pendiente de correcciones', 'Completada seguimiento anual',
-    // 'Completada seguimiento final' o 'En aclaracion seguimiento final' se muestra el botón de enviar.
-    if (this.isUserSolicitantePeticionEvaluacion() && (estadoMemoriaId === ESTADO_MEMORIA.COMPLETADA || estadoMemoriaId === ESTADO_MEMORIA.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS
-      || estadoMemoriaId === ESTADO_MEMORIA.PENDIENTE_CORRECCIONES || estadoMemoriaId === ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_ANUAL
-      || estadoMemoriaId === ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_FINAL
-      || estadoMemoriaId === ESTADO_MEMORIA.EN_ACLARACION_SEGUIMIENTO_FINAL)) {
-      return true;
-    } else {
-      return false;
-    }
+  hasPermisoEnviarSecretaria(memoria: IMemoriaPeticionEvaluacionWithLastEvaluacion): boolean {
+    const estadosEnviarSecretaria = [
+      ESTADO_MEMORIA.COMPLETADA,
+      ESTADO_MEMORIA.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS,
+      ESTADO_MEMORIA.PENDIENTE_CORRECCIONES,
+      ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_ANUAL,
+      ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_FINAL,
+      ESTADO_MEMORIA.EN_ACLARACION_SEGUIMIENTO_FINAL,
+      ESTADO_MEMORIA.SOLICITUD_MODIFICACION_SEGUIMIENTO_ANUAL
+    ];
+
+    return estadosEnviarSecretaria.includes(memoria.estadoActual.id);
   }
 
-  enviarSecretaria(memoria: IMemoriaPeticionEvaluacion) {
+  enviarSecretaria(memoria: IMemoriaPeticionEvaluacionWithLastEvaluacion) {
     this.subscriptions.push(this.memoriaService.checkDatosAdjuntosEnviarSecretariaExists(memoria.id).pipe(
       map(respuesta => {
         if (respuesta) {
@@ -254,7 +258,7 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
       && memoria.retrospectiva.estadoRetrospectiva.id === ESTADO_RETROSPECTIVA.COMPLETADA);
   }
 
-  enviarSecretariaRetrospectiva(memoria: IMemoriaPeticionEvaluacion) {
+  enviarSecretariaRetrospectiva(memoria: IMemoriaPeticionEvaluacionWithLastEvaluacion) {
     this.dialogService.showConfirmation(MSG_CONFIRM_ENVIAR_SECRETARIA_RETROSPECTIVA)
       .pipe(switchMap((aceptado) => {
         if (aceptado) {
@@ -291,13 +295,13 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
     return this.listadoFragment.solicitantePeticionEvaluacion?.id === this.authService.authStatus$.value.userRefId;
   }
 
-  isMemoriaSeguimiento(estadoMemoriaId: number): boolean {
-    if (estadoMemoriaId === ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_ANUAL
-      || estadoMemoriaId === ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_FINAL
-      || estadoMemoriaId === ESTADO_MEMORIA.EN_ACLARACION_SEGUIMIENTO_FINAL) {
-      return true;
-    } else {
-      return false;
-    }
+  isMemoriaSeguimiento(memoria: IMemoriaPeticionEvaluacionWithLastEvaluacion): boolean {
+    return [
+      ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_ANUAL,
+      ESTADO_MEMORIA.COMPLETADA_SEGUIMIENTO_FINAL,
+      ESTADO_MEMORIA.EN_ACLARACION_SEGUIMIENTO_FINAL,
+      ESTADO_MEMORIA.SOLICITUD_MODIFICACION_SEGUIMIENTO_ANUAL
+    ].includes(memoria.estadoActual.id);
   }
+
 }

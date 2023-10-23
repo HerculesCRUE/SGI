@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.exceptions.EvaluadorNotFoundException;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
@@ -34,9 +35,11 @@ public class EvaluadorServiceImpl implements EvaluadorService {
   private static final Long PRESIDENTE = 1L;
   private static final Long SECRETARIO = 3L;
   private final EvaluadorRepository evaluadorRepository;
+  private final SgiConfigProperties sgiConfigProperties;
 
-  public EvaluadorServiceImpl(EvaluadorRepository evaluadorRepository) {
+  public EvaluadorServiceImpl(EvaluadorRepository evaluadorRepository, SgiConfigProperties sgiConfigProperties) {
     this.evaluadorRepository = evaluadorRepository;
+    this.sgiConfigProperties = sgiConfigProperties;
   }
 
   /**
@@ -334,11 +337,12 @@ public class EvaluadorServiceImpl implements EvaluadorService {
   }
 
   /**
-   * Comprueba si la persona es evaluador en algun {@link Comite}
+   * Comprueba si la persona es evaluador activo en algun {@link Comite}
    * 
    * @param personaRef identificador de la persona
    * @return si es evaluador o no
    */
+  @Override
   public boolean isEvaluador(String personaRef) {
     log.debug("isEvaluador({}) - start", personaRef);
     Specification<Evaluador> specActivos = EvaluadorSpecifications.activos();
@@ -348,6 +352,32 @@ public class EvaluadorServiceImpl implements EvaluadorService {
     boolean isEvaluador = evaluadorRepository.count(specs) > 0;
 
     log.debug("isEvaluador({}) - end", personaRef);
+    return isEvaluador;
+  }
+
+  /**
+   * Comprueba si la persona correspondiente al evaluador esta activa en el
+   * {@link Comite}
+   * 
+   * @param evaluadorId identificador del {@link Evaluador}
+   * @param comiteId    identificador del {@link Comite}
+   * @return si esta activo o no
+   */
+  @Override
+  public boolean isEvaluadorActivoComite(Long evaluadorId, Long comiteId) {
+    log.debug("isEvaluadorActivoComite(Long evaluadorId, Long comiteId) - start");
+    Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
+
+    Specification<Evaluador> specActivos = EvaluadorSpecifications.activos();
+    Specification<Evaluador> specByPersonaRef = EvaluadorSpecifications.byPersonaRefEvaluadorId(evaluadorId);
+    Specification<Evaluador> specByComite = EvaluadorSpecifications.byComiteId(comiteId);
+    Specification<Evaluador> specActivoByFecha = EvaluadorSpecifications.activoByFecha(fechaActual);
+    Specification<Evaluador> specs = Specification.where(specActivos).and(specByPersonaRef).and(specByComite)
+        .and(specActivoByFecha);
+
+    boolean isEvaluador = evaluadorRepository.count(specs) > 0;
+
+    log.debug("isEvaluadorActivoComite(Long evaluadorId, Long comiteId) - end");
     return isEvaluador;
   }
 

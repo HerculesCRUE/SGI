@@ -10,8 +10,10 @@ import org.crue.hercules.sgi.eti.dto.DocumentoOutput;
 import org.crue.hercules.sgi.eti.dto.MemoriaEvaluada;
 import org.crue.hercules.sgi.eti.model.Acta;
 import org.crue.hercules.sgi.eti.model.BaseEntity.Update;
+import org.crue.hercules.sgi.eti.model.Comentario;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.service.ActaService;
+import org.crue.hercules.sgi.eti.service.ComentarioService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,16 +45,20 @@ public class ActaController {
 
   /** Acta service */
   private final ActaService service;
+  /** Comentario service */
+  private final ComentarioService comentariosService;
 
   /**
    * Instancia un nuevo ActaController.
    * 
-   * @param service {@link ActaService}
+   * @param service            {@link ActaService}
+   * @param comentariosService {@link ComentarioService}
    */
-  public ActaController(ActaService service) {
-    log.debug("ActaController(ActaService service) - start");
+  public ActaController(ActaService service, ComentarioService comentariosService) {
+    log.debug("ActaController(ActaService service, ComentarioService comentariosService) - start");
     this.service = service;
-    log.debug("ActaController(ActaService service) - end");
+    this.comentariosService = comentariosService;
+    log.debug("ActaController(ActaService service,ComentarioService comentariosService) - end");
   }
 
   /**
@@ -266,5 +272,86 @@ public class ActaController {
     }
     log.debug("Acta confirmarRegistroBlockchain(Long id) - end");
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Informa si los {@link Comentario} han sido enviados por el usuario
+   *
+   * @param id            Id de {@link Acta}.
+   * @param authorization autenticación
+   * @return HTTP-200 Si se han enviado / HTTP-204 Si no se han enviado
+   */
+  @RequestMapping(path = "/{id}/comentarios-enviados", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-V','ETI-ACT-INV-ER','ETI-ACT-ER')")
+  public ResponseEntity<Void> isComentariosEnviados(@PathVariable Long id, Authentication authorization) {
+    log.debug("isComentariosEnviados(Long id, Authentication authorization) - start");
+    String personaRef = authorization.getName();
+    if (service.isComentariosActaEnviados(id, personaRef)) {
+      log.debug("isComentariosEnviados(Long id, Authentication authorization) - end");
+      return new ResponseEntity<>(HttpStatus.OK);
+    }
+    log.debug("isComentariosEnviados(Long id, Authentication authorization) - end");
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Indica si es posible enviar {@link Comentario} por el usuario
+   *
+   * @param id            Id de {@link Evaluacion}.
+   * @param authorization autenticación
+   * @return HTTP-200 Si es posible enviar / HTTP-204 Si no es posible enviar
+   */
+  @RequestMapping(path = "/{id}/posible-enviar-comentarios", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-V','ETI-ACT-INV-ER','ETI-ACT-ER')")
+  public ResponseEntity<Void> isPosibleEnviarComentarios(@PathVariable Long id,
+      Authentication authorization) {
+    log.debug("isPosibleEnviarComentarios(Long id, Authentication authorization) - start");
+    String personaRef = authorization.getName();
+    if (service.isPosibleEnviarComentariosActa(id, personaRef)) {
+      log.debug("isPosibleEnviarComentarios(Long id, Authentication authorization) - end");
+      return new ResponseEntity<>(HttpStatus.OK);
+    }
+    log.debug("isPosibleEnviarComentarios(Long id, Authentication authorization) - end");
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Permite enviar los comentarios del {@link Acta}
+   * 
+   * @param id            Id del {@link Acta}.
+   * @param authorization autenticación
+   * @return HTTP-200 Si se puede enviar / HTTP-204 Si no se puede enviar
+   */
+  @RequestMapping(path = "/{id}/enviar-comentarios", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-ECOMR','ETI-ACT-INV-ECOMR')")
+  public ResponseEntity<Void> enviarComentarios(@PathVariable Long id, Authentication authorization) {
+    log.debug("enviarComentarios(Long id) - start");
+    String personaRef = authorization.getName();
+    Boolean returnValue = service.enviarComentariosEvaluacion(id, personaRef);
+    log.debug("enviarComentarios(Long id) - end");
+    return Boolean.TRUE.equals(returnValue) ? new ResponseEntity<>(HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Obtener todas las entidades paginadas {@link Comentario} activas para una
+   * determinada {@link Acta}.
+   *
+   * @param id         Id de {@link Acta}.
+   * @param personaRef identificador persona
+   * @return la lista de entidades {@link Comentario} paginadas.
+   */
+  @GetMapping("/{id}/comentarios-evaluador/{personaRef}/persona")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR')")
+  public ResponseEntity<List<Comentario>> getComentariosEvaluadorByPersonaRef(@PathVariable Long id,
+      @PathVariable String personaRef) {
+    log.debug("getComentariosEvaluadorByPersonaRef(Long id, String personaRef) - start");
+    List<Comentario> comentariosPersonaEvaluador = comentariosService.findComentariosActaByPersonaRef(id,
+        personaRef);
+    log.debug("getComentariosEvaluadorByPersonaRef(Long id,String personaRef) - end");
+    if (comentariosPersonaEvaluador.isEmpty()) {
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    return new ResponseEntity<>(comentariosPersonaEvaluador, HttpStatus.OK);
   }
 }

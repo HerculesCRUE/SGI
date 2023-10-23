@@ -74,12 +74,17 @@ export class DetalleOperacionesGastosComponent extends FragmentComponent impleme
 
     this.subscriptions.push(this.formPart.loadDataExport().subscribe(
       (exportData) => {
-        const config: IDesgloseEconomicoExportData = {
-          data: exportData.data,
-          columns: exportData.columns,
+        const data: IDesgloseEconomicoExportData = {
+          columns: exportData?.columns,
+          data: exportData?.data,
           totalRegistrosExportacionExcel: this.totalElementos,
           limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
         };
+
+        const config = {
+          data
+        };
+
         this.matDialog.open(DetalleOperacionesGastosExportModalComponent, config);
       },
       this.formPart.processError

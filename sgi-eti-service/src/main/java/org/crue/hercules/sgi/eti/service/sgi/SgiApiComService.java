@@ -12,13 +12,16 @@ import org.crue.hercules.sgi.eti.dto.com.EmailInput.Deferrable;
 import org.crue.hercules.sgi.eti.dto.com.EmailOutput;
 import org.crue.hercules.sgi.eti.dto.com.EmailParam;
 import org.crue.hercules.sgi.eti.dto.com.EtiComActaFinalizarActaData;
+import org.crue.hercules.sgi.eti.dto.com.EtiComAsignacionEvaluacionData;
 import org.crue.hercules.sgi.eti.dto.com.EtiComAvisoRetrospectivaData;
 import org.crue.hercules.sgi.eti.dto.com.EtiComDictamenEvaluacionRevMinData;
 import org.crue.hercules.sgi.eti.dto.com.EtiComDictamenEvaluacionSeguimientoRevMinData;
 import org.crue.hercules.sgi.eti.dto.com.EtiComEvaluacionModificadaData;
 import org.crue.hercules.sgi.eti.dto.com.EtiComInformeSegAnualPendienteData;
 import org.crue.hercules.sgi.eti.dto.com.EtiComInformeSegFinalPendienteData;
+import org.crue.hercules.sgi.eti.dto.com.EtiComMemoriaIndicarSubsanacionData;
 import org.crue.hercules.sgi.eti.dto.com.EtiComMemoriaRevisionMinArchivadaData;
+import org.crue.hercules.sgi.eti.dto.com.EtiComRevisionActaData;
 import org.crue.hercules.sgi.eti.dto.com.Recipient;
 import org.crue.hercules.sgi.eti.dto.com.Status;
 import org.crue.hercules.sgi.eti.enums.ServiceType;
@@ -91,6 +94,18 @@ public class SgiApiComService extends SgiApiBaseService {
 
   private static final String TEMPLATE_ETI_COM_MEM_ARCHIVADA_AUT = "ETI_COM_MEM_ARCHIVADA_AUT";
   private static final String TEMPLATE_ETI_COM_MEM_ARCHIVADA_AUT_PARAM = TEMPLATE_ETI_COM_MEM_ARCHIVADA_AUT
+      + DATA;
+
+  private static final String TEMPLATE_ETI_COM_MEN_INDICAR_SUBSANACION = "ETI_COM_MEM_INDICAR_SUBSANACION";
+  private static final String TEMPLATE_ETI_COM_MEN_INDICAR_SUBSANACION_PARAM = TEMPLATE_ETI_COM_MEN_INDICAR_SUBSANACION
+      + DATA;
+
+  private static final String TEMPLATE_ETI_COM_ASIGNACION_EVALUACION = "ETI_COM_ASIGNACION_EVALUACION";
+  private static final String TEMPLATE_ETI_COM_ASIGNACION_EVALUACION_PARAM = TEMPLATE_ETI_COM_ASIGNACION_EVALUACION
+      + DATA;
+
+  private static final String TEMPLATE_ETI_COM_REVISION_ACTA = "ETI_COM_REVISION_ACTA";
+  private static final String TEMPLATE_ETI_COM_REVISION_ACTA_PARAM = TEMPLATE_ETI_COM_REVISION_ACTA
       + DATA;
 
   private final SgiConfigProperties sgiConfigProperties;
@@ -343,6 +358,30 @@ public class SgiApiComService extends SgiApiBaseService {
     return this.createComunicado(data, recipients,
         TEMPLATE_ETI_COM_MEM_ARCHIVADA_AUT,
         TEMPLATE_ETI_COM_MEM_ARCHIVADA_AUT_PARAM);
+  }
+
+  public EmailOutput createComunicadoMemoriaIndicarSubsanacion(
+      EtiComMemoriaIndicarSubsanacionData data, List<Recipient> recipients)
+      throws JsonProcessingException {
+    return this.createComunicado(data, recipients,
+        TEMPLATE_ETI_COM_MEN_INDICAR_SUBSANACION,
+        TEMPLATE_ETI_COM_MEN_INDICAR_SUBSANACION_PARAM);
+  }
+
+  public EmailOutput createComunicadoAsignacionEvaluacion(
+      EtiComAsignacionEvaluacionData data, List<Recipient> recipients)
+      throws JsonProcessingException {
+    return this.createComunicado(data, recipients,
+        TEMPLATE_ETI_COM_ASIGNACION_EVALUACION,
+        TEMPLATE_ETI_COM_ASIGNACION_EVALUACION_PARAM);
+  }
+
+  public EmailOutput createComunicadoRevisionActa(
+      EtiComRevisionActaData data, List<Recipient> recipients)
+      throws JsonProcessingException {
+    return this.createComunicado(data, recipients,
+        TEMPLATE_ETI_COM_REVISION_ACTA,
+        TEMPLATE_ETI_COM_REVISION_ACTA_PARAM);
   }
 
   /**

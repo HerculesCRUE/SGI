@@ -120,11 +120,21 @@ export class EvaluadorService extends SgiMutableRestService<number, IEvaluadorBa
   }
 
   /**
-   * Comprueba si el usuario es evaluador en algun comite
+   * Comprueba si el usuario es evaluador activo en algun comite
    *
    */
   isEvaluador(): Observable<boolean> {
     const url = `${this.endpointUrl}/is-evaluador`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  /**
+   * Comprueba si el evaluador esta activo en el comite
+   */
+  isActivo(evaluadorId: number, comiteId: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${evaluadorId}/activo-comite/${comiteId}`;
     return this.http.head(url, { observe: 'response' }).pipe(
       map(response => response.status === 200)
     );

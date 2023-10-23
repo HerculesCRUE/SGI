@@ -1,0 +1,106 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="dev" author="master" id="00.04.00-peticion-evaluacion">
+    <update tableName="peticion_evaluacion">
+      <column name="titulo" value="Proyecto1"></column>
+      <column name="resumen"><![CDATA[<p>Resumen</p>]]></column>
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="codigo" value="PR_1" />
+      </whereParams>
+    </update>
+
+    <update tableName="peticion_evaluacion">
+      <column name="titulo" value="Proyecto2"></column>
+      <column name="resumen"><![CDATA[<p>Resumen</p>]]></column>
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="codigo" value="PR_2" />
+      </whereParams>
+    </update>
+
+    <update tableName="peticion_evaluacion">
+      <column name="titulo" value="Proyecto3"></column>
+      <column name="resumen"><![CDATA[<p>Resumen</p>]]></column>
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="codigo" value="PR_3" />
+      </whereParams>
+    </update>
+
+    <update tableName="peticion_evaluacion">
+      <column name="titulo" value="Proyecto4"></column>
+      <column name="resumen"><![CDATA[<p>Resumen</p>]]></column>
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="codigo" value="PR_4" />
+      </whereParams>
+    </update>
+
+    <update tableName="peticion_evaluacion">
+      <column name="titulo" value="Proyecto5"></column>
+      <column name="resumen"><![CDATA[<p>Resumen</p>]]></column>
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="codigo" value="PR_5" />
+      </whereParams>
+    </update>
+
+    <update tableName="acta">
+      <column name="resumen"><![CDATA[<p>Resumen1</p>]]></column>
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="1" />
+      </whereParams>
+    </update>
+
+    <update tableName="acta">
+      <column name="resumen"><![CDATA[<p>Resumen2</p>]]></column>
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="2" />
+      </whereParams>
+    </update>
+
+    <update tableName="acta">
+      <column name="resumen"><![CDATA[<p>Resumen3</p>]]></column>
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="3" />
+      </whereParams>
+    </update>
+
+    <update tableName="acta">
+      <column name="resumen"><![CDATA[<p>Resumen4</p>]]></column>
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="4" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="dev" author="master" id="00.04.00-tipo-comentario">
+    <update tableName="tipo_comentario">
+      <column name="nombre" value="ACTA_GESTOR"></column>
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="3" />
+      </whereParams>
+    </update>
+
+    <insert tableName="tipo_comentario">
+      <column name="id" valueNumeric="4" />
+      <column name="nombre" value="ACTA_EVALUADOR" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

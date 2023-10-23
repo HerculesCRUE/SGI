@@ -1,10 +1,11 @@
+import { T } from '@angular/cdk/keycodes';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
 import { SnackBarService } from '@core/services/snack-bar.service';
-import { FormlyFieldConfig } from '@ngx-formly/core';
+import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 
@@ -19,6 +20,7 @@ export interface TableCRUDModalData {
     name: string;
     gender: string;
   };
+  formState: any;
 }
 
 @Component({
@@ -30,6 +32,12 @@ export class TableCRUDModalComponent implements OnInit {
   title: string;
   private entity: string;
   private gender: string;
+
+  options: FormlyFormOptions = {
+    formState: {
+      mainModel: {},
+    },
+  };
 
   formGroup: FormGroup = new FormGroup({});
   fields: FormlyFieldConfig[];
@@ -54,6 +62,7 @@ export class TableCRUDModalComponent implements OnInit {
     this.model = this.tableCRUDModalData?.formModel ?? {};
     this.entity = this.tableCRUDModalData?.entity?.name;
     this.gender = this.tableCRUDModalData?.entity?.gender;
+    this.options.formState = this.tableCRUDModalData?.formState;
   }
 
   /**

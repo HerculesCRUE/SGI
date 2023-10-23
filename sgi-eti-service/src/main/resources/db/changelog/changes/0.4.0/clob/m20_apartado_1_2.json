@@ -1,0 +1,25 @@
+[
+  {
+    "key": "ap1_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "1.2 Justificación del uso de animales"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Exponer brevemente la necesidad de utilización de animales.</p>"
+      },
+      {
+        "key": "justificacion",
+        "className": "descripcion",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Justificación",
+          "required": true
+        }
+      }
+    ]
+  }
+]

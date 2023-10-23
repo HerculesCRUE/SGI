@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.eti.service;
 
+import java.util.List;
+
 import org.crue.hercules.sgi.eti.exceptions.AsistentesNotFoundException;
 import org.crue.hercules.sgi.eti.model.Asistentes;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
@@ -64,5 +66,14 @@ public interface AsistentesService {
    * Elimina todos los {@link Asistentes}.
    */
   void deleteAll();
+
+  /**
+   * Obtener todos los {@link Asistentes} activos para una
+   * determinada {@link ConvocatoriaReunion}.
+   *
+   * @param convocatoriaReunionId Id de {@link ConvocatoriaReunion}.
+   * @return la lista de entidades {@link Asistentes}.
+   */
+  List<Asistentes> findAllByConvocatoriaReunionId(Long convocatoriaReunionId);
 
 }

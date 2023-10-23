@@ -36,6 +36,9 @@
   </ng-container>
   <ng-container footer>
     <sgi-action-footer [texto]="textoActualizar" [actionService]="actionService">
+      <sgi-action-footer-button color="primary" action="indicar-subsanacion"
+        [text]="'btn.eti.memoria.indicar-subsanacion' | translate" *ngIf="showIndicarSubsanacionBtn" icon="rate_review">
+      </sgi-action-footer-button>
     </sgi-action-footer>
   </ng-container>
 </sgi-action>

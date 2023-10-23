@@ -1,25 +1,34 @@
 package org.crue.hercules.sgi.eti.service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.dto.com.EmailOutput;
 import org.crue.hercules.sgi.eti.dto.com.EtiComActaFinalizarActaData;
+import org.crue.hercules.sgi.eti.dto.com.EtiComAsignacionEvaluacionData;
 import org.crue.hercules.sgi.eti.dto.com.EtiComAvisoRetrospectivaData;
 import org.crue.hercules.sgi.eti.dto.com.EtiComDictamenEvaluacionRevMinData;
 import org.crue.hercules.sgi.eti.dto.com.EtiComEvaluacionModificadaData;
 import org.crue.hercules.sgi.eti.dto.com.EtiComInformeSegAnualPendienteData;
 import org.crue.hercules.sgi.eti.dto.com.EtiComInformeSegFinalPendienteData;
+import org.crue.hercules.sgi.eti.dto.com.EtiComMemoriaIndicarSubsanacionData;
 import org.crue.hercules.sgi.eti.dto.com.EtiComMemoriaRevisionMinArchivadaData;
+import org.crue.hercules.sgi.eti.dto.com.EtiComRevisionActaData;
 import org.crue.hercules.sgi.eti.dto.com.Recipient;
 import org.crue.hercules.sgi.eti.dto.sgp.PersonaOutput;
+import org.crue.hercules.sgi.eti.model.Acta;
+import org.crue.hercules.sgi.eti.model.Asistentes;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.crue.hercules.sgi.eti.service.sgi.SgiApiComService;
 import org.crue.hercules.sgi.eti.service.sgi.SgiApiSgpService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -147,8 +156,7 @@ public class ComunicadosService {
   }
 
   public void enviarComunicadoInformeRetrospectivaCeeaPendiente(String nombreInvestigacion, String generoComite,
-      String referenciaMemoria, String tipoActividad, String tituloSolicitudEvaluacion, String codigoOrganoCompetente,
-      String solicitanteRef)
+      String referenciaMemoria, String tipoActividad, String tituloSolicitudEvaluacion, String solicitanteRef)
       throws JsonProcessingException {
     log.debug("enviarComunicadoInformeRetrospectivaCeeaPendiente() - start");
 
@@ -162,8 +170,7 @@ public class ComunicadosService {
               .referenciaMemoria(referenciaMemoria)
               .tipoActividad(tipoActividad)
               .tituloSolicitudEvaluacion(tituloSolicitudEvaluacion)
-              .enlaceAplicacion(enlaceAplicacion)
-              .codigoOrganoCompetente(codigoOrganoCompetente).build(),
+              .enlaceAplicacion(enlaceAplicacion).build(),
           recipients);
       emailService.sendEmail(emailOutput.getId());
     } else {
@@ -301,6 +308,111 @@ public class ComunicadosService {
           "enviarComunicadoMemoriaRevisionMinimaArchivada() - end - No se puede enviar el comunicado, no existe ninguna persona asociada");
     }
     log.debug("enviarComunicadoMemoriaArchivadaAutomaticamentePorInactividad() - end");
+  }
+
+  public void enviarComunicadoIndicarSubsanacion(String nombreInvestigacion, String comentarioEstado,
+      String referenciaMemoria, String tipoActividad, String tituloSolicitudEvaluacion, String solicitanteRef)
+      throws JsonProcessingException {
+    log.debug(
+        "enviarComunicadoIndicarSubsanacion(String nombreInvestigacion, String comentarioEstado, String referenciaMemoria, String tipoActividad, String tituloSolicitudEvaluacion, String enlaceAplicacion, String solicitanteRef) - start");
+    List<Recipient> recipients = getRecipientsFromPersonaRef(solicitanteRef);
+    String enlaceAplicacion = sgiConfigProperties.getWebUrl();
+    if (recipients != null) {
+      EmailOutput emailOutput = emailService.createComunicadoMemoriaIndicarSubsanacion(
+          EtiComMemoriaIndicarSubsanacionData.builder()
+              .enlaceAplicacion(enlaceAplicacion)
+              .comentarioEstado(comentarioEstado)
+              .nombreInvestigacion(nombreInvestigacion)
+              .referenciaMemoria(referenciaMemoria)
+              .tipoActividad(tipoActividad)
+              .tituloSolicitudEvaluacion(tituloSolicitudEvaluacion)
+              .build(),
+          recipients);
+      emailService.sendEmail(emailOutput.getId());
+    } else {
+      log.debug(
+          "enviarComunicadoIndicarSubsanacion(String nombreInvestigacion, String comentarioEstado, String referenciaMemoria, String tipoActividad, String tituloSolicitudEvaluacion, String enlaceAplicacion, String solicitanteRef) - No se puede enviar el comunicado, no existe ninguna persona asociada");
+    }
+    log.debug(
+        "enviarComunicadoIndicarSubsanacion(String nombreInvestigacion, String comentarioEstado, String referenciaMemoria, String tipoActividad, String tituloSolicitudEvaluacion, String enlaceAplicacion, String solicitanteRef) - end");
+  }
+
+  public void enviarComunicadoAsignacionEvaluacion(Evaluacion evaluacion, List<Evaluador> evaluadores,
+      Instant fechaEvaluacionAnterior)
+      throws JsonProcessingException {
+    log.debug(
+        "enviarComunicadoAsignacionEvaluacion(Evaluacion evaluacion, List<Evaluador> evaluadores) - start");
+    List<Recipient> recipients = new ArrayList();
+
+    evaluadores.forEach(evaluador -> {
+      recipients.addAll(getRecipientsFromPersonaRef(evaluador.getPersonaRef()));
+    });
+
+    PersonaOutput evaluador1 = null;
+    PersonaOutput evaluador2 = null;
+    try {
+      evaluador1 = personasService.findById(evaluacion.getEvaluador1().getPersonaRef());
+      evaluador2 = personasService.findById(evaluacion.getEvaluador2().getPersonaRef());
+    } catch (Exception e) {
+      log.debug(
+          "enviarComunicadoAsignacionEvaluacion(Evaluacion evaluacion, List<Evaluador> evaluadores) - No se puede enviar el comunicado, no se pueden resolver los nombers de los evaluadores");
+    }
+
+    if (!CollectionUtils.isEmpty(recipients) && ObjectUtils.isNotEmpty(evaluador1)
+        && ObjectUtils.isNotEmpty(evaluador2)) {
+      EmailOutput emailOutput = emailService.createComunicadoAsignacionEvaluacion(
+          EtiComAsignacionEvaluacionData.builder()
+              .fechaConvocatoriaReunion(evaluacion.getConvocatoriaReunion().getFechaEvaluacion())
+              .referenciaMemoria(evaluacion.getMemoria().getNumReferencia())
+              .tituloSolicitudEvaluacion(evaluacion.getMemoria().getPeticionEvaluacion().getTitulo())
+              .nombreApellidosEvaluador1(evaluador1.getNombre() + " " + evaluador1.getApellidos())
+              .nombreApellidosEvaluador2(evaluador2.getNombre() + " " + evaluador2.getApellidos())
+              .nombreInvestigacion(evaluacion.getConvocatoriaReunion().getComite().getNombreInvestigacion())
+              .generoComite(evaluacion.getMemoria().getComite().getGenero()
+                  .toString())
+              .fechaEvaluacionAnterior(fechaEvaluacionAnterior)
+              .enlaceAplicacion(sgiConfigProperties.getWebUrl())
+              .build(),
+          recipients);
+      emailService.sendEmail(emailOutput.getId());
+    } else {
+      log.debug(
+          "enviarComunicadoAsignacionEvaluacion(Evaluacion evaluacion, List<Evaluador> evaluadores) - No se puede enviar el comunicado, no existe ninguna persona asociada");
+    }
+    log.debug(
+        "enviarComunicadoAsignacionEvaluacion(Evaluacion evaluacion, List<Evaluador> evaluadores) - end");
+  }
+
+  public void enviarComunicadoRevisionActa(Acta acta, List<Asistentes> asistentes)
+      throws JsonProcessingException {
+
+    log.debug(
+        "enviarComunicadoRevisionActa(Evaluacion evaluacion, List<Evaluador> evaluadores) - start");
+    List<Recipient> recipients = new ArrayList();
+
+    asistentes.forEach(asistente -> {
+      recipients.addAll(getRecipientsFromPersonaRef(asistente.getEvaluador().getPersonaRef()));
+    });
+
+    String enlaceAplicacion = sgiConfigProperties.getWebUrl();
+    if (!CollectionUtils.isEmpty(recipients)) {
+      EmailOutput emailOutput = emailService.createComunicadoRevisionActa(
+          EtiComRevisionActaData.builder()
+              .enlaceAplicacion(enlaceAplicacion)
+              .nombreInvestigacion(acta.getConvocatoriaReunion().getComite().getNombreInvestigacion())
+              .nombreComite(acta.getConvocatoriaReunion().getComite().getComite())
+              .fechaEvaluacion(acta.getConvocatoriaReunion().getFechaEvaluacion())
+              .generoComite(acta.getConvocatoriaReunion().getComite().getGenero().name())
+              .build(),
+          recipients);
+      emailService.sendEmail(emailOutput.getId());
+    } else {
+      log.debug(
+          "enviarComunicadoRevisionActa(Acta acta, List<Asistentes> asistentes) - No se puede enviar el comunicado, no existe ninguna persona asociada");
+    }
+    log.debug(
+        "enviarComunicadoRevisionActa(Acta acta, List<Asistentes> asistentes) - end");
+
   }
 
   /**

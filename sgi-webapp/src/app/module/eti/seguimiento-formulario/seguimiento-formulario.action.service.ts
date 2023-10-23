@@ -5,6 +5,7 @@ import { SeguimientoComentarioFragment } from './seguimiento-comentarios/seguimi
 import { SeguimientoDatosMemoriaFragment } from './seguimiento-datos-memoria/seguimiento-datos-memoria.fragment';
 import { SeguimientoDocumentacionFragment } from './seguimiento-documentacion/seguimiento-documentacion.fragment';
 import { SeguimientoEvaluacionFragment } from './seguimiento-evaluacion/seguimiento-evaluacion.fragment';
+import { IEvaluacionWithComentariosEnviados } from '../evaluacion-evaluador/evaluacion-evaluador-listado/evaluacion-evaluador-listado.component';
 
 export enum Rol { EVALUADOR = TIPO_COMENTARIO.EVALUADOR, GESTOR = TIPO_COMENTARIO.GESTOR }
 
@@ -17,14 +18,14 @@ export abstract class SeguimientoFormularioActionService extends ActionService {
     DOCUMENTACION: 'documentarion'
   };
 
-  protected evaluacion: IEvaluacion;
+  protected evaluacion: IEvaluacionWithComentariosEnviados;
   protected comentarios: SeguimientoComentarioFragment;
   protected datosMemoria: SeguimientoDatosMemoriaFragment;
   protected documentacion: SeguimientoDocumentacionFragment;
   protected evaluaciones: SeguimientoEvaluacionFragment;
 
 
-  getEvaluacion(): IEvaluacion {
+  getEvaluacion(): IEvaluacionWithComentariosEnviados {
     return this.evaluacion;
   }
 

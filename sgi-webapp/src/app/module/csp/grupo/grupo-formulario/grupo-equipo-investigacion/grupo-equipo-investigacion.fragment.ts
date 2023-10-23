@@ -3,7 +3,7 @@ import { IGrupo } from '@core/models/csp/grupo';
 import { IGrupoEquipo } from '@core/models/csp/grupo-equipo';
 import { ICategoriaProfesional } from '@core/models/sgp/categoria-profesional';
 import { Fragment } from '@core/services/action-service';
-import { ConfiguracionService } from '@core/services/csp/configuracion.service';
+import { ConfigService } from '@core/services/csp/config.service';
 import { GrupoEquipoService } from '@core/services/csp/grupo-equipo/grupo-equipo.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -12,7 +12,7 @@ import { LuxonUtils } from '@core/utils/luxon-utils';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, from, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export interface IGrupoEquipoListado extends IGrupoEquipo {
@@ -31,7 +31,7 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
     private readonly personaService: PersonaService,
     private readonly vinculacionService: VinculacionService,
     public readonly readonly: boolean,
-    private readonly configuracionService: ConfiguracionService
+    private readonly configuracionService: ConfigService
   ) {
     super(key);
     this.setComplete(true);

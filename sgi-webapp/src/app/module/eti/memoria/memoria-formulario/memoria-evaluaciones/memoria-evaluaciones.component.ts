@@ -100,8 +100,15 @@ export class MemoriaEvaluacionesComponent extends FragmentComponent implements O
   }
 
   hasInformeEvaluacion(evaluacion: StatusWrapper<IEvaluacion>): boolean {
-    return ((evaluacion.value.tipoEvaluacion.id === TIPO_EVALUACION.MEMORIA && (evaluacion.value.dictamen?.id === DICTAMEN.FAVORABLE_PDTE_REV_MINIMA
-      || evaluacion.value.dictamen?.id === DICTAMEN.PDTE_CORRECCIONES || evaluacion.value.dictamen?.id === DICTAMEN.NO_PROCEDE_EVALUAR))
+    const dictamenMemoriaWithInformeEvaluacion = [
+      DICTAMEN.FAVORABLE_PDTE_REV_MINIMA,
+      DICTAMEN.PDTE_CORRECCIONES,
+      DICTAMEN.NO_PROCEDE_EVALUAR,
+      DICTAMEN.DESFAVORABLE
+    ];
+
+    return (
+      (evaluacion.value.tipoEvaluacion.id === TIPO_EVALUACION.MEMORIA && dictamenMemoriaWithInformeEvaluacion.includes(evaluacion.value.dictamen?.id))
       || (evaluacion.value.tipoEvaluacion.id === TIPO_EVALUACION.SEGUIMIENTO_ANUAL && evaluacion.value.dictamen?.id === DICTAMEN.SOLICITUD_MODIFICACIONES_SEG_ANUAL)
       || (evaluacion.value.tipoEvaluacion.id === TIPO_EVALUACION.SEGUIMIENTO_FINAL && evaluacion.value.dictamen?.id === DICTAMEN.SOLICITUD_ACLARACIONES_SEG_FINAL)
     );

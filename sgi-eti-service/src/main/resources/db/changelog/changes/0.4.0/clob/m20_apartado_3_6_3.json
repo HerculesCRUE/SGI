@@ -1,0 +1,46 @@
+[
+  {
+    "key": "ap3_6_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.6.3 Animales protegidos o en peligro de extinción"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Las especies amenazadas y en peligro de extinción pueden consultarse en la página de la CITES (<a target='_blank' href='https://cites.org/esp/app/appendices.php'>Anexo A del Reglamento (CE) nº 338/97</a>).</p><p>La regulación del uso en experimentación de estas especies se precisa en el <a target='_blank' href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a20'>artículo 20</a> del RD 53/13, según el cual sólo se pueden utilizar estos animales si se cumplen las dos condiciones siguientes:</p><ul><li>El proyecto tiene una de las siguientes finalidades:<br><li>a) Precención, profilaxis, diagnóstico o tratamiento de enfermedades, maa salud u otras anomalías o sus efectos en los seres humanos, los animales o las plantas</li><br><li>b) La protección del medio natural en interés de la salud o el bienestar de los seres humanos o los aniamles.</li><br><li>c) La investigación dirigida a la conservación de las especies.</li></li><li>Se ha justificado científicamente que dicha finalidad no puede conseguirse utilizando animales de otras especies.</li></ul><p>En este apartado también se incluye el uso de primates como animal de experimentación, para lo cual hay que tener en cuenta lo dispuesto en el <strong>Real Decreto 1386/2018</strong>, de 19 de noviembre, por el que se modifica el Real Decreto 53/2013.</p>"
+      },
+      {
+        "template": "¿Son animales protegidos o en peligro de extinción?"
+      },
+      {
+        "key": "animalesProtegidosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Nota: recuerde que las excepciones requieren aportar el documento correspondiente en el apartado '5.4 Situaciones especiales'.</p>"
+      }
+    ]
+  }
+]

@@ -71,7 +71,7 @@ public class InformePatentabilidad extends BaseEntity {
   @Column(name = "entidad_creadora_ref", length = REF_LENGTH, nullable = false)
   private String entidadCreadoraRef;
 
-  @Column(name = "contacto_entidad_creadora", length = CONTACTO_LENGTH, nullable = false)
+  @Column(name = "contacto_entidad_creadora", length = CONTACTO_LENGTH, nullable = true)
   private String contactoEntidadCreadora;
 
   @Column(name = "contacto_examinador", length = CONTACTO_LENGTH, nullable = false)

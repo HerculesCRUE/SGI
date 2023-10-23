@@ -6,7 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IComentario } from '@core/models/eti/comentario';
+import { IComentario, TipoEstadoComentario } from '@core/models/eti/comentario';
 import { TipoComentario } from '@core/models/eti/tipo-comentario';
 import { DialogService } from '@core/services/dialog.service';
 import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reunion.service';
@@ -20,6 +20,7 @@ import { getApartadoNombre, getSubApartadoNombre } from '../../../shared/pipes/b
 import { Rol } from '../../acta-rol';
 import { ActaActionService } from '../../acta.action.service';
 import { ActaComentariosFragment } from './acta-comentarios.fragment';
+import { SgiAuthService } from '@sgi/framework/auth';
 
 const MSG_DELETE = marker('msg.delete.entity');
 const COMENTARIO_KEY = marker('eti.comentario');
@@ -44,6 +45,9 @@ export class ActaComentariosComponent extends FragmentComponent implements OnIni
   textoDelete: string;
   msgParamComentarioEntity = {};
 
+  public personaId: string;
+  public disabledCreate = false;
+
   get MSG_PARAMS() {
     return MSG_PARAMS;
   }
@@ -60,15 +64,20 @@ export class ActaComentariosComponent extends FragmentComponent implements OnIni
     return this.actionService.readonly;
   }
 
+  get TIPO_ESTADO_COMENTARIO() {
+    return TipoEstadoComentario;
+  }
+
   constructor(
     private readonly dialogService: DialogService,
     private tipoComentarioService: TipoComentarioService,
     private matDialog: MatDialog,
     private actionService: ActaActionService,
-    private convocatoriaReunionService: ConvocatoriaReunionService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly authService: SgiAuthService
   ) {
     super(actionService.FRAGMENT.COMENTARIOS, actionService);
+    this.personaId = this.authService.authStatus$.value.userRefId;
     this.formPart = this.fragment as ActaComentariosFragment;
     this.elementosPagina = [5, 10, 25, 100];
     this.columnas = ['evaluador.nombre', 'memoria.numReferencia', 'apartado.bloque', 'apartado.padre',
@@ -83,6 +92,10 @@ export class ActaComentariosComponent extends FragmentComponent implements OnIni
     this.dataSource.sort = this.sort;
     this.subscriptions.push(this.formPart.comentarios$.subscribe(elements => {
       this.dataSource.data = elements;
+
+      if (elements.length > 0 && elements.filter(comentario => comentario.value.evaluador.id === this.personaId).length > 0) {
+        this.disabledCreate = !elements.some(comentario => comentario.value.estado ? (comentario.value.estado === this.TIPO_ESTADO_COMENTARIO.ABIERTO || comentario.value.estado === null) : true);
+      }
     }));
 
     this.dataSource.sortingDataAccessor =

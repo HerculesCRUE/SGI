@@ -59,8 +59,8 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'csp.proyecto-socio.importe-solicitado' | translate}}</mat-label>
-          <input matInput formControlName="importeSolicitado" type="number" id="numInvestigadores"
-            placeholder="{{'csp.proyecto-socio.importe-solicitado' | translate}}">
+          <input matInput formControlName="importeSolicitado" type="text" id="numInvestigadores"
+            placeholder="{{'csp.proyecto-socio.importe-solicitado' | translate}}" sgiInputWithThousandSeparator>
           <mat-error *ngIf="formGroup.controls.importeSolicitado.errors?.min">
             {{'error.min.entity' | translate:msgParamImporteSolicitadoEntity}}
           </mat-error>
@@ -73,8 +73,8 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'csp.proyecto-socio.importe-presupuestado' | translate}}</mat-label>
-          <input matInput formControlName="importePresupuestado" type="number" id="numInvestigadores"
-            placeholder="{{'csp.proyecto-socio.importe-presupuestado' | translate}}">
+          <input matInput formControlName="importePresupuestado" type="text" id="numInvestigadores"
+            placeholder="{{'csp.proyecto-socio.importe-presupuestado' | translate}}" sgiInputWithThousandSeparator>
           <mat-error *ngIf="formGroup.controls.importePresupuestado.errors?.min">
             {{'error.min.entity' | translate:msgParamImportePresupuestadoEntity}}
           </mat-error>

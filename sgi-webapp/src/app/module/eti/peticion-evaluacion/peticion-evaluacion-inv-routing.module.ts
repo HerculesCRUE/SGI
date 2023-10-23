@@ -18,7 +18,7 @@ import { PeticionEvaluacionListadoInvComponent } from './peticion-evaluacion-lis
 import { PETICION_EVALUACION_ROUTE_NAMES } from './peticion-evaluacion-route-names';
 import { PeticionEvaluacionResolver } from './peticion-evaluacion.resolver';
 
-const PETICION_EVALUACION_KEY = marker('eti.peticion-evaluacion');
+const PETICION_EVALUACION_KEY = marker('eti.peticion-evaluacion-etica-proyecto');
 const MSG_NEW_TITLE = marker('title.new.entity');
 
 const routes: SgiRoutes = [

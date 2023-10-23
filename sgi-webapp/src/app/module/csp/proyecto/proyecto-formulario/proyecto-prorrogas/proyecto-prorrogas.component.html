@@ -49,7 +49,7 @@
           {{'csp.prorroga.importe' | translate}}
         </th>
         <td mat-cell *matCellDef="let wrapper">
-          {{wrapper.value.importe}}
+          {{wrapper.value.importe | number:'1.2-2'}}
         </td>
       </ng-container>
 

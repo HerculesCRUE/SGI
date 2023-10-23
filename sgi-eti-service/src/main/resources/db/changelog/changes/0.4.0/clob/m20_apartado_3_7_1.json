@@ -1,0 +1,100 @@
+[
+  {
+    "key": "ap3_7_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.1 Procedimientos/Intervenciones que se realizarán al animal"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Denominamos 'procedimientos/intervenciones' a las manipulaciones (quirúrgicas o no), pruebas u observaciones a las que es sometido el animal a lo largo del proceso de experimentación.</p>"
+      },
+      {
+        "template": "<p>Describir <strong>PORMENORIZADAMENTE</strong> (y <strong>numerados</strong>) todos los procedimientos/intervenciones a las que es sometido el animal a lo largo del proceso de experimentación. Detallar especialmente aquellas en las que se prevé que pueda sufrir 'un nivel de dolor, sufrimiento, angustia o daño duradero, equivalente o superior al causado por la introducción de una aguja conforme a la buena práctica veterinaria'. Indicar la duración de cada procedimiento/intervención, frecuencia de realización, número de animales de cada procedimiento y categoría de severidad.</p></br><p>La clasificación de la severidad que se prevé que el animal pueda experimentar dolor, sufrimiento o ansiedad, se realiza de acuerdo a la siguiente clasificación:<ul><li><strong>Sin recuperación</strong>: los procedimientos/intervenciones que se realizan enteramente bajo anestesia general tras la cual el animal no recuperará la conciencia deben clasificarse como de no recuperación.</li><li><strong>Leve</strong>: los procedimientos/intervenciones en animales a consecuencia de las cuales es probable que experimente dolor, sufrimiento o angustia leves de corta de duración, así como los procedimientos/intervenciones sin alteración significativa del bienestar o del estado general de los animales deben de clasificarse como leves.</li><li><strong>Moderada</strong>: los procedimientos/intervenciones en animales a consecuencia de las cuales es probable que experimenten dolor, sufrimiento o angustia moderados de corta duración pero duraderos, así como los procedimientos/intervenciones que pudieran causar una alteración moderada del bienestar o el estado general de los animales deben clasificarse como moderadas.</li><li><strong>Severa</strong>: los procedimientos/intervenciones en animales a consecuencia de las cuales es probable que experimenten dolor, sufrimiento o angustia intensos, o moderados pero duraderos, así como los procedimientos/intervenciones que pudieran causar una alteración grave del bienestar o del estado general de los animales deben clasificarse como severas.</li></ul></p>"
+      },
+      {
+        "type": "table-crud",
+        "key": "procedimientoIntervencionMedidaCorrectoraTable",
+        "templateOptions": {
+          "entity": "procedimiento/intervención",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Medida correctora"
+          },
+          "fieldGroup": [
+            {
+              "key": "numeroProcedimiento",
+              "type": "input",
+              "templateOptions": {
+                "label": "Nº Procedimiento/Intervención",
+                "required": true,
+                "order": 10
+              }
+            },
+            {
+              "key": "descripcionProcedimientoIntervencion",
+              "type": "textarea",
+              "templateOptions": {
+                "label": "Descripción del procedimiento/intervención",
+                "required": true,
+                "order": 20
+              }
+            },
+            {
+              "key": "frecuenciaRealizacion",
+              "type": "input",
+              "templateOptions": {
+                "label": "Frecuencia realización",
+                "required": true,
+                "order": 30
+              }
+            },
+            {
+              "key": "numeroAnimales",
+              "type": "input",
+              "templateOptions": {
+                "label": "Número de animales",
+                "required": true,
+                "order": 40
+              }
+            },
+            {
+              "key": "categoriaSeveridad",
+              "type": "select",
+              "templateOptions": {
+                "label": "Categoría de severidad",
+                "required": true,
+                "order": 50,
+                "options": [
+                  {
+                    "value": "Sin recuperación",
+                    "label": "Sin recuperación"
+                  },
+                  {
+                    "value": "Leve",
+                    "label": "Leve"
+                  },
+                  {
+                    "value": "Moderada",
+                    "label": "Moderada"
+                  },
+                  {
+                    "value": "Severa",
+                    "label": "Severa"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

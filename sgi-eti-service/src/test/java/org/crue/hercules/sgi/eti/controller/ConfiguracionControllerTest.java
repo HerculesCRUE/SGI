@@ -45,7 +45,7 @@ public class ConfiguracionControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "ETI-CNF-E" })
   public void replaceConfiguracion_ReturnsConfiguracion() throws Exception {
     // given: Una configuracion a modificar
-    String replaceConfiguracionJson = "{\"id\": 1, \"diasLimiteEvaluador\": 1, \"mesesArchivadaPendienteCorrecciones\": 4, \"diasArchivadaInactivo\":1, \"mesesAvisoProyectoCEEA\":1, \"mesesAvisoProyectoCEI\":1, \"mesesAvisoProyectoCBE\":1, \"diasAvisoRetrospectiva\":3}";
+    String replaceConfiguracionJson = "{\"id\": 1, \"diasLimiteEvaluador\": 1, \"mesesArchivadaPendienteCorrecciones\": 4, \"diasArchivadaInactivo\":1, \"mesesAvisoProyectoCEEA\":1, \"mesesAvisoProyectoCEI\":1, \"mesesAvisoProyectoCBE\":1, \"diasAvisoRetrospectiva\":3, \"duracionProyectoEvaluacion\":5}";
 
     Configuracion configuracion = generarMockConfiguracion();
 
@@ -66,7 +66,7 @@ public class ConfiguracionControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "ETI-CNF-E" })
   public void replaceConfiguracion_NotFound() throws Exception {
     // given: Una configuracion a modificar
-    String replaceConfiguracionJson = "{\"id\": 1, \"diasLimiteEvaluador\": 1, \"mesesArchivadaPendienteCorrecciones\": 4, \"diasArchivadaInactivo\":1, \"mesesAvisoProyectoCEEA\":1, \"mesesAvisoProyectoCEI\":1, \"mesesAvisoProyectoCBE\":1, \"diasAvisoRetrospectiva\":3}";
+    String replaceConfiguracionJson = "{\"id\": 1, \"diasLimiteEvaluador\": 1, \"mesesArchivadaPendienteCorrecciones\": 4, \"diasArchivadaInactivo\":1, \"mesesAvisoProyectoCEEA\":1, \"mesesAvisoProyectoCEI\":1, \"mesesAvisoProyectoCBE\":1, \"diasAvisoRetrospectiva\":3, \"duracionProyectoEvaluacion\":5}";
 
     BDDMockito.given(configuracionService.update(ArgumentMatchers.<Configuracion>any()))
         .will((InvocationOnMock invocation) -> {

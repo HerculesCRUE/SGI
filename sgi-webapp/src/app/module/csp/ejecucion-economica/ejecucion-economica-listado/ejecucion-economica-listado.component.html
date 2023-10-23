@@ -5,14 +5,16 @@
 
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <!-- Datos económicos de -->
-        <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
+        <mat-form-field
+          [fxFlex]="formGroup.controls.tipoEntidad.value === TipoEntidad.PROYECTO ? '25%' : '0 1 calc((100% - (10px * 3)) / 4)'">
           <mat-label>{{'csp.ejecucion-economica.tipo-entidad' | translate}}</mat-label>
           <sgi-select-enum formControlName="tipoEntidad" required [enumMap]="TIPO_ENTIDAD_MAP">
           </sgi-select-enum>
         </mat-form-field>
 
         <!-- Titulo proyecto / Nombre grupo -->
-        <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 2 + 10px)">
+        <mat-form-field
+          [fxFlex]="formGroup.controls.tipoEntidad.value === TipoEntidad.PROYECTO ? '25%' : '0 1 calc((100% - (10px * 3)) / 2 + 10px)'">
           <mat-label>{{(formGroup.controls.tipoEntidad.value === TipoEntidad.PROYECTO ?
             'csp.ejecucion-economica.proyecto.titulo' : 'csp.ejecucion-economica.grupo.nombre') | translate}}
           </mat-label>
@@ -21,11 +23,21 @@
         </mat-form-field>
 
         <!-- Indentificador SGE -->
-        <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
+        <mat-form-field
+          [fxFlex]="formGroup.controls.tipoEntidad.value === TipoEntidad.PROYECTO ? '25%' : '0 1 calc((100% - (10px * 3)) / 4)'">
           <mat-label>{{'csp.ejecucion-economica.identificador-sge' | translate}}</mat-label>
           <input matInput formControlName="identificadorSge" type="text"
             placeholder="{{'csp.ejecucion-economica.identificador-sge' | translate}}">
         </mat-form-field>
+
+        <!-- Referencia en entidad convocante -->
+        <ng-container *ngIf="formGroup.controls.tipoEntidad.value === TipoEntidad.PROYECTO">
+          <mat-form-field fxFlex="25%">
+            <mat-label>{{'csp.ejecucion-economica.referencia-entidad-convocante' | translate}}</mat-label>
+            <input matInput formControlName="referenciaEntidadConvocante" type="text"
+              placeholder="{{'csp.ejecucion-economica.referencia-entidad-convocante' | translate}}">
+          </mat-form-field>
+        </ng-container>
       </div>
 
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
@@ -180,6 +192,26 @@
         </td>
       </ng-container>
 
+      <!-- Referencia en entidad convocante Column -->
+      <ng-container matColumnDef="codigoExterno" *ngIf="this.tipoEntidadSelected === TipoEntidad.PROYECTO">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.ref-entidad-convocante' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.codigoExterno}}
+        </td>
+      </ng-container>
+
+      <!-- Referencia interna Column -->
+      <ng-container matColumnDef="codigoInterno" *ngIf="this.tipoEntidadSelected === TipoEntidad.PROYECTO">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.ref-interna' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.codigoInterno}}
+        </td>
+      </ng-container>
+
       <!-- Responsable Column -->
       <ng-container matColumnDef="responsable">
         <th mat-header-cell *matHeaderCellDef>
@@ -225,9 +257,9 @@
       <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
     </table>
 
-    <div class="paginator-export">
+    <div [class]="tipoEntidadSelected === TipoEntidad.PROYECTO ? 'paginator-export' : ''">
       <button mat-button color="primary" matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()"
-        [disabled]="totalElementos<=0" *ngIf="formGroup.controls.tipoEntidad.value === TipoEntidad.PROYECTO">
+        [disabled]="totalElementos<=0" *ngIf="tipoEntidadSelected === TipoEntidad.PROYECTO">
         <mat-icon>insert_chart_outlined</mat-icon>
       </button>
       <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>

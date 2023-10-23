@@ -25,7 +25,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.proyecto-calendario-facturacion.importe-base' |
           translate}} </th>
-        <td mat-cell *matCellDef="let element"> {{element.value.importeBase | number:'.2-2'}} </td>
+        <td mat-cell *matCellDef="let element"> {{element.value.importeBase | number:'1.2-2'}} </td>
       </ng-container>
 
       <!-- IVA -->
@@ -42,7 +42,7 @@
           {{'csp.proyecto-calendario-facturacion.importe-total' |
           translate}} </th>
         <td mat-cell *matCellDef="let element">{{getImporteTotal(element.value.importeBase,
-          element.value.porcentajeIVA) | number:'.2-2':'es'}}</td>
+          element.value.porcentajeIVA) | number:'1.2-2'}}</td>
       </ng-container>
 
       <!-- Comentario -->

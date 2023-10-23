@@ -1,0 +1,316 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="00.03.00-param">
+    <!-- ETI Memoria indicar subsanacion -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_COM_MEM_INDICAR_SUBSANACION_DATA" />
+      <column name="description"
+        value="JSON con formato: {&quot;tipoActividad&quot;: &quot;tipo1&quot;, &quot;tituloSolicitudEvaluacion&quot;: &quot;tituloSolicitud&quot;, &quot;referenciaMemoria&quot;: &quot;M10/2023/001&quot;, &quot;nombreInvestigacion&quot;: &quot;nombre&quot;, &quot;comentarioEstado&quot;: &quot;un comentario&quot;, &quot;enlaceAplicacion&quot;: &quot;enlace&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Asignación evaluación -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_COM_ASIGNACION_EVALUACION_DATA" />
+      <column name="description"
+        value="JSON con formato: {&quot;nombreInvestigacion&quot;: &quot;Comisión de Ética de Investigación&quot;, &quot;tituloSolicitudEvaluacion&quot;: &quot;tituloSolicitud&quot;, &quot;referenciaMemoria&quot;: &quot;M10/2023/001&quot;, &quot;fechaConvocatoriaReunion&quot;: &quot;01/01/2023&quot;, &quot;nombreApellidosEvaluador1&quot;: &quot;Evaluador1&quot;, &quot;nombreApellidosEvaluador2&quot;: &quot;Evaluador2&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Revisión Acta de reunión -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_COM_REVISION_ACTA_DATA" />
+      <column name="description"
+        value="JSON con formato: {&quot;tipoActividad&quot;: &quot;tipo1&quot;, &quot;tituloSolicitudEvaluacion&quot;: &quot;tituloSolicitud&quot;, &quot;referenciaMemoria&quot;: &quot;M10/2023/001&quot;, &quot;nombreInvestigacion&quot;: &quot;nombre&quot;, &quot;comentarioEstado&quot;: &quot;un comentario&quot;, &quot;enlaceAplicacion&quot;: &quot;enlace&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.03.00-subject_tpl">
+    <!-- ETI Memoria indicar subsanacion -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="ETI_COM_MEM_INDICAR_SUBSANACION_SUBJECT" />
+      <column name="description"
+        value="Plantilla de asunto para el envío de comunicados de indicar subsanacion de memoria" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl"
+        valueClobFile="clob/eti-com-mem-indicar-subsanacion/ETI_COM_MEM_INDICAR_SUBSANACION_SUBJECT.ftl" />
+      <where>name='ETI_COM_MEM_INDICAR_SUBSANACION_SUBJECT'</where>
+    </update>
+
+    <!-- ETI Asignación evaluación -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="ETI_COM_ASIGNACION_EVALUACION_SUBJECT" />
+      <column name="description"
+        value="Plantilla de asunto para el envío de comunicados de asignación de memoria" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl"
+        valueClobFile="clob/eti-com-asignacion-evaluacion/ETI_COM_ASIGNACION_EVALUACION_SUBJECT.ftl" />
+      <where>name='ETI_COM_ASIGNACION_EVALUACION_SUBJECT'</where>
+    </update>
+
+    <!-- ETI Revisión Acta de reunión -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="ETI_COM_REVISION_ACTA_SUBJECT" />
+      <column name="description"
+        value="Plantilla de asunto para el envío de comunicados de revisión de actas de reunión" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl"
+        valueClobFile="clob/eti-com-revision-acta/ETI_COM_REVISION_ACTA_SUBJECT.ftl" />
+      <where>name='ETI_COM_REVISION_ACTA_SUBJECT'</where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.03.00-subjecttpl_param">
+    <!-- ETI Memoria indicar subsanacion -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id"
+        valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_MEM_INDICAR_SUBSANACION_SUBJECT')" />
+      <column name="param_id"
+        valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_MEM_INDICAR_SUBSANACION_DATA')" />
+    </insert>
+
+    <!-- ETI Asignación evaluación -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id"
+        valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_ASIGNACION_EVALUACION_SUBJECT')" />
+      <column name="param_id"
+        valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_ASIGNACION_EVALUACION_DATA')" />
+    </insert>
+
+    <!-- ETI Revisión Acta de reunión -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id"
+        valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_REVISION_ACTA_SUBJECT')" />
+      <column name="param_id"
+        valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_REVISION_ACTA_DATA')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.03.00-content_tpl">
+    <!-- ETI Memoria indicar subsanacion -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="ETI_COM_MEM_INDICAR_SUBSANACION_CONTENT" />
+      <column name="description"
+        value="Plantilla de contenido para el envío de comunicados de indicar subsanacion de memoria" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text"
+        valueClobFile="clob/eti-com-mem-indicar-subsanacion/ETI_COM_MEM_INDICAR_SUBSANACION_CONTENT_text.ftl" />
+      <where>name='ETI_COM_MEM_INDICAR_SUBSANACION_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html"
+        valueClobFile="clob/eti-com-mem-indicar-subsanacion/ETI_COM_MEM_INDICAR_SUBSANACION_CONTENT_html.ftl" />
+      <where>name='ETI_COM_MEM_INDICAR_SUBSANACION_CONTENT'</where>
+    </update>
+
+    <update tableName="content_tpl">
+      <column name="tpl_text"
+        valueClobFile="clob/eti-com-informe/ETI_COM_INF_RETRO_PENDIENTE_CONTENT_text.ftl" />
+      <where>name='ETI_COM_INF_RETRO_PENDIENTE_CONTENT'</where>
+    </update>
+
+    <update tableName="content_tpl">
+      <column name="tpl_html"
+        valueClobFile="clob/eti-com-informe/ETI_COM_INF_RETRO_PENDIENTE_CONTENT_html.ftl" />
+      <where>name='ETI_COM_INF_RETRO_PENDIENTE_CONTENT'</where>
+    </update>
+
+    <!-- ETI Asignación evaluación -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="ETI_COM_ASIGNACION_EVALUACION_CONTENT" />
+      <column name="description"
+        value="Plantilla de contenido para el envío de comunicados de asignación de memoria" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+
+    <update tableName="content_tpl">
+      <column name="tpl_text"
+        valueClobFile="clob/eti-com-asignacion-evaluacion/ETI_COM_ASIGNACION_EVALUACION_CONTENT_text.ftl" />
+      <where>name='ETI_COM_ASIGNACION_EVALUACION_CONTENT'</where>
+    </update>
+
+    <update tableName="content_tpl">
+      <column name="tpl_html"
+        valueClobFile="clob/eti-com-asignacion-evaluacion/ETI_COM_ASIGNACION_EVALUACION_CONTENT_html.ftl" />
+      <where>name='ETI_COM_ASIGNACION_EVALUACION_CONTENT'</where>
+    </update>
+
+    <!-- ETI Revisión Acta de reunión -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="ETI_COM_REVISION_ACTA_CONTENT" />
+      <column name="description"
+        value="Plantilla de contenido para el envío de comunicados de indicar subsanacion de memoria" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+
+    <update tableName="content_tpl">
+      <column name="tpl_text"
+        valueClobFile="clob/eti-com-revision-acta/ETI_COM_REVISION_ACTA_CONTENT_text.ftl" />
+      <where>name='ETI_COM_REVISION_ACTA_CONTENT'</where>
+    </update>
+
+    <update tableName="content_tpl">
+      <column name="tpl_html"
+        valueClobFile="clob/eti-com-revision-acta/ETI_COM_REVISION_ACTA_CONTENT_html.ftl" />
+      <where>name='ETI_COM_REVISION_ACTA_CONTENT'</where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.03.00-contenttpl_param">
+    <!-- ETI Memoria indicar subsanacion -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id"
+        valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_MEM_INDICAR_SUBSANACION_CONTENT')" />
+      <column name="param_id"
+        valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_MEM_INDICAR_SUBSANACION_DATA')" />
+    </insert>
+
+    <!-- ETI Asignación evaluación -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id"
+        valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_ASIGNACION_EVALUACION_CONTENT')" />
+      <column name="param_id"
+        valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_ASIGNACION_EVALUACION_DATA')" />
+    </insert>
+
+    <!-- ETI Revisión Acta de reunión -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id"
+        valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_REVISION_ACTA_CONTENT')" />
+      <column name="param_id"
+        valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_REVISION_ACTA_DATA')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.03.00-email_tpl">
+    <!-- ETI Memoria indicar subsanacion -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="ETI_COM_MEM_INDICAR_SUBSANACION" />
+      <column name="description"
+        value="Aviso de indicar subsanacion de memoria (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Asignación evaluación -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="ETI_COM_ASIGNACION_EVALUACION" />
+      <column name="description"
+        value="Aviso de asignación de memoria (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Revisión Acta de reunión -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="ETI_COM_REVISION_ACTA" />
+      <column name="description"
+        value="Aviso de actas de reunión (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.03.00-emailtpl_subjecttpl">
+    <!-- ETI Memoria indicar subsanacion -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id"
+        valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_MEM_INDICAR_SUBSANACION')" />
+      <column name="subjecttpl_id"
+        valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_MEM_INDICAR_SUBSANACION_SUBJECT')" />
+    </insert>
+
+    <!-- ETI Asignación evaluación -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id"
+        valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_ASIGNACION_EVALUACION')" />
+      <column name="subjecttpl_id"
+        valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_ASIGNACION_EVALUACION_SUBJECT')" />
+    </insert>
+
+    <!-- ETI Revisión Acta de reunión -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id"
+        valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_REVISION_ACTA')" />
+      <column name="subjecttpl_id"
+        valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_REVISION_ACTA_SUBJECT')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.03.00-emailtpl_contenttpl">
+    <!-- ETI Memoria indicar subsanacion -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id"
+        valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_MEM_INDICAR_SUBSANACION')" />
+      <column name="contenttpl_id"
+        valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_MEM_INDICAR_SUBSANACION_CONTENT')" />
+    </insert>
+
+    <!-- ETI Asignación evaluación -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id"
+        valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_ASIGNACION_EVALUACION')" />
+      <column name="contenttpl_id"
+        valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_ASIGNACION_EVALUACION_CONTENT')" />
+    </insert>
+
+    <!-- ETI Revisión Acta de reunión -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id"
+        valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_REVISION_ACTA')" />
+      <column name="contenttpl_id"
+        valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_REVISION_ACTA_CONTENT')" />
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

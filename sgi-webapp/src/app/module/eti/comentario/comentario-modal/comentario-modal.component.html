@@ -37,7 +37,7 @@
               <li class="mat-tree-node">
                 <button mat-icon-button disabled></button>
                 <mat-checkbox class="checkbox" color="primary" [checked]="node === checkedNode"
-                  (change)="onCheckNode(node, $event)">
+                  (change)="onCheckNode(node, $event)" [disabled]="this.readonly">
                   {{node.apartado.value | bloqueApartado}}
                 </mat-checkbox>
               </li>
@@ -51,7 +51,7 @@
                     </mat-icon>
                   </button>
                   <mat-checkbox class="checkbox" color="primary" [checked]="node === checkedNode"
-                    (change)="onCheckNode(node, $event)">
+                    (change)="onCheckNode(node, $event)" [disabled]="this.readonly">
                     {{node.apartado.value | bloqueApartado}}
                   </mat-checkbox>
                 </div>

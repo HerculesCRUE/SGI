@@ -21,6 +21,7 @@ export class MemoriaFormularioFragment extends MemoriaFormlyFormFragment {
     readonly: boolean,
     key: number,
     comite: IComite,
+    moduloInv: boolean,
     formularioService: FormularioService,
     bloqueService: BloqueService,
     apartadoService: ApartadoService,
@@ -38,6 +39,7 @@ export class MemoriaFormularioFragment extends MemoriaFormlyFormFragment {
       comite,
       readonly,
       TIPO_EVALUACION.MEMORIA,
+      moduloInv,
       formularioService,
       memoriaService,
       evaluacionService,
@@ -58,6 +60,7 @@ export class MemoriaFormularioFragment extends MemoriaFormlyFormFragment {
     const estado = this.memoria.estadoActual.id as ESTADO_MEMORIA;
     switch (+estado) {
       case ESTADO_MEMORIA.COMPLETADA:
+      case ESTADO_MEMORIA.SUBSANACION:
       case ESTADO_MEMORIA.EN_ELABORACION:
       case ESTADO_MEMORIA.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS:
       case ESTADO_MEMORIA.PENDIENTE_CORRECCIONES:

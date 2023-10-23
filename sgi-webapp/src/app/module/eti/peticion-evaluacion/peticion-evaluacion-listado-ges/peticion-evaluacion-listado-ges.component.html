@@ -6,11 +6,13 @@
     [fxLayout]="fxLayoutProperties.layout" fxLayoutGap="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
 
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
-      <!-- Código -->
-      <mat-form-field fxFlex="15%">
-        <mat-label>{{'eti.peticion-evaluacion.codigo' | translate}}</mat-label>
-        <input matInput type="text" placeholder="{{'eti.peticion-evaluacion.codigo' | translate}}"
-          formControlName="codigo">
+
+      <!--Solicitante-->
+      <mat-form-field fxFlex="37%">
+        <mat-label>{{'eti.solicitante' | translate}}</mat-label>
+        <sgi-select-persona placeholder="{{'eti.solicitante' | translate}}" [tipoColectivo]="tipoColectivoSolicitante"
+          formControlName="solicitante">
+        </sgi-select-persona>
       </mat-form-field>
 
       <!-- Título proyecto -->
@@ -20,18 +22,11 @@
           formControlName="titulo">
       </mat-form-field>
 
-      <!-- Comité -->
-      <mat-form-field fxFlex="8%">
-        <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-        <sgi-select-comite #selectComite formControlName="comite"></sgi-select-comite>
-      </mat-form-field>
-
-      <!--Persona-->
-      <mat-form-field fxFlex="37%">
-        <mat-label>{{'eti.solicitante' | translate}}</mat-label>
-        <sgi-select-persona placeholder="{{'eti.solicitante' | translate}}" [tipoColectivo]="tipoColectivoSolicitante"
-          formControlName="solicitante">
-        </sgi-select-persona>
+      <!-- Referencia Memoria -->
+      <mat-form-field fxFlex="15%">
+        <mat-label>{{'eti.peticion-evaluacion.referencia-memoria' | translate}}</mat-label>
+        <input matInput type="text" placeholder="{{'eti.peticion-evaluacion.referencia-memoria' | translate}}"
+          formControlName="referenciaMemoria">
       </mat-form-field>
 
       <!-- Estado Memoria -->
@@ -40,6 +35,13 @@
         <sgi-select-enum formControlName="tipoEstadoMemoria" [enumMap]="ESTADO_MEMORIA_MAP">
         </sgi-select-enum>
       </mat-form-field>
+
+      <!-- Comité -->
+      <mat-form-field fxFlex="8%">
+        <mat-label>{{'label.eti.comite' | translate}}</mat-label>
+        <sgi-select-comite #selectComite formControlName="comite"></sgi-select-comite>
+      </mat-form-field>
+
     </div>
 
     <div class="buttons-final">
@@ -56,22 +58,27 @@
   </form>
 
   <div class="mat-elevation-z4">
-    <table mat-table [dataSource]="peticionesEvaluacion$ | async" matSort matSortActive="id" matSortDirection="asc"
-      matSortDisableClear>
-      <!-- Nombre y apellidos persona -->
+    <table class="peticion-evaluacion" mat-table [dataSource]="peticionesEvaluacion$ | async" matSort matSortActive="id"
+      matSortDirection="asc" matSortDisableClear>
+
+      <!-- Advertencia Column -->
+      <ng-container matColumnDef="helpIcon">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        </th>
+        <td mat-cell *matCellDef="let peticionEvaluacion">
+          <sgi-field-info matSuffix [visible]="peticionEvaluacion.memoriasAsignables?.length>0" color="warn"
+            icon="error" message="{{getMemoriasAsignables(peticionEvaluacion.memoriasAsignables)}}">
+          </sgi-field-info>
+        </td>
+      </ng-container>
+
+      <!-- Nombre y apellidos persona solicitante -->
       <ng-container matColumnDef="solicitante">
         <th mat-header-cell *matHeaderCellDef> {{'eti.solicitante' | translate}}
         </th>
         <td mat-cell *matCellDef="let peticionEvaluacion">
           {{peticionEvaluacion.solicitante?.nombre}} {{peticionEvaluacion.solicitante?.apellidos}}
         </td>
-      </ng-container>
-
-      <!-- Código -->
-      <ng-container matColumnDef="codigo">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.peticion-evaluacion.codigo' | translate}}
-        </th>
-        <td mat-cell *matCellDef="let peticionEvaluacion"> {{peticionEvaluacion.codigo}} </td>
       </ng-container>
 
       <!-- Título proyecto -->
@@ -82,28 +89,34 @@
         <td mat-cell *matCellDef="let peticionEvaluacion">{{peticionEvaluacion.titulo}}</td>
       </ng-container>
 
-      <!-- Financiación -->
-      <ng-container matColumnDef="fuenteFinanciacion">
+      <!-- Memoria comité 1 -->
+      <ng-container matColumnDef="memoriaComite1">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{'eti.peticion-evaluacion.organo-financiador' | translate}}
+          {{'eti.peticion-evaluacion.memoria' | translate}} {{getComite(1)}}
         </th>
-        <td mat-cell *matCellDef="let peticionEvaluacion"> {{peticionEvaluacion.fuenteFinanciacion}} </td>
+        <td mat-cell *matCellDef="let peticionEvaluacion"
+          matTooltip="{{getMemoriasComite(peticionEvaluacion.memorias,1)}}">
+          {{getMemoriasComite(peticionEvaluacion.memorias,1)}}</td>
       </ng-container>
 
-      <!-- Fecha inicio -->
-      <ng-container matColumnDef="fechaInicio">
+      <!-- Memoria comité 2 -->
+      <ng-container matColumnDef="memoriaComite2">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{'eti.peticion-evaluacion.fecha-inicio' | translate}}
+          {{'eti.peticion-evaluacion.memoria' | translate}} {{getComite(2)}}
         </th>
-        <td mat-cell *matCellDef="let peticionEvaluacion"> {{peticionEvaluacion.fechaInicio | luxon: 'shortDate'}} </td>
+        <td mat-cell *matCellDef="let peticionEvaluacion"
+          matTooltip="{{getMemoriasComite(peticionEvaluacion.memorias,2)}}">
+          {{getMemoriasComite(peticionEvaluacion.memorias,2)}}</td>
       </ng-container>
 
-      <!-- Fecha fin -->
-      <ng-container matColumnDef="fechaFin">
+      <!-- Memoria comité 3 -->
+      <ng-container matColumnDef="memoriaComite3">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{'eti.peticion-evaluacion.fecha-fin' | translate}}
+          {{'eti.peticion-evaluacion.memoria' | translate}} {{getComite(3)}}
         </th>
-        <td mat-cell *matCellDef="let peticionEvaluacion"> {{peticionEvaluacion.fechaFin | luxon: 'shortDate'}} </td>
+        <td mat-cell *matCellDef="let peticionEvaluacion"
+          matTooltip="{{getMemoriasComite(peticionEvaluacion.memorias,3)}}">
+          {{getMemoriasComite(peticionEvaluacion.memorias,3)}}</td>
       </ng-container>
 
       <!-- Acciones Column -->

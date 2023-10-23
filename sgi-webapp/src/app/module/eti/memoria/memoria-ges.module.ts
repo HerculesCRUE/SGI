@@ -17,11 +17,13 @@ import { MemoriaListadoGesComponent } from './memoria-listado-ges/memoria-listad
 import { MemoriaRoutingGesModule } from './memoria-routing-ges.module';
 import { MemoriaResolver } from './memoria.resolver';
 import { MemoriaListadoExportModalComponent } from './modals/memoria-listado-export-modal/memoria-listado-export-modal.component';
+import { IndicarSubsanacionModalComponent } from './modals/indicar-subsanacion-modal/indicar-subsanacion-modal.component';
 
 @NgModule({
   declarations: [
     MemoriaListadoGesComponent,
-    MemoriaListadoExportModalComponent
+    MemoriaListadoExportModalComponent,
+    IndicarSubsanacionModalComponent
   ],
   imports: [
     SharedModule,
@@ -43,6 +45,9 @@ import { MemoriaListadoExportModalComponent } from './modals/memoria-listado-exp
     MemoriaListadoExportService,
     MemoriaGeneralListadoExportService,
     MemoriaEvaluacionesListadoExportService
+  ],
+  exports: [
+    IndicarSubsanacionModalComponent
   ]
 })
 export class MemoriaGesModule { }

@@ -96,22 +96,20 @@
         <td mat-cell *matCellDef="let evaluacion">{{evaluacion.memoria?.tipoMemoria?.nombre}}</td>
       </ng-container>
 
-      <!-- Fecha de evaluación -->
-      <ng-container matColumnDef="convocatoriaReunion.fechaEvaluacion">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{'eti.seguimiento.datos-memoria.fecha-evaluacion' | translate}}
-        </th>
-        <td mat-cell *matCellDef="let evaluacion">
-          {{evaluacion.convocatoriaReunion?.fechaEvaluacion | luxon:'shortDate'}}
-        </td>
-      </ng-container>
-
       <!-- Referencia -->
       <ng-container matColumnDef="memoria.numReferencia">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'eti.memoria.referencia' | translate}}
         </th>
         <td mat-cell *matCellDef="let evaluacion">{{evaluacion.memoria?.numReferencia}}</td>
+      </ng-container>
+
+
+      <!-- Versión -->
+      <ng-container matColumnDef="version">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.seguimiento.datos-memoria.version' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let evaluacion">{{evaluacion.version}}</td>
       </ng-container>
 
       <!-- Solicitante -->
@@ -124,22 +122,48 @@
         </td>
       </ng-container>
 
-      <!-- Versión -->
-      <ng-container matColumnDef="version">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.seguimiento.datos-memoria.version' | translate}}
+      <!-- Enviada -->
+      <ng-container matColumnDef="enviada">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'eti.evaluacion.enviada' | translate}}
         </th>
-        <td mat-cell *matCellDef="let evaluacion">{{evaluacion.version}}</td>
+        <td mat-cell *matCellDef="let evaluacion">
+          {{(evaluacion.enviada ? 'label.si' : 'label.no') | translate}}
+        </td>
+      </ng-container>
+
+      <!-- Fecha de evaluación -->
+      <ng-container matColumnDef="convocatoriaReunion.fechaEvaluacion">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'eti.seguimiento.datos-memoria.fecha-evaluacion' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let evaluacion">
+          {{evaluacion.convocatoriaReunion?.fechaEvaluacion | luxon:'shortDate'}}
+        </td>
       </ng-container>
 
       <!-- Acciones -->
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let evaluacion">
-          <a mat-icon-button color="primary" [routerLink]="[evaluacion.id]"
-            matTooltip="{{'btn.eti.evaluar' | translate}}"
-            *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR']">
-            <mat-icon>border_color</mat-icon>
-          </a>
+          <ng-container *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR']">
+            <a mat-icon-button *ngIf="!evaluacion.enviada" color="primary" [routerLink]="[evaluacion.id]"
+              matTooltip="{{'btn.eti.evaluar' | translate}}">
+              <mat-icon>border_color</mat-icon>
+            </a>
+          </ng-container>
+          <ng-container *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-VR', 'ETI-EVC-INV-VR']">
+            <a *ngIf="evaluacion.enviada" mat-icon-button color="primary" [routerLink]="[evaluacion.id]"
+              matTooltip="{{'btn.view' | translate}}">
+              <mat-icon>visibility</mat-icon>
+            </a>
+          </ng-container>
+          <ng-container *sgiHasAnyAuthorityForAnyUO="['ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR']">
+            <button mat-icon-button color="primary" *ngIf="!evaluacion.enviada && evaluacion.permitirEnviarComentarios"
+              (click)="enviarComentarios(evaluacion.id)" matTooltip="{{'btn.eti.evaluacion-enviar' | translate}}">
+              <mat-icon>send</mat-icon>
+            </button>
+          </ng-container>
         </td>
       </ng-container>
 

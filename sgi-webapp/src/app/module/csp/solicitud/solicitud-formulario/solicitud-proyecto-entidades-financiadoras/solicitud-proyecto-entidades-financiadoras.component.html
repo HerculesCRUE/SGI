@@ -74,7 +74,7 @@
             {{'csp.solicitud-entidad-financiadora.importe-financiacion' | translate}}
           </th>
           <td mat-cell *matCellDef="let element">
-            {{element.importeFinanciacion}}
+            {{element.importeFinanciacion | number:'1.2-2'}}}
           </td>
         </ng-container>
 
@@ -164,7 +164,7 @@
               {{'csp.solicitud-entidad-financiadora.importe-financiacion' | translate}}
             </th>
             <td mat-cell *matCellDef="let wrapper">
-              {{wrapper.value.importeFinanciacion}}
+              {{wrapper.value.importeFinanciacion | number:'1.2-2'}}
             </td>
           </ng-container>
 

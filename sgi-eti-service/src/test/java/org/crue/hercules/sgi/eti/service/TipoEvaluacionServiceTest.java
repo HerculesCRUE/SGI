@@ -8,7 +8,6 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.exceptions.TipoEvaluacionNotFoundException;
 import org.crue.hercules.sgi.eti.model.Dictamen;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
-import org.crue.hercules.sgi.eti.repository.DictamenRepository;
 import org.crue.hercules.sgi.eti.repository.TipoEvaluacionRepository;
 import org.crue.hercules.sgi.eti.service.impl.TipoEvaluacionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,14 +31,11 @@ public class TipoEvaluacionServiceTest extends BaseServiceTest {
   @Mock
   private TipoEvaluacionRepository tipoEvaluacionRepository;
 
-  @Mock
-  private DictamenRepository dictamenRepository;
-
   private TipoEvaluacionService tipoEvaluacionService;
 
   @BeforeEach
   public void setUp() throws Exception {
-    tipoEvaluacionService = new TipoEvaluacionServiceImpl(tipoEvaluacionRepository, dictamenRepository);
+    tipoEvaluacionService = new TipoEvaluacionServiceImpl(tipoEvaluacionRepository);
   }
 
   @Test
@@ -184,8 +180,8 @@ public class TipoEvaluacionServiceTest extends BaseServiceTest {
     Page<TipoEvaluacion> page = tipoEvaluacionService.findAll(null, Pageable.unpaged());
 
     // then: Get a page with one hundred TipoEvaluaciones
-    Assertions.assertThat(page.getContent().size()).isEqualTo(100);
-    Assertions.assertThat(page.getNumber()).isEqualTo(0);
+    Assertions.assertThat(page.getContent()).hasSize(100);
+    Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(100);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
   }
@@ -219,7 +215,7 @@ public class TipoEvaluacionServiceTest extends BaseServiceTest {
 
     // then: A Page with ten TipoEvaluaciones are returned containing
     // descripcion='TipoEvaluacion031' to 'TipoEvaluacion040'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
     Assertions.assertThat(page.getSize()).isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
@@ -227,110 +223,6 @@ public class TipoEvaluacionServiceTest extends BaseServiceTest {
       TipoEvaluacion tipoEvaluacion = page.getContent().get(i);
       Assertions.assertThat(tipoEvaluacion.getNombre()).isEqualTo("TipoEvaluacion" + String.format("%03d", j));
     }
-  }
-
-  @Test
-  public void findAllDictamenByTipoEvaluacionRetrospectivaAndRevisionMinimaTrue_ReturnList() {
-
-    TipoEvaluacion tipoEvaluacion1 = generarMockTipoEvaluacion(1L, "Retrospectiva");
-    Dictamen dictamen1 = generarMockDictamen(5L, "Favorable", tipoEvaluacion1);
-    Dictamen dictamen2 = generarMockDictamen(6L, "Solicitud de modificaciones", tipoEvaluacion1);
-    List<Dictamen> listaDictamenes = new ArrayList<Dictamen>();
-    listaDictamenes.add(dictamen1);
-    listaDictamenes.add(dictamen2);
-
-    BDDMockito.given(dictamenRepository.findByTipoEvaluacionId(tipoEvaluacion1.getId())).willReturn(listaDictamenes);
-
-    List<Dictamen> lista = tipoEvaluacionService
-        .findAllDictamenByTipoEvaluacionAndRevisionMinima(tipoEvaluacion1.getId(), true);
-    Assertions.assertThat(lista).isEqualTo(listaDictamenes);
-
-  }
-
-  @Test
-  public void findAllDictamenByTipoEvaluacionMemoriaAndRevisionMinimaTrue_ReturnList() {
-
-    TipoEvaluacion tipoEvaluacion1 = generarMockTipoEvaluacion(2L, "Memoria");
-    Dictamen dictamen1 = generarMockDictamen(1L, "Favorable", tipoEvaluacion1);
-    Dictamen dictamen2 = generarMockDictamen(2L, "Favorable pendiente de revisión mínima", tipoEvaluacion1);
-    List<Dictamen> listaDictamenes = new ArrayList<Dictamen>();
-    listaDictamenes.add(dictamen1);
-    listaDictamenes.add(dictamen2);
-
-    List<Dictamen> lista = tipoEvaluacionService
-        .findAllDictamenByTipoEvaluacionAndRevisionMinima(tipoEvaluacion1.getId(), true);
-    Assertions.assertThat(lista).isNotNull();
-
-  }
-
-  @Test
-  public void findAllDictamenByTipoEvaluacionMemoriaAndRevisionMinimaFalse_ReturnList() {
-
-    TipoEvaluacion tipoEvaluacion1 = generarMockTipoEvaluacion(2L, "Memoria");
-    Dictamen dictamen1 = generarMockDictamen(5L, "Favorable", tipoEvaluacion1);
-    Dictamen dictamen2 = generarMockDictamen(6L, "Solicitud de modificaciones", tipoEvaluacion1);
-    List<Dictamen> listaDictamenes = new ArrayList<Dictamen>();
-    listaDictamenes.add(dictamen1);
-    listaDictamenes.add(dictamen2);
-
-    BDDMockito.given(dictamenRepository.findByTipoEvaluacionId(tipoEvaluacion1.getId())).willReturn(listaDictamenes);
-
-    List<Dictamen> lista = tipoEvaluacionService
-        .findAllDictamenByTipoEvaluacionAndRevisionMinima(tipoEvaluacion1.getId(), false);
-    Assertions.assertThat(lista).isEqualTo(listaDictamenes);
-
-  }
-
-  @Test
-  public void findAllDictamenByTipoEvaluacionSeguimientoAnualAndRevisionMinimaTrue_ReturnList() {
-
-    TipoEvaluacion tipoEvaluacion1 = generarMockTipoEvaluacion(3L, "Seguimiento anual");
-    Dictamen dictamen1 = generarMockDictamen(5L, "Favorable", tipoEvaluacion1);
-    Dictamen dictamen2 = generarMockDictamen(6L, "Solicitud de modificaciones", tipoEvaluacion1);
-    List<Dictamen> listaDictamenes = new ArrayList<Dictamen>();
-    listaDictamenes.add(dictamen1);
-    listaDictamenes.add(dictamen2);
-
-    BDDMockito.given(dictamenRepository.findByTipoEvaluacionId(tipoEvaluacion1.getId())).willReturn(listaDictamenes);
-
-    List<Dictamen> lista = tipoEvaluacionService
-        .findAllDictamenByTipoEvaluacionAndRevisionMinima(tipoEvaluacion1.getId(), true);
-    Assertions.assertThat(lista).isEqualTo(listaDictamenes);
-
-  }
-
-  @Test
-  public void findAllDictamenByTipoEvaluacionSeguimientoFinalAndRevisionMinimaTrue_ReturnList() {
-
-    TipoEvaluacion tipoEvaluacion1 = generarMockTipoEvaluacion(4L, "Seguimiento final");
-    Dictamen dictamen1 = generarMockDictamen(5L, "Favorable", tipoEvaluacion1);
-    Dictamen dictamen2 = generarMockDictamen(6L, "Solicitud de modificaciones", tipoEvaluacion1);
-    List<Dictamen> listaDictamenes = new ArrayList<Dictamen>();
-    listaDictamenes.add(dictamen1);
-    listaDictamenes.add(dictamen2);
-
-    BDDMockito.given(dictamenRepository.findByTipoEvaluacionId(tipoEvaluacion1.getId())).willReturn(listaDictamenes);
-
-    List<Dictamen> lista = tipoEvaluacionService
-        .findAllDictamenByTipoEvaluacionAndRevisionMinima(tipoEvaluacion1.getId(), true);
-    Assertions.assertThat(lista).isEqualTo(listaDictamenes);
-
-  }
-
-  @Test
-  public void findAllDictamenByTipoEvaluacionNotExistAndRevisionMinimaTrue_ReturnList() {
-
-    TipoEvaluacion tipoEvaluacion1 = generarMockTipoEvaluacion(5L, "Tipo evaluacion5");
-    Dictamen dictamen1 = generarMockDictamen(5L, "Favorable", tipoEvaluacion1);
-    Dictamen dictamen2 = generarMockDictamen(6L, "Solicitud de modificaciones", tipoEvaluacion1);
-    List<Dictamen> listaDictamenes = new ArrayList<Dictamen>();
-    listaDictamenes.add(dictamen1);
-    listaDictamenes.add(dictamen2);
-
-    List<Dictamen> lista = tipoEvaluacionService
-        .findAllDictamenByTipoEvaluacionAndRevisionMinima(tipoEvaluacion1.getId(), true);
-    Assertions.assertThat(lista).size().isZero();
-
   }
 
   @Test

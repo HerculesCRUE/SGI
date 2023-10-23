@@ -1,0 +1,24 @@
+[
+  {
+    "key": "ap4_2_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.4 Protocolo de supervisión"
+    },
+    "fieldGroup": [
+      {
+        "template": "Elaborar un protocolo sobre cómo será la supervisión del animal y cuantificar los parámetros que se supervisarán, indicando en qué momento del procedimiento/intervención comenzará el control y cuál será la duración y la frecuencia de la supervisión."
+      },
+      {
+        "key": "protocoloSupervision",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Protocolo de supervisión",
+          "required": true
+        }
+      }
+    ]
+  }
+]

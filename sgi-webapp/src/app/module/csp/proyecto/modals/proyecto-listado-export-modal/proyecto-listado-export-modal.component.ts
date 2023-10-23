@@ -11,14 +11,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { IProyectoReportOptions, ProyectoListadoExportService } from '../../proyecto-listado-export.service';
 
 const PROYECTO_KEY = marker('csp.proyecto');
-const REPORT_TITLE_KEY = marker('csp.ejecucion-economica.proyectos');
 
 @Component({
   templateUrl: './proyecto-listado-export-modal.component.html',
   styleUrls: ['./proyecto-listado-export-modal.component.scss']
 })
 export class ProyectoListadoExportModalComponent extends BaseExportModalComponent<IProyectoReportOptions> implements OnInit {
-  private reportTitle: string;
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
@@ -43,7 +41,6 @@ export class ProyectoListadoExportModalComponent extends BaseExportModalComponen
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.reportTitle = this.translate.instant(REPORT_TITLE_KEY);
     this.formGroup = this.buildFormGroup();
   }
 
@@ -58,10 +55,6 @@ export class ProyectoListadoExportModalComponent extends BaseExportModalComponen
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       outputType: new FormControl(this.outputType, Validators.required),
-      reportTitle: new FormControl(this.reportTitle, Validators.required),
-
-      hideBlocksIfNoData: new FormControl(true),
-
       showTodos: new FormControl(true),
       showAreasConocimiento: new FormControl(true),
       showClasificaciones: new FormControl(true),
@@ -104,9 +97,7 @@ export class ProyectoListadoExportModalComponent extends BaseExportModalComponen
 
   protected getReportOptions(): IReportConfig<IProyectoReportOptions> {
     const reportModalData: IReportConfig<IProyectoReportOptions> = {
-      title: this.formGroup.controls.reportTitle.value,
       outputType: this.formGroup.controls.outputType.value,
-      hideBlocksIfNoData: this.formGroup.controls.hideBlocksIfNoData.value,
       reportOptions: {
         findOptions: this.modalData.findOptions,
         showAreasConocimiento: this.formGroup.controls.showAreasConocimiento.value,

@@ -13,6 +13,7 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { EtiSharedModule } from '../../../shared/eti-shared.module';
 import { ActaActionService } from '../../acta.action.service';
 import { ActaDatosGeneralesComponent } from './acta-datos-generales.component';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 
 
@@ -36,7 +37,8 @@ describe('ActaDatosGenerealesComponent', () => {
         RouterTestingModule,
         SgiAuthModule,
         SharedModule,
-        EtiSharedModule
+        EtiSharedModule,
+        CKEditorModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

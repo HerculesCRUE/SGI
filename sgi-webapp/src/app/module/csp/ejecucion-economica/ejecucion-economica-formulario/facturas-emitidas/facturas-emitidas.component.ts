@@ -1,5 +1,4 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatOption } from '@angular/material/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
@@ -15,7 +14,7 @@ import { DateTime } from 'luxon';
 import { Subscription } from 'rxjs';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
 import { FacturasEmitidasModalComponent } from '../../modals/facturas-emitidas-modal/facturas-emitidas-modal.component';
-import { RowTreeDesglose } from '../desglose-economico.fragment';
+import { IDesgloseEconomicoExportData, RowTreeDesglose } from '../desglose-economico.fragment';
 import { IDesglose } from '../facturas-justificantes.fragment';
 import { FacturasEmitidasExportModalComponent } from './export/facturas-emitidas-export-modal.component';
 import { FacturasEmitidasFragment } from './facturas-emitidas.fragment';
@@ -99,11 +98,17 @@ export class FacturasEmitidasComponent extends FragmentComponent implements OnIn
 
     this.subscriptions.push(this.formPart.loadDataExport().subscribe(
       (exportData) => {
-        const config = {
-          data: exportData,
+        const data: IDesgloseEconomicoExportData = {
+          columns: exportData?.columns,
+          data: exportData?.data,
           totalRegistrosExportacionExcel: this.totalElementos,
           limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
         };
+
+        const config = {
+          data
+        };
+
         this.matDialog.open(FacturasEmitidasExportModalComponent, config);
       },
       this.formPart.processError

@@ -1,13 +1,13 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { TIPO_PARTIDA_MAP } from '@core/enums/tipo-partida';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaPartidaPresupuestaria } from '@core/models/csp/convocatoria-partida-presupuestaria';
 import { IPartidaPresupuestaria } from '@core/models/csp/partida-presupuestaria';
-import { ConfiguracionService } from '@core/services/csp/configuracion.service';
+import { ConfigService } from '@core/services/csp/config.service';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 import { comparePartidaPresupuestaria } from '../../proyecto/proyecto-formulario/proyecto-partidas-presupuestarias/proyecto-partida-presupuestaria.utils';
@@ -54,7 +54,7 @@ export class PartidaPresupuestariaModalComponent extends DialogFormComponent<IPa
   constructor(
     matDialogRef: MatDialogRef<PartidaPresupuestariaModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: PartidaPresupuestariaModalComponentData,
-    private configuracionService: ConfiguracionService,
+    private configuracionService: ConfigService,
     private readonly translate: TranslateService) {
     super(matDialogRef, !!data?.partidaPresupuestaria);
   }

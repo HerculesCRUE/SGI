@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
@@ -34,7 +35,8 @@ import lombok.Setter;
  */
 
 @Entity
-@Table(name = "respuesta")
+@Table(name = "respuesta", uniqueConstraints = {
+    @UniqueConstraint(columnNames = { "memoria_id", "apartado_id" }, name = "UK_RESPUESTA_MEMORIA_ID_APARTADO_ID") })
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor

@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
-import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.repository.custom.CustomEvaluacionRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +18,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EvaluacionRepository
     extends JpaRepository<Evaluacion, Long>, JpaSpecificationExecutor<Evaluacion>, CustomEvaluacionRepository {
+
+  /**
+   * Obtener todas las entidades paginadas {@link Evaluacion} para una
+   * determinada {@link ConvocatoriaReunion} que no sean de revisión mínima.
+   *
+   * @param id       Id de {@link ConvocatoriaReunion}.
+   * @param pageable la información de la paginación.
+   * @return la lista de entidades {@link Evaluacion} paginadas.
+   */
+  Page<Evaluacion> findAllByConvocatoriaReunionIdAndEsRevMinimaFalse(Long id, Pageable pageable);
 
   /**
    * Obtener todas las entidades paginadas {@link Evaluacion} activas para una
@@ -49,7 +58,7 @@ public interface EvaluacionRepository
    * @param idMemoria identificador de la memoria.
    * @return evaluación.
    */
-  Optional<Evaluacion> findFirstByMemoriaIdAndActivoTrueOrderByVersionDesc(Long idMemoria);
+  Optional<Evaluacion> findFirstByMemoriaIdAndActivoTrueOrderByVersionDescCreationDateDesc(Long idMemoria);
 
   /**
    * Recupera la última evaluación de una memoria y su tipo de evaluación
@@ -60,15 +69,6 @@ public interface EvaluacionRepository
    */
   Optional<Evaluacion> findFirstByMemoriaIdAndTipoEvaluacionIdAndActivoTrueOrderByVersionDesc(Long idMemoria,
       Long idTipoEvaluacion);
-
-  /**
-   * Recupera la evaluación de la memoria con la última versión
-   * 
-   * @param idMemoria el identificador del objeto {@link Memoria}
-   * @param version   el número de versión
-   * @return el objeto {@link Evaluacion}
-   */
-  Evaluacion findByMemoriaIdAndVersionAndActivoTrue(Long idMemoria, Integer version);
 
   /**
    * Comprueba si existen {@link Evaluacion} asociadas a una

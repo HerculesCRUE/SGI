@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.eti.controller;
 
+import org.crue.hercules.sgi.eti.dto.ApartadoTreeOutput;
 import org.crue.hercules.sgi.eti.model.Apartado;
 import org.crue.hercules.sgi.eti.model.Bloque;
 import org.crue.hercules.sgi.eti.model.Formulario;
@@ -33,6 +34,7 @@ public class BloqueController {
 
   public static final String PATH_ID = PATH_DELIMITER + "{id}";
   public static final String PATH_APARTADOS = PATH_ID + PATH_DELIMITER + "apartados";
+  public static final String PATH_APARTADOS_TREE = PATH_ID + PATH_DELIMITER + "apartados-tree";
   public static final String PATH_FORMULARIO = PATH_DELIMITER + "{idFormulario}" + PATH_DELIMITER + "formulario";
 
   /** Bloque service */
@@ -119,7 +121,7 @@ public class BloqueController {
    * @return el listado de entidades {@link Bloque} paginadas.
    */
   @GetMapping(PATH_FORMULARIO)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-PEV-INV-VR')")
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-eti')) or hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-PEV-INV-VR')")
   @Deprecated
   public Page<Bloque> findByFormularioId(@PathVariable Long idFormulario,
       @RequestPageable(sort = "s") Pageable paging) {
@@ -135,12 +137,29 @@ public class BloqueController {
    * @return el {@link Bloque}.
    */
   @GetMapping(PATH_COMENTARIOS_GENERALES)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-PEV-INV-C', 'ETI-PEV-INV-ER')")
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-eti')) or hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-PEV-INV-C', 'ETI-PEV-INV-ER')")
   public Bloque getBloqueComentariosGenerales() {
     log.debug("getBloqueComentariosGenerales() - start");
     Bloque returnValue = service.getBloqueComentariosGenerales();
     log.debug("getBloqueComentariosGenerales() - end");
     return returnValue;
+  }
+
+  /**
+   * Obtiene las entidades {@link Apartado} por el id de su {@link Bloque}.
+   * 
+   * @param id     El id de la entidad {@link Bloque}.
+   * @param paging pageable
+   * @return el listado de entidades {@link Apartado} paginadas.
+   */
+  @GetMapping(PATH_APARTADOS_TREE)
+  @PreAuthorize("isClient() and hasAuthority('SCOPE_sgi-eti')")
+  public ResponseEntity<Page<ApartadoTreeOutput>> getApartadosTree(@PathVariable Long id,
+      @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("getApartados(Long id, Pageable paging) - start");
+    Page<ApartadoTreeOutput> page = apartadoService.findApartadosTreeByBloqueId(id, paging);
+    log.debug("getApartados(Long id, Pageable paging) - end");
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(page, HttpStatus.OK);
   }
 
 }

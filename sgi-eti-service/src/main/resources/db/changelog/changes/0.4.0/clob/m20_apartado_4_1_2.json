@@ -1,0 +1,32 @@
+[
+  {
+    "key": "ap4_1_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.2 Fuentes consultadas para búsqueda de métodos alternativos"
+    },
+    "fieldGroup": [
+      {
+        "template": "Describir las fuentes consultadas y los criterios de búsqueda utilizados"
+      },
+      {
+        "key": "fuentes",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Fuentes consultadas",
+          "required": true
+        }
+      },
+      {
+        "key": "criteriosBusqueda",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Criterios de búsqueda",
+          "required": true
+        }
+      }
+    ]
+  }
+]

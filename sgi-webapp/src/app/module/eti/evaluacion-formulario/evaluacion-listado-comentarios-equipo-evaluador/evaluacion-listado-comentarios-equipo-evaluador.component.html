@@ -1,0 +1,45 @@
+<!-- Evaluacion listado -->
+<div>
+  <h2>{{'title.eti.evaluacion-evaluador.memoria.comentarios-equipo-evaluador' | translate}}</h2>
+  <div class="mat-elevation-z4">
+    <table mat-table [dataSource]="evaluadores$ | async" matSort matSortActive="version">
+      <!-- NumReferencia Column -->
+      <ng-container matColumnDef="persona.nombre">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'eti.evaluacion-evaluador.memoria.evaluador' | translate}}</th>
+        <td mat-cell *matCellDef="let evaluador"> {{evaluador?.persona?.nombre}} {{evaluador?.persona?.apellidos}}</td>
+      </ng-container>
+
+      <!-- Numero de comentarios Column -->
+      <ng-container matColumnDef="rolEvaluacion">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eti.evaluacion-evaluador.memoria.rol-evaluacion' | translate}}</th>
+        <td mat-cell *matCellDef="let evaluador"> {{evaluador.evaluador1 ?
+          ('eti.evaluacion-evaluador.memoria.evaluador1' | translate): (evaluador.evaluador2 ?
+          ('eti.evaluacion-evaluador.memoria.evaluador2' | translate) : '-')}}
+        </td>
+      </ng-container>
+
+      <!-- Numero de comentarios Column -->
+      <ng-container matColumnDef="numComentarios">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eti.evaluacion-evaluador.memoria.numero-comentarios' | translate}}</th>
+        <td mat-cell *matCellDef="let evaluador"> {{evaluador?.numComentarios}} </td>
+      </ng-container>
+
+      <!-- Comentarios enviados Column -->
+      <ng-container matColumnDef="comentariosEnviados">
+        <th mat-header-cell *matHeaderCellDef>
+          {{'eti.evaluacion-evaluador.memoria.comentarios-enviados' | translate}}</th>
+        <td mat-cell *matCellDef="let evaluador"> {{evaluador?.comentariosEnviados ? ('label.si' | translate) :
+          'label.no' | translate}}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="elementosPagina" [length]="totalElementos" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>

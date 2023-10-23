@@ -19,7 +19,7 @@ export class SeguimientoComentarioFragment extends Fragment {
     private rol: Rol,
     private service: EvaluacionService,
     private readonly personaService: PersonaService,
-    private readonly authService: SgiAuthService
+    private readonly authService: SgiAuthService,
   ) {
     super(key);
   }
@@ -34,8 +34,8 @@ export class SeguimientoComentarioFragment extends Fragment {
       }
 
       this.subscriptions.push(evaluacionComentarios$.pipe(
-        switchMap(result => {
-          return from(result.items).pipe(
+        switchMap(results => {
+          return from(results).pipe(
             mergeMap(element => {
               return this.personaService.findById(element.evaluador.id).pipe(
                 map(persona => {
@@ -44,10 +44,9 @@ export class SeguimientoComentarioFragment extends Fragment {
                 })
               );
             }),
-            map(() => result)
+            map(() => results)
           );
-        }),
-        map(response => response.items)
+        })
       ).subscribe((comentarios) => {
         this.comentarios$.next(comentarios.map(comentario => new StatusWrapper<IComentario>(comentario)));
       }));

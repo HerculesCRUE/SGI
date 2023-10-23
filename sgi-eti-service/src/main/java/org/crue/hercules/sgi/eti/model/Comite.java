@@ -12,7 +12,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,9 +30,34 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Comite extends BaseEntity {
 
-  /**
-   * Comité
-   */
+  public enum Tipo {
+    /** CEI <code>1L</code> */
+    CEI(1L),
+    /** CEEA <code>2L</code> */
+    CEEA(2L),
+    /** CBE <code>3L</code> */
+    CBE(3L);
+
+    private final Long id;
+
+    private Tipo(Long id) {
+      this.id = id;
+    }
+
+    public Long getId() {
+      return this.id;
+    }
+
+    public static Tipo fromId(Long id) {
+      for (Tipo tipo : Tipo.values()) {
+        if (tipo.id.equals(id)) {
+          return tipo;
+        }
+      }
+      return null;
+    }
+  }
+
   private static final long serialVersionUID = 1L;
 
   @Id
@@ -68,4 +96,11 @@ public class Comite extends BaseEntity {
     /** Masculino */
     M;
   }
+
+  @JsonIgnore
+  @Transient()
+  public Tipo getTipo() {
+    return Tipo.fromId(this.id);
+  }
+
 }

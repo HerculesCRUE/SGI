@@ -94,12 +94,18 @@ public class RespuestaControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "ETI-RESPUESTA-EDITAR" })
-  public void newRespuesta_Error_Returns400() throws Exception {
+  public void newRespuesta_updateRespuesta() throws Exception {
     // given: Un Respuesta nuevo que produce un error al crearse
-    String nuevoRespuestaJson = "{\"valor\": \"Valor1\", \"memoria\": {\"memoria\": {\"id\": 1}, \"formulario\": {\"id\": 1}, \"activo\": true}, \"componenteFormulario\": {\"esquema\": \"Esquema1\"}}";
-
+    String nuevoRespuestaJson = "{\"valor\": \"Valor1\", \"memoria\": {\"id\": 1}, \"apartado\": {\"id\": 1}, \"formulario\": {\"id\": 1}, \"activo\": true}, \"componenteFormulario\": {\"esquema\": \"Esquema1\"}}";
+    Respuesta respuesta = generarMockRespuesta(1L);
+    respuesta.setValor("{\"valor\":\"Valor actualizado\"}");
     BDDMockito.given(respuestaService.create(ArgumentMatchers.<Respuesta>any()))
         .willThrow(new IllegalArgumentException());
+    BDDMockito
+        .given(
+            respuestaService.findByMemoriaIdAndApartadoId(ArgumentMatchers.<Long>any(), ArgumentMatchers.<Long>any()))
+        .willReturn(respuesta);
+    BDDMockito.given(respuestaService.update(ArgumentMatchers.<Respuesta>any())).willReturn(respuesta);
 
     // when: Creamos un Respuesta
     mockMvc
@@ -108,8 +114,8 @@ public class RespuestaControllerTest extends BaseControllerTest {
             .content(nuevoRespuestaJson))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Devueve un error 400
-        .andExpect(MockMvcResultMatchers.status().isBadRequest());
-
+        .andExpect(MockMvcResultMatchers.status().isCreated()).andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
+        .andExpect(MockMvcResultMatchers.jsonPath("valor.valor").value("Valor actualizado"));
   }
 
   @Test

@@ -32,7 +32,7 @@ class PeticionEvaluacionServiceTest extends BaseReportEtiServiceTest {
 
     Assertions
         .assertThatThrownBy(
-            () -> peticionEvaluacionService.findMemoriaByPeticionEvaluacionMaxVersion(idPeticionEvaluacion))
+            () -> peticionEvaluacionService.getMemorias(idPeticionEvaluacion))
         .isInstanceOf(GetDataReportException.class);
   }
 
@@ -42,7 +42,7 @@ class PeticionEvaluacionServiceTest extends BaseReportEtiServiceTest {
 
     Assertions
         .assertThatThrownBy(
-            () -> peticionEvaluacionService.findTareasEquipoTrabajo(idPeticionEvaluacion))
+            () -> peticionEvaluacionService.getTareasEquipoTrabajo(idPeticionEvaluacion))
         .isInstanceOf(GetDataReportException.class);
   }
 

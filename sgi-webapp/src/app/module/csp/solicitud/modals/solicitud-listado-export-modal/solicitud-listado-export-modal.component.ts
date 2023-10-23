@@ -11,14 +11,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { ISolicitudReportOptions, SolicitudListadoExportService } from '../../solicitud-listado-export.service';
 
 const SOLICITUD_KEY = marker('csp.solicitud');
-const REPORT_TITLE_KEY = marker('csp.solicitud.listado');
 
 @Component({
   templateUrl: './solicitud-listado-export-modal.component.html',
   styleUrls: ['./solicitud-listado-export-modal.component.scss']
 })
 export class SolicitudListadoExportModalComponent extends BaseExportModalComponent<IReportOptions> implements OnInit {
-  private reportTitle: string;
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
@@ -43,7 +41,6 @@ export class SolicitudListadoExportModalComponent extends BaseExportModalCompone
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.reportTitle = this.translate.instant(REPORT_TITLE_KEY);
     this.formGroup = this.buildFormGroup();
   }
 
@@ -58,10 +55,6 @@ export class SolicitudListadoExportModalComponent extends BaseExportModalCompone
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       outputType: new FormControl(this.outputType, Validators.required),
-      reportTitle: new FormControl(this.reportTitle, Validators.required),
-
-      hideBlocksIfNoData: new FormControl(true),
-
       showTodos: new FormControl(true),
       showSolicitudEntidadesConvocantes: new FormControl(true),
       showSolicitudProyectoFichaGeneral: new FormControl(true),
@@ -96,9 +89,7 @@ export class SolicitudListadoExportModalComponent extends BaseExportModalCompone
 
   protected getReportOptions(): IReportConfig<ISolicitudReportOptions> {
     const reportModalData: IReportConfig<ISolicitudReportOptions> = {
-      title: this.formGroup.controls.reportTitle.value,
       outputType: this.formGroup.controls.outputType.value,
-      hideBlocksIfNoData: this.formGroup.controls.hideBlocksIfNoData.value,
       reportOptions: {
         findOptions: this.modalData.findOptions,
         showSolicitudEntidadesConvocantes: this.formGroup.controls.showSolicitudEntidadesConvocantes.value,

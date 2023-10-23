@@ -32,7 +32,7 @@ const MSG_ERROR = marker('error.load');
 const MSG_ESTADO_ANTERIOR_OK = marker('msg.eti.memoria.estado-anterior.success');
 const MSG_ESTADO_ANTERIOR_ERROR = marker('error.eti.memoria.estado-anterior');
 const MSG_RECUPERAR_ESTADO = marker('msg.eti.memoria.estado-anterior');
-const PETICION_EVALUACION_KEY = marker('eti.peticion-evaluacion');
+const PETICION_EVALUACION_KEY = marker('eti.peticion-evaluacion-etica-proyecto');
 
 @Component({
   selector: 'sgi-memoria-listado-ges',

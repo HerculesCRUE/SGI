@@ -11,6 +11,8 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
 import { endWith, map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
+import { Rol } from '../../acta-rol';
+import { ActaService } from '@core/services/eti/acta.service';
 
 export class ActaComentariosFragment extends Fragment {
 
@@ -23,19 +25,29 @@ export class ActaComentariosFragment extends Fragment {
   private idsEvaluacion: number[] = [];
   showAddComentarios = true;
 
+  public isRolGestor(): boolean {
+    return this.rol === Rol.GESTOR;
+  }
+
   constructor(
     key: number,
+    private actaService: ActaService,
     private service: EvaluacionService,
     private convocatoriaReunionService: ConvocatoriaReunionService,
     private readonly personaService: PersonaService,
-    private readonly authService: SgiAuthService) {
+    private readonly authService: SgiAuthService,
+    private rol: Rol
+  ) {
     super(key);
-    this.selectedIdConvocatoria = key;
   }
 
   protected onInitialize(): void {
     if (this.getKey()) {
-      this.loadEvaluaciones(this.getKey() as number);
+      this.subscriptions.push(this.actaService.findById(this.getKey() as number).subscribe(
+        value => {
+          this.selectedIdConvocatoria = value.convocatoriaReunion?.id;
+          this.loadEvaluaciones(value.convocatoriaReunion?.id);
+        }));
     }
   }
 
@@ -53,16 +65,16 @@ export class ActaComentariosFragment extends Fragment {
                 evaluacionesComentario.push(evaluacion);
                 this.idsEvaluacion.push(evaluacion.id);
                 this.showAddComentarios = this.checkAddComentario(evaluacion);
-                return this.service.getComentariosActa(evaluacion.id).pipe(
+                return this.service.getComentariosActa(evaluacion.id, this.isRolGestor()).pipe(
                   map((comentarios) => {
-                    if (comentarios.items.length > 0) {
+                    if (comentarios.length > 0) {
                       this.comentarios$.value.forEach(comentario => {
                         if (!evaluacionesComentario.some(ev => ev.id === comentario.value.evaluacion.id)) {
                           evaluacionesComentario.push(comentario.value.evaluacion);
                           this.idsEvaluacion.push(comentario.value.evaluacion.id);
                         }
                       });
-                      comentarios.items.forEach(comentario => {
+                      comentarios.forEach(comentario => {
                         this.personaService.findById(comentario.evaluador.id).subscribe(persona => {
                           current.push(new StatusWrapper<IComentario>(comentario));
                           if (!evaluacionesComentario.some(ev => ev.id === comentario.evaluacion.id)) {
@@ -137,7 +149,7 @@ export class ActaComentariosFragment extends Fragment {
     return from(this.comentariosEliminados).pipe(
       mergeMap((wrappedComentario) => {
         const evaluacion = this.evaluaciones$.value.filter(ev => ev.memoria.id === wrappedComentario.value.memoria.id)[0];
-        return this.service.deleteComentarioActa(evaluacion.id, wrappedComentario.value.id).pipe(
+        return this.service.deleteComentarioActa(evaluacion.id, wrappedComentario.value.id, this.isRolGestor()).pipe(
           map(() => {
             this.comentariosEliminados = this.comentariosEliminados.filter(
               comentario => comentario.value.id !== wrappedComentario.value.id);
@@ -155,7 +167,7 @@ export class ActaComentariosFragment extends Fragment {
     return from(comentariosCreados).pipe(
       mergeMap((wrappedComentario) => {
         const evaluacion = this.evaluaciones$.value.filter(ev => ev.memoria.id === wrappedComentario.value.memoria.id)[0];
-        return this.service.createComentarioActa(evaluacion.id, wrappedComentario.value).pipe(
+        return this.service.createComentarioActa(evaluacion.id, wrappedComentario.value, this.isRolGestor()).pipe(
           map((savedComentario) => {
             const index = this.comentarios$.value.findIndex((currentComentario) => currentComentario === wrappedComentario);
             wrappedComentario.value.id = savedComentario.id;

@@ -43,14 +43,12 @@ export class DetalleOperacionesModificacionesExportModalComponent
 
   protected buildFormGroup(): FormGroup {
     return new FormGroup({
-      outputType: new FormControl(this.outputType, Validators.required),
-      reportTitle: new FormControl(this.title, Validators.required),
+      outputType: new FormControl(this.outputType, Validators.required)
     });
   }
 
   protected getReportOptions(): IReportConfig<IEjecucionPresupuestariaReportOptions> {
     const reportModalData: IReportConfig<IEjecucionPresupuestariaReportOptions> = {
-      title: this.formGroup.controls.reportTitle.value,
       outputType: this.formGroup.controls.outputType.value,
       reportOptions: {
         data: this.modalData.data,
@@ -71,6 +69,5 @@ export class DetalleOperacionesModificacionesExportModalComponent
   protected getGender() {
     return null;
   }
-
 
 }

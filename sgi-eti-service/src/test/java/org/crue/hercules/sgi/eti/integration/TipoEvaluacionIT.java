@@ -243,29 +243,6 @@ public class TipoEvaluacionIT extends BaseIT {
   }
 
   @Test
-  public void findAllDictamenByTipoEvaluacionAndRevisionMinima_WithTipoEvaluacionId_ReturnsListaDictamen()
-      throws Exception {
-
-    TipoEvaluacion tipoEvaluacion = generarMockTipoEvaluacion(1L, "TipoEvaluacion1");
-    Dictamen dictamen1 = generarMockDictamen(5L, "Favorable", tipoEvaluacion);
-    Dictamen dictamen2 = generarMockDictamen(6L, "Desfavorable", tipoEvaluacion);
-    List<Dictamen> listaDictamenes = new ArrayList<Dictamen>();
-    listaDictamenes.add(dictamen1);
-    listaDictamenes.add(dictamen2);
-
-    final String url = new StringBuffer(TIPO_EVALUACION_CONTROLLER_BASE_PATH).append(PATH_PARAMETER_ID)
-        .append(DICTAMENES_REV_MINIMA).append(PATH_PARAMETER).toString();
-
-    final ResponseEntity<List<Dictamen>> response = restTemplate.exchange(url, HttpMethod.GET, buildRequest(null, null),
-        new ParameterizedTypeReference<List<Dictamen>>() {
-        }, 1L, Boolean.TRUE);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    final List<Dictamen> dictamenes = response.getBody();
-    Assertions.assertThat(dictamenes).isEqualTo(listaDictamenes);
-  }
-
-  @Test
   public void findTipoEvaluacionMemoriaRetrospectiva_ReturnsListaTipoEvaluacion() throws Exception {
 
     TipoEvaluacion tipoEvaluacion1 = generarMockTipoEvaluacion(1L, "TipoEvaluacion1");

@@ -320,3 +320,56 @@ mat-form-field {
     color: map-get($palette-warn, $warn-color - 100);
   }
 }
+
+/**/
+/** CKEDITOR */
+/**/
+.ckeditor-label {
+  display: inline-block;
+  position: relative;
+  text-align: left;
+  font-size: smaller;
+  font-weight: 400;
+  line-height: 1.333;
+  font-family: Poppins;
+  letter-spacing: normal;
+  padding: 0.5em 0;
+  border-top: 0.99975em solid transparent;
+  color: rgba(0, 0, 0, 0.7);
+  left: 0;
+  pointer-events: none;
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  transform-origin: 0 0;
+  transition: transform 400ms cubic-bezier(0.25, 0.8, 0.25, 1), color 400ms cubic-bezier(0.25, 0.8, 0.25, 1), width 400ms cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  .warn {
+    color: map-get($palette-warn, $warn-color) !important;
+  }
+}
+
+.ckeditor-error {
+  color: map-get($palette-warn, $warn-color);
+  font-size: 75%;
+}
+
+.ckeditor-hint {
+  height: 10px;
+  text-align: right;
+  font-size: 85%;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.ck-editor-border-warn {
+  border: 0.5px solid map-get($palette-warn, $warn-color);
+}
+
+.ck-content {
+  min-height: 200px;
+}
+
+/**/
+/** FIN CKEDITOR */
+/**/

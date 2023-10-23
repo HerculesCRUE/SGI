@@ -1,0 +1,74 @@
+[
+  {
+    "key": "ap3_6_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.6.5 Periodo del proyecto durante el que se utilizarán los animales"
+    },
+    "fieldGroup": [
+      {
+        "key": "fechaUsoAnimalesDesde",
+        "type": "datepicker",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Desde"
+        },
+        "validators": {
+          "validation": [
+            {
+              "name": "date-is-between",
+              "options": {
+                "compareTo": "formStateProperties",
+                "formStateProperties": [
+                  "memoria.peticionEvaluacion.fechaInicio",
+                  "memoria.peticionEvaluacion.fechaFin"
+                ],
+                "message": "Debe de estar comprendida entre las fechas de inicio y fin del proyecto (datos generales solicitud evaluación)"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "key": "fechaUsoAnimalesHasta",
+        "type": "datepicker",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Hasta"
+        },
+        "validators": {
+          "validation": [
+            {
+              "name": "date-is-between",
+              "options": {
+                "compareTo": "formStateProperties",
+                "formStateProperties": [
+                  "memoria.peticionEvaluacion.fechaInicio",
+                  "memoria.peticionEvaluacion.fechaFin"
+                ],
+                "message": "Debe de estar comprendida entre las fechas de inicio y fin del proyecto (datos generales solicitud evaluación)"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "validators": {
+      "validation": [
+        {
+          "name": "date-is-after",
+          "options": {
+            "compareTo": "formStateProperty",
+            "errorPath": "fechaUsoAnimalesHasta",
+            "formStateProperty": "mainModel.ap3_6.ap3_6_5.fechaUsoAnimalesDesde",
+            "message": "La fecha debe ser posterior a la fecha indicada en el campo desde"
+          }
+        }
+      ]
+    }
+  }
+]

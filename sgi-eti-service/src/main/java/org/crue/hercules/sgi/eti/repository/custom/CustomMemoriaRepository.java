@@ -69,4 +69,24 @@ public interface CustomMemoriaRepository {
    */
   public Page<Memoria> findAllMemoriasPeticionEvaluacionModificables(Long idComite, Long idPeticionEvaluacion,
       Pageable pageable);
+
+  /**
+   * 
+   * Devuelve una lista paginada de {@link Memoria} asignables para una
+   * convocatoria determinada
+   * 
+   * Si la convocatoria es de tipo "Seguimiento" devuelve las memorias en estado
+   * "En secretaría seguimiento anual" y "En secretaría seguimiento final" con la
+   * fecha de envío es igual o menor a la fecha límite de la convocatoria de
+   * reunión.
+   * 
+   * Si la convocatoria es de tipo "Ordinaria" o "Extraordinaria" devuelve las
+   * memorias en estado "En secretaria" con la fecha de envío es igual o menor a
+   * la fecha límite de la convocatoria de reunión y las que tengan una
+   * retrospectiva en estado "En secretaría".
+   * 
+   * @param idPeticionEvaluacion Identificador del {@link PeticionEvaluacion}
+   * @return lista de memorias asignables a la convocatoria.
+   */
+  public List<Memoria> findAllMemoriasAsignablesPeticionEvaluacion(Long idPeticionEvaluacion);
 }

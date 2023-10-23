@@ -28,7 +28,7 @@
           {{'csp.solicitud-proyecto-presupuesto.partida-gasto.importe-presupuestado' | translate}}
         </th>
         <td mat-cell *matCellDef="let wrapper">
-          {{wrapper.partidaGasto.value.importePresupuestado}}
+          {{wrapper.partidaGasto.value.importePresupuestado | number: '1.2-2'}}
         </td>
       </ng-container>
 
@@ -38,7 +38,7 @@
           {{'csp.solicitud-proyecto-presupuesto.partida-gasto.importe-solicitado' | translate}}
         </th>
         <td mat-cell *matCellDef="let wrapper">
-          {{wrapper.partidaGasto.value.importeSolicitado}}
+          {{wrapper.partidaGasto.value.importeSolicitado | number: '1.2-2'}}
         </td>
       </ng-container>
 
@@ -48,7 +48,7 @@
           {{'csp.solicitud-proyecto-presupuesto.partida-gasto.importe-total-presupuestado' | translate}}
         </th>
         <td mat-cell *matCellDef="let wrapper">
-          {{wrapper.importeTotalPresupuestadoConceptoGasto}}
+          {{wrapper.importeTotalPresupuestadoConceptoGasto | number: '1.2-2'}}
         </td>
       </ng-container>
 
@@ -58,7 +58,7 @@
           {{'csp.solicitud-proyecto-presupuesto.partida-gasto.importe-total-solicitado' | translate}}
         </th>
         <td mat-cell *matCellDef="let wrapper">
-          {{wrapper.importeTotalSolicitadoConceptoGasto}}
+          {{wrapper.importeTotalSolicitadoConceptoGasto | number: '1.2-2'}}
         </td>
       </ng-container>
 

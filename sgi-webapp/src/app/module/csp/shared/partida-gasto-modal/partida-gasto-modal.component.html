@@ -44,8 +44,9 @@
         <mat-form-field>
           <mat-label>{{'csp.solicitud-proyecto-presupuesto.importe-presupuestado' | translate}}
           </mat-label>
-          <input matInput formControlName="importePresupuestado" type="number" min="0" step="1"
-            placeholder="{{'csp.solicitud-proyecto-presupuesto.importe-presupuestado' | translate}}" required>
+          <input matInput formControlName="importePresupuestado" type="text"
+            placeholder="{{'csp.solicitud-proyecto-presupuesto.importe-presupuestado' | translate}}"
+            sgiInputWithThousandSeparator required>
           <mat-error *ngIf="formGroup.controls.importePresupuestado.errors?.required">
             {{'error.required.entity' | translate:msgParamImportePresupuestadoEntity}}
           </mat-error>
@@ -62,8 +63,9 @@
         <mat-form-field>
           <mat-label>{{'csp.solicitud-proyecto-presupuesto.importe-solicitado' | translate}}
           </mat-label>
-          <input matInput formControlName="importeSolicitado" type="number" min="0" step="1"
-            placeholder="{{'csp.solicitud-proyecto-presupuesto.importe-solicitado' | translate}}" required>
+          <input matInput formControlName="importeSolicitado" type="text"
+            placeholder="{{'csp.solicitud-proyecto-presupuesto.importe-solicitado' | translate}}"
+            sgiInputWithThousandSeparator required>
           <mat-error *ngIf="formGroup.controls.importeSolicitado.errors?.required">
             {{'error.required.entity' | translate:msgParamImporteEntity}}
           </mat-error>

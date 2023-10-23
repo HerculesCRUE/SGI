@@ -11,14 +11,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { GrupoListadoExportService, IGrupoReportOptions } from '../../grupo-listado-export.service';
 
 const GRUPO_KEY = marker('csp.grupo');
-const REPORT_TITLE_KEY = marker('csp.grupo.listado');
 
 @Component({
   templateUrl: './grupo-listado-export-modal.component.html',
   styleUrls: ['./grupo-listado-export-modal.component.scss']
 })
 export class GrupoListadoExportModalComponent extends BaseExportModalComponent<IGrupoReportOptions> implements OnInit {
-  private reportTitle: string;
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
@@ -43,7 +41,6 @@ export class GrupoListadoExportModalComponent extends BaseExportModalComponent<I
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.reportTitle = this.translate.instant(REPORT_TITLE_KEY);
     this.formGroup = this.buildFormGroup();
   }
 
@@ -58,10 +55,6 @@ export class GrupoListadoExportModalComponent extends BaseExportModalComponent<I
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       outputType: new FormControl(this.outputType, Validators.required),
-      reportTitle: new FormControl(this.reportTitle, Validators.required),
-
-      hideBlocksIfNoData: new FormControl(true),
-
       showTodos: new FormControl(true),
       showEquiposInvestigacion: new FormControl(true),
       showEnlaces: new FormControl(true),
@@ -92,9 +85,7 @@ export class GrupoListadoExportModalComponent extends BaseExportModalComponent<I
 
   protected getReportOptions(): IReportConfig<IGrupoReportOptions> {
     const reportModalData: IReportConfig<IGrupoReportOptions> = {
-      title: this.formGroup.controls.reportTitle.value,
       outputType: this.formGroup.controls.outputType.value,
-      hideBlocksIfNoData: this.formGroup.controls.hideBlocksIfNoData.value,
       reportOptions: {
         findOptions: this.modalData.findOptions,
         showEquiposInvestigacion: this.formGroup.controls.showEquiposInvestigacion.value,

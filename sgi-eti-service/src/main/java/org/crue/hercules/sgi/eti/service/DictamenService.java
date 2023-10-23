@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.crue.hercules.sgi.eti.exceptions.DictamenNotFoundException;
 import org.crue.hercules.sgi.eti.model.Dictamen;
+import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -78,5 +79,13 @@ public interface DictamenService {
    * @return el listado de Dictámenes.
    */
   List<Dictamen> findAllByRetrospectiva();
+
+  /**
+   * Devuelve los dictamenes que se pueden asignar a la evaluacion
+   * 
+   * @param evaluacionId identificador de la {@link Evaluacion}
+   * @return el listado de {@link Dictamen}
+   */
+  List<Dictamen> findAllDictamenByEvaluacionId(Long evaluacionId);
 
 }

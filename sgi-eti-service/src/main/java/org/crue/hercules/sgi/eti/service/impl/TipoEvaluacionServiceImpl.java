@@ -5,9 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.crue.hercules.sgi.eti.exceptions.TipoEvaluacionNotFoundException;
-import org.crue.hercules.sgi.eti.model.Dictamen;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
-import org.crue.hercules.sgi.eti.repository.DictamenRepository;
 import org.crue.hercules.sgi.eti.repository.TipoEvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.specification.TipoEvaluacionSpecifications;
 import org.crue.hercules.sgi.eti.service.TipoEvaluacionService;
@@ -29,12 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class TipoEvaluacionServiceImpl implements TipoEvaluacionService {
   private final TipoEvaluacionRepository tipoEvaluacionRepository;
-  private final DictamenRepository dictamenRepository;
 
-  public TipoEvaluacionServiceImpl(TipoEvaluacionRepository tipoEvaluacionRepository,
-      DictamenRepository dictamenRepository) {
+  public TipoEvaluacionServiceImpl(TipoEvaluacionRepository tipoEvaluacionRepository) {
     this.tipoEvaluacionRepository = tipoEvaluacionRepository;
-    this.dictamenRepository = dictamenRepository;
   }
 
   /**
@@ -142,64 +137,10 @@ public class TipoEvaluacionServiceImpl implements TipoEvaluacionService {
   }
 
   @Override
-  public List<Dictamen> findAllDictamenByTipoEvaluacionAndRevisionMinima(Long idTipoEvaluacion,
-      Boolean esRevisionMinima) {
-
-    log.debug("findAllDictamenByTipoEvaluacionAndRevisionMinima - start");
-    List<Dictamen> listaDictamenes = new ArrayList<Dictamen>();
-
-    // TipoEvaluacion: Memoria y esRevisionMinima: True
-    if ((idTipoEvaluacion == 2L) && (esRevisionMinima)) {
-
-      // Favorable (1) y Favorable pendiente de revisión mínima (2)
-      List<Long> ids = new ArrayList<Long>(Arrays.asList(1L, 2L));
-      listaDictamenes = dictamenRepository.findByIdIn(ids);
-
-      return listaDictamenes;
-    }
-
-    // TipoEvaluacion: Memoria y esRevisionMinima: False
-    if ((idTipoEvaluacion == 2L) && (!esRevisionMinima)) {
-
-      // Busqueda por TipoEvaluacion: Memoria (devuelve todas las de este tipo)
-      listaDictamenes = dictamenRepository.findByTipoEvaluacionId(idTipoEvaluacion);
-
-    }
-
-    // TipoEvaluacion: Retrospectiva
-    if (idTipoEvaluacion == 1L) {
-
-      // Busqueda por TipoEvaluacion: Retrospectiva (devuelve todas las de este tipo)
-      listaDictamenes = dictamenRepository.findByTipoEvaluacionId(idTipoEvaluacion);
-
-    }
-
-    // TipoEvaluacion: Seguimiento Anual
-    if (idTipoEvaluacion == 3L) {
-
-      // Busqueda por TipoEvaluacion: Seguimiento Anual (devuelve todas las de este
-      // tipo)
-      listaDictamenes = dictamenRepository.findByTipoEvaluacionId(idTipoEvaluacion);
-
-    }
-
-    // TipoEvaluacion: Seguimiento Final
-    if (idTipoEvaluacion == 4L) {
-
-      // Busqueda por TipoEvaluacion: Seguimiento Final (devuelve todas las de este
-      // tipo)
-      listaDictamenes = dictamenRepository.findByTipoEvaluacionId(idTipoEvaluacion);
-
-    }
-    log.debug("findAllDictamenByTipoEvaluacionAndRevisionMinima - end");
-    return listaDictamenes;
-  }
-
-  @Override
   public List<TipoEvaluacion> findTipoEvaluacionMemoriaRetrospectiva() {
     log.debug("findTipoEvaluacionMemoriaRetrospectiva - start");
 
-    List<Long> lista = new ArrayList<Long>(Arrays.asList(1L, 2L));
+    List<Long> lista = new ArrayList<>(Arrays.asList(1L, 2L));
     List<TipoEvaluacion> listaTipoEvaluacion = tipoEvaluacionRepository.findByActivoTrueAndIdIn(lista);
 
     log.debug("findTipoEvaluacionMemoriaRetrospectiva - end");
@@ -210,7 +151,7 @@ public class TipoEvaluacionServiceImpl implements TipoEvaluacionService {
   public List<TipoEvaluacion> findTipoEvaluacionSeguimientoAnualFinal() {
     log.debug("findTipoEvaluacionSeguimientoAnualFinal - start");
 
-    List<Long> lista = new ArrayList<Long>(Arrays.asList(3L, 4L));
+    List<Long> lista = new ArrayList<>(Arrays.asList(3L, 4L));
     List<TipoEvaluacion> listaTipoEvaluacion = tipoEvaluacionRepository.findByActivoTrueAndIdIn(lista);
 
     log.debug("findTipoEvaluacionSeguimientoAnualFinal - end");

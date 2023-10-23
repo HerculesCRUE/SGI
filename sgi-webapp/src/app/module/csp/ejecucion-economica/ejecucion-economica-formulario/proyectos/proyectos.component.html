@@ -33,6 +33,26 @@
         </td>
       </ng-container>
 
+      <!-- Referencia en entidad convocante Column -->
+      <ng-container matColumnDef="codigoExterno">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.ref-entidad-convocante' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.codigoExterno}}
+        </td>
+      </ng-container>
+
+      <!-- Referencia interna Column -->
+      <ng-container matColumnDef="codigoInterno">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.ejecucion-economica.ref-interna' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{element.codigoInterno}}
+        </td>
+      </ng-container>
+
       <!-- Responsable Column -->
       <ng-container matColumnDef="responsables">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>

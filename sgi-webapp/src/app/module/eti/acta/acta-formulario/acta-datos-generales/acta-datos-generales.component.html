@@ -51,17 +51,31 @@
         </mat-error>
       </mat-form-field>
     </div>
-    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
-      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexPropertiesInline.order">
-      <mat-form-field>
-        <mat-label>{{'eti.acta.resumen' | translate}}</mat-label>
-        <textarea #resumen matInput formControlName="resumen" id="resumen"
-          placeholder="{{'eti.acta.resumen' | translate}}" required [readonly]="readonly" maxlength="4000"></textarea>
-        <mat-hint>{{resumen.value.length}} / 4000</mat-hint>
-        <mat-error *ngIf="formGroup.controls.resumen.errors?.required">
-          {{'error.required.entity' | translate:msgParamResumenEntity}}
-        </mat-error>
-      </mat-form-field>
+    <div fxLayout="column" fxFlex="100" fxLayoutGap="10px" [fxFlexOrder]="fxFlexProperties.order">
+      <span class="ckeditor-label">{{'eti.acta.resumen' | translate}}<span
+          [class]="(formGroup.controls.resumen.touched && formGroup.controls.resumen.errors?.required) ? 'warn' : ''">
+          *</span></span>
+      <ckeditor
+        [class]="formGroup.controls.resumen.touched && formGroup.controls.resumen.errors ? 'ck-editor-border-warn' : ''"
+        [editor]="CkEditor" [config]="configCkEditor" formControlName="resumen" required [disabled]="readonly">
+      </ckeditor>
+      <span class="ckeditor-hint"
+        *ngIf="!formGroup.controls.resumen.errors">{{formGroup.controls.resumen?.value?.length}}
+        /
+        4000</span>
+      <span class="ckeditor-error"
+        *ngIf="formGroup.controls.resumen.touched && formGroup.controls.resumen.errors?.required">
+        {{'error.required.entity' | translate:msgParamResumenEntity}}
+      </span>
+      <span class="ckeditor-error"
+        *ngIf="formGroup.controls.resumen.touched && formGroup.controls.resumen.errors?.maxlength">
+        {{ 'error.maxlength.entity' | translate:msgParamResumenEntity }}
+      </span>
     </div>
   </form>
+
+  <sgi-acta-listado-comentarios-equipo-evaluador
+    *ngIf="this.formPart.isRolGestor() && this.actionService.getConvocatoriaReunion()" [actaId]="this.formPart.getKey()"
+    [convocatoriaReunion]="this.actionService.getConvocatoriaReunion()" (errors)="this.formPart.handleErrors($event)">
+  </sgi-acta-listado-comentarios-equipo-evaluador>
 </sgi-fragment>

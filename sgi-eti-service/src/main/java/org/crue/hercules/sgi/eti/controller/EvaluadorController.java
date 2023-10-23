@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
+import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.ConflictoInteres;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
@@ -37,9 +37,15 @@ import lombok.extern.slf4j.Slf4j;
  * EvaluadorController
  */
 @RestController
-@RequestMapping("/evaluadores")
+@RequestMapping(EvaluadorController.REQUEST_MAPPING)
 @Slf4j
 public class EvaluadorController {
+
+  public static final String PATH_DELIMITER = "/";
+  public static final String REQUEST_MAPPING = PATH_DELIMITER + "evaluadores";
+
+  public static final String PATH_ID = PATH_DELIMITER + "{id}";
+  public static final String PATH_ACTIVO_COMITE = PATH_ID + PATH_DELIMITER + "activo-comite/{comiteId}";
 
   /** Evaluador service */
   private final EvaluadorService evaluadorService;
@@ -89,7 +95,7 @@ public class EvaluadorController {
    * @param query filtro de búsqueda.
    */
   @GetMapping("comite/{idComite}/sinconflictointereses/{idMemoria}/fecha/{fechaEvaluacion}")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNV-C', 'ETI-CNV-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNV-C', 'ETI-CNV-E','ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR')")
   ResponseEntity<List<Evaluador>> findAllByComiteSinconflictoInteresesMemoria(@PathVariable Long idComite,
       @PathVariable Long idMemoria, @PathVariable Instant fechaEvaluacion) {
     log.debug("findAllByComiteSinconflictoInteresesMemoria(Long idComite, Long idMemoria) - start");
@@ -126,7 +132,7 @@ public class EvaluadorController {
    * @param id               id {@link Evaluador} a actualizar.
    * @return {@link Evaluador} actualizado.
    */
-  @PutMapping("/{id}")
+  @PutMapping(PATH_ID)
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVR-E')")
   Evaluador replaceEvaluador(@Valid @RequestBody Evaluador updatedEvaluador, @PathVariable Long id) {
     log.debug("replaceEvaluador(Evaluador updatedEvaluador, Long id) - start");
@@ -142,7 +148,7 @@ public class EvaluadorController {
    * @param id Identificador de {@link Evaluador}.
    * @return {@link Evaluador} correspondiente al id.
    */
-  @GetMapping("/{id}")
+  @GetMapping(PATH_ID)
   Evaluador one(@PathVariable Long id) {
     log.debug("Evaluador one(Long id) - start");
     Evaluador returnValue = evaluadorService.findById(id);
@@ -155,7 +161,7 @@ public class EvaluadorController {
    * 
    * @param id Identificador de {@link Evaluador}.
    */
-  @DeleteMapping("/{id}")
+  @DeleteMapping(PATH_ID)
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVR-B')")
   void delete(@PathVariable Long id) {
     log.debug("delete(Long id) - start");
@@ -246,7 +252,7 @@ public class EvaluadorController {
   public ResponseEntity<?> hasAssignedEvaluaciones(Authentication authorization) {
     log.debug("hasAssignedEvaluaciones(Authentication authorization) - start");
     String personaRef = authorization.getName();
-    if (evaluacionService.hasAssignedEvaluacionesByEvaluador(personaRef)) {
+    if (Boolean.TRUE.equals(evaluacionService.hasAssignedEvaluacionesByEvaluador(personaRef))) {
       log.debug("hasAssignedEvaluaciones(Authentication authorization) - end");
       return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -265,7 +271,7 @@ public class EvaluadorController {
   public ResponseEntity<?> hasAssignedEvaluacionesSeguimiento(Authentication authorization) {
     log.debug("hasAssignedEvaluacionesSeguimiento(Authentication authorization) - start");
     String personaRef = authorization.getName();
-    if (evaluacionService.hasAssignedEvaluacionesSeguimientoByEvaluador(personaRef)) {
+    if (Boolean.TRUE.equals(evaluacionService.hasAssignedEvaluacionesSeguimientoByEvaluador(personaRef))) {
       log.debug("hasAssignedEvaluacionesSeguimiento(Authentication authorization) - end");
       return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -284,7 +290,7 @@ public class EvaluadorController {
   public ResponseEntity<?> hasAssignedActas(Authentication authorization) {
     log.debug("hasAssignedActas(Authentication authorization) - start");
     String personaRef = authorization.getName();
-    if (actaService.hasAssignedActasByEvaluador(personaRef)) {
+    if (Boolean.TRUE.equals(actaService.hasAssignedActasByEvaluador(personaRef))) {
       log.debug("hasAssignedActas(Authentication authorization) - end");
       return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -309,6 +315,24 @@ public class EvaluadorController {
     }
     log.debug("isEvaluador(Authentication authorization) - end");
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
+   * Comprueba si la persona correspondiente al evaluador esta activa en el
+   * {@link Comite}
+   * 
+   * @param id       identificador del {@link Evaluador}
+   * @param comiteId identificador del {@link Comite}
+   * @return {@link HttpStatus#OK} si esta activo o {@link HttpStatus#NO_CONTENT}
+   *         si no
+   */
+  @RequestMapping(path = PATH_ACTIVO_COMITE, method = RequestMethod.HEAD)
+  @PreAuthorize("hasAuthority('ETI-CNV-E')")
+  public ResponseEntity<Void> isEvaluadorActivoComite(@PathVariable Long id, @PathVariable Long comiteId) {
+    log.debug("isEvaluadorActivoComite({}, {}) - start", id, comiteId);
+    boolean activo = evaluadorService.isEvaluadorActivoComite(id, comiteId);
+    log.debug("isEvaluadorActivoComite({}, {}) - end", id, comiteId);
+    return activo ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
 }

@@ -10,10 +10,13 @@ import { SeguimientoComentarioFragment } from '../seguimiento-formulario/seguimi
 import { SeguimientoDatosMemoriaFragment } from '../seguimiento-formulario/seguimiento-datos-memoria/seguimiento-datos-memoria.fragment';
 import { SeguimientoDocumentacionFragment } from '../seguimiento-formulario/seguimiento-documentacion/seguimiento-documentacion.fragment';
 import { Rol, SeguimientoFormularioActionService } from '../seguimiento-formulario/seguimiento-formulario.action.service';
+import { IEvaluacionWithComentariosEnviados } from '../evaluacion-evaluador/evaluacion-evaluador-listado/evaluacion-evaluador-listado.component';
 
 
 @Injectable()
 export class SeguimientoEvaluarActionService extends SeguimientoFormularioActionService {
+
+  private readonly: boolean;
 
   constructor(
     private readonly logger: NGXLogger,
@@ -24,7 +27,7 @@ export class SeguimientoEvaluarActionService extends SeguimientoFormularioAction
     authService: SgiAuthService
   ) {
     super();
-    this.evaluacion = {} as IEvaluacion;
+    this.evaluacion = {} as IEvaluacionWithComentariosEnviados;
     if (route.snapshot.data.evaluacion) {
       this.evaluacion = route.snapshot.data.evaluacion;
       this.enableEdit();
@@ -43,7 +46,7 @@ export class SeguimientoEvaluarActionService extends SeguimientoFormularioAction
     });
   }
 
-  getEvaluacion(): IEvaluacion {
+  getEvaluacion(): IEvaluacionWithComentariosEnviados {
     return this.evaluacion;
   }
 

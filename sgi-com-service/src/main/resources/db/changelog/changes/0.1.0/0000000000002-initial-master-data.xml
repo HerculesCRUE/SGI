@@ -1,0 +1,720 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000002-initial-master-data.xml">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="0000000000002-param">
+    <!-- ETI Finalizar Acta Sin Revisión Minima-->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_COM_ACTA_SIN_REV_MINIMA_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombre de investigacion&quot;&quot;genero de comite&quot;,&quot;referencia de memoria&quot;,&quot;tipo de actividad&quot;,&quot;titulo solicitud evaluacion&quot;,&quot;enlace de aplicacion&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Dictamen de Evaluación con Revisión Minima-->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_COM_DICT_EVA_REV_MINIMA_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombre de investigacion&quot;&quot;genero de comite&quot;,&quot;referencia de memoria&quot;,&quot;tipo de actividad&quot;,&quot;titulo solicitud evaluacion&quot;,&quot;enlace de aplicacion&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Dictamen de Evaluación Seguimiento con Revisión Minima-->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_COM_DICT_EVA_SEG_REV_MINIMA_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombre de investigacion&quot;&quot;genero de comite&quot;,&quot;referencia de memoria&quot;,&quot;tipo de actividad&quot;,&quot;titulo solicitud evaluacion&quot;,&quot;enlace de aplicacion&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Aviso de Evaluación retrospectiva pendiente-->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_COM_INF_RETRO_PENDIENTE_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombre de investigacion&quot;&quot;genero de comite&quot;,&quot;referencia de memoria&quot;,&quot;tipo de actividad&quot;,&quot;titulo solicitud evaluacion&quot;,&quot;enlace de aplicacion&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Aviso de Evaluación modificada-->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_COM_EVA_MODIFICADA_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombre de investigacion&quot;&quot;referencia de memoria&quot;,&quot;titulo solicitud evaluacion&quot;,&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- PII Fin Fecha Prioridad Solicitud Proteccion -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_DATA" />
+      <column name="description" value="JSON con formato: {&quot;solicitudTitle&quot;:&quot;Solicitud 1&quot;,&quot;monthsBeforeFechaFinPrioridad&quot;:6,&quot;fechaFinPrioridad&quot;:&quot;2022-01-01T00:00:00Z&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- PII Fin Plazo Presentación Entrada Fases nacionales/Reguionales Solicitud Proteccion -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_DATA" />
+      <column name="description" value="JSON con formato: {&quot;solicitudTitle&quot;:&quot;Solicitud 1&quot;,&quot;monthsBeforeFechaFinPrioridad&quot;:6,&quot;fechaFinPrioridad&quot;:&quot;2022-01-01T00:00:00Z&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Informe de Seguimiento Anual Pendiente -->
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_COM_INF_SEG_ANU_DATA" />
+      <column name="description" value="JSON con formato: {&quot;nombre de investigacion&quot;&quot;genero de comite&quot;,&quot;referencia de memoria&quot;,&quot;tipo de actividad&quot;,&quot;titulo solicitud evaluacion&quot;,&quot;enlace de aplicacion&quot;}" />
+      <column name="type" value="JSON" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-subject_tpl">
+    <!-- ETI Finalizar acta Sin Revision Minima-->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="ETI_COM_ACTA_SIN_REV_MINIMA_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de finalizacion de actas de ética" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000002/eti-com-acta/ETI_COM_ACTA_SIN_REV_MINIMA_SUBJECT.ftl" />
+      <where>name='ETI_COM_ACTA_SIN_REV_MINIMA_SUBJECT'</where>
+    </update>
+
+    <!-- ETI Dictamen de Evaluación con Revision Minima-->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="ETI_COM_DICT_EVA_REV_MINIMA_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de finalizacion de actas de ética con revisión mínima" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000002/eti-com-dictamen/ETI_COM_DICT_EVA_REV_MINIMA_SUBJECT.ftl" />
+      <where>name='ETI_COM_DICT_EVA_REV_MINIMA_SUBJECT'</where>
+    </update>
+
+    <!-- ETI Dictamen de Evaluación Seguimiento con Revision Minima-->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="ETI_COM_DICT_EVA_SEG_REV_MINIMA_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de evaluación de seguimiento con revisión mínima" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000002/eti-com-dictamen/ETI_COM_DICT_EVA_SEG_REV_MINIMA_SUBJECT.ftl" />
+      <where>name='ETI_COM_DICT_EVA_SEG_REV_MINIMA_SUBJECT'</where>
+    </update>
+
+    <!-- ETI Aviso de Evaluación retrospectiva pendiente-->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="ETI_COM_INF_RETRO_PENDIENTE_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de comunicados de aviso de evaluación retrospectiva pendiente" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000002/eti-com-informe/ETI_COM_INF_RETRO_PENDIENTE_SUBJECT.ftl" />
+      <where>name='ETI_COM_INF_RETRO_PENDIENTE_SUBJECT'</where>
+    </update>
+
+    <!-- ETI Aviso de Evaluación modificada -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="ETI_COM_EVA_MODIFICADA_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de comunicados de aviso de evaluación modificada" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000002/eti-com-evaluacion/ETI_COM_EVA_MODIFICADA_SUBJECT.ftl" />
+      <where>name='ETI_COM_EVA_MODIFICADA_SUBJECT'</where>
+    </update>
+
+    <!-- PII Fin Fecha Prioridad Solicitud Proteccion -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de aviso vencimiento Fin Fecha Prioridad Solicitud de Protección" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000002/pii-com-meses-hasta-fin-prioridad-solicitud-proteccion/PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_SUBJECT.ftl" />
+      <where>name='PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_SUBJECT'</where>
+    </update>
+
+    <!-- PII Fin Plazo Presentación Entrada Fases nacionales/Reguionales Solicitud Proteccion -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de aviso vencimiento Fin Fecha Prioridad Solicitud de Protección" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000002/pii-com-aviso-fin-plazo-presentacion-fases-nacionales-regionales-solicitud-proteccion/PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_SUBJECT.ftl" />
+      <where>name='PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_SUBJECT'</where>
+    </update>
+
+    <!-- Informe de Seguimiento Anual Pendiente -->
+    <insert tableName="subject_tpl">
+      <column name="id" valueSequenceNext="subject_tpl_seq" />
+      <column name="name" value="ETI_COM_INF_SEG_ANU_SUBJECT" />
+      <column name="description" value="Plantilla de asunto para el envío de comunicados de seguimiento anual pendiente" />
+      <column name="tpl" value=" " />
+    </insert>
+    <update tableName="subject_tpl">
+      <column name="tpl" valueClobFile="clob/0000000000002/eti-com-informe/ETI_COM_INF_SEG_ANU_SUBJECT.ftl" />
+      <where>name='ETI_COM_INF_SEG_ANU_SUBJECT'</where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-subjecttpl_param">
+    <!-- ETI Finalizar acta Sin Revisión Mínima-->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_ACTA_SIN_REV_MINIMA_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_ACTA_SIN_REV_MINIMA_DATA')" />
+    </insert>
+
+    <!-- ETI Dictamen de Evaluación con Revisión Mínima-->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_DICT_EVA_REV_MINIMA_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_DICT_EVA_REV_MINIMA_DATA')" />
+    </insert>
+
+    <!-- ETI Dictamen de Evaluación Seguimiento con Revisión Mínima-->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_DICT_EVA_SEG_REV_MINIMA_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_DICT_EVA_SEG_REV_MINIMA_DATA')" />
+    </insert>
+
+    <!-- ETI Aviso de Evaluación retrospectiva pendiente-->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_INF_RETRO_PENDIENTE_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_INF_RETRO_PENDIENTE_DATA')" />
+    </insert>
+
+    <!-- ETI Aviso de Evaluación modificada -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_EVA_MODIFICADA_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_EVA_MODIFICADA_DATA')" />
+    </insert>
+
+    <!-- PII Fin Fecha Prioridad Solicitud Proteccion -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_DATA')" />
+    </insert>
+
+    <!-- PII Fin Plazo Presentación Entrada Fases nacionales/Reguionales Solicitud Proteccion -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_DATA')" />
+    </insert>
+
+    <!-- ETI Informe de Seguimiento Anual Pendiente -->
+    <insert tableName="subjecttpl_param">
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_INF_SEG_ANU_SUBJECT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_INF_SEG_ANU_DATA')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-content_tpl">
+    <!-- ETI Finalizar Acta Sin Revisión Mínima -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="ETI_COM_ACTA_SIN_REV_MINIMA_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envio de evaluaciones al finalizar acta" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/eti-com-acta/ETI_COM_ACTA_SIN_REV_MINIMA_CONTENT_text.ftl" />
+      <where>name='ETI_COM_ACTA_SIN_REV_MINIMA_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/eti-com-acta/ETI_COM_ACTA_SIN_REV_MINIMA_CONTENT_html.ftl" />
+      <where>name='ETI_COM_ACTA_SIN_REV_MINIMA_CONTENT'</where>
+    </update>
+
+    <!-- ETI Dictamen de Evaluación con Revisión Mínima -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="ETI_COM_DICT_EVA_REV_MINIMA_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envio de evaluaciones al finalizar acta con revisión mínima" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/eti-com-dictamen/ETI_COM_DICT_EVA_REV_MINIMA_CONTENT_text.ftl" />
+      <where>name='ETI_COM_DICT_EVA_REV_MINIMA_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/eti-com-dictamen/ETI_COM_DICT_EVA_REV_MINIMA_CONTENT_html.ftl" />
+      <where>name='ETI_COM_DICT_EVA_REV_MINIMA_CONTENT'</where>
+    </update>
+
+    <!-- ETI Dictamen de Evaluación Seguimiento con Revisión Mínima -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="ETI_COM_DICT_EVA_SEG_REV_MINIMA_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envio de evaluaciones de seguimiento con revisión mínima" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/eti-com-dictamen/ETI_COM_DICT_EVA_SEG_REV_MINIMA_CONTENT_text.ftl" />
+      <where>name='ETI_COM_DICT_EVA_SEG_REV_MINIMA_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/eti-com-dictamen/ETI_COM_DICT_EVA_SEG_REV_MINIMA_CONTENT_html.ftl" />
+      <where>name='ETI_COM_DICT_EVA_SEG_REV_MINIMA_CONTENT'</where>
+    </update>
+
+    <!-- ETI Aviso de Evaluación retrospectiva pendiente-->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="ETI_COM_INF_RETRO_PENDIENTE_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de comunicados de aviso de evaluación retrospectiva pendiente" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/eti-com-informe/ETI_COM_INF_RETRO_PENDIENTE_CONTENT_text.ftl" />
+      <where>name='ETI_COM_INF_RETRO_PENDIENTE_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/eti-com-informe/ETI_COM_INF_RETRO_PENDIENTE_CONTENT_html.ftl" />
+      <where>name='ETI_COM_INF_RETRO_PENDIENTE_CONTENT'</where>
+    </update>
+
+    <!-- ETI Aviso de Evaluación modificada-->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="ETI_COM_EVA_MODIFICADA_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de comunicados de aviso de evaluación modificada" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/eti-com-evaluacion/ETI_COM_EVA_MODIFICADA_CONTENT_text.ftl" />
+      <where>name='ETI_COM_EVA_MODIFICADA_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/eti-com-evaluacion/ETI_COM_EVA_MODIFICADA_CONTENT_html.ftl" />
+      <where>name='ETI_COM_EVA_MODIFICADA_CONTENT'</where>
+    </update>
+
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST -->
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_CONTENT_text.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_CONTENT'</where>
+    </update>
+
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO -->
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_CONTENT_text.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO_CONTENT'</where>
+    </update>
+
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST -->
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_CONTENT'</where>
+    </update>
+
+    <!-- CSP Calendario Facturacion Notificar FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO -->
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_CONTENT_text.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/csp-com-calendario-facturacion/notificar/CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_CONTENT_html.ftl" />
+      <where>name='CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO_CONTENT'</where>
+    </update>
+
+    <!-- CSP SOL Denegada provisional -->
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/csp-com-solicitud-cambio-estado/denegadas/CSP_COM_SOL_CAMB_EST_DEN_PROV_CONTENT_text.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_DEN_PROV_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/csp-com-solicitud-cambio-estado/denegadas/CSP_COM_SOL_CAMB_EST_DEN_PROV_CONTENT_html.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_DEN_PROV_CONTENT'</where>
+    </update>
+    <!-- CSP SOL Denegada -->
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/csp-com-solicitud-cambio-estado/denegadas/CSP_COM_SOL_CAMB_EST_DEN_CONTENT_text.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_DEN_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/csp-com-solicitud-cambio-estado/denegadas/CSP_COM_SOL_CAMB_EST_DEN_CONTENT_html.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_DEN_CONTENT'</where>
+    </update>
+    <!-- CSP SOL Excluida provisional -->
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/csp-com-solicitud-cambio-estado/excluidas/CSP_COM_SOL_CAMB_EST_EXCL_PROV_CONTENT_text.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_EXCL_PROV_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/csp-com-solicitud-cambio-estado/excluidas/CSP_COM_SOL_CAMB_EST_EXCL_PROV_CONTENT_html.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_EXCL_PROV_CONTENT'</where>
+    </update>
+    <!-- CSP SOL Excluida definitiva -->
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/csp-com-solicitud-cambio-estado/excluidas/CSP_COM_SOL_CAMB_EST_EXCL_DEF_CONTENT_text.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_EXCL_DEF_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/csp-com-solicitud-cambio-estado/excluidas/CSP_COM_SOL_CAMB_EST_EXCL_DEF_CONTENT_html.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_EXCL_DEF_CONTENT'</where>
+    </update>
+    <!-- CSP SOL Concedida provisional -->
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/csp-com-solicitud-cambio-estado/concedidas/CSP_COM_SOL_CAMB_EST_CONC_PROV_CONTENT_text.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_CONC_PROV_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/csp-com-solicitud-cambio-estado/concedidas/CSP_COM_SOL_CAMB_EST_CONC_PROV_CONTENT_html.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_CONC_PROV_CONTENT'</where>
+    </update>
+    <!-- CSP SOL Concedida -->
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/csp-com-solicitud-cambio-estado/concedidas/CSP_COM_SOL_CAMB_EST_CONC_CONTENT_text.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_CONC_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/csp-com-solicitud-cambio-estado/concedidas/CSP_COM_SOL_CAMB_EST_CONC_CONTENT_html.ftl" />
+      <where>name='CSP_COM_SOL_CAMB_EST_CONC_CONTENT'</where>
+    </update>
+
+    <!-- PII Fin Fecha Prioridad Solicitud Proteccion -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envio de avisos de vencimiento de fin de fecha de prioridad de unsa solicitud de protección" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/pii-com-meses-hasta-fin-prioridad-solicitud-proteccion/PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_CONTENT_text.ftl" />
+      <where>name='PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/pii-com-meses-hasta-fin-prioridad-solicitud-proteccion/PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_CONTENT_html.ftl" />
+      <where>name='PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_CONTENT'</where>
+    </update>
+
+    <!-- PII Fin Plazo Presentación Entrada Fases nacionales/Reguionales Solicitud Proteccion -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envio de avisos de vencimiento del plazo para entrar en las fases nacionales/regionales de una solicitud de protección" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/pii-com-aviso-fin-plazo-presentacion-fases-nacionales-regionales-solicitud-proteccion/PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_CONTENT_text.ftl" />
+      <where>name='PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/pii-com-aviso-fin-plazo-presentacion-fases-nacionales-regionales-solicitud-proteccion/PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_CONTENT_html.ftl" />
+      <where>name='PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_CONTENT'</where>
+    </update>
+
+    <!-- ETI Informe de Seguimiento Anual Pendiente -->
+    <insert tableName="content_tpl">
+      <column name="id" valueSequenceNext="content_tpl_seq" />
+      <column name="name" value="ETI_COM_INF_SEG_ANU_CONTENT" />
+      <column name="description" value="Plantilla de contenido para el envío de comunicados de seguimiento anual pendiente" />
+      <column name="tpl_text" value=" " />
+      <column name="tpl_html" value="" />
+    </insert>
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000002/eti-com-informe/ETI_COM_INF_SEG_ANU_CONTENT_text.ftl" />
+      <where>name='ETI_COM_INF_SEG_ANU_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000002/eti-com-informe/ETI_COM_INF_SEG_ANU_CONTENT_html.ftl" />
+      <where>name='ETI_COM_INF_SEG_ANU_CONTENT'</where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-contenttpl_param">
+    <!-- ETI Finalizar Acta Sin Revisión Mínima-->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_ACTA_SIN_REV_MINIMA_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_ACTA_SIN_REV_MINIMA_DATA')" />
+    </insert>
+
+    <!-- ETI Dictamen de Evaluación con Revisión Mínima-->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_DICT_EVA_REV_MINIMA_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_DICT_EVA_REV_MINIMA_DATA')" />
+    </insert>
+
+    <!-- ETI Dictamen de Evaluación Seguimiento con Revisión Mínima-->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_DICT_EVA_SEG_REV_MINIMA_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_DICT_EVA_SEG_REV_MINIMA_DATA')" />
+    </insert>
+
+    <!-- ETI Aviso de Evaluación retrospectiva pendiente-->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_INF_RETRO_PENDIENTE_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_INF_RETRO_PENDIENTE_DATA')" />
+    </insert>
+
+    <!-- ETI Aviso de Evaluación modificada-->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_EVA_MODIFICADA_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_EVA_MODIFICADA_DATA')" />
+    </insert>
+
+    <!-- PII Fin Fecha Prioridad Solicitud Proteccion -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_DATA')" />
+    </insert>
+
+    <!-- PII Fin Plazo Presentación Entrada Fases nacionales/Reguionales Solicitud Proteccion -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_DATA')" />
+    </insert>
+
+    <!-- ETI Informe de Seguimiento Anual Pendiente -->
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_INF_SEG_ANU_CONTENT')" />
+      <column name="param_id" valueComputed="(select id from ${schemaPrefix}param where name='ETI_COM_INF_SEG_ANU_DATA')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-email_tpl">
+    <!-- ETI Finalizar Acta Sin revisión Mínima-->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="ETI_COM_ACTA_SIN_REV_MINIMA" />
+      <column name="description" value="Aviso de finalizacion de acta de evaluación (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Dictamen de Evaluación con revisión Mínima-->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="ETI_COM_DICT_EVA_REV_MINIMA" />
+      <column name="description" value="Aviso de finalizacion de acta de evaluación (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Dictamen de Evaluación Seguimiento con revisión Mínima-->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="ETI_COM_DICT_EVA_SEG_REV_MINIMA" />
+      <column name="description" value="Aviso de evaluación de seguimiento con revisiones mínimas (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Aviso de Evaluación retrospectiva pendiente-->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="ETI_COM_INF_RETRO_PENDIENTE" />
+      <column name="description" value="Aviso de evaluación retrospectiva pendiente(texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Aviso de Evaluación modificada-->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="ETI_COM_EVA_MODIFICADA" />
+      <column name="description" value="Aviso de evaluación modificada (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- PII Fin Fecha Prioridad Solicitud Proteccion -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION" />
+      <column name="description" value="Aviso de finalizacion de fin fecha prioridad de una solicitud de protección (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- PII Fin Plazo Presentación Entrada Fases nacionales/Reguionales Solicitud Proteccion -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION" />
+      <column name="description" value="Aviso del plazo de entrada en fase nacional/regional para una solicitud de protección (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+
+    <!-- ETI Informe de Seguimiento Anual Pendiente -->
+    <insert tableName="email_tpl">
+      <column name="id" valueSequenceNext="email_tpl_seq" />
+      <column name="name" value="ETI_COM_INF_SEG_ANU" />
+      <column name="description" value="Aviso de evaluación de seguimiento anual pendiente (texto + HTML)" />
+      <column name="created_by" value="master" />
+      <column name="creation_date" valueDate="current_timestamp()" />
+      <column name="last_modified_by" value="master" />
+      <column name="last_modified_date" valueDate="current_timestamp()" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-emailtpl_subjecttpl">
+    <!-- ETI Finalizar Acta Sin Revisión Mínima-->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_ACTA_SIN_REV_MINIMA')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_ACTA_SIN_REV_MINIMA_SUBJECT')" />
+    </insert>
+
+    <!-- ETI Dictamen de Evaluación con Revisión Mínima-->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_DICT_EVA_REV_MINIMA')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_DICT_EVA_REV_MINIMA_SUBJECT')" />
+    </insert>
+
+    <!-- ETI Dictamen de Evaluación Seguimiento con Revisión Mínima-->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_DICT_EVA_SEG_REV_MINIMA')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_DICT_EVA_SEG_REV_MINIMA_SUBJECT')" />
+    </insert>
+
+    <!-- ETI Aviso de Evaluación retrospectiva pendiente-->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_INF_RETRO_PENDIENTE')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_INF_RETRO_PENDIENTE_SUBJECT')" />
+    </insert>
+
+    <!-- ETI Aviso de Evaluación modificada -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_EVA_MODIFICADA')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_EVA_MODIFICADA_SUBJECT')" />
+    </insert>
+
+    <!-- PII Fin Fecha Prioridad Solicitud Proteccion -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_SUBJECT')" />
+    </insert>
+
+    <!-- PII Fin Plazo Presentación Entrada Fases nacionales/Reguionales Solicitud Proteccion -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_SUBJECT')" />
+    </insert>
+
+    <!-- ETI Informe de Seguimiento Anual Pendiente -->
+    <insert tableName="emailtpl_subjecttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_INF_SEG_ANU')" />
+      <column name="subjecttpl_id" valueComputed="(select id from ${schemaPrefix}subject_tpl where name='ETI_COM_INF_SEG_ANU_SUBJECT')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0000000000002-emailtpl_contenttpl">
+    <!-- ETI Finalizar Acta Sin Revisión Mínima-->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_ACTA_SIN_REV_MINIMA')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_ACTA_SIN_REV_MINIMA_CONTENT')" />
+    </insert>
+
+    <!-- ETI Dictamen de Evaluación con Revisión Mínima-->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_DICT_EVA_REV_MINIMA')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_DICT_EVA_REV_MINIMA_CONTENT')" />
+    </insert>
+
+    <!-- ETI Dictamen de Evaluación Seguimiento con Revisión Mínima-->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_DICT_EVA_SEG_REV_MINIMA')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_DICT_EVA_SEG_REV_MINIMA_CONTENT')" />
+    </insert>
+
+    <!-- ETI Aviso de Evaluación retrospectiva pendiente-->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_INF_RETRO_PENDIENTE')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_INF_RETRO_PENDIENTE_CONTENT')" />
+    </insert>
+
+    <!-- ETI Aviso de Evaluación modificada -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_EVA_MODIFICADA')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_EVA_MODIFICADA_CONTENT')" />
+    </insert>
+
+    <!-- PII Fin Fecha Prioridad Solicitud Proteccion -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='PII_COM_MESES_HASTA_FIN_PRIORIDAD_SOLICITUD_PROTECCION_CONTENT')" />
+    </insert>
+
+    <!-- PII Fin Plazo Presentación Entrada Fases nacionales/Reguionales Solicitud Proteccion -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_CONTENT')" />
+    </insert>
+
+    <!-- ETI Informe de Seguimiento Anual Pendiente -->
+    <insert tableName="emailtpl_contenttpl">
+      <column name="emailtpl_id" valueComputed="(select id from ${schemaPrefix}email_tpl where name='ETI_COM_INF_SEG_ANU')" />
+      <column name="contenttpl_id" valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_INF_SEG_ANU_CONTENT')" />
+    </insert>
+  </changeSet>
+</databaseChangeLog>

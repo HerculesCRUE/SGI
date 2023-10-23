@@ -10,7 +10,7 @@ import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableRatificacion;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
-import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -22,7 +22,7 @@ import org.springframework.validation.annotation.Validated;
 public class InformeFavorableRatificacionReportService extends InformeEvaluacionEvaluadorBaseReportService {
 
   public InformeFavorableRatificacionReportService(SgiConfigProperties sgiConfigProperties,
-      SgiApiConfService sgiApiConfService, SgiApiSgpService personaService, EvaluacionService evaluacionService) {
+      SgiApiConfService sgiApiConfService, PersonaService personaService, EvaluacionService evaluacionService) {
 
     super(sgiConfigProperties, sgiApiConfService, personaService, evaluacionService, null);
   }
@@ -43,7 +43,7 @@ public class InformeFavorableRatificacionReportService extends InformeEvaluacion
   }
 
   public byte[] getReportInformeFavorableRatificacion(ReportInformeFavorableRatificacion sgiReport, Long idEvaluacion) {
-    getReportFromIdEvaluacion(sgiReport, idEvaluacion);
+    getReportFromEvaluacionId(sgiReport, idEvaluacion);
     return sgiReport.getContent();
   }
 

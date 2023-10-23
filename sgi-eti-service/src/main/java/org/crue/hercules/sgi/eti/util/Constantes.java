@@ -40,17 +40,7 @@ public class Constantes {
   public static final Long TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_FINAL = 19L;
   public static final Long TIPO_ESTADO_MEMORIA_FIN_EVALUACION_SEGUIMIENTO_FINAL = 20L;
   public static final Long TIPO_ESTADO_MEMORIA_EN_ACLARACION_SEGUIMIENTO_FINAL = 21L;
-
-  // Tipo evaluación
-  public static final Long TIPO_EVALUACION_RETROSPECTIVA = 1L;
-  public static final Long TIPO_EVALUACION_MEMORIA = 2L;
-  public static final Long TIPO_EVALUACION_SEGUIMIENTO_ANUAL = 3L;
-  public static final Long TIPO_EVALUACION_SEGUIMIENTO_FINAL = 4L;
-
-  public static final int TIPO_EVALUACION_RETROSPECTIVA_INT = 1;
-  public static final int TIPO_EVALUACION_MEMORIA_INT = 2;
-  public static final int TIPO_EVALUACION_SEGUIMIENTO_ANUAL_INT = 3;
-  public static final int TIPO_EVALUACION_SEGUIMIENTO_FINAL_INT = 4;
+  public static final Long TIPO_ESTADO_MEMORIA_SUBSANACION = 22L;
 
   // Tipo estado acta
   public static final Long TIPO_ESTADO_ACTA_EN_ELABORACION = 1L;
@@ -76,23 +66,6 @@ public class Constantes {
   public static final int ESTADO_MEMORIA_FIN_EVALUACION = 9;
   public static final int ESTADO_MEMORIA_PENDIENTE_CORRECCIONES = 7;
   public static final int ESTADO_MEMORIA_FAVORABLE_PENDIENTE_MOD_MINIMAS = 6;
-
-  // Tipos de dictamen
-  public static final int DICTAMEN_FAVORABLE = 1;
-  public static final int DICTAMEN_FAVORABLE_PENDIENTE_REVISION_MINIMA = 2;
-  public static final int DICTAMEN_PENDIENTE_CORRECCIONES = 3;
-  public static final int DICTAMEN_NO_PROCEDE_EVALUAR = 4;
-  public static final int DICTAMEN_FAVORABLE_SEGUIMIENTO_ANUAL = 5;
-  public static final int DICTAMEN_SOLICITUD_MODIFICACIONES = 6;
-  public static final int DICTAMEN_FAVORABLE_SEGUIMIENTO_FINAL = 7;
-  public static final int DICTAMEN_SOLICITUD_ACLARACIONES_SEGUIMIENTO_FINAL = 8;
-  public static final int DICTAMEN_FAVORABLE_RETROSPECTIVA = 9;
-  public static final int DICTAMEN_DESFAVORABLE_RETROSPECTIVA = 10;
-
-  // Tipos de memoria
-  public static final int TIPO_MEMORIA_NUEVA = 1;
-  public static final int TIPO_MEMORIA_MODIFICACION = 2;
-  public static final int TIPO_MEMORIA_RATIFICACION = 3;
 
   // Formularios
   public static final Long FORMULARIO_M10 = 1L;

@@ -10,7 +10,7 @@
   </parent>
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-rep-service</artifactId>
-  <version>0.3.0</version>
+  <version>0.4.0</version>
   <packaging>jar</packaging>
   <name>sgi-rep-service</name>
   <description>Informes SGI HERCULES</description>
@@ -39,6 +39,9 @@
     <sgi-framework-spring.version>0.1.0</sgi-framework-spring.version>
     <!-- Última versión compatible con librería pentaho report -->
     <com-deepoove-poi-tl.version>1.10.5</com-deepoove-poi-tl.version>
+    <com-deepoove-poi-tl-jsonmodel-support.version>1.0.0</com-deepoove-poi-tl-jsonmodel-support.version>
+    <!-- Última versión compatible con librería pentaho report -->
+    <io.github.draco1023-poi-tl-ext.version>0.4.8</io.github.draco1023-poi-tl-ext.version>
     <!-- Última versión compatible con librería pentaho report -->
     <org-apache-poi.version>4.1.2</org-apache-poi.version>
     <!-- Última versión compatible con librería pentaho report -->
@@ -89,6 +92,18 @@
       <groupId>com.deepoove</groupId>
       <artifactId>poi-tl</artifactId>
       <version>${com-deepoove-poi-tl.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.deepoove</groupId>
+      <artifactId>poi-tl-jsonmodel-support</artifactId>
+      <version>${com-deepoove-poi-tl-jsonmodel-support.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.draco1023</groupId>
+      <artifactId>poi-tl-ext</artifactId>
+      <version>${io.github.draco1023-poi-tl-ext.version}</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->

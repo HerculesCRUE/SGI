@@ -5,6 +5,8 @@ import { IProyectoSge } from "../sge/proyecto-sge";
 export interface IRelacionEjecucionEconomica {
   id: number;
   nombre: string;
+  codigoExterno?: string;
+  codigoInterno?: string;
   fechaInicio: DateTime;
   fechaFin: DateTime;
   proyectoSge: IProyectoSge;

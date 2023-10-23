@@ -1,5 +1,6 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { COMITE, IComite } from '@core/models/eti/comite';
+import { IEstadoMemoria } from '@core/models/eti/estado-memoria';
 import { IMemoria } from '@core/models/eti/memoria';
 import { IPeticionEvaluacion } from '@core/models/eti/peticion-evaluacion';
 import { ESTADO_MEMORIA } from '@core/models/eti/tipo-estado-memoria';
@@ -15,18 +16,22 @@ import { catchError, map, switchMap, tap } from 'rxjs/operators';
 export class MemoriaDatosGeneralesFragment extends FormFragment<IMemoria>  {
   private memoria: IMemoria;
   public readonly: boolean;
-  public showCodOrganoCompetente = false;
   public showTitulo = false;
   public showMemoriaOriginal = false;
   public personasResponsable$: BehaviorSubject<IPersona[]> = new BehaviorSubject<IPersona[]>([]);
   public mostrarCodOrgano = false;
   public showInfoRatificacion = false;
+  public showComentarioSubsanacion = false;
+  private estadoMemoria: IEstadoMemoria;
 
   public idPeticionEvaluacion: number;
   private isInvestigador: boolean;
 
   constructor(
-    private fb: FormBuilder, readonly: boolean, key: number, private service: MemoriaService,
+    private fb: FormBuilder,
+    readonly: boolean,
+    key: number,
+    private service: MemoriaService,
     private personaService: PersonaService,
     private readonly peticionEvaluacionService: PeticionEvaluacionService,
     private readonly moduloInv: boolean) {
@@ -79,13 +84,12 @@ export class MemoriaDatosGeneralesFragment extends FormFragment<IMemoria>  {
       personaResponsable: [
         { value: null, disabled: this.readonly }
       ],
-      codOrganoCompetente: [
-        { value: this.isEdit() ? this.memoria.codOrganoCompetente : '', disabled: this.readonly },
-        Validators.maxLength(250)
-      ],
       memoriaOriginal: [
         { value: this.isEdit() ? this.memoria.memoriaOriginal : null, disabled: this.isEdit() },
         Validators.required
+      ],
+      comentarioSubsanacion: [
+        { value: '', disabled: true }
       ]
     });
   }
@@ -101,8 +105,8 @@ export class MemoriaDatosGeneralesFragment extends FormFragment<IMemoria>  {
       tipoMemoria: value.tipoMemoria,
       titulo: value.titulo,
       personaResponsable: value.responsable?.id ? value.responsable : null,
-      codOrganoCompetente: value.codOrganoCompetente,
-      memoriaOriginal: value.memoriaOriginal
+      memoriaOriginal: value.memoriaOriginal,
+      comentarioSubsanacion: this.estadoMemoria?.comentario ?? ''
     };
   }
 
@@ -115,20 +119,13 @@ export class MemoriaDatosGeneralesFragment extends FormFragment<IMemoria>  {
       this.memoria.titulo = form.titulo.value;
     }
     this.memoria.responsable = form.personaResponsable.value;
-    if (this.memoria.comite.id === COMITE.CEEA) {
-      this.memoria.codOrganoCompetente = form.codOrganoCompetente.value;
-    } else {
-      this.memoria.codOrganoCompetente = null;
-    }
     return this.memoria;
   }
 
   public onComiteChange(comite: IComite) {
-    this.showCodOrganoCompetente = comite.id === COMITE.CEEA;
     this.showTitulo = comite.id === COMITE.CEEA;
 
     this.getFormGroup().controls.tipoMemoria.markAsTouched();
-    this.getFormGroup().controls.codOrganoCompetente?.reset();
   }
 
   public onTipoMemoriaChange(tipoMemoria: ITipoMemoria) {
@@ -184,6 +181,19 @@ export class MemoriaDatosGeneralesFragment extends FormFragment<IMemoria>  {
           } else {
             return of(memoria);
           }
+        }),
+        switchMap(memoria => {
+          if (memoria.estadoActual.id === ESTADO_MEMORIA.SUBSANACION) {
+            return this.service.getEstadoActual(memoria.id).pipe(
+              tap(estadoMemoria => {
+                this.estadoMemoria = estadoMemoria;
+                this.showComentarioSubsanacion = true;
+              }),
+              map(_ => memoria)
+            )
+          }
+
+          return of(memoria);
         }),
         tap((memoria) => {
           this.loadResponsable(memoria.peticionEvaluacion.id);

@@ -1,11 +1,13 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IChecklist } from '@core/models/eti/checklist';
+import { IConfiguracion } from '@core/models/eti/configuracion';
 import { IEquipoTrabajoWithIsEliminable } from '@core/models/eti/equipo-trabajo-with-is-eliminable';
 import { IPeticionEvaluacion, TipoValorSocial } from '@core/models/eti/peticion-evaluacion';
 import { IPersona } from '@core/models/sgp/persona';
 import { FormFragment } from '@core/services/action-service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { ChecklistService } from '@core/services/eti/checklist/checklist.service';
+import { ConfiguracionService } from '@core/services/eti/configuracion.service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SgiAuthService } from '@sgi/framework/auth/public-api';
@@ -24,6 +26,8 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
 
   equiposTrabajo: IEquipoTrabajoWithIsEliminable[] = [];
 
+  public duracionProyectoEvaluacion$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+
   constructor(
     private fb: FormBuilder,
     key: number,
@@ -33,6 +37,7 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
     private readonly solicitudService: SolicitudService,
     checklist: IChecklist,
     private personaService: PersonaService,
+    private configuracionService: ConfiguracionService,
     readonly: boolean,
   ) {
     super(key);
@@ -42,6 +47,7 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
     } as IPeticionEvaluacion;
     this.readonly = readonly;
     this.checklist = checklist;
+    this.loadDuracionProyectoEvaluacion();
   }
 
   protected buildFormGroup(): FormGroup {
@@ -72,6 +78,14 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
 
     this.subscriptions.push(form.controls.valorSocial.valueChanges.subscribe((value: string) => {
       this.addValorSocialValidations(value);
+    }));
+
+    this.subscriptions.push(form.controls.fechaInicio.valueChanges.subscribe(() => {
+      this.addDuracionValidations();
+    }));
+
+    this.subscriptions.push(form.controls.fechaFin.valueChanges.subscribe(() => {
+      this.addDuracionValidations();
     }));
 
     return form;
@@ -119,6 +133,7 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
     this.addFinanciacionValidations(value.existeFinanciacion);
     this.addValorSocialValidations(value.otroValorSocial);
     this.addTieneFondosPropiosValidations(value.solicitudConvocatoriaRef);
+    this.addDuracionValidations();
     return {
       codigo: value.codigo,
       solicitudConvocatoriaRef: value.solicitudConvocatoriaRef,
@@ -259,4 +274,34 @@ export class PeticionEvaluacionDatosGeneralesFragment extends FormFragment<IPeti
       form.tieneFondosPropios.updateValueAndValidity();
     }
   }
+
+  /**
+ * Carga la variable de configuración duracionProyectoEvaluacion
+ */
+  private loadDuracionProyectoEvaluacion() {
+    this.subscriptions.push(this.configuracionService.getConfiguracion().subscribe(
+      (configuracion: IConfiguracion) => {
+        this.duracionProyectoEvaluacion$.next(configuracion.duracionProyectoEvaluacion);
+      }
+    ));
+  }
+
+  private addDuracionValidations() {
+    const form = this.getFormGroup().controls;
+    const fechaInicio = form.fechaInicio.value;
+    const fechaFin = form.fechaFin.value;
+
+    if (fechaInicio && fechaFin) {
+      const fechaLimite = fechaInicio.plus({
+        year: this.duracionProyectoEvaluacion$.value
+      });
+      if (fechaFin > fechaLimite) {
+        form.fechaFin.setErrors({ duracion: true });
+        form.fechaFin.markAsTouched({ onlySelf: true });
+      } else {
+        form.fechaFin.setErrors(null);
+      }
+    }
+  }
+
 }

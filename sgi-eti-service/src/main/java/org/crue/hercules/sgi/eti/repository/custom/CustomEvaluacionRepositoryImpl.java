@@ -27,11 +27,12 @@ import org.crue.hercules.sgi.eti.model.ConflictoInteres;
 import org.crue.hercules.sgi.eti.model.ConflictoInteres_;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion_;
+import org.crue.hercules.sgi.eti.model.Dictamen;
 import org.crue.hercules.sgi.eti.model.EquipoTrabajo;
 import org.crue.hercules.sgi.eti.model.EquipoTrabajo_;
 import org.crue.hercules.sgi.eti.model.EstadoMemoria;
 import org.crue.hercules.sgi.eti.model.EstadoMemoria_;
-import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva_;
+import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluacion_;
 import org.crue.hercules.sgi.eti.model.Evaluador;
@@ -42,8 +43,9 @@ import org.crue.hercules.sgi.eti.model.PeticionEvaluacion_;
 import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.Retrospectiva_;
 import org.crue.hercules.sgi.eti.model.TipoComentario_;
+import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria_;
-import org.crue.hercules.sgi.eti.model.TipoEvaluacion_;
+import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.repository.specification.EvaluadorSpecifications;
 import org.crue.hercules.sgi.eti.util.Constantes;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -62,8 +64,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepository {
-
-  private static final Long ID_COMITE_CEEA = 2L;
 
   /**
    * The entity manager.
@@ -105,7 +105,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
     if (idTipoEvaluacion != null) {
       cq.where(cb.equal(root.get(Evaluacion_.memoria).get(Memoria_.id), idMemoria),
           cb.notEqual(root.get(Evaluacion_.id), idEvaluacion), cb.isTrue(root.get(Evaluacion_.activo)),
-          cb.equal(root.get(Evaluacion_.tipoEvaluacion).get(TipoEvaluacion_.id), idTipoEvaluacion));
+          cb.equal(root.get(Evaluacion_.tipoEvaluacionId), idTipoEvaluacion));
     } else {
       cq.where(cb.equal(root.get(Evaluacion_.memoria).get(Memoria_.id), idMemoria),
           cb.notEqual(root.get(Evaluacion_.id), idEvaluacion), cb.isTrue(root.get(Evaluacion_.activo)));
@@ -118,7 +118,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
     if (idTipoEvaluacion != null) {
       countQuery.where(cb.equal(rootCount.get(Evaluacion_.memoria).get(Memoria_.id), idMemoria),
           cb.notEqual(rootCount.get(Evaluacion_.id), idEvaluacion), cb.isTrue(rootCount.get(Evaluacion_.activo)),
-          cb.equal(rootCount.get(Evaluacion_.tipoEvaluacion).get(TipoEvaluacion_.id), idTipoEvaluacion));
+          cb.equal(rootCount.get(Evaluacion_.tipoEvaluacionId), idTipoEvaluacion));
     } else {
       countQuery.where(cb.equal(rootCount.get(Evaluacion_.memoria).get(Memoria_.id), idMemoria),
           cb.notEqual(rootCount.get(Evaluacion_.id), idEvaluacion), cb.isTrue(rootCount.get(Evaluacion_.activo)));
@@ -148,7 +148,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
    * @param pageable la información de la paginación.
    * @return la lista de entidades {@link Evaluacion} paginadas y/o filtradas.
    */
-  public Page<Evaluacion> findByEvaluacionesEnSeguimientoFinal(String query, Pageable pageable) {
+  public Page<Evaluacion> findByEvaluacionesEnSeguimientoAnualOrFinal(String query, Pageable pageable) {
 
     // Crete query
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -156,16 +156,20 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
 
     // Define FROM clause
     Root<Evaluacion> root = cq.from(Evaluacion.class);
+    Join<Evaluacion, Memoria> joinMemoria = root.join(Evaluacion_.memoria);
 
     // Count query
     CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
     Root<Evaluacion> rootCount = countQuery.from(Evaluacion.class);
+    Join<Evaluacion, Memoria> joinMemoriaCount = rootCount.join(Evaluacion_.memoria);
 
-    List<Predicate> listPredicatesFinal = getPredicatesEvaluacionesEnSeguimientoFinal(root, cb, cq, null);
-    List<Predicate> listPredicatesFinalCount = getPredicatesEvaluacionesEnSeguimientoFinal(rootCount, cb, cq, null);
+    List<Predicate> listPredicatesFinal = getPredicatesEvaluacionesEnSeguimientoFinal(root, joinMemoria, cb, cq, null);
+    List<Predicate> listPredicatesFinalCount = getPredicatesEvaluacionesEnSeguimientoFinal(rootCount, joinMemoriaCount,
+        cb, cq, null);
 
-    List<Predicate> listPredicatesAnual = getPredicatesEvaluacionesEnSeguimientoAnual(root, cb, cq, null);
-    List<Predicate> listPredicatesAnualCount = getPredicatesEvaluacionesEnSeguimientoAnual(rootCount, cb, cq, null);
+    List<Predicate> listPredicatesAnual = getPredicatesEvaluacionesEnSeguimientoAnual(root, joinMemoria, cb, cq, null);
+    List<Predicate> listPredicatesAnualCount = getPredicatesEvaluacionesEnSeguimientoAnual(rootCount, joinMemoriaCount,
+        cb, cq, null);
 
     // Where
     if (query != null) {
@@ -260,11 +264,18 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
 
   private Predicate getByMemoriaAndRetrospectivaEnEvaluacionPredicate(String query, Root<Evaluacion> root,
       CriteriaQuery<?> cq, CriteriaBuilder cb) {
-    Predicate predicate = cb.and(cb.or(
-        cb.and(cb.equal(root.get(Evaluacion_.tipoEvaluacion).get(TipoEvaluacion_.id), 1L),
-            cb.in(root.get(Evaluacion_.memoria).get(Memoria_.id)).value(getIdsMemoriasRestropectivas(cb, cq, root))),
-        cb.and(cb.equal(root.get(Evaluacion_.tipoEvaluacion).get(TipoEvaluacion_.id), 2L),
-            cb.in(root.get(Evaluacion_.memoria).get(Memoria_.id)).value(getIdsMemoriasEstadoActual(cb, cq, root)))));
+    Predicate predicate = cb.and(
+        cb.equal(root.get(Evaluacion_.version), getLastEvaluacionVersion(cb, cq, root)),
+        cb.or(
+            cb.and(
+                cb.equal(root.get(Evaluacion_.tipoEvaluacionId),
+                    TipoEvaluacion.Tipo.RETROSPECTIVA.getId()),
+                cb.in(root.get(Evaluacion_.memoria).get(Memoria_.id))
+                    .value(getIdsMemoriasRestropectivasEnEvaluacion(cb, cq))),
+            cb.and(
+                cb.equal(root.get(Evaluacion_.tipoEvaluacionId),
+                    TipoEvaluacion.Tipo.MEMORIA.getId()),
+                cb.in(root.get(Evaluacion_.memoriaId)).value(getIdsMemoriasEvaluables(cb, cq)))));
 
     predicate = cb.and(predicate, cb.equal(root.get(Evaluacion_.activo), Boolean.TRUE));
 
@@ -278,24 +289,23 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
   }
 
   /**
-   * Devuelve una subconsulta con el listado de Memorias con estado 4 o 5 donde
-   * además la versión de la memoria sea igual a la versión del listado de
-   * evaluación.
+   * Devuelve una subconsulta con el listado de Memorias evaluables (con estado
+   * EN_SECRETARIA_REVISION_MINIMA (4) o EN_EVALUACION (5))
    * 
-   * @return Subquery<Long> Listado de Memorias con estado En Evaluacion o En
-   *         secretaría revisión mínima
+   * @return Subquery<Long> Listado de Memorias evaluables
    */
-  private Subquery<Long> getIdsMemoriasEstadoActual(CriteriaBuilder cb, CriteriaQuery<?> cq, Root<Evaluacion> root) {
+  private Subquery<Long> getIdsMemoriasEvaluables(CriteriaBuilder cb, CriteriaQuery<?> cq) {
+    log.debug("getIdsMemoriasEvaluables(CriteriaBuilder cb, CriteriaQuery<?> cq) - start");
 
-    log.debug("getIdsMemoriasEstadoActual : {} - start");
+    List<Long> estadosEvaluables = Arrays.asList(TipoEstadoMemoria.Tipo.EN_SECRETARIA_REVISION_MINIMA.getId(),
+        TipoEstadoMemoria.Tipo.EN_EVALUACION.getId());
 
     Subquery<Long> queryMemoriasEstadoActual = cq.subquery(Long.class);
     Root<Memoria> subqRoot = queryMemoriasEstadoActual.from(Memoria.class);
     queryMemoriasEstadoActual.select(subqRoot.get(Memoria_.id))
-        .where(cb.and(subqRoot.get(Memoria_.estadoActual).get(TipoEstadoMemoria_.id).in(Arrays.asList(4L, 5L)),
-            cb.equal(root.get(Evaluacion_.version), subqRoot.get(Memoria_.version))));
+        .where(cb.and(subqRoot.get(Memoria_.estadoActual).get(TipoEstadoMemoria_.id).in(estadosEvaluables)));
 
-    log.debug("getIdsMemoriasEstadoActual : {} - end");
+    log.debug("getIdsMemoriasEvaluables(CriteriaBuilder cb, CriteriaQuery<?> cq) - end");
 
     return queryMemoriasEstadoActual;
   }
@@ -386,22 +396,24 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
 
     // Define FROM clause
     Root<Evaluacion> rootEvaluacion = cq.from(Evaluacion.class);
+    Join<Evaluacion, Memoria> joinMemoria = rootEvaluacion.join(Evaluacion_.memoria);
 
     // Count query
     CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
     Root<Evaluacion> rootCount = countQuery.from(Evaluacion.class);
+    Join<Evaluacion, Memoria> joinMemoriaCount = rootCount.join(Evaluacion_.memoria);
     countQuery.select(cb.count(rootCount));
 
     // Evaluaciones en seguimiento
-    List<Predicate> listPredicatesAnual = getPredicatesEvaluacionesEnSeguimientoAnual(rootEvaluacion, cb, cq,
-        personaRef);
-    List<Predicate> listPredicatesAnualCount = getPredicatesEvaluacionesEnSeguimientoAnual(rootCount, cb, cq,
-        personaRef);
+    List<Predicate> listPredicatesAnual = getPredicatesEvaluacionesEnSeguimientoAnual(rootEvaluacion, joinMemoria, cb,
+        cq, personaRef);
+    List<Predicate> listPredicatesAnualCount = getPredicatesEvaluacionesEnSeguimientoAnual(rootCount, joinMemoriaCount,
+        cb, cq, personaRef);
 
-    List<Predicate> listPredicatesFinal = getPredicatesEvaluacionesEnSeguimientoFinal(rootEvaluacion, cb, cq,
-        personaRef);
-    List<Predicate> listPredicatesFinalCount = getPredicatesEvaluacionesEnSeguimientoFinal(rootCount, cb, cq,
-        personaRef);
+    List<Predicate> listPredicatesFinal = getPredicatesEvaluacionesEnSeguimientoFinal(rootEvaluacion, joinMemoria, cb,
+        cq, personaRef);
+    List<Predicate> listPredicatesFinalCount = getPredicatesEvaluacionesEnSeguimientoFinal(rootCount, joinMemoriaCount,
+        cb, cq, personaRef);
 
     // Where
     if (query != null) {
@@ -443,8 +455,9 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
   }
 
   private List<Predicate> getPredicatesEvaluacionesEnSeguimientoAnual(Root<Evaluacion> rootEvaluacion,
-      CriteriaBuilder cb, CriteriaQuery<Evaluacion> cq, String personaRef) {
-    return getPredicatesEvaluacionesEnSeguimientoAnualByEvaluadorAndEvaluacion(rootEvaluacion, cb, cq, personaRef,
+      Join<Evaluacion, Memoria> joinMemoria, CriteriaBuilder cb, CriteriaQuery<Evaluacion> cq, String personaRef) {
+    return getPredicatesEvaluacionesEnSeguimientoAnualByEvaluadorAndEvaluacion(rootEvaluacion, joinMemoria, cb, cq,
+        personaRef,
         null);
   }
 
@@ -457,30 +470,31 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
    * 
    * @param idEvaluacion   identificador de la {@link Evaluacion}
    * @param rootEvaluacion
+   * @param joinMemoria
    * @param cb
    * @return lista con los predicates necesarios
    */
   private List<Predicate> getPredicatesEvaluacionesEnSeguimientoAnualByEvaluadorAndEvaluacion(
-      Root<Evaluacion> rootEvaluacion, CriteriaBuilder cb, CriteriaQuery<Evaluacion> cq, String personaRef,
+      Root<Evaluacion> rootEvaluacion, Join<Evaluacion, Memoria> joinMemoria, CriteriaBuilder cb,
+      CriteriaQuery<Evaluacion> cq, String personaRef,
       Long idEvaluacion) {
 
     log.debug("getPredicatesEvaluacionesEnSeguimientoAnualByEvaluadorAndEvaluacion : {} - start");
     List<Predicate> listPredicates = new ArrayList<>();
 
-    listPredicates.add(rootEvaluacion.get(Evaluacion_.memoria).get(Memoria_.estadoActual).get(TipoEstadoMemoria_.id)
-        .in(Arrays.asList(Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_ANUAL)));
-
-    listPredicates.add(rootEvaluacion.get(Evaluacion_.tipoEvaluacion).get(TipoEvaluacion_.id)
-        .in(Arrays.asList(Constantes.TIPO_EVALUACION_SEGUIMIENTO_FINAL)).not());
-
+    listPredicates
+        .add(cb.equal(rootEvaluacion.get(Evaluacion_.tipoEvaluacionId), TipoEvaluacion.Tipo.SEGUIMIENTO_ANUAL.getId()));
     listPredicates.add(cb.isTrue(rootEvaluacion.get(Evaluacion_.activo)));
-    listPredicates.add(rootEvaluacion.get(Evaluacion_.tipoEvaluacion).get(TipoEvaluacion_.id)
-        .in(Arrays.asList(Constantes.TIPO_EVALUACION_SEGUIMIENTO_ANUAL)));
-
-    listPredicates.add(rootEvaluacion.get(Evaluacion_.memoria).get(Memoria_.estadoActual).get(TipoEstadoMemoria_.id)
-        .in(Arrays.asList(Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_FINAL,
-            Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_SEGUIMIENTO_FINAL_ACLARACIONES))
-        .not());
+    listPredicates
+        .add(cb.equal(rootEvaluacion.get(Evaluacion_.version), getLastEvaluacionVersion(cb, cq, rootEvaluacion)));
+    listPredicates.add(
+        cb.or(
+            cb.equal(joinMemoria.get(Memoria_.estadoActual).get(TipoEstadoMemoria_.id),
+                TipoEstadoMemoria.Tipo.EN_EVALUACION_SEGUIMIENTO_ANUAL.getId()),
+            cb.and(
+                cb.equal(joinMemoria.get(Memoria_.estadoActual).get(TipoEstadoMemoria_.id),
+                    TipoEstadoMemoria.Tipo.EN_SECRETARIA_SEGUIMIENTO_ANUAL_MODIFICACION.getId()),
+                cb.isTrue(rootEvaluacion.get(Evaluacion_.esRevMinima)))));
 
     if (personaRef != null) {
       Subquery<String> queryPersonaRefEquipoTrabajo = cq.subquery(String.class);
@@ -488,7 +502,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
 
       queryPersonaRefEquipoTrabajo.select(subqRootEquipoTrabajo.get(EquipoTrabajo_.personaRef)).where(
           cb.equal(subqRootEquipoTrabajo.get(EquipoTrabajo_.peticionEvaluacion).get(PeticionEvaluacion_.id),
-              rootEvaluacion.get(Evaluacion_.memoria).get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id)));
+              joinMemoria.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id)));
 
       Subquery<Long> queryConflictosInteres = cq.subquery(Long.class);
       Root<ConflictoInteres> subqRootConflictosInteres = queryConflictosInteres.from(ConflictoInteres.class);
@@ -505,7 +519,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
       if (idEvaluacion != null) {
         predicateEvaluacion = cb.and(
             cb.equal(subqRootEvaluadores.get(Evaluador_.comite).get(Comite_.id),
-                rootEvaluacion.get(Evaluacion_.memoria).get(Memoria_.comite).get(Comite_.id)),
+                joinMemoria.get(Memoria_.comite).get(Comite_.id)),
             cb.in(subqRootEvaluadores.get(Evaluador_.personaRef)).value(personaRef),
             cb.equal(subqRootEvaluadores.get(Evaluador_.activo), Boolean.TRUE),
             cb.not(subqRootEvaluadores.get(Evaluador_.id).in(queryConflictosInteres)),
@@ -513,7 +527,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
       } else {
         predicateEvaluacion = cb.and(
             cb.equal(subqRootEvaluadores.get(Evaluador_.comite).get(Comite_.id),
-                rootEvaluacion.get(Evaluacion_.memoria).get(Memoria_.comite).get(Comite_.id)),
+                joinMemoria.get(Memoria_.comite).get(Comite_.id)),
             cb.in(subqRootEvaluadores.get(Evaluador_.personaRef)).value(personaRef),
             cb.equal(subqRootEvaluadores.get(Evaluador_.activo), Boolean.TRUE),
             cb.not(subqRootEvaluadores.get(Evaluador_.id).in(queryConflictosInteres)));
@@ -530,10 +544,6 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
               cb.in(queryEvaluadores).value(rootEvaluacion.get(Evaluacion_.evaluador2).get(Evaluador_.comite)
                   .get(Comite_.comite))));
     }
-
-    Predicate memoriaVersion = cb.equal(rootEvaluacion.get(Evaluacion_.version),
-        rootEvaluacion.get(Evaluacion_.memoria).get(Memoria_.version));
-    listPredicates.add(memoriaVersion);
 
     log.debug("getPredicatesEvaluacionesEnSeguimientoAnualByEvaluadorAndEvaluacion : {} - end");
 
@@ -557,24 +567,21 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
 
   /**
    * Devuelve una subconsulta con el listado de Memorias con Retrospectivas en
-   * estado 4 (En Evaluacion) donde la versión de la memoria sea igual a la
-   * versión del listado de evaluación.
+   * estado 4 (En Evaluacion).
    * 
    * @return Subquery<Long> Listado de Memorias con Retrospectivas en estado En
    *         Evaluacion
    */
-  private Subquery<Long> getIdsMemoriasRestropectivas(CriteriaBuilder cb, CriteriaQuery<?> cq, Root<Evaluacion> root) {
-
-    log.debug("getIdsMemoriasRestropectivas : {} - start");
+  private Subquery<Long> getIdsMemoriasRestropectivasEnEvaluacion(CriteriaBuilder cb, CriteriaQuery<?> cq) {
+    log.debug("getIdsMemoriasRestropectivasEnEvaluacion(CriteriaBuilder cb, CriteriaQuery<?> cq - start");
 
     Subquery<Long> queryMemorias = cq.subquery(Long.class);
     Root<Memoria> subqRoot = queryMemorias.from(Memoria.class);
     queryMemorias.select(subqRoot.get(Memoria_.id)).where(
-        cb.and(cb.in(subqRoot.get(Memoria_.retrospectiva).get(Retrospectiva_.id)).value(getRetrospectivas(cb, cq)),
-            cb.equal(root.get(Evaluacion_.version), subqRoot.get(Memoria_.version))));
+        cb.in(subqRoot.get(Memoria_.retrospectiva).get(Retrospectiva_.id))
+            .value(getRetrospectivasEnEvaluacion(cb, cq)));
 
-    log.debug("getIdsMemoriasRestropectivas : {} - end");
-
+    log.debug("getIdsMemoriasRestropectivasEnEvaluacion(CriteriaBuilder cb, CriteriaQuery<?> cq - end");
     return queryMemorias;
   }
 
@@ -584,25 +591,25 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
    * 
    * @return Subquery<Long> Listado de Retrospectivas en estado En Evaluacion
    */
-
-  private Subquery<Long> getRetrospectivas(CriteriaBuilder cb, CriteriaQuery<?> cq) {
-
-    log.debug("getRetrospectivas : {} - start");
+  private Subquery<Long> getRetrospectivasEnEvaluacion(CriteriaBuilder cb, CriteriaQuery<?> cq) {
+    log.debug("getRetrospectivasEnEvaluacion(CriteriaBuilder cb, CriteriaQuery<?> cq) - start");
 
     Subquery<Long> queryRetrospectivas = cq.subquery(Long.class);
     Root<Retrospectiva> subqRoot = queryRetrospectivas.from(Retrospectiva.class);
     queryRetrospectivas.select(subqRoot.get(Retrospectiva_.id))
-        .where(cb.equal(subqRoot.get(Retrospectiva_.estadoRetrospectiva).get(EstadoRetrospectiva_.id), 4L));
+        .where(cb.equal(subqRoot.get(Retrospectiva_.estadoRetrospectivaId),
+            EstadoRetrospectiva.Tipo.EN_EVALUACION.getId()));
 
-    log.debug("getRetrospectivas : {} - end");
-
+    log.debug("getRetrospectivasEnEvaluacion(CriteriaBuilder cb, CriteriaQuery<?> cq) - end");
     return queryRetrospectivas;
 
   }
 
-  private List<Predicate> getPredicatesEvaluacionesEnSeguimientoFinal(Root<Evaluacion> root, CriteriaBuilder cb,
+  private List<Predicate> getPredicatesEvaluacionesEnSeguimientoFinal(Root<Evaluacion> root,
+      Join<Evaluacion, Memoria> joinMemoria, CriteriaBuilder cb,
       CriteriaQuery<Evaluacion> cq, String personaRef) {
-    return getPredicatesEvaluacionesEnSeguimientoFinalByEvaluadorAndEvaluacion(root, cb, cq, personaRef, null);
+    return getPredicatesEvaluacionesEnSeguimientoFinalByEvaluadorAndEvaluacion(root, joinMemoria, cb, cq, personaRef,
+        null);
   }
 
   /**
@@ -615,23 +622,18 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
    * @return lista de predicates.
    */
   private List<Predicate> getPredicatesEvaluacionesEnSeguimientoFinalByEvaluadorAndEvaluacion(Root<Evaluacion> root,
+      Join<Evaluacion, Memoria> joinMemoria,
       CriteriaBuilder cb, CriteriaQuery<Evaluacion> cq, String personaRef, Long idEvaluacion) {
     log.debug("getPredicatesEvaluacionesEnSeguimientoFinalByEvaluadorAndEvaluacion : {} - start");
     List<Predicate> listPredicates = new ArrayList<>();
 
-    listPredicates.add(root.get(Evaluacion_.tipoEvaluacion).get(TipoEvaluacion_.id)
-        .in(Arrays.asList(Constantes.TIPO_EVALUACION_SEGUIMIENTO_FINAL)));
-
-    listPredicates.add(root.get(Evaluacion_.memoria).get(Memoria_.estadoActual).get(TipoEstadoMemoria_.id)
-        .in(Arrays.asList(Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_ANUAL)).not());
-
+    listPredicates.add(cb.equal(root.get(Evaluacion_.tipoEvaluacionId), TipoEvaluacion.Tipo.SEGUIMIENTO_FINAL.getId()));
     listPredicates.add(cb.isTrue(root.get(Evaluacion_.activo)));
-    listPredicates.add(root.get(Evaluacion_.tipoEvaluacion).get(TipoEvaluacion_.id)
-        .in(Arrays.asList(Constantes.TIPO_EVALUACION_SEGUIMIENTO_ANUAL)).not());
-
-    listPredicates.add(root.get(Evaluacion_.memoria).get(Memoria_.estadoActual).get(TipoEstadoMemoria_.id)
-        .in(Arrays.asList(Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_FINAL,
-            Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_SEGUIMIENTO_FINAL_ACLARACIONES)));
+    listPredicates.add(cb.equal(root.get(Evaluacion_.version), getLastEvaluacionVersion(cb, cq, root)));
+    listPredicates.add(joinMemoria.get(Memoria_.estadoActual).get(TipoEstadoMemoria_.id)
+        .in(Arrays.asList(
+            TipoEstadoMemoria.Tipo.EN_EVALUACION_SEGUIMIENTO_FINAL.getId(),
+            TipoEstadoMemoria.Tipo.EN_SECRETARIA_SEGUIMIENTO_FINAL_ACLARACIONES.getId())));
 
     if (personaRef != null) {
       Subquery<String> queryPersonaRefEquipoTrabajo = cq.subquery(String.class);
@@ -639,7 +641,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
 
       queryPersonaRefEquipoTrabajo.select(subqRootEquipoTrabajo.get(EquipoTrabajo_.personaRef)).where(
           cb.equal(subqRootEquipoTrabajo.get(EquipoTrabajo_.peticionEvaluacion).get(PeticionEvaluacion_.id),
-              root.get(Evaluacion_.memoria).get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id)));
+              joinMemoria.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id)));
 
       Subquery<Long> queryConflictosInteres = cq.subquery(Long.class);
       Root<ConflictoInteres> subqRootConflictosInteres = queryConflictosInteres.from(ConflictoInteres.class);
@@ -656,7 +658,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
       if (idEvaluacion != null) {
         predicateEvaluacion = cb.and(
             cb.equal(subqRootEvaluadores.get(Evaluador_.comite).get(Comite_.id),
-                root.get(Evaluacion_.memoria).get(Memoria_.comite).get(Comite_.id)),
+                joinMemoria.get(Memoria_.comite).get(Comite_.id)),
             cb.in(subqRootEvaluadores.get(Evaluador_.personaRef)).value(personaRef),
             cb.equal(subqRootEvaluadores.get(Evaluador_.activo), Boolean.TRUE),
             cb.not(subqRootEvaluadores.get(Evaluador_.id).in(queryConflictosInteres)),
@@ -664,7 +666,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
       } else {
         predicateEvaluacion = cb.and(
             cb.equal(subqRootEvaluadores.get(Evaluador_.comite).get(Comite_.id),
-                root.get(Evaluacion_.memoria).get(Memoria_.comite).get(Comite_.id)),
+                joinMemoria.get(Memoria_.comite).get(Comite_.id)),
             cb.in(subqRootEvaluadores.get(Evaluador_.personaRef)).value(personaRef),
             cb.equal(subqRootEvaluadores.get(Evaluador_.activo), Boolean.TRUE),
             cb.not(subqRootEvaluadores.get(Evaluador_.id).in(queryConflictosInteres)));
@@ -681,9 +683,6 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
                   .get(Comite_.comite))));
     }
 
-    listPredicates.add(cb.equal(root.get(Evaluacion_.version), root.get(Evaluacion_.memoria).get(Memoria_.version)));
-
-    listPredicates.add(cb.and(cb.isTrue(root.get(Evaluacion_.activo))));
     log.debug("getPredicatesEvaluacionesEnSeguimientoFinalByEvaluadorAndEvaluacion : {} - end");
     return listPredicates;
   }
@@ -706,8 +705,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
       CriteriaQuery<Evaluacion> cq, String personaRef, Long idEvaluacion) {
 
     List<Predicate> listPredicates = new ArrayList<>();
-    Predicate memoriaVersion = cb.equal(root.get(Evaluacion_.version),
-        root.get(Evaluacion_.memoria).get(Memoria_.version));
+    Predicate evaluacionLastVersion = cb.equal(root.get(Evaluacion_.version), getLastEvaluacionVersion(cb, cq, root));
 
     Subquery<String> queryPersonaRefEquipoTrabajo = cq.subquery(String.class);
     Root<EquipoTrabajo> subqRootEquipoTrabajo = queryPersonaRefEquipoTrabajo.from(EquipoTrabajo.class);
@@ -751,9 +749,11 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
     // Memoria en estado 'En evaluacion' (id = 4)
     // o 'En secretaria revisión minima'(id = 5)
 
-    Predicate memoria = cb.and(cb.equal(root.get(Evaluacion_.tipoEvaluacion).get(TipoEvaluacion_.id), 2L),
-        cb.in(root.get(Evaluacion_.memoria).get(Memoria_.id)).value(getIdsMemoriasEstadoActual(cb, cq, root)),
-        memoriaVersion,
+    Predicate memoria = cb.and(
+        cb.equal(root.get(Evaluacion_.tipoEvaluacionId), TipoEvaluacion.Tipo.MEMORIA.getId()),
+        cb.equal(root.get(Evaluacion_.version), getLastEvaluacionVersion(cb, cq, root)),
+        cb.in(root.get(Evaluacion_.memoria).get(Memoria_.id)).value(getIdsMemoriasEvaluables(cb, cq)),
+        evaluacionLastVersion,
         cb.or(
             cb.in(queryEvaluadores).value(root.get(Evaluacion_.evaluador1).get(Evaluador_.comite).get(Comite_.comite)),
             cb.in(queryEvaluadores)
@@ -767,16 +767,18 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
 
     Predicate requiereRetrospectiva = cb.isTrue(subqRoot.get(Evaluacion_.memoria).get(Memoria_.requiereRetrospectiva));
     Predicate estadoRetrospectiva = cb.equal(subqRoot.get(Evaluacion_.memoria).get(Memoria_.retrospectiva)
-        .get(Retrospectiva_.estadoRetrospectiva).get(EstadoRetrospectiva_.id), 4L);
-    Predicate comite = cb.equal(subqRoot.get(Evaluacion_.memoria).get(Memoria_.comite).get(Comite_.id), 2L);
-    Predicate tipoEvaluacion = cb.equal(subqRoot.get(Evaluacion_.tipoEvaluacion).get(TipoEvaluacion_.id), 1L);
+        .get(Retrospectiva_.estadoRetrospectivaId), EstadoRetrospectiva.Tipo.EN_EVALUACION.getId());
+    Predicate comite = cb.equal(subqRoot.get(Evaluacion_.memoria).get(Memoria_.comite).get(Comite_.id),
+        Constantes.COMITE_CEEA);
+    Predicate tipoEvaluacion = cb.equal(subqRoot.get(Evaluacion_.tipoEvaluacionId),
+        TipoEvaluacion.Tipo.RETROSPECTIVA.getId());
     Predicate evaluador = cb.or(
         cb.in(queryEvaluadores).value(subqRoot.get(Evaluacion_.evaluador1).get(Evaluador_.comite).get(Comite_.comite)),
         cb.in(queryEvaluadores).value(subqRoot.get(Evaluacion_.evaluador2).get(Evaluador_.comite).get(Comite_.comite)));
 
     queryRetrospectiva.select(subqRoot.get(Evaluacion_.id))
         .where(cb.and(requiereRetrospectiva, estadoRetrospectiva, comite, tipoEvaluacion,
-            evaluador, memoriaVersion));
+            evaluador, evaluacionLastVersion));
 
     Predicate retrospectiva = cb.in(root.get(Evaluacion_.id)).value(queryRetrospectiva);
 
@@ -871,11 +873,14 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
     // Count query
     CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
     Root<Evaluacion> root = countQuery.from(Evaluacion.class);
+    Join<Evaluacion, Memoria> joinMemoria = root.join(Evaluacion_.memoria);
 
     countQuery.select(cb.count(root));
     // Evaluaciones en seguimiento
-    List<Predicate> listPredicatesAnualCount = getPredicatesEvaluacionesEnSeguimientoAnual(root, cb, cq, personaRef);
-    List<Predicate> listPredicatesFinalCount = getPredicatesEvaluacionesEnSeguimientoFinal(root, cb, cq, personaRef);
+    List<Predicate> listPredicatesAnualCount = getPredicatesEvaluacionesEnSeguimientoAnual(root, joinMemoria, cb, cq,
+        personaRef);
+    List<Predicate> listPredicatesFinalCount = getPredicatesEvaluacionesEnSeguimientoFinal(root, joinMemoria, cb, cq,
+        personaRef);
 
     // Número de registros totales para la paginación
     Predicate predicateFinalCount = cb.and(listPredicatesFinalCount.toArray(new Predicate[] {}));
@@ -908,13 +913,14 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
     // Count query
     CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
     Root<Evaluacion> root = countQuery.from(Evaluacion.class);
+    Join<Evaluacion, Memoria> joinMemoria = root.join(Evaluacion_.memoria);
 
     countQuery.select(cb.count(root));
     // Evaluaciones en seguimiento
     List<Predicate> listPredicatesAnualCount = getPredicatesEvaluacionesEnSeguimientoAnualByEvaluadorAndEvaluacion(root,
-        cb, cq, personaRef, idEvaluacion);
+        joinMemoria, cb, cq, personaRef, idEvaluacion);
     List<Predicate> listPredicatesFinalCount = getPredicatesEvaluacionesEnSeguimientoFinalByEvaluadorAndEvaluacion(root,
-        cb, cq, personaRef, idEvaluacion);
+        joinMemoria, cb, cq, personaRef, idEvaluacion);
 
     // Número de registros totales para la paginación
     Predicate predicateFinalCount = cb.and(listPredicatesFinalCount.toArray(new Predicate[] {}));
@@ -1045,4 +1051,75 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
     log.debug("findFirstFechaEnvioSecretariaByIdEvaluacion(idEvaluacion) - end");
     return fechaEnvioSecretaria;
   }
+
+  /**
+   * Comprueba si la ultima evaluacion de la memoria tiene dictamen pendiente de
+   * correcciones
+   * 
+   * @param memoriaId identificador de la {@link Memoria}
+   * @return true si la ultima evaluacion tiene dictamen pendiente de correcciones
+   *         / false si no lo tiene
+   */
+  @Override
+  public boolean isLastEvaluacionMemoriaPendienteCorrecciones(Long memoriaId) {
+    log.debug("isLastEvaluacionMemoriaPendienteCorrecciones(Long memoriaId) - start");
+
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Evaluacion> cq = cb.createQuery(Evaluacion.class);
+
+    CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+    Root<Evaluacion> root = countQuery.from(Evaluacion.class);
+
+    countQuery.select(cb.count(root))
+        .where(cb.and(
+            cb.equal(root.get(Evaluacion_.memoriaId), memoriaId),
+            cb.equal(root.get(Evaluacion_.version), getLastEvaluacionVersionMemoria(cb, cq, memoriaId)),
+            cb.equal(root.get(Evaluacion_.dictamenId), Dictamen.Tipo.PENDIENTE_CORRECCIONES.getId())));
+
+    Long count = entityManager.createQuery(countQuery).getSingleResult();
+
+    log.debug("isLastEvaluacionMemoriaPendienteCorrecciones(Long memoriaId) - end");
+    return count > 0;
+  }
+
+  /**
+   * Devuelve una subconsulta con la version de la ultima evaluacion de la memoria
+   * 
+   * @return Subquery<Long> la version de la ultima evaluacion de la memoria
+   */
+  private Subquery<Integer> getLastEvaluacionVersionMemoria(CriteriaBuilder cb, CriteriaQuery<?> cq, Long memoriaId) {
+    log.debug("getLastEvaluacionVersionMemoria(CriteriaBuilder cb, CriteriaQuery<?> cq, Long memoriaId) - start");
+
+    Subquery<Integer> queryLastEvaluacionMemoria = cq.subquery(Integer.class);
+    Root<Evaluacion> subqRoot = queryLastEvaluacionMemoria.from(Evaluacion.class);
+    queryLastEvaluacionMemoria.select(cb.max(subqRoot.get(Evaluacion_.version)))
+        .where(cb.equal(
+            subqRoot.get(Evaluacion_.memoriaId),
+            memoriaId));
+
+    log.debug("getLastEvaluacionVersionMemoria(CriteriaBuilder cb, CriteriaQuery<?> cq, Long memoriaId) - end");
+    return queryLastEvaluacionMemoria;
+  }
+
+  /**
+   * Devuelve una subconsulta con la version de la ultima evaluacion (la ultima
+   * evaluacion de la memoria de la evaluacion)
+   * 
+   * @return Subquery<Long> la version de la ultima evaluacion
+   */
+  private Subquery<Integer> getLastEvaluacionVersion(CriteriaBuilder cb, CriteriaQuery<?> cq, Root<Evaluacion> root) {
+    log.debug("getLastEvaluacionVersion(CriteriaBuilder cb, CriteriaQuery<?> cq, Root<Evaluacion> root) - start");
+
+    Subquery<Integer> queryLastEvaluacionMemoria = cq.subquery(Integer.class);
+    Root<Evaluacion> subqRoot = queryLastEvaluacionMemoria.from(Evaluacion.class);
+    queryLastEvaluacionMemoria.select(cb.max(subqRoot.get(Evaluacion_.version)))
+        .where(
+            cb.and(
+                cb.equal(subqRoot.get(Evaluacion_.tipoEvaluacionId), root.get(Evaluacion_.tipoEvaluacionId)),
+                cb.equal(subqRoot.get(Evaluacion_.memoriaId), root.get(Evaluacion_.memoriaId))));
+
+    log.debug("getLastEvaluacionVersion(CriteriaBuilder cb, CriteriaQuery<?> cq, Root<Evaluacion> root) - end");
+    return queryLastEvaluacionMemoria;
+  }
+
 }

@@ -22,8 +22,8 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { FormlyConfig, FormlyFormBuilder } from '@ngx-formly/core';
 import { NGXLogger } from 'ngx-logger';
-import { from, Observable } from 'rxjs';
-import { concatMap, filter, map, switchMap, take, takeLast } from 'rxjs/operators';
+import { Observable, from, of, throwError } from 'rxjs';
+import { catchError, concatMap, filter, map, switchMap, take, takeLast } from 'rxjs/operators';
 import { PETICION_EVALUACION_ROUTE } from '../peticion-evaluacion/peticion-evaluacion-route-names';
 import { MemoriaDatosGeneralesFragment } from './memoria-formulario/memoria-datos-generales/memoria-datos-generales.fragment';
 import { MemoriaDocumentacionFragment } from './memoria-formulario/memoria-documentacion/memoria-documentacion.fragment';
@@ -33,8 +33,10 @@ import { MemoriaInformesFragment } from './memoria-formulario/memoria-informes/m
 import { MemoriaRetrospectivaFragment } from './memoria-formulario/memoria-retrospectiva/memoria-retrospectiva.fragment';
 import { MemoriaSeguimientoAnualFragment } from './memoria-formulario/memoria-seguimiento-anual/memoria-seguimiento-anual.fragment';
 import { MemoriaSeguimientoFinalFragment } from './memoria-formulario/memoria-seguimiento-final/memoria-seguimiento-final.fragment';
+import { SnackBarService } from '@core/services/snack-bar.service';
 
 const MSG_PETICIONES_EVALUACION = marker('eti.peticion-evaluacion-link');
+const MSG_ERROR_FORMULARIO = marker('eti.memoria.formulario.error');
 
 @Injectable()
 export class MemoriaActionService extends ActionService {
@@ -83,7 +85,8 @@ export class MemoriaActionService extends ActionService {
     evaluacionService: EvaluacionService,
     formlyConfig: FormlyConfig,
     componentFactoryResolver: ComponentFactoryResolver,
-    injector: Injector
+    injector: Injector,
+    protected readonly snackBarService: SnackBarService,
   ) {
     super();
     this.formlyFormBuilder = new FormlyFormBuilder(formlyConfig, componentFactoryResolver, injector);
@@ -100,13 +103,21 @@ export class MemoriaActionService extends ActionService {
 
     this.isInvestigador = route.snapshot.data.module === Module.INV;
 
-    this.datosGenerales = new MemoriaDatosGeneralesFragment(fb, this.readonly, this.memoria?.id, service, personaService,
-      peticionEvaluacionService, this.isInvestigador);
+    this.datosGenerales = new MemoriaDatosGeneralesFragment(
+      fb,
+      this.readonly,
+      this.memoria?.id,
+      service,
+      personaService,
+      peticionEvaluacionService,
+      this.isInvestigador
+    );
     this.formularios = new MemoriaFormularioFragment(
       logger,
       this.readonly,
       this.memoria?.id,
       this.memoria?.comite,
+      this.isInvestigador,
       formularioService,
       bloqueService,
       apartadoService,
@@ -124,6 +135,7 @@ export class MemoriaActionService extends ActionService {
       this.readonly,
       this.memoria?.id,
       this.memoria?.comite,
+      this.isInvestigador,
       formularioService,
       bloqueService,
       apartadoService,
@@ -140,6 +152,7 @@ export class MemoriaActionService extends ActionService {
       this.readonly,
       this.memoria?.id,
       this.memoria?.comite,
+      this.isInvestigador,
       formularioService,
       bloqueService,
       apartadoService,
@@ -156,6 +169,7 @@ export class MemoriaActionService extends ActionService {
       this.readonly,
       this.memoria?.id,
       this.memoria?.comite,
+      this.isInvestigador,
       formularioService,
       bloqueService,
       apartadoService,
@@ -234,6 +248,10 @@ export class MemoriaActionService extends ActionService {
     }
   }
 
+  public getMemoria(): IMemoria {
+    return this.memoria;
+  }
+
   public getComite(): IComite {
     return this.memoria?.comite || this.datosGenerales.getFormGroup()?.controls?.comite?.value;
   }
@@ -248,6 +266,10 @@ export class MemoriaActionService extends ActionService {
 
   public isLoadDocumentoRatificacion(): boolean {
     return this.documentacion.isLoadDocumentoRatificacion;
+  }
+
+  public isModuleInv(): boolean {
+    return this.isInvestigador;
   }
 
   saveOrUpdate(action?: any): Observable<void> {
@@ -265,7 +287,7 @@ export class MemoriaActionService extends ActionService {
         switchMap(() => {
           // Llegados a este punto, siempre debería estar inicializado, por si acaso lo inicializamos.
           this.formularios.initialize();
-          return this.formularios.initialized$.pipe(filter((value) => value), take(1), map((v) => this.formularios));
+          return this.formularios.initialized$.pipe(filter((value) => value), take(1), map((_v) => this.formularios));
         }),
         switchMap((fragment) => {
           return from(fragment.blocks$.value).pipe(
@@ -288,6 +310,10 @@ export class MemoriaActionService extends ActionService {
         switchMap((fragment) => fragment.saveOrUpdate()),
       );
     }
-    return operation$;
+    return operation$.pipe(
+      catchError(_ => {
+        return throwError(MSG_ERROR_FORMULARIO);
+      })
+    )
   }
 }

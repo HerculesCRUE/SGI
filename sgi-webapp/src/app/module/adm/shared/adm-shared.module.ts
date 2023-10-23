@@ -6,16 +6,20 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SharedModule } from '@shared/shared.module';
 import { ConfigInputEmailsComponent } from './config-input-emails /config-input-emails.component';
 import { ConfigInputFileComponent } from './config-input-file /config-input-file.component';
-import { ConfigInputTextComponent } from './config-input-text/config-input-text.component';
-import { ConfigSelectComponent } from './config-select/config-select.component';
+import { ConfigInputTextCnfComponent } from './config-input-text-cnf/config-input-text-cnf.component';
+import { ConfigInputTextCspComponent } from './config-input-text-csp/config-input-text-csp.component';
+import { ConfigSelectCnfComponent } from './config-select-cnf/config-select-cnf.component';
 import { ResourceUploadComponent } from './resource-upload/resource-upload.component';
+import { ConfigSelectCspComponent } from './config-select-csp/config-select-csp.component';
 
 @NgModule({
   declarations: [
     ConfigInputEmailsComponent,
     ConfigInputFileComponent,
-    ConfigInputTextComponent,
-    ConfigSelectComponent,
+    ConfigInputTextCnfComponent,
+    ConfigInputTextCspComponent,
+    ConfigSelectCnfComponent,
+    ConfigSelectCspComponent,
     ResourceUploadComponent
   ],
   imports: [
@@ -29,8 +33,10 @@ import { ResourceUploadComponent } from './resource-upload/resource-upload.compo
   exports: [
     ConfigInputEmailsComponent,
     ConfigInputFileComponent,
-    ConfigInputTextComponent,
-    ConfigSelectComponent,
+    ConfigInputTextCnfComponent,
+    ConfigInputTextCspComponent,
+    ConfigSelectCnfComponent,
+    ConfigSelectCspComponent,
     ResourceUploadComponent
   ]
 })

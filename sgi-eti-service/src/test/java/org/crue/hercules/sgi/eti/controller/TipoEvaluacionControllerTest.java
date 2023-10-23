@@ -291,34 +291,6 @@ public class TipoEvaluacionControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "ETI-EVC-EVAL" })
-  public void findAllDictamenByTipoEvaluacionAndRevisionMinima_WithTipoEvaluacionId_ReturnsListaDictamen()
-      throws Exception {
-
-    TipoEvaluacion tipoEvaluacion = generarMockTipoEvaluacion(4L, "Seguimiento final");
-    Dictamen dictamen1 = generarMockDictamen(7L, "Favorable", tipoEvaluacion);
-    Dictamen dictamen2 = generarMockDictamen(8L, "Solicitud de aclaraciones", tipoEvaluacion);
-
-    List<Dictamen> listaDictamen = new ArrayList<Dictamen>();
-    listaDictamen.add(dictamen1);
-    listaDictamen.add(dictamen2);
-
-    BDDMockito.given(tipoEvaluacionService.findAllDictamenByTipoEvaluacionAndRevisionMinima(ArgumentMatchers.anyLong(),
-        ArgumentMatchers.anyBoolean())).willReturn(listaDictamen);
-
-    mockMvc
-        .perform(MockMvcRequestBuilders
-            .get(TIPO_EVALUACION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + DICTAMENES_REV_MINIMA_PATH + PATH_PARAMETER,
-                4L, true)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()))
-        .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(7L))
-        .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(8L))
-        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)));
-    ;
-  }
-
-  @Test
   @WithMockUser(username = "user", authorities = { "ETI-EVC-V", "ETI-EVC-VR" })
   public void findTipoEvaluacionMemoriaRetrospectiva() throws Exception {
 

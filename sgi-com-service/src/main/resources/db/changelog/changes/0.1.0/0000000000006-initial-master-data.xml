@@ -1,0 +1,18 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
+  logicalFilePath="classpath*:db/changelog/changes/0000000000006-initial-master-data.xml">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="0000000000006-content_tpl">
+
+    <!-- CSP Solicitud usuario externo -->
+    <update tableName="content_tpl">
+      <column name="tpl_text" valueClobFile="clob/0000000000006/csp-com-sol-usuario-externo/CSP_COM_SOL_USUARIO_EXTERNO_CONTENT_text.ftl" />
+      <where>name='CSP_COM_SOL_USUARIO_EXTERNO_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html" valueClobFile="clob/0000000000006/csp-com-sol-usuario-externo/CSP_COM_SOL_USUARIO_EXTERNO_CONTENT_html.ftl" />
+      <where>name='CSP_COM_SOL_USUARIO_EXTERNO_CONTENT'</where>
+    </update>
+  </changeSet>
+</databaseChangeLog>

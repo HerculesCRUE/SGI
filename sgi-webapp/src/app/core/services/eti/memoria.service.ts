@@ -18,6 +18,7 @@ import { IMemoriaPeticionEvaluacionBackend } from '@core/models/eti/backend/memo
 import { IRespuestaBackend } from '@core/models/eti/backend/respuesta-backend';
 import { IConvocatoriaReunion } from '@core/models/eti/convocatoria-reunion';
 import { IDocumentacionMemoria } from '@core/models/eti/documentacion-memoria';
+import { IEstadoMemoria } from '@core/models/eti/estado-memoria';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { IEvaluacionWithNumComentario } from '@core/models/eti/evaluacion-with-num-comentario';
 import { IInforme } from '@core/models/eti/informe';
@@ -30,6 +31,8 @@ import { SgiMutableRestService, SgiRestFindOptions, SgiRestListResult } from '@s
 import { NGXLogger } from 'ngx-logger';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IEstadoMemoriaResponse } from './estado-memoria/estado-memoria-response';
+import { ESTADO_MEMORIA_RESPONSE_CONVERTER } from './estado-memoria/estado-memoria-response.converter';
 
 @Injectable({
   providedIn: 'root'
@@ -349,6 +352,16 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
   }
 
   /**
+   * Se cambia el estado de la memoria a Subsanacion con el comnetario indicado
+   *
+   * @param memoriaId id memoria.
+   * @param comentario un comentario
+   */
+  indicarSubsanacion(memoriaId: number, comentario: string): Observable<void> {
+    return this.http.patch<void>(`${this.endpointUrl}/${memoriaId}/indicar-subsanacion`, comentario);
+  }
+
+  /**
    * Crea una memoria del tipo modificada enviando el id de la memoria de la que se realizará la copia de datos.
    * @param memoria memoria a crear.
    * @param id identificador de la memoria de la que se parte para crear la nueva memoria.
@@ -431,6 +444,59 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
     const url = `${this.endpointUrl}/${id}/responsable-creador`;
     return this.http.head(url, { observe: 'response' }).pipe(
       map(x => x.status === 200)
+    );
+  }
+
+  /**
+   * Recupera el estado actual de la memoria
+   * @param id identificador de la memoria
+   */
+  getEstadoActual(id: number): Observable<IEstadoMemoria> {
+    return this.http.get<IEstadoMemoriaResponse>(
+      `${this.endpointUrl}/${id}/estado-actual`
+    ).pipe(
+      map(response => ESTADO_MEMORIA_RESPONSE_CONVERTER.toTarget(response))
+    );
+  }
+
+  /**
+   * Obtiene la ultima evaluacion de la memoria
+   * 
+   * @param id identificador de la memoria
+   */
+  getLastEvaluacionMemoria(id: number): Observable<IEvaluacion> {
+    return this.http.get<IEvaluacionBackend>(
+      `${this.endpointUrl}/${id}/last-evaluacion`
+    ).pipe(
+      map(response => EVALUACION_CONVERTER.toTarget(response))
+    );
+  }
+
+
+  /**
+   * Comprueba si la ultima evaluacion de la memoria tiene dictamen pendiente de
+   * correcciones
+   *
+   * @param id Id de la Memoria
+   */
+  isLastEvaluacionMemoriaPendienteCorrecciones(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/last-evaluacion-pendiente-correcciones`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(x => x.status === 200)
+    );
+  }
+
+  /**
+ * Devuelve todas las memorias de una petición de evaluación asignables a la convocatoria
+ *
+ * @param idPeticionEvaluacion id petición de evaluación.
+ * @return las memorias asignables a la convocatoria.
+ */
+  findAllMemoriasAsignablesPeticionEvaluacion(idPeticionEvaluacion: number): Observable<SgiRestListResult<IMemoria>> {
+    return this.find<IMemoriaBackend, IMemoria>(
+      `${this.endpointUrl}/asignables-peticion-evaluacion/${idPeticionEvaluacion}`,
+      null,
+      MEMORIA_CONVERTER
     );
   }
 

@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.eti.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.eti.model.Memoria;
@@ -8,12 +9,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.stereotype.Repository;
 
 /**
  * Spring Data JPA repository para {@link Respuesta}.
  */
-@Repository
 public interface RespuestaRepository extends JpaRepository<Respuesta, Long>, JpaSpecificationExecutor<Respuesta> {
 
   /**
@@ -37,5 +36,7 @@ public interface RespuestaRepository extends JpaRepository<Respuesta, Long>, Jpa
   Page<Respuesta> findByMemoriaIdAndTipoDocumentoIsNotNull(Long idMemoria, Pageable pageable);
 
   Optional<Respuesta> findTopByMemoriaIdOrderByApartadoBloqueOrdenDescApartadoOrdenDesc(Long memoriaId);
+
+  List<Respuesta> findByMemoriaId(Long memoriaId);
 
 }

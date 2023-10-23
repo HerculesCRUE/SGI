@@ -10,9 +10,16 @@ export enum ConfigType {
   CONFIG_GROUP_TITLE = 'config-group-title'
 }
 
+export enum ConfigModule {
+  CNF,
+  CSP,
+  NONE
+}
+
 export interface IConfigOptions {
   type: ConfigType,
   label: string,
+  module: ConfigModule,
   options?: Observable<KeyValue<string, string>[]>,
   disabled?: boolean,
   info?: string

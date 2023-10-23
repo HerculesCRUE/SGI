@@ -20,7 +20,6 @@ import org.crue.hercules.sgi.rep.service.eti.InformeFavorableMemoriaReportServic
 import org.crue.hercules.sgi.rep.service.eti.InformeFavorableModificacionReportService;
 import org.crue.hercules.sgi.rep.service.eti.InformeFavorableRatificacionReportService;
 import org.crue.hercules.sgi.rep.service.eti.MXXReportService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -34,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -41,6 +41,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @RestController
 @RequestMapping(EtiReportController.MAPPING)
+@RequiredArgsConstructor
 @Slf4j
 public class EtiReportController {
   public static final String MAPPING = "/report/eti";
@@ -55,25 +56,6 @@ public class EtiReportController {
   private final InformeFavorableModificacionReportService informeFavorableModificacionReportService;
   private final InformeFavorableRatificacionReportService informeFavorableRatificacionReportService;
 
-  @Autowired
-  public EtiReportController(MXXReportService mxxReportService,
-      InformeEvaluacionReportService informeEvaluacionReportService,
-      InformeEvaluadorReportService informeEvaluadorReportService,
-      InformeFavorableMemoriaReportService informeFavorableMemoriaReportService,
-      InformeActaReportService informeActaReportService,
-      InformeEvaluacionRetrospectivaReportService informeEvaluacionRetrospectivaReportService,
-      InformeFavorableModificacionReportService informeFavorableModificacionReportService,
-      InformeFavorableRatificacionReportService informeFavorableRatificacionReportService) {
-    this.mxxReportService = mxxReportService;
-    this.informeEvaluacionReportService = informeEvaluacionReportService;
-    this.informeEvaluadorReportService = informeEvaluadorReportService;
-    this.informeFavorableMemoriaReportService = informeFavorableMemoriaReportService;
-    this.informeActaReportService = informeActaReportService;
-    this.informeEvaluacionRetrospectivaReportService = informeEvaluacionRetrospectivaReportService;
-    this.informeFavorableModificacionReportService = informeFavorableModificacionReportService;
-    this.informeFavorableRatificacionReportService = informeFavorableRatificacionReportService;
-  }
-
   /**
    * Devuelve un informe M10, M20 o M30, Seguimiento anual, final y retrospectiva
    *
@@ -83,20 +65,20 @@ public class EtiReportController {
    */
   @GetMapping("/informe-mxx/{idMemoria}/{idFormulario}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-MEM-INV-ESCR', 'ETI-MEM-INV-ERTR')")
-  public ResponseEntity<Resource> getMXX(@PathVariable Long idMemoria, @PathVariable Long idFormulario) {
+  public ResponseEntity<Resource> getInformeMXX(@PathVariable Long idMemoria, @PathVariable Long idFormulario) {
 
-    log.debug("getMXX(idMemoria, idFormulario) - start");
+    log.debug("getInformeMXX({}, {}) - start", idMemoria, idFormulario);
 
     ReportMXX report = new ReportMXX();
     report.setOutputType(OUTPUT_TYPE_PDF);
 
-    byte[] reportContent = mxxReportService.getReportMXX(report, idMemoria, idFormulario);
+    byte[] reportContent = mxxReportService.getReport(report, idMemoria, idFormulario);
     ByteArrayResource archivo = new ByteArrayResource(reportContent);
 
     HttpHeaders headers = new HttpHeaders();
     headers.add(HttpHeaders.CONTENT_TYPE, OUTPUT_TYPE_PDF.getType());
 
-    log.debug("getMXX(idMemoria, idFormulario) - end");
+    log.debug("getInformeMXX({}, {}) - end", idMemoria, idFormulario);
     return new ResponseEntity<>(archivo, headers, HttpStatus.OK);
   }
 

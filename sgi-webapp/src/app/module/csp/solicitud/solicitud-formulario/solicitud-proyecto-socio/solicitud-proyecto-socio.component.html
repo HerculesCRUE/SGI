@@ -58,7 +58,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.solicitud-socio-colaborador.importe-presupuestado'
           | translate}}
         </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importePresupuestado}}
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importePresupuestado | number: '1.2-2'}}
         </td>
       </ng-container>
 
@@ -67,7 +67,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.solicitud-socio-colaborador.importe-solicitado' |
           translate}}
         </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importeSolicitado}}
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.importeSolicitado | number: '1.2-2'}}
         </td>
       </ng-container>
 

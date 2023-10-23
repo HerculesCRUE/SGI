@@ -25,6 +25,8 @@ export class ProyectosComponent extends FragmentComponent implements OnInit, OnD
     'id',
     'proyectoSge.id',
     'nombre',
+    'codigoExterno',
+    'codigoInterno',
     'responsables',
     'fechaInicio',
     'fechaFin',

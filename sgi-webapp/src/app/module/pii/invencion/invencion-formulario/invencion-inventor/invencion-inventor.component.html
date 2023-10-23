@@ -52,6 +52,8 @@
       <ng-container matColumnDef="acciones">
         <th mat-header-cell *matHeaderCellDef> {{'label.actions' | translate}} </th>
         <td mat-cell *matCellDef="let invencionInventor; let i = index;">
+          <sgi-icon-view-persona-detail [personaId]="invencionInventor.value.inventor?.id">
+          </sgi-icon-view-persona-detail>
           <ng-container *sgiHasAnyAuthority="['PII-INV-E']">
             <button color="primary" (click)="openModal(invencionInventor)" mat-icon-button
               matTooltip="{{'btn.edit' | translate}}">

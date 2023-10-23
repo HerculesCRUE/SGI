@@ -5,15 +5,16 @@
       <!-- Importe pendiente de compensar -->
       <mat-form-field class="first-row-input" fxFlex="0 1 calc(50% - 5px)">
         <mat-label>{{'pii.reparto.gasto.importe-pendiente-compensar' | translate}}</mat-label>
-        <input matInput formControlName="importePendienteCompensar" id="importePendienteCompensar" type="number"
-          placeholder="{{'pii.reparto.gasto.importe-pendiente-compensar' | translate}}">
+        <input matInput formControlName="importePendienteCompensar" id="importePendienteCompensar" type="text"
+          placeholder="{{'pii.reparto.gasto.importe-pendiente-compensar' | translate}}" sgiInputWithThousandSeparator>
       </mat-form-field>
 
       <!-- Importe a compensar -->
       <mat-form-field fxFlex="0 1 calc(50% - 5px)">
         <mat-label>{{'pii.reparto.gasto.importe-compensar' | translate}}</mat-label>
-        <input matInput formControlName="importeACompensar" id="importeACompensar" type="number"
-          placeholder="{{'pii.reparto.gasto.importe-compensar' | translate}}" required cdkFocusInitial>
+        <input matInput formControlName="importeACompensar" id="importeACompensar" type="text"
+          placeholder="{{'pii.reparto.gasto.importe-compensar' | translate}}" required cdkFocusInitial
+          sgiInputWithThousandSeparator>
         <mat-error *ngIf="formGroup.controls.importeACompensar.errors?.required">
           {{'error.required.entity' | translate:msgParamImporteACompensarEntity}}
         </mat-error>

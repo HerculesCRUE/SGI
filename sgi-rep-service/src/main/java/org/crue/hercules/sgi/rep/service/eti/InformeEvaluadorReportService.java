@@ -9,7 +9,7 @@ import org.crue.hercules.sgi.rep.dto.SgiReportDto;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeEvaluador;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
-import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
@@ -22,7 +22,7 @@ import org.springframework.validation.annotation.Validated;
 public class InformeEvaluadorReportService extends InformeEvaluacionEvaluadorBaseReportService {
 
   public InformeEvaluadorReportService(SgiConfigProperties sgiConfigProperties, SgiApiConfService sgiApiConfService,
-      SgiApiSgpService personaService, EvaluacionService evaluacionService,
+      PersonaService personaService, EvaluacionService evaluacionService,
       BaseApartadosRespuestasReportDocxService baseApartadosRespuestasService) {
 
     super(sgiConfigProperties, sgiApiConfService, personaService, evaluacionService, baseApartadosRespuestasService);
@@ -62,7 +62,7 @@ public class InformeEvaluadorReportService extends InformeEvaluacionEvaluadorBas
   }
 
   private XWPFDocument getReportFromEvaluador(SgiReportDto sgiReport, Long idEvaluacion) {
-    return this.getReportFromIdEvaluacion(sgiReport, idEvaluacion);
+    return this.getReportFromEvaluacionId(sgiReport, idEvaluacion);
 
   }
 

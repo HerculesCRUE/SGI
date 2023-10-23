@@ -15,8 +15,10 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
+import { SgiCkEditorConfig } from '@shared/sgi-ckeditor-config';
+import Editor from 'ckeditor5-custom-build/build/ckeditor';
 import { NGXLogger } from 'ngx-logger';
-import { Observable, of, Subscription } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ConvocatoriaReunionActionService } from '../../convocatoria-reunion.action.service';
 import { ConvocatoriaReunionDatosGeneralesFragment } from './convocatoria-reunion-datos-generales.fragment';
@@ -38,6 +40,8 @@ const CONVOCATORIA_CONVOCANTES_KEY = marker('eti.convocatoria-reunion.convocante
   styleUrls: ['./convocatoria-reunion-datos-generales.component.scss']
 })
 export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComponent<IConvocatoriaReunion> implements OnInit, OnDestroy {
+  public readonly CkEditor = Editor;
+  public readonly configCkEditor = SgiCkEditorConfig.defaultConfig
 
   fxFlexProperties: FxFlexProperties;
   fxFlexPropertiesInline: FxFlexProperties;

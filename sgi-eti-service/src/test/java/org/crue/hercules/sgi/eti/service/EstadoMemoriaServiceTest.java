@@ -196,7 +196,7 @@ public class EstadoMemoriaServiceTest extends BaseServiceTest {
     Page<EstadoMemoria> page = estadoMemoriaService.findAll(null, Pageable.unpaged());
 
     // then: Get a page with one hundred estado memorias
-    Assertions.assertThat(page.getContent().size()).isEqualTo(100);
+    Assertions.assertThat(page.getContent()).hasSize(100);
     Assertions.assertThat(page.getNumber()).isZero();
     Assertions.assertThat(page.getSize()).isEqualTo(100);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
@@ -231,7 +231,7 @@ public class EstadoMemoriaServiceTest extends BaseServiceTest {
 
     // then: A Page with ten Memorias are returned containing
     // titulo='Memoria031' to 'Memoria040'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
     Assertions.assertThat(page.getSize()).isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
@@ -256,7 +256,7 @@ public class EstadoMemoriaServiceTest extends BaseServiceTest {
             1),
         generarMockTipoEstadoMemoria(idDatosEstadoMemoria,
             "TipoEstadoMemoria" + String.format("%03d", idDatosEstadoMemoria), Boolean.TRUE),
-        Instant.now());
+        Instant.now(), null);
 
   }
 
@@ -276,7 +276,7 @@ public class EstadoMemoriaServiceTest extends BaseServiceTest {
         generarMockComite(id, "comite" + id, true), titulo, "user-00" + id,
         generarMockTipoMemoria(1L, "TipoMemoria1", true),
         generarMockTipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.now(), Boolean.TRUE,
-        generarMockRetrospectiva(1L), version, "CodOrganoCompetente", Boolean.TRUE, null);
+        generarMockRetrospectiva(1L), version, Boolean.TRUE, null);
   }
 
   /**

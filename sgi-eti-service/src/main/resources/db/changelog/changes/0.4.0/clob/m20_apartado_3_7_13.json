@@ -1,0 +1,73 @@
+[
+  {
+    "key": "ap3_7_13",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.13 Eutanasia"
+    },
+    "fieldGroup": [
+      {
+        "template": "Explicar a continuación un método de eutanasia (programada y/o no programada) que se vaya a utilizar."
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "El RD 53/13 dedica el <a target='_blank' href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#aniii'>Anexo III</a>, puntos 1 y 3, a los Métodos de eutanasia."
+      },
+      {
+        "key": "explicarMetodoEutanasia",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Explicar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "¿Qué método se empleará para confirmar la muerte del animal?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Pueden consultarse los métodos para completar la eutanasia en el <a target='_blank' href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#aniii'>Anexo III</a> punto 2 del RD 53/13."
+      },
+      {
+        "key": "confirmarMuerte",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Explicar",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "Tiempo máximo estimado desde la finalización del proceso de experimentación hasta el sacrificio."
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "El RD 53/2013 en su <a target='_blank' href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a25'>artículo 25.6</a> señala que “tan pronto como se haya conseguido la finalidad del procedimiento se tomarán las medidas adecuadas para minimizar el sufrimiento del animal”. De ello puede deducirse que la aplicación de la eutanasia debe realizarse sin demora injustificada."
+      },
+      {
+        "key": "tiempoProceso",
+        "type": "textarea",
+        "templateOptions": {
+          "label": "Tiempo",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

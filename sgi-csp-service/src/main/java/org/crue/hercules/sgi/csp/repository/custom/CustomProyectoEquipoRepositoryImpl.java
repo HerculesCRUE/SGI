@@ -7,8 +7,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
@@ -54,8 +56,41 @@ public class CustomProyectoEquipoRepositoryImpl implements CustomProyectoEquipoR
     CriteriaQuery<String> cq = cb.createQuery(String.class);
     Root<ProyectoEquipo> root = cq.from(ProyectoEquipo.class);
 
+    Subquery<String> queryRolPrincipalFechaFinNull = cq.subquery(String.class);
+    Root<ProyectoEquipo> subqRolPrincipalFechaFinNull = queryRolPrincipalFechaFinNull.from(ProyectoEquipo.class);
+    Join<ProyectoEquipo, RolProyecto> joinRolProyectoFechaFinNull = subqRolPrincipalFechaFinNull
+        .join(ProyectoEquipo_.rolProyecto);
+    Predicate rolPrincipalFechaFinNull = cb
+        .equal(joinRolProyectoFechaFinNull.get(RolProyecto_.rolPrincipal), true);
+    Predicate grupoEqualsFechaFinNull = cb.equal(subqRolPrincipalFechaFinNull.get(ProyectoEquipo_.proyectoId),
+        proyectoId);
+    queryRolPrincipalFechaFinNull.select(subqRolPrincipalFechaFinNull.get(ProyectoEquipo_.personaRef))
+        .where(cb.and(
+            rolPrincipalFechaFinNull,
+            grupoEqualsFechaFinNull,
+            cb.isNull(subqRolPrincipalFechaFinNull.get(ProyectoEquipo_.fechaFin))));
+
+    Subquery<Instant> queryMaxFechaFin = cq.subquery(Instant.class);
+    Root<ProyectoEquipo> subqRootMaxFechaFin = queryMaxFechaFin.from(ProyectoEquipo.class);
+    Join<ProyectoEquipo, RolProyecto> joinRolProyectoMaxFechaFin = subqRootMaxFechaFin
+        .join(ProyectoEquipo_.rolProyecto);
+    Predicate rolPrincipalMaxFechaFin = cb.equal(joinRolProyectoMaxFechaFin.get(RolProyecto_.rolPrincipal), true);
+    Predicate grupoEqualsMaxFechaFin = cb.equal(subqRootMaxFechaFin.get(ProyectoEquipo_.proyectoId), proyectoId);
+
+    queryMaxFechaFin.select(cb.greatest(subqRootMaxFechaFin.get(ProyectoEquipo_.fechaFin)))
+        .where(cb.and(
+            rolPrincipalMaxFechaFin,
+            grupoEqualsMaxFechaFin));
+
     cq.select(root.get(ProyectoEquipo_.personaRef)).where(cb.and(
-        getPredicateRolPrincipalFecha(root, cb, proyectoId, fecha)))
+        getPredicateRolPrincipalFecha(root, cb, proyectoId, fecha),
+        cb.or(
+            cb.and(
+                root.get(ProyectoEquipo_.personaRef).in(queryRolPrincipalFechaFinNull)),
+            cb.and(
+                cb.exists(queryRolPrincipalFechaFinNull).not(),
+                cb.equal(root.get(ProyectoEquipo_.fechaFin),
+                    queryMaxFechaFin)))))
         .distinct(true);
 
     List<String> returnValue = entityManager.createQuery(cq).getResultList();

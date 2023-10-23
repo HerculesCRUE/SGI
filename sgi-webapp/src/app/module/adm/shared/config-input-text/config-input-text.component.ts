@@ -1,24 +1,19 @@
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Directive, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConfigValue } from '@core/models/cnf/config-value';
-import { ConfigService } from '@core/services/cnf/config.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 const MSG_SUCCESS = marker('msg.adm.config.update.success');
 
-@Component({
-  selector: 'sgi-config-input-text',
-  templateUrl: './config-input-text.component.html',
-  styleUrls: ['./config-input-text.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
-})
-export class ConfigInputTextComponent implements OnInit, OnDestroy {
+@Directive()
+// tslint:disable-next-line: directive-class-suffix
+export abstract class ConfigInputTextComponent implements OnInit, OnDestroy {
 
   configValue: IConfigValue;
 
@@ -84,9 +79,8 @@ export class ConfigInputTextComponent implements OnInit, OnDestroy {
   readonly error = new EventEmitter<Error>();
 
   constructor(
-    private readonly translate: TranslateService,
-    private readonly snackBarService: SnackBarService,
-    private readonly configService: ConfigService
+    protected readonly translate: TranslateService,
+    protected readonly snackBarService: SnackBarService
   ) { }
 
   ngOnInit(): void {
@@ -101,7 +95,7 @@ export class ConfigInputTextComponent implements OnInit, OnDestroy {
   save(): void {
     const newValue = this.formGroup.controls.configValue.value;
     this.subscriptions.push(
-      this.configService.updateValue(this.key, newValue)
+      this.updateValue(this.key, newValue)
         .subscribe(
           (configValue) => {
             this.configValue = configValue;
@@ -149,7 +143,7 @@ export class ConfigInputTextComponent implements OnInit, OnDestroy {
 
   private loadConfigValue(key: string): void {
     this.subscriptions.push(
-      this.configService.findById(key).subscribe(
+      this.getValue(key).subscribe(
         (configValue) => {
           this.configValue = configValue;
           this.formGroup.controls.configValue.setValue(configValue.value);
@@ -158,5 +152,8 @@ export class ConfigInputTextComponent implements OnInit, OnDestroy {
       )
     );
   }
+
+  protected abstract getValue(key: string): Observable<IConfigValue>;
+  protected abstract updateValue(key: string, newValue: string): Observable<IConfigValue>;
 
 }

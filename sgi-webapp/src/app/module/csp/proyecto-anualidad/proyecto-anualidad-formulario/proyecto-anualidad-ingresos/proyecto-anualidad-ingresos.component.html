@@ -38,7 +38,7 @@
           {{'csp.proyecto-anualidad.partida-ingreso.importe-concedido' |
           translate}}
         </th>
-        <td mat-cell *matCellDef="let wrapper">{{wrapper.value.importeConcedido }}</td>
+        <td mat-cell *matCellDef="let wrapper">{{wrapper.value.importeConcedido | number: '1.2-2' }}</td>
       </ng-container>
 
       <!-- Acciones Column -->

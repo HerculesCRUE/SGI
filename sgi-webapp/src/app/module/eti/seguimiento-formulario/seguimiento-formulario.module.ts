@@ -13,6 +13,7 @@ import { SeguimientoDatosMemoriaComponent } from './seguimiento-datos-memoria/se
 import { SeguimientoDocumentacionComponent } from './seguimiento-documentacion/seguimiento-documentacion.component';
 import { SeguimientoEvaluacionComponent } from './seguimiento-evaluacion/seguimiento-evaluacion.component';
 import { SeguimientoListadoAnteriorMemoriaComponent } from './seguimiento-listado-anterior-memoria/seguimiento-listado-anterior-memoria.component';
+import { SeguimientoListadoComentariosEquipoEvaluadorComponent } from './seguimiento-listado-comentarios-equipo-evaluador/seguimiento-listado-comentarios-equipo-evaluador.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { SeguimientoListadoAnteriorMemoriaComponent } from './seguimiento-listad
     SeguimientoDocumentacionComponent,
     SeguimientoListadoAnteriorMemoriaComponent,
     SeguimientoEvaluacionComponent,
+    SeguimientoListadoComentariosEquipoEvaluadorComponent
   ],
   imports: [
     SharedModule,
@@ -38,7 +40,8 @@ import { SeguimientoListadoAnteriorMemoriaComponent } from './seguimiento-listad
     SeguimientoDatosMemoriaComponent,
     SeguimientoDocumentacionComponent,
     SeguimientoListadoAnteriorMemoriaComponent,
-    SeguimientoEvaluacionComponent
+    SeguimientoEvaluacionComponent,
+    SeguimientoListadoComentariosEquipoEvaluadorComponent
   ]
 })
 export class SeguimientoFormularioModule { }

@@ -18,6 +18,7 @@ import { ConvocatoriaReunionListadoComponent } from './convocatoria-reunion-list
 import { ConvocatoriaReunionMemoriasListadoExportService } from './convocatoria-reunion-memorias-listado-export.service';
 import { ConvocatoriaReunionRoutingModule } from './convocatoria-reunion-routing.module';
 import { ConvocatoriaReunionListadoExportModalComponent } from './modals/convocatoria-reunion-listado-export-modal/convocatoria-reunion-listado-export-modal.component';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { ConvocatoriaReunionListadoExportModalComponent } from './modals/convoca
     SgiAuthModule,
     FormsModule,
     ReactiveFormsModule,
-    EtiSharedModule
+    EtiSharedModule,
+    CKEditorModule
   ],
   providers: [
     ConvocatoriaReunionDataResolver,

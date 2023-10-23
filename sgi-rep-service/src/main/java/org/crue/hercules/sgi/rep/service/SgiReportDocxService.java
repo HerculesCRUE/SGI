@@ -17,8 +17,8 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
+import org.ddr.poi.html.HtmlRenderPolicy;
 import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
-import org.pentaho.reporting.libraries.resourceloader.ResourceManager;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -63,14 +63,8 @@ public class SgiReportDocxService {
    */
   protected InputStream getReportDefinitionStream(String reportPath) {
     try {
-      // Parse the report file
-      final ResourceManager resourceManager = new ResourceManager();
-      resourceManager.registerDefaults();
-
       byte[] reportDefinition = sgiApiConfService.getResource(reportPath);
-      InputStream targetStream = new ByteArrayInputStream(reportDefinition);
-
-      return targetStream;
+      return new ByteArrayInputStream(reportDefinition);
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new GetDataReportException();
@@ -84,10 +78,6 @@ public class SgiReportDocxService {
    */
   protected PictureRenderData getImageHeaderLogo() {
     try {
-      // Parse the report file
-      final ResourceManager resourceManager = new ResourceManager();
-      resourceManager.registerDefaults();
-
       byte[] imgByte = sgiApiConfService.getResource("rep-common-header-logo");
 
       return Pictures.ofBytes(imgByte, PictureType.JPEG).fitSize().create();
@@ -154,8 +144,13 @@ public class SgiReportDocxService {
 
     Configure config = Configure.builder()
         .useSpringEL()
+        .addPlugin('<', new HtmlRenderPolicy())
         .build();
 
+    return compileReportData(is, config, dataReport);
+  }
+
+  protected XWPFDocument compileReportData(InputStream is, Configure config, HashMap<String, Object> dataReport) {
     return XWPFTemplate.compile(is, config).render(dataReport).getXWPFDocument();
   }
 

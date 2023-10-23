@@ -39,7 +39,7 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.proyecto-calendario-facturacion.importe-base' | translate}}</mat-label>
-        <input matInput formControlName="importeBase" type="number" required>
+        <input matInput formControlName="importeBase" type="text" required sgiInputWithThousandSeparator>
         <mat-error *ngIf="formGroup.controls.importeBase.errors?.required">
           {{'error.required.entity' | translate:msgParamImporteBaseEntity}}
         </mat-error>

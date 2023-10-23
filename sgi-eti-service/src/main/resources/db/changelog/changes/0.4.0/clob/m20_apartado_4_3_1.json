@@ -1,0 +1,21 @@
+[
+  {
+    "key": "ap4_3_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.3.1 Justificación del tamaño muestral y tratamiento estadístico"
+    },
+    "fieldGroup": [
+      {
+        "key": "justificacionMuestraEstadistica",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Justificación",
+          "required": true
+        }
+      }
+    ]
+  }
+]

@@ -7,6 +7,7 @@ import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { SgpFormlyFormsModule } from '../formly-forms/sgp-formly-forms.module';
 import { SgpNotFoundErrorDirective } from './directives/sgp-not-found-error.directive';
+import { IconViewPersonaDetailComponent } from './icon-view-persona-detail/icon-view-persona-detail.component';
 import { PersonaEmailPipe } from './pipes/persona-email.pipe';
 import { PersonaEntidadPipe } from './pipes/persona-entidad.pipe';
 import { PersonaNombreCompletoPipe } from './pipes/persona-nombre-completo.pipe';
@@ -17,11 +18,12 @@ import { SelectTipoDocumentoComponent } from './select-tipo-documento/select-tip
 
 @NgModule({
   declarations: [
+    IconViewPersonaDetailComponent,
+    PersonaEmailPipe,
+    PersonaEntidadPipe,
+    PersonaNombreCompletoPipe,
     SearchPersonaModalComponent,
     SelectPersonaComponent,
-    PersonaEntidadPipe,
-    PersonaEmailPipe,
-    PersonaNombreCompletoPipe,
     SelectSexoComponent,
     SelectTipoDocumentoComponent,
     SgpNotFoundErrorDirective
@@ -37,10 +39,11 @@ import { SelectTipoDocumentoComponent } from './select-tipo-documento/select-tip
     SgiAuthModule
   ],
   exports: [
-    SelectPersonaComponent,
-    PersonaEntidadPipe,
+    IconViewPersonaDetailComponent,
     PersonaEmailPipe,
+    PersonaEntidadPipe,
     PersonaNombreCompletoPipe,
+    SelectPersonaComponent,
     SelectSexoComponent,
     SelectTipoDocumentoComponent,
     SgpNotFoundErrorDirective

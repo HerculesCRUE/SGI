@@ -39,6 +39,28 @@
       </mat-form-field>
     </div>
 
+    <!-- diasAvisoRetrospectiva -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field>
+        <mat-label>{{'eti.configuracion.dias-aviso-retrospectiva' | translate}}</mat-label>
+        <input type="number" [placeholder]="'eti.configuracion.dias-aviso-retrospectiva' | translate"
+          arial-label="Number" matInput formControlName="diasAvisoRetrospectiva">
+        <mat-hint>{{'eti.configuracion.dias-aviso-retrospectiva.descripcion' | translate}}</mat-hint>
+      </mat-form-field>
+    </div>
+
+    <!-- duracionProyectoEvaluacion -->
+    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+      [fxFlexOrder]="fxFlexProperties.order">
+      <mat-form-field>
+        <mat-label>{{'eti.configuracion.duracion-proyecto-evaluacion' | translate}}</mat-label>
+        <input type="number" [placeholder]="'eti.configuracion.duracion-proyecto-evaluacion' | translate"
+          arial-label="Number" matInput formControlName="duracionProyectoEvaluacion">
+        <mat-hint>{{'eti.configuracion.duracion-proyecto-evaluacion.descripcion' | translate}}</mat-hint>
+      </mat-form-field>
+    </div>
+
   </form>
 
   <div id="modals-buttons" class="float-right" mat-dialog-actions>

@@ -63,8 +63,8 @@
       <div fxFlex="49%" fxFlex.sm="99%">
         <mat-form-field>
           <mat-label>{{'prc.convocatoria.importe-total' | translate}}</mat-label>
-          <input matInput placeholder="{{'prc.convocatoria.importe-total' | translate}}" type="number"
-            formControlName="importeTotal" required>
+          <input matInput placeholder="{{'prc.convocatoria.importe-total' | translate}}" type="text"
+            formControlName="importeTotal" required sgiInputWithThousandSeparator>
           <mat-error *ngIf="formGroup.controls.importeTotal.errors?.required">
             {{'error.required.entity' | translate:msgParamImporteTotalEntity}}
           </mat-error>

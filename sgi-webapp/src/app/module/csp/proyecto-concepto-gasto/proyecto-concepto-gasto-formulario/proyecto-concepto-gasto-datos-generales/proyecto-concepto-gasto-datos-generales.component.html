@@ -42,7 +42,7 @@
             <mat-label>
               {{'csp.proyecto-concepto-gasto.importe-maximo' | translate}}
             </mat-label>
-            <input matInput formControlName="importeMaximo" type="number" min="0"
+            <input matInput formControlName="importeMaximo" type="text" sgiInputWithThousandSeparator
               placeholder="{{'csp.proyecto-concepto-gasto.importe-maximo' | translate}}">
             <mat-error *ngIf="formGroup.controls.importeMaximo.hasError('max')">
               {{'error.max.digit' | translate}}
@@ -160,7 +160,7 @@
             <mat-label>
               {{'csp.proyecto-concepto-gasto.importe-maximo' | translate}}
             </mat-label>
-            <input matInput formControlName="importeMaximoConvocatoria" type="number" min="0"
+            <input matInput formControlName="importeMaximoConvocatoria" type="text" sgiInputWithThousandSeparator
               placeholder="{{'csp.proyecto-concepto-gasto.importe-maximo' | translate}}">
           </mat-form-field>
         </div>

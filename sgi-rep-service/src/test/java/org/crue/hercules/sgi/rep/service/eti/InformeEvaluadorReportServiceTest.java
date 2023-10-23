@@ -8,7 +8,7 @@ import org.crue.hercules.sgi.rep.dto.OutputType;
 import org.crue.hercules.sgi.rep.dto.eti.ReportInformeEvaluador;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
-import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -38,7 +38,7 @@ class InformeEvaluadorReportServiceTest extends BaseReportEtiServiceTest {
   private EvaluacionService evaluacionService;
 
   @Mock
-  private SgiApiSgpService personaService;
+  private PersonaService personaService;
 
   @Mock
   private BaseApartadosRespuestasReportDocxService baseApartadosrespuestasService;

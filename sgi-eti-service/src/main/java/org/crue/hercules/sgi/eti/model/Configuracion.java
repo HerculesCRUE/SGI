@@ -58,4 +58,9 @@ public class Configuracion extends BaseEntity {
   @NotNull
   private Integer diasAvisoRetrospectiva;
 
+  /** Duración en años de los proyectos de evaluación */
+  @Column(name = "duracion_proyecto_evaluacion", nullable = false, unique = true)
+  @NotNull
+  private Integer duracionProyectoEvaluacion;
+
 }

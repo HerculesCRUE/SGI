@@ -75,10 +75,7 @@
       <mat-form-field fxFlex>
         <mat-label>{{'pii.invencion-informe-patentabilidad.contacto-entidad' | translate}}</mat-label>
         <input matInput formControlName="contactoEntidadCreadora" id="contactoEntidadCreadora"
-          placeholder="{{'pii.invencion-informe-patentabilidad.contacto-entidad' | translate}}" required>
-        <mat-error *ngIf="formGroup.controls.contactoEntidadCreadora.errors?.required">
-          {{'error.required.entity' | translate:msgParamContactoEntidadEntity}}
-        </mat-error>
+          placeholder="{{'pii.invencion-informe-patentabilidad.contacto-entidad' | translate}}">
         <mat-error *ngIf="formGroup.controls.contactoEntidadCreadora.errors?.maxlength">
           {{'error.maxlength.entity' | translate:msgParamContactoEntidadEntity}}
         </mat-error>

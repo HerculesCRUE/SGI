@@ -2,7 +2,7 @@ import { KeyValue } from '@angular/common';
 import { Component } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractMenuContentComponent } from '@core/component/abstract-menu-content.component';
-import { ConfigType, IConfigOptions } from '@core/models/cnf/config-options';
+import { ConfigModule, ConfigType, IConfigOptions } from '@core/models/cnf/config-options';
 import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { Observable, of } from 'rxjs';
@@ -23,9 +23,9 @@ export enum ConfigPrc {
 export class ConfigPrcComponent extends AbstractMenuContentComponent {
 
   private readonly _CONFIG_MAP: Map<ConfigPrc, IConfigOptions> = new Map([
-    [ConfigPrc.PRC_REP_DETALLE_GRUPO, { type: ConfigType.FILE, label: marker(`adm.config.prc.PRC_REP_DETALLE_GRUPO`) }],
-    [ConfigPrc.TITLE_COMUNICADO, { type: ConfigType.CONFIG_GROUP_TITLE, label: marker(`adm.config.group-title.comunicados`) }],
-    [ConfigPrc.PRC_COM_PROCESO_BAREMACION_DESTINATARIOS, { type: ConfigType.EMAILS, label: marker(`adm.config.prc.PRC_COM_PROCESO_BAREMACION_DESTINATARIOS`), required: true }]
+    [ConfigPrc.PRC_REP_DETALLE_GRUPO, { type: ConfigType.FILE, label: marker(`adm.config.prc.PRC_REP_DETALLE_GRUPO`), module: ConfigModule.CNF }],
+    [ConfigPrc.TITLE_COMUNICADO, { type: ConfigType.CONFIG_GROUP_TITLE, label: marker(`adm.config.group-title.comunicados`), module: ConfigModule.NONE }],
+    [ConfigPrc.PRC_COM_PROCESO_BAREMACION_DESTINATARIOS, { type: ConfigType.EMAILS, label: marker(`adm.config.prc.PRC_COM_PROCESO_BAREMACION_DESTINATARIOS`), required: true, module: ConfigModule.CNF }]
   ]);
 
   get ConfigType() {

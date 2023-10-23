@@ -2,6 +2,9 @@ package org.crue.hercules.sgi.eti.repository.specification;
 
 import java.time.Instant;
 
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
+
 import org.crue.hercules.sgi.eti.model.CargoComite_;
 import org.crue.hercules.sgi.eti.model.Comite_;
 import org.crue.hercules.sgi.eti.model.Evaluador;
@@ -34,6 +37,16 @@ public class EvaluadorSpecifications {
     return (root, query, cb) -> cb.equal(cb.lower(root.get(Evaluador_.personaRef)), personaRef);
   }
 
+  public static Specification<Evaluador> byPersonaRefEvaluadorId(Long id) {
+    return (root, query, cb) -> {
+      Subquery<String> queryPersonaRef = query.subquery(String.class);
+      Root<Evaluador> subqRoot = queryPersonaRef.from(Evaluador.class);
+      queryPersonaRef.select(subqRoot.get(Evaluador_.personaRef))
+          .where(cb.equal(subqRoot.get(Evaluador_.id), id));
+      return root.get(Evaluador_.personaRef).in(queryPersonaRef);
+    };
+  }
+
   public static Specification<Evaluador> inFechas(Instant fechaAlta, Instant fechaBaja) {
     return (root, query, cb) -> {
       if (fechaBaja != null) {
@@ -56,6 +69,10 @@ public class EvaluadorSpecifications {
     return (root, query, cb) -> cb.equal(root.get(Evaluador_.comite).get(Comite_.comite), comite);
   }
 
+  public static Specification<Evaluador> byComiteId(Long comiteId) {
+    return (root, query, cb) -> cb.equal(root.get(Evaluador_.comiteId), comiteId);
+  }
+
   public static Specification<Evaluador> secretarios() {
     return (root, query, cb) -> cb.equal(root.get(Evaluador_.cargoComite).get(CargoComite_.id),
         SECRETARIO);
@@ -65,4 +82,14 @@ public class EvaluadorSpecifications {
     return (root, query, cb) -> cb.and(cb.lessThan(root.get(Evaluador_.fechaAlta), fecha),
         cb.greaterThan(root.get(Evaluador_.fechaBaja), fecha));
   }
+
+  public static Specification<Evaluador> activoByFecha(Instant fecha) {
+    return (root, query,
+        cb) -> cb.and(
+            cb.lessThan(root.get(Evaluador_.fechaAlta), fecha),
+            cb.or(
+                cb.isNull(root.get(Evaluador_.fechaBaja)),
+                cb.greaterThan(root.get(Evaluador_.fechaBaja), fecha)));
+  }
+
 }

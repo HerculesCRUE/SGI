@@ -1,7 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FlexModule } from '@angular/flex-layout';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -13,6 +13,8 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { EtiSharedModule } from '../../../shared/eti-shared.module';
 import { ConvocatoriaReunionActionService } from '../../convocatoria-reunion.action.service';
 import { ConvocatoriaReunionDatosGeneralesComponent } from './convocatoria-reunion-datos-generales.component';
+import { forwardRef } from '@angular/core';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 
 describe('ConvocatoriaReunionDatosGeneralesComponent', () => {
@@ -35,7 +37,8 @@ describe('ConvocatoriaReunionDatosGeneralesComponent', () => {
         RouterTestingModule,
         SgiAuthModule,
         SharedModule,
-        EtiSharedModule
+        EtiSharedModule,
+        CKEditorModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

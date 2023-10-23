@@ -48,6 +48,8 @@ public class ProyectoProyectoSgePredicateResolver implements SgiRSQLPredicateRes
     RESPONSABLE_PROYECTO("responsable"),
     /* Codigo externo del proyecto */
     CODIGO_EXTERNO("codigoExterno"),
+    /* Referencia interna */
+    CODIGO_INTERNO("codigoInterno"),
     /* Titulo convocatoria */
     TITULO_CONVOCATORIA("tituloConvocatoria"),
     /* Importe concedido costes directos */
@@ -114,6 +116,8 @@ public class ProyectoProyectoSgePredicateResolver implements SgiRSQLPredicateRes
         return buildByResponsableProyecto(node, root, criteriaBuilder);
       case CODIGO_EXTERNO:
         return buildByCodigoExterno(node, root, criteriaBuilder);
+      case CODIGO_INTERNO:
+        return buildByCodigoInterno(node, root, criteriaBuilder);
       case TITULO_CONVOCATORIA:
         return buildByTituloConvocatoria(node, root, criteriaBuilder);
       case IMPORTE_CONCEDIDO:
@@ -212,6 +216,18 @@ public class ProyectoProyectoSgePredicateResolver implements SgiRSQLPredicateRes
     Join<ProyectoProyectoSge, Proyecto> joinProyecto = root.join(ProyectoProyectoSge_.proyecto, JoinType.INNER);
 
     return cb.equal(joinProyecto.get(Proyecto_.codigoExterno), codigoExterno);
+  }
+
+  private Predicate buildByCodigoInterno(ComparisonNode node, Root<ProyectoProyectoSge> root,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    String codigoInterno = node.getArguments().get(0);
+
+    Join<ProyectoProyectoSge, Proyecto> joinProyecto = root.join(ProyectoProyectoSge_.proyecto, JoinType.INNER);
+
+    return cb.equal(joinProyecto.get(Proyecto_.codigoInterno), codigoInterno);
   }
 
   private Predicate buildByTituloConvocatoria(ComparisonNode node, Root<ProyectoProyectoSge> root,

@@ -56,6 +56,16 @@ public interface EvaluacionService {
       String query, Pageable paging);
 
   /**
+   * Obtener todas las entidades paginadas {@link Evaluacion} para una
+   * determinada {@link ConvocatoriaReunion}.
+   *
+   * @param id       Id de {@link ConvocatoriaReunion}.
+   * @param pageable la información de la paginación.
+   * @return la lista de entidades {@link Evaluacion} paginadas.
+   */
+  Page<Evaluacion> findAllByConvocatoriaReunionId(Long id, Pageable pageable);
+
+  /**
    * Obtener todas las entidades paginadas {@link Evaluacion} activas para una
    * determinada {@link ConvocatoriaReunion}.
    *
@@ -140,7 +150,7 @@ public interface EvaluacionService {
    * @return la lista de entidades {@link Evaluacion} paginadas.
    */
 
-  Page<Evaluacion> findByEvaluacionesEnSeguimientoFinal(String query, Pageable pageable);
+  Page<Evaluacion> findByEvaluacionesEnSeguimientoAnualOrFinal(String query, Pageable pageable);
 
   /**
    * Elimina las memorias asignadas a una convocatoria de reunión
@@ -245,4 +255,23 @@ public interface EvaluacionService {
    * @return secretario de la evaluación
    */
   Evaluador findSecretarioEvaluacion(Long idEvaluacion);
+
+  /**
+   * Obtiene la ultima evaluacion de la memoria
+   * 
+   * @param memoriaId identificador de la {@link Memoria}
+   * @return la evaluacion
+   */
+  Evaluacion getLastEvaluacionMemoria(Long memoriaId);
+
+  /**
+   * Comprueba si la ultima evaluacion de la memoria tiene dictamen pendiente de
+   * correcciones
+   * 
+   * @param memoriaId identificador de la {@link Memoria}
+   * @return true si la ultima evaluacion tiene dictamen pendiente de correcciones
+   *         / false si no lo tiene
+   */
+  boolean isLastEvaluacionMemoriaPendienteCorrecciones(Long memoriaId);
+
 }
