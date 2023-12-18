@@ -1,0 +1,86 @@
+server:
+  error:
+    whitelabel:
+      # Disble the default error page displayed in browsers in case of a server error
+      enabled: false
+
+spring:
+  profiles:
+    # Set spring-profile
+    include: test
+  jpa:
+    # Disable Open Session In View
+    open-in-view: false
+  liquibase:
+    # No Liquibase contexts
+    contexts: none
+---
+spring:
+  profiles: test
+  datasource:
+    # Make sure database schema is created (schema.sql is executed)
+    initialization-mode: always
+    # We use a H2 in memory database
+    url: "jdbc:h2:mem:sgdoctest;DB_CLOSE_DELAY=-1"
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  liquibase:
+    # Enable Liquibase
+    enabled: true
+    # Set default Liquibase schema
+    default-schema: sgdoc
+    # Schema to use for Liquibase objects
+    liquibase-schema: sgdoc
+    # Set Liquibase contexts same as spring profiles
+    contexts: unit-test
+  jpa:
+    hibernate:
+      # Hibernate will use the entities to validate the database
+      # validate | update | create | create-drop
+      ddl-auto: none
+    properties:
+      hibernate:
+        # We use a H2 database with PostgreSQL compatibility mode
+        dialect: org.hibernate.dialect.H2Dialect
+        # Set default Hibernate schema
+        default_schema: sgdoc
+  test:
+    database:
+      # By default, tests annotated with @DataJpaTest will use an embedded in-memory database (replacing any explicit or usually auto-configured DataSource).
+      replace: none
+---
+spring:
+  profiles: integration-test
+  datasource:
+    # Make sure database schema is created (schema.sql is executed)
+    initialization-mode: always
+    # We use PostgreSQL database
+    url: "jdbc:postgresql://postgres:5432/db"
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: admin
+  liquibase:
+    # Enable Liquibase
+    enabled: true
+    # Set default Liquibase schema
+    default-schema: sgdoc
+    # Schema to use for Liquibase objects
+    liquibase-schema: sgdoc
+    # Set Liquibase contexts same as spring profiles
+    contexts: integration-test
+  jpa:
+    hibernate:
+      # Hibernate will use the entities to validate the database
+      # validate | update | create | create-drop
+      ddl-auto: none
+    properties:
+      hibernate:
+        # We use a PostgreSQL database
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        # Set default Hibernate Schema
+        default_schema: sgdoc
+  test:
+    database:
+      # By default, tests annotated with @DataJpaTest will use an embedded in-memory database (replacing any explicit or usually auto-configured DataSource).
+      replace: none

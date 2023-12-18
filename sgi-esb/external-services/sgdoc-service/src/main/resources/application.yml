@@ -1,0 +1,212 @@
+server:
+  port : 4295
+  error:
+    whitelabel:
+      # Disble the default error page displayed in browsers in case of a server error
+      enabled: false
+sgi:
+  store:
+    # System path where store resources
+    path: "/tmp/store"
+spring:
+  profiles:
+    # Set spring-profile using maven
+    active: @spring.profiles.active@
+  servlet:
+    multipart:
+      # Increase max file input size (Default: 128KB)
+      max-file-size: 10MB
+      # Increase max request size (Default: 128KB)
+      max-request-size: 10MB
+  datasource:
+    # Make sure database schema is created (schema.sql is executed): always/never
+    initialization-mode: always
+    # We use a H2 in file database with PostgreSQL compatibility mode
+    url: "jdbc:h2:./target/db/sgdoc;DB_CLOSE_ON_EXIT=FALSE"
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  # H2 console
+  h2:
+    console:
+      enabled: false
+  jpa:
+    # Disable Open Session In View
+    open-in-view: false
+    # Extra Hibernate properties
+    properties:
+      hibernate:
+        # We use a H2 database with PostgreSQL compatibility mode
+        dialect: org.hibernate.dialect.H2Dialect
+        # Set default Hibernate schema
+        '[default_schema]': ${spring.datasource.username}
+        jdbc:
+          # see: https://vladmihalcea.com/how-to-store-date-time-and-timestamps-in-utc-time-zone-with-jdbc-and-hibernate/
+          '[time_zone]': UTC
+  liquibase:
+    # No Liquibase contexts
+    contexts: none
+    # Default database schema
+    default-schema: ${spring.jpa.properties.hibernate.[default_schema]}
+    # Enable Liquibase
+    enabled: true
+    # Schema to use for Liquibase objects
+    liquibase-schema: ${spring.jpa.properties.hibernate.[default_schema]}
+    # Set Liquibase changeLog parameters
+    parameters:
+      schemaPrefix: ${spring.jpa.properties.hibernate.[default_schema]}.
+  autoconfigure:
+    # Disable security
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
+---
+spring:
+  profiles: dev
+  jpa:
+    # Extra Hibernate properties
+    properties:
+      hibernate:
+        # Set default Hibernate schema
+        '[default_schema]': sgdoc
+  liquibase:
+    # Set Liquibase contexts same as spring profiles
+    contexts: dev
+  # H2 console
+#  # H2 console
+#  h2:
+#    console:
+#      enabled: true
+#      path: /h2-console
+#      settings:
+#        web-allow-others: true
+#  security:
+#    oauth2:
+#      # Enable login page if JWT not provided (enable only for development)
+#      enable-login: true
+#    # Disable CSRF (disable only for development)
+#    csrf:
+#      enable: false
+#    # Disable X-Frame-Options (disable only for development)
+#    frameoptions:
+#      enable: false
+
+logging:
+  level:
+    org:
+      hibernate:
+        # Log the SQL statements
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              # Log SQL query parameter binding
+              BasicBinder: TRACE
+      springframework:
+        jdbc:
+          core:
+            # Log JdbcTemplate Queries
+            JdbcTemplate: DEBUG
+            StatementCreatorUtils: TRACE
+---
+spring:
+  profiles: dev-oracle
+  datasource:
+    # Make sure database schema is not created (schema.sql is not executed): always/never
+    initialization-mode: never
+    # We use Oracle database
+    url: jdbc:oracle:thin:@oracle12c:1521/ORCLPDB1.localdomain
+    driver-class-name: oracle.jdbc.OracleDriver
+    username: SGDOC_SGI
+    password: SGDOC_SGI
+  jpa:
+    hibernate:
+      # Make sure Hibernate will not use the entities to create, update or validate the database
+      # validate | update | create | create-drop
+      ddl-auto: none
+    properties:
+      hibernate:
+        # We use Oracle database
+        dialect: org.hibernate.dialect.Oracle12cDialect
+  liquibase:
+    # Set Liquibase contexts same as spring profiles
+    contexts: dev
+logging:
+  level:
+    org:
+      hibernate:
+        # Log the SQL statements
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              # Log SQL query parameter binding
+              BasicBinder: TRACE
+      springframework:
+        jdbc:
+          core:
+            # Log JdbcTemplate Queries
+            JdbcTemplate: DEBUG
+            StatementCreatorUtils: TRACE
+---
+spring:
+  profiles: dev-sqlserver
+  datasource:
+    # Make sure database schema is not created (schema.sql is not executed): always/never
+    initialization-mode: never
+    # We use SQL Server database
+    url: jdbc:sqlserver://sqlserver:1433;databaseName=SGI
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    username: SGDOC_SGI
+    password: SGDOC_SGI_2021
+  jpa:
+    hibernate:
+      # Make sure Hibernate will not use the entities to create, update or validate the database
+      # validate | update | create | create-drop
+      ddl-auto: none
+    properties:
+      hibernate:
+        # We use SQL Server database
+        dialect: org.hibernate.dialect.SQLServer2012Dialect
+  liquibase:
+    # Set Liquibase contexts same as spring profiles
+    contexts: dev
+logging:
+  level:
+    org:
+      hibernate:
+        # Log the SQL statements
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              # Log SQL query parameter binding
+              BasicBinder: TRACE
+      springframework:
+        jdbc:
+          core:
+            # Log JdbcTemplate Queries
+            JdbcTemplate: DEBUG
+            StatementCreatorUtils: TRACE
+---
+spring:
+  profiles: prod
+  datasource:
+    # Make sure database schema is created (schema.sql is executed)
+    initialization-mode: always
+    # We use PostgreSQL database
+    url: "jdbc:postgresql://postgres:5432/sgdoc"
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: admin
+  jpa:
+    hibernate:
+      # Hibernate will use the entities to validate the database
+      # validate | update | create | create-drop
+      ddl-auto: none
+    properties:
+      hibernate:
+        # We use a PostgreSQL database
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        # Set default Hibernate Schema
+        '[default_schema]': sgdoc

@@ -1,0 +1,20 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <changeSet author="user (generated)" id="0000000000001-1">
+    <createSequence incrementBy="1" sequenceName="archivo_seq" startValue="1" />
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000001-2">
+    <createTable tableName="archivo">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="archivoPK" />
+      </column>
+      <column name="archivo" type="BLOB" />
+      <column name="documento_ref" type="VARCHAR(255)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+  </changeSet>
+  <changeSet author="user (generated)" id="0000000000001-3">
+    <addForeignKeyConstraint baseColumnNames="documento_ref" baseTableName="archivo" constraintName="FK_ARCHIVO_DOCUMENTO" deferrable="false" initiallyDeferred="false" referencedColumnNames="documento_ref" referencedTableName="documento" validate="true" />
+  </changeSet>
+</databaseChangeLog>

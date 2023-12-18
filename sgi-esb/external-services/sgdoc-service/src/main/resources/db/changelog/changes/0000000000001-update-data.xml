@@ -1,0 +1,32 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="0000000000001-archivo">
+    <validCheckSum>8:58580d49e6389f218fdee6f66bcd4c25</validCheckSum>
+    <validCheckSum>8:31284a1b2aea79b3e238cfa46236e12f</validCheckSum>
+    <!-- Carga de la nueva tabla archivo a partir de datos existentes en documento -->
+    <sql dbms="!postgresql, !mssql">INSERT INTO ${schemaPrefix}archivo(id, documento_ref, archivo) 
+      SELECT 
+        ${schemaPrefix}archivo_seq.NEXTVAL AS id,
+        d.documento_ref AS documento_ref,
+        d.archivo AS archivo
+      FROM ${schemaPrefix}documento d
+    </sql>
+    <sql dbms="postgresql">INSERT INTO ${schemaPrefix}archivo(id, documento_ref, archivo)
+      SELECT 
+        nextval('${schemaPrefix}archivo_seq') AS id,
+        d.documento_ref AS documento_ref,
+        d.archivo AS archivo
+      FROM ${schemaPrefix}documento d
+    </sql>
+    <sql dbms="mssql">INSERT INTO ${schemaPrefix}archivo(id, documento_ref, archivo)
+      SELECT 
+        NEXT VALUE FOR ${schemaPrefix}archivo_seq AS id,
+        d.documento_ref AS documento_ref,
+        d.archivo AS archivo
+      FROM ${schemaPrefix}documento d
+    </sql>
+  </changeSet>
+
+</databaseChangeLog>
