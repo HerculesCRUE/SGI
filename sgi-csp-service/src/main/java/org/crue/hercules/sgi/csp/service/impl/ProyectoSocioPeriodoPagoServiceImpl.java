@@ -68,10 +68,6 @@ public class ProyectoSocioPeriodoPagoServiceImpl implements ProyectoSocioPeriodo
       List<ProyectoSocioPeriodoPago> proyectoSocioPeriodoPagos) {
     log.debug("update(Long proyectoSocioId, List<ProyectoSocioPeriodoPago> solicitudPeriodoPagos) - start");
 
-    if (proyectoSocioPeriodoPagos.isEmpty()) {
-      return new ArrayList<>();
-    }
-
     if (!proyectoSocioRepository.existsById(proyectoSocioId)) {
       throw new ProyectoSocioNotFoundException(proyectoSocioId);
     }
@@ -86,6 +82,10 @@ public class ProyectoSocioPeriodoPagoServiceImpl implements ProyectoSocioPeriodo
 
     if (!proyectoSocioPeriodoPagoEliminar.isEmpty()) {
       repository.deleteAll(proyectoSocioPeriodoPagoEliminar);
+    }
+
+    if (proyectoSocioPeriodoPagos.isEmpty()) {
+      return new ArrayList<>();
     }
 
     // Ordena los periodos por mesInicial

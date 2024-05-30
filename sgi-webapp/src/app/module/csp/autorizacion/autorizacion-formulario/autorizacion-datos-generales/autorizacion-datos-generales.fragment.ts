@@ -127,8 +127,11 @@ export class AutorizacionDatosGeneralesFragment extends FormFragment<IAutorizaci
             map(responsable => {
               autorizacionData.responsable = responsable;
               return autorizacionData;
-            })
-          );
+            }),
+            catchError((error) => {
+              this.logger.error(error);
+              return of(autorizacionData);
+            }));
         } else {
           return of(autorizacionData);
         }
@@ -177,7 +180,7 @@ export class AutorizacionDatosGeneralesFragment extends FormFragment<IAutorizaci
       }),
       catchError((error) => {
         this.logger.error(error);
-        return EMPTY;
+        return of(this.autorizacionData);
       }),
       switchMap(autorizacionData => {
         if (autorizacionData?.solicitante?.id) {
@@ -188,7 +191,7 @@ export class AutorizacionDatosGeneralesFragment extends FormFragment<IAutorizaci
             }),
             catchError((error) => {
               this.logger.error(error);
-              return EMPTY;
+              return of(autorizacionData);
             }));
         } else {
           return of(autorizacionData);

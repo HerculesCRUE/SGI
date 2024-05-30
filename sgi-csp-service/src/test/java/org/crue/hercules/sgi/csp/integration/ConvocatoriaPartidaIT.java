@@ -68,6 +68,7 @@ class ConvocatoriaPartidaIT extends BaseIT {
 
   @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
     // @formatter:off  
+    "classpath:scripts/configuracion.sql",
     "classpath:scripts/modelo_ejecucion.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_regimen_concurrencia.sql",
@@ -98,6 +99,7 @@ class ConvocatoriaPartidaIT extends BaseIT {
 
   @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
     // @formatter:off  
+    "classpath:scripts/configuracion.sql",
     "classpath:scripts/modelo_ejecucion.sql",
     "classpath:scripts/tipo_finalidad.sql",
     "classpath:scripts/tipo_regimen_concurrencia.sql",
@@ -111,7 +113,7 @@ class ConvocatoriaPartidaIT extends BaseIT {
   void update_ReturnsConvocatoriaPartida() throws Exception {
     Long convocatoriaPartidaId = 1L;
     ConvocatoriaPartida convocatoriaPartidaToUpdate = buildMockConvocatoriaPartida(1L);
-    convocatoriaPartidaToUpdate.setCodigo("COD-UPDATED");
+    convocatoriaPartidaToUpdate.setDescripcion("DES-UPDATED");
 
     final ResponseEntity<ConvocatoriaPartida> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
         HttpMethod.PUT, buildRequest(null, convocatoriaPartidaToUpdate, "CSP-CON-E"),
@@ -170,7 +172,8 @@ class ConvocatoriaPartidaIT extends BaseIT {
     // given: existing id
     Long modificableId = 2L;
     // when: exists by id
-    final ResponseEntity<Void> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_MODIFICABLE,
+    final ResponseEntity<Void> response = restTemplate.exchange(
+        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_MODIFICABLE,
         HttpMethod.HEAD, buildRequest(null, null, "CSP-CON-E"), Void.class, modificableId);
     // then: 200 ok
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -178,7 +181,7 @@ class ConvocatoriaPartidaIT extends BaseIT {
 
   private ConvocatoriaPartida buildMockConvocatoriaPartida(Long convocatoriaPartidaId) throws Exception {
     return ConvocatoriaPartida.builder()
-        .codigo("TEST_CREATED")
+        .codigo("formato-partida-presupuestaria")
         .convocatoriaId(1L)
         .descripcion("Test Created Success")
         .tipoPartida(TipoPartida.GASTO)

@@ -59,19 +59,11 @@ export class SolicitudProteccionService extends _SolicitudProteccionServiceMixin
   }
 
   /**
-   * Activar Solicitur de Proteccion
-   * @param options opciones de búsqueda.
+   * Elimina la solicitud de proteccion
+   * @param id Id de la {@link ISolicitudProteccion}
    */
-  public activate(id: number): Observable<void> {
-    return this.http.patch<void>(`${this.endpointUrl}/${id}/activar`, {});
-  }
-
-  /**
-   * Desactivar Solicitud de Proteccion
-   * @param options Opciones de búsqueda.
-   */
-  public deactivate(id: number): Observable<void> {
-    return this.http.patch<void>(`${this.endpointUrl}/${id}/desactivar`, {});
+  public deleteById(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.endpointUrl}/${id}`);
   }
 
   /**
@@ -111,6 +103,45 @@ export class SolicitudProteccionService extends _SolicitudProteccionServiceMixin
       `${this.endpointUrl}/${solicitudId}/procedimientos`,
       {},
       SOLICITUD_PROTECCION_PROCEDIMIENTO_RESPONSE_CONVERTER
+    );
+  }
+
+  /**
+   * Indica si la solicitud de proteccion tiene relacionados algún pais validado
+   *
+   * @param id Id de la solicitud de proteccion
+   * @returns **true** si tiene relaciones, **false** en cualquier otro caso
+   */
+  hasPaisesValidados(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/paisesvalidados`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  /**
+   * Indica si la solicitud de proteccion tiene relacionados algún procedimiento
+   *
+   * @param id Id de la solicitud de proteccion
+   * @returns **true** si tiene relaciones, **false** en cualquier otro caso
+   */
+  hasProcedimientos(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/procedimientos`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  /**
+   * Indica si la solicitud de proteccion tiene relacionados algún gasto
+   *
+   * @param id Id de la solicitud de proteccion
+   * @returns **true** si tiene relaciones, **false** en cualquier otro caso
+   */
+  hasInvencionGastos(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/invenciongastos`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
     );
   }
 

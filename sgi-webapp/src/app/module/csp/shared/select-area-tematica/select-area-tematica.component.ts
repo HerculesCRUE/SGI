@@ -1,4 +1,4 @@
-import { Component, Optional, Self } from '@angular/core';
+import { Component, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
@@ -22,6 +22,16 @@ import { map } from 'rxjs/operators';
 })
 export class SelectAreaTematicaComponent extends SelectServiceComponent<IAreaTematica> {
 
+  @Input()
+  get todos(): boolean {
+    return this._todos;
+  }
+  set todos(value: boolean) {
+    this._todos = value;
+  }
+  // tslint:disable-next-line: variable-name
+  private _todos: boolean;
+
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     private service: AreaTematicaService,
@@ -33,7 +43,11 @@ export class SelectAreaTematicaComponent extends SelectServiceComponent<IAreaTem
     const findOptions: SgiRestFindOptions = {
       sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
     };
-    return this.service.findAllGrupo(findOptions).pipe(map(response => response.items));
+    if (this._todos) {
+      return this.service.findTodos(findOptions).pipe(map(response => response.items));
+    } else {
+      return this.service.findAllGrupo(findOptions).pipe(map(response => response.items));
+    }
   }
 
 }

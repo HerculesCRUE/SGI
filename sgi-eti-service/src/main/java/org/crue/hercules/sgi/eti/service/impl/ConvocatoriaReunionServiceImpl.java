@@ -107,6 +107,7 @@ public class ConvocatoriaReunionServiceImpl implements ConvocatoriaReunionServic
       convocatoriaReunion.setComite(convocatoriaReunionActualizar.getComite());
       convocatoriaReunion.setFechaEvaluacion(convocatoriaReunionActualizar.getFechaEvaluacion());
       convocatoriaReunion.setFechaLimite(convocatoriaReunionActualizar.getFechaLimite());
+      convocatoriaReunion.setVideoconferencia(convocatoriaReunionActualizar.getVideoconferencia());
       convocatoriaReunion.setLugar(convocatoriaReunionActualizar.getLugar());
       convocatoriaReunion.setOrdenDia(convocatoriaReunionActualizar.getOrdenDia());
       convocatoriaReunion.setAnio(convocatoriaReunionActualizar.getAnio());

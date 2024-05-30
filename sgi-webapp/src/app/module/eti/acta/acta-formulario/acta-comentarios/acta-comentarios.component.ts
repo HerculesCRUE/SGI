@@ -7,7 +7,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IComentario, TipoEstadoComentario } from '@core/models/eti/comentario';
-import { TipoComentario } from '@core/models/eti/tipo-comentario';
+import { TIPO_COMENTARIO, TipoComentario } from '@core/models/eti/tipo-comentario';
 import { DialogService } from '@core/services/dialog.service';
 import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reunion.service';
 import { TipoComentarioService } from '@core/services/eti/tipo-comentario.service';
@@ -151,7 +151,8 @@ export class ActaComentariosComponent extends FragmentComponent implements OnIni
     this.subscriptions.push(this.formPart.evaluaciones$.subscribe(evaluaciones => {
       const actaData: ComentarioModalData = {
         evaluaciones,
-        comentario: undefined
+        comentario: undefined,
+        readonly: false,
       };
 
       const config = {
@@ -179,7 +180,8 @@ export class ActaComentariosComponent extends FragmentComponent implements OnIni
 
       const actaData: ComentarioModalData = {
         evaluaciones,
-        comentario: wrapperRef.value
+        comentario: wrapperRef.value,
+        readonly: !this.isEditable(wrapperRef)
       };
 
       const config = {
@@ -226,5 +228,13 @@ export class ActaComentariosComponent extends FragmentComponent implements OnIni
       this.tipoComentario$ = this.tipoComentarioService.findById(2);
     }
     return this.tipoComentario$;
+  }
+
+  isTipoGestor(comentario: IComentario): boolean {
+    return comentario.tipoComentario.id === TIPO_COMENTARIO.ACTA_GESTOR;
+  }
+
+  isEditable(wrapperComentario: StatusWrapper<IComentario>): boolean {
+    return (wrapperComentario.value.estado === undefined || (this.isTipoGestor(wrapperComentario.value) || (wrapperComentario.value.estado === this.TIPO_ESTADO_COMENTARIO.ABIERTO && this.personaId === wrapperComentario.value.evaluador?.id))) && !this.readonly;
   }
 }

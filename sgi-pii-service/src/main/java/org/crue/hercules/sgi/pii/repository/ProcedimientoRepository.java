@@ -21,4 +21,6 @@ public interface ProcedimientoRepository
 
   List<Procedimiento> findByFechaLimiteAccionBetweenAndGenerarAvisoTrue(Instant fechaLimiteFrom, Instant fechaLimiteTo);
 
+  boolean existsBySolicitudProteccionId(Long solicitudProteccionId);
+
 }

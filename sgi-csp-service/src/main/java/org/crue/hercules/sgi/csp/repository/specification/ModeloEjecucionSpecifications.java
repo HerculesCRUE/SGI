@@ -17,4 +17,17 @@ public class ModeloEjecucionSpecifications {
     };
   }
 
+  /**
+   * {@link ModeloEjecucion} distintos.
+   * 
+   * @return specification para obtener las entidades {@link ModeloEjecucion} sin
+   *         repetidos.
+   */
+  public static Specification<ModeloEjecucion> distinct() {
+    return (root, query, cb) -> {
+      query.distinct(true);
+      return cb.isTrue(cb.literal(true));
+    };
+  }
+
 }

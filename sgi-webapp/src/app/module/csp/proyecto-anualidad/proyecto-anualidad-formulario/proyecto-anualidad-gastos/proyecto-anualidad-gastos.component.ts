@@ -97,6 +97,7 @@ export class ProyectoAnualidadGastosComponent extends FragmentComponent implemen
       proyectoId: this.formPart.proyectoId,
       fechaInicioAnualidad: this.formPart.fechaInicioAnualidad,
       fechaFinAnualidad: this.formPart.fechaFinAnualidad,
+      disableIndentificadorSge: this.formPart.disableIndentificadorSge,
       isEdit: !!anualidadGasto,
       readonly: this.actionService.readonly
     };

@@ -92,10 +92,12 @@
 
   <ng-container *sgiHasAuthority="'ESB-PER-C'">
     <div class="separation-button">
-      <button color="three" mat-raised-button (click)="openPersonaCreateModal()">
+      <button color="three" mat-raised-button (click)="openPersonaCreateModal()" [disabled]="sgpAltaDisabled">
         <mat-icon color="accent">add_circle</mat-icon>
         {{ 'btn.request.add.entity' | translate:msgParamEntity }}
       </button>
+      <sgi-field-info matSuffix [visible]="sgpAltaDisabled" message="{{'msg.sgp.alta-persona-disabled' | translate}}">
+      </sgi-field-info>
     </div>
   </ng-container>
 </sgi-dialog-content>

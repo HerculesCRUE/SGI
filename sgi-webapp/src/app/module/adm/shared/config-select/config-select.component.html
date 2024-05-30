@@ -5,7 +5,9 @@
       <mat-label>{{label | translate:labelParams}}</mat-label>
       <sgi-select formControlName="configValue" [options]="options$ | async"
         placeholder="{{label | translate:labelParams}}" [compareWith]="comparer" [displayWith]="displayer"
-        [sortWith]="sorter" [matTooltip]="configValue?.description" matTooltipShowDelay="200" [required]="required">
+        [sortWith]="sorter"
+        [matTooltip]="(configValue?.description ? configValue.description : description) | translate"
+        matTooltipShowDelay="200" [required]="required">
       </sgi-select>
       <mat-error *ngIf="formGroup.controls.configValue.errors?.required">
         {{ 'error.required.field' | translate:msgParamLabel }}

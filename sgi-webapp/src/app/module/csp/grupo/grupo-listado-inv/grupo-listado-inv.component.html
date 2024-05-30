@@ -16,7 +16,7 @@
         </mat-form-field>
 
         <!-- Codigo identificacion SGE -->
-        <mat-form-field fxFlex="25%">
+        <mat-form-field fxFlex="25%" *ngIf="isEjecucionEconomicaGruposEnabled">
           <mat-label>{{'csp.grupo.codigo-sge' | translate}}</mat-label>
           <input matInput type="text" placeholder="{{'csp.grupo.codigo-sge' | translate}}"
             formControlName="proyectoSgeRef">

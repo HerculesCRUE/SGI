@@ -155,7 +155,7 @@
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field class="input-form">
             <mat-label>{{'csp.convocatoria.fuente-financiacion' | translate}}</mat-label>
-            <sgi-select-fuente-financiacion formControlName="fuenteFinanciacion" extended="false">
+            <sgi-select-fuente-financiacion formControlName="fuenteFinanciacion" todos="true" extended="false">
             </sgi-select-fuente-financiacion>
           </mat-form-field>
         </div>
@@ -184,7 +184,7 @@
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field class="input-form">
             <mat-label>{{'list.entity' | translate:msgParamAreaTematicaEntity}}</mat-label>
-            <sgi-select-area-tematica formControlName="areaTematica"></sgi-select-area-tematica>
+            <sgi-select-area-tematica formControlName="areaTematica" todos="true"></sgi-select-area-tematica>
           </mat-form-field>
         </div>
 

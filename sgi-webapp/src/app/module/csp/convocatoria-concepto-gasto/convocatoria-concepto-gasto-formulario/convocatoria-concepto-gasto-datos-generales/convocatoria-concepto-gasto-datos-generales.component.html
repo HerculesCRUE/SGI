@@ -2,7 +2,7 @@
 
   <form [formGroup]="formGroup">
     <!-- Concepto Gasto -->
-    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign">
+    <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign" fxLayoutGap="10px">
       <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
@@ -30,9 +30,9 @@
       </div>
     </div>
 
-    <!-- Importe máximo -->
     <div [fxLayout]="fxLayoutProperties.layout" [fxLayoutAlign]="fxLayoutProperties.layoutAlign"
-      *ngIf="actionService.permitido">
+      *ngIf="actionService.permitido" fxLayoutGap="10px">
+      <!-- Importe máximo -->
       <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
@@ -45,6 +45,24 @@
           </mat-error>
           <mat-error *ngIf="formGroup.controls.importeMaximo.hasError('min')">
             {{'error.min.digit' | translate}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Porcentaje máximo -->
+      <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+        [fxFlexOrder]="fxFlexProperties.order">
+        <mat-form-field fxFill>
+          <mat-label>{{'csp.convocatoria-elegibilidad.concepto-gasto.porcentaje-maximo' | translate}}
+          </mat-label>
+          <input matInput formControlName="porcentajeMaximo" type="text" id="porcentajeMaximo"
+            sgiInputWithThousandSeparator
+            placeholder="{{'csp.convocatoria-elegibilidad.concepto-gasto.porcentaje-maximo' | translate}}">
+          <mat-error *ngIf="formGroup.controls.porcentajeMaximo.hasError('max')">
+            {{'error.porcentaje-no-valido' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.porcentajeMaximo.hasError('min')">
+            {{'error.porcentaje-no-valido' | translate}}
           </mat-error>
         </mat-form-field>
       </div>

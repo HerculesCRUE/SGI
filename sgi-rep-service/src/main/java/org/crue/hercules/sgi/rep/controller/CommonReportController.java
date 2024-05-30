@@ -3,7 +3,7 @@ package org.crue.hercules.sgi.rep.controller;
 import javax.validation.Valid;
 
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto;
-import org.crue.hercules.sgi.rep.service.SgiDynamicReportService;
+import org.crue.hercules.sgi.rep.service.SgiReportExcelService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -26,10 +26,10 @@ import lombok.extern.slf4j.Slf4j;
 public class CommonReportController {
   public static final String MAPPING = "/report/common";
 
-  private final SgiDynamicReportService sgiDynamicReportService;
+  private final SgiReportExcelService sgiReportExcelService;
 
-  public CommonReportController(SgiDynamicReportService sgiDynamicReportService) {
-    this.sgiDynamicReportService = sgiDynamicReportService;
+  public CommonReportController(SgiReportExcelService sgiReportExcelService) {
+    this.sgiReportExcelService = sgiReportExcelService;
   }
 
   /**
@@ -43,14 +43,18 @@ public class CommonReportController {
   public ResponseEntity<Resource> getDynamic(@Valid @RequestBody SgiDynamicReportDto sgiReport) {
 
     log.debug("getDynamic(SgiDynamicReportDto) - start");
-
-    byte[] reportContent = sgiDynamicReportService.generateDynamicReport(sgiReport);
-    ByteArrayResource archivo = new ByteArrayResource(reportContent);
-
     HttpHeaders headers = new HttpHeaders();
     headers.add("Content-Type", sgiReport.getOutputType().getType());
-
+    ByteArrayResource archivo = null;
+    try {
+      byte[] reportContent = sgiReportExcelService.export(sgiReport);
+      archivo = new ByteArrayResource(reportContent);
+    } catch (Exception e) {
+      log.error("getDynamic(SgiDynamicReportDto) - end", e);
+    }
+    log.debug("getDynamic(SgiDynamicReportDto) - end");
     return new ResponseEntity<>(archivo, headers, HttpStatus.OK);
+
   }
 
 }

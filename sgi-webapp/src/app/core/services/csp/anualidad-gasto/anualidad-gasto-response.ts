@@ -10,6 +10,7 @@ export interface IAnualidadGastoResponse {
   proyectoPartida: {
     id: number;
     codigo: string;
+    partidaRef: string;
   };
   importePresupuesto: number;
   importeConcedido: number;

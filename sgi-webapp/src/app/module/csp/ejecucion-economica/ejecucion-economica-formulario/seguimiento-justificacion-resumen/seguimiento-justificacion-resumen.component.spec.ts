@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Data } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { IConfiguracion } from '@core/models/csp/configuracion';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
@@ -15,7 +16,6 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { EJECUCION_ECONOMICA_DATA_KEY } from '../../ejecucion-economica-data.resolver';
 import { EjecucionEconomicaActionService, IEjecucionEconomicaData, IRelacionEjecucionEconomicaWithResponsables } from '../../ejecucion-economica.action.service';
-
 import { SeguimientoJustificacionResumenComponent } from './seguimiento-justificacion-resumen.component';
 
 describe('SeguimientoJustificacionResumenComponent', () => {
@@ -25,6 +25,7 @@ describe('SeguimientoJustificacionResumenComponent', () => {
     [EJECUCION_ECONOMICA_DATA_KEY]: {
       proyectoSge: {},
       relaciones: [{ id: 1, proyectoSge: { id: '1' } as IProyectoSge } as IRelacionEjecucionEconomicaWithResponsables],
+      configuracion: { ejecucionEconomicaGruposEnabled: true } as IConfiguracion,
       readonly: false
     } as IEjecucionEconomicaData
   };

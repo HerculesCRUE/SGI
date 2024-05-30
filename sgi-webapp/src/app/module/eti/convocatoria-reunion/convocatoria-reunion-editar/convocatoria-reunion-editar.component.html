@@ -8,6 +8,10 @@
       [title]="'eti.memoria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.ASIGNACION_MEMORIAS)">
     </sgi-action-fragment-menu-item>
+    <sgi-action-fragment-menu-item [route]="[CONVOCATORIA_REUNION_ROUTE_NAMES.DOCUMENTACION]"
+      [title]="'eti.documentacion' | translate"
+      [fragment]="actionService.getFragment(actionService.FRAGMENT.DOCUMENTACION)">
+    </sgi-action-fragment-menu-item>
   </ng-container>
   <ng-container footer>
     <sgi-action-footer [texto]="textoUpdate" [actionService]="actionService">

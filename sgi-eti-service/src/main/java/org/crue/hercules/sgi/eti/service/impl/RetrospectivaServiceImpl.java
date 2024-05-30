@@ -168,4 +168,22 @@ public class RetrospectivaServiceImpl implements RetrospectivaService {
     log.debug("updateEstadoRetrospectiva(Retrospectiva retrospectiva, Long idEstadoRetrospectiva) - end");
   }
 
+  /**
+   * Actualiza el estado de la {@link Retrospectiva}
+   * 
+   * @param retrospectivaId       Identificador de la {@link Retrospectiva} a
+   *                              actualizar.
+   * @param estadoRetrospectivaId identificador del estado nuevo de la
+   *                              retrospectiva.
+   */
+  @Override
+  @Transactional
+  public void updateEstadoRetrospectiva(Long retrospectivaId, Long estadoRetrospectivaId) {
+    log.debug("updateEstadoRetrospectiva(Long retrospectivaId, Long estadoRetrospectivaId) - start");
+    Retrospectiva retrospectiva = repository.findById(retrospectivaId)
+        .orElseThrow(() -> new RetrospectivaNotFoundException(retrospectivaId));
+    updateEstadoRetrospectiva(retrospectiva, estadoRetrospectivaId);
+    log.debug("updateEstadoRetrospectiva(Long retrospectivaId, Long estadoRetrospectivaId) - end");
+  }
+
 }

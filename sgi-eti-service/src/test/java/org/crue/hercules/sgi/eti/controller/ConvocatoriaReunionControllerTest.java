@@ -36,6 +36,7 @@ import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.service.ActaService;
 import org.crue.hercules.sgi.eti.service.AsistentesService;
 import org.crue.hercules.sgi.eti.service.ConvocatoriaReunionService;
+import org.crue.hercules.sgi.eti.service.DocumentacionConvocatoriaReunionService;
 import org.crue.hercules.sgi.eti.service.EvaluacionService;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
@@ -74,6 +75,9 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
 
   @MockBean
   private ActaService actaService;
+
+  @MockBean
+  private DocumentacionConvocatoriaReunionService documentacionConvocatoriaReunionService;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONVOCATORIA_REUNION_CONTROLLER_BASE_PATH = "/convocatoriareuniones";

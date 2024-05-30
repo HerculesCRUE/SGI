@@ -289,7 +289,7 @@ export class ProyectoPresupuestoComponent extends FormFragmentComponent<IProyect
               anualidad: proyectoAnualidad.anio ?? proyectoAnualidad.fechaInicio.year,
               importe: anualidad.importeConcedido,
               tipoDatoEconomico: tipoPartida,
-              partidaPresupuestaria: anualidad.proyectoPartida.codigo,
+              partidaPresupuestaria: anualidad.proyectoPartida.codigo ?? anualidad.proyectoPartida?.partidaSge?.id,
               proyecto: { id: anualidad.proyectoSgeRef } as IProyectoSge
             };
             return proyectoAnualidadPartida;

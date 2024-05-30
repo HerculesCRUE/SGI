@@ -10,7 +10,7 @@
   </parent>
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-rep-service</artifactId>
-  <version>0.4.0</version>
+  <version>0.5.0</version>
   <packaging>jar</packaging>
   <name>sgi-rep-service</name>
   <description>Informes SGI HERCULES</description>
@@ -37,15 +37,13 @@
     <manifest.name>org/crue/hercules/sgi/csp</manifest.name>
     <!-- Versions -->
     <sgi-framework-spring.version>0.1.0</sgi-framework-spring.version>
-    <!-- Última versión compatible con librería pentaho report -->
-    <com-deepoove-poi-tl.version>1.10.5</com-deepoove-poi-tl.version>
+    <com-deepoove-poi-tl.version>1.12.1</com-deepoove-poi-tl.version>
     <com-deepoove-poi-tl-jsonmodel-support.version>1.0.0</com-deepoove-poi-tl-jsonmodel-support.version>
-    <!-- Última versión compatible con librería pentaho report -->
-    <io.github.draco1023-poi-tl-ext.version>0.4.8</io.github.draco1023-poi-tl-ext.version>
-    <!-- Última versión compatible con librería pentaho report -->
-    <org-apache-poi.version>4.1.2</org-apache-poi.version>
-    <!-- Última versión compatible con librería pentaho report -->
-    <fr-opensagres-xdocreport.version>2.0.2</fr-opensagres-xdocreport.version>
+    <io.github.draco1023-poi-tl-ext.version>0.4.8-poi5</io.github.draco1023-poi-tl-ext.version>
+    <org-apache-poi.version>5.2.4</org-apache-poi.version>
+    <fr-opensagres-xdocreport.version>2.0.4</fr-opensagres-xdocreport.version>
+    <org-commons-csv.version>1.10.0</org-commons-csv.version>
+    <commons-io.version>2.15.0</commons-io.version>
   </properties>
   <profiles>
     <profile>
@@ -87,47 +85,39 @@
     </dependencies>
   </dependencyManagement>
   <dependencies>
-
+    <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io.version}</version>
+    </dependency>
     <dependency>
       <groupId>com.deepoove</groupId>
       <artifactId>poi-tl</artifactId>
       <version>${com-deepoove-poi-tl.version}</version>
     </dependency>
-
     <dependency>
       <groupId>com.deepoove</groupId>
       <artifactId>poi-tl-jsonmodel-support</artifactId>
       <version>${com-deepoove-poi-tl-jsonmodel-support.version}</version>
     </dependency>
-
     <dependency>
       <groupId>io.github.draco1023</groupId>
       <artifactId>poi-tl-ext</artifactId>
       <version>${io.github.draco1023-poi-tl-ext.version}</version>
     </dependency>
-
     <!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
       <version>${org-apache-poi.version}</version>
     </dependency>
-
     <!--
     https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.poi.xwpf.converter.pdf -->
     <dependency>
       <groupId>fr.opensagres.xdocreport</groupId>
       <artifactId>fr.opensagres.poi.xwpf.converter.pdf</artifactId>
       <version>${fr-opensagres-xdocreport.version}</version>
-    </dependency>
-
-    <!-- 
-        Pentaho Reporting Engine Classic Core - Java class library for generating reports
-        https://github.com/pentaho/pentaho-reporting
-      -->
-    <dependency>
-      <groupId>org.pentaho.reporting.engine</groupId>
-      <artifactId>classic-core</artifactId>
     </dependency>
     <!--
       Commons Lang - Provides a host of helper utilities for the java.lang API, notably String
@@ -370,6 +360,11 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-test</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-csv</artifactId>
+      <version>${org-commons-csv.version}</version>
     </dependency>
   </dependencies>
   <build>

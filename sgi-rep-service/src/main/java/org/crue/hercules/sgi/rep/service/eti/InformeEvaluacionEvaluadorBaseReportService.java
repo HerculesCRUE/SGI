@@ -53,7 +53,7 @@ public abstract class InformeEvaluacionEvaluadorBaseReportService extends SgiRep
 
   private final EvaluacionService evaluacionService;
   private final PersonaService personaService;
-  private final BaseApartadosRespuestasReportDocxService baseApartadosRespuestasService;
+  private final BaseApartadosRespuestasReportService baseApartadosRespuestasService;
 
   private static final Long TIPO_ACTIVIDAD_PROYECTO_DE_INVESTIGACION = 1L;
   private static final Long TIPO_ACTIVIDAD_INVESTIGACION_TUTELADA = 3L;
@@ -64,7 +64,7 @@ public abstract class InformeEvaluacionEvaluadorBaseReportService extends SgiRep
 
   protected InformeEvaluacionEvaluadorBaseReportService(SgiConfigProperties sgiConfigProperties,
       SgiApiConfService sgiApiConfService, PersonaService personaService,
-      EvaluacionService evaluacionService, BaseApartadosRespuestasReportDocxService baseApartadosRespuestasService) {
+      EvaluacionService evaluacionService, BaseApartadosRespuestasReportService baseApartadosRespuestasService) {
 
     super(sgiConfigProperties, sgiApiConfService);
     this.personaService = personaService;
@@ -304,7 +304,7 @@ public abstract class InformeEvaluacionEvaluadorBaseReportService extends SgiRep
   }
 
   protected RenderData generarBloqueApartados(Long idDictamen,
-      InformeEvaluacionEvaluadorReportOutput informeEvaluacionEvaluadorReportOutput) {
+      InformeEvaluacionEvaluadorReportOutput informeEvaluacionEvaluadorReportOutput, String namePlantillaDocx) {
     Map<String, Object> subDataBloqueApartado = new HashMap<>();
     subDataBloqueApartado.put("idDictamen", idDictamen);
     subDataBloqueApartado.put("idDictamenNoProcedeEvaluar", DICTAMEN_NO_PROCEDE_EVALUAR);
@@ -324,7 +324,7 @@ public abstract class InformeEvaluacionEvaluadorBaseReportService extends SgiRep
       subDataBloqueApartado.put("bloques", null);
       return null;
     }
-    return Includes.ofStream(getReportDefinitionStream("rep-eti-bloque-apartado-docx"))
+    return Includes.ofStream(getReportDefinitionStream(namePlantillaDocx))
         .setRenderModel(subDataBloqueApartado).create();
   }
 
@@ -372,7 +372,12 @@ public abstract class InformeEvaluacionEvaluadorBaseReportService extends SgiRep
       if (null != comentarios && !comentarios.isEmpty()) {
         final Set<Long> apartados = new HashSet<>();
         comentarios.forEach(
-            c -> baseApartadosRespuestasService.getApartadoService().findTreeApartadosById(apartados, c.getApartado()));
+            c -> {
+              baseApartadosRespuestasService.getApartadoService().findTreeApartadosById(apartados, c.getApartado());
+              PersonaDto personaCreated = personaService.findById(c.getCreatedBy());
+              c.setPersonaCreated(personaCreated.getNombre() + " " + personaCreated.getApellidos());
+              c.setSexoPersonaCreated(personaCreated.getSexo().getId());
+            });
 
         Long idFormulario = 0L;
 

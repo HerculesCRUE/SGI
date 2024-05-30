@@ -7,13 +7,14 @@ import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudRrhhTutor } from '@core/models/csp/solicitud-rrhh-tutor';
 import { Module } from '@core/module';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
+import { RolSocioService } from '@core/services/csp/rol-socio/rol-socio.service';
 import { SolicitudProyectoService } from '@core/services/csp/solicitud-proyecto.service';
 import { SolicitudRrhhService } from '@core/services/csp/solicitud-rrhh/solicitud-rrhh.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
-import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { Observable, forkJoin, of, throwError } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { SOLICITUD_ROUTE_PARAMS } from './solicitud-route-params';
 import { ISolicitudData } from './solicitud.action.service';
@@ -38,7 +39,8 @@ export class SolicitudDataResolver extends SgiResolverResolver<ISolicitudData> {
     private service: SolicitudService,
     private authService: SgiAuthService,
     private solicitudProyectoService: SolicitudProyectoService,
-    private solicitudRrhhService: SolicitudRrhhService
+    private solicitudRrhhService: SolicitudRrhhService,
+    private rolSocioService: RolSocioService
   ) {
     super(logger, router, snackBar, MSG_NOT_FOUND);
   }
@@ -120,7 +122,19 @@ export class SolicitudDataResolver extends SgiResolverResolver<ISolicitudData> {
         }
         return of(data);
       }),
-      switchMap(data => this.verifyIfWhenProyectoCoordinadoAndCoordinadorExternoHasAnySocioCoordinador(data)),
+      switchMap(data => {
+        if (!data.solicitudProyecto?.rolUniversidad) {
+          return of(data);
+        }
+
+        return this.rolSocioService.findById(data.solicitudProyecto.rolUniversidad.id).pipe(
+          map(rolSocio => {
+            data.solicitudProyecto.rolUniversidad = rolSocio;
+            return data;
+          })
+        )
+      }),
+      switchMap(data => this.hasAnyProyectoSocioWithRolCoordinador(data)),
       switchMap(data => {
         if (data.hasSolicitudProyecto) {
           return this.checkIfSolicitudProyectoSocioHasPeriodosPagoAndJustificacion(data);
@@ -175,17 +189,17 @@ export class SolicitudDataResolver extends SgiResolverResolver<ISolicitudData> {
       );
   }
 
-  private verifyIfWhenProyectoCoordinadoAndCoordinadorExternoHasAnySocioCoordinador(data: ISolicitudData): Observable<ISolicitudData> {
+  private hasAnyProyectoSocioWithRolCoordinador(data: ISolicitudData): Observable<ISolicitudData> {
     if (data?.solicitudProyecto) {
       return this.solicitudProyectoService.hasAnySolicitudProyectoSocioWithRolCoordinador(data?.solicitudProyecto.id).pipe(
         map((value: boolean) => {
-          return {
-            ...data,
-            hasAnySolicitudProyectoSocioWithRolCoordinador: data.solicitudProyecto?.coordinadorExterno ? value : true
-          };
+          data.hasAnySolicitudProyectoSocioWithRolCoordinador = value;
+          return data;
         }));
     } else {
+      data.hasAnySolicitudProyectoSocioWithRolCoordinador = false;
       return of(data);
     }
   }
+
 }

@@ -7,8 +7,8 @@ import { ProyectoEntidadGestoraService } from '@core/services/csp/proyecto-entid
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { DatosContactoService } from '@core/services/sgemp/datos-contacto/datos-contacto.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
-import { forkJoin, Observable, of } from 'rxjs';
-import { filter, map, switchMap, takeLast, tap } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
+import { catchError, filter, map, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export interface ProyectoEntidadGestoraDetail extends IProyectoEntidadGestora {
   direccion: string;
@@ -55,6 +55,9 @@ export class ProyectoEntidadGestoraFragment extends FormFragment<ProyectoEntidad
                   map((empresaPadre) => {
                     entidadGestora.empresaPadre = empresaPadre;
                     return entidadGestora;
+                  }),
+                  catchError(() => {
+                    return of(entidadGestora);
                   })
                 );
               }),
@@ -63,6 +66,9 @@ export class ProyectoEntidadGestoraFragment extends FormFragment<ProyectoEntidad
                   map(datosContacto => {
                     entidadGestora.direccion = datosContacto.direccion;
                     return entidadGestora;
+                  }),
+                  catchError(() => {
+                    return of(entidadGestora);
                   })
                 )
               )

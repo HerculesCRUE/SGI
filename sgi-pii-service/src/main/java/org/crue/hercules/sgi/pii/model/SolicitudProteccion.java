@@ -20,19 +20,18 @@ import javax.persistence.Table;
 import javax.validation.Valid;
 
 import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
-import org.crue.hercules.sgi.pii.model.SolicitudProteccion.OnActivar;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion.OnActualizar;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion.OnCrear;
 import org.crue.hercules.sgi.pii.validation.UniqueSolicitudViaProteccion;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = SolicitudProteccion.TABLE_NAME)
@@ -40,10 +39,9 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
-@UniqueSolicitudViaProteccion(groups = { OnActualizar.class, OnActivar.class, OnCrear.class })
-@ActivableIsActivo(entityClass = SolicitudProteccion.class, groups = { OnActualizar.class })
-public class SolicitudProteccion extends BaseActivableEntity {
+@Builder
+@UniqueSolicitudViaProteccion(groups = { OnActualizar.class, OnCrear.class })
+public class SolicitudProteccion extends BaseEntity {
   /*
    * 
    */
@@ -138,12 +136,6 @@ public class SolicitudProteccion extends BaseActivableEntity {
    * Interfaz para marcar validaciones en la actualizacion de la entidad.
    */
   public interface OnActualizar {
-  }
-
-  /**
-   * Interfaz para marcar validaciones en las activaciones de la entidad.
-   */
-  public interface OnActivar {
   }
 
   /**

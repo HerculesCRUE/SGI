@@ -3,7 +3,6 @@ package org.crue.hercules.sgi.rep.dto.sgp;
 import java.io.Serializable;
 import java.util.List;
 
-import org.crue.hercules.sgi.rep.dto.BaseRestDto;
 import org.crue.hercules.sgi.rep.dto.sgemp.EmpresaDto;
 
 import lombok.AllArgsConstructor;
@@ -11,14 +10,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
-public class PersonaDto extends BaseRestDto {
+@Builder
+public class PersonaDto implements Serializable {
+  private String id;
   private String nombre;
   private String numeroDocumento;
   private String apellidos;

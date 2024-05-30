@@ -1,0 +1,241 @@
+[
+  {
+    "key": "ap3_6_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.6.1 Definición"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Sólo podrán utilizarse en experimentación animales de las especies enumeradas en el <a target='_blank' href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#ani'>anexo I del RD 53/13</a> si han sido criados expresamente para ese fin.</p><p>En casos excepcionales, y siempre que exista una justificación científica, los órganos competentes podrán autorizar el uso de animales que no hayan sido criados para experimentación (<a target='_blank' href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a19'>Art. 19 RD 53/13</a>).</p>"
+      },
+      {
+        "type": "table-crud",
+        "key": "animalesExperimentacionTable",
+        "templateOptions": {
+          "entity": "especie animal",
+          "gender": "female"
+        },
+        "validators": {
+          "validation": [
+            "oneRowRequired"
+          ]
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Experimentación animal"
+          },
+          "fieldGroup": [
+            {
+              "key": "especie",
+              "type": "select",
+              "templateOptions": {
+                "label": "Especie",
+                "required": true,
+                "order": 10,
+                "options": [
+                  {
+                    "label": "[1] Ratón",
+                    "value": "1"
+                  },
+                  {
+                    "label": "[2] Rata",
+                    "value": "2"
+                  },
+                  {
+                    "label": "[3] Cobaya",
+                    "value": "3"
+                  },
+                  {
+                    "label": "[4] Hámster",
+                    "value": "4"
+                  },
+                  {
+                    "label": "[5] Otros roedores",
+                    "value": "5"
+                  },
+                  {
+                    "label": "[6] Conejo",
+                    "value": "6"
+                  },
+                  {
+                    "label": "[7] Gato",
+                    "value": "7"
+                  },
+                  {
+                    "label": "[8] Perro",
+                    "value": "8"
+                  },
+                  {
+                    "label": "[9] Hurón",
+                    "value": "9"
+                  },
+                  {
+                    "label": "[10] Otros carnívoros",
+                    "value": "10"
+                  },
+                  {
+                    "label": "[11] Caballo, asno, híbrido",
+                    "value": "11"
+                  },
+                  {
+                    "label": "[12] Cerdo",
+                    "value": "12"
+                  },
+                  {
+                    "label": "[13] Cabra",
+                    "value": "13"
+                  },
+                  {
+                    "label": "[14] Oveja",
+                    "value": "14"
+                  },
+                  {
+                    "label": "[15] Vaca",
+                    "value": "15"
+                  },
+                  {
+                    "label": "[16] Prosimios",
+                    "value": "16"
+                  },
+                  {
+                    "label": "[17] Primates viejo mundo",
+                    "value": "17"
+                  },
+                  {
+                    "label": "[18] Primates nuevo mundo",
+                    "value": "18"
+                  },
+                  {
+                    "label": "[19] Primates homínidos",
+                    "value": "19"
+                  },
+                  {
+                    "label": "[20] Otros mamíferos",
+                    "value": "20"
+                  },
+                  {
+                    "label": "[21] Codorniz",
+                    "value": "21"
+                  },
+                  {
+                    "label": "[22] Otras aves",
+                    "value": "22"
+                  },
+                  {
+                    "label": "[23] Reptiles",
+                    "value": "23"
+                  },
+                  {
+                    "label": "[24] Anfibios",
+                    "value": "24"
+                  },
+                  {
+                    "label": "[25] Peces",
+                    "value": "25"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "nombreCientifico",
+              "type": "input",
+              "templateOptions": {
+                "label": "Nombre científico",
+                "required": true,
+                "placeholder": "Nombre",
+                "order": 20
+              }
+            },
+            {
+              "key": "cepa",
+              "type": "textarea",
+              "templateOptions": {
+                "label": "Cepa/s",
+                "placeholder": "Cepa/s",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10",
+                "order": 30
+              }
+            },
+            {
+              "key": "sexo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Sexo",
+                "required": true,
+                "order": 40,
+                "options": [
+                  {
+                    "label": "Macho",
+                    "value": "1"
+                  },
+                  {
+                    "label": "Hembra",
+                    "value": "2"
+                  },
+                  {
+                    "label": "Macho y Hembra",
+                    "value": "3"
+                  },
+                  {
+                    "label": "Indiferente",
+                    "value": "4"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "edadPeso",
+              "type": "input",
+              "templateOptions": {
+                "label": "Edad o peso",
+                "order": 50,
+                "required": true,
+                "placeholder": "Edad o peso"
+              }
+            },
+            {
+              "key": "procedencia",
+              "type": "select",
+              "templateOptions": {
+                "label": "Procedencia",
+                "required": true,
+                "order": 60,
+                "options": [
+                  {
+                    "label": "Producción propia",
+                    "value": "1"
+                  },
+                  {
+                    "label": "Centros de cría o suministro registrados del país",
+                    "value": "2"
+                  },
+                  {
+                    "label": "Cedido por otro centro usuario/intercambio científico",
+                    "value": "3"
+                  },
+                  {
+                    "label": "Importados legalmente",
+                    "value": "4"
+                  },
+                  {
+                    "label": "Capturados en la naturaleza o vagabundos",
+                    "value": "5"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

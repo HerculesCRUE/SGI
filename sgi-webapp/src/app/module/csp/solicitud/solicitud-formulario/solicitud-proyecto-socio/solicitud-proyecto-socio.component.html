@@ -2,7 +2,7 @@
 
   <!-- Error campos coordinado y coordinador externo como true pero no hay socio coordinador -->
   <div
-    *ngIf="!(actionService.hasAnySolicitudProyectoSocioWithRolCoordinador$ | async) || (actionService.showAlertNotSocioCoordinadorExist$ | async)"
+    *ngIf="(actionService.hasProyectoCoordinadoAndCoordinadorExterno$ | async) && !(actionService.hasAnySolicitudProyectoSocioWithRolCoordinador$ | async)"
     class="info-message">
     {{'info.csp.solicitud-proyecto-socio.socio-con-rol-coordinador.no-informado' | translate}}
   </div>

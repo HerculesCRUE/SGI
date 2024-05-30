@@ -316,9 +316,12 @@
       <call-template target="sgi-auth-sequence-template">
         <with-param name="requiredAuthorities" value="" />
       </call-template>
+      
+      <sequence key="sge-remove-authorization-header-sequence" />
+
       <payloadFactory media-type="json">
         <format>
-        [
+[
   {
     "wrappers": [
       "global"
@@ -404,6 +407,7 @@
               },
               {
                 "fieldGroupClassName": "row-formly",
+                "hideExpression": "formState.isGrupo === true",
                 "fieldGroup": [
                   {
                     "key": "modeloEjecucion",
@@ -526,6 +530,9 @@
       <call-template target="sgi-auth-sequence-template">
         <with-param name="requiredAuthorities" value="" />
       </call-template>
+
+      <sequence key="sge-remove-authorization-header-sequence" />
+
       <payloadFactory media-type="json">
         <format>
 [
@@ -632,6 +639,7 @@
               },
               {
                 "fieldGroupClassName": "row-formly",
+                "hideExpression": "formState.isGrupo === true",
                 "fieldGroup": [
                   {
                     "key": "modeloEjecucion",
@@ -749,6 +757,150 @@
     </faultSequence>
   </resource>
 
+  <resource methods="GET" url-mapping="/proyectos/formly/view">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      
+      <sequence key="sge-remove-authorization-header-sequence" />
+
+      <payloadFactory media-type="json">
+        <format>
+[
+  {
+    "wrappers": [
+      "global"
+    ],
+    "templateOptions": {
+      "styles": "{ \"width\": \"700px\" }"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "mat-card-group"
+        ],
+        "templateOptions": {
+          "label": ""
+        },
+        "fieldGroup": [
+          {
+            "fieldGroup": [
+              {
+                "fieldGroupClassName": "row-formly",
+                "fieldGroup": [
+                  {
+                    "key": "proyectoSgeProyectoSgiId",
+                    "type": "input",
+                    "className": "flex-1-50",
+                    "templateOptions": {
+                      "disabled": true,
+                      "label": "Identificador proyecto SGI",
+                      "required": true
+                    },
+                    "expressionProperties": {
+                      "model.proyectoSgeProyectoSgiId": "formState.mainModel.proyectoSge.proyectoSGIId"
+                    }
+                  }
+                ]
+              },
+              {
+                "key": "proyectoSgeTitulo",
+                "type": "input",
+                "templateOptions": {
+                  "disabled": true,
+                  "label": "Título proyecto",
+                  "required": true
+                },
+                "expressionProperties": {
+                  "model.proyectoSgeTitulo": "formState.mainModel.proyectoSge.titulo"
+                }
+              },
+              {
+                "fieldGroupClassName": "row-formly",
+                "fieldGroup": [
+                  {
+                    "key": "proyectoSgeFechaInicio",
+                    "type": "datepicker",
+                    "className": "flex-1",
+                    "templateOptions": {
+                      "disabled": true,
+                      "label": "Fecha inicio",
+                      "placeholder": "Introduce fecha inicio",
+                      "required": true
+                    },
+                    "expressionProperties": {
+                      "model.proyectoSgeFechaInicio": "formState.mainModel.proyectoSge.fechaInicio"
+                    }
+                  },
+                  {
+                    "key": "proyectoSgeFechaFin",
+                    "type": "datepicker",
+                    "className": "flex-1",
+                    "templateOptions": {
+                      "disabled": true,
+                      "label": "Fecha fin",
+                      "placeholder": "Introduce fecha fin",
+                      "required": true
+                    },
+                    "expressionProperties": {
+                      "model.proyectoSgeFechaFin": "formState.mainModel.proyectoSge.fechaFin"
+                    }
+                  }
+                ]
+              },
+              {
+                "fieldGroupClassName": "row-formly",
+                "fieldGroup": [
+                  {
+                    "key": "proyectoSgeSectorIva",
+                    "type": "select",
+                    "className": "flex-1-50",
+                    "templateOptions": {
+                      "disabled": true,
+                      "label": "Sector IVA",
+                      "labelProp": "label",
+                      "options": [
+                        {
+                          "value": true,
+                          "label": "Sí"
+                        },
+                        {
+                          "value": false,
+                          "label": "No"
+                        }
+                      ],
+                      "required": true,
+                      "valueProp": "value"
+                    },
+                    "expressionProperties": {
+                      "model.proyectoSgeSectorIva": "formState.mainModel.proyectoSge.sectorIva"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
+        </format>
+        <args>
+          <arg expression="get-property('tiposAyuda')" literal="true"/>
+        </args>
+      </payloadFactory>
+      <respond />
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
   <resource methods="POST" url-mapping="/proyectos/formly">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
@@ -756,6 +908,35 @@
       </call-template>
       <sequence key="sge-add-x-api-key-sequence" />
       <sequence key="sge-remove-authorization-header-sequence" />
+      <send>
+        <endpoint key="sge-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" uri-template="/proyectos/formly/{id}">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+
+      <property name="url" expression="get-property('axis2','REST_URL_POSTFIX')" />
+      <rewrite inProperty="url" outProperty="url">
+        <rewriterule>
+          <action type="replace" regex="/proyectos/formly" value="/proyectos" fragment="path" />
+        </rewriterule>
+      </rewrite>
+      <property name="REST_URL_POSTFIX" scope="axis2" expression="get-property('url')" />
+
+      <sequence key="sge-add-x-api-key-sequence" />
+      <sequence key="sge-remove-authorization-header-sequence" />
+
       <send>
         <endpoint key="sge-endpoint" />
       </send>

@@ -180,14 +180,14 @@ public class ComunicadosService {
     log.debug("enviarComunicadoInformeRetrospectivaCeeaPendiente() - end");
   }
 
-  public void enviarComunicadoCambiosEvaluacionEti(String comite, String nombreInvestigacion, String referenciaMemoria,
+  public void enviarComunicadoCambiosEvaluacionEti(String evaluador1Ref, String evaluador2Ref,
+      String nombreInvestigacion, String referenciaMemoria,
       String tituloSolicitudEvaluacion) throws JsonProcessingException {
     log.debug("enviarComunicadoCambiosEvaluacionEti(Evaluacion evaluacion) - start");
-    List<Evaluador> evaluadoresMemoria = evaluadorService
-        .findAllByComite(comite);
 
-    List<String> idsPersonaRef = evaluadoresMemoria.stream().map(Evaluador::getPersonaRef)
-        .collect(Collectors.toList());
+    List<String> idsPersonaRef = new ArrayList<>();
+    idsPersonaRef.add(evaluador1Ref);
+    idsPersonaRef.add(evaluador2Ref);
 
     if (idsPersonaRef == null) {
       log.debug(
@@ -337,25 +337,23 @@ public class ComunicadosService {
         "enviarComunicadoIndicarSubsanacion(String nombreInvestigacion, String comentarioEstado, String referenciaMemoria, String tipoActividad, String tituloSolicitudEvaluacion, String enlaceAplicacion, String solicitanteRef) - end");
   }
 
-  public void enviarComunicadoAsignacionEvaluacion(Evaluacion evaluacion, List<Evaluador> evaluadores,
-      Instant fechaEvaluacionAnterior)
+  public void enviarComunicadoAsignacionEvaluacion(Evaluacion evaluacion, Instant fechaEvaluacionAnterior)
       throws JsonProcessingException {
     log.debug(
-        "enviarComunicadoAsignacionEvaluacion(Evaluacion evaluacion, List<Evaluador> evaluadores) - start");
-    List<Recipient> recipients = new ArrayList();
-
-    evaluadores.forEach(evaluador -> {
-      recipients.addAll(getRecipientsFromPersonaRef(evaluador.getPersonaRef()));
-    });
+        "enviarComunicadoAsignacionEvaluacion(Evaluacion evaluacion, Instant fechaEvaluacionAnterior) - start");
+    List<Recipient> recipients = new ArrayList<>();
 
     PersonaOutput evaluador1 = null;
     PersonaOutput evaluador2 = null;
     try {
       evaluador1 = personasService.findById(evaluacion.getEvaluador1().getPersonaRef());
+      recipients.addAll(getRecipientsFromPersona(evaluador1));
+
       evaluador2 = personasService.findById(evaluacion.getEvaluador2().getPersonaRef());
+      recipients.addAll(getRecipientsFromPersona(evaluador2));
     } catch (Exception e) {
-      log.debug(
-          "enviarComunicadoAsignacionEvaluacion(Evaluacion evaluacion, List<Evaluador> evaluadores) - No se puede enviar el comunicado, no se pueden resolver los nombers de los evaluadores");
+      log.error(
+          "enviarComunicadoAsignacionEvaluacion(Evaluacion evaluacion, Instant fechaEvaluacionAnterior) - No se puede enviar el comunicado, no se pueden resolver los nombers de los evaluadores");
     }
 
     if (!CollectionUtils.isEmpty(recipients) && ObjectUtils.isNotEmpty(evaluador1)
@@ -377,10 +375,10 @@ public class ComunicadosService {
       emailService.sendEmail(emailOutput.getId());
     } else {
       log.debug(
-          "enviarComunicadoAsignacionEvaluacion(Evaluacion evaluacion, List<Evaluador> evaluadores) - No se puede enviar el comunicado, no existe ninguna persona asociada");
+          "enviarComunicadoAsignacionEvaluacion(Evaluacion evaluacion, Instant fechaEvaluacionAnterior) - No se puede enviar el comunicado, no existe ninguna persona asociada");
     }
     log.debug(
-        "enviarComunicadoAsignacionEvaluacion(Evaluacion evaluacion, List<Evaluador> evaluadores) - end");
+        "enviarComunicadoAsignacionEvaluacion(Evaluacion evaluacion, Instant fechaEvaluacionAnterior) - end");
   }
 
   public void enviarComunicadoRevisionActa(Acta acta, List<Asistentes> asistentes)
@@ -418,12 +416,26 @@ public class ComunicadosService {
   /**
    * Obtiene los emails de la personaRef recibida
    * 
-   * @param personaRef id del proyecto
+   * @param personaRef id de la persona
    * @return lista @link{Recipient}
    */
   private List<Recipient> getRecipientsFromPersonaRef(String personaRef) {
     List<Recipient> recipients = new ArrayList<>();
     PersonaOutput persona = personasService.findById(personaRef);
+    if (persona != null) {
+      recipients = getRecipientsFromPersona(persona);
+    }
+    return recipients;
+  }
+
+  /**
+   * Obtiene los emails de la persona recibida
+   * 
+   * @param persona la persona
+   * @return lista @link{Recipient}
+   */
+  private List<Recipient> getRecipientsFromPersona(PersonaOutput persona) {
+    List<Recipient> recipients = new ArrayList<>();
     if (persona != null) {
       recipients = persona.getEmails().stream()
           .map(email -> Recipient.builder().name(email.getEmail()).address(email.getEmail()).build())
@@ -431,4 +443,5 @@ public class ComunicadosService {
     }
     return recipients;
   }
+
 }

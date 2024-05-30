@@ -7,6 +7,7 @@ import { Estado } from '@core/models/csp/convocatoria';
 import { IConvocatoriaFase } from '@core/models/csp/convocatoria-fase';
 import { IModeloEjecucion } from '@core/models/csp/tipos-configuracion';
 import { ActionService } from '@core/services/action-service';
+import { ConfigService } from '@core/services/csp/config.service';
 import { ConfiguracionSolicitudService } from '@core/services/csp/configuracion-solicitud.service';
 import { ConvocatoriaAreaTematicaService } from '@core/services/csp/convocatoria-area-tematica.service';
 import { ConvocatoriaConceptoGastoService } from '@core/services/csp/convocatoria-concepto-gasto.service';
@@ -15,7 +16,7 @@ import { ConvocatoriaEntidadFinanciadoraService } from '@core/services/csp/convo
 import { ConvocatoriaEntidadGestoraService } from '@core/services/csp/convocatoria-entidad-gestora.service';
 import { ConvocatoriaFaseService } from '@core/services/csp/convocatoria-fase/convocatoria-fase.service';
 import { ConvocatoriaHitoService } from '@core/services/csp/convocatoria-hito/convocatoria-hito.service';
-import { ConvocatoriaPartidaPresupuestariaService } from '@core/services/csp/convocatoria-partidas-presupuestarias.service';
+import { ConvocatoriaPartidaPresupuestariaService } from '@core/services/csp/convocatoria-partida-presupuestaria/convocatoria-partida-presupuestaria.service';
 import { ConvocatoriaPeriodoJustificacionService } from '@core/services/csp/convocatoria-periodo-justificacion.service';
 import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo.service';
 import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-requisito-ip.service';
@@ -26,12 +27,14 @@ import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { DialogService } from '@core/services/dialog.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
+import { PartidaPresupuestariaGastoSgeService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-gasto-sge.service';
+import { PartidaPresupuestariaIngresoSgeService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-ingreso-sge.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { CategoriaProfesionalService } from '@core/services/sgp/categoria-profesional.service';
 import { NivelAcademicosService } from '@core/services/sgp/nivel-academico.service';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, merge, Observable, of, Subject, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, merge, of, throwError } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../csp-route-names';
 import { CONVOCATORIA_DATA_KEY } from './convocatoria-data.resolver';
@@ -140,29 +143,32 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     fb: FormBuilder,
     logger: NGXLogger,
     route: ActivatedRoute,
-    private convocatoriaService: ConvocatoriaService,
-    proyectoService: ProyectoService,
-    empresaService: EmpresaService,
-    convocatoriaEntidadFinanciadoraService: ConvocatoriaEntidadFinanciadoraService,
-    convocatoriaEntidadGestoraService: ConvocatoriaEntidadGestoraService,
-    unidadGestionService: UnidadGestionService,
-    convocatoriaPeriodoJustificacionService: ConvocatoriaPeriodoJustificacionService,
-    convocatoriaFaseService: ConvocatoriaFaseService,
-    convocatoriaConceptoGastoService: ConvocatoriaConceptoGastoService,
-    convocatoriaHitoService: ConvocatoriaHitoService,
-    convocatoriaSeguimientoCientificoService: ConvocatoriaSeguimientoCientificoService,
-    convocatoriaAreaTematicaService: ConvocatoriaAreaTematicaService,
-    convocatoriaRequisitoEquipoService: ConvocatoriaRequisitoEquipoService,
-    convocatoriaRequisitoIPService: ConvocatoriaRequisitoIPService,
-    convocatoriaDocumentoService: ConvocatoriaDocumentoService,
-    configuracionSolicitudService: ConfiguracionSolicitudService,
-    documentoRequeridoSolicitudService: DocumentoRequeridoSolicitudService,
-    convocatoriaPartidaPresupuestariaService: ConvocatoriaPartidaPresupuestariaService,
-    nivelAcademicoService: NivelAcademicosService,
-    categoriaProfesionaService: CategoriaProfesionalService,
     dialogService: DialogService,
-    palabraClaveService: PalabraClaveService,
-    documentoService: DocumentoService
+    private categoriaProfesionaService: CategoriaProfesionalService,
+    private configService: ConfigService,
+    private configuracionSolicitudService: ConfiguracionSolicitudService,
+    private convocatoriaAreaTematicaService: ConvocatoriaAreaTematicaService,
+    private convocatoriaConceptoGastoService: ConvocatoriaConceptoGastoService,
+    private convocatoriaDocumentoService: ConvocatoriaDocumentoService,
+    private convocatoriaEntidadFinanciadoraService: ConvocatoriaEntidadFinanciadoraService,
+    private convocatoriaEntidadGestoraService: ConvocatoriaEntidadGestoraService,
+    private convocatoriaFaseService: ConvocatoriaFaseService,
+    private convocatoriaHitoService: ConvocatoriaHitoService,
+    private convocatoriaPartidaPresupuestariaService: ConvocatoriaPartidaPresupuestariaService,
+    private convocatoriaPeriodoJustificacionService: ConvocatoriaPeriodoJustificacionService,
+    private convocatoriaRequisitoEquipoService: ConvocatoriaRequisitoEquipoService,
+    private convocatoriaRequisitoIPService: ConvocatoriaRequisitoIPService,
+    private convocatoriaSeguimientoCientificoService: ConvocatoriaSeguimientoCientificoService,
+    private convocatoriaService: ConvocatoriaService,
+    private documentoRequeridoSolicitudService: DocumentoRequeridoSolicitudService,
+    private documentoService: DocumentoService,
+    private empresaService: EmpresaService,
+    private nivelAcademicoService: NivelAcademicosService,
+    private palabraClaveService: PalabraClaveService,
+    private partidaPresupuestariaGastoSgeService: PartidaPresupuestariaGastoSgeService,
+    private partidaPresupuestariaIngresoSgeService: PartidaPresupuestariaIngresoSgeService,
+    private proyectoService: ProyectoService,
+    private unidadGestionService: UnidadGestionService
   ) {
     super();
     this.id = Number(route.snapshot.paramMap.get(CONVOCATORIA_ROUTE_PARAMS.ID));
@@ -209,8 +215,16 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
       logger, this.id, configuracionSolicitudService, documentoRequeridoSolicitudService,
       this.readonly, this.canEdit);
     this.partidasPresupuestarias = new ConvocatoriaPartidaPresupuestariaFragment(
-      this.id, convocatoriaService, convocatoriaPartidaPresupuestariaService,
-      this.readonly, this.canEdit, this.data?.estado);
+      this.id,
+      configService,
+      convocatoriaPartidaPresupuestariaService,
+      convocatoriaService,
+      partidaPresupuestariaGastoSgeService,
+      partidaPresupuestariaIngresoSgeService,
+      this.readonly,
+      this.canEdit,
+      this.data?.estado
+    );
     this.elegibilidad = new ConvocatoriaConceptoGastoFragment(this.id, convocatoriaService,
       convocatoriaConceptoGastoService, this.readonly, this.canEdit);
 

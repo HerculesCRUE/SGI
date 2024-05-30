@@ -1,24 +1,23 @@
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { TIPO_PARTIDA_MAP } from '@core/enums/tipo-partida';
+import { TIPO_PARTIDA_MAP, TipoPartida } from '@core/enums/tipo-partida';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
-import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
-import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
+import { IPartidaPresupuestariaSge } from '@core/models/sge/partida-presupuestaria-sge';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
+import { PartidaPresupuestariaGastoSgeService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-gasto-sge.service';
+import { PartidaPresupuestariaIngresoSgeService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-ingreso-sge.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
-import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { NGXLogger } from 'ngx-logger';
-import { Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { Observable, from, of } from 'rxjs';
+import { map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { IProyectoReportData, IProyectoReportOptions } from './proyecto-listado-export.service';
 
 const PARTIDA_PRESUPUESTARIA_KEY = marker('csp.proyecto-partida-presupuestaria');
-const PARTIDA_PRESUPUESTARIA_CODIGO_KEY = marker('csp.proyecto-partida-presupuestaria.codigo');
 const PARTIDA_KEY = marker('csp.proyecto-partida-presupuestaria.partida');
 const PARTIDA_PRESUPUESTARIA_FIELD = 'partidaPresupuestaria';
 const PARTIDA_PRESUPUESTARIA_TIPO_KEY = marker('csp.proyecto-partida-presupuestaria.tipo-partida');
@@ -31,7 +30,8 @@ export class ProyectoPartidaPresupuestariaListadoExportService
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
-    private luxonDatePipe: LuxonDatePipe,
+    private readonly partidaPresupuestariaGastoSgeService: PartidaPresupuestariaGastoSgeService,
+    private readonly partidaPresupuestariaIngresoSgeService: PartidaPresupuestariaIngresoSgeService,
     private readonly proyectoService: ProyectoService
   ) {
     super(translate);
@@ -42,16 +42,25 @@ export class ProyectoPartidaPresupuestariaListadoExportService
       sort: new RSQLSgiRestSort('id', SgiRestSortDirection.ASC)
     };
     return this.proyectoService.findAllProyectoPartidas(proyectoData.id, findOptions).pipe(
-      map((responsePartidaPresupuestaria) => {
-        proyectoData.partidasPresupuestarias = [];
-        return responsePartidaPresupuestaria;
-      }),
-      switchMap(responsePartidaPresupuestaria => {
-        if (responsePartidaPresupuestaria.total === 0) {
-          return of(proyectoData);
-        }
-
-        proyectoData.partidasPresupuestarias = responsePartidaPresupuestaria.items;
+      map(responsePartidaPresupuestaria => responsePartidaPresupuestaria.items),
+      switchMap(proyectoPartidas =>
+        from(proyectoPartidas).pipe(
+          mergeMap(proyectoPartidaPresupuestaria => {
+            return this.getPartidaPresupuestariaSge(proyectoPartidaPresupuestaria.partidaSge?.id, proyectoPartidaPresupuestaria.tipoPartida).pipe(
+              map(partidaPresupuestariaSge => {
+                proyectoPartidaPresupuestaria.partidaSge = partidaPresupuestariaSge;
+                return proyectoPartidaPresupuestaria;
+              })
+            )
+          }),
+          toArray(),
+          map(() => {
+            return proyectoPartidas;
+          })
+        )
+      ),
+      switchMap(proyectoPartidas => {
+        proyectoData.partidasPresupuestarias = proyectoPartidas;
         return of(proyectoData);
       })
     );
@@ -61,33 +70,7 @@ export class ProyectoPartidaPresupuestariaListadoExportService
     proyectos: IProyectoReportData[],
     reportConfig: IReportConfig<IProyectoReportOptions>
   ): ISgiColumnReport[] {
-
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      return this.getColumnsPartidaPresupuestariaNotExcel();
-    } else {
-      return this.getColumnsPartidaPresupuestariaExcel(proyectos);
-    }
-  }
-
-  private getColumnsPartidaPresupuestariaNotExcel(): ISgiColumnReport[] {
-    const columns: ISgiColumnReport[] = [];
-    columns.push({
-      name: PARTIDA_PRESUPUESTARIA_FIELD,
-      title: this.translate.instant(PARTIDA_PRESUPUESTARIA_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR),
-      type: ColumnType.STRING
-    });
-    const titleI18n = this.translate.instant(PARTIDA_PRESUPUESTARIA_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR) +
-      ' (' + this.translate.instant(PARTIDA_PRESUPUESTARIA_CODIGO_KEY) +
-      ' - ' + this.translate.instant(PARTIDA_PRESUPUESTARIA_TIPO_KEY) +
-      ')';
-    const columnPartidaPresupuestaria: ISgiColumnReport = {
-      name: PARTIDA_PRESUPUESTARIA_FIELD,
-      title: titleI18n,
-      type: ColumnType.SUBREPORT,
-      fieldOrientation: FieldOrientation.VERTICAL,
-      columns
-    };
-    return [columnPartidaPresupuestaria];
+    return this.getColumnsPartidaPresupuestariaExcel(proyectos);
   }
 
   private getColumnsPartidaPresupuestariaExcel(proyectos: IProyectoReportData[]): ISgiColumnReport[] {
@@ -118,46 +101,19 @@ export class ProyectoPartidaPresupuestariaListadoExportService
 
     const proyecto = proyectos[index];
     const elementsRow: any[] = [];
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      this.fillRowsPartidaPresupuestariaNotExcel(proyecto, elementsRow);
-    } else {
-      const maxNumPartidaPresupuestaria = Math.max(...proyectos.map(p => p.partidasPresupuestarias?.length));
-      for (let i = 0; i < maxNumPartidaPresupuestaria; i++) {
-        const partidaPresupuestaria = proyecto.partidasPresupuestarias[i] ?? null;
-        this.fillRowsPartidaPresupuestariaExcel(elementsRow, partidaPresupuestaria);
-      }
+
+    const maxNumPartidaPresupuestaria = Math.max(...proyectos.map(p => p.partidasPresupuestarias?.length));
+    for (let i = 0; i < maxNumPartidaPresupuestaria; i++) {
+      const partidaPresupuestaria = proyecto.partidasPresupuestarias[i] ?? null;
+      this.fillRowsPartidaPresupuestariaExcel(elementsRow, partidaPresupuestaria);
     }
+
     return elementsRow;
-  }
-
-  private fillRowsPartidaPresupuestariaNotExcel(proyecto: IProyectoReportData, elementsRow: any[]) {
-    const rowsReport: ISgiRowReport[] = [];
-
-    proyecto.partidasPresupuestarias?.forEach(partidaPresupuestaria => {
-      const partidaPresupuestariaElementsRow: any[] = [];
-
-      let partidaPresupuestariaTable = String(partidaPresupuestaria?.codigo);
-      partidaPresupuestariaTable += '\n';
-      partidaPresupuestariaTable += partidaPresupuestaria?.tipoPartida ?
-        this.translate.instant(TIPO_PARTIDA_MAP.get(partidaPresupuestaria?.tipoPartida)) : '';
-      partidaPresupuestariaTable += '\n';
-
-      partidaPresupuestariaElementsRow.push(partidaPresupuestariaTable);
-
-      const rowReport: ISgiRowReport = {
-        elements: partidaPresupuestariaElementsRow
-      };
-      rowsReport.push(rowReport);
-    });
-
-    elementsRow.push({
-      rows: rowsReport
-    });
   }
 
   private fillRowsPartidaPresupuestariaExcel(elementsRow: any[], partidaPresupuestaria: IProyectoPartida) {
     if (partidaPresupuestaria) {
-      elementsRow.push(partidaPresupuestaria.codigo ?? '');
+      elementsRow.push(partidaPresupuestaria.codigo ?? partidaPresupuestaria.partidaSge?.codigo ?? '');
       elementsRow.push(partidaPresupuestaria?.tipoPartida ?
         this.translate.instant(TIPO_PARTIDA_MAP.get(partidaPresupuestaria?.tipoPartida)) : '');
     } else {
@@ -165,4 +121,17 @@ export class ProyectoPartidaPresupuestariaListadoExportService
       elementsRow.push('');
     }
   }
+
+  private getPartidaPresupuestariaSge(partidaSgeId: string, tipo: TipoPartida): Observable<IPartidaPresupuestariaSge> {
+    if (!partidaSgeId || !tipo) {
+      return of(null);
+    }
+
+    if (tipo === TipoPartida.GASTO) {
+      return this.partidaPresupuestariaGastoSgeService.findById(partidaSgeId);
+    } else {
+      return this.partidaPresupuestariaIngresoSgeService.findById(partidaSgeId);
+    }
+  }
+
 }

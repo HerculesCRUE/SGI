@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.pii.dto.InvencionInventorOutput;
+import org.crue.hercules.sgi.pii.dto.SolicitudProteccionOutput;
 import org.crue.hercules.sgi.pii.model.InvencionInventor;
 import org.crue.hercules.sgi.pii.repository.InvencionInventorRepository;
 import org.junit.jupiter.api.Test;
@@ -103,7 +104,6 @@ class InvencionInventorControllerIT extends BaseIT {
     InvencionInventorOutput founded = response.getBody();
 
     Assertions.assertThat(founded).isNotNull();
-    Assertions.assertThat(founded.getActivo()).as("getActivo()").isTrue();
     Assertions.assertThat(founded.getId()).as("getId()").isEqualTo(invencionInventorId);
     Assertions.assertThat(founded.getInvencionId()).as("getInvencionId()").isEqualTo(expected.getInvencionId());
     Assertions.assertThat(founded.getInventorRef()).as("getInventorRef()").isEqualTo(expected.getInventorRef());
@@ -111,4 +111,27 @@ class InvencionInventorControllerIT extends BaseIT {
     Assertions.assertThat(founded.getRepartoUniversidad()).as("getRepartoUniversidad()")
         .isEqualTo(expected.getRepartoUniversidad());
   }
+
+  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
+    // @formatter:off
+    "classpath:scripts/tipo_proteccion.sql",
+    "classpath:scripts/invencion.sql",
+    "classpath:scripts/invencion_inventor.sql"
+    // @formatter:on
+  })
+  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
+  @Test
+  void deletable_SolicitudProteccion_ReturnsTRUE() throws Exception {
+    String roles[] = { "PII-INV-E" };
+    Long invencionInventorId = 1L;
+
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/eliminable")
+        .buildAndExpand(invencionInventorId).toUri();
+
+    ResponseEntity<SolicitudProteccionOutput> response = this.restTemplate.exchange(uri, HttpMethod.HEAD,
+        this.buildRequest(null, null, roles), SolicitudProteccionOutput.class);
+
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
 }

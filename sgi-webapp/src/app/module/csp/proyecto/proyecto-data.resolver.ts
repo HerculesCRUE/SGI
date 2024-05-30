@@ -5,11 +5,12 @@ import { IProyecto } from '@core/models/csp/proyecto';
 import { Module } from '@core/module';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { RolSocioService } from '@core/services/csp/rol-socio/rol-socio.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
-import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { Observable, forkJoin, of, throwError } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { PROYECTO_ROUTE_PARAMS } from './proyecto-route-params';
 import { IProyectoData } from './proyecto.action.service';
@@ -26,8 +27,10 @@ export class ProyectoDataResolver extends SgiResolverResolver<IProyectoData> {
     router: Router,
     snackBar: SnackBarService,
     private service: ProyectoService,
+    private rolSocioService: RolSocioService,
     private solicitudService: SolicitudService,
-    private authService: SgiAuthService) {
+    private authService: SgiAuthService
+  ) {
     super(logger, router, snackBar, MSG_NOT_FOUND);
   }
 
@@ -38,7 +41,7 @@ export class ProyectoDataResolver extends SgiResolverResolver<IProyectoData> {
           proyecto,
           solicitanteRefSolicitud: null,
           solicitudFormularioSolicitud: null,
-          disableCoordinadorExterno: false,
+          disableRolUniversidad: false,
           hasAnyProyectoSocioCoordinador: false,
           isVisor: this.hasVisorAuthority(proyecto) && route.data.module === Module.CSP,
           isInvestigador: this.hasViewAuthorityInv() && route.data.module === Module.INV
@@ -52,10 +55,22 @@ export class ProyectoDataResolver extends SgiResolverResolver<IProyectoData> {
         return of(data);
       }),
       switchMap(data => {
+        if (!data.proyecto.rolUniversidad) {
+          return of(data);
+        }
+
+        return this.rolSocioService.findById(data.proyecto.rolUniversidad.id).pipe(
+          map(rolSocio => {
+            data.proyecto.rolUniversidad = rolSocio;
+            return data;
+          })
+        )
+      }),
+      switchMap(data => {
         return forkJoin([this.service.hasPeriodosPago(data.proyecto.id), this.service.hasPeriodosJustificacion(data.proyecto.id)])
           .pipe(
             map((response) => {
-              data.disableCoordinadorExterno = response[0] || response[1];
+              data.disableRolUniversidad = response[0] || response[1];
               return data;
             })
           );

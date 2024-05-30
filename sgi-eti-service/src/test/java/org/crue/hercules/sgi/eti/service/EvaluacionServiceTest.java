@@ -97,11 +97,15 @@ class EvaluacionServiceTest extends BaseServiceTest {
   @Mock
   private EvaluadorService evaluadorService;
 
+  @Mock
+  private RetrospectivaService retrospectivaService;
+
   @BeforeEach
   void setUp() throws Exception {
-    evaluacionService = new EvaluacionServiceImpl(evaluacionRepository, estadoMemoriaRepository,
-        retrospectivaRepository, memoriaService, comentarioRepository, convocatoriaReunionRepository, memoriaRepository,
-        evaluacionConverter, reportService, sgdocService, comunicadosService, sgiConfigProperties, evaluadorService);
+    evaluacionService = new EvaluacionServiceImpl(evaluacionRepository, memoriaService, comentarioRepository,
+        convocatoriaReunionRepository, memoriaRepository,
+        evaluacionConverter, reportService, sgdocService, comunicadosService, sgiConfigProperties, evaluadorService,
+        retrospectivaService);
   }
 
   @Test
@@ -971,6 +975,7 @@ class EvaluacionServiceTest extends BaseServiceTest {
     convocatoriaReunion.setComite(comite);
     convocatoriaReunion.setFechaEvaluacion(Instant.parse("2020-05-10T00:00:00Z"));
     convocatoriaReunion.setFechaLimite(Instant.now());
+    convocatoriaReunion.setVideoconferencia(false);
     convocatoriaReunion.setLugar("Lugar");
     convocatoriaReunion.setOrdenDia("Orden del día convocatoria reunión");
     convocatoriaReunion.setAnio(2020);
@@ -1065,6 +1070,7 @@ class EvaluacionServiceTest extends BaseServiceTest {
     convocatoriaReunion.setComite(comite);
     convocatoriaReunion.setFechaEvaluacion(Instant.parse("2020-05-10T00:00:00Z"));
     convocatoriaReunion.setFechaLimite(Instant.now());
+    convocatoriaReunion.setVideoconferencia(false);
     convocatoriaReunion.setLugar("Lugar");
     convocatoriaReunion.setOrdenDia("Orden del día convocatoria reunión");
     convocatoriaReunion.setAnio(2020);

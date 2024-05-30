@@ -72,11 +72,14 @@ public class ConvocatoriaReunionDatosGenerales implements Serializable {
   /** Si la convocatoria tiene Acta */
   private Long idActa;
 
+  private Boolean videoconferencia;
+
   public ConvocatoriaReunionDatosGenerales(ConvocatoriaReunion convocatoriaReunion, Long numEvaluaciones, Long idActa) {
     this.id = convocatoriaReunion.getId();
     this.comite = convocatoriaReunion.getComite();
     this.fechaEvaluacion = convocatoriaReunion.getFechaEvaluacion();
     this.fechaLimite = convocatoriaReunion.getFechaLimite();
+    this.videoconferencia = convocatoriaReunion.getVideoconferencia();
     this.lugar = convocatoriaReunion.getLugar();
     this.ordenDia = convocatoriaReunion.getOrdenDia();
     this.anio = convocatoriaReunion.getAnio();

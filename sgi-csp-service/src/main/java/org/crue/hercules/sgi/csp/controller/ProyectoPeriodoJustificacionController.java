@@ -43,12 +43,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ProyectoPeriodoJustificacionController {
 
-  public static final String REQUEST_MAPPING = "/proyectoperiodosjustificacion";
-  public static final String PATH_PARAMETER_ID = "/{id}";
-  public static final String PATH_IDENTIFICADOR_JUSTIFICACION = "/identificadorjustificacion";
-  public static final String PATH_DELETEABLE = PATH_PARAMETER_ID + "/deleteable";
+  public static final String PATH_DELIMITER = "/";
+  public static final String REQUEST_MAPPING = PATH_DELIMITER + "proyectoperiodosjustificacion";
 
-  ModelMapper modelMapper;
+  public static final String PATH_PARAMETER_ID = PATH_DELIMITER + "{id}";
+  public static final String PATH_IDENTIFICADOR_JUSTIFICACION = PATH_DELIMITER + "identificadorjustificacion";
+  public static final String PATH_HAS_REQUERIMIENTOS_JUSTIFICACION = PATH_PARAMETER_ID + PATH_DELIMITER
+      + "hasrequerimientosjustificacion";
+
+  private final ModelMapper modelMapper;
 
   /** ProyectoPeriodoSeguimiento service */
   private final ProyectoPeriodoJustificacionService service;
@@ -98,7 +101,7 @@ public class ProyectoPeriodoJustificacionController {
    * @param id Identificador de {@link ProyectoPeriodoJustificacion}.
    * @return {@link ProyectoPeriodoJustificacion} correspondiente al id.
    */
-  @GetMapping("/{id}")
+  @GetMapping(PATH_PARAMETER_ID)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E')")
   public ProyectoPeriodoJustificacionOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
@@ -193,13 +196,14 @@ public class ProyectoPeriodoJustificacionController {
    * @param id Identificador de {@link ProyectoPeriodoJustificacion}.
    * @return true/false.
    */
-  @RequestMapping(method = RequestMethod.HEAD, path = PATH_DELETEABLE)
+  @RequestMapping(method = RequestMethod.HEAD, path = PATH_HAS_REQUERIMIENTOS_JUSTIFICACION)
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  public ResponseEntity<Void> checkDeleteable(@PathVariable Long id) {
-    log.debug("checkDeleteable(Long id) - start");
-    boolean isDeleteable = service.checkDeleteable(id);
-    log.debug("checkDeleteable(Long id) - end");
-    return isDeleteable ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  public ResponseEntity<Void> hasRequerimientosJustificacion(@PathVariable Long id) {
+    log.debug("hasRequerimientosJustificacion(Long id) - start");
+    boolean hasRequerimientosJustificacion = service.hasRequerimientosJustificacion(id);
+    log.debug("hasRequerimientosJustificacion(Long id) - end");
+    return hasRequerimientosJustificacion ? new ResponseEntity<>(HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   private ProyectoPeriodoJustificacionOutput convert(ProyectoPeriodoJustificacion proyectoPeriodoJustificacion) {
@@ -220,20 +224,20 @@ public class ProyectoPeriodoJustificacionController {
 
   private Page<ProyectoPeriodoJustificacionOutput> convert(Page<ProyectoPeriodoJustificacion> page) {
     List<ProyectoPeriodoJustificacionOutput> content = page.getContent().stream()
-        .map(proyectoPeriodoJustificacion -> convert(proyectoPeriodoJustificacion)).collect(Collectors.toList());
+        .map(this::convert).collect(Collectors.toList());
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
 
   private List<ProyectoPeriodoJustificacion> convert(List<ProyectoPeriodoJustificacionInput> list) {
 
-    return list.stream().map(proyectoPeriodoJustificacion -> convert(proyectoPeriodoJustificacion))
+    return list.stream().map(this::convert)
         .collect(Collectors.toList());
   }
 
   private List<ProyectoPeriodoJustificacionOutput> convertToOutput(List<ProyectoPeriodoJustificacion> lista) {
 
-    return lista.stream().map(proyectoPeriodoJustificacion -> convert(proyectoPeriodoJustificacion))
+    return lista.stream().map(this::convert)
         .collect(Collectors.toList());
   }
 }

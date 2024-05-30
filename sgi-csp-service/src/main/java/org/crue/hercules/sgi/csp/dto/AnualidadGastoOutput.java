@@ -42,6 +42,7 @@ public class AnualidadGastoOutput implements Serializable {
   public static class ProyectoPartida implements Serializable {
     private Long id;
     private String codigo;
+    private String partidaRef;
   }
 
   @Data

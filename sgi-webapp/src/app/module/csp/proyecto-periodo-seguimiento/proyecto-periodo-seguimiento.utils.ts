@@ -69,6 +69,10 @@ export function comparePeriodoJustificacion(
  * @returns la fecha de inicio
  */
 export function getFechaInicioPeriodoSeguimiento(fechaInicioProyecto: DateTime, mesInicialPeriodoSeguimiento: number): DateTime {
+  if (!fechaInicioProyecto) {
+    return;
+  }
+
   return fechaInicioProyecto.plus({ months: mesInicialPeriodoSeguimiento - 1 });
 }
 
@@ -83,8 +87,14 @@ export function getFechaInicioPeriodoSeguimiento(fechaInicioProyecto: DateTime, 
  * @returns la fecha de fin
  */
 export function getFechaFinPeriodoSeguimiento(
-  fechaInicioProyecto: DateTime, fechaFinProyecto: DateTime,
-  mesFinalPeriodoSeguimiento: number): DateTime {
+  fechaInicioProyecto: DateTime,
+  fechaFinProyecto: DateTime,
+  mesFinalPeriodoSeguimiento: number
+): DateTime {
+
+  if (!fechaInicioProyecto) {
+    return;
+  }
 
   let fechaFinConvocatoriaPeriodoSeguimiento = fechaInicioProyecto
     .plus({ months: mesFinalPeriodoSeguimiento })

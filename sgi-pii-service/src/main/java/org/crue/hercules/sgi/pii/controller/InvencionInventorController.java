@@ -8,7 +8,6 @@ import org.crue.hercules.sgi.pii.dto.InvencionInventorOutput;
 import org.crue.hercules.sgi.pii.model.Invencion;
 import org.crue.hercules.sgi.pii.model.InvencionInventor;
 import org.crue.hercules.sgi.pii.service.InvencionInventorService;
-import org.crue.hercules.sgi.pii.service.InvencionService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -19,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,14 +38,10 @@ public class InvencionInventorController {
 
   /** InvencionInventor service */
   private final InvencionInventorService service;
-  /** Invencion service */
-  private final InvencionService invencionService;
 
-  public InvencionInventorController(ModelMapper modelMapper, InvencionInventorService invencionInventorService,
-      InvencionService invencionService) {
+  public InvencionInventorController(ModelMapper modelMapper, InvencionInventorService invencionInventorService) {
     this.modelMapper = modelMapper;
     this.service = invencionInventorService;
-    this.invencionService = invencionService;
   }
 
   /**
@@ -90,6 +86,22 @@ public class InvencionInventorController {
     final InvencionInventor returnValue = service.findById(id);
     log.debug("findById(Long id) - end");
     return convert(returnValue);
+  }
+
+  /**
+   * Comprueba si se puede eliminar el {@link InvencionInventor} con id indicado.
+   * 
+   * @param id Identificador de {@link InvencionInventor}.
+   * @return {@link HttpStatus#OK} si se permite, {@link HttpStatus#NO_CONTENT} si
+   *         no se permite
+   */
+  @RequestMapping(path = "/{id}/eliminable", method = RequestMethod.HEAD)
+  @PreAuthorize("hasAuthority('PII-INV-E')")
+  public ResponseEntity<Void> deletable(@PathVariable Long id) {
+    log.debug("deletable(Long id) - start");
+    boolean deletable = service.deletable(id);
+    log.debug("deletable(Long id) - end");
+    return deletable ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   private InvencionInventorOutput convert(InvencionInventor invencionInventor) {

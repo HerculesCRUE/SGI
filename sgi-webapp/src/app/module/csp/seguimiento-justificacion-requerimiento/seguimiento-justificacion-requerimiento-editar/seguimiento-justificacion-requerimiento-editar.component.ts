@@ -11,6 +11,7 @@ import { NGXLogger } from 'ngx-logger';
 import { switchMap } from 'rxjs/operators';
 import { SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTO_ROUTE_NAMES } from '../seguimiento-justificacion-requerimiento-route-names';
 import { SeguimientoJustificacionRequerimientoActionService } from '../seguimiento-justificacion-requerimiento.action.service';
+import { ConfigService } from '@core/services/csp/config.service';
 
 const MSG_BUTTON_EDIT = marker('btn.save.entity');
 const MSG_SUCCESS = marker('msg.update.entity.success');
@@ -30,6 +31,7 @@ export class SeguimientoJustificacionRequerimientoEditarComponent extends Action
   textoActualizar: string;
   textoActualizarSuccess: string;
   textoActualizarError: string;
+  private _gastosJustificadosSgeEnabled: boolean = true;
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
@@ -39,6 +41,10 @@ export class SeguimientoJustificacionRequerimientoEditarComponent extends Action
     return SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTO_ROUTE_NAMES;
   }
 
+  get gastosJustificadosSgeEnabled(): boolean {
+    return this._gastosJustificadosSgeEnabled;
+  }
+
   constructor(
     private readonly logger: NGXLogger,
     protected readonly snackBarService: SnackBarService,
@@ -46,9 +52,16 @@ export class SeguimientoJustificacionRequerimientoEditarComponent extends Action
     route: ActivatedRoute,
     public actionService: SeguimientoJustificacionRequerimientoActionService,
     dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly cspConfigService: ConfigService
   ) {
     super(router, route, actionService, dialogService);
+
+    this.subscriptions.push(
+      this.cspConfigService.isGastosJustificadosSgeEnabled().subscribe(gastosJustificadosSgeEnabled => {
+        this._gastosJustificadosSgeEnabled = gastosJustificadosSgeEnabled;
+      })
+    );
   }
 
   ngOnInit(): void {

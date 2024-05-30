@@ -1,4 +1,5 @@
 import { FormControl, FormGroup } from '@angular/forms';
+import { IConfiguracion } from '@core/models/csp/configuracion';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
@@ -26,9 +27,11 @@ export class FacturasEmitidasFragment extends DesgloseEconomicoFragment<IDatoEco
     relaciones: IRelacionEjecucionEconomicaWithResponsables[],
     proyectoService: ProyectoService,
     proyectoAnualidadService: ProyectoAnualidadService,
-    private calendarioFacturacionService: CalendarioFacturacionService
+    private calendarioFacturacionService: CalendarioFacturacionService,
+    protected readonly config: IConfiguracion
+
   ) {
-    super(key, proyectoSge, relaciones, proyectoService, proyectoAnualidadService);
+    super(key, proyectoSge, relaciones, proyectoService, proyectoAnualidadService, config);
   }
 
   protected onInitialize(): void {

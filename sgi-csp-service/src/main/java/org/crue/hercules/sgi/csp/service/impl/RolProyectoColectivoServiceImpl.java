@@ -7,12 +7,10 @@ import org.crue.hercules.sgi.csp.exceptions.RolProyectoColectivoNotFoundExceptio
 import org.crue.hercules.sgi.csp.model.RolProyecto;
 import org.crue.hercules.sgi.csp.model.RolProyectoColectivo;
 import org.crue.hercules.sgi.csp.repository.RolProyectoColectivoRepository;
-import org.crue.hercules.sgi.csp.repository.RolProyectoRepository;
 import org.crue.hercules.sgi.csp.service.RolProyectoColectivoService;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,12 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 public class RolProyectoColectivoServiceImpl implements RolProyectoColectivoService {
 
   private final RolProyectoColectivoRepository repository;
-  private final RolProyectoRepository rolProyectoRepository;
 
-  public RolProyectoColectivoServiceImpl(RolProyectoColectivoRepository repository,
-      RolProyectoRepository rolProyectoRepository) {
+  public RolProyectoColectivoServiceImpl(RolProyectoColectivoRepository repository) {
     this.repository = repository;
-    this.rolProyectoRepository = rolProyectoRepository;
   }
 
   /**

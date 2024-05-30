@@ -1,0 +1,58 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="00.04.00-param">
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_CONVOCATORIA_REUNION_VIDEOCONFERENCIA" />
+      <column name="description"
+        value="Indica si la convocatoria de reunión es a través de videoconferencia o no" />
+      <column name="type" value="STRING" />
+    </insert>
+
+    <insert tableName="param">
+      <column name="id" valueSequenceNext="param_seq" />
+      <column name="name" value="ETI_CONVOCATORIA_REUNION_LUGAR" />
+      <column name="description"
+        value="Indica el lugar donde se celebrará la convocatoria de reunión" />
+      <column name="type" value="STRING" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.04.00-contenttpl_param">
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id"
+        valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_CONVOCATORIA_REUNION_CONTENT')" />
+      <column name="param_id"
+        valueComputed="(select id from ${schemaPrefix}param where name='ETI_CONVOCATORIA_REUNION_VIDEOCONFERENCIA')" />
+    </insert>
+
+    <insert tableName="contenttpl_param">
+      <column name="contenttpl_id"
+        valueComputed="(select id from ${schemaPrefix}content_tpl where name='ETI_COM_CONVOCATORIA_REUNION_CONTENT')" />
+      <column name="param_id"
+        valueComputed="(select id from ${schemaPrefix}param where name='ETI_CONVOCATORIA_REUNION_LUGAR')" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.04.00-content_tpl">
+    <update tableName="content_tpl">
+      <column name="tpl_text"
+        valueClobFile="clob/eti-com-convocatoria-reunion/ETI_COM_CONVOCATORIA_REUNION_CONTENT_text.ftl" />
+      <where>name='ETI_COM_CONVOCATORIA_REUNION_CONTENT'</where>
+    </update>
+    <update tableName="content_tpl">
+      <column name="tpl_html"
+        valueClobFile="clob/eti-com-convocatoria-reunion/ETI_COM_CONVOCATORIA_REUNION_CONTENT_html.ftl" />
+      <where>name='ETI_COM_CONVOCATORIA_REUNION_CONTENT'</where>
+    </update>
+  </changeSet>
+
+</databaseChangeLog>

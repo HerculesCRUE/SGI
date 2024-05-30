@@ -8,4 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface InvencionGastoRepository
     extends JpaRepository<InvencionGasto, Long>, JpaSpecificationExecutor<InvencionGasto> {
+
+  boolean existsBySolicitudProteccionId(Long solicitudProteccionId);
+
 }

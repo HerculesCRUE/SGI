@@ -12,6 +12,7 @@ import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContext
 import org.crue.hercules.sgi.pii.exceptions.ProcedimientoNotFoundException;
 import org.crue.hercules.sgi.pii.exceptions.TipoProcedimientoNotFoundException;
 import org.crue.hercules.sgi.pii.model.Procedimiento;
+import org.crue.hercules.sgi.pii.model.SolicitudProteccion;
 import org.crue.hercules.sgi.pii.model.TipoProcedimiento;
 import org.crue.hercules.sgi.pii.repository.ProcedimientoRepository;
 import org.crue.hercules.sgi.pii.repository.TipoProcedimientoRepository;
@@ -64,6 +65,21 @@ public class ProcedimientoService {
   public Page<Procedimiento> findAllBySolicitudProteccionId(Long solicitudProteccionId, Pageable pageable) {
 
     return this.procedimientoRepository.findAllBySolicitudProteccionId(solicitudProteccionId, pageable);
+  }
+
+  /**
+   * Comprueba si la {@link SolicitudProteccion} tiene {@link Procedimiento}
+   * asociados
+   *
+   * @param id el id de la {@link SolicitudProteccion}.
+   * @return Si la {@link SolicitudProteccion} tiene {@link Procedimiento}
+   *         asociados
+   */
+  public boolean existsBySolicitudProteccionId(Long id) {
+    log.debug("existsBySolicitudProteccionId(Long id) - start");
+    boolean result = this.procedimientoRepository.existsBySolicitudProteccionId(id);
+    log.debug("existsBySolicitudProteccionId(Long id) - end");
+    return result;
   }
 
   /**

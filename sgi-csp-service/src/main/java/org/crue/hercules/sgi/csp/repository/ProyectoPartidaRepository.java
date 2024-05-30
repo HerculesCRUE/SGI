@@ -13,9 +13,10 @@ import org.springframework.stereotype.Repository;
 public interface ProyectoPartidaRepository
     extends JpaRepository<ProyectoPartida, Long>, JpaSpecificationExecutor<ProyectoPartida> {
 
-  boolean existsByProyectoIdAndCodigoAndTipoPartida(Long proyectoId, String codigo, TipoPartida tipoPartida);
-
   boolean existsByProyectoIdAndCodigoAndTipoPartidaAndIdNot(Long proyectoId, String codigo, TipoPartida tipoPartida,
+      Long id);
+
+  boolean existsByProyectoIdAndPartidaRefAndTipoPartidaAndIdNot(Long proyectoId, String codigo, TipoPartida tipoPartida,
       Long id);
 
 }

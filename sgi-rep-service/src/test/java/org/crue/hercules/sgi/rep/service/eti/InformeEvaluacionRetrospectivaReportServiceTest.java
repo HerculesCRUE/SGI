@@ -36,10 +36,14 @@ class InformeEvaluacionRetrospectivaReportServiceTest extends BaseReportEtiServi
   @Mock
   private PersonaService personaService;
 
+  @Mock
+  private BaseApartadosRespuestasReportService baseApartadosRespuestasReportService;
+
   @BeforeEach
   public void setUp() throws Exception {
     informeEvaluacionRetrospectivaReportService = new InformeEvaluacionRetrospectivaReportService(
-        sgiConfigProperties, sgiApiConfService, personaService, evaluacionService);
+        sgiConfigProperties, sgiApiConfService, personaService, evaluacionService,
+        baseApartadosRespuestasReportService);
   }
 
   @WithMockUser(username = "user", authorities = { "ETI-EVC-EVAL", "ETI-EVC-INV-EVALR" })

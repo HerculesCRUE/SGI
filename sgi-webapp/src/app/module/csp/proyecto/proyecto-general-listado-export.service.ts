@@ -8,6 +8,7 @@ import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report
 import { AreaTematicaService } from '@core/services/csp/area-tematica.service';
 import { ContextoProyectoService } from '@core/services/csp/contexto-proyecto.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { RolSocioService } from '@core/services/csp/rol-socio/rol-socio.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
@@ -36,8 +37,9 @@ const FECHA_FIN_DEFINITIVA_KEY = marker('csp.proyecto.fecha-fin-definitiva');
 const CONFIDENCIAL_KEY = marker('csp.proyecto.confidencial');
 const CLASIFICACION_CVN_KEY = marker('csp.convocatoria.clasificacion-produccion-cientifica');
 const COORDINADO_KEY = marker('csp.proyecto.proyecto-coordinado');
-const COORDINADOR_EXTERNO_KEY = marker('csp.proyecto.coordinador-externo');
+const ROL_UNIVERSIDAD_KEY = marker('csp.proyecto.rol-universidad');
 const PROYECTO_COLABORATIVO_KEY = marker('csp.proyecto.proyecto-colaborativo');
+const IVA_DECUCIBLE_KEY = marker('csp.ejecucion-economica.iva-deducible');
 const PORCENTAJE_IVA_KEY = marker('csp.ejecucion-economica.iva');
 const CAUSA_EXENCION_IVA_KEY = marker('csp.proyecto.causa-exencion');
 const AREA_TEMATICA_KEY = marker('csp.area-tematica.nombre');
@@ -52,6 +54,7 @@ export class ProyectoGeneralListadoExportService extends AbstractTableExportFill
     private readonly contextoProyectoService: ContextoProyectoService,
     private readonly unidadGestionService: UnidadGestionService,
     private readonly areaTematicaService: AreaTematicaService,
+    private readonly rolSocioService: RolSocioService,
     private readonly percentPipe: PercentPipe,
   ) {
     super(translate);
@@ -82,6 +85,18 @@ export class ProyectoGeneralListadoExportService extends AbstractTableExportFill
           return this.unidadGestionService.findById(proyectoData.unidadGestion?.id).pipe(
             map(unidadGestion => {
               proyectoData.unidadGestion = unidadGestion;
+              return proyectoData;
+            })
+          );
+        } else {
+          return of(proyectoData);
+        }
+      }),
+      switchMap(() => {
+        if (proyectoData.rolUniversidad?.id) {
+          return this.rolSocioService.findById(proyectoData.rolUniversidad.id).pipe(
+            map(rolSocio => {
+              proyectoData.rolUniversidad = rolSocio;
               return proyectoData;
             })
           );
@@ -202,13 +217,18 @@ export class ProyectoGeneralListadoExportService extends AbstractTableExportFill
         type: ColumnType.STRING
       },
       {
-        title: this.translate.instant(COORDINADOR_EXTERNO_KEY),
-        name: 'coordinadorExterno',
+        title: this.translate.instant(ROL_UNIVERSIDAD_KEY),
+        name: 'rolUniversidad',
         type: ColumnType.STRING
       },
       {
         title: this.translate.instant(PROYECTO_COLABORATIVO_KEY),
         name: 'proyectoColaborativo',
+        type: ColumnType.STRING
+      },
+      {
+        title: this.translate.instant(IVA_DECUCIBLE_KEY),
+        name: 'ivaDeducible',
         type: ColumnType.STRING
       },
       {
@@ -253,8 +273,9 @@ export class ProyectoGeneralListadoExportService extends AbstractTableExportFill
     elementsRow.push(this.notIsNullAndNotUndefined(proyecto.confidencial) ? this.getI18nBooleanYesNo(proyecto.confidencial) : '');
     elementsRow.push(proyecto.clasificacionCVN ? this.translate.instant(CLASIFICACION_CVN_MAP.get(proyecto.clasificacionCVN)) : '');
     elementsRow.push(this.notIsNullAndNotUndefined(proyecto.coordinado) ? this.getI18nBooleanYesNo(proyecto.coordinado) : '');
-    elementsRow.push(this.notIsNullAndNotUndefined(proyecto.coordinadorExterno) ? this.getI18nBooleanYesNo(proyecto.coordinadorExterno) : '');
+    elementsRow.push(proyecto.rolUniversidad?.nombre);
     elementsRow.push(this.notIsNullAndNotUndefined(proyecto.colaborativo) ? this.getI18nBooleanYesNo(proyecto.colaborativo) : '');
+    elementsRow.push(this.notIsNullAndNotUndefined(proyecto.ivaDeducible) ? this.getI18nBooleanYesNo(proyecto.ivaDeducible) : '');
     elementsRow.push(this.percentPipe.transform(proyecto.iva?.iva / 100));
     elementsRow.push(proyecto.causaExencion ? this.translate.instant(CAUSA_EXENCION_MAP.get(proyecto.causaExencion)) : '');
     elementsRow.push(proyecto.contextoProyecto?.areaTematica?.nombre);

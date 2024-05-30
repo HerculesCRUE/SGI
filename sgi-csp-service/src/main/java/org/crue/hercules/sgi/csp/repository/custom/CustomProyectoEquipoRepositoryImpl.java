@@ -46,7 +46,7 @@ public class CustomProyectoEquipoRepositoryImpl implements CustomProyectoEquipoR
    * @param proyectoId identificador del {@link Proyecto}.
    * @param fecha      fecha en la que se busca el investigador principal.
    * @return la lista de personaRef de los investigadores principales del
-   *         {@link Proyecto} en el momento actual.
+   *         {@link Proyecto} en la fecha.
    */
   @Override
   public List<String> findPersonaRefInvestigadoresPrincipales(Long proyectoId, Instant fecha) {
@@ -55,6 +55,52 @@ public class CustomProyectoEquipoRepositoryImpl implements CustomProyectoEquipoR
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
     CriteriaQuery<String> cq = cb.createQuery(String.class);
     Root<ProyectoEquipo> root = cq.from(ProyectoEquipo.class);
+
+    cq.select(root.get(ProyectoEquipo_.personaRef)).where(cb.and(
+        getPredicateRolPrincipalFecha(root, cb, proyectoId, fecha),
+        getPredicateRolPrincipalFechaFin(root, cq, cb, proyectoId)))
+        .distinct(true);
+
+    List<String> returnValue = entityManager.createQuery(cq).getResultList();
+
+    log.debug("findPersonaRefInvestigadoresPrincipales(Long proyectoId, Instant fecha) - end");
+    return returnValue;
+  }
+
+  /**
+   * {@link ProyectoEquipo} que son investigador o investigadores principales del
+   * {@link Proyecto} con el id indicado.
+   * 
+   * Se considera investiador principal al {@link ProyectoEquipo} que a fecha
+   * actual tiene el {@link RolProyecto} con el flag "principal" a true. En caso
+   * de que varios coincidan se devuelven todos los que coincidan.
+   * 
+   * @param proyectoId identificador del {@link Proyecto}.
+   * @param fecha      fecha en la que se busca el investigador principal.
+   * @return la lista de investigadores principales del {@link Proyecto} en la
+   *         fecha.
+   */
+  @Override
+  public List<ProyectoEquipo> findInvestigadoresPrincipales(Long proyectoId, Instant fecha) {
+    log.debug("findInvestigadoresPrincipales(Long proyectoId, Instant fecha) - start");
+
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<ProyectoEquipo> cq = cb.createQuery(ProyectoEquipo.class);
+    Root<ProyectoEquipo> root = cq.from(ProyectoEquipo.class);
+
+    cq.select(root).where(cb.and(
+        getPredicateRolPrincipalFecha(root, cb, proyectoId, fecha),
+        getPredicateRolPrincipalFechaFin(root, cq, cb, proyectoId)))
+        .distinct(true);
+
+    List<ProyectoEquipo> returnValue = entityManager.createQuery(cq).getResultList();
+
+    log.debug("findInvestigadoresPrincipales(Long proyectoId, Instant fecha) - end");
+    return returnValue;
+  }
+
+  private Predicate getPredicateRolPrincipalFechaFin(Root<ProyectoEquipo> root, CriteriaQuery<?> cq, CriteriaBuilder cb,
+      Long proyectoId) {
 
     Subquery<String> queryRolPrincipalFechaFinNull = cq.subquery(String.class);
     Root<ProyectoEquipo> subqRolPrincipalFechaFinNull = queryRolPrincipalFechaFinNull.from(ProyectoEquipo.class);
@@ -82,21 +128,13 @@ public class CustomProyectoEquipoRepositoryImpl implements CustomProyectoEquipoR
             rolPrincipalMaxFechaFin,
             grupoEqualsMaxFechaFin));
 
-    cq.select(root.get(ProyectoEquipo_.personaRef)).where(cb.and(
-        getPredicateRolPrincipalFecha(root, cb, proyectoId, fecha),
-        cb.or(
-            cb.and(
-                root.get(ProyectoEquipo_.personaRef).in(queryRolPrincipalFechaFinNull)),
-            cb.and(
-                cb.exists(queryRolPrincipalFechaFinNull).not(),
-                cb.equal(root.get(ProyectoEquipo_.fechaFin),
-                    queryMaxFechaFin)))))
-        .distinct(true);
-
-    List<String> returnValue = entityManager.createQuery(cq).getResultList();
-
-    log.debug("findPersonaRefInvestigadoresPrincipales(Long proyectoId, Instant fecha) - end");
-    return returnValue;
+    return cb.or(
+        cb.and(
+            root.get(ProyectoEquipo_.personaRef).in(queryRolPrincipalFechaFinNull)),
+        cb.and(
+            cb.exists(queryRolPrincipalFechaFinNull).not(),
+            cb.equal(root.get(ProyectoEquipo_.fechaFin),
+                queryMaxFechaFin)));
   }
 
   private Predicate getPredicateRolPrincipalFecha(Root<ProyectoEquipo> root, CriteriaBuilder cb, Long proyectoId,

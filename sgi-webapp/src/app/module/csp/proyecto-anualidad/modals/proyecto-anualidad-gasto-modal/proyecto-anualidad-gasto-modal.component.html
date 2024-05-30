@@ -32,11 +32,8 @@
       <mat-form-field fxFlex="50">
         <mat-label>{{'csp.proyecto-anualidad.partida-gasto.concepto-gasto' | translate}}</mat-label>
         <sgi-select-entity formControlName="conceptoGasto" [options]="conceptosGasto$ | async"
-          (selectionChange)="loadCodigosEconomicos($event)" required>
+          (selectionChange)="loadCodigosEconomicos($event)">
         </sgi-select-entity>
-        <mat-error *ngIf="formGroup.controls.conceptoGasto.errors?.required">
-          {{'error.required.entity' | translate:msgParamConceptoGastoEntity}}
-        </mat-error>
       </mat-form-field>
     </div>
 
@@ -155,10 +152,11 @@
       <!--  Partida Presupuestaria -->
       <mat-form-field fxFlex="50">
         <mat-label>{{'csp.proyecto-anualidad.partida.partida-presupuestaria' | translate}}</mat-label>
-        <sgi-select-entity formControlName="partidaPresupuestaria" required [options]="proyectosPartida$ | async"
-          [displayWith]="displayerProyectoPartida">
-        </sgi-select-entity>
-        <mat-error *ngIf="formGroup.controls.partidaPresupuestaria.errors?.required">
+        <sgi-select-proyecto-partida formControlName="proyectoPartida" [proyectoId]="data.proyectoId"
+          [tipoPartida]="tipoPartidaGasto" (selectValuesChange)="selectFirstProyectoPartidaIfOnlyOneOption($event)"
+          required>
+        </sgi-select-proyecto-partida>
+        <mat-error *ngIf="formGroup.controls.proyectoPartida.errors?.required">
           {{'error.required.entity' | translate:msgParamPartidaPresupuestariaEntity}}
         </mat-error>
       </mat-form-field>

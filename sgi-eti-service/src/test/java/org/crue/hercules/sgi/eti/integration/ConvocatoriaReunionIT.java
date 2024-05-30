@@ -718,6 +718,7 @@ public class ConvocatoriaReunionIT extends BaseIT {
     data.setFechaEvaluacion(LocalDate.of(2020, 7, id.intValue()).atStartOfDay(ZoneOffset.UTC).toInstant());
     data.setFechaLimite(
         LocalDate.of(2020, 8, id.intValue()).atStartOfDay(ZoneOffset.UTC).with(LocalTime.of(23, 59, 59)).toInstant());
+    data.setVideoconferencia(false);
     data.setLugar("Lugar " + txt);
     data.setOrdenDia("Orden del día convocatoria reunión " + txt);
     data.setAnio(2020);
@@ -994,6 +995,7 @@ public class ConvocatoriaReunionIT extends BaseIT {
     convocatoriaReunion.setComite(comite);
     convocatoriaReunion.setFechaEvaluacion(Instant.parse("2020-08-01T00:00:00Z"));
     convocatoriaReunion.setFechaLimite(Instant.parse("2020-08-01T23:59:59Z"));
+    convocatoriaReunion.setVideoconferencia(false);
     convocatoriaReunion.setLugar("Lugar");
     convocatoriaReunion.setOrdenDia("Orden del día convocatoria reunión");
     convocatoriaReunion.setAnio(2020);

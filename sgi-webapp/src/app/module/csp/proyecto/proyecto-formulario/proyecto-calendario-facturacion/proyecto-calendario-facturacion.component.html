@@ -53,12 +53,22 @@
         <td mat-cell *matCellDef="let element"> {{element.value.comentario}} </td>
       </ng-container>
 
-      <!-- Hito facturación -->
-      <ng-container matColumnDef="hitoFacturacion">
+      <!-- Tipo facturación -->
+      <ng-container matColumnDef="tipoFacturacion">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.proyecto-calendario-facturacion.tipo-facturacion' |
           translate}} </th>
         <td mat-cell *matCellDef="let element"> {{element.value.tipoFacturacion?.nombre}} </td>
+      </ng-container>
+
+      <!-- Prorroga -->
+      <ng-container matColumnDef="prorroga">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.proyecto-calendario-facturacion.prorroga' |
+          translate}} </th>
+        <td mat-cell *matCellDef="let element"> {{element.value.proyectoProrroga ?
+          element.value.proyectoProrroga?.numProrroga + ' - ' : ''}} {{element.value.proyectoProrroga?.fechaConcesion |
+          luxon:'shortDate'}} </td>
       </ng-container>
 
       <!-- Fecha conformidad -->
@@ -137,8 +147,8 @@
 
   <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
     <div class="separation-button">
-      <button *ngIf="!this.actionService.readonly" color="three" mat-button mat-raised-button
-        (click)="openModal(DIALOG_ACTION.NEW)">
+      <button *ngIf="!this.actionService.readonly" [disabled]="!isProyectoEstadoConcedido()" color="three" mat-button
+        mat-raised-button (click)="openModal(DIALOG_ACTION.NEW)">
         <mat-icon color="accent">add_circle</mat-icon>
         {{ 'btn.add.entity' | translate:msgParamEntity }}
       </button>

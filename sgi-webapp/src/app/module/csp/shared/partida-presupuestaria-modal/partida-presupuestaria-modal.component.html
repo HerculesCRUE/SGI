@@ -4,40 +4,58 @@
     <div fxFlex fxLayout="column" fxLayoutGap="10px">
       <h3 *ngIf="showDatosPartidaPresupuestaria">&nbsp;</h3>
 
-      <!-- Codigo -->
-      <div fxFlex fxLayout="row" fxLayoutGap="10px">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}
-          </mat-label>
-          <input matInput formControlName="codigo" type="text" required
-            placeholder="{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}">
-          <sgi-field-info matSuffix [visible]="true"
-            message="{{'csp.partida-presupuestaria.codigo-tooltip' | translate:msgTooltip}}">
-          </sgi-field-info>
-          <mat-error *ngIf="formGroup.controls.codigo.errors?.required">
-            {{'error.required.entity' | translate:msgParamCodigoEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.codigo.errors?.pattern">
-            {{'error.csp.proyecto-partida-presupuestaria.codigo.invalid-format' | translate}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.codigo.errors?.maxlength">
-            {{'error.maxlength.entity' | translate:msgParamCodigoEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.codigo.errors?.duplicated">
-            {{'error.csp.proyecto-partida-presupuestaria.codigo.duplicated' | translate}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-
       <!-- Tipo -->
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field>
           <mat-label>{{'csp.proyecto-partida-presupuestaria.tipo-partida' | translate}}</mat-label>
-          <sgi-select-enum formControlName="tipo" [enumMap]="TIPO_PARTIDA_MAP" required></sgi-select-enum>
+          <sgi-select-enum formControlName="tipo" #tipoPartida [enumMap]="TIPO_PARTIDA_MAP" required></sgi-select-enum>
           <mat-error *ngIf="formGroup.controls.tipo.errors?.required">
             {{'error.required.entity' | translate:msgParamTipoEntity}}
           </mat-error>
         </mat-form-field>
+      </div>
+
+      <!-- Codigo -->
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <ng-container *ngIf="this.data.partidasPresupuestariasSgeEnabled else partidaSgi">
+          <mat-form-field>
+            <mat-label>{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}
+            </mat-label>
+            <sgi-select-partida-presupuestaria-sge formControlName="codigo"
+              [resetOnChange]="tipoPartida.selectionChange" [tipo]="formGroup.controls.tipo.value" required>
+            </sgi-select-partida-presupuestaria-sge>
+            <mat-error *ngIf="formGroup.controls.codigo.errors?.required">
+              {{'error.required.entity' | translate:msgParamCodigoEntity}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.codigo.errors?.duplicated">
+              {{'error.csp.proyecto-partida-presupuestaria.codigo.duplicated' | translate}}
+            </mat-error>
+          </mat-form-field>
+        </ng-container>
+
+        <ng-template #partidaSgi>
+          <mat-form-field>
+            <mat-label>{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}
+            </mat-label>
+            <input matInput formControlName="codigo" type="text" required
+              placeholder="{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}">
+            <sgi-field-info matSuffix [visible]="true"
+              message="{{'csp.partida-presupuestaria.codigo-tooltip' | translate:msgTooltip}}">
+            </sgi-field-info>
+            <mat-error *ngIf="formGroup.controls.codigo.errors?.pattern">
+              {{'error.csp.proyecto-partida-presupuestaria.codigo.invalid-format' | translate}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.codigo.errors?.maxlength">
+              {{'error.maxlength.entity' | translate:msgParamCodigoEntity}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.codigo.errors?.required">
+              {{'error.required.entity' | translate:msgParamCodigoEntity}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.codigo.errors?.duplicated">
+              {{'error.csp.proyecto-partida-presupuestaria.codigo.duplicated' | translate}}
+            </mat-error>
+          </mat-form-field>
+        </ng-template>
       </div>
 
       <!-- Descripcion -->
@@ -58,22 +76,40 @@
     <div fxFlex="50" fxLayout="column" fxLayoutGap="10px" *ngIf="showDatosPartidaPresupuestaria">
       <h3>{{'info.csp.datos-convocatoria' | translate}}</h3>
 
-      <!-- Codigo convocatoria-->
-      <div fxFlex fxLayout="row" fxLayoutGap="10px">
-        <mat-form-field>
-          <mat-label>{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}
-          </mat-label>
-          <input matInput formControlName="codigoConvocatoria" type="text" required
-            placeholder="{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}">
-        </mat-form-field>
-      </div>
-
       <!-- Tipo convocatoria-->
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field>
           <mat-label>{{'csp.proyecto-partida-presupuestaria.tipo-partida' | translate}}</mat-label>
           <sgi-select-enum formControlName="tipoConvocatoria" [enumMap]="TIPO_PARTIDA_MAP" required></sgi-select-enum>
         </mat-form-field>
+      </div>
+
+      <!-- Codigo convocatoria-->
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <ng-container *ngIf="this.data.partidasPresupuestariasSgeEnabled else partidaSgiConvocatoria">
+          <mat-form-field>
+            <mat-label>{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}
+            </mat-label>
+            <sgi-select-partida-presupuestaria-sge formControlName="codigoConvocatoria"
+              [tipo]="formGroup.controls.tipoConvocatoria.value" required>
+            </sgi-select-partida-presupuestaria-sge>
+            <mat-error *ngIf="formGroup.controls.codigo.errors?.required">
+              {{'error.required.entity' | translate:msgParamCodigoEntity}}
+            </mat-error>
+            <mat-error *ngIf="formGroup.controls.codigo.errors?.duplicated">
+              {{'error.csp.proyecto-partida-presupuestaria.codigo.duplicated' | translate}}
+            </mat-error>
+          </mat-form-field>
+        </ng-container>
+
+        <ng-template #partidaSgiConvocatoria>
+          <mat-form-field>
+            <mat-label>{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}
+            </mat-label>
+            <input matInput formControlName="codigoConvocatoria" type="text" required
+              placeholder="{{'csp.proyecto-partida-presupuestaria.codigo' | translate}}">
+          </mat-form-field>
+        </ng-template>
       </div>
 
       <!-- Descripcion convocatoria-->

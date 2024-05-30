@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.crue.hercules.sgi.csp.exceptions.ConceptoGastoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoAnualidadNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPartidaNotFoundException;
@@ -23,7 +24,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -113,7 +113,8 @@ public class AnualidadGastoService {
 
       anualidadGasto.setProyectoAnualidadId(proyectoAnualidadId);
 
-      if (!conceptoGastoRepository.findById(anualidadGasto.getConceptoGasto().getId()).isPresent()) {
+      if (ObjectUtils.isNotEmpty(anualidadGasto.getConceptoGasto())
+          && !conceptoGastoRepository.findById(anualidadGasto.getConceptoGasto().getId()).isPresent()) {
         throw new ConceptoGastoNotFoundException(anualidadGasto.getConceptoGasto().getId());
       }
     }

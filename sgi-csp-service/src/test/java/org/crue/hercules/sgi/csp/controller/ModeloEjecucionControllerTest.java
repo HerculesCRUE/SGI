@@ -3,8 +3,6 @@ package org.crue.hercules.sgi.csp.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ModeloEjecucionNotFoundException;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
@@ -45,6 +43,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * ModeloEjecucionControllerTest
@@ -302,21 +302,8 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
     Integer page = 3;
     Integer pageSize = 10;
 
-    BDDMockito.given(modeloEjecucionService.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<ModeloEjecucion>>() {
-          @Override
-          public Page<ModeloEjecucion> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            toIndex = toIndex > modelosEjecucion.size() ? modelosEjecucion.size() : toIndex;
-            List<ModeloEjecucion> content = modelosEjecucion.subList(fromIndex, toIndex);
-            Page<ModeloEjecucion> page = new PageImpl<>(content, pageable, modelosEjecucion.size());
-            return page;
-          }
-        });
+    BDDMockito.given(modeloEjecucionService.findAll(ArgumentMatchers.<String>any()))
+        .willReturn(modelosEjecucion);
 
     // when: Get page=3 with pagesize=10
     MvcResult requestResult = mockMvc
@@ -327,19 +314,15 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
         // then: Devuelve la pagina 3 con los ModeloEjecucion del 31 al 37
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page", "3"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page-Total-Count", "7"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page-Size", "10"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Total-Count", "37"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(7))).andReturn();
+        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(37))).andReturn();
 
     List<ModeloEjecucion> modelosEjecucionResponse = mapper.readValue(requestResult.getResponse().getContentAsString(),
         new TypeReference<List<ModeloEjecucion>>() {
         });
 
-    for (int i = 31; i <= 37; i++) {
-      ModeloEjecucion modeloEjecucion = modelosEjecucionResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(modeloEjecucion.getNombre()).isEqualTo("ModeloEjecucion" + String.format("%03d", i));
+    for (int i = 31; i < 37; i++) {
+      ModeloEjecucion modeloEjecucion = modelosEjecucionResponse.get(i);
+      Assertions.assertThat(modeloEjecucion.getNombre()).isEqualTo("ModeloEjecucion" + String.format("%03d", i + 1));
     }
   }
 
@@ -352,15 +335,7 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
     Integer page = 0;
     Integer pageSize = 10;
 
-    BDDMockito.given(modeloEjecucionService.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<ModeloEjecucion>>() {
-          @Override
-          public Page<ModeloEjecucion> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
-            Page<ModeloEjecucion> page = new PageImpl<>(modelosEjecucion, pageable, 0);
-            return page;
-          }
-        });
+    BDDMockito.given(modeloEjecucionService.findAll(ArgumentMatchers.<String>any())).willReturn(modelosEjecucion);
 
     // when: Get page=0 with pagesize=10
     mockMvc

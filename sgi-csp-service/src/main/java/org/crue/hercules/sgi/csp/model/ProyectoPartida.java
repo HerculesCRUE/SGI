@@ -11,12 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.csp.enums.TipoPartida;
+import org.crue.hercules.sgi.csp.validation.ProyectoPartidaCodigoOrPartidaRefRequired;
 import org.crue.hercules.sgi.csp.validation.UniqueCodigoTipoProyectoPartida;
 
 import lombok.AccessLevel;
@@ -29,14 +28,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "proyecto_partida", uniqueConstraints = { @UniqueConstraint(columnNames = { "proyecto_id", "codigo",
-    "tipo_partida" }, name = "UK_PROYECTOPARTIDA_PROYECTO_CODIGO_TIPO") })
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @UniqueCodigoTipoProyectoPartida(groups = { BaseEntity.Create.class, BaseEntity.Update.class })
+@ProyectoPartidaCodigoOrPartidaRefRequired(groups = { BaseEntity.Create.class, BaseEntity.Update.class })
 public class ProyectoPartida extends BaseEntity {
 
   /**
@@ -60,10 +58,14 @@ public class ProyectoPartida extends BaseEntity {
   @Column(name = "convocatoria_partida_id", nullable = true)
   private Long convocatoriaPartidaId;
 
-  /** Convocatoria partida id. */
-  @Column(name = "codigo", length = 50, nullable = false)
+  /** Partida sge ref. */
+  @Column(name = "partida_ref", length = 50, nullable = true)
   @Size(max = 50)
-  @NotNull
+  private String partidaRef;
+
+  /** Codigo. */
+  @Column(name = "codigo", length = 50, nullable = true)
+  @Size(max = 50)
   private String codigo;
 
   /** Descripcion */

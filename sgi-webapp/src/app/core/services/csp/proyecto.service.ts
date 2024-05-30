@@ -18,6 +18,7 @@ import { PROYECTO_PRORROGA_CONVERTER } from '@core/converters/csp/proyecto-prorr
 import { PROYECTO_PROYECTO_SGE_CONVERTER } from '@core/converters/csp/proyecto-proyecto-sge.converter';
 import { PROYECTO_SOCIO_CONVERTER } from '@core/converters/csp/proyecto-socio.converter';
 import { PROYECTO_CONVERTER } from '@core/converters/csp/proyecto.converter';
+import { TipoPartida } from '@core/enums/tipo-partida';
 import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
 import { IEstadoProyectoBackend } from '@core/models/csp/backend/estado-proyecto-backend';
 import { IProyectoAreaConocimientoBackend } from '@core/models/csp/backend/proyecto-area-conocimiento-backend';
@@ -43,6 +44,8 @@ import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoAgrupacionGasto } from '@core/models/csp/proyecto-agrupacion-gasto';
 import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
 import { IProyectoAnualidadResumen } from '@core/models/csp/proyecto-anualidad-resumen';
+import { IProyectoApartadosToBeCopied } from '@core/models/csp/proyecto-aparatados-to-be-copied';
+import { IProyectoApartadosWithDates } from '@core/models/csp/proyecto-aparatados-with-dates';
 import { IProyectoAreaConocimiento } from '@core/models/csp/proyecto-area-conocimiento';
 import { IProyectoClasificacion } from '@core/models/csp/proyecto-clasificacion';
 import { IProyectoConceptoGasto } from '@core/models/csp/proyecto-concepto-gasto';
@@ -100,6 +103,8 @@ import { PROYECTO_HITO_RESPONSE_CONVERTER } from './proyecto-hito/proyecto-hito-
 import { PROYECTO_PALABRACLAVE_REQUEST_CONVERTER } from './proyecto-palabra-clave/proyecto-palabra-clave-request.converter';
 import { IProyectoPalabraClaveResponse } from './proyecto-palabra-clave/proyecto-palabra-clave-response';
 import { PROYECTO_PALABRACLAVE_RESPONSE_CONVERTER } from './proyecto-palabra-clave/proyecto-palabra-clave-response.converter';
+import { IProyectoPartidaPresupuestariaResponse } from './proyecto-partida-presupuestaria/proyecto-partida-presupuestaria-response';
+import { PROYECTO_PARTIDA_PRESUPUESTARIA_RESPONSE_CONVERTER } from './proyecto-partida-presupuestaria/proyecto-partida-presupuestaria-response.converter';
 import { IProyectoPeriodoJustificacionResponse } from './proyecto-periodo-justificacion/proyecto-periodo-justificacion-response';
 import { PROYECTO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER } from './proyecto-periodo-justificacion/proyecto-periodo-justificacion-response.converter';
 import { IProyectoResponsableEconomicoResponse } from './proyecto-responsable-economico/proyecto-responsable-economico-response';
@@ -523,10 +528,41 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    */
   findAllProyectoPartidas(proyectoId: number, options?: SgiRestFindOptions):
     Observable<SgiRestListResult<IProyectoPartida>> {
-    return this.find<IProyectoPartida, IProyectoPartida>(
+    return this.find<IProyectoPartidaPresupuestariaResponse, IProyectoPartida>(
       `${this.endpointUrl}/${proyectoId}/proyecto-partidas`,
-      options
+      options,
+      PROYECTO_PARTIDA_PRESUPUESTARIA_RESPONSE_CONVERTER
     );
+  }
+
+  /**
+   * Recupera los IProyectoPartida del proyecto de tipo ingreso
+   *
+   * @param proyectoId Id del proyecto
+   * @returns observable con la lista de IProyectoPartida de tipo ingreso del proyecto
+   */
+  findAllProyectoPartidasIngresos(proyectoId: number):
+    Observable<SgiRestListResult<IProyectoPartida>> {
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('tipoPartida', SgiRestFilterOperator.EQUALS, TipoPartida.INGRESO)
+    };
+
+    return this.findAllProyectoPartidas(proyectoId, options);
+  }
+
+  /**
+   * Recupera los IProyectoPartida del proyecto de tipo gasto
+   *
+   * @param proyectoId Id del proyecto
+   * @returns observable con la lista de IProyectoPartida de tipo gasto del proyecto
+   */
+  findAllProyectoPartidasGastos(proyectoId: number):
+    Observable<SgiRestListResult<IProyectoPartida>> {
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('tipoPartida', SgiRestFilterOperator.EQUALS, TipoPartida.GASTO)
+    };
+
+    return this.findAllProyectoPartidas(proyectoId, options);
   }
 
   /**
@@ -807,11 +843,12 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * true. En caso de que varios coincidan se devuelven todos los que coincidan.
    *
    * @param id identificador del proyecto.
-   * @return la lista de personaRef de los investigadores principales del
-   *         proyecto en el momento actual.
+   * @return la lista de investigadores principales del proyecto en el momento actual.
    */
-  findPersonaRefInvestigadoresPrincipales(id: number): Observable<string[]> {
-    return this.http.get<string[]>(`${this.endpointUrl}/${id}/investigadoresprincipales`);
+  findInvestigadoresPrincipales(id: number): Observable<IProyectoEquipo[]> {
+    return this.http.get<IProyectoEquipoBackend[]>(`${this.endpointUrl}/${id}/investigadoresprincipales`).pipe(
+      map((response => PROYECTO_EQUIPO_CONVERTER.toTargetArray(response)))
+    );
   }
 
   /**
@@ -889,4 +926,38 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
       options,
       REQUERIMIENTO_JUSTIFICACION_RESPONSE_CONVERTER);
   }
+
+  /**
+   * Devuelve la informacion de cuales de los apartados tienen elementos con fechas.
+   *
+   * @param id Id del proyecto
+   */
+  hasApartadosWithDates(id: number): Observable<IProyectoApartadosWithDates> {
+    return this.http.get<IProyectoApartadosWithDates>(
+      `${this.endpointUrl}/${id}/has-apartados-with-dates`
+    );
+  }
+
+  /**
+   * Devuelve la informacion de cuales de los apartados de la convocatoria y/o se van copiar 
+   *
+   * @param id Id del proyecto
+   */
+  hasApartadosToBeCopied(id: number): Observable<IProyectoApartadosToBeCopied> {
+    return this.http.get<IProyectoApartadosToBeCopied>(
+      `${this.endpointUrl}/${id}/has-apartados-to-be-copied`
+    );
+  }
+
+  /**
+   * Marca la fecha de inicio del proyecto como inicializada y hace la copia de
+   * los apartados de la convocatoria y de la solicitud dependientes de la
+   * inicializacion de la fecha
+   * 
+   * @param id Id del proyecto
+   */
+  initFechaInicio(id: number): Observable<IProyecto> {
+    return this.http.patch<IProyecto>(`${this.endpointUrl}/${id}/init-fecha-inicio`, undefined);
+  }
+
 }

@@ -25,6 +25,7 @@ export interface PartidaPresupuestariaModalComponentData {
   partidasPresupuestarias: IPartidaPresupuestaria[];
   partidaPresupuestaria: IPartidaPresupuestaria;
   convocatoriaPartidaPresupuestaria: IConvocatoriaPartidaPresupuestaria;
+  partidasPresupuestariasSgeEnabled: boolean;
   readonly: boolean;
   canEdit: boolean;
 }
@@ -131,7 +132,12 @@ export class PartidaPresupuestariaModalComponent extends DialogFormComponent<IPa
       this.data.partidaPresupuestaria = {} as IPartidaPresupuestaria;
     }
 
-    this.data.partidaPresupuestaria.codigo = this.formGroup.controls.codigo.value;
+    if (this.data.partidasPresupuestariasSgeEnabled) {
+      this.data.partidaPresupuestaria.partidaSge = this.formGroup.controls.codigo.value;
+    } else {
+      this.data.partidaPresupuestaria.codigo = this.formGroup.controls.codigo.value;
+    }
+
     this.data.partidaPresupuestaria.tipoPartida = this.formGroup.controls.tipo.value;
     this.data.partidaPresupuestaria.descripcion = this.formGroup.controls.descripcion.value === ''
       ? null : this.formGroup.controls.descripcion.value;
@@ -139,10 +145,11 @@ export class PartidaPresupuestariaModalComponent extends DialogFormComponent<IPa
   }
 
   protected buildFormGroup(): FormGroup {
+    const codigo = this.data.partidasPresupuestariasSgeEnabled ? this.data?.partidaPresupuestaria?.partidaSge : this.data?.partidaPresupuestaria?.codigo;
+    const codigoConvocatoria = this.data.partidasPresupuestariasSgeEnabled ? this.data?.convocatoriaPartidaPresupuestaria?.partidaSge : this.data?.convocatoriaPartidaPresupuestaria?.codigo;
     const formGroup = new FormGroup({
-      codigo: new FormControl(this.data?.partidaPresupuestaria?.codigo, [
-        Validators.required,
-        Validators.maxLength(50)
+      codigo: new FormControl(codigo, [
+        Validators.required
       ]),
       tipo: new FormControl(this.data?.partidaPresupuestaria?.tipoPartida, [
         Validators.required
@@ -150,7 +157,7 @@ export class PartidaPresupuestariaModalComponent extends DialogFormComponent<IPa
       descripcion: new FormControl(this.data?.partidaPresupuestaria?.descripcion, [
         Validators.maxLength(250)
       ]),
-      codigoConvocatoria: new FormControl({ value: this.data?.convocatoriaPartidaPresupuestaria?.codigo, disabled: true }),
+      codigoConvocatoria: new FormControl({ value: codigoConvocatoria, disabled: true }),
       tipoConvocatoria: new FormControl({ value: this.data?.convocatoriaPartidaPresupuestaria?.tipoPartida, disabled: true }),
       descripcionConvocatoria: new FormControl({ value: this.data?.convocatoriaPartidaPresupuestaria?.descripcion, disabled: true }),
     }, {
@@ -163,14 +170,17 @@ export class PartidaPresupuestariaModalComponent extends DialogFormComponent<IPa
       formGroup.disable();
     }
 
-    this.subscriptions.push(
-      this.configuracionService.getConfiguracion().subscribe(configuracion => {
-        formGroup.controls.codigo.setValidators([
-          formGroup.controls.codigo.validator,
-          Validators.pattern(configuracion.formatoPartidaPresupuestaria)
-        ]);
-      })
-    );
+    if (!this.data.partidasPresupuestariasSgeEnabled) {
+      this.subscriptions.push(
+        this.configuracionService.getConfiguracion().subscribe(configuracion => {
+          formGroup.controls.codigo.setValidators([
+            formGroup.controls.codigo.validator,
+            Validators.maxLength(50),
+            Validators.pattern(configuracion.formatoPartidaPresupuestaria)
+          ]);
+        })
+      );
+    }
 
     if (this.data.convocatoriaPartidaPresupuestaria) {
       formGroup.controls.codigo.disable();
@@ -188,7 +198,7 @@ export class PartidaPresupuestariaModalComponent extends DialogFormComponent<IPa
   }
 
   /**
-   * Comprueba si es unica la combinacion de codigo y tipo.
+   * Comprueba si es unica la combinacion de codigo (o partida sge si partidasPresupuestariasSgeEnabled) y tipo.
    */
   private uniqueCodigoTipo(): ValidatorFn {
     return (formGroup: FormGroup): ValidationErrors | null => {
@@ -199,11 +209,19 @@ export class PartidaPresupuestariaModalComponent extends DialogFormComponent<IPa
         return;
       }
 
-      const codigoValue = codigoControl.value;
       const tipoValue = tipoControl.value;
 
-      const duplicated = this.data.partidasPresupuestarias
-        .some(partidaPresupuestaria => partidaPresupuestaria?.codigo === codigoValue && partidaPresupuestaria?.tipoPartida === tipoValue);
+      let duplicated: boolean;
+
+      if (this.data.partidasPresupuestariasSgeEnabled) {
+        const partidaSgeId = codigoControl.value?.id;
+        duplicated = this.data.partidasPresupuestarias
+          .some(partidaPresupuestaria => partidaPresupuestaria?.partidaSge?.id === partidaSgeId && partidaPresupuestaria?.tipoPartida === tipoValue);
+      } else {
+        const codigoValue = this.data.partidasPresupuestariasSgeEnabled ? codigoControl.value?.id : codigoControl.value;
+        duplicated = this.data.partidasPresupuestarias
+          .some(partidaPresupuestaria => partidaPresupuestaria?.codigo === codigoValue && partidaPresupuestaria?.tipoPartida === tipoValue);
+      }
 
       if (duplicated) {
         codigoControl.setErrors({ duplicated: true });

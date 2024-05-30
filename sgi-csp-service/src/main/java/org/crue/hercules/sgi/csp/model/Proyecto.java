@@ -100,13 +100,11 @@ public class Proyecto extends BaseEntity {
   private String codigoExterno;
 
   /** Fecha Inicio. */
-  @Column(name = "fecha_inicio", nullable = false)
-  @NotNull
+  @Column(name = "fecha_inicio", nullable = true)
   private Instant fechaInicio;
 
   /** Fecha Fin. */
-  @Column(name = "fecha_fin", nullable = false)
-  @NotNull
+  @Column(name = "fecha_fin", nullable = true)
   private Instant fechaFin;
 
   /** Fecha Fin definitiva */
@@ -157,9 +155,9 @@ public class Proyecto extends BaseEntity {
   @Column(name = "colaborativo", nullable = true)
   private Boolean colaborativo;
 
-  /** Coordinador Externo */
-  @Column(name = "coordinador_externo", nullable = true)
-  private Boolean coordinadorExterno;
+  /** Rol universidad */
+  @Column(name = "rol_universidad", nullable = true)
+  private Long rolUniversidadId;
 
   /** Excelencia */
   @Column(name = "excelencia", nullable = true)
@@ -168,6 +166,10 @@ public class Proyecto extends BaseEntity {
   /** Permite paquetes de trabajo */
   @Column(name = "paquetes_trabajo", nullable = true)
   private Boolean permitePaquetesTrabajo;
+
+  /** IVA deducible */
+  @Column(name = "iva_deducible", nullable = true)
+  private Boolean ivaDeducible;
 
   /** Iva */
   @ManyToOne
@@ -225,6 +227,10 @@ public class Proyecto extends BaseEntity {
   @NotNull
   private Boolean activo;
 
+  /** Fecha inicio informada en algun momento */
+  @Column(name = "fecha_inicio_started", columnDefinition = "boolean default false", nullable = true)
+  private Boolean fechaInicioStarted;
+
   // Relation mappings for JPA metamodel generation only
   @OneToOne(mappedBy = "proyecto")
   @Getter(AccessLevel.NONE)
@@ -242,6 +248,12 @@ public class Proyecto extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final Solicitud solicitud = null;
+
+  @ManyToOne
+  @JoinColumn(name = "rol_universidad", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_PROYECTO_ROLSOCIO"))
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final RolSocio rolUniversidad = null;
 
   @OneToMany(mappedBy = "proyecto")
   @Getter(AccessLevel.NONE)

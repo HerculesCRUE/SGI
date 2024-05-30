@@ -20,6 +20,7 @@ import { PROYECTO_ROUTE_NAMES } from '../../proyecto-route-names';
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { IEntidadFinanciadora } from '../proyecto-entidades-financiadoras/proyecto-entidades-financiadoras.fragment';
 import { IProyectoPeriodoAmortizacionListado, ProyectoAmortizacionFondosFragment } from './proyecto-amortizacion-fondos.fragment';
+import { ConfigService } from '@core/services/csp/config.service';
 
 const MSG_NUEVO = marker('title.new.entity');
 const MSG_DELETE = marker('msg.delete.entity');
@@ -72,7 +73,7 @@ export class ProyectoAmortizacionFondosComponent extends FragmentComponent imple
     protected actionService: ProyectoActionService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
-    private readonly translate: TranslateService,
+    private readonly translate: TranslateService
   ) {
     super(actionService.FRAGMENT.AMORTIZACION_FONDOS, actionService);
     this.formPart = this.fragment as ProyectoAmortizacionFondosFragment;
@@ -154,7 +155,7 @@ export class ProyectoAmortizacionFondosComponent extends FragmentComponent imple
       proyectoId: this.formPart.getKey() as number,
       entidadesFinanciadoras: this.formPart.entidadesFinanciadoras$.value.map(entidad => entidad.value),
       proyectosSGE: this.formPart.proyectosSGE$.value,
-      anualidadGenerica: !this.formPart.anualidades
+      anualidadGenerica: !this.formPart.anualidades,
     };
     const config = {
       data

@@ -163,10 +163,10 @@ export class MiembroEquipoProyectoModalComponent extends DialogFormComponent<Mie
           Validators.required
         ]),
         fechaInicio: new FormControl(this.data?.entidad?.fechaInicio, [
-          DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax)
+          DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax, false)
         ]),
         fechaFin: new FormControl(this.data?.entidad?.fechaFin, [
-          DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax)
+          DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax, false)
         ])
       },
       {

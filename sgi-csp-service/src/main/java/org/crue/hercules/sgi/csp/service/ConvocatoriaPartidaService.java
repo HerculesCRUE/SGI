@@ -1,13 +1,18 @@
 package org.crue.hercules.sgi.csp.service;
 
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPartida;
+
+import javax.validation.Valid;
+
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.data.domain.Page;
 
 /**
  * Service Interface para gestionar {@link ConvocatoriaPartida}.
  */
+@Validated
 public interface ConvocatoriaPartidaService {
 
   /**
@@ -16,7 +21,7 @@ public interface ConvocatoriaPartidaService {
    * @param convocatoriaPartida la partida {@link ConvocatoriaPartida} a guardar.
    * @return la partida {@link ConvocatoriaPartida} persistida.
    */
-  ConvocatoriaPartida create(ConvocatoriaPartida convocatoriaPartida);
+  ConvocatoriaPartida create(@Valid ConvocatoriaPartida convocatoriaPartida);
 
   /**
    * Actualizar {@link ConvocatoriaPartida}.
@@ -25,7 +30,7 @@ public interface ConvocatoriaPartidaService {
    *                                      actualizar.
    * @return la partida {@link ConvocatoriaPartida} persistida.
    */
-  ConvocatoriaPartida update(ConvocatoriaPartida convocatoriaPartidaActualizar);
+  ConvocatoriaPartida update(@Valid ConvocatoriaPartida convocatoriaPartidaActualizar);
 
   /**
    * Elimina el {@link ConvocatoriaPartida}.

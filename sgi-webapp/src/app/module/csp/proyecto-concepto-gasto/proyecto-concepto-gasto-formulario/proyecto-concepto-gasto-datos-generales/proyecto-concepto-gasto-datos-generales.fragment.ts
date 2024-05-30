@@ -51,12 +51,10 @@ export class ProyectoConceptoGastoDatosGeneralesFragment extends FormFragment<IP
         costesIndirectos: new FormControl({ value: null, disabled: true },
           Validators.required),
         fechaInicio: new FormControl(null, [
-          DateValidator.minDate(this.proyecto?.fechaInicio),
-          DateValidator.maxDate(this.proyecto?.fechaFin)
+          DateValidator.isBetween(this.proyecto?.fechaInicio, this.proyecto?.fechaFinDefinitiva ?? this.proyecto?.fechaFin, false)
         ]),
         fechaFin: new FormControl(null, [
-          DateValidator.minDate(this.proyecto?.fechaInicio),
-          DateValidator.maxDate(this.proyecto?.fechaFin)
+          DateValidator.isBetween(this.proyecto?.fechaInicio, this.proyecto?.fechaFinDefinitiva ?? this.proyecto?.fechaFin, false)
         ]),
         observaciones: new FormControl(undefined),
         conceptoGastoConvocatoria: new FormControl({ value: null, disabled: true }),

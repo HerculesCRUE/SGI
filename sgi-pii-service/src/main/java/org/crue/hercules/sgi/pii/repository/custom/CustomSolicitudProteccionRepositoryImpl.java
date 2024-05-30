@@ -12,7 +12,6 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.crue.hercules.sgi.framework.data.jpa.domain.Activable_;
 import org.crue.hercules.sgi.pii.dto.InvencionDto.SolicitudProteccionDto;
 import org.crue.hercules.sgi.pii.dto.SolicitudProteccionOutput.Invencion;
 import org.crue.hercules.sgi.pii.model.Invencion_;
@@ -64,13 +63,11 @@ public class CustomSolicitudProteccionRepositoryImpl implements CustomSolicitudP
     Predicate predicateInvencion = cb
         .equal(root.get(SolicitudProteccion_.invencion).get(Invencion_.id), invencionId);
 
-    Predicate predicateIsActiva = cb.equal(root.get(Activable_.activo), Boolean.TRUE);
-
     Path<Instant> fechaConcesion = root.get(SolicitudProteccion_.fechaConcesion);
     Predicate predicateInFechaBaremacion = cb.and(cb.lessThanOrEqualTo(fechaConcesion, fechaFinBaremacion),
         cb.greaterThanOrEqualTo(fechaConcesion, fechaInicioBaremacion));
 
-    cq.where(cb.and(predicateIsActiva, predicateInvencion, predicateInFechaBaremacion));
+    cq.where(cb.and(predicateInvencion, predicateInFechaBaremacion));
 
     cq.orderBy(cb.asc(fechaConcesion));
 

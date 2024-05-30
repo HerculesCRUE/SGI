@@ -6,11 +6,16 @@ import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo_;
+import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.Proyecto_;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
 import org.crue.hercules.sgi.csp.model.RolProyecto_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProyectoEquipoSpecifications {
 
   /**
@@ -21,9 +26,7 @@ public class ProyectoEquipoSpecifications {
    *         {@link Proyecto} con el id indicado.
    */
   public static Specification<ProyectoEquipo> byProyectoId(Long id) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ProyectoEquipo_.proyecto).get(Proyecto_.id), id);
-    };
+    return (root, query, cb) -> cb.equal(root.get(ProyectoEquipo_.proyecto).get(Proyecto_.id), id);
   }
 
   /**
@@ -35,15 +38,13 @@ public class ProyectoEquipoSpecifications {
    *         fechas solapadas
    */
   public static Specification<ProyectoEquipo> byRangoFechaSolapados(Instant fechaInicio, Instant fechaFin) {
-    return (root, query, cb) -> {
-      return cb.and(
-          cb.or(cb.isNull(root.get(ProyectoEquipo_.fechaInicio)),
-              cb.lessThanOrEqualTo(root.get(ProyectoEquipo_.fechaInicio),
-                  fechaFin != null ? fechaFin : Instant.parse("2500-01-01T23:59:59Z"))),
-          cb.or(cb.isNull(root.get(ProyectoEquipo_.fechaFin)),
-              cb.greaterThanOrEqualTo(root.get(ProyectoEquipo_.fechaFin),
-                  fechaInicio != null ? fechaInicio : Instant.parse("1900-01-01T00:00:00Z"))));
-    };
+    return (root, query, cb) -> cb.and(
+        cb.or(cb.isNull(root.get(ProyectoEquipo_.fechaInicio)),
+            cb.lessThanOrEqualTo(root.get(ProyectoEquipo_.fechaInicio),
+                fechaFin != null ? fechaFin : Instant.parse("2500-01-01T23:59:59Z"))),
+        cb.or(cb.isNull(root.get(ProyectoEquipo_.fechaFin)),
+            cb.greaterThanOrEqualTo(root.get(ProyectoEquipo_.fechaFin),
+                fechaInicio != null ? fechaInicio : Instant.parse("1900-01-01T00:00:00Z"))));
   }
 
   /**
@@ -54,9 +55,7 @@ public class ProyectoEquipoSpecifications {
    *         Ref sea la recibida.
    */
   public static Specification<ProyectoEquipo> byPersonaRef(String personaRef) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ProyectoEquipo_.personaRef), personaRef);
-    };
+    return (root, query, cb) -> cb.equal(root.get(ProyectoEquipo_.personaRef), personaRef);
   }
 
   /**
@@ -109,9 +108,20 @@ public class ProyectoEquipoSpecifications {
    *         {@link RolProyecto} con el rolPrincipal indicado.
    */
   public static Specification<ProyectoEquipo> byRolPrincipal(Boolean rolPrincipal) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ProyectoEquipo_.rolProyecto).get(RolProyecto_.rolPrincipal), rolPrincipal);
-    };
+    return (root, query, cb) -> cb.equal(root.get(ProyectoEquipo_.rolProyecto).get(RolProyecto_.rolPrincipal),
+        rolPrincipal);
+  }
+
+  /**
+   * Se obtienen los {@link ProyectoEquipo} con valores para las fechas de
+   * inicio y/o fin
+   * 
+   * @return specification para obtener los {@link ProyectoSocio} con
+   *         valor en alguna de sus fechas
+   */
+  public static Specification<ProyectoEquipo> withFechaInicioOrFechaFin() {
+    return (root, query, cb) -> cb.or(cb.isNotNull(root.get(ProyectoEquipo_.fechaInicio)),
+        cb.isNotNull(root.get(ProyectoEquipo_.fechaFin)));
   }
 
 }

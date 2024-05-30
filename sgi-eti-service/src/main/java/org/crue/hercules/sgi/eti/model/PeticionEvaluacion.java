@@ -146,11 +146,11 @@ public class PeticionEvaluacion extends BaseEntity {
   private String otroValorSocial;
 
   /** Objetivos */
-  @Column(name = "objetivos", length = 4000)
+  @Column(name = "objetivos", length = 4000, columnDefinition = "clob")
   private String objetivos;
 
   /** Diseño metodológico */
-  @Column(name = "dis_metodologico", length = 4000)
+  @Column(name = "dis_metodologico", length = 4000, columnDefinition = "clob")
   private String disMetodologico;
 
   /** Tiene fondos propios */

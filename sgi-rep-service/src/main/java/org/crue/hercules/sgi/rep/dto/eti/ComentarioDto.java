@@ -20,4 +20,7 @@ public class ComentarioDto extends BaseRestDto {
   private EvaluacionDto evaluacion;
   private TipoComentarioDto tipoComentario;
   private String texto;
+  private String createdBy;
+  private String personaCreated;
+  private String sexoPersonaCreated;
 }

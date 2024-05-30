@@ -17,6 +17,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.ScriptAssert;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,6 +30,9 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
+@ScriptAssert.List({
+    // Validacion de lugar
+    @ScriptAssert(lang = "javascript", alias = "_this", script = "(_this.getVideoconferencia() || _this.getLugar() != null)", reportOn = "lugar", message = "{org.crue.hercules.sgi.eti.validation.required.message}") })
 public class ConvocatoriaReunion extends BaseEntity {
 
   private static final long serialVersionUID = 1L;
@@ -53,8 +58,12 @@ public class ConvocatoriaReunion extends BaseEntity {
   @Column(name = "fecha_limite", nullable = false)
   private Instant fechaLimite;
 
+  /** Videoconferencia. */
+  @Column(name = "videoconferencia", nullable = false)
+  private Boolean videoconferencia;
+
   /** Lugar. */
-  @Column(name = "lugar", length = 250, nullable = false)
+  @Column(name = "lugar", length = 250)
   private String lugar;
 
   /** Orden del día. */

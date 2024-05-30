@@ -7,14 +7,11 @@
       <mat-form-field>
         <mat-label>{{'csp.identificador-justificacion.identificador-justificacion' | translate}}
         </mat-label>
-        <input matInput formControlName="identificadorJustificacion" type="text" required
+        <input matInput formControlName="identificadorJustificacion" type="text"
           placeholder="{{'csp.identificador-justificacion.identificador-justificacion' | translate}}">
         <sgi-field-info matSuffix [visible]="true"
           message="{{'csp.identificador-justificacion.identificador-justificacion-tooltip' | translate: plantillaFormatoIdentificadorJustificacion}}">
         </sgi-field-info>
-        <mat-error *ngIf="formGroup.controls.identificadorJustificacion.errors?.required">
-          {{'error.required.entity' | translate:msgParamIdJustificacionEntity}}
-        </mat-error>
         <mat-error *ngIf="formGroup.controls.identificadorJustificacion.errors?.pattern">
           {{'error.csp.identificador-justificacion.identificador-justificacion.invalid-format' | translate}}
         </mat-error>
@@ -32,12 +29,9 @@
     <div fxFlex>
       <mat-form-field>
         <mat-label>{{'csp.identificador-justificacion.fecha-presentacion-justificacion' | translate}}</mat-label>
-        <input matInput formControlName="fechaPresentacionJustificacion" [ngxMatDatetimePicker]="picker1" required>
+        <input matInput formControlName="fechaPresentacionJustificacion" [ngxMatDatetimePicker]="picker1">
         <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
         <ngx-mat-datetime-picker #picker1 showSeconds="true" [defaultTime]="[0,0,0]"></ngx-mat-datetime-picker>
-        <mat-error *ngIf="formGroup.controls.fechaPresentacionJustificacion.errors?.required">
-          {{'error.required.entity' | translate:msgParamFechaJustificacionEntity}}
-        </mat-error>
       </mat-form-field>
     </div>
   </form>

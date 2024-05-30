@@ -23,7 +23,15 @@ export class ProyectoSociosFragment extends Fragment {
     this.setComplete(true);
   }
 
+  public reloadData(): void {
+    this.loadTableData();
+  }
+
   protected onInitialize(): void {
+    this.loadTableData();
+  }
+
+  private loadTableData(): void {
 
     const id = this.getKey() as number;
 

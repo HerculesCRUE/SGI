@@ -105,9 +105,9 @@
             <a color="primary" mat-icon-button [routerLink]="[memoria.id]" matTooltip="{{'btn.edit' | translate}}">
               <mat-icon>border_color</mat-icon>
             </a>
-            <ng-container *ngIf="hasPermisoEliminar(memoria.estadoActual.id, memoria.solicitanteRef)">
-              <button color="warn" mat-icon-button (click)="delete(memoria.id)"
-                matTooltip="{{'btn.delete' | translate}}">
+            <ng-container *ngIf="hasPermisoEliminar(memoria.estadoActual.id, memoria.solicitante.id)">
+              <button color="warn" mat-icon-button *sgiHasAuthorityForAnyUO="'ETI-MEM-INV-BR'"
+                (click)="delete(memoria.id)" matTooltip="{{'btn.delete' | translate}}">
                 <mat-icon>highlight_off</mat-icon>
               </button>
             </ng-container>

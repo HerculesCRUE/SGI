@@ -118,7 +118,7 @@ class AutorizacionServiceTest extends BaseServiceTest {
     BDDMockito.given(this.sgdocService.uploadInforme(anyString(), ArgumentMatchers.<Resource>any()))
         .willReturn(expectedDocumento);
 
-    DocumentoOutput documento = autorizacionService.generarDocumentoAutorizacion(1L);
+    DocumentoOutput documento = autorizacionService.generarDocumentoAutorizacion(1L, null);
 
     Assertions.assertThat(documento).isNotNull();
     Assertions.assertThat(documento.getArchivo()).isEqualTo(expectedDocumento.getArchivo());

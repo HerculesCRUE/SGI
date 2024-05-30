@@ -71,9 +71,4 @@ public class InvencionInventor extends BaseEntity {
   @Setter(AccessLevel.NONE)
   private final Invencion invencion = null;
 
-  @JsonInclude()
-  @Transient
-  @Builder.Default
-  private Boolean activo = true;
-
 }

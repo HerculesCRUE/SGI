@@ -4,11 +4,12 @@ import { ISolicitudPalabraClave } from '@core/models/csp/solicitud-palabra-clave
 import { ISolicitudProyecto, TipoPresupuesto } from '@core/models/csp/solicitud-proyecto';
 import { FormFragment } from '@core/services/action-service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
+import { RolSocioService } from '@core/services/csp/rol-socio/rol-socio.service';
 import { SolicitudProyectoService } from '@core/services/csp/solicitud-proyecto.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, EMPTY, Observable, of, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, Subject, Subscription, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import { AreaTematicaModalData } from '../../modals/solicitud-area-tematica-modal/solicitud-area-tematica-modal.component';
 
@@ -40,9 +41,9 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
     private convocatoriaService: ConvocatoriaService,
     public readonly: boolean,
     private convocatoriaId: number,
-    public hasAnySolicitudProyectoSocioWithRolCoordinador$: BehaviorSubject<boolean>,
     private hasPopulatedPeriodosSocios: boolean,
-    private readonly palabraClaveService: PalabraClaveService
+    private readonly palabraClaveService: PalabraClaveService,
+    private rolSocioService: RolSocioService
   ) {
     super(key, true);
     this.setComplete(true);
@@ -89,19 +90,19 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
     } else {
       form.addControl('colaborativo', new FormControl(null, []));
       form.addControl('coordinado', new FormControl(undefined, [Validators.required]));
-      form.addControl('coordinadorExterno', new FormControl(undefined));
+      form.addControl('rolUniversidad', new FormControl(undefined));
       form.addControl('tipoDesglosePresupuesto', new FormControl(undefined, [Validators.required]));
 
       this.subscriptions.push(
         this.coordinadoValueChangeListener(
           form.controls.coordinado as FormControl,
-          form.controls.coordinadorExterno as FormControl,
+          form.controls.rolUniversidad as FormControl,
           form.controls.colaborativo as FormControl
         )
       );
 
       this.subscriptions.push(
-        this.coordinadoExternoValueChangeListener(form.controls.coordinadorExterno as FormControl)
+        this.rolUniversidadValueChangeListener(form.controls.rolUniversidad as FormControl)
       );
 
       this.subscriptions.push(
@@ -118,41 +119,38 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
     return form;
   }
 
-  private coordinadoValueChangeListener(coordinado: FormControl, coordinadorExterno: FormControl, colaborativo: FormControl): Subscription {
+  private coordinadoValueChangeListener(coordinado: FormControl, rolUniversidad: FormControl, colaborativo: FormControl): Subscription {
 
     return coordinado.valueChanges.subscribe(
       (value) => {
         if (value && !this.readonly) {
-          coordinadorExterno.enable();
-          coordinadorExterno.setValidators([Validators.required]);
+          rolUniversidad.enable();
+          rolUniversidad.setValidators([Validators.required]);
           this.disableProyectoCoordinadoIfAnySocioExists(this.hasSolicitudSocio$.value);
         }
-        coordinadorExterno.updateValueAndValidity();
+        rolUniversidad.updateValueAndValidity();
         this.coordinado$.next(value);
 
         if (!value) {
           colaborativo.setValue(null);
-          coordinadorExterno.disable();
-          coordinadorExterno.setValue('');
+          rolUniversidad.disable();
+          rolUniversidad.setValue('');
           this.coordinadorExterno$.next(false);
-          coordinadorExterno.setValidators([]);
-          coordinadorExterno.updateValueAndValidity();
+          rolUniversidad.setValidators([]);
+          rolUniversidad.updateValueAndValidity();
         }
       }
     );
   }
 
-  private coordinadoExternoValueChangeListener(coordinadorExterno: FormControl): Subscription {
-
-    return coordinadorExterno.valueChanges
-      .subscribe(
-        (value) => {
-          this.coordinadorExterno$.next(value);
-          if (!this.readonly) {
-            this.disableCoordinadorExterno(value, this.hasPopulatedPeriodosSocios$.value);
-          }
-        }
-      );
+  private rolUniversidadValueChangeListener(rolUniversidad: FormControl): Subscription {
+    return rolUniversidad.valueChanges.subscribe((value) => {
+      const isCoordinadorExterno = !!value ? !value.coordinador : true;
+      this.coordinadorExterno$.next(isCoordinadorExterno);
+      if (!this.readonly) {
+        this.disableRolUniversidad(isCoordinadorExterno, this.hasPopulatedPeriodosSocios$.value);
+      }
+    });
   }
 
   /**
@@ -207,7 +205,7 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
         duracion: solicitudProyecto?.duracion,
         colaborativo: solicitudProyecto?.colaborativo,
         coordinado: solicitudProyecto?.coordinado,
-        coordinadorExterno: solicitudProyecto?.coordinadorExterno,
+        rolUniversidad: solicitudProyecto?.rolUniversidad,
         tipoDesglosePresupuesto: solicitudProyecto?.tipoPresupuesto,
         objetivos: solicitudProyecto?.objetivos,
         intereses: solicitudProyecto?.intereses,
@@ -298,6 +296,17 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
         }
         return of(solicitudProyecto);
       }),
+      switchMap(solicitudProyecto => {
+        if (this.isInvestigador || !solicitudProyecto?.rolUniversidad?.id) {
+          return of(solicitudProyecto);
+        }
+
+        return this.rolSocioService.findById(solicitudProyecto.rolUniversidad.id).pipe(
+          map(rolSocio => {
+            solicitudProyecto.rolUniversidad = rolSocio;
+            return solicitudProyecto;
+          }));
+      }),
       switchMap(solicitudProyecto =>
         this.solicitudService.findPalabrasClave(key).pipe(
           map(({ items }) => items.map(solicitudPalabraClave => solicitudPalabraClave.palabraClave)),
@@ -366,7 +375,7 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
     } else {
       this.solicitudProyecto.colaborativo = Boolean(form.colaborativo.value);
       this.solicitudProyecto.coordinado = Boolean(form.coordinado.value);
-      this.solicitudProyecto.coordinadorExterno = Boolean(form.coordinadorExterno.value);
+      this.solicitudProyecto.rolUniversidad = form.rolUniversidad.value;
       this.solicitudProyecto.peticionEvaluacionRef = form.peticionEvaluacionRef.value;
       this.solicitudProyecto.tipoPresupuesto = form.tipoDesglosePresupuesto.value;
 
@@ -424,11 +433,11 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
     );
   }
 
-  private disableCoordinadorExterno(isCoordinadorExterno: boolean, hasPopulatedPeriodosSocios: boolean): void {
+  private disableRolUniversidad(isCoordinadorExterno: boolean, hasPopulatedPeriodosSocios: boolean): void {
     if (!isCoordinadorExterno && hasPopulatedPeriodosSocios) {
-      this.getFormGroup()?.controls.coordinadorExterno.disable({ emitEvent: false });
+      this.getFormGroup()?.controls.rolUniversidad.disable({ emitEvent: false });
     } else {
-      this.getFormGroup()?.controls.coordinadorExterno.enable({ emitEvent: false });
+      this.getFormGroup()?.controls.rolUniversidad.enable({ emitEvent: false });
     }
   }
 }

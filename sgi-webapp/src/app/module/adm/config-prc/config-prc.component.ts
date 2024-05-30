@@ -10,7 +10,9 @@ import { map, share } from 'rxjs/operators';
 
 export enum ConfigPrc {
   PRC_COM_PROCESO_BAREMACION_DESTINATARIOS = 'prc-proceso-baremacion-destinatarios',
-  PRC_REP_DETALLE_GRUPO = 'rep-prc-detalle-grupo-prpt',
+  PRC_REP_DETALLE_GRUPO = 'rep-prc-detalle-grupo-docx',
+  PRC_REP_DETALLE_PRODUCCION_INVESTIGADOR = 'rep-prc-detalle-produccion-investigador-docx',
+  PRC_REP_RESUMEN_PUNTUACION_GRUPOS = 'rep-prc-resumen-puntuacion-grupos-docx',
   // Titulos
   TITLE_COMUNICADO = 'title-comunicado',
 }
@@ -24,6 +26,8 @@ export class ConfigPrcComponent extends AbstractMenuContentComponent {
 
   private readonly _CONFIG_MAP: Map<ConfigPrc, IConfigOptions> = new Map([
     [ConfigPrc.PRC_REP_DETALLE_GRUPO, { type: ConfigType.FILE, label: marker(`adm.config.prc.PRC_REP_DETALLE_GRUPO`), module: ConfigModule.CNF }],
+    [ConfigPrc.PRC_REP_RESUMEN_PUNTUACION_GRUPOS, { type: ConfigType.FILE, label: marker(`adm.config.prc.PRC_REP_RESUMEN_PUNTUACION_GRUPOS`), module: ConfigModule.CNF }],
+    [ConfigPrc.PRC_REP_DETALLE_PRODUCCION_INVESTIGADOR, { type: ConfigType.FILE, label: marker(`adm.config.prc.PRC_REP_DETALLE_PRODUCCION_INVESTIGADOR`), module: ConfigModule.CNF }],
     [ConfigPrc.TITLE_COMUNICADO, { type: ConfigType.CONFIG_GROUP_TITLE, label: marker(`adm.config.group-title.comunicados`), module: ConfigModule.NONE }],
     [ConfigPrc.PRC_COM_PROCESO_BAREMACION_DESTINATARIOS, { type: ConfigType.EMAILS, label: marker(`adm.config.prc.PRC_COM_PROCESO_BAREMACION_DESTINATARIOS`), required: true, module: ConfigModule.CNF }]
   ]);

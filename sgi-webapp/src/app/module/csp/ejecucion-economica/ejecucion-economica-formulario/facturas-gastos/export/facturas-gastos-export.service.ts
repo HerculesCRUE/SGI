@@ -22,6 +22,9 @@ const CONCEPTO_GASTO_KEY = marker('sge.dato-economico.concepto-gasto');
 const APLICACION_PRESUPUESTARIA_KEY = marker('sge.dato-economico.partida-presupuestaria');
 const CODIGO_ECONOMICO_KEY = marker('sge.dato-economico.codigo-economico');
 const FECHA_DEVENGO_KEY = marker('sge.dato-economico.fecha-devengo');
+const CLASIFICADO_AUTOMATICAMENTE_KEY = marker('sge.dato-economico.clasificado-automaticamente');
+const MSG_TRUE = marker('label.si');
+const MSG_FALSE = marker('label.no');
 
 @Injectable()
 export class FacturasGastosExportService
@@ -45,8 +48,17 @@ export class FacturasGastosExportService
         elements: []
       };
       row.elements.push(item.anualidad);
-      row.elements.push(item.proyecto?.titulo ?? 'Sin clasificar');
+
+      if (reportConfig.reportOptions.showColumnProyectoSgi) {
+        row.elements.push(item.proyecto?.titulo ?? 'Sin clasificar');
+      }
+
       row.elements.push(item.conceptoGasto?.nombre ?? 'Sin clasificar');
+
+      if (reportConfig.reportOptions.showColumClasificadoAutomaticamente) {
+        row.elements.push(this.getI18nBooleanYesNo(item.clasificadoAutomaticamente));
+      }
+
       row.elements.push(item.clasificacionSGE?.nombre ?? 'Sin clasificar');
       row.elements.push(item.partidaPresupuestaria);
 
@@ -74,21 +86,22 @@ export class FacturasGastosExportService
   protected getColumns(resultados: IDatoEconomico[], reportConfig: IReportConfig<IEjecucionPresupuestariaReportOptions>):
     Observable<ISgiColumnReport[]> {
 
-    return of(this.toReportColumns(reportConfig.reportOptions.columns));
+    return of(
+      this.toReportColumns(
+        reportConfig.reportOptions.columns,
+        reportConfig.reportOptions.showColumnProyectoSgi,
+        reportConfig.reportOptions.showColumClasificadoAutomaticamente
+      )
+    );
   }
 
-  private toReportColumns(columns: IColumnDefinition[]): ISgiColumnReport[] {
+  private toReportColumns(columns: IColumnDefinition[], showColumnProyectoSgi = false, showColumClasificadoAutomaticamente = false): ISgiColumnReport[] {
 
     const columnsReport: ISgiColumnReport[] = [
       {
         title: this.translate.instant(ANUALIDAD_KEY),
         name: 'anualidad',
         type: ColumnType.STRING,
-      },
-      {
-        title: this.translate.instant(PROYECTO_KEY),
-        name: 'proyecto',
-        type: ColumnType.STRING
       },
       {
         title: this.translate.instant(CONCEPTO_GASTO_KEY),
@@ -117,6 +130,24 @@ export class FacturasGastosExportService
       }
     ];
 
+    if (showColumnProyectoSgi) {
+      const column: ISgiColumnReport = {
+        title: this.translate.instant(PROYECTO_KEY),
+        name: 'proyecto',
+        type: ColumnType.STRING
+      };
+      columnsReport.splice(1, 0, column);
+    }
+
+    if (showColumClasificadoAutomaticamente) {
+      const column: ISgiColumnReport = {
+        title: this.translate.instant(CLASIFICADO_AUTOMATICAMENTE_KEY),
+        name: 'clasificadoAutomaticamente',
+        type: ColumnType.STRING
+      };
+      columnsReport.splice(showColumnProyectoSgi ? 3 : 2, 0, column);
+    }
+
     columns.forEach(column => {
       columnsReport.push({
         name: column.id,
@@ -135,4 +166,9 @@ export class FacturasGastosExportService
     };
     return groupBy;
   }
+
+  protected getI18nBooleanYesNo(field: boolean): string {
+    return field ? this.translate.instant(MSG_TRUE) : this.translate.instant(MSG_FALSE);
+  }
+
 }

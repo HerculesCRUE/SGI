@@ -4,7 +4,8 @@ import { PROYECTO_PROYECTO_SGE_CONVERTER } from '@core/converters/csp/proyecto-p
 import { IProyectoProyectoSgeBackend } from '@core/models/csp/backend/proyecto-proyecto-sge-backend';
 import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { environment } from '@env';
-import { SgiMutableRestService } from '@sgi/framework/http';
+import { RSQLSgiRestFilter, SgiMutableRestService, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -21,4 +22,13 @@ export class ProyectoProyectoSgeService
       PROYECTO_PROYECTO_SGE_CONVERTER
     );
   }
+
+  findByProyectoSgeId(id: string): Observable<SgiRestListResult<IProyectoProyectoSge>> {
+    const queryOptions: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('proyectoSgeRef', SgiRestFilterOperator.EQUALS, id)
+    };
+
+    return this.findAll(queryOptions);
+  }
+
 }

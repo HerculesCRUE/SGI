@@ -14,6 +14,7 @@ import org.crue.hercules.sgi.pii.model.Invencion;
 import org.crue.hercules.sgi.pii.model.InvencionGasto;
 import org.crue.hercules.sgi.pii.model.InvencionGasto.Estado;
 import org.crue.hercules.sgi.pii.model.RepartoGasto;
+import org.crue.hercules.sgi.pii.model.SolicitudProteccion;
 import org.crue.hercules.sgi.pii.repository.InvencionGastoRepository;
 import org.crue.hercules.sgi.pii.repository.specification.InvencionGastoSpecifications;
 import org.springframework.data.jpa.domain.Specification;
@@ -51,6 +52,21 @@ public class InvencionGastoService {
     List<InvencionGasto> returnValue = repository.findAll(specs);
     log.debug("findByInvencionId(Long invencionId) - end");
     return returnValue;
+  }
+
+  /**
+   * Comprueba si la {@link SolicitudProteccion} tiene {@link InvencionGasto}
+   * asociados
+   *
+   * @param id el id de la {@link SolicitudProteccion}.
+   * @return Si la {@link SolicitudProteccion} tiene {@link InvencionGasto}
+   *         asociados
+   */
+  public boolean existsBySolicitudProteccionId(Long id) {
+    log.debug("existsBySolicitudProteccionId(Long id) - start");
+    boolean result = this.repository.existsBySolicitudProteccionId(id);
+    log.debug("existsBySolicitudProteccionId(Long id) - end");
+    return result;
   }
 
   /**

@@ -1,5 +1,5 @@
-import { IEstadoValidacionIP } from '@core/models/csp/estado-validacion-ip';
 import { IProyectoFacturacion } from '@core/models/csp/proyecto-facturacion';
+import { IProyectoProrroga } from '@core/models/csp/proyecto-prorroga';
 import { ITipoFacturacion } from '@core/models/csp/tipo-facturacion';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';
@@ -25,7 +25,9 @@ class ProyectoFacturacionRequestConverter extends SgiBaseConverter<IProyectoFact
         estado: value.estadoValidacionIP?.estado,
         fecha: undefined,
         proyectoFacturacionId: undefined
-      }
+      },
+      proyectoProrroga: value.proyectoProrrogaId ? { id: value.proyectoProrrogaId } as IProyectoProrroga : null,
+      proyectoSgeRef: value.proyectoSgeRef
     };
   }
 
@@ -44,7 +46,9 @@ class ProyectoFacturacionRequestConverter extends SgiBaseConverter<IProyectoFact
         id: value.estadoValidacionIP.id,
         comentario: value.estadoValidacionIP.comentario,
         estado: value.estadoValidacionIP.estado,
-      }
+      },
+      proyectoProrrogaId: value.proyectoProrroga?.id,
+      proyectoSgeRef: value.proyectoSgeRef
     };
   }
 

@@ -25,7 +25,6 @@ export interface ISolicitudProteccion {
   agentePropiedad: IEmpresa;
   paisProteccion: IPais;
   comentarios: string;
-  activo: boolean;
 }
 
 export enum Estado {

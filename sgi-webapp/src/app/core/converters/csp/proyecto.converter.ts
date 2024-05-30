@@ -1,5 +1,6 @@
 import { IProyectoBackend } from '@core/models/csp/backend/proyecto-backend';
 import { IProyecto } from '@core/models/csp/proyecto';
+import { IRolSocio } from '@core/models/csp/rol-socio';
 import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';
@@ -21,6 +22,7 @@ class ProyectoConverter extends SgiBaseConverter<IProyectoBackend, IProyecto> {
       codigoInterno: value.codigoInterno,
       codigoExterno: value.codigoExterno,
       fechaInicio: LuxonUtils.fromBackend(value.fechaInicio),
+      fechaInicioStarted: value.fechaInicioStarted,
       fechaFin: LuxonUtils.fromBackend(value.fechaFin),
       fechaFinDefinitiva: LuxonUtils.fromBackend(value.fechaFinDefinitiva),
       modeloEjecucion: value.modeloEjecucion,
@@ -34,10 +36,11 @@ class ProyectoConverter extends SgiBaseConverter<IProyectoBackend, IProyecto> {
       colaborativo: value.colaborativo,
       excelencia: value.excelencia,
       coordinado: value.coordinado,
-      coordinadorExterno: value.coordinadorExterno,
+      rolUniversidad: value.rolUniversidadId ? { id: value.rolUniversidadId } as IRolSocio : null,
       permitePaquetesTrabajo: value.permitePaquetesTrabajo,
       causaExencion: value.causaExencion,
       iva: PROYECTO_IVA_CONVERTER.toTarget(value.iva),
+      ivaDeducible: value.ivaDeducible,
       anualidades: value.anualidades,
       unidadGestion: { id: +value.unidadGestionRef } as IUnidadGestion,
       observaciones: value.observaciones,
@@ -66,6 +69,7 @@ class ProyectoConverter extends SgiBaseConverter<IProyectoBackend, IProyecto> {
       codigoInterno: value.codigoInterno,
       codigoExterno: value.codigoExterno,
       fechaInicio: LuxonUtils.toBackend(value.fechaInicio),
+      fechaInicioStarted: value.fechaInicioStarted,
       fechaFinDefinitiva: LuxonUtils.toBackend(value.fechaFinDefinitiva),
       fechaFin: LuxonUtils.toBackend(value.fechaFin),
       unidadGestionRef: String(value.unidadGestion?.id),
@@ -80,10 +84,11 @@ class ProyectoConverter extends SgiBaseConverter<IProyectoBackend, IProyecto> {
       coordinado: value.coordinado,
       colaborativo: value.colaborativo,
       excelencia: value.excelencia,
-      coordinadorExterno: value.coordinadorExterno,
+      rolUniversidadId: value.rolUniversidad?.id,
       permitePaquetesTrabajo: value.permitePaquetesTrabajo,
       causaExencion: value.causaExencion,
       iva: PROYECTO_IVA_CONVERTER.fromTarget(value.iva),
+      ivaDeducible: value.ivaDeducible,
       observaciones: value.observaciones,
       anualidades: value.anualidades,
       activo: value.activo,

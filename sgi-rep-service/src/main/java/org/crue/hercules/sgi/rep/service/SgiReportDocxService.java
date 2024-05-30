@@ -13,12 +13,12 @@ import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
-import org.ddr.poi.html.HtmlRenderPolicy;
-import org.pentaho.reporting.engine.classic.core.ClassicEngineBoot;
+import org.crue.hercules.sgi.rep.util.SgiHtmlRenderPolicy;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -51,8 +51,6 @@ public class SgiReportDocxService {
     this.sgiConfigProperties = sgiConfigProperties;
     this.sgiApiConfService = sgiApiConfService;
 
-    // Initialize the reporting engine
-    ClassicEngineBoot.getInstance().start();
   }
 
   /**
@@ -119,7 +117,11 @@ public class SgiReportDocxService {
    */
   protected String getErrorMessage(Exception e) {
     log.error(e.getMessage());
-    return "<b>" + e.getMessage() + "</b>";
+    String msgError = " - Error - ";
+    if (ObjectUtils.isNotEmpty(e.getMessage())) {
+      msgError = e.getMessage();
+    }
+    return msgError;
   }
 
   protected String formatInstantToString(Instant instantDate, String pattern) {
@@ -144,7 +146,7 @@ public class SgiReportDocxService {
 
     Configure config = Configure.builder()
         .useSpringEL()
-        .addPlugin('<', new HtmlRenderPolicy())
+        .addPlugin('<', new SgiHtmlRenderPolicy())
         .build();
 
     return compileReportData(is, config, dataReport);

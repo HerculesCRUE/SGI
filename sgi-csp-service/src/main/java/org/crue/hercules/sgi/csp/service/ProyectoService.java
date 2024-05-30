@@ -2,6 +2,8 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.util.List;
 
+import org.crue.hercules.sgi.csp.dto.ProyectoApartadosToBeCopied;
+import org.crue.hercules.sgi.csp.dto.ProyectoApartadosWithDates;
 import org.crue.hercules.sgi.csp.dto.ProyectoDto;
 import org.crue.hercules.sgi.csp.dto.ProyectoPresupuestoTotales;
 import org.crue.hercules.sgi.csp.dto.ProyectoSeguimientoEjecucionEconomica;
@@ -34,6 +36,16 @@ public interface ProyectoService {
    * @return proyecto {@link Proyecto} actualizado.
    */
   Proyecto update(final Proyecto proyecto);
+
+  /**
+   * Marca la fecha de inicio del proyecto como inicializada y hace la copia de
+   * los apartados de la convocatoria y de la solicitud dependientes de la
+   * inicializacion de la fecha
+   *
+   * @param id Identificador de {@link Proyecto}.
+   * @return {@link Proyecto} actualizado.
+   */
+  Proyecto initFechaInicio(Long id);
 
   /**
    * Reactiva el {@link Proyecto}.
@@ -219,5 +231,24 @@ public interface ProyectoService {
   Page<ProyectoSeguimientoEjecucionEconomica> findProyectosSeguimientoEjecucionEconomica(String proyectoSgeRef,
       String query,
       Pageable pageable);
+
+  /**
+   * Devuelve el {@link ProyectoApartadosWithDates} con la informacion de cuales
+   * de los apartados tienen elementos con fechas.
+   * 
+   * @param id Identificador de {@link Proyecto}.
+   * @return {@link ProyectoApartadosWithDates} correspondiente al id
+   */
+  ProyectoApartadosWithDates getProyectoApartadosWithDates(Long id);
+
+  /**
+   * Devuelve el {@link ProyectoApartadosToBeCopied} con la informacion de cuales
+   * de los apartados tienen datos para ser copiados.
+   * 
+   * @param id Identificador de {@link Proyecto}.
+   * @return {@link ProyectoApartadosToBeCopied}
+   *         correspondiente al id
+   */
+  ProyectoApartadosToBeCopied getProyectoApartadosToBeCopied(Long id);
 
 }

@@ -1,12 +1,16 @@
 package org.crue.hercules.sgi.rep.service.csp;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.time.Instant;
-import java.util.Vector;
+import java.util.HashMap;
 
-import javax.swing.table.DefaultTableModel;
-
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
+import org.crue.hercules.sgi.rep.dto.SgiReportDto;
 import org.crue.hercules.sgi.rep.dto.csp.AutorizacionDto;
 import org.crue.hercules.sgi.rep.dto.csp.AutorizacionReport;
 import org.crue.hercules.sgi.rep.dto.csp.ConvocatoriaDto;
@@ -14,15 +18,16 @@ import org.crue.hercules.sgi.rep.dto.sgemp.EmpresaDto;
 import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto;
 import org.crue.hercules.sgi.rep.dto.sgp.PersonaDto.VinculacionDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
-import org.crue.hercules.sgi.rep.service.SgiReportService;
+import org.crue.hercules.sgi.rep.service.SgiReportDocxService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiSgempService;
 import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
-import org.pentaho.reporting.engine.classic.core.MasterReport;
-import org.pentaho.reporting.engine.classic.core.TableDataFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
+import fr.opensagres.poi.xwpf.converter.pdf.PdfConverter;
+import fr.opensagres.poi.xwpf.converter.pdf.PdfOptions;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -31,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Validated
-public class AutorizacionProyectoExternoReportService extends SgiReportService {
+public class AutorizacionProyectoExternoReportService extends SgiReportDocxService {
 
   private final PersonaService personaService;
   private final AutorizacionProyectoExternoService autorizacionProyectoExternoService;
@@ -50,130 +55,140 @@ public class AutorizacionProyectoExternoReportService extends SgiReportService {
     this.empresaService = empresaService;
   }
 
-  private DefaultTableModel getTableModelGeneral(AutorizacionDto autorizacionProyectoExterno) {
+  private XWPFDocument getDocument(AutorizacionDto autorizacionProyectoExterno, HashMap<String, Object> dataReport,
+      InputStream path) {
+    Assert.notNull(
+        autorizacionProyectoExterno,
+        // Defer message resolution untill is needed
+        () -> ProblemMessage.builder().key(Assert.class, "notNull")
+            .parameter("field",
+                ApplicationContextSupport.getMessage("org.crue.hercules.sgi.rep.dto.eti.AutorizacionDto.message"))
+            .parameter("entity",
+                ApplicationContextSupport.getMessage(AutorizacionDto.class))
+            .build());
 
-    Vector<Object> columnsData = new Vector<>();
-    Vector<Vector<Object>> rowsData = new Vector<>();
-    Vector<Object> elementsRow = new Vector<>();
+    getDatosSolicitante(autorizacionProyectoExterno, dataReport);
 
-    getDatosSolicitante(autorizacionProyectoExterno, columnsData, elementsRow);
-
-    columnsData.add("datosConvocatoria");
+    String datosConvocatoriaString = null;
     if (autorizacionProyectoExterno.getConvocatoriaId() != null) {
       try {
         ConvocatoriaDto convocatoria = convocatoriaService.findById(autorizacionProyectoExterno.getConvocatoriaId());
-        elementsRow.add(convocatoria.getTitulo());
+        datosConvocatoriaString = convocatoria.getTitulo();
       } catch (Exception e) {
-        elementsRow.add(getErrorMessageToReport(e));
+        datosConvocatoriaString = getErrorMessage(e);
       }
     } else {
-      elementsRow.add(autorizacionProyectoExterno.getDatosConvocatoria());
+      datosConvocatoriaString = autorizacionProyectoExterno.getDatosConvocatoria();
     }
+    dataReport.put("datosConvocatoria", datosConvocatoriaString);
 
-    columnsData.add("horasDedicacion");
-    elementsRow.add(autorizacionProyectoExterno.getHorasDedicacion() != null
+    dataReport.put("horasDedicacion", autorizacionProyectoExterno.getHorasDedicacion() != null
         ? autorizacionProyectoExterno.getHorasDedicacion() + " horas"
         : "");
 
-    columnsData.add("tituloProyecto");
-    elementsRow.add(autorizacionProyectoExterno.getTituloProyecto());
+    dataReport.put("tituloProyecto", autorizacionProyectoExterno.getTituloProyecto());
 
-    columnsData.add("universidad");
+    String universidadString = null;
     if (autorizacionProyectoExterno.getEntidadRef() != null) {
       try {
         EmpresaDto empresa = empresaService.findById(autorizacionProyectoExterno.getEntidadRef());
-        elementsRow.add(empresa.getNombre());
+        universidadString = empresa.getNombre();
       } catch (Exception e) {
-        elementsRow.add(getErrorMessageToReport(e));
+        universidadString = getErrorMessage(e);
       }
     } else {
-      elementsRow.add(autorizacionProyectoExterno.getDatosEntidad());
+      universidadString = autorizacionProyectoExterno.getDatosEntidad();
     }
+    dataReport.put("universidad", universidadString);
 
-    columnsData.add("investigador");
+    String investigadorString = null;
+    String fieldInvestigador = "-";
     if (autorizacionProyectoExterno.getResponsableRef() != null) {
       try {
         PersonaDto persona = personaService.findById(autorizacionProyectoExterno.getResponsableRef());
-        elementsRow.add(persona.getNombre() + " " + persona.getApellidos());
+        investigadorString = persona.getNombre() + " " + persona.getApellidos();
+        if (persona.getSexo().getId().equals("V")) {
+          fieldInvestigador = ApplicationContextSupport.getMessage("field.capitalize.investigador.masculino");
+        } else {
+          fieldInvestigador = ApplicationContextSupport.getMessage("field.capitalize.investigador.femenino");
+        }
       } catch (Exception e) {
-        elementsRow.add(getErrorMessageToReport(e));
+        investigadorString = getErrorMessage(e);
       }
     } else {
-      elementsRow.add(autorizacionProyectoExterno.getDatosResponsable());
+      investigadorString = autorizacionProyectoExterno.getDatosResponsable();
+      fieldInvestigador = ApplicationContextSupport.getMessage("field.capitalize.investigador.masculinoFemenino");
     }
+    dataReport.put("investigador", investigadorString);
+    dataReport.put("fieldCapitalizeInvestigador", fieldInvestigador);
 
-    columnsData.add("fechaActual");
     String i18nDe = ApplicationContextSupport.getMessage("common.de");
     String pattern = String.format("EEEE dd '%s' MMMM '%s' yyyy", i18nDe, i18nDe);
-    elementsRow.add(formatInstantToString(Instant.now(), pattern));
+    dataReport.put("fechaActual", formatInstantToString(Instant.now(), pattern));
 
-    columnsData.add("resourcesBaseURL");
-    elementsRow.add(getRepResourcesBaseURL());
-
-    rowsData.add(elementsRow);
-
-    DefaultTableModel tableModel = new DefaultTableModel();
-    tableModel.setDataVector(rowsData, columnsData);
-    return tableModel;
+    return compileReportData(path, dataReport);
   }
 
-  private void getDatosSolicitante(AutorizacionDto autorizacionProyectoExterno, Vector<Object> columnsData,
-      Vector<Object> elementsRow) {
-    columnsData.add("nombre");
-    columnsData.add("nif");
+  private void getDatosSolicitante(AutorizacionDto autorizacionProyectoExterno, HashMap<String, Object> dataReport) {
+    boolean isSolicitanteMasculino = true;
     try {
       PersonaDto persona = personaService.findById(autorizacionProyectoExterno.getSolicitanteRef());
-      elementsRow.add(persona.getNombre() + " " + persona.getApellidos());
-      elementsRow.add(persona.getNumeroDocumento());
+      dataReport.put("solicitanteNombre", persona.getNombre() + " " + persona.getApellidos());
+      dataReport.put("solicitanteNif", persona.getNumeroDocumento());
+      if (!persona.getSexo().getId().equals("V")) {
+        isSolicitanteMasculino = false;
+      }
     } catch (Exception e) {
-      elementsRow.add(getErrorMessageToReport(e));
-      elementsRow.add(getErrorMessageToReport(e));
+      dataReport.put("solicitanteNombre", getErrorMessage(e));
+      dataReport.put("solicitanteNif", getErrorMessage(e));
     }
+    dataReport.put("isSolicitanteMasculino", isSolicitanteMasculino);
 
-    columnsData.add("catProfesional");
-    columnsData.add("departamento");
-    columnsData.add("centro");
     try {
       VinculacionDto vinculacionPersona = personaService
           .getVinculacion(autorizacionProyectoExterno.getSolicitanteRef());
-      elementsRow.add(vinculacionPersona.getCategoriaProfesional() != null
+      dataReport.put("solicitanteCatProfesional", vinculacionPersona.getCategoriaProfesional() != null
           ? vinculacionPersona.getCategoriaProfesional().getNombre()
           : '-');
-      elementsRow
-          .add(vinculacionPersona.getDepartamento() != null ? vinculacionPersona.getDepartamento().getNombre() : "-");
-      elementsRow
-          .add(vinculacionPersona.getCentro() != null ? vinculacionPersona.getCentro().getNombre() : "-");
+      dataReport.put("solicitanteDepartamento",
+          vinculacionPersona.getDepartamento() != null ? vinculacionPersona.getDepartamento().getNombre() : "-");
+      dataReport.put("solicitanteCentro",
+          vinculacionPersona.getCentro() != null ? vinculacionPersona.getCentro().getNombre() : "-");
     } catch (Exception e) {
-      elementsRow.add(getErrorMessageToReport(e));
-      elementsRow.add(getErrorMessageToReport(e));
-      elementsRow.add(getErrorMessageToReport(e));
+      dataReport.put("solicitanteCatProfesional", getErrorMessage(e));
+      dataReport.put("solicitanteDepartamento", getErrorMessage(e));
+      dataReport.put("solicitanteCentro", getErrorMessage(e));
     }
   }
 
-  public byte[] getReportAutorizacionProyectoExterno(AutorizacionReport autorizacionReport, Long idAutorizacion) {
+  private XWPFDocument getReportFromAutorizacionProyectoExterno(SgiReportDto sgiReport, Long idAutorizacion) {
     try {
-
-      final MasterReport report = getReportDefinition(autorizacionReport.getPath());
-
+      HashMap<String, Object> dataReport = new HashMap<>();
       AutorizacionDto autorizacionProyectoExterno = autorizacionProyectoExternoService
           .findById(idAutorizacion);
 
-      String queryGeneral = QUERY_TYPE + SEPARATOR_KEY + NAME_GENERAL_TABLE_MODEL + SEPARATOR_KEY
-          + "informeAutorizacion";
-      DefaultTableModel tableModelGeneral = getTableModelGeneral(autorizacionProyectoExterno);
+      dataReport.put("headerImg", getImageHeaderLogo());
 
-      TableDataFactory dataFactory = new TableDataFactory();
-      dataFactory.addTable(queryGeneral, tableModelGeneral);
-      report.setDataFactory(dataFactory);
+      XWPFDocument document = getDocument(autorizacionProyectoExterno, dataReport,
+          getReportDefinitionStream(sgiReport.getPath()));
 
-      autorizacionReport.setContent(generateReportOutput(autorizacionReport.getOutputType(), report));
+      ByteArrayOutputStream outputPdf = new ByteArrayOutputStream();
+      PdfOptions pdfOptions = PdfOptions.create();
+
+      PdfConverter.getInstance().convert(document, outputPdf, pdfOptions);
+
+      sgiReport.setContent(outputPdf.toByteArray());
+      return document;
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new GetDataReportException();
     }
-
-    return autorizacionReport.getContent();
   }
 
+  public byte[] getReportAutorizacionProyectoExterno(AutorizacionReport sgiReport,
+      Long idAutorizacion) {
+    getReportFromAutorizacionProyectoExterno(sgiReport, idAutorizacion);
+    return sgiReport.getContent();
+  }
 }

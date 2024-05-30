@@ -37,6 +37,14 @@
         </td>
       </ng-container>
 
+      <!-- Porcentaje máximo -->
+      <ng-container matColumnDef="porcentajeMaximo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.convocatoria-concepto-gasto.porcentaje-maximo' | translate}} </th>
+        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.porcentajeMaximo | number: '1.2-2'}}
+        </td>
+      </ng-container>
+
       <!-- Mes inicial -->
       <ng-container matColumnDef="mesInicial">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>

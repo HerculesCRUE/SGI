@@ -50,7 +50,7 @@ export class ConvocatoriaConceptoGastoComponent extends FragmentComponent implem
 
   elementosPagina = [5, 10, 25, 100];
   displayedColumnsPermitidos =
-    ['conceptoGasto.nombre', 'conceptoGasto.descripcion', 'conceptoGasto.costesIndirectos', 'importeMaximo', 'mesInicial', 'mesFinal', 'observaciones', 'acciones'];
+    ['conceptoGasto.nombre', 'conceptoGasto.descripcion', 'conceptoGasto.costesIndirectos', 'importeMaximo', 'porcentajeMaximo', 'mesInicial', 'mesFinal', 'observaciones', 'acciones'];
   displayedColumnsNoPermitidos =
     ['conceptoGasto.nombre', 'conceptoGasto.descripcion', 'conceptoGasto.costesIndirectos', 'mesInicial', 'mesFinal', 'observaciones', 'acciones'];
 

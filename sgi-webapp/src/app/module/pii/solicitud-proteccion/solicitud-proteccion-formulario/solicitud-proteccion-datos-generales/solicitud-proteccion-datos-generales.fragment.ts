@@ -75,7 +75,6 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
     const firstSolicitudProteccion = solicitudesAnteriores
       .find(solicitud =>
         solicitud.invencion.tipoProteccion.tipoPropiedad === TipoPropiedad.INDUSTRIAL
-        && solicitud.activo === true
       );
     this.firstSolicitudProteccionWithPrioridad.next(firstSolicitudProteccion ?? null);
     if (!key) {

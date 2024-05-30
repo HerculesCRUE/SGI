@@ -1,12 +1,12 @@
 {
   "name": "sgi-webapp",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "scripts": {
     "ng": "ng",
-    "start": "node ./generate-config.js && NODE_OPTIONS=--max-old-space-size=2048 ng serve --disable-host-check",
+    "start": "node ./generate-config.js && NODE_OPTIONS=--max-old-space-size=4096 ng serve --disable-host-check",
     "build": "node ./generate-config.js && ng build",
     "build-prod": "node ./generate-config.js && ng build --prod",
-    "test": "node ./generate-config.js && ng test",
+    "test": "node ./generate-config.js && NODE_OPTIONS=--max-old-space-size=4096 ng test",
     "test-ci": "node ./generate-config.js && ng test --watch=false --browsers=ChromeHeadlessCI",
     "lint": "node ./generate-config.js && ng lint",
     "e2e": "node ./generate-config.js && ng e2e",

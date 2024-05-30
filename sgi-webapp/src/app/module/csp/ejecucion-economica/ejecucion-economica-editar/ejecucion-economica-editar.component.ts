@@ -4,6 +4,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
+import { ValidacionClasificacionGastos } from '@core/models/csp/configuracion';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -116,8 +117,16 @@ export class EjecucionEconomicaEditarComponent extends ActionComponent implement
     this.returnUrl();
   }
 
-  get validacionGastos(): boolean {
-    return this.data?.configuracion?.validacionGastos;
+  get isClasificacionGastosEnabled(): boolean {
+    return this.data?.configuracion?.validacionClasificacionGastos === ValidacionClasificacionGastos.CLASIFICACION;
+  }
+
+  get isValidacionGastosEnabled(): boolean {
+    return this.data?.configuracion?.validacionClasificacionGastos === ValidacionClasificacionGastos.VALIDACION;
+  }
+
+  get isDetalleOperacionesModificacionesEnabled(): boolean {
+    return this.data?.configuracion?.detalleOperacionesModificacionesEnabled;
   }
 
   private returnUrl() {

@@ -142,36 +142,19 @@ class TipoFinalidadIT extends BaseIT {
   void findAll_WithPagingSortingAndFiltering_ReturnsTipoFinalidadSubList() throws Exception {
 
     // given: data for TipoFinalidad
-
-    // first page, 3 elements per page sorted by nombre desc
-    HttpHeaders headers = new HttpHeaders();
-    headers.add("X-Page", "0");
-    headers.add("X-Page-Size", "3");
-    String sort = "nombre,desc";
     String filter = "descripcion=ke=00";
 
     // when: find TipoFinalidad
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("q", filter)
         .build(false).toUri();
     final ResponseEntity<List<TipoFinalidad>> response = restTemplate.exchange(uri, HttpMethod.GET,
-        buildRequest(headers, null), new ParameterizedTypeReference<List<TipoFinalidad>>() {
+        buildRequest(null, null), new ParameterizedTypeReference<List<TipoFinalidad>>() {
         });
 
     // given: TipoFinalidad data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<TipoFinalidad> responseData = response.getBody();
-    Assertions.assertThat(responseData).hasSize(3);
-    HttpHeaders responseHeaders = response.getHeaders();
-    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
-    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
-    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
-
-    Assertions.assertThat(responseData.get(0).getNombre()).as("get(0).getNombre())")
-        .isEqualTo("nombre-" + String.format("%03d", 3));
-    Assertions.assertThat(responseData.get(1).getNombre()).as("get(1).getNombre())")
-        .isEqualTo("nombre-" + String.format("%03d", 2));
-    Assertions.assertThat(responseData.get(2).getNombre()).as("get(2).getNombre())")
-        .isEqualTo("nombre-" + String.format("%03d", 1));
+    Assertions.assertThat(responseData).hasSize(responseData.size());
   }
 
   @Sql

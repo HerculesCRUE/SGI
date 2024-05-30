@@ -14,7 +14,7 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-enum TipoOperacion {
+export enum TipoOperacion {
   EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL = 'EPA',
   EJECUCION_PRESUPUESTARIA_GASTOS = 'EPG',
   EJECUCION_PRESUPUESTARIA_INGRESOS = 'EPI',

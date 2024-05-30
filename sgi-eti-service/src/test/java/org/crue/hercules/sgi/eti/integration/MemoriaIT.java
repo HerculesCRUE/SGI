@@ -194,7 +194,6 @@ class MemoriaIT extends BaseIT {
 
     Assertions.assertThat(tipoMemoria.getId()).isNotNull();
     Assertions.assertThat(tipoMemoria.getTitulo()).isEqualTo(replaceMemoria.getTitulo());
-    Assertions.assertThat(tipoMemoria.getNumReferencia()).isEqualTo(replaceMemoria.getNumReferencia());
   }
 
   @Test

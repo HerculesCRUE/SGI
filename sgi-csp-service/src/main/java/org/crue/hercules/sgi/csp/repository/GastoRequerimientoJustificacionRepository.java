@@ -10,4 +10,6 @@ public interface GastoRequerimientoJustificacionRepository
     JpaSpecificationExecutor<GastoRequerimientoJustificacion>,
     CustomGastoRequerimientoJustificacionRepository {
 
+  boolean existsByIdentificadorJustificacion(String identificadorJustificacion);
+
 }

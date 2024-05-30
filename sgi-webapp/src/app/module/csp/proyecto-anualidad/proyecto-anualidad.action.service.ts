@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TipoPartida } from '@core/enums/tipo-partida';
 import { IAnualidadResumen } from '@core/models/csp/anualidad-resumen';
+import { CardinalidadRelacionSgiSge } from '@core/models/csp/configuracion';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoAnualidadResumen } from '@core/models/csp/proyecto-anualidad-resumen';
 import { ActionService } from '@core/services/action-service';
@@ -10,6 +11,8 @@ import { AnualidadIngresoService } from '@core/services/csp/anualidad-ingreso/an
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
 import { CodigoEconomicoIngresoService } from '@core/services/sge/codigo-economico-ingreso.service';
+import { PartidaPresupuestariaGastoSgeService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-gasto-sge.service';
+import { PartidaPresupuestariaIngresoSgeService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-ingreso-sge.service';
 import { NGXLogger } from 'ngx-logger';
 import { PROYECTO_ANUALIDAD_DATA_KEY } from './proyecto-anualidad-data.resolver';
 import { ProyectoAnualidadDatosGeneralesFragment } from './proyecto-anualidad-formulario/proyecto-anualidad-datos-generales/proyecto-anualidad-datos-generales.fragment';
@@ -21,6 +24,7 @@ import { PROYECTO_ANUALIDAD_ROUTE_PARAMS } from './proyecto-anualidad-route-para
 export interface IProyectoAnualidadData {
   proyecto: IProyecto;
   proyectoAnualidadResumen: IProyectoAnualidadResumen[];
+  cardinalidadRelacionSgiSge: CardinalidadRelacionSgiSge;
   readonly: boolean;
 }
 
@@ -56,11 +60,13 @@ export class ProyectoAnualidadActionService extends ActionService {
   constructor(
     logger: NGXLogger,
     route: ActivatedRoute,
-    proyectoAnualidadService: ProyectoAnualidadService,
     anualidadGastoService: AnualidadGastoService,
     anualidadIngresoService: AnualidadIngresoService,
     codigoEconomicoGastoService: CodigoEconomicoGastoService,
-    codigoEconomicoIngresoService: CodigoEconomicoIngresoService
+    codigoEconomicoIngresoService: CodigoEconomicoIngresoService,
+    partidaPresupuestariaGastoSgeService: PartidaPresupuestariaGastoSgeService,
+    partidaPresupuestariaIngresoSgeService: PartidaPresupuestariaIngresoSgeService,
+    proyectoAnualidadService: ProyectoAnualidadService
   ) {
     super();
     this.data = route.snapshot.data[PROYECTO_ANUALIDAD_DATA_KEY];
@@ -71,11 +77,34 @@ export class ProyectoAnualidadActionService extends ActionService {
     }
 
     this.datosGenerales = new ProyectoAnualidadDatosGeneralesFragment(
-      id, this.data.proyecto, proyectoAnualidadService, this.data.readonly);
+      id,
+      this.data.proyecto,
+      proyectoAnualidadService,
+      this.data.readonly
+    );
+
     this.anualidadGastos = new ProyectoAnualidadGastosFragment(
-      logger, id, this.data.proyecto.id, proyectoAnualidadService, anualidadGastoService, codigoEconomicoGastoService);
+      logger,
+      id,
+      this.data.proyecto.id,
+      anualidadGastoService,
+      codigoEconomicoGastoService,
+      partidaPresupuestariaGastoSgeService,
+      proyectoAnualidadService,
+      this.data.cardinalidadRelacionSgiSge
+    );
+
     this.anualidadIngresos = new ProyectoAnualidadIngresosFragment(
-      logger, id, this.data.proyecto.id, proyectoAnualidadService, anualidadIngresoService, codigoEconomicoIngresoService);
+      logger,
+      id,
+      this.data.proyecto.id,
+      anualidadIngresoService,
+      codigoEconomicoIngresoService,
+      partidaPresupuestariaIngresoSgeService,
+      proyectoAnualidadService,
+      this.data.cardinalidadRelacionSgiSge
+    );
+
     this.anualidadResumen = new ProyectoAnualidadResumenFragment(id, proyectoAnualidadService);
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);

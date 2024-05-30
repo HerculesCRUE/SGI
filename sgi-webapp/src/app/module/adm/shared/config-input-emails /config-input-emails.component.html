@@ -3,8 +3,9 @@
   <div fxFlex fxLayout="row" fxLayoutGap="10px">
     <mat-form-field fxFlex>
       <mat-label>{{label | translate:labelParams}}</mat-label>
-      <sgi-input-emails formControlName="configValue" [matTooltip]="configValue?.description" matTooltipShowDelay="200"
-        [required]="required">
+      <sgi-input-emails formControlName="configValue"
+        [matTooltip]="(configValue?.description ? configValue.description : description) | translate"
+        matTooltipShowDelay="200" [required]="required">
       </sgi-input-emails>
 
       <mat-error *ngIf="formGroup.controls.configValue.errors?.required">

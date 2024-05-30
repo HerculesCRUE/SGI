@@ -14,6 +14,7 @@ import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
 import org.crue.hercules.sgi.csp.repository.ProrrogaDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoFacturacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoProrrogaRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoResponsableEconomicoRepository;
@@ -50,13 +51,15 @@ class ProyectoProrrogaServiceTest extends BaseServiceTest {
   private ProyectoResponsableEconomicoRepository proyectoResponsableEconomicoRepository;
   @Mock
   private ProyectoHelper proyectoHelper;
+  @Mock
+  private ProyectoFacturacionRepository proyectoFacturacionRepository;
 
   private ProyectoProrrogaService service;
 
   @BeforeEach
   void setUp() throws Exception {
     service = new ProyectoProrrogaServiceImpl(repository, proyectoRepository, prorrogaDocumentoRepository,
-        proyectoEquipoRepository, proyectoHelper);
+        proyectoEquipoRepository, proyectoHelper, proyectoFacturacionRepository);
   }
 
   @Test
@@ -71,8 +74,6 @@ class ProyectoProrrogaServiceTest extends BaseServiceTest {
         .willReturn(Optional.of(generarMockProyecto(1L)));
     BDDMockito.given(repository.findFirstByProyectoIdOrderByFechaConcesionDesc(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(proyectoProrrogaAnterior));
-    BDDMockito.given(repository.getProyecto(ArgumentMatchers.<Long>any()))
-        .willReturn(Optional.of(generarMockProyecto(1L)));
 
     BDDMockito.given(repository.save(proyectoProrroga)).will((InvocationOnMock invocation) -> {
       ProyectoProrroga proyectoProrrogaCreado = invocation.getArgument(0);
@@ -276,8 +277,6 @@ class ProyectoProrrogaServiceTest extends BaseServiceTest {
         .willReturn(Optional.of(proyectoProrroga));
     BDDMockito.given(repository.findFirstByIdNotAndProyectoIdOrderByFechaConcesionDesc(ArgumentMatchers.<Long>any(),
         ArgumentMatchers.<Long>any())).willReturn(Optional.of(proyectoProrrogaAnterior));
-    BDDMockito.given(repository.getProyecto(ArgumentMatchers.<Long>any()))
-        .willReturn(Optional.of(generarMockProyecto(1L)));
 
     BDDMockito.given(repository.save(ArgumentMatchers.<ProyectoProrroga>any()))
         .will((InvocationOnMock invocation) -> invocation.getArgument(0));
@@ -499,6 +498,8 @@ class ProyectoProrrogaServiceTest extends BaseServiceTest {
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(proyectoProrroga));
     BDDMockito.given(repository.findFirstByProyectoIdOrderByFechaConcesionDesc(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(proyectoProrroga));
+    BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(generarMockProyecto(1L)));
 
     BDDMockito.doNothing().when(repository).deleteById(ArgumentMatchers.<Long>any());
 

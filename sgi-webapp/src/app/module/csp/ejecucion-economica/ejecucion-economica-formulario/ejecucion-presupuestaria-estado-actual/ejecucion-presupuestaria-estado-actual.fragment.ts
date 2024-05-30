@@ -1,3 +1,4 @@
+import { IConfiguracion } from '@core/models/csp/configuracion';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
@@ -17,9 +18,10 @@ export class EjecucionPresupuestariaEstadoActualFragment extends EjecucionPresup
     relaciones: IRelacionEjecucionEconomicaWithResponsables[],
     proyectoService: ProyectoService,
     proyectoAnualidadService: ProyectoAnualidadService,
-    private ejecucionEconomicaService: EjecucionEconomicaService
+    private ejecucionEconomicaService: EjecucionEconomicaService,
+    protected readonly config: IConfiguracion
   ) {
-    super(key, proyectoSge, relaciones, proyectoService, proyectoAnualidadService);
+    super(key, proyectoSge, relaciones, proyectoService, proyectoAnualidadService, config);
   }
 
   protected onInitialize(): void {

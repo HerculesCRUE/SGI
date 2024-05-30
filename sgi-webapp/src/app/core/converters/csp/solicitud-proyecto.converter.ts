@@ -1,4 +1,5 @@
 import { ISolicitudProyectoBackend } from '@core/models/csp/backend/solicitud-proyecto-backend';
+import { IRolSocio } from '@core/models/csp/rol-socio';
 import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
 import { SgiBaseConverter } from '@sgi/framework/core';
 
@@ -15,7 +16,7 @@ class SolicitudProyectoConverter extends SgiBaseConverter<ISolicitudProyectoBack
       duracion: value.duracion,
       colaborativo: value.colaborativo,
       coordinado: value.coordinado,
-      coordinadorExterno: value.coordinadorExterno,
+      rolUniversidad: !!value.rolUniversidadId ? { id: value.rolUniversidadId } as IRolSocio : null,
       objetivos: value.objetivos,
       intereses: value.intereses,
       resultadosPrevistos: value.resultadosPrevistos,
@@ -45,7 +46,7 @@ class SolicitudProyectoConverter extends SgiBaseConverter<ISolicitudProyectoBack
       duracion: value.duracion,
       colaborativo: value.colaborativo,
       coordinado: value.coordinado,
-      coordinadorExterno: value.coordinadorExterno,
+      rolUniversidadId: value.rolUniversidad?.id,
       objetivos: value.objetivos,
       intereses: value.intereses,
       resultadosPrevistos: value.resultadosPrevistos,

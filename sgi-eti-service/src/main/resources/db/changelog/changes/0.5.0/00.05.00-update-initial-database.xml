@@ -1,0 +1,99 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+
+  <changeSet author="user (generated)" id="00.05.00-1">
+    <dropNotNullConstraint columnDataType="VARCHAR(4000)" columnName="resumen" tableName="acta" />
+    <renameColumn tableName="acta" newColumnName="resumen_old" oldColumnName="resumen" />
+
+    <addColumn tableName="acta">
+      <column name="resumen" type="CLOB" />
+    </addColumn>
+
+    <sql> UPDATE ${schemaPrefix}acta SET resumen=resumen_old </sql>
+
+    <addNotNullConstraint tableName="acta" columnName="resumen" columnDataType="CLOB" />
+    <dropColumn columnName="resumen_old" tableName="acta" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="00.05.00-2">
+    <renameColumn tableName="evaluador" newColumnName="resumen_old" oldColumnName="resumen" />
+
+    <addColumn tableName="evaluador">
+      <column name="resumen" type="CLOB" />
+    </addColumn>
+
+    <sql> UPDATE ${schemaPrefix}evaluador SET resumen=resumen_old </sql>
+
+    <dropColumn columnName="resumen_old" tableName="evaluador" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="00.05.00-3">
+    <renameColumn tableName="peticion_evaluacion" newColumnName="dis_metodologico_old"
+      oldColumnName="dis_metodologico" />
+    <renameColumn tableName="peticion_evaluacion" newColumnName="objetivos_old"
+      oldColumnName="objetivos" />
+    <renameColumn tableName="peticion_evaluacion" newColumnName="resumen_old"
+      oldColumnName="resumen" />
+
+    <addColumn tableName="peticion_evaluacion">
+      <column name="dis_metodologico" type="CLOB" />
+      <column name="objetivos" type="CLOB" />
+      <column name="resumen" type="CLOB" />
+    </addColumn>
+
+    <sql> UPDATE ${schemaPrefix}peticion_evaluacion SET dis_metodologico=dis_metodologico_old,
+      objetivos=objetivos_old, resumen=resumen_old </sql>
+
+    <dropColumn columnName="dis_metodologico_old" tableName="peticion_evaluacion" />
+    <dropColumn columnName="objetivos_old" tableName="peticion_evaluacion" />
+    <dropColumn columnName="resumen_old" tableName="peticion_evaluacion" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="00.05.00-4">
+    <addColumn tableName="convocatoria_reunion">
+      <column name="videoconferencia" type="BOOLEAN" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="user (generated)" id="0000000000000-5">
+    <createTable tableName="documentacion_convocatoria_reunion">
+      <column name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true"
+          primaryKeyName="documentacion_convocatoria_reunionPK" />
+      </column>
+      <column name="created_by" type="VARCHAR(255)" />
+      <column name="creation_date" type="TIMESTAMP" />
+      <column name="last_modified_by" type="VARCHAR(255)" />
+      <column name="last_modified_date" type="TIMESTAMP" />
+      <column name="documento_ref" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+      <column name="nombre" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+      <column name="convocatoria_reunion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <createSequence incrementBy="1" sequenceName="documentacion_convocatoria_reunion_seq"
+      startValue="1" />
+
+    <addForeignKeyConstraint baseColumnNames="convocatoria_reunion_id"
+      baseTableName="documentacion_convocatoria_reunion"
+      constraintName="FK_DOCUMENTACIONCONVOCATORIAREUNION_CONVOCATORIAREUNION" deferrable="false"
+      initiallyDeferred="false" referencedColumnNames="id"
+      referencedTableName="convocatoria_reunion"
+      validate="true" />
+
+  </changeSet>
+
+</databaseChangeLog>

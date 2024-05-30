@@ -3,10 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
-import { SgiError } from '@core/errors/sgi-error';
-import { MSG_PARAMS } from '@core/i18n';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { TIPO_CONVOCATORIA_REUNION } from '@core/models/eti/tipo-convocatoria-reunion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -18,15 +15,11 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
-import { from, Observable, of } from 'rxjs';
+import { Observable, from, of } from 'rxjs';
 import { map, mergeMap, switchMap } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { TipoComentario } from '../evaluacion-listado-export.service';
 import { EvaluacionListadoExportModalComponent, IEvaluacionListadoModalData } from '../modals/evaluacion-listado-export-modal/evaluacion-listado-export-modal.component';
-
-const EVALUACION_KEY = marker('eti.evaluacion');
-const MSG_SUCCESS_ENVIADO = marker('msg.envio-comunicado.entity.success');
-const MSG_ERROR_ENVIADO = marker('msg.envio-comunicado.entity.error');
 
 @Component({
   selector: 'sgi-evaluacion-listado',
@@ -39,9 +32,6 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
 
   displayedColumns: string[];
   totalElementos: number;
-
-  textoEnviadoSuccess: string;
-  textoEnviadoError: string;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -88,7 +78,6 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
 
     this.formGroup = new FormGroup({
       comite: new FormControl(null, []),
@@ -104,32 +93,6 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
       this.cnfService.getLimiteRegistrosExportacionExcel('eti-exp-max-num-registros-excel-evaluacion-listado').subscribe(value => {
         this.limiteRegistrosExportacionExcel = value;
       }));
-  }
-
-  private setupI18N(): void {
-    this.translate.get(
-      EVALUACION_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_SUCCESS_ENVIADO,
-          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
-        );
-      })
-    ).subscribe((value) => this.textoEnviadoSuccess = value);
-
-    this.translate.get(
-      EVALUACION_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_ERROR_ENVIADO,
-          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
-        );
-      })
-    ).subscribe((value) => this.textoEnviadoError = value);
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IEvaluacion>> {
@@ -200,32 +163,6 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
       data
     };
     this.matDialog.open(EvaluacionListadoExportModalComponent, config);
-  }
-
-  /**
-   * Notificar de cambios en la memoria realizados
-   * @param evaluacionId id de la evaluación modificada que se quiere notificar.
-   * @param event evento lanzado.
-   */
-  notificarCambiosMemoria(evaluacionId: number, $event: Event): void {
-    this.evaluacionesService.enviarComunicado(evaluacionId).subscribe(
-      (response) => {
-        if (response) {
-          this.snackBarService.showSuccess(this.textoEnviadoSuccess);
-          this.loadTable();
-        } else {
-          this.processError(new SgiError(this.textoEnviadoError));
-        }
-      },
-      (error) => {
-        if (error instanceof SgiError) {
-          this.processError(error);
-        }
-        else {
-          this.processError(new SgiError(this.textoEnviadoError));
-        }
-      }
-    );
   }
 
 }

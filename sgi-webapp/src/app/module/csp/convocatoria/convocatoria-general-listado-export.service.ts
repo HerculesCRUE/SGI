@@ -138,7 +138,7 @@ export class ConvocatoriaGeneralListadoExportService
       {
         title: this.translate.instant(DURACION_KEY),
         name: 'duracion',
-        type: ColumnType.STRING
+        type: ColumnType.NUMBER
       },
       {
         title: this.translate.instant(AMBITO_GEOGRAFICO_KEY),

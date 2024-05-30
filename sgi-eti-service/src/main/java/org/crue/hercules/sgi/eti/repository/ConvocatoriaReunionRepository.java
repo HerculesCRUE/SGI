@@ -1,6 +1,9 @@
 package org.crue.hercules.sgi.eti.repository;
 
+import java.util.Optional;
+
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.repository.custom.CustomConvocatoriaReunionRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -21,5 +24,13 @@ public interface ConvocatoriaReunionRepository extends JpaRepository<Convocatori
    * @return la convocatoria con el numero de acta más alto
    */
   ConvocatoriaReunion findFirstByComiteIdOrderByNumeroActaDesc(Long idComite);
+
+  /**
+   * Recupera la convocatoria de reunión activa por su id
+   * 
+   * @param idConvocatoriaReunion Identificador de la convocatoria de reunión
+   * @return la convocatoria de reunión activa
+   */
+  Optional<ConvocatoriaReunion> findByIdAndActivoTrue(Long idConvocatoriaReunion);
 
 }

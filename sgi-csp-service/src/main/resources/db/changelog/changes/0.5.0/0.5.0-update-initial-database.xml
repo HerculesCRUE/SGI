@@ -1,0 +1,150 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <changeSet author="master" id="0.5.0-1">
+    <addColumn tableName="convocatoria_concepto_gasto">
+      <column name="porcentaje_maximo" type="DECIMAL(5, 2)" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.5.0-2">
+    <addColumn tableName="proyecto_facturacion">
+      <column name="proyecto_prorroga_id" type="BIGINT" />
+    </addColumn>
+    <addForeignKeyConstraint baseColumnNames="proyecto_prorroga_id"
+      baseTableName="proyecto_facturacion"
+      constraintName="FK_PROYECTOFACTURACION_PROYECTOPRORROGA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="proyecto_prorroga" validate="true" />
+  </changeSet>
+
+  <changeSet author="master" id="0.5.0-3">
+    <addColumn tableName="proyecto">
+      <column name="iva_deducible" type="BOOLEAN" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.5.0-4">
+    <addColumn tableName="configuracion">
+      <column name="validacion_clasificacion_gastos" type="varchar(50)" />
+      <column name="gin_ejecucion_economica" defaultValueBoolean="true" type="boolean" />
+      <column name="cardinalidad_relacion_sgi_sge" type="varchar(50)" />
+      <column name="partidas_presupuestarias_sge" defaultValueBoolean="false" type="boolean" />
+      <column name="sge_amortizacion_fondos" defaultValueBoolean="true" type="boolean" />
+      <column name="sge_alta_buscador" defaultValueBoolean="true" type="boolean" />
+      <column name="sge_gastos_justificados" defaultValueBoolean="true" type="boolean" />
+      <column name="sge_modificacion" defaultValueBoolean="false" type="boolean" />
+      <column name="sge_sector_iva" defaultValueBoolean="true" type="boolean" />
+      <column name="sge_modificaciones" defaultValueBoolean="true" type="boolean" />
+      <column name="sge_sincronizacion_alta_proyecto" type="varchar(50)" />
+      <column name="sge_sincronizacion_modificacion_proyecto" type="varchar(50)" />
+      <column name="sge_calendario_facturacion" defaultValueBoolean="false" type="boolean" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.5.0-5">
+    <addColumn tableName="solicitud_proyecto">
+      <column name="rol_universidad" type="BIGINT" />
+    </addColumn>
+    <addForeignKeyConstraint baseColumnNames="rol_universidad"
+      baseTableName="solicitud_proyecto"
+      constraintName="FK_SOLICITUDPROYECTO_ROLSOCIO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="rol_socio" validate="true" />
+  </changeSet>
+
+  <changeSet author="master" id="0.5.0-6">
+    <addColumn tableName="proyecto">
+      <column name="rol_universidad" type="BIGINT" />
+    </addColumn>
+    <addForeignKeyConstraint baseColumnNames="rol_universidad"
+      baseTableName="proyecto"
+      constraintName="FK_PROYECTO_ROLSOCIO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="rol_socio" validate="true" />
+  </changeSet>
+
+  <changeSet author="master" id="0.5.0-7">
+    <addColumn tableName="convocatoria_partida">
+      <column name="partida_ref" type="varchar(50)" />
+    </addColumn>
+    <dropNotNullConstraint columnDataType="varchar(50)" columnName="codigo"
+      tableName="convocatoria_partida" />
+  </changeSet>
+
+  <changeSet author="master" id="0.5.0-8">
+    <addColumn tableName="proyecto_partida">
+      <column name="partida_ref" type="varchar(50)" />
+    </addColumn>
+    <dropNotNullConstraint columnDataType="varchar(50)" columnName="codigo"
+      tableName="proyecto_partida" />
+    <dropUniqueConstraint
+      constraintName="UK_PROYECTOPARTIDA_PROYECTO_CODIGO_TIPO" tableName="proyecto_partida" />
+  </changeSet>
+
+  <changeSet author="master" id="0.5.0-9">
+    <renameColumn tableName="solicitud_rrhh" newColumnName="observaciones_old"
+      oldColumnName="observaciones" />
+    <renameColumn tableName="solicitud_rrhh" newColumnName="resumen_old" oldColumnName="resumen" />
+
+    <addColumn tableName="solicitud_rrhh">
+      <column name="observaciones" type="CLOB" />
+      <column name="resumen" type="CLOB" />
+    </addColumn>
+
+    <sql> UPDATE ${schemaPrefix}solicitud_rrhh SET resumen=resumen_old,
+      observaciones=observaciones_old </sql>
+
+    <dropColumn columnName="observaciones_old" tableName="solicitud_rrhh" />
+    <dropColumn columnName="resumen_old" tableName="solicitud_rrhh" />
+  </changeSet>
+
+  <changeSet author="master" id="0.5.0-10">
+    <renameColumn tableName="programa" newColumnName="descripcion_old" oldColumnName="descripcion" />
+
+    <addColumn tableName="programa">
+      <column name="descripcion" type="CLOB" />
+    </addColumn>
+
+    <sql> UPDATE ${schemaPrefix}programa SET descripcion=descripcion_old </sql>
+
+    <dropColumn columnName="descripcion_old" tableName="programa" />
+  </changeSet>
+
+  <changeSet author="master" id="0.5.0-11">
+    <dropNotNullConstraint columnDataType="BIGINT" columnName="concepto_gasto_id"
+      tableName="anualidad_gasto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.5.0-12">
+    <addColumn tableName="proyecto_facturacion">
+      <column name="proyecto_sge_ref" type="varchar(50)" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.5.0-13">
+    <dropNotNullConstraint columnDataType="TIMESTAMP" columnName="fecha_inicio"
+      tableName="proyecto" />
+    <dropNotNullConstraint columnDataType="TIMESTAMP" columnName="fecha_fin"
+      tableName="proyecto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.5.0-14">
+    <addColumn tableName="proyecto_socio">
+      <column name="solicitud_socio_id" type="BIGINT" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.5.0-15">
+    <addColumn tableName="proyecto">
+      <column name="fecha_inicio_started" type="BOOLEAN" />
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

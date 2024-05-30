@@ -41,6 +41,8 @@ export class ConvocatoriaConceptoGastoDatosGeneralesFragment extends FormFragmen
         Validators.required),
       importeMaximo: new FormControl('', [Validators.compose(
         [Validators.min(0), NumberValidator.maxDecimalPlaces(5)])]),
+      porcentajeMaximo: new FormControl('', [Validators.compose(
+        [Validators.min(0), Validators.max(100)])]),
       mesInicial: new FormControl(
         '',
         [
@@ -87,6 +89,7 @@ export class ConvocatoriaConceptoGastoDatosGeneralesFragment extends FormFragmen
       conceptoGasto: convocatoriaConceptoGasto.conceptoGasto,
       costesIndirectos: convocatoriaConceptoGasto.conceptoGasto.costesIndirectos,
       importeMaximo: convocatoriaConceptoGasto.importeMaximo,
+      porcentajeMaximo: convocatoriaConceptoGasto.porcentajeMaximo,
       mesInicial: convocatoriaConceptoGasto.mesInicial,
       mesFinal: convocatoriaConceptoGasto.mesFinal,
       observaciones: convocatoriaConceptoGasto.observaciones,
@@ -103,6 +106,7 @@ export class ConvocatoriaConceptoGastoDatosGeneralesFragment extends FormFragmen
     const form = this.getFormGroup().controls;
     this.convocatoriaConceptoGasto.conceptoGasto = form.conceptoGasto.value;
     this.convocatoriaConceptoGasto.importeMaximo = form.importeMaximo.value;
+    this.convocatoriaConceptoGasto.porcentajeMaximo = form.porcentajeMaximo.value;
     this.convocatoriaConceptoGasto.mesInicial = form.mesInicial.value;
     this.convocatoriaConceptoGasto.mesFinal = form.mesFinal.value;
     this.convocatoriaConceptoGasto.observaciones = form.observaciones.value;

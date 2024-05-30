@@ -10,7 +10,6 @@ import { COMITE } from '@core/models/eti/comite';
 import { ESTADO_RETROSPECTIVA } from '@core/models/eti/estado-retrospectiva';
 import { IMemoria } from '@core/models/eti/memoria';
 import { ESTADO_MEMORIA } from '@core/models/eti/tipo-estado-memoria';
-import { TIPO_EVALUACION } from '@core/models/eti/tipo-evaluacion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
@@ -22,7 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
 import { Subscription, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { MEMORIAS_ROUTE } from '../../../memoria/memoria-route-names';
 import { PeticionEvaluacionActionService } from '../../peticion-evaluacion.action.service';
 import { IMemoriaPeticionEvaluacionWithLastEvaluacion, MemoriasListadoFragment } from './memorias-listado.fragment';
@@ -39,6 +38,9 @@ const MSG_ERROR_ENVIAR_SECRETARIA_RETROSPECTIVA = marker('error.eti.memoria.envi
 const MSG_CONFIRM_ENVIAR_SECRETARIA_RETROSPECTIVA = marker('msg.eti.memoria.enviar-secretaria.retrospectiva');
 const MEMORIA_KEY = marker('eti.memoria');
 const MSG_ERROR_DATOS_ADJUNTOS = marker('error.eti.memoria.enviar-secretaria.documentos-adjuntos');
+const MSG_SUCCESS_NOTIFICAR_REV_MINIMA = marker('msg.eti.memoria.notificar-revision-minima.success');
+const MSG_ERROR_NOTIFICAR_REV_MINIMA = marker('msg.eti.memoria.notificar-revision-minima.error');
+const MSG_CONFIRMACION_NOTIFICAR_REV_MINIMA = marker('msg.eti.memoria.notificar-rev-minima.confirmacion');
 
 @Component({
   selector: 'sgi-memorias-listado',
@@ -65,6 +67,8 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   textoDelete: string;
+  textoNotificarRevMinimaSuccess: string;
+  textoNotificarRevMinimaError: string;
   msgParamEntity = {};
 
   get MSG_PARAMS() {
@@ -133,6 +137,14 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
       MEMORIA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE });
+
+    this.translate.get(
+      MSG_SUCCESS_NOTIFICAR_REV_MINIMA,
+    ).subscribe((value) => this.textoNotificarRevMinimaSuccess = value);
+
+    this.translate.get(
+      MSG_ERROR_NOTIFICAR_REV_MINIMA
+    ).subscribe((value) => this.textoNotificarRevMinimaError = value);
   }
 
   /**
@@ -302,6 +314,40 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
       ESTADO_MEMORIA.EN_ACLARACION_SEGUIMIENTO_FINAL,
       ESTADO_MEMORIA.SOLICITUD_MODIFICACION_SEGUIMIENTO_ANUAL
     ].includes(memoria.estadoActual.id);
+  }
+
+  public showRecuperarEstadoAnterior(memoria: IMemoriaPeticionEvaluacionWithLastEvaluacion): boolean {
+    return [
+      ESTADO_MEMORIA.EN_SECRETARIA,
+      ESTADO_MEMORIA.EN_SECRETARIA_REVISION_MINIMA,
+      ESTADO_MEMORIA.EN_EVALUACION,
+      ESTADO_MEMORIA.ARCHIVADA,
+      ESTADO_MEMORIA.EN_EVALUACION_REVISION_MINIMA
+    ].includes(memoria.estadoActual.id);
+  }
+
+  public showNotificarRevisionMinima(memoria: IMemoriaPeticionEvaluacionWithLastEvaluacion): boolean {
+    return ESTADO_MEMORIA.EN_SECRETARIA_REVISION_MINIMA === memoria.estadoActual.id;
+  }
+
+  public notificarRevisionMinima(memoria: IMemoriaPeticionEvaluacionWithLastEvaluacion): void {
+    this.subscriptions.push(
+      this.dialogService.showConfirmation(MSG_CONFIRMACION_NOTIFICAR_REV_MINIMA).pipe(
+        filter(aceptado => !!aceptado),
+        switchMap(() => this.memoriaService.notificarRevisionMinima(memoria.id))
+      ).subscribe(() => {
+        this.snackBarService.showSuccess(this.textoNotificarRevMinimaSuccess);
+        this.listadoFragment.loadMemorias(this.listadoFragment.getKey() as number);
+      },
+        (error) => {
+          if (error instanceof SgiError) {
+            this.snackBarService.showError(error);
+          } else {
+            this.snackBarService.showError(new SgiError(this.textoNotificarRevMinimaError));
+          }
+        }
+      )
+    );
   }
 
 }

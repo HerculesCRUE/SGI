@@ -290,14 +290,14 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
 
   /**
    * Devuelve una subconsulta con el listado de Memorias evaluables (con estado
-   * EN_SECRETARIA_REVISION_MINIMA (4) o EN_EVALUACION (5))
+   * EN_EVALUACION_REVISION_MINIMA (26) o EN_EVALUACION (5))
    * 
    * @return Subquery<Long> Listado de Memorias evaluables
    */
   private Subquery<Long> getIdsMemoriasEvaluables(CriteriaBuilder cb, CriteriaQuery<?> cq) {
     log.debug("getIdsMemoriasEvaluables(CriteriaBuilder cb, CriteriaQuery<?> cq) - start");
 
-    List<Long> estadosEvaluables = Arrays.asList(TipoEstadoMemoria.Tipo.EN_SECRETARIA_REVISION_MINIMA.getId(),
+    List<Long> estadosEvaluables = Arrays.asList(TipoEstadoMemoria.Tipo.EN_EVALUACION_REVISION_MINIMA.getId(),
         TipoEstadoMemoria.Tipo.EN_EVALUACION.getId());
 
     Subquery<Long> queryMemoriasEstadoActual = cq.subquery(Long.class);
@@ -747,7 +747,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
             cb.greaterThan(subqRootEvaluadores.get(Evaluador_.fechaBaja), Instant.now())));
 
     // Memoria en estado 'En evaluacion' (id = 4)
-    // o 'En secretaria revisión minima'(id = 5)
+    // o 'En evaluacion revisión minima'(id = 26)
 
     Predicate memoria = cb.and(
         cb.equal(root.get(Evaluacion_.tipoEvaluacionId), TipoEvaluacion.Tipo.MEMORIA.getId()),

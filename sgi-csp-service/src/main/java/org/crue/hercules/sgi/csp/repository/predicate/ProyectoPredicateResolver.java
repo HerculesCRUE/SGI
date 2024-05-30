@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -13,6 +12,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ListJoin;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.model.AnualidadGasto;
@@ -148,19 +148,22 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
     }
   }
 
-  private Predicate buildByProrrogado(ComparisonNode node, Root<Proyecto> root, CriteriaBuilder cb) {
+  private Predicate buildByProrrogado(ComparisonNode node, Root<Proyecto> root, CriteriaQuery<?> cq,
+      CriteriaBuilder cb) {
     PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
     PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
 
     boolean prorrogado = Boolean.parseBoolean(node.getArguments().get(0));
 
+    Subquery<Long> subquery = cq.subquery(Long.class);
+    Root<ProyectoProrroga> prorrogaRoot = subquery.from(ProyectoProrroga.class);
+    subquery.select(prorrogaRoot.get(ProyectoProrroga_.proyectoId));
+    subquery.where(cb.equal(prorrogaRoot.get(ProyectoProrroga_.proyectoId), root.get(Proyecto_.id)));
+
     if (prorrogado) {
-      ListJoin<Proyecto, ProyectoProrroga> joinProrrogas = root.join(Proyecto_.prorrogas, JoinType.INNER);
-      return cb.and(cb.equal(joinProrrogas.get(ProyectoProrroga_.proyectoId), root.get(Proyecto_.id)));
+      return cb.exists(subquery);
     } else {
-      List<Long> idsProyectoWithProrrogas = this.proyectoProrrogaRepository.findAll().stream()
-          .map(ProyectoProrroga::getProyectoId).collect(Collectors.toList());
-      return cb.and(cb.not(root.get(Proyecto_.id).in(idsProyectoWithProrrogas)));
+      return cb.not(cb.exists(subquery));
     }
   }
 
@@ -263,7 +266,7 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
       case FINALIZADO:
         return buildByFinalizado(node, root, criteriaBuilder);
       case PRORROGADO:
-        return buildByProrrogado(node, root, criteriaBuilder);
+        return buildByProrrogado(node, root, query, criteriaBuilder);
       case FECHA_MODIFICACION:
         return buildByFechaModificacion(node, root, criteriaBuilder);
       case PARTICIPACION_ACTUAL:

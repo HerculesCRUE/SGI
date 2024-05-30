@@ -21,7 +21,7 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { from, Observable, Subscription } from 'rxjs';
-import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { concatMap, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 import { PROYECTO_ANUALIDAD_ROUTE_NAMES } from '../../proyecto-anualidad/proyecto-anualidad-route-names';
 import { PROYECTO_ROUTE_NAMES } from '../../proyecto/proyecto-route-names';
@@ -252,7 +252,7 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
                       anualidad: proyectoAnualidad.anio ?? proyectoAnualidad.proyectoFechaInicio.year,
                       importe: anualidadGasto.importeConcedido,
                       tipoDatoEconomico: TipoPartida.GASTO,
-                      partidaPresupuestaria: anualidadGasto.proyectoPartida.codigo,
+                      partidaPresupuestaria: anualidadGasto.proyectoPartida.codigo ?? anualidadGasto.proyectoPartida.partidaSge?.id,
                       proyecto: { id: anualidadGasto.proyectoSgeRef } as IProyectoSge
                     };
                     return proyectoAnualidadPartida;
@@ -269,13 +269,13 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
               .pipe(
                 tap(anualidadesIngreso => {
 
-                  const proyectoAnualidadPartidasGasto = anualidadesIngreso.items.map(anualidadGasto => {
+                  const proyectoAnualidadPartidasGasto = anualidadesIngreso.items.map(anualidadIngreso => {
                     const proyectoAnualidadPartida: IProyectoAnualidadPartida = {
                       anualidad: proyectoAnualidad.anio ?? proyectoAnualidad.proyectoFechaInicio.year,
-                      importe: anualidadGasto.importeConcedido,
+                      importe: anualidadIngreso.importeConcedido,
                       tipoDatoEconomico: TipoPartida.INGRESO,
-                      partidaPresupuestaria: anualidadGasto.proyectoPartida.codigo,
-                      proyecto: { id: anualidadGasto.proyectoSgeRef } as IProyectoSge
+                      partidaPresupuestaria: anualidadIngreso.proyectoPartida.codigo ?? anualidadIngreso.proyectoPartida.partidaSge?.id,
+                      proyecto: { id: anualidadIngreso.proyectoSgeRef } as IProyectoSge
                     };
                     return proyectoAnualidadPartida;
                   });
@@ -320,7 +320,8 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
           ),
           switchMap(() => {
             return from(this.proyectoAnualidadEnvio).pipe(
-              switchMap(proyectoAnualidad => this.proyectoAnualidadService.notificarSge(proyectoAnualidad.id))
+              concatMap(proyectoAnualidad => this.proyectoAnualidadService.notificarSge(proyectoAnualidad.id)),
+              toArray()
             );
           })
         )

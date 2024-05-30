@@ -33,8 +33,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 
+import liquibase.util.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -288,9 +290,9 @@ public class AutorizacionService {
     autorizacion.setEstado(estadoAutorizacion);
 
     Autorizacion returnValue = repository.save(autorizacion);
-    try{
+    try {
       this.autorizacionComService.enviarComunicadoCambioEstadoParticipacionAutorizacionProyectoExterno(autorizacion);
-    }catch(Exception ex) {
+    } catch (Exception ex) {
       log.error(ex.getMessage(), ex);
     }
 
@@ -479,15 +481,18 @@ public class AutorizacionService {
    * Obtiene el informe de una {@link Autorizacion}
    * 
    * @param idAutorizacion identificador {@link Autorizacion}
+   * @param fileName nombre del fichero
    * @return El documento del informe de la {@link Autorizacion}
    */
-  public DocumentoOutput generarDocumentoAutorizacion(Long idAutorizacion) {
+  public DocumentoOutput generarDocumentoAutorizacion(Long idAutorizacion, String fileName) {
     Resource informePdf = reportService.getInformeAutorizacion(idAutorizacion);
     // Se sube el informe a sgdoc
     String pattern = "yyyyMMddHH:mm:ss";
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern)
         .withZone(sgiConfigProperties.getTimeZone().toZoneId()).withLocale(LocaleContextHolder.getLocale());
-    String fileName = TITULO_INFORME_AUTORIZACION + idAutorizacion + formatter.format(Instant.now()) + ".pdf";
+    if (ObjectUtils.isEmpty(fileName)) {
+      fileName = TITULO_INFORME_AUTORIZACION + idAutorizacion + formatter.format(Instant.now()) + ".pdf";
+    }
     return sgdocService.uploadInforme(fileName, informePdf);
   }
 }

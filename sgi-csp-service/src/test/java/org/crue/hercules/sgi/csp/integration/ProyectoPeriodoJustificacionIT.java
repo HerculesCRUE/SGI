@@ -33,7 +33,7 @@ class ProyectoPeriodoJustificacionIT extends BaseIT {
   private static final String CONTROLLER_BASE_PATH = ProyectoPeriodoJustificacionController.REQUEST_MAPPING;
   private static final String PATH_PROYECTO_PERIODO_JUSTIFICACION = "/proyectoperiodojustificacion";
   private static final String PATH_IDENTIFICADOR_JUSTIFICACION = ProyectoPeriodoJustificacionController.PATH_IDENTIFICADOR_JUSTIFICACION;
-  private static final String PATH_DELETEABLE = ProyectoPeriodoJustificacionController.PATH_DELETEABLE;
+  private static final String PATH_DELETEABLE = ProyectoPeriodoJustificacionController.PATH_HAS_REQUERIMIENTOS_JUSTIFICACION;
 
   private HttpEntity<Object> buildRequest(HttpHeaders headers, Object entity, String... roles) throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());

@@ -1,5 +1,6 @@
 import { FormControl } from '@angular/forms';
 import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
+import { IConfiguracion } from '@core/models/csp/configuracion';
 import { IRelacionEjecucionEconomica, TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
 import { IColumna } from '@core/models/sge/columna';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
@@ -8,8 +9,8 @@ import { Fragment } from '@core/services/action-service';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
-import { BehaviorSubject, from, Observable, of, Subject } from 'rxjs';
-import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../ejecucion-economica.action.service';
 
 export interface IColumnDefinition {
@@ -78,6 +79,8 @@ export class RowTreeDesglose<T extends IDatoEconomico> extends RowTree<T> {
 export interface IDesgloseEconomicoExportData extends IBaseExportModalData {
   data: IDatoEconomico[];
   columns: IColumnDefinition[];
+  showColumClasificadoAutomaticamente?: boolean;
+  showColumnProyectoSgi?: boolean;
 }
 
 export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extends Fragment {
@@ -89,12 +92,17 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
   readonly desglose$: Subject<RowTreeDesglose<T>[]> = new BehaviorSubject<RowTreeDesglose<T>[]>([]);
   readonly aniosControl = new FormControl();
 
+  get isEjecucionEconomicaGruposEnabled(): boolean {
+    return this.config.ejecucionEconomicaGruposEnabled ?? false;
+  }
+
   constructor(
     key: number,
     protected proyectoSge: IProyectoSge,
     protected relaciones: IRelacionEjecucionEconomicaWithResponsables[],
     protected proyectoService: ProyectoService,
-    private proyectoAnualidadService: ProyectoAnualidadService
+    private proyectoAnualidadService: ProyectoAnualidadService,
+    protected readonly config: IConfiguracion
   ) {
     super(key);
     this.setComplete(true);
@@ -183,6 +191,7 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
 
   public loadDesglose(): void {
     const anualidades = this.aniosControl.value ?? [];
+    this.clearProblems();
     this.getDatosEconomicos(anualidades)
       .pipe(
         switchMap(response => this.buildRows(response))

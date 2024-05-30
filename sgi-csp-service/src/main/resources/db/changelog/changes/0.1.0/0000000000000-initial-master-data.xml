@@ -2,7 +2,7 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd"
   logicalFilePath="classpath*:db/changelog/changes/0000000000000-initial-master-data.xml">
 
-  <changeSet context="!test" author="master" id="0000000000000-tipo_origen_fuente_financiacion">
+  <changeSet context="dev" author="master" id="0000000000000-tipo_origen_fuente_financiacion">
     <insert tableName="tipo_origen_fuente_financiacion">
       <column name="id" valueSequenceNext="tipo_origen_fuente_financiacion_seq" />
       <column name="nombre" value="Público" />
@@ -15,7 +15,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!test" author="master" id="0000000000000-tipo_regimen_concurrencia">
+  <changeSet context="dev" author="master" id="0000000000000-tipo_regimen_concurrencia">
     <insert tableName="tipo_regimen_concurrencia">
       <column name="id" valueSequenceNext="tipo_regimen_concurrencia_seq" />
       <column name="nombre" value="Concesión directa" />
@@ -28,7 +28,7 @@
     </insert>
   </changeSet>
 
-  <changeSet context="!test" author="master" id="0000000000000-tipo_ambito_geografico">
+  <changeSet context="dev" author="master" id="0000000000000-tipo_ambito_geografico">
     <insert tableName="tipo_ambito_geografico">
       <column name="id" valueSequenceNext="tipo_ambito_geografico_seq" />
       <column name="nombre" value="Propio" />

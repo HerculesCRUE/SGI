@@ -40,7 +40,7 @@
 
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <!-- Codigo identificacion SGE -->
-        <mat-form-field>
+        <mat-form-field *ngIf="formPart.showProyectoSge">
           <mat-label>{{'csp.grupo.codigo-sge' | translate}}</mat-label>
           <sgi-select-proyecto-economico formControlName="proyectoSge" [grupoInvestigacion]="this.grupo">
           </sgi-select-proyecto-economico>

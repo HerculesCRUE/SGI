@@ -8,6 +8,8 @@ import { FormlyMaterialModule } from '@ngx-formly/material';
 import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedModule } from '@shared/shared.module';
+import { SelectAreasConocimientoPublicTypeComponent } from './types/select-areas-conocimiento-public.type';
+import { SelectCentrosPublicTypeComponent } from './types/select-centros-public.type';
 import { SelectComunidadesPublicTypeComponent } from './types/select-comunidades-public.type';
 import { SelectDepartamentosPublicTypeComponent } from './types/select-departamentos-public.type';
 import { SelectPaisesPublicTypeComponent } from './types/select-paises-public.type';
@@ -15,10 +17,12 @@ import { SelectProvinciasPublicTypeComponent } from './types/select-provincias-p
 
 @NgModule({
   declarations: [
-    SelectPaisesPublicTypeComponent,
+    SelectAreasConocimientoPublicTypeComponent,
+    SelectCentrosPublicTypeComponent,
     SelectComunidadesPublicTypeComponent,
-    SelectProvinciasPublicTypeComponent,
-    SelectDepartamentosPublicTypeComponent
+    SelectDepartamentosPublicTypeComponent,
+    SelectPaisesPublicTypeComponent,
+    SelectProvinciasPublicTypeComponent
   ],
   imports: [
     SharedModule,
@@ -33,8 +37,13 @@ import { SelectProvinciasPublicTypeComponent } from './types/select-provincias-p
     FormlyModule.forChild({
       types: [
         {
-          name: 'select-paises',
-          component: SelectPaisesPublicTypeComponent,
+          name: 'select-areas-conocimiento',
+          component: SelectAreasConocimientoPublicTypeComponent,
+          wrappers: ['form-field']
+        },
+        {
+          name: 'select-centros',
+          component: SelectCentrosPublicTypeComponent,
           wrappers: ['form-field']
         },
         {
@@ -43,23 +52,30 @@ import { SelectProvinciasPublicTypeComponent } from './types/select-provincias-p
           wrappers: ['form-field']
         },
         {
-          name: 'select-provincias',
-          component: SelectProvinciasPublicTypeComponent,
+          name: 'select-departamentos',
+          component: SelectDepartamentosPublicTypeComponent,
           wrappers: ['form-field']
         },
         {
-          name: 'select-departamentos',
-          component: SelectDepartamentosPublicTypeComponent,
+          name: 'select-paises',
+          component: SelectPaisesPublicTypeComponent,
+          wrappers: ['form-field']
+        },
+        {
+          name: 'select-provincias',
+          component: SelectProvinciasPublicTypeComponent,
           wrappers: ['form-field']
         }
       ]
     })
   ],
   exports: [
-    SelectPaisesPublicTypeComponent,
+    SelectAreasConocimientoPublicTypeComponent,
+    SelectCentrosPublicTypeComponent,
     SelectComunidadesPublicTypeComponent,
-    SelectProvinciasPublicTypeComponent,
-    SelectDepartamentosPublicTypeComponent
+    SelectDepartamentosPublicTypeComponent,
+    SelectPaisesPublicTypeComponent,
+    SelectProvinciasPublicTypeComponent
   ]
 })
 export class SgoPublicFormlyFormsModule { }

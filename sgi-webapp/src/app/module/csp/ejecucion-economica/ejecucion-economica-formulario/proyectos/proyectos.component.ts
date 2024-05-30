@@ -3,8 +3,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
-import { TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
 import { CAUSA_EXENCION_MAP } from '@core/models/csp/proyecto';
+import { TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { CSP_ROUTE_NAMES } from '../../../csp-route-names';
@@ -21,20 +21,7 @@ export class ProyectosComponent extends FragmentComponent implements OnInit, OnD
   formPart: ProyectosFragment;
 
   elementosPagina = [5, 10, 25, 100];
-  displayedColumns = [
-    'id',
-    'proyectoSge.id',
-    'nombre',
-    'codigoExterno',
-    'codigoInterno',
-    'responsables',
-    'fechaInicio',
-    'fechaFin',
-    'iva',
-    'causaExencion',
-    'sectorIva',
-    'acciones'
-  ];
+  displayedColumns = [];
 
   dataSource = new MatTableDataSource<IRelacionEjecucionEconomicaWithIva>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -63,6 +50,7 @@ export class ProyectosComponent extends FragmentComponent implements OnInit, OnD
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.initDisplayedColumns();
 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -74,6 +62,28 @@ export class ProyectosComponent extends FragmentComponent implements OnInit, OnD
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
+  private initDisplayedColumns(): void {
+    this.displayedColumns = [
+      'id',
+      'proyectoSge.id',
+      'nombre',
+      'codigoExterno',
+      'codigoInterno',
+      'responsables',
+      'fechaInicio',
+      'fechaFin',
+      'fechaFinDefinitiva',
+      'ivaDeducible',
+      'iva',
+      'causaExencion',
+      'acciones'
+    ];
+
+    if (this.formPart.isSectorIvaSgeEnabled) {
+      this.displayedColumns.splice(12, 0, 'sectorIva');
+    }
   }
 
 }

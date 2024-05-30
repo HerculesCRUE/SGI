@@ -189,7 +189,8 @@ class ProyectoEquipoServiceTest extends BaseServiceTest {
         () -> service.update(proyectoId, Arrays.asList(proyectoEquipo)))
         // then: throw exception
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La fecha de inicio no puede ser superior a la fecha de fin");
+        .hasMessage(
+            "La fecha de fin de participación en el proyecto de algún miembro del equipo pasaría a ser menor que su fecha de inicio. Revise los datos del apartado equipo del proyecto");
   }
 
   @Test

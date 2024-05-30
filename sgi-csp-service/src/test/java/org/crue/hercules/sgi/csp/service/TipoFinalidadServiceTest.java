@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 class TipoFinalidadServiceTest extends BaseServiceTest {
@@ -293,7 +294,7 @@ class TipoFinalidadServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void findAll_WithPaging_ReturnsPage() {
+  void findAll_WithPaging_ReturnsList() {
     // given: One hundred TipoFinalidad
     List<TipoFinalidad> data = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
@@ -302,35 +303,15 @@ class TipoFinalidadServiceTest extends BaseServiceTest {
 
     BDDMockito
         .given(
-            repository.findAll(ArgumentMatchers.<Specification<TipoFinalidad>>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<TipoFinalidad>>() {
-          @Override
-          public Page<TipoFinalidad> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            List<TipoFinalidad> content = data.subList(fromIndex, toIndex);
-            Page<TipoFinalidad> page = new PageImpl<>(content, pageable, data.size());
-            return page;
-          }
-        });
-
+            repository.findAll(ArgumentMatchers.<Specification<TipoFinalidad>>any(), ArgumentMatchers.<Sort>any()))
+        .willReturn(data);
     // when: Get page=3 with pagesize=10
-    Pageable paging = PageRequest.of(3, 10);
-    Page<TipoFinalidad> page = service.findAll(null, paging);
+    List<TipoFinalidad> listado = service.findAll(null);
 
-    // then: A Page with ten TipoFinalidad are returned containing
-    // Nombre='nombre-31' to
-    // 'nombre-40'
-    Assertions.assertThat(page.getContent()).hasSize(10);
-    Assertions.assertThat(page.getNumber()).isEqualTo(3);
-    Assertions.assertThat(page).hasSize(10);
-    Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
-    for (int i = 0, j = 31; i < 10; i++, j++) {
-      TipoFinalidad item = page.getContent().get(i);
-      Assertions.assertThat(item.getNombre()).isEqualTo("nombre-" + j);
+    Assertions.assertThat(listado.size()).isEqualTo(100);
+    for (int i = 1; i < 10; i++) {
+      TipoFinalidad item = listado.get(i - 1);
+      Assertions.assertThat(item.getNombre()).isEqualTo("nombre-" + i);
     }
   }
 

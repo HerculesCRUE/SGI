@@ -76,12 +76,20 @@
         </mat-error>
       </mat-form-field>
     </div>
-    <!-- Hito facturación -->
+    <!-- Tipo facturación -->
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.proyecto-calendario-facturacion.tipo-facturacion' | translate}}</mat-label>
-        <sgi-select-entity formControlName="hitoFacturacion" [options]="tiposFacturacion$ | async">
+        <sgi-select-entity formControlName="tipoFacturacion" [options]="tiposFacturacion$ | async">
         </sgi-select-entity>
+      </mat-form-field>
+    </div>
+    <!-- Prorroga -->
+    <div fxLayout="row">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-calendario-facturacion.prorroga' | translate}}</mat-label>
+        <sgi-select-proyecto-prorroga formControlName="proyectoProrroga" [proyectoId]="data.proyectoId">
+        </sgi-select-proyecto-prorroga>
       </mat-form-field>
     </div>
     <!-- Fecha conformidad -->
@@ -121,6 +129,21 @@
         </mat-error>
         <mat-error *ngIf="formGroup.get('mensajeMotivoRechazo').errors?.required">
           {{'error.required.entity' | translate:msgParamMotivoRechazoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Identificador SGE -->
+    <div fxLayout="row"
+      *ngIf="data.isCalendarioFacturacionSgeEnabled && (DIALOG_ACTION.VALIDAR_IP === data.action || DIALOG_ACTION.EDIT === data.action) && showIndentificadorSge$ | async">
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto-calendario-facturacion.identificador-sge' | translate}}</mat-label>
+        <sgi-select formControlName="identificadorSge" [options]=" data.proyectosSge" required
+          [displayWith]="displayerIdentificadorSge" [compareWith]="comparerIdentificadorSge"
+          [sortWith]="sorterIdentificadorSge">
+        </sgi-select>
+        <mat-error *ngIf="formGroup.controls.identificadorSge.errors?.required">
+          {{'error.required.entity' | translate:msgParamIdentificadorSge}}
         </mat-error>
       </mat-form-field>
     </div>

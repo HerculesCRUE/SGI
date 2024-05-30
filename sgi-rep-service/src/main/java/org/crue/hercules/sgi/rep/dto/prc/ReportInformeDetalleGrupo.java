@@ -7,7 +7,7 @@ import org.crue.hercules.sgi.rep.dto.SgiReportDto;
  */
 public class ReportInformeDetalleGrupo extends SgiReportDto {
   public ReportInformeDetalleGrupo() {
-    this.setPath("rep-prc-detalle-grupo-prpt");
+    this.setPath("rep-prc-detalle-grupo-docx");
     this.setName("informeDetalleGrupo");
   }
 }

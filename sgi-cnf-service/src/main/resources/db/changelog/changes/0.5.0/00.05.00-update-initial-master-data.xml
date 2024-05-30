@@ -1,0 +1,295 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="00.05.00-resources-insert">
+
+    <insert tableName="resources">
+      <column name="name" value="rep-csp-certificado-autorizacion-proyecto-externo-docx" />
+      <column name="description"
+        value="Informe del certificado de autorización del proyecto externo" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-csp-certificado-autorizacion-proyecto-externo.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-csp-certificado-autorizacion-proyecto-externo.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <delete tableName="resources">
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-csp-certificado-autorizacion-proyecto-externo-prpt" />
+      </whereParams>
+    </delete>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-prc-detalle-grupo-docx" />
+      <column name="description"
+        value="Informe del detalle de grupo" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-prc-detalle-grupo.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-prc-detalle-grupo.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <delete tableName="resources">
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-prc-detalle-grupo-prpt" />
+      </whereParams>
+    </delete>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-prc-resumen-puntuacion-grupos-docx" />
+      <column name="description"
+        value="Informe del resumen de puntuación de grupos" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-prc-resumen-puntuacion-grupos.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-prc-resumen-puntuacion-grupos.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-prc-detalle-produccion-investigador-docx" />
+      <column name="description"
+        value="Informe del detalle de grupos de producción por investigador" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-prc-detalle-produccion-investigador.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-prc-detalle-produccion-investigador.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-ficha-evaluador-docx" />
+      <column name="description"
+        value="Informe con los bloques y apartados del formulario para los comentarios del informe ficha evaluador" />
+      <column name="value"
+        valueBlobFile="blob/rep/rep-eti-bloque-apartado-ficha-evaluador.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-eti-bloque-apartado-ficha-evaluador.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <delete tableName="resources">
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-common-dynamic-portrait-prpt" />
+      </whereParams>
+    </delete>
+
+    <delete tableName="resources">
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-common-dynamic-landscape-prpt" />
+      </whereParams>
+    </delete>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.05.00-resources-update-oracle"
+    dbms="oracle">
+    <update tableName="resources">
+      <column name="value" valueBlobFile="blob/rep/rep-eti-acta.docx" />
+      <where>:name=:value AND dbms_lob.compare(value, default_value) = 0</where>
+      <whereParams>
+        <param name="name" value="rep-eti-acta-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-acta.docx" />
+     <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-acta-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="value" valueBlobFile="blob/rep/rep-eti-bloque-apartado-acta.docx" />
+      <where>:name=:value AND dbms_lob.compare(value, default_value) = 0</where>
+      <whereParams>
+        <param name="name" value="rep-eti-bloque-apartado-acta-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-bloque-apartado-acta.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-bloque-apartado-acta-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-favorable-memoria-nueva.docx" />
+      <where>:name=:value AND dbms_lob.compare(value, default_value) = 0</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-favorable-memoria-nueva-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-favorable-memoria-nueva.docx" />
+     <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-favorable-memoria-nueva-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="value" valueBlobFile="blob/rep/rep-eti-ficha-evaluador.docx" />
+      <where>:name=:value AND dbms_lob.compare(value, default_value) = 0</where>
+      <whereParams>
+        <param name="name" value="rep-eti-ficha-evaluador-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-ficha-evaluador.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-ficha-evaluador-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="value" valueBlobFile="blob/rep/rep-eti-mxx.docx" />
+      <where>:name=:value AND dbms_lob.compare(value, default_value) = 0</where>
+      <whereParams>
+        <param name="name" value="rep-eti-mxx-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-mxx.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-mxx-docx" />
+      </whereParams>
+    </update>
+
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.05.00-resources-update-!oracle" dbms="!oracle">
+    <update tableName="resources">
+      <column name="value" valueBlobFile="blob/rep/rep-eti-acta.docx" />
+        <where>:name=:value AND value=default_value</where>
+        <whereParams>
+        <param name="name" value="rep-eti-acta-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-acta.docx" />
+     <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-acta-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="value" valueBlobFile="blob/rep/rep-eti-bloque-apartado-acta.docx" />
+        <where>:name=:value AND value=default_value</where>
+        <whereParams>
+        <param name="name" value="rep-eti-bloque-apartado-acta-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-bloque-apartado-acta.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-bloque-apartado-acta-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-favorable-memoria-nueva.docx" />
+        <where>:name=:value AND value=default_value</where>
+        <whereParams>
+        <param name="name" value="rep-eti-evaluacion-favorable-memoria-nueva-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="default_value"
+        valueBlobFile="blob/rep/rep-eti-evaluacion-favorable-memoria-nueva.docx" />
+     <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-favorable-memoria-nueva-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="value" valueBlobFile="blob/rep/rep-eti-ficha-evaluador.docx" />
+        <where>:name=:value AND value=default_value</where>
+        <whereParams>
+        <param name="name" value="rep-eti-ficha-evaluador-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-ficha-evaluador.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-ficha-evaluador-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="value" valueBlobFile="blob/rep/rep-eti-mxx.docx" />
+        <where>:name=:value AND value=default_value</where>
+        <whereParams>
+        <param name="name" value="rep-eti-mxx-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-mxx.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-mxx-docx" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.05.00-config">
+    <insert tableName="config">
+      <column name="name" value="sgp-alta" />
+      <column name="description"
+        value="Habilita/deshabilita el botón 'Solicitar alta de personas' en el buscador de personas según su valor" />
+      <column name="value" value="true" />
+    </insert>
+    <insert tableName="config">
+      <column name="name" value="sgp-modificacion" />
+      <column name="description"
+        value="Habilita/deshabilita el botón 'Solicitar modificación' en el detalle de persona según su valor" />
+      <column name="value" value="true" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name" value="sgemp-alta" />
+      <column name="description"
+        value="Habilita/deshabilita el botón 'Solicitar alta entidad' en el buscador de empresas según su valor" />
+      <column name="value" value="true" />
+    </insert>
+    <insert tableName="config">
+      <column name="name" value="sgemp-modificacion" />
+      <column name="description"
+        value="Habilita/deshabilita el botón 'Solicitar modificación' en el detalle de empresa según su valor" />
+      <column name="value" value="true" />
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

@@ -11,7 +11,8 @@
           </ng-container>
           <ng-container *ngSwitchCase="ConfigModule.CSP">
             <sgi-config-input-text-csp [key]="config.key" [label]="config.value.label"
-              [required]="config.value.required" (error)="handleErrors($event)">
+              [description]="config.value.description" [required]="config.value.required"
+              (error)="handleErrors($event)">
             </sgi-config-input-text-csp>
           </ng-container>
           <ng-container *ngSwitchDefault></ng-container>
@@ -42,7 +43,8 @@
             </sgi-config-select-cnf>
           </ng-container>
           <ng-container *ngSwitchCase="ConfigModule.CSP">
-            <sgi-config-select-csp [key]="config.key" [label]="config.value.label" [required]="config.value.required"
+            <sgi-config-select-csp [key]="config.key" [label]="config.value.label"
+              [description]="config.value.description" [required]="config.value.required"
               [options$]="config.value.options" (error)="handleErrors($event)">
             </sgi-config-select-csp>
           </ng-container>

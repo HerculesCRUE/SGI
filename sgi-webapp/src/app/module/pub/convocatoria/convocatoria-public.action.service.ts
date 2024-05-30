@@ -1,12 +1,13 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { IModeloEjecucion } from '@core/models/csp/tipos-configuracion';
 import { ActionService } from '@core/services/action-service';
 import { ConvocatoriaPublicService } from '@core/services/csp/convocatoria-public.service';
 import { ConvocatoriaRequisitoEquipoPublicService } from '@core/services/csp/convocatoria-requisito-equipo-public.service';
 import { ConvocatoriaRequisitoIPPublicService } from '@core/services/csp/convocatoria-requisito-ip-public.service';
 import { UnidadGestionPublicService } from '@core/services/csp/unidad-gestion-public.service';
+import { PartidaPresupuestariaGastoSgePublicService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-gasto-sge-public.service';
+import { PartidaPresupuestariaIngresoSgePublicService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-ingreso-sge-public.service';
 import { EmpresaPublicService } from '@core/services/sgemp/empresa-public.service';
 import { CategoriaProfesionalPublicService } from '@core/services/sgp/categoria-profesional-public.service';
 import { NivelAcademicoPublicService } from '@core/services/sgp/nivel-academico-public.service';
@@ -68,13 +69,15 @@ export class ConvocatoriaPublicActionService extends ActionService implements On
     fb: FormBuilder,
     logger: NGXLogger,
     route: ActivatedRoute,
-    convocatoriaService: ConvocatoriaPublicService,
-    empresaService: EmpresaPublicService,
-    unidadGestionService: UnidadGestionPublicService,
+    categoriaProfesionaService: CategoriaProfesionalPublicService,
     convocatoriaRequisitoEquipoService: ConvocatoriaRequisitoEquipoPublicService,
     convocatoriaRequisitoIPService: ConvocatoriaRequisitoIPPublicService,
+    convocatoriaService: ConvocatoriaPublicService,
+    empresaService: EmpresaPublicService,
     nivelAcademicoService: NivelAcademicoPublicService,
-    categoriaProfesionaService: CategoriaProfesionalPublicService
+    partidaPresupuestariaGastoSgeService: PartidaPresupuestariaGastoSgePublicService,
+    partidaPresupuestariaIngresoSgeService: PartidaPresupuestariaIngresoSgePublicService,
+    unidadGestionService: UnidadGestionPublicService
   ) {
     super();
     this.id = Number(route.snapshot.paramMap.get(CONVOCATORIA_ROUTE_PARAMS.ID));
@@ -140,7 +143,9 @@ export class ConvocatoriaPublicActionService extends ActionService implements On
     );
     this.partidasPresupuestarias = new ConvocatoriaPartidaPresupuestariaPublicFragment(
       this.id,
-      convocatoriaService
+      convocatoriaService,
+      partidaPresupuestariaGastoSgeService,
+      partidaPresupuestariaIngresoSgeService
     );
     this.elegibilidad = new ConvocatoriaConceptoGastoPublicFragment(
       this.id,

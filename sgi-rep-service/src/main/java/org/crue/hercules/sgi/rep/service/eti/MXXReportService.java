@@ -28,7 +28,7 @@ import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
 import org.crue.hercules.sgi.rep.util.AssertHelper;
 import org.crue.hercules.sgi.rep.util.CustomSpELRenderDataCompute;
-import org.ddr.poi.html.HtmlRenderPolicy;
+import org.crue.hercules.sgi.rep.util.SgiHtmlRenderPolicy;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -149,7 +149,7 @@ public class MXXReportService extends SgiReportDocxService {
                 return null;
               }
             })
-        .addPlugin('<', new HtmlRenderPolicy())
+        .addPlugin('<', new SgiHtmlRenderPolicy())
         .build();
 
     // Reduce el ratio a la mitad para evitar que se produzca una Zip Bomb exception

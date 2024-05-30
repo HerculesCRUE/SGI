@@ -21,7 +21,7 @@ import { map } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class EvaluacionService extends SgiMutableRestService<number, IEvaluacionBackend, IEvaluacion>{
+export class EvaluacionService extends SgiMutableRestService<number, IEvaluacionBackend, IEvaluacion> {
   private static readonly MAPPING = '/evaluaciones';
 
   constructor(protected http: HttpClient) {
@@ -301,18 +301,6 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    */
   isSeguimientoEvaluable(idEvaluacion: number): Observable<boolean> {
     const url = `${this.endpointUrl}/${idEvaluacion}/evaluacion-seguimiento`;
-    return this.http.head(url, { observe: 'response' }).pipe(
-      map(response => response.status === 200)
-    );
-  }
-
-  /**
-   * Permite enviar el comunicado de la evaluación modificada
-   * 
-   * * @param idEvaluacion id convocatoria
-   */
-  enviarComunicado(idEvaluacion: number): Observable<boolean> {
-    const url = `${this.endpointUrl}/${idEvaluacion}/comunicado`;
     return this.http.head(url, { observe: 'response' }).pipe(
       map(response => response.status === 200)
     );

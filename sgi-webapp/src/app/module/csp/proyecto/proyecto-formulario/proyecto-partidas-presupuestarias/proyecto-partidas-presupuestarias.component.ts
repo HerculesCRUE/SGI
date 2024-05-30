@@ -71,6 +71,8 @@ export class ProyectoPartidasPresupuestariasComponent extends FragmentComponent 
     this.dataSource.sortingDataAccessor =
       (wrapper: IPartidaPresupuestariaListado, property: string) => {
         switch (property) {
+          case 'codigo':
+            return wrapper.codigo ? wrapper.codigo : wrapper.partidaSge.codigo;
           default:
             return wrapper[property];
         }
@@ -118,7 +120,7 @@ export class ProyectoPartidasPresupuestariasComponent extends FragmentComponent 
     this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort);
 
     const proyectoPartidaPresupuestariaTabla = this.dataSource.data
-      .map(partidaPresupuestaria => partidaPresupuestaria.partidaPresupuestaria?.value);
+      .map(partidaPresupuestaria => !!partidaPresupuestaria.partidaPresupuestaria ? partidaPresupuestaria.partidaPresupuestaria?.value : partidaPresupuestaria.convocatoriaPartidaPresupuestaria);
 
     let row: number;
     if (!!rowIndex || rowIndex === 0) {
@@ -130,6 +132,7 @@ export class ProyectoPartidasPresupuestariasComponent extends FragmentComponent 
       partidaPresupuestaria: proyectoPartida?.value,
       partidasPresupuestarias: proyectoPartidaPresupuestariaTabla,
       convocatoriaPartidaPresupuestaria: convocatoriaPartida,
+      partidasPresupuestariasSgeEnabled: this.formPart.partidasPresupuestariasSgeEnabled,
       readonly: this.formPart.readonly,
       canEdit: canEdit ?? true
     };

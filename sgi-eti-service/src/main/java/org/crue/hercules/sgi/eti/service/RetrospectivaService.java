@@ -63,4 +63,14 @@ public interface RetrospectivaService {
    */
   void updateEstadoRetrospectiva(Retrospectiva retrospectiva, Long idEstadoRetrospectiva);
 
+  /**
+   * Actualiza el estado de la {@link Retrospectiva}
+   * 
+   * @param retrospectivaId       Identificador de la {@link Retrospectiva} a
+   *                              actualizar.
+   * @param estadoRetrospectivaId identificador del estado nuevo de la
+   *                              retrospectiva.
+   */
+  void updateEstadoRetrospectiva(Long retrospectivaId, Long estadoRetrospectivaId);
+
 }

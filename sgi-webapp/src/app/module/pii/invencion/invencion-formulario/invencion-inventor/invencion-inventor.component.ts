@@ -10,14 +10,17 @@ import { IInvencionInventor } from '@core/models/pii/invencion-inventor';
 import { DialogService } from '@core/services/dialog.service';
 import { Status, StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, of, Subscription } from 'rxjs';
+import { Subscription, forkJoin, of } from 'rxjs';
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
+import { getPersonaEmailListConcatenated } from 'src/app/esb/sgp/shared/pipes/persona-email.pipe';
 import { InvencionActionService } from '../../invencion.action.service';
 import { InvencionInventorModalComponent, InvencionInventorModalData } from '../../modals/invencion-inventor-modal/invencion-inventor-modal.component';
 import { InvencionInventorFragment } from './invencion-inventor.fragment';
+import { InvencionInventorService } from '@core/services/pii/invencion-inventor/invencion-inventor.service';
 
 const INVENCION_INVENTOR_KEY = marker('pii.invencion.inventor');
 const INVENCION_INVENTOR_PARTICIPACION_ERROR = marker('pii.invencion-inventor.error.participacion');
+const INVENCION_INVENTOR_PARTICIPACION_NO_DELETABLE = marker('pii.invencion-inventor.error.no-deletable');
 const MSG_DELETE = marker('msg.delete.entity');
 
 @Component({
@@ -33,6 +36,7 @@ export class InvencionInventorComponent extends FragmentComponent implements OnI
   msgParamEntity = {};
   msgErrorParticipacion: string;
   msgConfirmDelete: string;
+  msgNoDeletable: string;
 
   columnas = ['nombre', 'apellidos', 'persona', 'entidad', 'participacion', 'esReparto', 'acciones'];
   elementosPagina = [5, 10, 25, 100];
@@ -49,7 +53,9 @@ export class InvencionInventorComponent extends FragmentComponent implements OnI
     readonly actionService: InvencionActionService,
     private readonly translate: TranslateService,
     private matDialog: MatDialog,
-    private dialogService: DialogService) {
+    private dialogService: DialogService,
+    private invencionInventoriService: InvencionInventorService
+  ) {
     super(actionService.FRAGMENT.INVENCION_INVENTOR, actionService);
     this.formPart = this.fragment as InvencionInventorFragment;
   }
@@ -59,6 +65,23 @@ export class InvencionInventorComponent extends FragmentComponent implements OnI
 
     this.setupI18N();
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sortingDataAccessor =
+      (wrapper: StatusWrapper<IInvencionInventor>, property: string) => {
+        switch (property) {
+          case 'nombre':
+            return wrapper.value.inventor.nombre;
+          case 'apellidos':
+            return wrapper.value.inventor.apellidos;
+          case 'persona':
+            return getPersonaEmailListConcatenated(wrapper.value.inventor);
+          case 'esReparto':
+            return wrapper.value.repartoUniversidad;
+          case 'participacion':
+            return wrapper.value.participacion;
+          default:
+            return wrapper[property];
+        }
+      };
     this.dataSource.sort = this.sort;
 
     this.subscriptions.push(
@@ -103,6 +126,10 @@ export class InvencionInventorComponent extends FragmentComponent implements OnI
         );
       })
     ).subscribe((value) => this.msgConfirmDelete = value);
+
+    this.translate.get(
+      INVENCION_INVENTOR_PARTICIPACION_NO_DELETABLE
+    ).subscribe((value) => this.msgNoDeletable = value);
 
   }
 
@@ -149,16 +176,24 @@ export class InvencionInventorComponent extends FragmentComponent implements OnI
 
   }
 
-  deleteInventor = (invencionInventor: StatusWrapper<IInvencionInventor>) =>
+  deleteInventor = (invencionInventor: StatusWrapper<IInvencionInventor>) => {
+    const eliminable$ = invencionInventor.value?.id ? this.invencionInventoriService.isEliminable(invencionInventor.value.id) : of(true);
+
     this.subscriptions.push(
-      this.dialogService.showConfirmation(this.msgConfirmDelete).subscribe(
-        (accepted) => {
-          if (accepted) {
-            this.formPart.deleteInvencionInventor(invencionInventor);
+      eliminable$.pipe(
+        switchMap(isEliminable => {
+          if (!isEliminable) {
+            return this.dialogService.showInfoDialog(this.msgNoDeletable);
           }
-        }
-      )
-    )
+
+          return this.dialogService.showConfirmation(this.msgConfirmDelete).pipe(
+            filter(accepted => !!accepted),
+            tap(() => this.formPart.deleteInvencionInventor(invencionInventor))
+          )
+        })
+      ).subscribe()
+    );
+  }
 
   ngOnDestroy = () => this.subscriptions.forEach(subscription =>
     subscription.unsubscribe())

@@ -12,6 +12,7 @@ import { ILineaInvestigacion } from '@core/models/csp/linea-investigacion';
 import { IPersona } from '@core/models/sgp/persona';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ConfigService } from '@core/services/cnf/config.service';
+import { ConfigService as ConfigCspService } from '@core/services/csp/config.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { LineaInvestigacionService } from '@core/services/csp/linea-investigacion/linea-investigacion.service';
 import { RolProyectoColectivoService } from '@core/services/csp/rol-proyecto-colectivo/rol-proyecto-colectivo.service';
@@ -23,7 +24,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, EMPTY, from, Observable } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, from } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 import { GrupoListadoExportModalComponent } from '../modals/grupo-listado-export-modal/grupo-listado-export-modal.component';
@@ -69,9 +70,14 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
   readonly lineasInvestigacion$ = new BehaviorSubject<ILineaInvestigacion[]>([]);
 
   private limiteRegistrosExportacionExcel: string;
+  private _isEjecucionEconomicaGruposEnabled: boolean;
 
   get TIPO_MAP() {
     return TIPO_MAP;
+  }
+
+  get isEjecucionEconomicaGruposEnabled(): boolean {
+    return this._isEjecucionEconomicaGruposEnabled ?? false;
   }
 
   constructor(
@@ -85,7 +91,8 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
     private readonly translate: TranslateService,
     private lineaInvestigacionService: LineaInvestigacionService,
     private matDialog: MatDialog,
-    private readonly cnfService: ConfigService
+    private readonly cnfService: ConfigService,
+    private readonly configCspService: ConfigCspService
   ) {
     super();
   }
@@ -99,6 +106,12 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
     this.filter = this.createFilter();
     this.isInvestigador = this.authService.hasAnyAuthority(['CSP-AUT-INV-VR']);
     this.isVisor = this.authService.hasAnyAuthority(['CSP-GIN-V']);
+
+    this.suscripciones.push(
+      this.configCspService.isEjecucionEconomicaGruposEnabled().subscribe(value => {
+        this._isEjecucionEconomicaGruposEnabled = value;
+      })
+    );
 
     this.suscripciones.push(
       this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-grupo-listado').subscribe(value => {
@@ -244,8 +257,9 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
 
   private fillInvestigadorPrincipal(grupo: IGrupoListado): Observable<IGrupoListado> {
     let idsInvestigadoresPrincipales: string[];
-    return this.grupoService.findPersonaRefInvestigadoresPrincipales(grupo.id).pipe(
+    return this.grupoService.findInvestigadoresPrincipales(grupo.id).pipe(
       filter(investigadoresPrincipales => !!investigadoresPrincipales),
+      map(investigadoresPrincipales => investigadoresPrincipales.map(investigador => investigador.persona.id)),
       tap(investigadoresPrincipales => idsInvestigadoresPrincipales = [...investigadoresPrincipales]),
       switchMap(investigadoresPrincipales => this.personaService.findAllByIdIn(investigadoresPrincipales)),
       map(investigadoresPrincipales => {

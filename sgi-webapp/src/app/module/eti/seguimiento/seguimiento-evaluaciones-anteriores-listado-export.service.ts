@@ -75,6 +75,7 @@ export class SeguimientoEvaluacionesAnterioresListadoExportService extends
         name: 'version' + idEvaluacionCol,
         title: prefixTitleColumn + idEvaluacionCol + ': ' + this.translate.instant(EVALUACION_VERSION_KEY),
         type: ColumnType.NUMBER,
+        format: '#'
       };
       columns.push(columnVersion);
 

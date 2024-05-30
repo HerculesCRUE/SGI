@@ -44,7 +44,7 @@ spring:
     properties:
       hibernate:
         # We use a H2 database with PostgreSQL compatibility mode
-        dialect: org.hibernate.dialect.H2Dialect
+        dialect: org.crue.hercules.sgi.eti.repository.functions.CustomPostgreSQL9Dialect
         # Set default Hibernate schema
         '[default_schema]': ${spring.datasource.username}
         jdbc:
@@ -172,7 +172,7 @@ spring:
     properties:
       hibernate:
         # We use Oracle database
-        dialect: org.hibernate.dialect.Oracle12cDialect
+        dialect: org.crue.hercules.sgi.eti.repository.functions.CustomOracle12cDialect
   liquibase:
     # Set Liquibase contexts same as spring profiles
     contexts: dev
@@ -229,7 +229,7 @@ spring:
     properties:
       hibernate:
         # We use SQL Server database
-        dialect: org.hibernate.dialect.SQLServer2012Dialect
+        dialect: org.crue.hercules.sgi.eti.repository.functions.CustomSQLServer2012Dialect
   liquibase:
     # Set Liquibase contexts same as spring profiles
     contexts: dev
@@ -291,7 +291,7 @@ spring:
     properties:
       hibernate:
         # We use a PostgreSQL database
-        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        dialect: org.crue.hercules.sgi.eti.repository.functions.CustomPostgreSQL9Dialect
         # Set default Hibernate Schema
         '[default_schema]': eti
   security:
@@ -310,8 +310,10 @@ spring:
   jpa:
     properties:
       hibernate:
-        # Set default Hibernate Schema
-        '[default_schema]': test
+      # We use a Oracle database
+      dialect: org.crue.hercules.sgi.eti.repository.functions.CustomOracle12cDialect
+      # Set default Hibernate Schema
+      '[default_schema]': test
   liquibase:
     # Set Liquibase contexts
     contexts: test
@@ -338,7 +340,7 @@ spring:
     properties:
       hibernate:
         # We use a PostgreSQL database
-        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        dialect: org.crue.hercules.sgi.eti.repository.functions.CustomPostgreSQL9Dialect
         # Set default Hibernate Schema
         '[default_schema]': test
   liquibase:

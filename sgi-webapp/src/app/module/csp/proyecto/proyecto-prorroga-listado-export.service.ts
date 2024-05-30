@@ -104,19 +104,19 @@ export class ProyectoProrrogaListadoExportService extends AbstractTableExportFil
     const titleProrroga = this.translate.instant(PRORROGA_KEY);
     for (let i = 0; i < maxNumProrrogas; i++) {
       const idProrroga: string = String(i + 1);
-      const columnNombreProrroga: ISgiColumnReport = {
+      const columnNumeroProrroga: ISgiColumnReport = {
         name: PRORROGA_FIELD + idProrroga,
         title: titleProrroga + idProrroga + ': ' + this.translate.instant(PRORROGA_NUMERO_KEY),
-        type: ColumnType.STRING,
+        type: ColumnType.NUMBER,
       };
-      columns.push(columnNombreProrroga);
+      columns.push(columnNumeroProrroga);
 
-      const columnNumeroProrroga: ISgiColumnReport = {
+      const columnTipoProrroga: ISgiColumnReport = {
         name: PRORROGA_TIPO_FIELD + idProrroga,
         title: titleProrroga + idProrroga + ': ' + this.translate.instant(PRORROGA_TIPO_KEY),
         type: ColumnType.STRING,
       };
-      columns.push(columnNumeroProrroga);
+      columns.push(columnTipoProrroga);
 
       const columnFechaConcesionProrroga: ISgiColumnReport = {
         name: PRORROGA_FECHA_CONCESION_FIELD + idProrroga,
@@ -136,6 +136,7 @@ export class ProyectoProrrogaListadoExportService extends AbstractTableExportFil
         name: PRORROGA_IMPORTE_FIELD + idProrroga,
         title: titleProrroga + idProrroga + ': ' + this.translate.instant(PRORROGA_IMPORTE_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteProrroga);
     }

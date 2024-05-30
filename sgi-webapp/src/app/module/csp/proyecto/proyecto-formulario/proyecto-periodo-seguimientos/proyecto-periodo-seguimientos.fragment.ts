@@ -1,6 +1,7 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { TipoSeguimiento } from '@core/enums/tipo-seguimiento';
 import { IConvocatoriaPeriodoSeguimientoCientifico } from '@core/models/csp/convocatoria-periodo-seguimiento-cientifico';
+import { Estado } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoPeriodoSeguimiento } from '@core/models/csp/proyecto-periodo-seguimiento';
 import { Fragment } from '@core/services/action-service';
@@ -11,7 +12,7 @@ import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
-import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { filter, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 import { comparePeriodoSeguimiento, getFechaFinPeriodoSeguimiento, getFechaInicioPeriodoSeguimiento } from '../../../proyecto-periodo-seguimiento/proyecto-periodo-seguimiento.utils';
 
 const PROYECTO_PERIODO_SEGUIMIENTO_NO_COINCIDE_KEY = marker('info.csp.proyecto-periodo-seguimiento.no-coincide-convocatoria');
@@ -59,55 +60,59 @@ export class ProyectoPeriodoSeguimientosFragment extends Fragment {
 
   protected onInitialize(): void {
     if (this.getKey()) {
-      this.proyectoService.findAllProyectoPeriodoSeguimientoProyecto(this.getKey() as number).pipe(
-        map((response) => response.items.map(item => {
-          return {
-            proyectoPeriodoSeguimiento: new StatusWrapper<IProyectoPeriodoSeguimiento>(item)
-          } as IPeriodoSeguimientoListado;
-        })),
-        switchMap(periodosSeguimientoListado => {
-          let requestConvocatoriaPeriodoSeguimiento: Observable<IPeriodoSeguimientoListado[]>;
+      this.subscriptions.push(
+        this.proyectoService.findEstadoProyecto(this.getKey() as number).pipe(
+          filter(response => response.items.some(estado => estado.estado === Estado.CONCEDIDO)),
+          switchMap(() => this.proyectoService.findAllProyectoPeriodoSeguimientoProyecto(this.getKey() as number)),
+          map((response) => response.items.map(item => {
+            return {
+              proyectoPeriodoSeguimiento: new StatusWrapper<IProyectoPeriodoSeguimiento>(item)
+            } as IPeriodoSeguimientoListado;
+          })),
+          switchMap(periodosSeguimientoListado => {
+            let requestConvocatoriaPeriodoSeguimiento: Observable<IPeriodoSeguimientoListado[]>;
 
-          if (this.proyecto.convocatoriaId) {
-            requestConvocatoriaPeriodoSeguimiento = this.convocatoriaService
-              .findSeguimientosCientificos(this.proyecto.convocatoriaId)
-              .pipe(
-                map((response) => response.items),
-                map(periodoSeguimientoCientificoConvocatoria => {
-                  periodosSeguimientoListado.forEach(periodoSeguimientoListado => {
-                    if (periodoSeguimientoListado.proyectoPeriodoSeguimiento.value.convocatoriaPeriodoSeguimientoId) {
-                      const index = periodoSeguimientoCientificoConvocatoria.findIndex(periodoSeguimientoConvocatoria =>
-                        periodoSeguimientoConvocatoria.id ===
-                        periodoSeguimientoListado.proyectoPeriodoSeguimiento.value.convocatoriaPeriodoSeguimientoId
-                      );
-                      if (index >= 0) {
-                        periodoSeguimientoListado.convocatoriaPeriodoSeguimiento = periodoSeguimientoCientificoConvocatoria[index];
-                        periodoSeguimientoCientificoConvocatoria.splice(index, 1);
+            if (this.proyecto.convocatoriaId) {
+              requestConvocatoriaPeriodoSeguimiento = this.convocatoriaService
+                .findSeguimientosCientificos(this.proyecto.convocatoriaId)
+                .pipe(
+                  map((response) => response.items),
+                  map(periodoSeguimientoCientificoConvocatoria => {
+                    periodosSeguimientoListado.forEach(periodoSeguimientoListado => {
+                      if (periodoSeguimientoListado.proyectoPeriodoSeguimiento.value.convocatoriaPeriodoSeguimientoId) {
+                        const index = periodoSeguimientoCientificoConvocatoria.findIndex(periodoSeguimientoConvocatoria =>
+                          periodoSeguimientoConvocatoria.id ===
+                          periodoSeguimientoListado.proyectoPeriodoSeguimiento.value.convocatoriaPeriodoSeguimientoId
+                        );
+                        if (index >= 0) {
+                          periodoSeguimientoListado.convocatoriaPeriodoSeguimiento = periodoSeguimientoCientificoConvocatoria[index];
+                          periodoSeguimientoCientificoConvocatoria.splice(index, 1);
+                        }
                       }
+                    });
+
+                    if (periodoSeguimientoCientificoConvocatoria.length > 0) {
+                      periodosSeguimientoListado.push(...periodoSeguimientoCientificoConvocatoria.map(convocatoriaPeriodoSeguimiento => {
+                        return {
+                          convocatoriaPeriodoSeguimiento
+                        } as IPeriodoSeguimientoListado;
+                      }));
                     }
-                  });
 
-                  if (periodoSeguimientoCientificoConvocatoria.length > 0) {
-                    periodosSeguimientoListado.push(...periodoSeguimientoCientificoConvocatoria.map(convocatoriaPeriodoSeguimiento => {
-                      return {
-                        convocatoriaPeriodoSeguimiento
-                      } as IPeriodoSeguimientoListado;
-                    }));
-                  }
-
-                  return periodosSeguimientoListado;
-                })
-              );
-          } else {
-            requestConvocatoriaPeriodoSeguimiento = of(periodosSeguimientoListado);
-          }
-          return requestConvocatoriaPeriodoSeguimiento;
-        }),
-      ).subscribe((periodoSeguimientoListado) => {
-        periodoSeguimientoListado.forEach(element => this.fillListadoFields(element));
-        this.periodoSeguimientos$.next(periodoSeguimientoListado);
-        this.recalcularNumPeriodos();
-      });
+                    return periodosSeguimientoListado;
+                  })
+                );
+            } else {
+              requestConvocatoriaPeriodoSeguimiento = of(periodosSeguimientoListado);
+            }
+            return requestConvocatoriaPeriodoSeguimiento;
+          })
+        ).subscribe((periodoSeguimientoListado) => {
+          periodoSeguimientoListado.forEach(element => this.fillListadoFields(element));
+          this.periodoSeguimientos$.next(periodoSeguimientoListado);
+          this.recalcularNumPeriodos();
+        })
+      );
     }
   }
 

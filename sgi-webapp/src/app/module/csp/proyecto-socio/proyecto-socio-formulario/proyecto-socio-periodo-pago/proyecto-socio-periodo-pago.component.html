@@ -64,7 +64,7 @@
     </table>
   </div>
   <div class="separation-button" *ngIf="!this.readonly">
-    <button color="three" mat-button mat-raised-button (click)="openModal()">
+    <button color="three" [disabled]="!isProyectoEstadoConcedido()" mat-button mat-raised-button (click)="openModal()">
       <mat-icon color="accent">add_circle</mat-icon>
       {{ 'btn.add.entity' | translate:msgParamEntity }}
     </button>

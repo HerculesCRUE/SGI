@@ -3,7 +3,9 @@ package org.crue.hercules.sgi.csp.validation;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.crue.hercules.sgi.csp.model.Configuracion;
 import org.crue.hercules.sgi.csp.model.ProyectoPartida;
+import org.crue.hercules.sgi.csp.repository.ConfiguracionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoPartidaRepository;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
@@ -15,6 +17,7 @@ public class UniqueCodigoTipoProyectoPartidaValidator
     implements ConstraintValidator<UniqueCodigoTipoProyectoPartida, ProyectoPartida> {
 
   private final ProyectoPartidaRepository proyectoPartidaRepository;
+  private final ConfiguracionRepository configuracionRepository;
 
   private String field;
 
@@ -27,13 +30,19 @@ public class UniqueCodigoTipoProyectoPartidaValidator
   @Override
   public boolean isValid(ProyectoPartida value, ConstraintValidatorContext context) {
 
+    Configuracion config = configuracionRepository.findFirstByOrderByIdAsc().orElse(null);
+    if (config == null) {
+      return false;
+    }
+
     boolean isValid = true;
-    if (value.getId() == null) {
-      isValid = !this.proyectoPartidaRepository.existsByProyectoIdAndCodigoAndTipoPartida(
-          value.getProyectoId(), value.getCodigo(), value.getTipoPartida());
+    if (Boolean.TRUE.equals(config.getPartidasPresupuestariasSGE())) {
+      isValid = !this.proyectoPartidaRepository.existsByProyectoIdAndPartidaRefAndTipoPartidaAndIdNot(
+          value.getProyectoId(), value.getPartidaRef(), value.getTipoPartida(),
+          value.getId() != null ? value.getId() : 0);
     } else {
       isValid = !this.proyectoPartidaRepository.existsByProyectoIdAndCodigoAndTipoPartidaAndIdNot(
-          value.getProyectoId(), value.getCodigo(), value.getTipoPartida(), value.getId());
+          value.getProyectoId(), value.getCodigo(), value.getTipoPartida(), value.getId() != null ? value.getId() : 0);
     }
 
     if (!isValid) {

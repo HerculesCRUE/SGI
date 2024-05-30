@@ -77,7 +77,7 @@ public class RolSocioController {
    * @return {@link RolSocio} correspondiente al id.
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-ROLS-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-ROLS-E','CSP-PRO-E','CSP-PRO-E', 'CSP-PRO-INV-VR')")
   public RolSocioOutput findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     RolSocio returnValue = service.findById(id);

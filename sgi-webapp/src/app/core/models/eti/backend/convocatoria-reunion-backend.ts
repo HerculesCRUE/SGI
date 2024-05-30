@@ -20,6 +20,8 @@ export interface IConvocatoriaReunionBackend {
   minutoInicioSegunda: number;
   /** Fecha Limite */
   fechaLimite: string;
+  /** Videoconferencia */
+  videoconferencia: boolean;
   /** Lugar */
   lugar: string;
   /** Orden día */

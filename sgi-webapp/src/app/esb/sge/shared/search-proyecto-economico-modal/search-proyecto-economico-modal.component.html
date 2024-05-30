@@ -115,7 +115,7 @@
           <ng-container *ngIf="data.selectAndNotify">
             <span
               matTooltip="{{(proyectoListado.selected ? 'sge.proyecto.seleccionado' :'btn.select-notify') | translate}}">
-              <button mat-icon-button (click)="openProyectoUpdateModal(proyectoListado.proyecto)"
+              <button mat-icon-button (click)="openProyectoSgeSelectAndNotifyModal(proyectoListado.proyecto)"
                 [disabled]="proyectoListado.selected" color="primary">
                 <mat-icon>done_outline</mat-icon>
               </button>

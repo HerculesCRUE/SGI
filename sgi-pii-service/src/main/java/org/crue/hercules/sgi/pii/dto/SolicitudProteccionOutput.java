@@ -41,7 +41,6 @@ public class SolicitudProteccionOutput implements Serializable {
   private String agentePropiedadRef;
   private String paisProteccionRef;
   private String comentarios;
-  private Boolean activo;
 
   @Data
   @EqualsAndHashCode(callSuper = false)

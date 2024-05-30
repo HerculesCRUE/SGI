@@ -81,6 +81,7 @@
       <mat-form-field fxFlex="33%">
         <mat-label>{{'csp.convocatoria.finalidad' | translate}}</mat-label>
         <sgi-select-tipo-finalidad formControlName="finalidad" [required]="formPart.isEstadoRegistrada()"
+          [unidadGestionRef]="formGroup.controls.unidadGestion.value?.id"
           [modeloEjecucionId]="formGroup.controls.modeloEjecucion.value?.id"
           [resetOnChange]="modeloEjecucion.selectionChange">
         </sgi-select-tipo-finalidad>

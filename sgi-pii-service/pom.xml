@@ -12,7 +12,7 @@
 
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-pii-service</artifactId>
-  <version>0.3.0</version>
+  <version>0.4.0</version>
   <packaging>jar</packaging>
   <name>sgi-pii-service</name>
   <description>Servicio de Propiedad industrial e intelectual SGI HERCULES</description>

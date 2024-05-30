@@ -29,8 +29,7 @@ export class SolicitudProteccionResponseConverter extends SgiBaseConverter<ISoli
       paisProteccion: { id: value.paisProteccionRef } as IPais,
       tipoCaducidad: value.tipoCaducidad as ITipoCaducidad,
       titulo: value.titulo,
-      viaProteccion: value.viaProteccion as IViaProteccion,
-      activo: value.activo
+      viaProteccion: value.viaProteccion as IViaProteccion
     } : (value as unknown as ISolicitudProteccion);
   }
 
@@ -53,8 +52,7 @@ export class SolicitudProteccionResponseConverter extends SgiBaseConverter<ISoli
       paisProteccionRef: value.paisProteccion.id,
       tipoCaducidad: value.tipoCaducidad,
       titulo: value.titulo,
-      viaProteccion: value.viaProteccion,
-      activo: value.activo
+      viaProteccion: value.viaProteccion
     } : (value as unknown as ISolicitudProteccionResponse);
   }
 }

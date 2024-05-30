@@ -89,34 +89,15 @@
         <td mat-cell *matCellDef="let peticionEvaluacion">{{peticionEvaluacion.titulo}}</td>
       </ng-container>
 
-      <!-- Memoria comité 1 -->
-      <ng-container matColumnDef="memoriaComite1">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{'eti.peticion-evaluacion.memoria' | translate}} {{getComite(1)}}
-        </th>
-        <td mat-cell *matCellDef="let peticionEvaluacion"
-          matTooltip="{{getMemoriasComite(peticionEvaluacion.memorias,1)}}">
-          {{getMemoriasComite(peticionEvaluacion.memorias,1)}}</td>
-      </ng-container>
-
-      <!-- Memoria comité 2 -->
-      <ng-container matColumnDef="memoriaComite2">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{'eti.peticion-evaluacion.memoria' | translate}} {{getComite(2)}}
-        </th>
-        <td mat-cell *matCellDef="let peticionEvaluacion"
-          matTooltip="{{getMemoriasComite(peticionEvaluacion.memorias,2)}}">
-          {{getMemoriasComite(peticionEvaluacion.memorias,2)}}</td>
-      </ng-container>
-
-      <!-- Memoria comité 3 -->
-      <ng-container matColumnDef="memoriaComite3">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{'eti.peticion-evaluacion.memoria' | translate}} {{getComite(3)}}
-        </th>
-        <td mat-cell *matCellDef="let peticionEvaluacion"
-          matTooltip="{{getMemoriasComite(peticionEvaluacion.memorias,3)}}">
-          {{getMemoriasComite(peticionEvaluacion.memorias,3)}}</td>
+      <ng-container *ngFor="let comite of comites">
+        <ng-container [matColumnDef]="'memoriaComite' + comite.id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'eti.peticion-evaluacion.memoria' | translate}} {{comite.comite}}
+          </th>
+          <td mat-cell *matCellDef="let peticionEvaluacion"
+            matTooltip="{{getMemoriasComite(peticionEvaluacion.memorias, comite.id)}}">
+            {{getMemoriasComite(peticionEvaluacion.memorias, comite.id)}}</td>
+        </ng-container>
       </ng-container>
 
       <!-- Acciones Column -->

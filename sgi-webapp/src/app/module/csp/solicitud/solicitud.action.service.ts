@@ -1,4 +1,3 @@
-import { T } from '@angular/cdk/keycodes';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -7,7 +6,6 @@ import { VALIDACION_REQUISITOS_EQUIPO_IP_MAP } from '@core/enums/validaciones-re
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { Estado, IEstadoSolicitud } from '@core/models/csp/estado-solicitud';
-import { IProyecto } from '@core/models/csp/proyecto';
 import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudProyecto, TipoPresupuesto } from '@core/models/csp/solicitud-proyecto';
 import { ISolicitudProyectoSocio } from '@core/models/csp/solicitud-proyecto-socio';
@@ -20,6 +18,7 @@ import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { RolProyectoService } from '@core/services/csp/rol-proyecto/rol-proyecto.service';
+import { RolSocioService } from '@core/services/csp/rol-socio/rol-socio.service';
 import { SolicitanteExternoService } from '@core/services/csp/solicitante-externo/solicitante-externo.service';
 import { SolicitudDocumentoService } from '@core/services/csp/solicitud-documento.service';
 import { SolicitudGrupoService } from '@core/services/csp/solicitud-grupo/solicitud-grupo.service';
@@ -57,7 +56,7 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, NEVER, Observable, of, Subject, throwError } from 'rxjs';
+import { BehaviorSubject, NEVER, Observable, Subject, of, throwError } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../csp-route-names';
 import { PROYECTO_ROUTE_NAMES } from '../proyecto/proyecto-route-names';
@@ -150,7 +149,6 @@ export class SolicitudActionService extends ActionService {
   readonly showDesglosePresupuestoGlobal$: Subject<boolean> = new BehaviorSubject<boolean>(false);
   readonly showDesglosePresupuestoEntidad$: Subject<boolean> = new BehaviorSubject<boolean>(false);
   readonly datosProyectoComplete$: Subject<boolean> = new BehaviorSubject<boolean>(false);
-  readonly showAlertNotSocioCoordinadorExist$ = new BehaviorSubject<boolean>(false);
   readonly hasAnySolicitudProyectoSocioWithRolCoordinador$ = new BehaviorSubject<boolean>(false);
 
   private readonly data: ISolicitudData;
@@ -232,6 +230,10 @@ export class SolicitudActionService extends ActionService {
     return this.data?.isInvestigador ?? (this.isModuleINV() && this.hasAnyAuthorityInv());
   }
 
+  get hasProyectoCoordinadoAndCoordinadorExterno$() {
+    return this.proyectoDatos.coordinadorExterno$;
+  }
+
   constructor(
     logger: NGXLogger,
     private route: ActivatedRoute,
@@ -275,7 +277,8 @@ export class SolicitudActionService extends ActionService {
     categoriasProfesionalesService: CategoriaProfesionalService,
     solicitudRrhhRequisitoCategoriaService: SolicitudRrhhRequisitoCategoriaService,
     solicitudRrhhRequisitoNivelAcademicoService: SolicitudRrhhRequisitoNivelAcademicoService,
-    documentoService: DocumentoService
+    documentoService: DocumentoService,
+    rolSocioService: RolSocioService
   ) {
     super();
 
@@ -327,10 +330,19 @@ export class SolicitudActionService extends ActionService {
       solicitudProyectoAreaConocimiento, solicitudService, areaConocimientoService, this.readonly);
     this.hitos = new SolicitudHitosFragment(this.data?.solicitud?.id, solicitudHitoService, solicitudService, this.readonly);
     this.historicoEstado = new SolicitudHistoricoEstadosFragment(this.data?.solicitud?.id, solicitudService, this.readonly);
-    this.proyectoDatos = new SolicitudProyectoFichaGeneralFragment(logger, this.data?.solicitud?.id,
-      this.isInvestigador, solicitudService,
-      solicitudProyectoService, convocatoriaService, this.readonly, this.data?.solicitud.convocatoriaId,
-      this.hasAnySolicitudProyectoSocioWithRolCoordinador$, this.data?.hasPopulatedPeriodosSocios, palabraClaveService);
+    this.proyectoDatos = new SolicitudProyectoFichaGeneralFragment(
+      logger,
+      this.data?.solicitud?.id,
+      this.isInvestigador,
+      solicitudService,
+      solicitudProyectoService,
+      convocatoriaService,
+      this.readonly,
+      this.data?.solicitud.convocatoriaId,
+      this.data?.hasPopulatedPeriodosSocios,
+      palabraClaveService,
+      rolSocioService
+    );
     this.equipoProyecto = new SolicitudEquipoProyectoFragment(
       logger,
       this.data?.solicitud?.id,
@@ -851,21 +863,8 @@ export class SolicitudActionService extends ActionService {
   }
 
   private onSolicitudProyectoSocioListChangeHandle(proyectoSocios: StatusWrapper<ISolicitudProyectoSocio>[]): void {
-
-    let needShow = false;
-    if (this.proyectoDatos.getFormGroup()?.controls?.coordinado.value
-      && this.proyectoDatos.getFormGroup()?.controls?.coordinadorExterno.value) {
-      const socioCoordinador = proyectoSocios.find((socio: StatusWrapper<ISolicitudProyectoSocio>) => socio.value.rolSocio.coordinador);
-
-      if (socioCoordinador) {
-        needShow = false;
-      } else {
-        needShow = true;
-      }
-    } else {
-      needShow = false;
-    }
-    this.showAlertNotSocioCoordinadorExist$.next(needShow);
+    const hasSocioCoordinador = proyectoSocios.some((socio: StatusWrapper<ISolicitudProyectoSocio>) => socio.value.rolSocio.coordinador);
+    this.hasAnySolicitudProyectoSocioWithRolCoordinador$.next(hasSocioCoordinador);
   }
 
   private addProyectoLink(): void {

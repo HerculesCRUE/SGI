@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -75,6 +77,12 @@ public class ConvocatoriaConceptoGasto extends BaseEntity {
   @Column(name = "importe_maximo", nullable = true)
   @Min(0)
   private Double importeMaximo;
+
+  /** Porcentaje máximo */
+  @Column(name = "porcentaje_maximo", nullable = true, precision = 5, scale = 2)
+  @Min(0)
+  @Max(100)
+  private BigDecimal porcentajeMaximo;
 
   /** Permitido */
   @Column(name = "permitido", nullable = true)

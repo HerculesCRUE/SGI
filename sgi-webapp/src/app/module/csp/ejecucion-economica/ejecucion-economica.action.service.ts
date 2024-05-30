@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IConfiguracion } from '@core/models/csp/configuracion';
-import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
 import { IRelacionEjecucionEconomica, TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
-import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-justificacion';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { IPersona } from '@core/models/sgp/persona';
 import { ActionService } from '@core/services/action-service';
@@ -25,6 +23,7 @@ import { GastoService } from '@core/services/sge/gasto/gasto.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { filter } from 'rxjs/operators';
 import { EJECUCION_ECONOMICA_DATA_KEY } from './ejecucion-economica-data.resolver';
+import { ClasificacionGastosFragment } from './ejecucion-economica-formulario/clasificacion-gastos/clasificacion-gastos.fragment';
 import { DetalleOperacionesGastosFragment } from './ejecucion-economica-formulario/detalle-operaciones-gastos/detalle-operaciones-gastos.fragment';
 import { DetalleOperacionesIngresosFragment } from './ejecucion-economica-formulario/detalle-operaciones-ingresos/detalle-operaciones-ingresos.fragment';
 import { DetalleOperacionesModificacionesFragment } from './ejecucion-economica-formulario/detalle-operaciones-modificaciones/detalle-operaciones-modificaciones.fragment';
@@ -66,6 +65,7 @@ export class EjecucionEconomicaActionService extends ActionService {
     FACTURAS_GASTOS: 'facturas-gastos',
     VIAJES_DIETAS: 'viajes-dietas',
     PERSONAL_CONTRATADO: 'personal-contratado',
+    CLASIFICACION_GASTOS: 'clasificacion-gastos',
     VALIDACION_GASTOS: 'validacion-gastos',
     FACTURAS_EMITIDAS: 'facturas-emitidas',
     SEGUIMIENTO_JUSTIFICACION_RESUMEN: 'seguimiento-justificacion-resumen',
@@ -82,12 +82,17 @@ export class EjecucionEconomicaActionService extends ActionService {
   private facturasGastos: FacturasGastosFragment;
   private viajesDietas: ViajesDietasFragment;
   private personalContratado: PersonalContratadoFragment;
+  private clasificacionGastos: ClasificacionGastosFragment;
   private validacionGastos: ValidacionGastosFragment;
   private facturasEmitidas: FacturasEmitidasFragment;
   private seguimientoJustificacionResumen: SeguimientoJustificacionResumenFragment;
   private seguimientoJustificacionRequerimientos: SeguimientoJustificacionRequerimientosFragment;
 
   private readonly data: IEjecucionEconomicaData;
+
+  get isEjecucionEconomicaGruposEnabled(): boolean {
+    return this.data.configuracion?.ejecucionEconomicaGruposEnabled ?? false;
+  }
 
   constructor(
     route: ActivatedRoute,
@@ -113,31 +118,73 @@ export class EjecucionEconomicaActionService extends ActionService {
     this.data = route.snapshot.data[EJECUCION_ECONOMICA_DATA_KEY];
     const id = Number(route.snapshot.paramMap.get(EJECUCION_ECONOMICA_ROUTE_PARAMS.ID));
 
-    this.proyectos = new ProyectosFragment(id, this.data.proyectoSge, this.data.relaciones, proyectoService);
+    this.proyectos = new ProyectosFragment(
+      id,
+      this.data.proyectoSge,
+      this.data.relaciones,
+      proyectoService,
+      this.data.configuracion
+    );
 
     this.ejecucionPresupuestariaEstadoActual = new EjecucionPresupuestariaEstadoActualFragment(
-      id, this.data.proyectoSge, this.data.relaciones,
-      proyectoService, proyectoAnualidadService, ejecucionEconomicaService);
+      id,
+      this.data.proyectoSge,
+      this.data.relaciones,
+      proyectoService,
+      proyectoAnualidadService,
+      ejecucionEconomicaService,
+      this.data.configuracion
+    );
 
     this.ejecucionPresupuestariaGastos = new EjecucionPresupuestariaGastosFragment(
-      id, this.data.proyectoSge, this.data.relaciones,
-      proyectoService, proyectoAnualidadService, ejecucionEconomicaService);
+      id,
+      this.data.proyectoSge,
+      this.data.relaciones,
+      proyectoService,
+      proyectoAnualidadService,
+      ejecucionEconomicaService,
+      this.data.configuracion
+    );
 
     this.ejecucionPresupuestariaIngresos = new EjecucionPresupuestariaIngresosFragment(
-      id, this.data.proyectoSge, this.data.relaciones,
-      proyectoService, proyectoAnualidadService, ejecucionEconomicaService);
+      id,
+      this.data.proyectoSge,
+      this.data.relaciones,
+      proyectoService,
+      proyectoAnualidadService,
+      ejecucionEconomicaService,
+      this.data.configuracion
+    );
 
     this.detalleOperacionesGastos = new DetalleOperacionesGastosFragment(
-      id, this.data.proyectoSge, this.data.relaciones,
-      proyectoService, proyectoAnualidadService, ejecucionEconomicaService);
+      id,
+      this.data.proyectoSge,
+      this.data.relaciones,
+      proyectoService,
+      proyectoAnualidadService,
+      ejecucionEconomicaService,
+      this.data.configuracion
+    );
 
     this.detalleOperacionesIngresos = new DetalleOperacionesIngresosFragment(
-      id, this.data.proyectoSge, this.data.relaciones,
-      proyectoService, proyectoAnualidadService, ejecucionEconomicaService);
+      id,
+      this.data.proyectoSge,
+      this.data.relaciones,
+      proyectoService,
+      proyectoAnualidadService,
+      ejecucionEconomicaService,
+      this.data.configuracion
+    );
 
     this.detalleOperacionesModificaciones = new DetalleOperacionesModificacionesFragment(
-      id, this.data.proyectoSge, this.data.relaciones,
-      proyectoService, proyectoAnualidadService, ejecucionEconomicaService);
+      id,
+      this.data.proyectoSge,
+      this.data.relaciones,
+      proyectoService,
+      proyectoAnualidadService,
+      ejecucionEconomicaService,
+      this.data.configuracion
+    );
 
     this.facturasGastos = new FacturasGastosFragment(
       id, this.data.proyectoSge, this.data.relaciones,
@@ -157,12 +204,36 @@ export class EjecucionEconomicaActionService extends ActionService {
       gastoProyectoService, ejecucionEconomicaService, proyectoConceptoGastoCodigoEcService,
       proyectoConceptoGastoService, this.data.configuracion);
 
+    this.clasificacionGastos = new ClasificacionGastosFragment(
+      id,
+      this.data.relaciones.filter(relacion => relacion.tipoEntidad === TipoEntidad.PROYECTO),
+      this.data.proyectoSge,
+      ejecucionEconomicaService,
+      proyectoService,
+      gastoProyectoService,
+      proyectoConceptoGastoCodigoEcService,
+      proyectoConceptoGastoService,
+      this.data.configuracion
+    );
+
     this.validacionGastos = new ValidacionGastosFragment(
-      id, this.data.proyectoSge, gastoService, proyectoService, gastoProyectoService);
+      id,
+      this.data.proyectoSge,
+      gastoService,
+      proyectoService,
+      gastoProyectoService,
+      this.data.configuracion
+    );
 
     this.facturasEmitidas = new FacturasEmitidasFragment(
-      id, this.data.proyectoSge, this.data.relaciones,
-      proyectoService, proyectoAnualidadService, calendarioFacturacionService);
+      id,
+      this.data.proyectoSge,
+      this.data.relaciones,
+      proyectoService,
+      proyectoAnualidadService,
+      calendarioFacturacionService,
+      this.data.configuracion
+    );
 
     this.seguimientoJustificacionResumen = new SeguimientoJustificacionResumenFragment(
       id, this.data.proyectoSge, this.data.relaciones.filter(relacion => relacion.tipoEntidad === TipoEntidad.PROYECTO),
@@ -224,6 +295,7 @@ export class EjecucionEconomicaActionService extends ActionService {
     this.addFragment(this.FRAGMENT.FACTURAS_GASTOS, this.facturasGastos);
     this.addFragment(this.FRAGMENT.VIAJES_DIETAS, this.viajesDietas);
     this.addFragment(this.FRAGMENT.PERSONAL_CONTRATADO, this.personalContratado);
+    this.addFragment(this.FRAGMENT.CLASIFICACION_GASTOS, this.clasificacionGastos);
     this.addFragment(this.FRAGMENT.VALIDACION_GASTOS, this.validacionGastos);
     this.addFragment(this.FRAGMENT.FACTURAS_EMITIDAS, this.facturasEmitidas);
     this.addFragment(this.FRAGMENT.SEGUIMIENTO_JUSTIFICACION_RESUMEN, this.seguimientoJustificacionResumen);

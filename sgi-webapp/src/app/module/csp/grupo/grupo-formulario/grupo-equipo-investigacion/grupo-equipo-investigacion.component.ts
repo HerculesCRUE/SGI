@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -11,8 +12,9 @@ import { GrupoEquipoService } from '@core/services/csp/grupo-equipo/grupo-equipo
 import { DialogService } from '@core/services/dialog.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
+import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
-import { of, Subscription } from 'rxjs';
+import { Subscription, of } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { getPersonaEmailListConcatenated } from 'src/app/esb/sgp/shared/pipes/persona-email.pipe';
 import { GrupoActionService } from '../../grupo.action.service';
@@ -33,6 +35,7 @@ export class GrupoEquipoInvestigacionComponent extends FragmentComponent impleme
 
   private subscriptions: Subscription[] = [];
   formPart: GrupoEquipoInvestigacionFragment;
+  formGroup: FormGroup;
 
   elementosPagina = [5, 10, 25, 100];
   displayedColumns = ['persona', 'nombre', 'apellidos', 'rolEquipo', 'categoria', 'fechaInicio', 'fechaFin', 'dedicacion', 'participacion', 'acciones'];
@@ -65,6 +68,7 @@ export class GrupoEquipoInvestigacionComponent extends FragmentComponent impleme
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
+    this.buildFormGroup();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IGrupoEquipoListado>, property: string) => {
@@ -95,6 +99,18 @@ export class GrupoEquipoInvestigacionComponent extends FragmentComponent impleme
     this.subscriptions.push(this.formPart.equipos$.subscribe(elements => {
       this.dataSource.data = elements;
     }));
+
+    this.dataSource.filterPredicate = (data: StatusWrapper<IGrupoEquipoListado>, filter: string) => {
+      return filter == 'todos' ? true : filter === 'true' ? !data.value.fechaFin || data.value.fechaFin > DateTime.now() : !!data.value.fechaFin && data.value.fechaFin <= DateTime.now();
+    };
+
+    this.applyFilter(true);
+  }
+
+  private buildFormGroup() {
+    this.formGroup = new FormGroup({
+      activo: new FormControl('true')
+    });
   }
 
   private setupI18N(): void {
@@ -125,6 +141,15 @@ export class GrupoEquipoInvestigacionComponent extends FragmentComponent impleme
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.textoNoDelete = value);
 
+  }
+
+  onSearch() {
+    this.applyFilter(this.formGroup.controls.activo.value);
+  }
+
+
+  onClearFilters() {
+    this.formGroup.controls.activo.setValue('true');
   }
 
   /**
@@ -222,6 +247,10 @@ export class GrupoEquipoInvestigacionComponent extends FragmentComponent impleme
    */
   private getDedicacionMinima(): number {
     return !!this.formPart.configuracion.dedicacionMinimaGrupo ? this.formPart.configuracion.dedicacionMinimaGrupo : 1;
+  }
+
+  private applyFilter(filterValue: boolean) {
+    this.dataSource.filter = filterValue.toString();
   }
 
 }

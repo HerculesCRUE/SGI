@@ -66,12 +66,12 @@ public class SolicitudRrhh extends BaseEntity {
   private String tituloTrabajo;
 
   /** Resumen */
-  @Column(name = "resumen", length = SolicitudRrhh.RESUMEN_LENGTH, nullable = true)
+  @Column(name = "resumen", length = SolicitudRrhh.RESUMEN_LENGTH, nullable = true, columnDefinition = "clob")
   @Size(max = SolicitudRrhh.RESUMEN_LENGTH)
   private String resumen;
 
   /** Observaciones */
-  @Column(name = "observaciones", length = SolicitudRrhh.OBSERVACIONES_LENGTH, nullable = true)
+  @Column(name = "observaciones", length = SolicitudRrhh.OBSERVACIONES_LENGTH, nullable = true, columnDefinition = "clob")
   @Size(max = SolicitudRrhh.OBSERVACIONES_LENGTH)
   private String observaciones;
 

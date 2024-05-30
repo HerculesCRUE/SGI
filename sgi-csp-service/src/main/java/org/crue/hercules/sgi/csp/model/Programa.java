@@ -51,7 +51,7 @@ public class Programa extends BaseEntity {
   private String nombre;
 
   /** Descripcion. */
-  @Column(name = "descripcion", length = Programa.DESCRIPCION_LENGTH, nullable = true)
+  @Column(name = "descripcion", length = Programa.DESCRIPCION_LENGTH, nullable = true, columnDefinition = "clob")
   @Size(max = Programa.DESCRIPCION_LENGTH)
   private String descripcion;
 

@@ -2,6 +2,7 @@ import { FormGroup } from '@angular/forms';
 import { IProyectoPeriodoAmortizacion } from '@core/models/csp/proyecto-periodo-amortizacion';
 import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { Fragment } from '@core/services/action-service';
+import { ConfigService } from '@core/services/csp/config.service';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
 import { ProyectoEntidadFinanciadoraService } from '@core/services/csp/proyecto-entidad-financiadora.service';
 import { ProyectoPeriodoAmortizacionService } from '@core/services/csp/proyecto-periodo-amortizacion/proyecto-periodo-amortizacion.service';
@@ -25,6 +26,8 @@ export class ProyectoAmortizacionFondosFragment extends Fragment {
   private periodosAmortizacionEliminados: StatusWrapper<IProyectoPeriodoAmortizacionListado>[] = [];
   hasProyectoSGE = false;
 
+  private _amortizacionFondosSgeEnabled: boolean;
+
   constructor(
     key: number,
     public readonly anualidades: boolean,
@@ -33,10 +36,18 @@ export class ProyectoAmortizacionFondosFragment extends Fragment {
     private proyectoEntidadFinanciadoraService: ProyectoEntidadFinanciadoraService,
     private empresaService: EmpresaService,
     private proyectoAnualidadService: ProyectoAnualidadService,
-    private periodoAmortizacionService: PeriodoAmortizacionService
+    private periodoAmortizacionService: PeriodoAmortizacionService,
+    private readonly cspConfigService: ConfigService
   ) {
     super(key);
     this.setComplete(true);
+
+
+    this.subscriptions.push(
+      this.cspConfigService.isAmortizacionFondosSgeEnabled().subscribe(amortizacionFondosSgeEnabled => {
+        this._amortizacionFondosSgeEnabled = amortizacionFondosSgeEnabled;
+      })
+    );
   }
 
   protected buildFormGroup(): FormGroup {
@@ -165,11 +176,15 @@ export class ProyectoAmortizacionFondosFragment extends Fragment {
       mergeMap((wrapped) => {
         return this.proyectoPeriodoAmortizacionService.deleteById(wrapped.value.id)
           .pipe(
-            switchMap(() =>
-              this.periodoAmortizacionService.deleteById(wrapped.value.id).pipe(
-                switchMap(() => of(void 0))
-              )
-            ),
+            switchMap(() => {
+              if (this._amortizacionFondosSgeEnabled) {
+                return this.periodoAmortizacionService.deleteById(wrapped.value.id).pipe(
+                  switchMap(() => of(void 0))
+                );
+              } else {
+                return of(void 0);
+              }
+            }),
             tap(() => {
               this.periodosAmortizacionEliminados = deleted.filter(periodo => periodo.value.id !== wrapped.value.id);
             })
@@ -186,11 +201,15 @@ export class ProyectoAmortizacionFondosFragment extends Fragment {
     return from(edited).pipe(
       mergeMap((wrapped) => {
         return this.proyectoPeriodoAmortizacionService.update(wrapped.value.id, wrapped.value).pipe(
-          switchMap(() =>
-            this.periodoAmortizacionService.update(wrapped.value.id, wrapped.value).pipe(
-              switchMap(() => of(void 0))
-            )
-          )
+          switchMap(() => {
+            if (this._amortizacionFondosSgeEnabled) {
+              return this.periodoAmortizacionService.update(wrapped.value.id, wrapped.value).pipe(
+                switchMap(() => of(void 0))
+              )
+            } else {
+              return of(void 0);
+            }
+          })
         );
       })
     );
@@ -215,11 +234,15 @@ export class ProyectoAmortizacionFondosFragment extends Fragment {
             target$.next(target$.value);
             return proyectoPeriodoAmortizacionListado;
           }),
-          switchMap((proyectoPeriodoAmortizacionListado) =>
-            this.periodoAmortizacionService.create(proyectoPeriodoAmortizacionListado).pipe(
-              switchMap(() => of(void 0))
-            )
-          )
+          switchMap((proyectoPeriodoAmortizacionListado) => {
+            if (this._amortizacionFondosSgeEnabled) {
+              return this.periodoAmortizacionService.create(proyectoPeriodoAmortizacionListado).pipe(
+                switchMap(() => of(void 0))
+              )
+            } else {
+              return of(void 0);
+            }
+          })
         );
       }));
   }

@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { SgeFormlyFormsModule } from 'src/app/esb/sge/formly-forms/sge-formly-forms.module';
+import { SgeSharedModule } from 'src/app/esb/sge/shared/sge-shared.module';
 import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { EntidadFinanciadoraModalComponent } from './entidad-financiadora-modal/entidad-financiadora-modal.component';
@@ -27,11 +28,15 @@ import { SelectLineaInvestigacionComponent } from './select-linea-investigacion/
 import { SelectModeloEjecucionComponent } from './select-modelo-ejecucion/select-modelo-ejecucion.component';
 import { SelectProgramaComponent } from './select-programa/select-programa.component';
 import { SelectProyectoAnualidadComponent } from './select-proyecto-anualidad/select-proyecto-anualidad.component';
+import { SelectProyectoPartidaComponent } from './select-proyecto-partida/select-proyecto-partida.component';
 import { SelectProyectoPeriodoJustificacionComponent } from './select-proyecto-periodo-justificacion/select-proyecto-periodo-justificacion.component';
+import { SelectProyectoProrrogaComponent } from './select-proyecto-prorroga/select-proyecto-prorroga.component';
 import { SelectProyectoProyectoSgeComponent } from './select-proyecto-proyecto-sge/select-proyecto-proyecto-sge.component';
 import { SearchProyectoModalComponent } from './select-proyecto/dialog/search-proyecto.component';
 import { SelectProyectoComponent } from './select-proyecto/select-proyecto.component';
 import { SelectRequerimientoJustificacionComponent } from './select-requerimiento-justificacion/select-requerimiento-justificacion.component';
+import { SelectRolEquipoComponent } from './select-rol-equipo/select-rol-equipo.component';
+import { SelectRolSocioComponent } from './select-rol-socio/select-rol-socio.component';
 import { SelectTipoAmbitoGeograficoComponent } from './select-tipo-ambito-geografico/select-tipo-ambito-geografico.component';
 import { SelectTipoDocumentoComponent } from './select-tipo-documento/select-tipo-documento.component';
 import { SelectTipoEnlaceComponent } from './select-tipo-enlace/select-tipo-enlace.component';
@@ -44,8 +49,6 @@ import { SelectTipoRegimenConcurrenciaComponent } from './select-tipo-regimen-co
 import { SelectTipoRequerimientoComponent } from './select-tipo-requerimiento/select-tipo-requerimiento.component';
 import { SelectUnidadGestionComponent } from './select-unidad-gestion/select-unidad-gestion.component';
 import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-modal/solicitud-presupuesto-modal.component';
-import { SelectRolSocioComponent } from './select-rol-socio/select-rol-socio.component';
-import { SelectRolEquipoComponent } from './select-rol-equipo/select-rol-equipo.component';
 
 @NgModule({
   declarations: [
@@ -70,7 +73,9 @@ import { SelectRolEquipoComponent } from './select-rol-equipo/select-rol-equipo.
     SelectProgramaComponent,
     SelectProyectoAnualidadComponent,
     SelectProyectoComponent,
+    SelectProyectoPartidaComponent,
     SelectProyectoPeriodoJustificacionComponent,
+    SelectProyectoProrrogaComponent,
     SelectProyectoProyectoSgeComponent,
     SelectRequerimientoJustificacionComponent,
     SelectRolEquipoComponent,
@@ -95,6 +100,7 @@ import { SelectRolEquipoComponent } from './select-rol-equipo/select-rol-equipo.
     ReactiveFormsModule,
     SgeFormlyFormsModule,
     SgempSharedModule,
+    SgeSharedModule,
     SgiAuthModule,
     SgpSharedModule,
     SharedModule,
@@ -118,7 +124,9 @@ import { SelectRolEquipoComponent } from './select-rol-equipo/select-rol-equipo.
     SelectProgramaComponent,
     SelectProyectoAnualidadComponent,
     SelectProyectoComponent,
+    SelectProyectoPartidaComponent,
     SelectProyectoPeriodoJustificacionComponent,
+    SelectProyectoProrrogaComponent,
     SelectProyectoProyectoSgeComponent,
     SelectRequerimientoJustificacionComponent,
     SelectRolEquipoComponent,

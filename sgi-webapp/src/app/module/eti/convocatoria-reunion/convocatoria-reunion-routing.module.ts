@@ -15,6 +15,7 @@ import { ConvocatoriaReunionDatosGeneralesComponent } from './convocatoria-reuni
 import { ConvocatoriaReunionListadoComponent } from './convocatoria-reunion-listado/convocatoria-reunion-listado.component';
 import { CONVOCATORIA_REUNION_ROUTE_NAMES } from './convocatoria-reunion-route-names';
 import { CONVOCATORIA_REUNION_ROUTE_PARAMS } from './convocatoria-reunion-route-params';
+import { ConvocatoriaReunionDocumentacionComponent } from './convocatoria-reunion-formulario/convocatoria-reunion-documentacion/convocatoria-reunion-documentacion.component';
 
 const CONVOCATORIA_REUNION_KEY = marker('eti.convocatoria-reunion');
 const MSG_NEW_TITLE = marker('title.new.entity');
@@ -57,7 +58,12 @@ const routes: SgiRoutes = [
         path: CONVOCATORIA_REUNION_ROUTE_NAMES.ASIGNACION_MEMORIAS,
         component: ConvocatoriaReunionAsignacionMemoriasListadoComponent,
         canDeactivate: [FragmentGuard]
-      }
+      },
+      {
+        path: CONVOCATORIA_REUNION_ROUTE_NAMES.DOCUMENTACION,
+        component: ConvocatoriaReunionDocumentacionComponent,
+        canDeactivate: [FragmentGuard]
+      },
     ]
   },
   {
@@ -88,7 +94,12 @@ const routes: SgiRoutes = [
         path: CONVOCATORIA_REUNION_ROUTE_NAMES.ASIGNACION_MEMORIAS,
         component: ConvocatoriaReunionAsignacionMemoriasListadoComponent,
         canDeactivate: [FragmentGuard]
-      }
+      },
+      {
+        path: CONVOCATORIA_REUNION_ROUTE_NAMES.DOCUMENTACION,
+        component: ConvocatoriaReunionDocumentacionComponent,
+        canDeactivate: [FragmentGuard]
+      },
     ]
   },
 

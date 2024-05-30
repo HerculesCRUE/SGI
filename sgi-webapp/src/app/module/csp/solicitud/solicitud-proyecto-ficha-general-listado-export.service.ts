@@ -4,13 +4,14 @@ import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
 import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
+import { RolSocioService } from '@core/services/csp/rol-socio/rol-socio.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { ISolicitudReportData, ISolicitudReportOptions } from './solicitud-listado-export.service';
 
 const PROYECTO_FIELD = 'proyecto';
@@ -19,7 +20,7 @@ const REFERENCIA_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.codigo
 const ACRONIMO_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.acronimo');
 const DURACION_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.duracion');
 const COORDINADO_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.proyecto-coordinado');
-const COORDINADOR_EXTERNO_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.coordinador-externo');
+const ROL_UNIVERSIDAD_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.rol-universidad');
 const COLABORATIVO_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.proyecto-colaborativo');
 const AREA_TEMATICA_KEY = marker('csp.area-tematica.nombre');
 
@@ -31,6 +32,7 @@ export class SolicitudProyectoFichaGeneralListadoExportService extends
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
     private readonly solicitudService: SolicitudService,
+    private readonly rolSocioService: RolSocioService
   ) {
     super(translate);
   }
@@ -40,6 +42,18 @@ export class SolicitudProyectoFichaGeneralListadoExportService extends
       map(solicitudProyecto => {
         solicitudData.proyecto = solicitudProyecto;
         return solicitudData;
+      }),
+      switchMap(data => {
+        if (!data.proyecto?.rolUniversidad) {
+          return of(data);
+        }
+
+        return this.rolSocioService.findById(data.proyecto.rolUniversidad.id).pipe(
+          map(rolSocio => {
+            data.proyecto.rolUniversidad = rolSocio;
+            return data;
+          })
+        )
       })
     );
   }
@@ -69,7 +83,7 @@ export class SolicitudProyectoFichaGeneralListadoExportService extends
       ' - ' + this.translate.instant(ACRONIMO_KEY) +
       ' - ' + this.translate.instant(DURACION_KEY) +
       ' - ' + this.translate.instant(COORDINADO_KEY) +
-      ' - ' + this.translate.instant(COORDINADOR_EXTERNO_KEY) +
+      ' - ' + this.translate.instant(ROL_UNIVERSIDAD_KEY) +
       ' - ' + this.translate.instant(COLABORATIVO_KEY) +
       ' - ' + this.translate.instant(AREA_TEMATICA_KEY) +
       ')';
@@ -109,8 +123,8 @@ export class SolicitudProyectoFichaGeneralListadoExportService extends
         type: ColumnType.STRING,
       },
       {
-        title: this.translate.instant(COORDINADOR_EXTERNO_KEY),
-        name: 'coordinadorExterno',
+        title: this.translate.instant(ROL_UNIVERSIDAD_KEY),
+        name: 'rolUniversidad',
         type: ColumnType.STRING,
         format: '#'
       },
@@ -159,8 +173,7 @@ export class SolicitudProyectoFichaGeneralListadoExportService extends
       proyectoTable += this.notIsNullAndNotUndefined(proyecto?.coordinado) ?
         this.getI18nBooleanYesNo(proyecto?.coordinado) : '';
       proyectoTable += '\n';
-      proyectoTable += this.notIsNullAndNotUndefined(proyecto?.coordinadorExterno) ?
-        this.getI18nBooleanYesNo(proyecto?.coordinadorExterno) : '';
+      proyectoTable += proyecto?.rolUniversidad?.nombre ?? '';
       proyectoTable += '\n';
       proyectoTable += this.notIsNullAndNotUndefined(proyecto?.colaborativo) ?
         this.getI18nBooleanYesNo(proyecto?.colaborativo) : '';
@@ -187,8 +200,7 @@ export class SolicitudProyectoFichaGeneralListadoExportService extends
       elementsRow.push(proyecto?.duracion ? proyecto?.duracion.toString() : '');
       elementsRow.push(this.notIsNullAndNotUndefined(proyecto?.coordinado) ?
         this.getI18nBooleanYesNo(proyecto?.coordinado) : '');
-      elementsRow.push(this.notIsNullAndNotUndefined(proyecto?.coordinadorExterno) ?
-        this.getI18nBooleanYesNo(proyecto?.coordinadorExterno) : '');
+      elementsRow.push(proyecto?.rolUniversidad?.nombre ?? '');
       elementsRow.push(this.notIsNullAndNotUndefined(proyecto?.colaborativo) ?
         this.getI18nBooleanYesNo(proyecto?.colaborativo) : '');
       elementsRow.push(proyecto?.areaTematica ? proyecto?.areaTematica.nombre : '');

@@ -4,6 +4,7 @@ import { ProyectoProrrogaService } from '@core/services/csp/proyecto-prorroga.se
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { DateTime } from 'luxon';
 import { BehaviorSubject, from, Observable, of, Subject } from 'rxjs';
 import { concatMap, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
@@ -12,6 +13,7 @@ export class ProyectoProrrogasFragment extends Fragment {
   private prorrogasEliminados: StatusWrapper<IProyectoProrroga>[] = [];
 
   readonly ultimaProrroga$: Subject<IProyectoProrroga> = new BehaviorSubject<IProyectoProrroga>(null);
+  readonly ultimaFechaFinProrrogas$: Subject<DateTime> = new Subject<DateTime>();
 
   constructor(
     key: number,
@@ -75,14 +77,18 @@ export class ProyectoProrrogasFragment extends Fragment {
                   this.prorrogasEliminados = this.prorrogasEliminados
                     .filter(deletedProrroga => deletedProrroga.value.id !== wrapped.value.id);
                 }),
-                switchMap(() =>
-                  from(documentos.items).pipe(
+                switchMap(() => {
+                  if (documentos.items.length === 0) {
+                    return of(null);
+                  }
+
+                  return from(documentos.items).pipe(
                     mergeMap(documento => {
                       return this.documentoService.eliminarFichero(documento.documentoRef);
                     }),
                     takeLast(1)
                   )
-                ),
+                }),
                 takeLast(1)
               );
           })

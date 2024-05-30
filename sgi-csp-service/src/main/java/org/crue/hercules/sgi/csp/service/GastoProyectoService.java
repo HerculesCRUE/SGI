@@ -67,7 +67,8 @@ public class GastoProyectoService {
     GastoProyecto gastoProyectoCreated = repository.save(gastoProyecto);
 
     Configuracion configuracion = configuracionService.findConfiguracion();
-    if (estadoGastoProyectoToCreate != null && Boolean.TRUE.equals(configuracion.getValidacionGastos())) {
+    if (estadoGastoProyectoToCreate != null && Configuracion.ValidacionClasificacionGastos.VALIDACION
+        .equals(configuracion.getValidacionClasificacionGastos())) {
       estadoGastoProyectoToCreate.setFechaEstado(Instant.now());
       estadoGastoProyectoToCreate.setGastoProyectoId(gastoProyectoCreated.getId());
 
@@ -115,6 +116,7 @@ public class GastoProyectoService {
       }
 
       // Establecemos los campos actualizables con los recibidos
+      gastoProyectoExistente.setProyectoId(gastoProyecto.getProyectoId());
       gastoProyectoExistente.setConceptoGasto(gastoProyecto.getConceptoGasto());
       gastoProyectoExistente.setFechaCongreso(gastoProyecto.getFechaCongreso());
       gastoProyectoExistente.setImporteInscripcion(gastoProyecto.getImporteInscripcion());

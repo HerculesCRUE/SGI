@@ -60,9 +60,9 @@
               <mat-icon>border_color</mat-icon>
             </button>
           </ng-container>
-          <ng-container *sgiHasAnyAuthority="['PII-INV-B']">
-            <button color="warn" *ngIf="!invencionInventor.value.id" mat-icon-button
-              matTooltip="{{'btn.delete' | translate}}" (click)="deleteInventor(invencionInventor)">
+          <ng-container *sgiHasAnyAuthority="['PII-INV-E']">
+            <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
+              (click)="deleteInventor(invencionInventor)">
               <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>

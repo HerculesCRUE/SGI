@@ -18,7 +18,8 @@ class RelacionEjecucionEconomicaResponseConverter
       fechaInicio: LuxonUtils.fromBackend(value.fechaInicio),
       fechaFin: LuxonUtils.fromBackend(value.fechaFin),
       proyectoSge: value.proyectoSgeRef ? { id: value.proyectoSgeRef } as IProyectoSge : null,
-      tipoEntidad: value.tipoEntidad
+      tipoEntidad: value.tipoEntidad,
+      fechaFinDefinitiva: LuxonUtils.fromBackend(value.fechaFinDefinitiva),
     };
   }
 
@@ -34,7 +35,8 @@ class RelacionEjecucionEconomicaResponseConverter
       fechaInicio: LuxonUtils.toBackend(value.fechaInicio),
       fechaFin: LuxonUtils.toBackend(value.fechaFin),
       proyectoSgeRef: value.proyectoSge?.id,
-      tipoEntidad: value.tipoEntidad
+      tipoEntidad: value.tipoEntidad,
+      fechaFinDefinitiva: LuxonUtils.toBackend(value.fechaFinDefinitiva),
     };
   }
 }

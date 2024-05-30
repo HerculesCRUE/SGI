@@ -6,8 +6,9 @@ import { ActionGuard } from '@core/guards/master-form.guard';
 import { MSG_PARAMS } from '@core/i18n';
 import { SgiRoutes } from '@core/route';
 import { SgiAuthGuard } from '@sgi/framework/auth';
-import { EjecucionEconomicaDataResolver, EJECUCION_ECONOMICA_DATA_KEY } from './ejecucion-economica-data.resolver';
+import { EJECUCION_ECONOMICA_DATA_KEY, EjecucionEconomicaDataResolver } from './ejecucion-economica-data.resolver';
 import { EjecucionEconomicaEditarComponent } from './ejecucion-economica-editar/ejecucion-economica-editar.component';
+import { ClasificacionGastosComponent } from './ejecucion-economica-formulario/clasificacion-gastos/clasificacion-gastos.component';
 import { DetalleOperacionesGastosComponent } from './ejecucion-economica-formulario/detalle-operaciones-gastos/detalle-operaciones-gastos.component';
 import { DetalleOperacionesIngresosComponent } from './ejecucion-economica-formulario/detalle-operaciones-ingresos/detalle-operaciones-ingresos.component';
 import { DetalleOperacionesModificacionesComponent } from './ejecucion-economica-formulario/detalle-operaciones-modificaciones/detalle-operaciones-modificaciones.component';
@@ -106,6 +107,11 @@ const routes: SgiRoutes = [
       {
         path: EJECUCION_ECONOMICA_ROUTE_NAMES.PERSONAL_CONTRATADO,
         component: PersonalContratadoComponent,
+        canDeactivate: [FragmentGuard]
+      },
+      {
+        path: EJECUCION_ECONOMICA_ROUTE_NAMES.CLASIFICACION_GASTOS,
+        component: ClasificacionGastosComponent,
         canDeactivate: [FragmentGuard]
       },
       {

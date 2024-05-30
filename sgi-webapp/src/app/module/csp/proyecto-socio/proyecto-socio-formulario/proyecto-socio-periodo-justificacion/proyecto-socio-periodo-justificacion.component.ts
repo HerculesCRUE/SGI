@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { Estado } from '@core/models/csp/estado-proyecto';
 import { IProyectoSocioPeriodoJustificacion } from '@core/models/csp/proyecto-socio-periodo-justificacion';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ProyectoSocioPeriodoJustificacionService } from '@core/services/csp/proyecto-socio-periodo-justificacion.service';
@@ -108,6 +109,10 @@ export class ProyectoSocioPeriodoJustificacionComponent extends FragmentComponen
         )
       );
     });
+  }
+
+  isProyectoEstadoConcedido(): boolean {
+    return this.actionService.proyectoEstado === Estado.CONCEDIDO;
   }
 
 }

@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { IGastoRequerimientoJustificacion } from '@core/models/csp/gasto-requerimiento-justificacion';
 import { environment } from '@env';
 import { CreateCtor, FindAllCtor, mixinCreate, mixinFindAll, mixinUpdate, SgiRestBaseService, UpdateCtor } from '@sgi/framework/http';
-import { throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { IGastoRequerimientoJustificacionRequest } from './gasto-requerimiento-justificacion-request';
 import { GASTO_REQUERIMIENTO_JUSTIFICACION_REQUEST_CONVERTER } from './gasto-requerimiento-justificacion-request.converter';
 import { IGastoRequerimientoJustificacionResponse } from './gasto-requerimiento-justificacion-response';
@@ -55,4 +55,12 @@ export class GastoRequerimientoJustificacionService extends _GastoRequerimientoJ
       })
     );
   }
+
+  existsWithIndentificadorJustificacion(identificadorJustificacion: string): Observable<boolean> {
+    const url = `${this.endpointUrl}/byidentificadorjustificacion`;
+    return this.http.head(url, { params: { identificadorJustificacion }, observe: 'response' }).pipe(
+      map(x => x.status === 200)
+    );
+  }
+
 }

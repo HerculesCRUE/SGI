@@ -1,0 +1,33 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <changeSet context="!test" author="master" id="00.04.00-solicitud_proteccion">
+    <sql>
+      DELETE FROM ${schemaPrefix}solicitud_proteccion
+      WHERE 
+        activo = '0'
+        AND NOT EXISTS (
+          SELECT id
+          FROM ${schemaPrefix}pais_validado p
+          WHERE p.solicitud_proteccion_id = ${schemaPrefix}solicitud_proteccion.id
+        )
+        AND NOT EXISTS (
+          SELECT id
+          FROM ${schemaPrefix}procedimiento p
+          WHERE p.solicitud_proteccion_id = ${schemaPrefix}solicitud_proteccion.id
+        )
+        AND NOT EXISTS (
+          SELECT id
+          FROM ${schemaPrefix}invencion_gasto ig
+          WHERE ig.solicitud_proteccion_id = ${schemaPrefix}solicitud_proteccion.id
+        );
+    </sql>
+  </changeSet>
+
+</databaseChangeLog>

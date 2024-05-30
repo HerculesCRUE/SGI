@@ -15,6 +15,8 @@ import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAgrupacionGastoOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadResumen;
+import org.crue.hercules.sgi.csp.dto.ProyectoApartadosToBeCopied;
+import org.crue.hercules.sgi.csp.dto.ProyectoApartadosWithDates;
 import org.crue.hercules.sgi.csp.dto.ProyectoDto;
 import org.crue.hercules.sgi.csp.dto.ProyectoEquipoDto;
 import org.crue.hercules.sgi.csp.dto.ProyectoFacturacionOutput;
@@ -131,6 +133,8 @@ public class ProyectoController {
   public static final String PATH_ID = PATH_SEPARATOR + "{id}";
   public static final String PATH_ANUALIDAD_GASTOS = PATH_ID + PATH_SEPARATOR + "anualidad-gastos";
   public static final String PATH_ANUALIDAD_INGRESOS = PATH_ID + PATH_SEPARATOR + "anualidad-ingresos";
+  public static final String PATH_APARTADOS_WITH_DATES = PATH_ID + PATH_SEPARATOR + "has-apartados-with-dates";
+  public static final String PATH_APARTADOS_TO_BE_COPIED = PATH_ID + PATH_SEPARATOR + "has-apartados-to-be-copied";
   public static final String PATH_CAMBIAR_ESTADO = PATH_ID + PATH_SEPARATOR + "cambiar-estado";
   public static final String PATH_CODIGOS_ECONOMICOS = PATH_ID + PATH_SEPARATOR + "proyectoconceptosgastocodigosecs";
   public static final String PATH_CODIGOS_ECONOMICOS_NO_PERMITIDOS = PATH_CODIGOS_ECONOMICOS + PATH_SEPARATOR
@@ -138,6 +142,7 @@ public class ProyectoController {
   public static final String PATH_CODIGOS_ECONOMICOS_PERMITIDOS = PATH_CODIGOS_ECONOMICOS + PATH_SEPARATOR
       + "permitidos";
   public static final String PATH_GASTOS_PROYECTO = PATH_ID + PATH_SEPARATOR + "gastos-proyecto";
+  public static final String PATH_INIT_FECHA_INICIO = PATH_ID + PATH_SEPARATOR + "init-fecha-inicio";
   public static final String PATH_INVESTIGADORES_PRINCIPALES = PATH_ID + PATH_SEPARATOR + "investigadoresprincipales";
   public static final String PATH_MODIFICABLE = PATH_ID + PATH_SEPARATOR + "modificable";
   public static final String PATH_PRORROGAS = PATH_ID + PATH_SEPARATOR + "proyecto-prorrogas";
@@ -1465,15 +1470,15 @@ public class ProyectoController {
    * <code>true</code>.
    * 
    * @param id Identificador del {@link Proyecto}.
-   * @return la lista de personaRef de los investigadores principales del
-   *         {@link Proyecto} en el momento actual.
+   * @return la lista investigadores principales del {@link Proyecto} en el
+   *         momento actual.
    */
   @GetMapping(PATH_INVESTIGADORES_PRINCIPALES)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-EJEC-V', 'CSP-EJEC-E', 'CSP-EJEC-INV-VR')")
-  public ResponseEntity<List<String>> findPersonaRefInvestigadoresPrincipales(@PathVariable Long id) {
-    log.debug("findPersonaRefInvestigadoresPrincipales(Long id) - start");
-    List<String> returnValue = proyectoEquipoService.findPersonaRefInvestigadoresPrincipales(id);
-    log.debug("findPersonaRefInvestigadoresPrincipales(Long id) - end");
+  public ResponseEntity<List<ProyectoEquipo>> findInvestigadoresPrincipales(@PathVariable Long id) {
+    log.debug("findInvestigadoresPrincipales(Long id) - start");
+    List<ProyectoEquipo> returnValue = proyectoEquipoService.findInvestigadoresPrincipales(id);
+    log.debug("findInvestigadoresPrincipales(Long id) - end");
     return returnValue.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
         : new ResponseEntity<>(returnValue, HttpStatus.OK);
   }
@@ -1688,6 +1693,57 @@ public class ProyectoController {
 
     log.debug("findAllProyectoGastosCodigoEcNoPermitidos(Long id, Pageable paging) - end");
     return new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve el {@link ProyectoApartadosWithDates} con la informacion de cuales
+   * de
+   * los apartados tienen elementos con fechas.
+   * 
+   * @param id Identificador de {@link Proyecto}.
+   * @return {@link ProyectoApartadosWithDates} correspondiente al id
+   */
+  @GetMapping(PATH_APARTADOS_WITH_DATES)
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  public ResponseEntity<ProyectoApartadosWithDates> getProyectoApartadoWithDates(@PathVariable Long id) {
+    log.debug("getProyectoApartadoWithDates({}) - start", id);
+    ProyectoApartadosWithDates returnValue = service.getProyectoApartadosWithDates(id);
+    log.debug("getProyectoApartadoWithDates({}) - end", id);
+    return new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve el {@link ProyectoApartadosToBeCopied} con la informacion de cuales
+   * de los apartados tienen datos para ser copiados.
+   * 
+   * @param id Identificador de {@link Proyecto}.
+   * @return {@link ProyectoApartadosToBeCopied}
+   *         correspondiente al id
+   */
+  @GetMapping(PATH_APARTADOS_TO_BE_COPIED)
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  public ResponseEntity<ProyectoApartadosToBeCopied> getProyectoApartadosToBeCopied(@PathVariable Long id) {
+    log.debug("getProyectoApartadosToBeCopied({}) - start", id);
+    ProyectoApartadosToBeCopied returnValue = service.getProyectoApartadosToBeCopied(id);
+    log.debug("getProyectoApartadosToBeCopied({}) - end", id);
+    return new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
+  /**
+   * Marca la fecha de inicio del proyecto como inicializada y hace la copia de
+   * los apartados de la convocatoria y de la solicitud dependientes de la
+   * inicializacion de la fecha
+   *
+   * @param id Identificador de {@link Proyecto}.
+   * @return {@link Proyecto} actualizado.
+   */
+  @PatchMapping(PATH_INIT_FECHA_INICIO)
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  public Proyecto initFechaInicio(@PathVariable Long id) {
+    log.debug("initFechaInicio(Long id) - start");
+    Proyecto returnValue = service.initFechaInicio(id);
+    log.debug("initFechaInicio(Long id) - end");
+    return returnValue;
   }
 
 }

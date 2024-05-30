@@ -447,14 +447,16 @@ public class AutorizacionController {
    * Obtiene el documento de una {@link Autorizacion}
    * 
    * @param idAutorizacion identificador {@link Autorizacion}
+   * @param fileName       nombre fichero
    * @return el documento de la {@link Autorizacion}
    */
-  @GetMapping("/{idAutorizacion}/documento")
+  @GetMapping("/{idAutorizacion}/documento/{fileName}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-AUT-E','CSP-AUT-INV-C', 'CSP-AUT-INV-ER','CSP-AUT-V')")
-  public ResponseEntity<DocumentoOutput> documentoAutorizacion(@PathVariable Long idAutorizacion) {
-    log.debug("documentoAutorizacion(@PathVariable Long idAutorizacion) - start");
-    DocumentoOutput documento = service.generarDocumentoAutorizacion(idAutorizacion);
-    log.debug("documentoAutorizacion(@PathVariable Long idAutorizacion) - end");
+  public ResponseEntity<DocumentoOutput> documentoAutorizacion(@PathVariable Long idAutorizacion,
+      @PathVariable String fileName) {
+    log.debug("documentoAutorizacion(@PathVariable Long idAutorizacion, @PathVariable String fileName) - start");
+    DocumentoOutput documento = service.generarDocumentoAutorizacion(idAutorizacion, fileName);
+    log.debug("documentoAutorizacion(@PathVariable Long idAutorizacion, @PathVariable String fileName) - end");
     return new ResponseEntity<>(documento, HttpStatus.OK);
   }
 

@@ -7,12 +7,14 @@ import { AsistenteService } from '@core/services/eti/asistente.service';
 import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reunion.service';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
+import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
 import { CONVOCATORIA_REUNION_DATA_KEY } from './convocatoria-reunion-data.resolver';
 import { ConvocatoriaReunionAsignacionMemoriasListadoFragment } from './convocatoria-reunion-formulario/convocatoria-reunion-asignacion-memorias/convocatoria-reunion-asignacion-memorias-listado/convocatoria-reunion-asignacion-memorias-listado.fragment';
 import { ConvocatoriaReunionDatosGeneralesFragment } from './convocatoria-reunion-formulario/convocatoria-reunion-datos-generales/convocatoria-reunion-datos-generales.fragment';
+import { ConvocatoriaReunionDocumentacionFragment } from './convocatoria-reunion-formulario/convocatoria-reunion-documentacion/convocatoria-reunion-documentacion.fragment';
 import { CONVOCATORIA_REUNION_ROUTE_PARAMS } from './convocatoria-reunion-route-params';
 
 export interface DatosAsignacionEvaluacion {
@@ -31,12 +33,14 @@ export class ConvocatoriaReunionActionService extends ActionService {
 
   public readonly FRAGMENT = {
     DATOS_GENERALES: 'datosGenerales',
-    ASIGNACION_MEMORIAS: 'asignacionMemorias'
+    ASIGNACION_MEMORIAS: 'asignacionMemorias',
+    DOCUMENTACION: 'documentacion'
   };
 
   convocatoriaReunion: IConvocatoriaReunion;
   private datosGenerales: ConvocatoriaReunionDatosGeneralesFragment;
   private asignacionMemorias: ConvocatoriaReunionAsignacionMemoriasListadoFragment;
+  private documentacion: ConvocatoriaReunionDocumentacionFragment;
 
   private readonly data: IConvocatoriaReunionData;
 
@@ -52,7 +56,8 @@ export class ConvocatoriaReunionActionService extends ActionService {
     asistenteService: AsistenteService,
     evaluacionService: EvaluacionService,
     personaService: PersonaService,
-    evaluadorService: EvaluadorService
+    evaluadorService: EvaluadorService,
+    documentoService: DocumentoService,
   ) {
     super();
     this.data = route.snapshot.data[CONVOCATORIA_REUNION_DATA_KEY];
@@ -64,9 +69,11 @@ export class ConvocatoriaReunionActionService extends ActionService {
       logger, fb, id, service, asistenteService, personaService, evaluadorService, this.readonly);
     this.asignacionMemorias = new ConvocatoriaReunionAsignacionMemoriasListadoFragment(
       logger, id, evaluacionService, personaService, service);
+    this.documentacion = new ConvocatoriaReunionDocumentacionFragment(logger, id, service, documentoService, this.readonly);
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);
     this.addFragment(this.FRAGMENT.ASIGNACION_MEMORIAS, this.asignacionMemorias);
+    this.addFragment(this.FRAGMENT.DOCUMENTACION, this.documentacion);
   }
 
   initializeDatosGenerales(): void {
@@ -95,6 +102,7 @@ export class ConvocatoriaReunionActionService extends ActionService {
 
   onKeyChange(value: number) {
     this.asignacionMemorias.setKey(value);
+    this.documentacion.setKey(value);
   }
 
   /**

@@ -754,9 +754,9 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "ETI-ACT-V" })
-  public void createComentarioActaGestor_estadoMemoria4L_Success() {
-    // given: Una evaluación con una memoria en estado 4L
-    final Long estadoMemoriaId = 4L; // En secretaría revisión mínima
+  public void createComentarioActaGestor_estadoMemoria26L_Success() {
+    // given: Una evaluación con una memoria en estado 26L
+    final Long estadoMemoriaId = TipoEstadoMemoria.Tipo.EN_EVALUACION_REVISION_MINIMA.getId();
     final Long evaluacionId = 12L;
     Evaluacion evaluacion = generarMockEvaluacion(evaluacionId);
 
@@ -1915,7 +1915,7 @@ public class ComentarioServiceTest extends BaseServiceTest {
     final TipoEstadoMemoria estadoMemoria = new TipoEstadoMemoria();
     final Evaluador evaluador = new Evaluador();
     evaluador.setPersonaRef("user-002");
-    estadoMemoria.setId(4L);
+    estadoMemoria.setId(TipoEstadoMemoria.Tipo.EN_EVALUACION.getId());
     memoria.setEstadoActual(estadoMemoria);
 
     Formulario formulario = new Formulario(1L, "M10", "Descripcion");

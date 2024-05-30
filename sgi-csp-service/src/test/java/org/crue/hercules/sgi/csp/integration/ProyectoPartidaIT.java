@@ -39,6 +39,7 @@ class ProyectoPartidaIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
   // @formatter:off    
+    "classpath:scripts/configuracion.sql",
     "classpath:scripts/modelo_ejecucion.sql",
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
@@ -79,6 +80,7 @@ class ProyectoPartidaIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
   // @formatter:off    
+    "classpath:scripts/configuracion.sql",
     "classpath:scripts/modelo_ejecucion.sql",
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",
@@ -96,7 +98,7 @@ class ProyectoPartidaIT extends BaseIT {
     Long proyectoPartidaId = 1L;
 
     ProyectoPartida toUpdate = buildMockProyectoPartida(1L);
-    toUpdate.setCodigo("UU.UUUU.UUUU.UPDAT");
+    toUpdate.setDescripcion("UU.UUUU.UUUU.UPDAT");
 
     final ResponseEntity<ProyectoPartida> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
         HttpMethod.PUT, buildRequest(null, toUpdate, "CSP-PRO-E"),
@@ -263,7 +265,7 @@ class ProyectoPartidaIT extends BaseIT {
   private ProyectoPartida buildMockProyectoPartida(Long proyectoPartidaId) {
     return ProyectoPartida.builder()
         .id(proyectoPartidaId)
-        .codigo("AA.AAAA.BBBB.CCCCD")
+        .codigo("formato-partida-presupuestaria")
         .convocatoriaPartidaId(1L)
         .descripcion("Nueva Partida Creada")
         .proyectoId(1L)

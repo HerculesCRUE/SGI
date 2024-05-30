@@ -32,6 +32,7 @@ import { GRUPO_ROUTE_PARAMS } from './grupo-route-params';
 export interface IGrupoData {
   grupo: IGrupo;
   isInvestigador: boolean;
+  isEjecucionEconomicaGruposEnabled: boolean;
   readonly: boolean;
 }
 
@@ -104,6 +105,7 @@ export class GrupoActionService extends ActionService implements OnDestroy {
       palabraClaveService,
       rolProyectoService,
       vinculacionService,
+      this.data?.isEjecucionEconomicaGruposEnabled,
       this.data?.readonly
     );
     this.equiposInvestigacion = new GrupoEquipoInvestigacionFragment(

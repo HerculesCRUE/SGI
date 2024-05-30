@@ -21,7 +21,15 @@ export class ProyectoResponsableEconomicoFragment extends Fragment {
     this.setComplete(true);
   }
 
+  public reloadData(): void {
+    this.loadTableData();
+  }
+
   protected onInitialize(): void {
+    this.loadTableData();
+  }
+
+  private loadTableData(): void {
     if (this.getKey()) {
       const id = this.getKey() as number;
 

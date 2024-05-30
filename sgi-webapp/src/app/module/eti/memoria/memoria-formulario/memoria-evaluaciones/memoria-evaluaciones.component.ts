@@ -41,8 +41,9 @@ export class MemoriaEvaluacionesComponent extends FragmentComponent implements O
 
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
-  displayedColumns: string[] = ['tipoEvaluacion', 'version', 'dictamen', 'informeEvaluacion',
+  displayedColumns: string[] = ['tipoEvaluacion', 'version', 'dictamen', 'informeFichaEvaluador', 'informeEvaluacion',
     'informeFavorable'];
+  displayedColumnsInv: string[] = ['tipoEvaluacion', 'version', 'dictamen', 'informeEvaluacion', 'informeFavorable'];
   elementosPagina: number[] = [5, 10, 25, 100];
   dataSource: MatTableDataSource<StatusWrapper<IEvaluacion>> = new MatTableDataSource<StatusWrapper<IEvaluacion>>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -52,13 +53,17 @@ export class MemoriaEvaluacionesComponent extends FragmentComponent implements O
     return MSG_PARAMS;
   }
 
+  get isInvestigador(): boolean {
+    return this.actionService.isModuleInv();
+  }
+
   constructor(
     protected readonly dialogService: DialogService,
     protected matDialog: MatDialog,
     protected memoriaService: MemoriaService,
     protected evaluacionService: EvaluacionService,
     protected documentoService: DocumentoService,
-    actionService: MemoriaActionService,
+    private actionService: MemoriaActionService,
     private readonly convocatoriaReunionService: ConvocatoriaReunionService) {
 
     super(actionService.FRAGMENT.EVALUACIONES, actionService);
@@ -125,6 +130,10 @@ export class MemoriaEvaluacionesComponent extends FragmentComponent implements O
     return actaConvocatoriaReunion?.acta?.estadoActual?.id === 2 ? true : false;
   }
 
+  hasDictamen(evaluacionWrapper: StatusWrapper<IEvaluacion>): boolean {
+    return !!evaluacionWrapper.value.dictamen?.nombre;
+  }
+
   /**
    * Visualiza el informe de evaluación seleccionado.
    * @param idEvaluacion id de la evaluación del informe
@@ -132,6 +141,21 @@ export class MemoriaEvaluacionesComponent extends FragmentComponent implements O
   visualizarInforme(idEvaluacion: number): void {
     const documento: IDocumento = {} as IDocumento;
     this.evaluacionService.getDocumentoEvaluacion(idEvaluacion).pipe(
+      switchMap((documentoInfo: IDocumento) => {
+        documento.nombre = documentoInfo.nombre;
+        return this.documentoService.downloadFichero(documentoInfo.documentoRef);
+      })
+    ).subscribe(response => {
+      triggerDownloadToUser(response, documento.nombre);
+    });
+  }
+
+  /**
+ * Visualiza el informe del evaluador a partir de su evaluación
+ */
+  visualizarInformeEvaluador(idEvaluacion: number): void {
+    const documento: IDocumento = {} as IDocumento;
+    this.evaluacionService.getDocumentoEvaluador(idEvaluacion).pipe(
       switchMap((documentoInfo: IDocumento) => {
         documento.nombre = documentoInfo.nombre;
         return this.documentoService.downloadFichero(documentoInfo.documentoRef);

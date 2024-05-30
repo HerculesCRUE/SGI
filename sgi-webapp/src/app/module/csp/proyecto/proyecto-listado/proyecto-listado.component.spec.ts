@@ -12,6 +12,8 @@ import { FooterCrearComponent } from '@shared/footers/footer-crear/footer-crear.
 import { LoggerTestingModule } from 'ngx-logger/testing';
 
 import { ProyectoListadoComponent } from './proyecto-listado.component';
+import { SharedModule } from '@shared/shared.module';
+import { CspSharedModule } from '../../shared/csp-shared.module';
 
 describe('ProyectoListadoComponent', () => {
   let component: ProyectoListadoComponent;
@@ -32,7 +34,9 @@ describe('ProyectoListadoComponent', () => {
         FlexLayoutModule,
         FormsModule,
         ReactiveFormsModule,
-        LoggerTestingModule
+        LoggerTestingModule,
+        SharedModule,
+        CspSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

@@ -10,7 +10,7 @@ import { SgiMutableRestService } from '@sgi/framework/http';
   providedIn: 'root'
 })
 export class CodigoEconomicoIngresoService extends SgiMutableRestService<string, ICodigoEconomicoIngresoBackend, ICodigoEconomicoIngreso>{
-  private static readonly MAPPING = '/codigos-economicos-gastos';
+  private static readonly MAPPING = '/codigos-economicos-ingresos';
 
   constructor(protected http: HttpClient) {
     super(

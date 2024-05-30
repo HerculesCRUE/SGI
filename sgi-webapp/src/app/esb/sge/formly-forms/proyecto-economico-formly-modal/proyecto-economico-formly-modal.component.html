@@ -11,8 +11,12 @@
     <mat-icon class="save-icon">save</mat-icon>{{'btn.request.add' | translate}}
   </button>
   <button color="accent" *ngIf="proyectoData.action === ACTION_MODAL_MODE.EDIT" (click)="doAction()" mat-raised-button
-    type="submit">
-    <mat-icon class="save-icon">save</mat-icon>{{'btn.request.add-notify' | translate}}
+    type="submit" [disabled]="actionDisabled">
+    <mat-icon class="save-icon">save</mat-icon> {{'btn.sge.solicitar-modificacion' | translate}}
+  </button>
+  <button color="accent" *ngIf="proyectoData.action === ACTION_MODAL_MODE.SELECT_AND_NOTIFY" (click)="doAction()"
+    mat-raised-button type="submit" [disabled]="actionDisabled">
+    <mat-icon class="save-icon">save</mat-icon> {{'btn.sge.solicitar-relacion' | translate}}
   </button>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' | translate}}</button>
 </mat-dialog-actions>

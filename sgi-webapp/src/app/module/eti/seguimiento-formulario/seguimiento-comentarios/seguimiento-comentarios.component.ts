@@ -7,18 +7,18 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IComentario, TipoEstadoComentario } from '@core/models/eti/comentario';
-import { TipoComentario } from '@core/models/eti/tipo-comentario';
+import { TIPO_COMENTARIO, TipoComentario } from '@core/models/eti/tipo-comentario';
 import { DialogService } from '@core/services/dialog.service';
 import { TipoComentarioService } from '@core/services/eti/tipo-comentario.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { Observable, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ComentarioModalComponent, ComentarioModalData } from '../../comentario/comentario-modal/comentario-modal.component';
 import { getApartadoNombre, getSubApartadoNombre } from '../../shared/pipes/bloque-apartado.pipe';
 import { Rol, SeguimientoFormularioActionService } from '../seguimiento-formulario.action.service';
 import { SeguimientoComentarioFragment } from './seguimiento-comentarios.fragment';
-import { SgiAuthService } from '@sgi/framework/auth';
 
 const MSG_DELETE = marker('msg.delete.entity');
 const COMENTARIO_KEY = marker('eti.comentario');
@@ -137,7 +137,8 @@ export class SeguimientoComentariosComponent extends FragmentComponent implement
   openCreateModal(): void {
     const evaluacionData: ComentarioModalData = {
       evaluaciones: [this.actionService.getEvaluacion()],
-      comentario: undefined
+      comentario: undefined,
+      readonly: false
     };
 
     const config = {
@@ -163,7 +164,8 @@ export class SeguimientoComentariosComponent extends FragmentComponent implement
 
     const evaluacionData: ComentarioModalData = {
       evaluaciones: [this.actionService.getEvaluacion()],
-      comentario: wrapperRef.value
+      comentario: wrapperRef.value,
+      readonly: !this.isEditable(wrapperRef)
     };
 
     const config = {
@@ -210,5 +212,13 @@ export class SeguimientoComentariosComponent extends FragmentComponent implement
       this.tipoComentario$ = this.tipoComentarioService.findById(2);
     }
     return this.tipoComentario$;
+  }
+
+  isTipoGestor(comentario: IComentario): boolean {
+    return comentario.tipoComentario.id === TIPO_COMENTARIO.GESTOR;
+  }
+
+  isEditable(wrapperComentario: StatusWrapper<IComentario>): boolean {
+    return (wrapperComentario.value.estado === undefined || (this.isTipoGestor(wrapperComentario.value) || (wrapperComentario.value.estado === this.TIPO_ESTADO_COMENTARIO.ABIERTO && this.personaId === wrapperComentario.value.evaluador?.id)))
   }
 }

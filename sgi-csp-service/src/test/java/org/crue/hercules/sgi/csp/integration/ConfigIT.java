@@ -121,7 +121,7 @@ class ConfigIT extends BaseIT {
   @Test
   void get_ShouldReturnConfigOutput() throws Exception {
     String[] roles = { "ADM-CNF-E" };
-    String configName = "validacionGastos";
+    String configName = "validacionClasificacionGastos";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_NAME).buildAndExpand(configName).toUri();
 
@@ -131,7 +131,7 @@ class ConfigIT extends BaseIT {
     Assertions.assertThat(response).isNotNull();
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     Assertions.assertThat(response.getBody()).isNotNull();
-    Assertions.assertThat(response.getBody().getValue()).isEqualTo("true");
+    Assertions.assertThat(response.getBody().getValue()).isEqualTo("VALIDACION");
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -143,8 +143,8 @@ class ConfigIT extends BaseIT {
   @Test
   void update_ShouldReturnModifiedConfigOutput() throws Exception {
     String[] roles = { "ADM-CNF-E" };
-    String configName = "validacionGastos";
-    String newValue = "false";
+    String configName = "validacionClasificacionGastos";
+    String newValue = "CLASIFICACION";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_NAME).buildAndExpand(configName).toUri();
 

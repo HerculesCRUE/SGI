@@ -100,9 +100,6 @@ public class CustomInvencionRepositoryImpl implements CustomInvencionRepository 
     Root<SolicitudProteccion> rootSolicitudProteccion = querySolicitudProteccion
         .from(SolicitudProteccion.class);
 
-    Predicate predicateSolicudProteccionIsActiva = cb.equal(rootSolicitudProteccion.get(Activable_.activo),
-        Boolean.TRUE);
-
     Path<Instant> fechaConcesion = rootSolicitudProteccion.get(SolicitudProteccion_.fechaConcesion);
     Predicate predicateSolicitudProteccionInFechaBaremacion = cb.and(
         cb.lessThanOrEqualTo(fechaConcesion, fechaFinBaremacion),
@@ -110,7 +107,7 @@ public class CustomInvencionRepositoryImpl implements CustomInvencionRepository 
 
     Predicate existsQuerySolicitudProteccion = cb.exists(querySolicitudProteccion
         .select(rootSolicitudProteccion.get(SolicitudProteccion_.id))
-        .where(predicateSolicudProteccionIsActiva, predicateSolicitudProteccionInFechaBaremacion));
+        .where(predicateSolicitudProteccionInFechaBaremacion));
 
     cq.where(cb.and(
         predicateInvencionIsActiva,

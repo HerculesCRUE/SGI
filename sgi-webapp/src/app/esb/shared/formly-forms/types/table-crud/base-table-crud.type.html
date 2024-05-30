@@ -46,6 +46,10 @@
             {{getOptionSelected(model[i][currentField.key], currentField.options)}}
           </p>
 
+          <p *ngSwitchCase="'select-categorias-profesionales'">
+            {{model[i][currentField.key]['nombre']}}
+          </p>
+
           <p *ngSwitchDefault>{{model[i][currentField.key]}}</p>
         </td>
       </ng-container>
@@ -58,7 +62,7 @@
 
 <formly-validation-message [field]="field"></formly-validation-message>
 
-<div class="separation-button" *ngIf="!to.disabled">
+<div class="separation-bottom-button" *ngIf="!to.disabled">
   <button color="three" mat-raised-button (click)="addItem()">
     <mat-icon color="accent">add_circle</mat-icon>
     {{ btnAddTitle }}

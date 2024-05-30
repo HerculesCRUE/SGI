@@ -72,7 +72,7 @@ public class Acta extends BaseEntity {
   private Integer minutoFin;
 
   /** Resumen */
-  @Column(name = "resumen", length = 4000, nullable = false)
+  @Column(name = "resumen", length = 4000, nullable = false, columnDefinition = "clob")
   @NotNull
   private String resumen;
 

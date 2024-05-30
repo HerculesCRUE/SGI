@@ -1201,4 +1201,20 @@
     </insert>
   </changeSet>
 
+  <changeSet context="!test" author="master" id="00.04.00-tipo-comentario">
+    <update tableName="tipo_comentario">
+      <column name="nombre" value="ACTA_GESTOR"></column>
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="id" valueNumeric="3" />
+      </whereParams>
+    </update>
+
+    <insert tableName="tipo_comentario">
+      <column name="id" valueNumeric="4" />
+      <column name="nombre" value="ACTA_EVALUADOR" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
 </databaseChangeLog>

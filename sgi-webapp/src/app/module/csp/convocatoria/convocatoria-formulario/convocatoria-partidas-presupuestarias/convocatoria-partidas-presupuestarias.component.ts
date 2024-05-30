@@ -108,7 +108,8 @@ export class ConvocatoriaPartidaPresupuestariaComponent extends FragmentComponen
   openModalPartidaPresupuestaria(
     partidaPresupuestariaActualizar?: StatusWrapper<IConvocatoriaPartidaPresupuestaria>,
     rowIndex?: number,
-    canEdit?: boolean): void {
+    canEdit?: boolean
+  ): void {
 
     // Necesario para sincronizar los cambios de orden de registros dependiendo de la ordenación y paginación
     this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort);
@@ -126,6 +127,7 @@ export class ConvocatoriaPartidaPresupuestariaComponent extends FragmentComponen
       partidasPresupuestarias: partidaPresupuestariaTabla,
       convocatoriaPartidaPresupuestaria: null,
       readonly: this.formPart.readonly,
+      partidasPresupuestariasSgeEnabled: this.formPart.partidasPresupuestariasSgeEnabled,
       canEdit: canEdit ?? true
     };
 
@@ -166,4 +168,5 @@ export class ConvocatoriaPartidaPresupuestariaComponent extends FragmentComponen
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
+
 }

@@ -30,12 +30,13 @@ const PROYECTO_SGI_KEY = marker('csp.ejecucion-economica.validacion-gastos.proye
 const CONCEPTO_GASTO_KEY = marker('csp.ejecucion-economica.validacion-gastos.concepto-gasto');
 
 export interface GastoDetalleModalData extends IDatoEconomicoDetalle {
-  estado: IEstadoGastoProyecto;
+  estado: string;
   proyectosSgi: IProyecto[];
   proyecto: IProyecto;
   gastoProyecto: IGastoProyecto;
   vinculacion: string;
   conceptoGasto: IConceptoGasto;
+  disableProyectoSgi: boolean;
 }
 
 @Component({
@@ -150,7 +151,7 @@ export class ValidacionGastosEditarModalComponent extends DialogFormComponent<Ga
 
     const formGroup = new FormGroup(
       {
-        identificadorSgi: new FormControl(identificadorSgi),
+        identificadorSgi: new FormControl({ value: identificadorSgi, disabled: this.data.disableProyectoSgi }),
         conceptoGastoFiltro: new FormControl(conceptoGastoFiltro),
         conceptoGasto: new FormControl(conceptoGasto),
         estadoGasto:

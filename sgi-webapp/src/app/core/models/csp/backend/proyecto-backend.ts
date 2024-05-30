@@ -21,6 +21,8 @@ export interface IProyectoBackend {
   codigoExterno: string;
   /** Fecha Inicio */
   fechaInicio: string;
+  /** Fecha inicio informada en algun momento */
+  fechaInicioStarted: boolean;
   /** Fecha Fin */
   fechaFin: string;
   /** Fecha Fin Definitiva */
@@ -47,12 +49,14 @@ export interface IProyectoBackend {
   colaborativo: boolean;
   /** excelencia */
   excelencia: boolean;
-  /** coordinadorExterno */
-  coordinadorExterno: boolean;
+  /** Id de RolSocio de la Universidad */
+  rolUniversidadId: number;
   /** permitePaquetesTrabajo */
   permitePaquetesTrabajo: boolean;
   /** iva */
   iva: IProyectoIVABackend;
+  /** IVA deducible */
+  ivaDeducible: boolean;
   /** causaExencion */
   causaExencion: CausaExencion;
   /** observaciones */

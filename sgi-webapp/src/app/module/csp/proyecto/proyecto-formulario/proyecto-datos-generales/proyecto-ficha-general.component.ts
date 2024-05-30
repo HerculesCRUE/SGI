@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -6,10 +6,10 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { CLASIFICACION_CVN_MAP } from '@core/enums/clasificacion-cvn';
 import { MSG_PARAMS } from '@core/i18n';
-import { Estado, ESTADO_MAP } from '@core/models/csp/estado-proyecto';
+import { ESTADO_MAP, Estado } from '@core/models/csp/estado-proyecto';
 import { CAUSA_EXENCION_MAP, IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoIVA } from '@core/models/csp/proyecto-iva';
-import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
+import { ConfigService } from '@core/services/csp/config.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -22,7 +22,7 @@ const PROYECTO_AMBITO_GEOGRAFICO_KEY = marker('csp.proyecto.ambito-geografico');
 const PROYECTO_CODIGO_INTERNO_KEY = marker('csp.proyecto.codigo-interno');
 const PROYECTO_CODIGO_EXTERNO_KEY = marker('csp.proyecto.codigo-externo');
 const PROYECTO_CONFIDENCIAL_KEY = marker('csp.proyecto.confidencial');
-const PROYECTO_COORDINADOR_EXTERNO_KEY = marker('csp.proyecto.coordinador-externo');
+const PROYECTO_ROL_UNIVERSIDAD_KEY = marker('csp.proyecto.rol-universidad');
 const PROYECTO_CONVOCATORIA_EXTERNA_KEY = marker('csp.proyecto.convocatoria-externa');
 const PROYECTO_FECHA_FIN_KEY = marker('csp.proyecto.fecha-fin');
 const PROYECTO_FECHA_FIN_DEFINITIVA_KEY = marker('csp.proyecto.fecha-fin-definitiva');
@@ -48,8 +48,6 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
 
   formPart: ProyectoFichaGeneralFragment;
 
-  proyectosSge: StatusWrapper<IProyectoProyectoSge>[];
-
   displayedColumns = ['iva', 'fechaInicio', 'fechaFin'];
   elementosPagina = [5, 10, 25, 100];
 
@@ -65,7 +63,7 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
   msgParamCodigoInternoFormato = {};
   msgParamCodigoExternoEntity = {};
   msgParamConfidencialEntity = {};
-  msgParamCoordinadorExternoEntity = {};
+  msgParamRolUniversidadEntity = {};
   msgParamConvocatoriaExternaEntity = {};
   msgParamFechaFinEntity = {};
   msgParamFechaInicioEntity = {};
@@ -102,6 +100,7 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
 
   constructor(
     protected actionService: ProyectoActionService,
+    private configService: ConfigService,
     private readonly translate: TranslateService
   ) {
     super(actionService.FRAGMENT.FICHA_GENERAL, actionService);
@@ -172,10 +171,6 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
           }
         }
       ));
-    this.subscriptions.push(this.actionService.proyectosSge$.subscribe(elements => {
-      this.proyectosSge = elements;
-      this.formPart.getFormGroup().controls.codigosSge.patchValue(elements, { onlySelf: true, emitEvent: false });
-    }));
   }
 
   private setupI18N(): void {
@@ -190,7 +185,7 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamCodigoInternoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
 
-    this.formPart.configuracionService.getConfiguracion().subscribe(
+    this.configService.getConfiguracion().subscribe(
       configuracion => {
         this.translate.get(
           PROYECTO_CODIGO_INTERNO_FORMATO_KEY,
@@ -267,9 +262,9 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
     ).subscribe((value) => this.msgParamProyectoCoordinadoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
-      PROYECTO_COORDINADOR_EXTERNO_KEY,
+      PROYECTO_ROL_UNIVERSIDAD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamCoordinadorExternoEntity =
+    ).subscribe((value) => this.msgParamRolUniversidadEntity =
       { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(

@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
@@ -105,23 +107,21 @@ public class TipoFinalidadController {
   /**
    * Devuelve una lista paginada y filtrada {@link TipoFinalidad} activos.
    * 
-   * @param query  filtro de búsqueda.
-   * @param paging {@link Pageable}.
+   * @param query filtro de búsqueda.
    * @return el listado de entidades {@link TipoFinalidad} paginadas y filtradas.
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-INV-V', 'CSP-ME-C', 'CSP-ME-E', 'CSP-PRO-E', 'CSP-PRO-V', 'CSP-PRO-MOD-V')")
-  public ResponseEntity<Page<TipoFinalidad>> findAll(@RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging) {
-    log.debug("findAll(String query, Pageable paging) - start");
-    Page<TipoFinalidad> page = service.findAll(query, paging);
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-INV-V', 'CSP-ME-C', 'CSP-ME-E', 'CSP-PRO-E', 'CSP-PRO-V', 'CSP-PRO-MOD-V', 'CSP-CNV-V', 'CSP-CNV-E')")
+  public ResponseEntity<List<TipoFinalidad>> findAll(@RequestParam(name = "q", required = false) String query) {
+    log.debug("findAll(String query) - start");
+    List<TipoFinalidad> returnValue = service.findAll(query);
 
-    if (page.isEmpty()) {
-      log.debug("findAll(String query, Pageable paging) - end");
+    if (returnValue.isEmpty()) {
+      log.debug("findAll(String query) - end");
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    log.debug("findAll(String query, Pageable paging) - end");
-    return new ResponseEntity<>(page, HttpStatus.OK);
+    log.debug("findAll(String query) - end");
+    return new ResponseEntity<>(returnValue, HttpStatus.OK);
   }
 
   /**
@@ -132,7 +132,7 @@ public class TipoFinalidadController {
    * @return el listado de entidades {@link TipoFinalidad} paginadas y filtradas.
    */
   @GetMapping("/todos")
-  @PreAuthorize("hasAnyAuthority('CSP-TFIN-V','CSP-TFIN-C','CSP-TFIN-E', 'CSP-TFIN-B', 'CSP-TFIN-R')")
+  @PreAuthorize("hasAnyAuthority('CSP-TFIN-V','CSP-TFIN-C','CSP-TFIN-E', 'CSP-TFIN-B', 'CSP-TFIN-R', 'CSP-PRO-V', 'CSP-PRO-E', 'CSP-CNV-V', 'CSP-CNV-E')")
   public ResponseEntity<Page<TipoFinalidad>> findAllTodos(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodos(String query,Pageable paging) - start");

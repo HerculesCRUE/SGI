@@ -19,6 +19,7 @@ describe('PartidaPresupuestariaModalComponent', () => {
     partidaPresupuestaria: undefined,
     partidasPresupuestarias: [],
     convocatoriaPartidaPresupuestaria: undefined,
+    partidasPresupuestariasSgeEnabled: false,
     readonly: false,
     canEdit: true
   };

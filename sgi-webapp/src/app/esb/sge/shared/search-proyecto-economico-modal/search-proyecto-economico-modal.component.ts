@@ -17,7 +17,7 @@ import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperato
 import { NGXLogger } from 'ngx-logger';
 import { merge, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { IProyectoEconomicoFormlyData, ProyectoEconomicoFormlyModalComponent } from 'src/app/esb/sge/formly-forms/proyecto-economico-formly-modal/proyecto-economico-formly-modal.component';
+import { IProyectoEconomicoFormlyData, IProyectoEconomicoFormlyResponse, ProyectoEconomicoFormlyModalComponent } from 'src/app/esb/sge/formly-forms/proyecto-economico-formly-modal/proyecto-economico-formly-modal.component';
 import { ACTION_MODAL_MODE } from 'src/app/esb/shared/formly-forms/core/base-formly-modal.component';
 
 const TIPO_PROYECTO_KEY = marker('sge.proyecto');
@@ -218,20 +218,20 @@ export class SearchProyectoEconomicoModalComponent extends DialogCommonComponent
     const dialogRef = this.proyectoCreateMatDialog.open(ProyectoEconomicoFormlyModalComponent, config);
 
     dialogRef.afterClosed().subscribe(
-      (proyectoSge) => {
-        if (proyectoSge) {
-          this.closeModal(proyectoSge);
+      (response: IProyectoEconomicoFormlyResponse) => {
+        if (response) {
+          this.closeModal(response?.proyectoSge);
           this.snackBarService.showSuccess(this.textoCrearSuccess);
         }
       }
     );
   }
 
-  openProyectoUpdateModal(proyectoSeleccionado: IProyectoSge): void {
+  openProyectoSgeSelectAndNotifyModal(proyectoSeleccionado: IProyectoSge): void {
     const proyectoData: IProyectoEconomicoFormlyData = {
       proyectoSgiId: this.data.proyectoSgiId,
       proyectoSge: proyectoSeleccionado,
-      action: ACTION_MODAL_MODE.EDIT,
+      action: ACTION_MODAL_MODE.SELECT_AND_NOTIFY,
       grupoInvestigacion: this.data.grupoInvestigacion
     };
 
@@ -242,9 +242,9 @@ export class SearchProyectoEconomicoModalComponent extends DialogCommonComponent
 
     const dialogRef = this.proyectoCreateMatDialog.open(ProyectoEconomicoFormlyModalComponent, config);
     dialogRef.afterClosed().subscribe(
-      (proyectoSge) => {
-        if (proyectoSge) {
-          this.closeModal(proyectoSge);
+      (response: IProyectoEconomicoFormlyResponse) => {
+        if (response) {
+          this.closeModal(response?.proyectoSge);
           this.snackBarService.showSuccess(this.textoUpdateSuccess);
         }
       }

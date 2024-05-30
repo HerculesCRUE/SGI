@@ -4,7 +4,6 @@ import { ITipoCaducidad } from '@core/models/pii/tipo-caducidad';
 import { IViaProteccion } from '@core/models/pii/via-proteccion';
 
 export interface ISolicitudProteccionResponse {
-
   id: number;
   invencion: IInvencion;
   titulo: string;
@@ -23,6 +22,4 @@ export interface ISolicitudProteccionResponse {
   agentePropiedadRef: string;
   paisProteccionRef: string;
   comentarios: string;
-  activo: boolean;
-
 }

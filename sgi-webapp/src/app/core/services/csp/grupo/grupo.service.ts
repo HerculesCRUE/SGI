@@ -177,11 +177,12 @@ export class GrupoService extends _GrupoMixinBase {
    * true. En caso de que varios coincidan se devuelven todos los que coincidan.
    *
    * @param id identificador del grupo.
-   * @return la lista de personaRef de los investigadores principales del
-   *         grupo en el momento actual.
+   * @return la lista de investigadores principales del grupo en el momento actual.
    */
-  findPersonaRefInvestigadoresPrincipales(id: number): Observable<string[]> {
-    return this.get<string[]>(`${this.endpointUrl}/${id}/investigadoresprincipales`);
+  findInvestigadoresPrincipales(id: number): Observable<IGrupoEquipo[]> {
+    return this.get<IGrupoEquipoResponse[]>(`${this.endpointUrl}/${id}/investigadoresprincipales`).pipe(
+      map((response => GRUPO_EQUIPO_RESPONSE_CONVERTER.toTargetArray(response)))
+    );
   }
 
   getNextCodigo(departamentoRef: string): Observable<string> {

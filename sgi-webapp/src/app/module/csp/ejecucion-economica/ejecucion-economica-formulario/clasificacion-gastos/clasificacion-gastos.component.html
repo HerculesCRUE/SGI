@@ -1,0 +1,172 @@
+<sgi-fragment title="{{'menu.csp.ejecucion-economica.clasificacion-gastos' | translate}}">
+  <!-- Buscador -->
+  <div>
+    <form [formGroup]="formGroup">
+      <div fxLayout="column" fxLayout.gt-sm="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+
+        <!-- gastos clasificados -->
+        <mat-form-field fxFlex>
+          <mat-label>{{'csp.ejecucion-economica.gastos-clasificados-sgi' | translate}}</mat-label>
+          <mat-select matNativeControl formControlName="gastosClasficadosSgi">
+            <mat-option [value]="GastosClasficadosSgiEnum.TODOS">
+              {{'csp.ejecucion-economica.gastos-clasificados-sgi.todos' | translate}}
+            </mat-option>
+            <mat-option [value]="GastosClasficadosSgiEnum.SI">
+              {{'csp.ejecucion-economica.gastos-clasificados-sgi.clasificados' | translate}}
+            </mat-option>
+            <mat-option [value]="GastosClasficadosSgiEnum.NO">
+              {{'csp.ejecucion-economica.gastos-clasificados-sgi.sin-clasificar' | translate}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Fecha gasto -->
+        <mat-form-field fxFlex>
+          <mat-label>
+            {{'csp.ejecucion-economica.clasificacion.fecha-gasto-desde' | translate}}
+          </mat-label>
+          <input matInput [ngxMatDatetimePicker]="pickerFechaDesde" formControlName="fechaDesde">
+          <mat-datepicker-toggle matSuffix [for]="pickerFechaDesde"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaDesde showSeconds="true" [defaultTime]="[0,0,0]">
+          </ngx-mat-datetime-picker>
+        </mat-form-field>
+        <mat-form-field fxFlex>
+          <mat-label>
+            {{'csp.ejecucion-economica.clasificacion.fecha-gasto-hasta' | translate}}
+          </mat-label>
+          <input matInput [ngxMatDatetimePicker]="pickerFechaHasta" formControlName="fechaHasta">
+          <mat-datepicker-toggle matSuffix [for]="pickerFechaHasta"></mat-datepicker-toggle>
+          <ngx-mat-datetime-picker #pickerFechaHasta showSeconds="true" [defaultTime]="[23,59,59]">
+          </ngx-mat-datetime-picker>
+        </mat-form-field>
+      </div>
+
+      <div class="separation-button">
+        <button type="submit" color="primary" mat-raised-button (click)="onSearch()">
+          <mat-icon>search</mat-icon>
+          {{'btn.search'| translate}}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Listado gastos -->
+  <div>
+    <h1>{{ 'csp.ejecucion-economica.validacion-gastos.listado-gastos' | translate }}</h1>
+    <div class="mat-elevation-z4">
+      <mat-table [dataSource]="dataSource" matSort class=" listado-gastos">
+        <!-- Anualidad Column -->
+        <ng-container matColumnDef="anualidad">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'sge.dato-economico.anualidad' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let element">
+            {{ element.anualidad }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Proyecto Column -->
+        <ng-container matColumnDef="proyecto">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'sge.dato-economico.proyecto' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let element">
+            {{element.proyecto?.titulo }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Concepto gasto Column -->
+        <ng-container matColumnDef="conceptoGasto">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'sge.dato-economico.concepto-gasto' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let element">
+            {{ element.conceptoGasto?.nombre }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Clasificacion SGE Column -->
+        <ng-container matColumnDef="clasificacionSGE">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'sge.dato-economico.clasificacion-sge' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let element">
+            {{ element.clasificacionSGE?.nombre }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Aplicacion presupuestaria Column -->
+        <ng-container matColumnDef="aplicacionPresupuestaria">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'sge.dato-economico.partida-presupuestaria' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let element">
+            {{ element.partidaPresupuestaria }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Codigo economico Column -->
+        <ng-container matColumnDef="codigoEconomico">
+          <mat-header-cell mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'sge.dato-economico.codigo-economico' | translate}}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let element">
+            {{ element.codigoEconomico?.id }}
+            {{ element.codigoEconomico?.nombre ? ' - ' + element.codigoEconomico?.nombre : '' }}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Fecha Devengo Column -->
+        <ng-container matColumnDef="fechaDevengo">
+          <mat-header-cell *matHeaderCellDef>{{'sge.dato-economico.fecha-devengo' | translate}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            {{element.fechaDevengo | luxon:'shortDate'}}
+          </mat-cell>
+        </ng-container>
+
+        <!-- Columnas dinamicas -->
+        <ng-container *ngFor="let column of formPart.columns" [matColumnDef]="column.id">
+          <mat-header-cell *matHeaderCellDef [class.computed]="column.compute" mat-sort-header>
+            {{column.name}}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element" [class.computed]="column.compute">
+            <ng-container *ngIf="column.compute">
+              {{element?.columnas[element.tipo === TipoOperacion.FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS ?
+              column.idFacturasGastos : (element.tipo === TipoOperacion.FACTURAS_JUSTIFICANTES_VIAJES_DIETAS ?
+              column.idViajesDietas : column.idPersonalContratado)] | number: '1.2-2'}}
+            </ng-container>
+            <ng-container *ngIf="!column.compute">
+              {{element?.columnas[element.tipo === TipoOperacion.FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS ?
+              column.idFacturasGastos : (element.tipo === TipoOperacion.FACTURAS_JUSTIFICANTES_VIAJES_DIETAS ?
+              column.idViajesDietas : column.idPersonalContratado)]}}
+            </ng-container>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Acciones Column -->
+        <ng-container matColumnDef="acciones">
+          <mat-header-cell mat-header-cell *matHeaderCellDef>
+            {{ 'label.actions' | translate }}
+          </mat-header-cell>
+          <mat-cell mat-cell *matCellDef="let element">
+            <button mat-icon-button color="primary" matTooltip="{{'btn.edit' | translate}}"
+              (click)="showEditModal(element)">
+              <mat-icon>border_color</mat-icon>
+            </button>
+
+            <button mat-icon-button color="primary" (click)="acceptClasificacion(element)"
+              *ngIf="isAcceptClasificacionAllowed(element)"
+              matTooltip="{{'csp.ejecucion-economica.facturas-justificantes.confirmar-clasificacion' | translate}}">
+              <mat-icon>check_circle</mat-icon>
+            </button>
+
+          </mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="formPart.displayColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: formPart.displayColumns;"></mat-row>
+      </mat-table>
+      <mat-paginator [pageSizeOptions]="elementsPage" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+</sgi-fragment>

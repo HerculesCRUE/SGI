@@ -19,16 +19,27 @@ export class TableProyectosRelacionadosComponent implements OnInit {
     'nombre',
     'responsables',
     'fechaInicio',
-    'fechaFin'
+    'fechaFin',
+    'fechaFinDefinitiva'
   ];
 
   readonly dataSource = new MatTableDataSource<IRelacionEjecucionEconomicaWithResponsables>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
+  private _isEjecucionEconomicaGruposEnabled: boolean;
 
   @Input()
   set data(value: IRelacionEjecucionEconomicaWithResponsables[]) {
     this.dataSource.data = value;
+  }
+
+  @Input()
+  set isEjecucionEconomicaGruposEnabled(value: boolean) {
+    this._isEjecucionEconomicaGruposEnabled = value;
+  }
+
+  get isEjecucionEconomicaGruposEnabled(): boolean {
+    return this._isEjecucionEconomicaGruposEnabled ?? false;
   }
 
   constructor() { }

@@ -22,4 +22,20 @@ export class ReportPrcService {
     );
 
   }
+
+  getInformeResumenPuntuacionGrupos(anio: number): Observable<Blob> {
+    return this.http.get(`${this.endpointUrl}/informeresumenpuntuaciongrupos/${anio}`, {
+      headers: new HttpHeaders().set('Accept', 'application/octet-stream'), responseType: 'blob'
+    }
+    );
+
+  }
+
+  getDetalleProduccionInvestigador(anio, personaRef): Observable<Blob> {
+    return this.http.get(`${this.endpointUrl}/informedetalleproduccioninvestigador/${anio}/${personaRef}`, {
+      headers: new HttpHeaders().set('Accept', 'application/octet-stream'), responseType: 'blob'
+    }
+    );
+
+  }
 }

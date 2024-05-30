@@ -2,14 +2,13 @@ import { FocusMonitor } from '@angular/cdk/a11y';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatFormField, MatFormFieldControl, MAT_FORM_FIELD } from '@angular/material/form-field';
+import { MAT_FORM_FIELD, MatFormField, MatFormFieldControl } from '@angular/material/form-field';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { SearchResult, SelectDialogComponent } from '@core/component/select-dialog/select-dialog.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEmpresa } from '@core/models/sgemp/empresa';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { TranslateService } from '@ngx-translate/core';
-import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SearchEmpresaModalComponent, SearchEmpresaModalData } from './dialog/search-empresa.component';
@@ -94,7 +93,7 @@ export class SelectEmpresaComponent extends SelectDialogComponent<SearchEmpresaM
       return this.getErrorMsg(empresa.id);
     }
 
-    return empresa.nombre;
+    return empresa.nombre ?? empresa.razonSocial;
   }
 
   private getErrorMsg(id: string): string {

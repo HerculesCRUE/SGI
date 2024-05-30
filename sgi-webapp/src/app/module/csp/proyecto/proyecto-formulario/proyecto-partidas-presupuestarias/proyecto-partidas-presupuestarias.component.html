@@ -22,7 +22,7 @@
           {{'csp.proyecto-partida-presupuestaria.codigo' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{element.codigo}}
+          {{element.codigo ? element.codigo : element.partidaSge?.codigo}}
         </td>
       </ng-container>
 
@@ -62,7 +62,7 @@
               <mat-icon>border_color</mat-icon>
             </button>
             <button color="warn" mat-icon-button matTooltip="{{'btn.delete' | translate}}"
-              *ngIf="!element.partidaPresupuestaria?.value.id || formPart.mapModificable.get(element.partidaPresupuestaria.value.id) && element.canEdit"
+              *ngIf="element.partidaPresupuestaria?.value?.id && formPart.mapModificable.get(element.partidaPresupuestaria.value.id) && element.canEdit"
               (click)="deletePartidaPresupuestaria(element.partidaPresupuestaria)">
               <mat-icon>highlight_off</mat-icon>
             </button>

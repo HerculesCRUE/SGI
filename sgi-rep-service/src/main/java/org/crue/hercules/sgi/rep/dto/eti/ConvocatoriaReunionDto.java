@@ -20,6 +20,7 @@ public class ConvocatoriaReunionDto extends BaseRestDto {
   private ComiteDto comite;
   private Instant fechaEvaluacion;
   private Instant fechaLimite;
+  private Boolean videoconferencia;
   private String lugar;
   private String ordenDia;
   private Integer anio;

@@ -8,7 +8,7 @@ import org.crue.hercules.sgi.rep.dto.SgiReportDto;
  */
 public class AutorizacionReport extends SgiReportDto {
   public AutorizacionReport() {
-    this.setPath("rep-csp-certificado-autorizacion-proyecto-externo-prpt");
+    this.setPath("rep-csp-certificado-autorizacion-proyecto-externo-docx");
     this.setName("autorizacionProyectoExterno");
   }
 }

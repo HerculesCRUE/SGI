@@ -75,6 +75,7 @@ export class MemoriaEvaluacionesListadoExportService extends
         name: 'version' + idTareaCol,
         title: prefixTitleColumn + idTareaCol + ': ' + this.translate.instant(EVALUACION_VERSION_KEY),
         type: ColumnType.NUMBER,
+        format: '#'
       };
       columns.push(columnVersion);
 

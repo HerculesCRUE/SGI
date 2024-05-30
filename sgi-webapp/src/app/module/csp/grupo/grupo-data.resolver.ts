@@ -4,6 +4,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IGrupo } from '@core/models/csp/grupo';
 import { Module } from '@core/module';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
+import { ConfigService } from '@core/services/csp/config.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiAuthService } from '@sgi/framework/auth';
@@ -25,7 +26,8 @@ export class GrupoDataResolver extends SgiResolverResolver<IGrupoData> {
     router: Router,
     snackBar: SnackBarService,
     private service: GrupoService,
-    private authService: SgiAuthService
+    private authService: SgiAuthService,
+    private configService: ConfigService
   ) {
     super(logger, router, snackBar, MSG_NOT_FOUND);
   }
@@ -53,7 +55,13 @@ export class GrupoDataResolver extends SgiResolverResolver<IGrupoData> {
           } as IGrupoData
         );
       }),
-      switchMap(data => this.isReadonly(data, grupoId))
+      switchMap(data => this.isReadonly(data, grupoId)),
+      switchMap(data => this.configService.isEjecucionEconomicaGruposEnabled().pipe(
+        map(isEnabled => {
+          data.isEjecucionEconomicaGruposEnabled = isEnabled;
+          return data;
+        })
+      ))
     );
   }
 

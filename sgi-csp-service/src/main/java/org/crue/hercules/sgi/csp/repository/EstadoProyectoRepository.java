@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.csp.repository;
 
 import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.EstadoProyecto.Estado;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -19,5 +20,7 @@ public interface EstadoProyectoRepository
    *         paginadas.
    */
   Page<EstadoProyecto> findAllByProyectoId(Long idProyecto, Pageable paging);
+
+  boolean existsByProyectoIdAndEstado(Long proyectoId, Estado estado);
 
 }

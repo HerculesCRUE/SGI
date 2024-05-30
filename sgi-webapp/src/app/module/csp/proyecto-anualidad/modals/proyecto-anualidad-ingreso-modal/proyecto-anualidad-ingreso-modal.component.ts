@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { SelectValue } from '@core/component/select-common/select-common.component';
@@ -12,10 +12,9 @@ import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { ICodigoEconomicoGasto } from '@core/models/sge/codigo-economico-gasto';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
-import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
+import { CodigoEconomicoIngresoService } from '@core/services/sge/codigo-economico-ingreso.service';
 import { SelectValidator } from '@core/validators/select-validator';
 import { TranslateService } from '@ngx-translate/core';
-import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
@@ -29,6 +28,7 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
 export interface ProyectoAnualidadIngresoModalData {
   anualidadIngreso: IAnualidadIngreso;
   proyectoId: number;
+  disableIndentificadorSge: boolean;
   isEdit: boolean;
   readonly: boolean;
 }
@@ -47,19 +47,22 @@ export class ProyectoAnualidadIngresoModalComponent extends DialogFormComponent<
   title: string;
 
   readonly proyectosSge$ = new BehaviorSubject<IProyectoProyectoSge[]>([]);
-  readonly proyectoPartida$ = new BehaviorSubject<IProyectoPartida[]>([]);
   codigosEconomicos$: Observable<ICodigoEconomicoGasto[]>;
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
   }
 
+  get tipoPartidaIngreso(): TipoPartida {
+    return TipoPartida.INGRESO;
+  }
+
   constructor(
     matDialogRef: MatDialogRef<ProyectoAnualidadIngresoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ProyectoAnualidadIngresoModalData,
-    private readonly translate: TranslateService,
+    private readonly codigoEconomicoIngresoService: CodigoEconomicoIngresoService,
     private readonly proyectoService: ProyectoService,
-    codigoEconomicoGastoService: CodigoEconomicoGastoService,
+    private readonly translate: TranslateService
   ) {
     super(matDialogRef, data.isEdit);
 
@@ -70,15 +73,7 @@ export class ProyectoAnualidadIngresoModalComponent extends DialogFormComponent<
         .subscribe(response => this.proyectosSge$.next(response.items))
     );
 
-    const options: SgiRestFindOptions = {
-      filter: new RSQLSgiRestFilter('tipoPartida', SgiRestFilterOperator.EQUALS, TipoPartida.INGRESO)
-    };
-    this.subscriptions.push(
-      this.proyectoService.findAllProyectoPartidas(data.proyectoId, options)
-        .subscribe(response => this.proyectoPartida$.next(response.items))
-    );
-
-    this.codigosEconomicos$ = codigoEconomicoGastoService.findAll().pipe(
+    this.codigosEconomicos$ = codigoEconomicoIngresoService.findAll().pipe(
       map(response => response.items)
     );
   }
@@ -157,21 +152,10 @@ export class ProyectoAnualidadIngresoModalComponent extends DialogFormComponent<
       } as IProyectoPartida
       : null;
 
-    const proyectoPartidaFormControl = new FormControl(proyectoPartida, Validators.required);
-
-    // TODO: Sincronizar la carga
-    this.proyectoService.findAllProyectoPartidas(this.data.proyectoId).subscribe(partidas => {
-      if (proyectoPartida == null && partidas.items.filter(partida => partida.tipoPartida === TipoPartida.INGRESO).length === 1) {
-        proyectoPartidaFormControl.setValue(partidas.items.filter(partida => partida.tipoPartida === TipoPartida.INGRESO)[0]);
-      } else {
-        proyectoPartidaFormControl.setValue(proyectoPartida);
-      }
-    });
-
     const formGroup = new FormGroup(
       {
-        identificadorSge: new FormControl(identificadorSge, [Validators.required]),
-        proyectoPartida: proyectoPartidaFormControl,
+        identificadorSge: new FormControl({ value: identificadorSge, disabled: !!identificadorSge && this.data.disableIndentificadorSge }, [Validators.required]),
+        proyectoPartida: new FormControl(proyectoPartida, Validators.required),
         codigoEconomico: new FormControl(
           this.data.anualidadIngreso?.codigoEconomico?.id
             ? this.data.anualidadIngreso?.codigoEconomico
@@ -186,6 +170,10 @@ export class ProyectoAnualidadIngresoModalComponent extends DialogFormComponent<
         this.proyectosSge$.subscribe((values) => {
           if (values.length === 1) {
             this.formGroup.controls.identificadorSge.setValue(values[0]);
+
+            if (this.data.disableIndentificadorSge) {
+              this.formGroup.controls.identificadorSge.disable();
+            }
           }
         })
       );
@@ -196,6 +184,12 @@ export class ProyectoAnualidadIngresoModalComponent extends DialogFormComponent<
     }
 
     return formGroup;
+  }
+
+  selectFirstProyectoPartidaIfOnlyOneOption(options: SelectValue<IProyectoPartida>[]): void {
+    if (options?.length === 1 && !this.formGroup.controls.proyectoPartida.value) {
+      this.formGroup.controls.proyectoPartida.setValue(options[0].item);
+    }
   }
 
   displayerIdentificadorSge(proyectoSge: IProyectoProyectoSge): string {
@@ -211,10 +205,6 @@ export class ProyectoAnualidadIngresoModalComponent extends DialogFormComponent<
       return o1?.id === o2?.id;
     }
     return o1 === o2;
-  }
-
-  displayerProyectoPartida(proyectoPartida: IProyectoPartida): string {
-    return proyectoPartida?.codigo;
   }
 
   displayerCodigoEconomico(codigoEconomico: ICodigoEconomicoGasto): string {

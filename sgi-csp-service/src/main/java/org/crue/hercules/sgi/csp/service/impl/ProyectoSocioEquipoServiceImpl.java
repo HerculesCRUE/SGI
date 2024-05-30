@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.ProyectoSocioEquipoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoSocioNotFoundException;
+import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioEquipo;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioEquipoRepository;
@@ -172,6 +173,41 @@ public class ProyectoSocioEquipoServiceImpl implements ProyectoSocioEquipoServic
     log.debug("findAllByProyectoSocio(Long proyectoSocioId, String query, Pageable paging) - end");
     return returnValue;
 
+  }
+
+  /**
+   * Recupera la lista de miembros del equipo del socio de un
+   * {@link ProyectoSocio}.
+   * 
+   * @param proyectoSocioId Identificador de la {@link ProyectoSocio}.
+   * @return lista de {@link ProyectoSocioEquipo}.
+   */
+  @Override
+  public List<ProyectoSocioEquipo> findAllByProyectoSocio(Long proyectoSocioId) {
+    log.debug("findAllByProyectoSocio(Long proyectoSocioId) - start");
+    Specification<ProyectoSocioEquipo> specs = ProyectoSocioEquipoSpecifications.byProyectoSocioId(proyectoSocioId);
+    List<ProyectoSocioEquipo> returnValue = repository.findAll(specs);
+    log.debug("findAllByProyectoSocio(Long proyectoSocioId) - end");
+    return returnValue;
+  }
+
+  /**
+   * Comprueba si alguno de los {@link ProyectoSocioEquipo} del {@link Proyecto}
+   * tienen fechas
+   * 
+   * @param proyectoId el id del {@link Proyecto}.
+   * @return true si existen y false en caso contrario.
+   */
+  @Override
+  public boolean proyectoHasProyectoSocioEquipoWithDates(Long proyectoId) {
+    log.debug("proyectoHasProyectoSocioEquipoWithDates({})  - start", proyectoId);
+
+    Specification<ProyectoSocioEquipo> specs = ProyectoSocioEquipoSpecifications.byProyectoId(proyectoId)
+        .and(ProyectoSocioEquipoSpecifications.withFechaInicioOrFechaFin());
+
+    boolean hasProyectoSocioEquipoWithDates = repository.count(specs) > 0;
+    log.debug("proyectoHasProyectoSocioEquipoWithDates({})  - end", proyectoId);
+    return hasProyectoSocioEquipoWithDates;
   }
 
 }

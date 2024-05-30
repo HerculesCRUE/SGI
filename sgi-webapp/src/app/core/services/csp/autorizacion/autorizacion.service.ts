@@ -213,9 +213,9 @@ export class AutorizacionService extends _AutorizacionMixinBase {
    * Obtiene el documento de autorización
    * @param idAutorizacion identificador de la autorización
    */
-  getInformeAutorizacion(idAutorizacion: number): Observable<IDocumento> {
+  getInformeAutorizacion(idAutorizacion: number, fileName: string): Observable<IDocumento> {
     return this.http.get<IDocumentoBackend>(
-      `${this.endpointUrl}/${idAutorizacion}/documento`
+      `${this.endpointUrl}/${idAutorizacion}/documento/${fileName}`
     ).pipe(
       map(response => DOCUMENTO_CONVERTER.toTarget(response))
     );

@@ -44,7 +44,6 @@ export class RolSocioModalComponent
     } else {
       this.rolSocio = { activo: true } as IRolSocio;
     }
-    console.log(this.rolSocio);
   }
 
   ngOnInit(): void {

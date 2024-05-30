@@ -110,7 +110,7 @@ public class SolicitudProyectoServiceImpl implements SolicitudProyectoService {
     target.setDuracion(source.getDuracion());
     target.setColaborativo(source.getColaborativo());
     target.setCoordinado(source.getCoordinado());
-    target.setCoordinadorExterno(source.getCoordinadorExterno());
+    target.setRolUniversidadId(source.getRolUniversidadId());
     target.setObjetivos(source.getObjetivos());
     target.setIntereses(source.getIntereses());
     target.setResultadosPrevistos(source.getResultadosPrevistos());

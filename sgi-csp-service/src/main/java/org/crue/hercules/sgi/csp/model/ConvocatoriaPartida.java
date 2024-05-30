@@ -12,11 +12,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.csp.enums.TipoPartida;
+import org.crue.hercules.sgi.csp.validation.ConvocatoriaPartidaCodigoOrPartidaRefRequired;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -34,7 +34,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
+@ConvocatoriaPartidaCodigoOrPartidaRefRequired(groups = { BaseEntity.Create.class, BaseEntity.Update.class })
 public class ConvocatoriaPartida extends BaseEntity {
 
   /**
@@ -54,9 +54,13 @@ public class ConvocatoriaPartida extends BaseEntity {
   @NotNull
   private Long convocatoriaId;
 
+  /** Partida sge ref. */
+  @Column(name = "partida_ref", length = 50, nullable = true)
+  @Size(max = 50)
+  private String partidaRef;
+
   /** Código. */
-  @Column(name = "codigo", length = 50, nullable = false)
-  @NotEmpty
+  @Column(name = "codigo", length = 50, nullable = true)
   @Size(max = 50)
   private String codigo;
 

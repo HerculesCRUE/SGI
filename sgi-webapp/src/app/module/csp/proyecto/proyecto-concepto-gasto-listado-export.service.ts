@@ -205,6 +205,7 @@ export class ProyectoConceptoGastoListadoExportService extends AbstractTableExpo
         name: CONCEPTO_GASTO_IMPORTE_FIELD + idConceptoGasto,
         title: titleConceptoGastoPermitido + idConceptoGasto + ': ' + this.translate.instant(CONCEPTO_GASTO_IMPORTE_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteConceptoGasto);
 
@@ -250,6 +251,7 @@ export class ProyectoConceptoGastoListadoExportService extends AbstractTableExpo
         name: CONCEPTO_GASTO_NO_PERMITIDO_IMPORTE_FIELD + idConceptoGasto,
         title: titleConceptoGastoNoPermitido + idConceptoGasto + ': ' + this.translate.instant(CONCEPTO_GASTO_IMPORTE_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteConceptoGasto);
 

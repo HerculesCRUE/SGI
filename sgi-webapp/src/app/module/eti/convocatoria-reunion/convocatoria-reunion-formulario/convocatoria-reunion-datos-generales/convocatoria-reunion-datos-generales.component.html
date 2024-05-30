@@ -1,130 +1,121 @@
 <sgi-fragment title="{{'label.datos-generales' | translate}}">
 
-  <form [formGroup]="formGroup" [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-    [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
+  <form [formGroup]="formGroup" fxLayout="column">
 
     <!-- Código -->
-    <div *ngIf="fragment.isEdit()" [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-      [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxLayout.xs]="fxLayoutProperties.xs"
-      [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap">
-      <mat-form-field>
+    <div *ngIf="fragment.isEdit()" fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="16%">
         <mat-label>{{'eti.convocatoria-reunion.codigo' | translate}}</mat-label>
         <input matInput formControlName="codigo" id="codigo" readonly="true" />
       </mat-form-field>
     </div>
 
     <!-- Comite -->
-    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
-      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxLayout.xs]="fxLayoutProperties.xs"
-      [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap">
-      <div>
-        <mat-form-field>
-          <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-          <sgi-select-comite #selectComite formControlName="comite" required></sgi-select-comite>
-          <mat-error *ngIf="formGroup.controls.comite.errors?.required">
-            {{'error.required.entity' | translate:msgParamComiteEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="16%">
+        <mat-label>{{'label.eti.comite' | translate}}</mat-label>
+        <sgi-select-comite #selectComite formControlName="comite" required></sgi-select-comite>
+        <mat-error *ngIf="formGroup.controls.comite.errors?.required">
+          {{'error.required.entity' | translate:msgParamComiteEntity}}
+        </mat-error>
+      </mat-form-field>
 
       <!-- Fecha evaluación -->
-      <div>
-        <mat-form-field>
-          <mat-label>{{'eti.convocatoria-reunion.fecha-evaluacion' | translate}}
-          </mat-label>
-          <input matInput formControlName="fechaEvaluacion" [matDatepicker]="pickerFechaEvaluacion"
-            [placeholder]="'eti.convocatoria-reunion.fecha-evaluacion' | translate" required>
-          <mat-datepicker-toggle matSuffix [for]="pickerFechaEvaluacion"></mat-datepicker-toggle>
-          <mat-datepicker #pickerFechaEvaluacion>
-          </mat-datepicker>
-          <mat-error *ngIf="formGroup.controls.fechaEvaluacion.errors?.required">
-            {{'error.required.entity' | translate:msgParamFechaEvaluacionEntity}}
-          </mat-error>
-          <mat-error *ngIf="formGroup.controls.fechaEvaluacion.errors?.after">
-            {{'error.eti.convocatoria-reunion.fecha-limite.after' | translate}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <!-- Fecha limite -->
-      <div>
-        <mat-form-field>
-          <mat-label>{{'error.eti.convocatoria-reunion.fecha-limite' | translate}}
-          </mat-label>
-          <input matInput formControlName="fechaLimite" [matDatepicker]="pickerFechaLimite"
-            [placeholder]="'error.eti.convocatoria-reunion.fecha-limite' | translate" required>
-          <mat-datepicker-toggle matSuffix [for]="pickerFechaLimite"></mat-datepicker-toggle>
-          <mat-datepicker #pickerFechaLimite>
-          </mat-datepicker>
-          <mat-error *ngIf="formGroup.controls.fechaLimite?.errors?.required">
-            {{'error.required.entity' | translate:msgParamFechaLimiteEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </div>
-
-    <!-- Convocatoria-->
-    <div [fxFlex.sm]="fxFlexPropertiesInline.sm" [fxFlex.md]="fxFlexPropertiesInline.md"
-      [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxLayout.xs]="fxLayoutProperties.xs"
-      [fxLayout]="fxLayoutProperties.layout" [fxLayoutGap]="fxLayoutProperties.gap">
-      <div>
-        <mat-form-field>
-          <mat-label>{{'eti.convocatoria-reunion.tipo' | translate}}</mat-label>
-          <sgi-select-tipo-convocatoria-reunion formControlName="tipoConvocatoriaReunion" required>
-          </sgi-select-tipo-convocatoria-reunion>
-          <mat-error *ngIf="formGroup.controls.tipoConvocatoriaReunion.errors?.required">
-            {{'error.required.entity' | translate:msgParamTipoEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <!-- Hora -->
-      <div>
-        <mat-form-field>
-          <mat-label>{{'eti.convocatoria-reunion.hora-inicio' | translate}}</mat-label>
-          <input matTimepicker #timepicker="matTimepicker" formControlName="horaInicio" disableDialogOpenOnClick="true"
-            strict="false" okLabel="{{ 'btn.ok' | translate }}" cancelLabel="{{ 'btn.cancel' | translate }}" required>
-          <button mat-icon-button type="button" matSuffix (click)="timepicker.showDialog()" color="primary"
-            [disabled]="formGroup.controls.horaInicio.disabled">
-            <mat-icon>access_time</mat-icon>
-          </button>
-          <mat-error *ngIf="formGroup.controls.horaInicio.errors?.required">
-            {{'error.required.entity' | translate:msgParamHoraInicioEntity}}
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div>
-        <mat-form-field>
-          <mat-label>{{'eti.convocatoria-reunion.hora-inicio-segunda' | translate}}</mat-label>
-          <input matTimepicker #timepickerSegunda="matTimepicker" formControlName="horaInicioSegunda"
-            disableDialogOpenOnClick="true" strict="false" okLabel="{{ 'btn.ok' | translate }}"
-            cancelLabel="{{ 'btn.cancel' | translate }}">
-          <button mat-icon-button type="button" matSuffix (click)="timepickerSegunda.showDialog()" color="primary"
-            [disabled]="formGroup.controls.horaInicioSegunda.disabled">
-            <mat-icon>access_time</mat-icon>
-          </button>
-        </mat-form-field>
-      </div>
-    </div>
-
-    <!-- Lugar -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field>
-        <mat-label>{{'eti.convocatoria-reunion.lugar' | translate}}</mat-label>
-        <input matInput formControlName="lugar" id="lugar"
-          placeholder="{{'eti.convocatoria-reunion.lugar' | translate}}" required />
-        <mat-error *ngIf="formGroup.controls.lugar.errors?.required">
-          {{'error.required.entity' | translate:msgParamLugarEntity}}
+      <mat-form-field fxFlex="16%">
+        <mat-label>{{'eti.convocatoria-reunion.fecha-evaluacion' | translate}}
+        </mat-label>
+        <input matInput formControlName="fechaEvaluacion" [matDatepicker]="pickerFechaEvaluacion"
+          [placeholder]="'eti.convocatoria-reunion.fecha-evaluacion' | translate" required>
+        <mat-datepicker-toggle matSuffix [for]="pickerFechaEvaluacion"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaEvaluacion>
+        </mat-datepicker>
+        <mat-error *ngIf="formGroup.controls.fechaEvaluacion.errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaEvaluacionEntity}}
         </mat-error>
-        <mat-error *ngIf="formGroup.controls.lugar.errors?.maxlength">
-          {{'error.maxlength.entity' | translate:msgParamLugarEntity}}
+        <mat-error *ngIf="formGroup.controls.fechaEvaluacion.errors?.after">
+          {{'error.eti.convocatoria-reunion.fecha-limite.after' | translate}}
+        </mat-error>
+      </mat-form-field>
+      <!-- Fecha limite -->
+      <mat-form-field fxFlex="16%">
+        <mat-label>{{'error.eti.convocatoria-reunion.fecha-limite' | translate}}
+        </mat-label>
+        <input matInput formControlName="fechaLimite" [matDatepicker]="pickerFechaLimite"
+          [placeholder]="'error.eti.convocatoria-reunion.fecha-limite' | translate" required>
+        <mat-datepicker-toggle matSuffix [for]="pickerFechaLimite"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFechaLimite>
+        </mat-datepicker>
+        <mat-error *ngIf="formGroup.controls.fechaLimite?.errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaLimiteEntity}}
         </mat-error>
       </mat-form-field>
     </div>
 
+    <!-- Convocatoria-->
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="16%">
+        <mat-label>{{'eti.convocatoria-reunion.tipo' | translate}}</mat-label>
+        <sgi-select-tipo-convocatoria-reunion formControlName="tipoConvocatoriaReunion" required>
+        </sgi-select-tipo-convocatoria-reunion>
+        <mat-error *ngIf="formGroup.controls.tipoConvocatoriaReunion.errors?.required">
+          {{'error.required.entity' | translate:msgParamTipoEntity}}
+        </mat-error>
+      </mat-form-field>
+      <!-- Hora -->
+      <mat-form-field fxFlex="16%">
+        <mat-label>{{'eti.convocatoria-reunion.hora-inicio' | translate}}</mat-label>
+        <input matTimepicker #timepicker="matTimepicker" formControlName="horaInicio" disableDialogOpenOnClick="true"
+          strict="false" okLabel="{{ 'btn.ok' | translate }}" cancelLabel="{{ 'btn.cancel' | translate }}" required>
+        <button mat-icon-button type="button" matSuffix (click)="timepicker.showDialog()" color="primary"
+          [disabled]="formGroup.controls.horaInicio.disabled">
+          <mat-icon>access_time</mat-icon>
+        </button>
+        <mat-error *ngIf="formGroup.controls.horaInicio.errors?.required">
+          {{'error.required.entity' | translate:msgParamHoraInicioEntity}}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field fxFlex="16%">
+        <mat-label>{{'eti.convocatoria-reunion.hora-inicio-segunda' | translate}}</mat-label>
+        <input matTimepicker #timepickerSegunda="matTimepicker" formControlName="horaInicioSegunda"
+          disableDialogOpenOnClick="true" strict="false" okLabel="{{ 'btn.ok' | translate }}"
+          cancelLabel="{{ 'btn.cancel' | translate }}">
+        <button mat-icon-button type="button" matSuffix (click)="timepickerSegunda.showDialog()" color="primary"
+          [disabled]="formGroup.controls.horaInicioSegunda.disabled">
+          <mat-icon>access_time</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <div fxFlex fxLayout="row wrap" fxLayoutGap="10px">
+      <!-- Videoconferencia -->
+      <mat-form-field fxFlex="16%">
+        <mat-label>{{'eti.convocatoria-reunion.videoconferencia' | translate}}
+        </mat-label>
+        <sgi-select-boolean formControlName="videoconferencia" required></sgi-select-boolean>
+        <mat-error *ngIf="formGroup.controls.videoconferencia.errors?.required">
+          {{'error.required.entity' | translate:msgParamVideoconferenciaEntity}}
+        </mat-error>
+      </mat-form-field>
+      <!-- Lugar -->
+      <ng-container *ngIf="formGroup.controls.videoconferencia?.value === false">
+        <mat-form-field fxFlex="33%">
+          <mat-label>{{'eti.convocatoria-reunion.lugar' | translate}}</mat-label>
+          <input matInput formControlName="lugar" id="lugar"
+            placeholder="{{'eti.convocatoria-reunion.lugar' | translate}}" required />
+          <mat-error *ngIf="formGroup.controls.lugar.errors?.required">
+            {{'error.required.entity' | translate:msgParamLugarEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.lugar.errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamLugarEntity}}
+          </mat-error>
+        </mat-form-field>
+      </ng-container>
+    </div>
+
     <!-- Convocantes -->
-    <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
-      [fxFlexOrder]="fxFlexProperties.order">
-      <mat-form-field>
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <mat-form-field fxFlex="50%">
         <mat-label>{{'eti.convocatoria-reunion.convocantes' | translate}}</mat-label>
         <mat-select matNativeControl formControlName="convocantes" multiple required>
           <mat-option *ngFor="let convocante of formFragment.evaluadoresComite" [value]="convocante">
@@ -138,7 +129,7 @@
     </div>
 
     <!-- Orden del dia -->
-    <div fxLayout="column" fxFlex="100" fxLayoutGap="10px" [fxFlexOrder]="fxFlexProperties.order">
+    <div fxLayout="column" fxLayoutGap="10px">
       <span class="ckeditor-label">{{'eti.convocatoria-reunion.orden-dia' | translate}}<span
           [class]="(formGroup.controls.ordenDia.touched && formGroup.controls.ordenDia.errors?.required) ? 'warn' : ''">
           *</span></span>

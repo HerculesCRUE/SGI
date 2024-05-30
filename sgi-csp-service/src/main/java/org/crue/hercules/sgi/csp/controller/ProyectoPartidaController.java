@@ -1,9 +1,7 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import javax.validation.Valid;
-import javax.validation.groups.Default;
 
-import org.crue.hercules.sgi.csp.model.BaseEntity.Update;
 import org.crue.hercules.sgi.csp.model.AnualidadGasto;
 import org.crue.hercules.sgi.csp.model.AnualidadIngreso;
 import org.crue.hercules.sgi.csp.model.ProyectoPartida;
@@ -11,7 +9,6 @@ import org.crue.hercules.sgi.csp.service.ProyectoPartidaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,7 +69,7 @@ public class ProyectoPartidaController {
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
   public ProyectoPartida update(
-      @Validated({ Update.class, Default.class }) @RequestBody ProyectoPartida proyectoPartida, @PathVariable Long id) {
+      @Valid @RequestBody ProyectoPartida proyectoPartida, @PathVariable Long id) {
     log.debug("update(ProyectoPartida proyectoPartida, Long id) - start");
     proyectoPartida.setId(id);
     ProyectoPartida returnValue = service.update(proyectoPartida);

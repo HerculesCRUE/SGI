@@ -102,11 +102,11 @@ export class ProyectoProrrogaDatosGeneralesFragment extends FormFragment<IProyec
   saveOrUpdate(): Observable<number> {
     const proyectoProrroga = this.getValue();
     let mostrarAvisoImporte = false;
-    if (proyectoProrroga.tipo === Tipo.IMPORTE) {
-      if (this.isEdit() && proyectoProrroga.importe !== this.importeInicial) {
-        mostrarAvisoImporte = true;
-      } else if (proyectoProrroga.importe !== null) {
-        mostrarAvisoImporte = true;
+    if ([Tipo.IMPORTE, Tipo.TIEMPO_IMPORTE].includes(proyectoProrroga.tipo)) {
+      if (this.isEdit()) {
+        mostrarAvisoImporte = proyectoProrroga.importe !== this.importeInicial;
+      } else {
+        mostrarAvisoImporte = proyectoProrroga.importe !== null;
       }
     }
     const observable$ = this.isEdit() ? this.update(proyectoProrroga) : this.create(proyectoProrroga);
@@ -129,6 +129,7 @@ export class ProyectoProrrogaDatosGeneralesFragment extends FormFragment<IProyec
     return observable$.pipe(
       map(result => {
         this.proyectoProrroga = result;
+        this.importeInicial = result.importe;
         return this.proyectoProrroga.id;
       })
     );

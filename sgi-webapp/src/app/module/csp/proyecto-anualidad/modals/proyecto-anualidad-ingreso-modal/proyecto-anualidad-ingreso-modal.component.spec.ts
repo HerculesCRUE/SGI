@@ -1,7 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { IAnualidadIngreso } from '@core/models/csp/anualidad-ingreso';
@@ -9,6 +9,7 @@ import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { CspSharedModule } from '../../../shared/csp-shared.module';
 import { ProyectoAnualidadIngresoModalComponent, ProyectoAnualidadIngresoModalData } from './proyecto-anualidad-ingreso-modal.component';
 
 describe('ProyectoAnualidadIngresoModalComponent', () => {
@@ -19,6 +20,7 @@ describe('ProyectoAnualidadIngresoModalComponent', () => {
     isEdit: false,
     anualidadIngreso: {} as IAnualidadIngreso,
     proyectoId: null,
+    disableIndentificadorSge: false,
     readonly: false
   };
 
@@ -36,6 +38,7 @@ describe('ProyectoAnualidadIngresoModalComponent', () => {
         TestUtils.getIdiomas(),
         RouterTestingModule,
         ReactiveFormsModule,
+        CspSharedModule
       ],
       providers: [
         { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },

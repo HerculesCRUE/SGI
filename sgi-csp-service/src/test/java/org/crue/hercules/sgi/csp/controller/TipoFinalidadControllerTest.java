@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.TipoFinalidadNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
@@ -29,6 +27,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * TipoFinalidadControllerTest
@@ -281,27 +281,14 @@ class TipoFinalidadControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-INV-V" })
-  void findAll_WithPaging_ReturnsTipoFinalidadSubList() throws Exception {
+  void findAll_WithList_ReturnsTipoFinalidadSubList() throws Exception {
     // given: One hundred TipoFinalidad
     List<TipoFinalidad> data = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
       data.add(generarMockTipoFinalidad(Long.valueOf(i), Boolean.TRUE));
     }
 
-    BDDMockito.given(service.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<TipoFinalidad>>() {
-          @Override
-          public Page<TipoFinalidad> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            List<TipoFinalidad> content = data.subList(fromIndex, toIndex);
-            Page<TipoFinalidad> page = new PageImpl<>(content, pageable, data.size());
-            return page;
-          }
-        });
+    BDDMockito.given(service.findAll(ArgumentMatchers.<String>any())).willReturn(data);
 
     // when: get page=3 with pagesize=10
     MvcResult requestResult = mockMvc
@@ -312,10 +299,7 @@ class TipoFinalidadControllerTest extends BaseControllerTest {
         // headers
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page", "3"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page-Size", "10"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Total-Count", "100"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(10))).andReturn();
+        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(100))).andReturn();
 
     // this uses a TypeReference to inform Jackson about the Lists's generic type
     List<TipoFinalidad> actual = mapper.readValue(requestResult.getResponse().getContentAsString(),
@@ -323,9 +307,9 @@ class TipoFinalidadControllerTest extends BaseControllerTest {
         });
 
     // containing Nombre='Nombre-31' to 'Nombre-40'
-    for (int i = 0, j = 31; i < 10; i++, j++) {
-      TipoFinalidad item = actual.get(i);
-      Assertions.assertThat(item.getNombre()).isEqualTo("nombre-" + j);
+    for (int i = 1; i < 10; i++) {
+      TipoFinalidad item = actual.get(i - 1);
+      Assertions.assertThat(item.getNombre()).isEqualTo("nombre-" + i);
     }
   }
 
@@ -333,14 +317,7 @@ class TipoFinalidadControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-CON-INV-V" })
   void findAll_EmptyList_Returns204() throws Exception {
     // given: no data TipoFinalidad
-    BDDMockito.given(service.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<TipoFinalidad>>() {
-          @Override
-          public Page<TipoFinalidad> answer(InvocationOnMock invocation) throws Throwable {
-            Page<TipoFinalidad> page = new PageImpl<>(Collections.emptyList());
-            return page;
-          }
-        });
+    BDDMockito.given(service.findAll(ArgumentMatchers.<String>any())).willReturn(new ArrayList<>());
 
     // when: get page=3 with pagesize=10
     mockMvc

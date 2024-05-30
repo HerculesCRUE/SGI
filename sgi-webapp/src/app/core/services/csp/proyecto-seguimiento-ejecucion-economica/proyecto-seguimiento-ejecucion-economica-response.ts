@@ -6,6 +6,7 @@ export interface IProyectoSeguimientoEjecucionEconomicaResponse {
   codigoExterno: string;
   fechaInicio: string;
   fechaFin: string;
+  fechaFinDefinitiva: string;
   tituloConvocatoria: string;
   importeConcedido: number;
   importeConcedidoCostesIndirectos: number;

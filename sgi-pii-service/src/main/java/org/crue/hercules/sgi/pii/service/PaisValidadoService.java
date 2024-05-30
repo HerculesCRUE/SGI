@@ -54,6 +54,21 @@ public class PaisValidadoService {
   }
 
   /**
+   * Comprueba si la {@link SolicitudProteccion} tiene {@link PaisValidado}
+   * asociados
+   *
+   * @param solicitudProteccionId el id de la {@link SolicitudProteccion}.
+   * @return Si la {@link SolicitudProteccion} tiene {@link PaisValidado}
+   *         asociados
+   */
+  public boolean existsBySolicitudProteccionId(Long solicitudProteccionId) {
+    log.debug("existsBySolicitudProteccionId(Long solicitudProteccionId) - start");
+    boolean result = this.repository.existsBySolicitudProteccionId(solicitudProteccionId);
+    log.debug("existsBySolicitudProteccionId(Long solicitudProteccionId) - end");
+    return result;
+  }
+
+  /**
    * Crear {@link PaisValidado}.
    *
    * @param paisValidado entidad {@link PaisValidado} a guardar.

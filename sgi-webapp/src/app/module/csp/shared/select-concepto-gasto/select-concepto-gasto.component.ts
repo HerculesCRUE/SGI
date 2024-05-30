@@ -1,5 +1,5 @@
 import { PlatformLocation } from '@angular/common';
-import { Component, Optional, Self } from '@angular/core';
+import { Component, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -26,6 +26,36 @@ import { ConceptoGastoModalComponent } from '../../concepto-gasto/concepto-gasto
 })
 export class SelectConceptoGastoComponent extends SelectServiceExtendedComponent<IConceptoGasto> {
 
+  @Input()
+  get proyectoId(): number {
+    return this._proyectoId;
+  }
+  set proyectoId(value: number) {
+    const changes = this._proyectoId !== value;
+    this._proyectoId = value;
+    if (this.ready && changes) {
+      this.loadData();
+    }
+    this.stateChanges.next();
+  }
+  // tslint:disable-next-line: variable-name
+  private _proyectoId: number;
+
+  @Input()
+  get onlyPermitidosProyecto(): boolean {
+    return this._onlyPermitidosProyecto;
+  }
+  set onlyPermitidosProyecto(value: boolean) {
+    const changes = this._onlyPermitidosProyecto !== value;
+    this._onlyPermitidosProyecto = value;
+    if (this.ready && changes) {
+      this.loadData();
+    }
+    this.stateChanges.next();
+  }
+  // tslint:disable-next-line: variable-name
+  private _onlyPermitidosProyecto: boolean;
+
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
@@ -44,6 +74,13 @@ export class SelectConceptoGastoComponent extends SelectServiceExtendedComponent
       filter: new RSQLSgiRestFilter('activo', SgiRestFilterOperator.EQUALS, 'true'),
       sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
     };
+
+    if (!!this.proyectoId && !!this.onlyPermitidosProyecto) {
+      findOptions.filter.and(
+        new RSQLSgiRestFilter('proyectoId', SgiRestFilterOperator.EQUALS, this.proyectoId.toString())
+      );
+    }
+
     return this.service.findAll(findOptions).pipe(map(response => response.items));
   }
 

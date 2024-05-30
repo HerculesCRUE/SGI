@@ -21,6 +21,7 @@ import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaEnlaceNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.EstadoSolicitudNotUpdatedException;
 import org.crue.hercules.sgi.csp.exceptions.MissingInvestigadorPrincipalInSolicitudProyectoEquipoException;
+import org.crue.hercules.sgi.csp.exceptions.RolSocioNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoWithoutSocioCoordinadorException;
@@ -35,6 +36,7 @@ import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud.Estado;
 import org.crue.hercules.sgi.csp.model.Grupo;
 import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.RolSocio;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudDocumento;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
@@ -48,6 +50,7 @@ import org.crue.hercules.sgi.csp.repository.DocumentoRequeridoSolicitudRepositor
 import org.crue.hercules.sgi.csp.repository.EstadoSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
+import org.crue.hercules.sgi.csp.repository.RolSocioRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoPresupuestoRepository;
@@ -108,6 +111,7 @@ public class SolicitudService {
   private final GrupoAuthorityHelper grupoAuthorityHelper;
   private final SolicitudRrhhComService solicitudRrhhComService;
   private final SolicitudComService solicitudComService;
+  private final RolSocioRepository rolSocioRepository;
 
   public SolicitudService(SgiConfigProperties sgiConfigProperties,
       SgiApiEtiService sgiApiEtiService, SolicitudRepository repository,
@@ -126,7 +130,8 @@ public class SolicitudService {
       SolicitudAuthorityHelper solicitudAuthorityHelper,
       GrupoAuthorityHelper grupoAuthorityHelper,
       SolicitudRrhhComService solicitudRrhhComService,
-      SolicitudComService solicitudComService) {
+      SolicitudComService solicitudComService,
+      RolSocioRepository rolSocioRepository) {
     this.sgiConfigProperties = sgiConfigProperties;
     this.sgiApiEtiService = sgiApiEtiService;
     this.repository = repository;
@@ -147,6 +152,7 @@ public class SolicitudService {
     this.grupoAuthorityHelper = grupoAuthorityHelper;
     this.solicitudRrhhComService = solicitudRrhhComService;
     this.solicitudComService = solicitudComService;
+    this.rolSocioRepository = rolSocioRepository;
   }
 
   /**
@@ -1206,16 +1212,20 @@ public class SolicitudService {
       if (!solicitudAuthorityHelper.hasAuthorityEditInvestigador()) {
         // En caso de sea colaborativo y no tenga coordinador externo
         if (Boolean.TRUE.equals(solicitudProyecto.getColaborativo())
-            && solicitudProyecto.getCoordinadorExterno() == null) {
+            && solicitudProyecto.getRolUniversidadId() == null) {
           throw new ColaborativoWithoutCoordinadorExternoException();
         }
 
-        if (solicitudProyecto.getColaborativo() && solicitudProyecto.getCoordinadorExterno()) {
-          List<SolicitudProyectoSocio> solicitudProyectoSocios = solicitudProyectoSocioRepository
-              .findAllBySolicitudProyectoIdAndRolSocioCoordinadorTrue(solicitudProyecto.getId());
+        if (Boolean.TRUE.equals(solicitudProyecto.getColaborativo())) {
+          RolSocio rolUniversidad = rolSocioRepository.findById(solicitudProyecto.getRolUniversidadId())
+              .orElseThrow(() -> new RolSocioNotFoundException(solicitudProyecto.getRolUniversidadId()));
+          if (Boolean.FALSE.equals(rolUniversidad.getCoordinador())) {
+            List<SolicitudProyectoSocio> solicitudProyectoSocios = solicitudProyectoSocioRepository
+                .findAllBySolicitudProyectoIdAndRolSocioCoordinadorTrue(solicitudProyecto.getId());
 
-          if (CollectionUtils.isEmpty(solicitudProyectoSocios)) {
-            throw new SolicitudProyectoWithoutSocioCoordinadorException();
+            if (CollectionUtils.isEmpty(solicitudProyectoSocios)) {
+              throw new SolicitudProyectoWithoutSocioCoordinadorException();
+            }
           }
         }
       }

@@ -1,6 +1,7 @@
 <sgi-fragment title="{{'menu.csp.ejecucion-economica.facturas-emitidas' | translate}}">
   <div fxLayout="column" fxLayoutGap="10px">
-    <sgi-ejecucion-economica-table-proyectos-relacionados [data]="formPart.relaciones$ | async">
+    <sgi-ejecucion-economica-table-proyectos-relacionados [data]="formPart.relaciones$ | async"
+      [isEjecucionEconomicaGruposEnabled]="formPart.isEjecucionEconomicaGruposEnabled">
     </sgi-ejecucion-economica-table-proyectos-relacionados>
 
 

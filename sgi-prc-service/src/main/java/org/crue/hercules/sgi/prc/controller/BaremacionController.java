@@ -131,7 +131,7 @@ public class BaremacionController {
    * @return datos del informe
    */
   @GetMapping("/resumenpuntuaciongrupos/{anio}")
-  @PreAuthorize("hasAnyAuthority('PRC-INF-G', 'PRC-INF-INV-GR')")
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-prc')) or hasAnyAuthority('PRC-INF-G', 'PRC-INF-INV-GR')")
   @ResponseStatus(value = HttpStatus.OK)
   public ResumenPuntuacionGrupoAnioOutput getDataReportResumenPuntuacionGrupos(@PathVariable Integer anio) {
     log.debug("getDataReportResumenPuntuacionGrupos({}) - start", anio);
@@ -151,7 +151,7 @@ public class BaremacionController {
    * @return datos del informe
    */
   @GetMapping("/detalleproduccioninvestigador/{anio}/{personaRef}")
-  @PreAuthorize("hasAnyAuthority('PRC-INF-G', 'PRC-INF-INV-GR')")
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-prc')) or hasAnyAuthority('PRC-INF-G', 'PRC-INF-INV-GR')")
   @ResponseStatus(value = HttpStatus.OK)
   public DetalleProduccionInvestigadorOutput getDataDetalleProduccionInvestigador(@PathVariable Integer anio,
       @PathVariable String personaRef) {

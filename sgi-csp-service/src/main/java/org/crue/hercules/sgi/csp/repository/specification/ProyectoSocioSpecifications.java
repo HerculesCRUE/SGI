@@ -10,6 +10,10 @@ import org.crue.hercules.sgi.csp.model.ProyectoSocio_;
 import org.crue.hercules.sgi.csp.model.RolSocio_;
 import org.springframework.data.jpa.domain.Specification;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProyectoSocioSpecifications {
 
   /**
@@ -18,9 +22,7 @@ public class ProyectoSocioSpecifications {
    * @return specification para obtener los {@link ProyectoSocio} coordinadores.
    */
   public static Specification<ProyectoSocio> sociosCoordinadores() {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ProyectoSocio_.rolSocio).get(RolSocio_.coordinador), Boolean.TRUE);
-    };
+    return (root, query, cb) -> cb.equal(root.get(ProyectoSocio_.rolSocio).get(RolSocio_.coordinador), Boolean.TRUE);
   }
 
   /**
@@ -30,9 +32,7 @@ public class ProyectoSocioSpecifications {
    * @return specification para obtener los {@link ProyectoSocio} del proyecto.
    */
   public static Specification<ProyectoSocio> byProyectoId(Long proyectoId) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ProyectoSocio_.proyectoId), proyectoId);
-    };
+    return (root, query, cb) -> cb.equal(root.get(ProyectoSocio_.proyectoId), proyectoId);
   }
 
   /**
@@ -42,9 +42,7 @@ public class ProyectoSocioSpecifications {
    * @return specification para obtener los {@link ProyectoSocio} del empresaRef.
    */
   public static Specification<ProyectoSocio> byEmpresaRef(String empresaRef) {
-    return (root, query, cb) -> {
-      return cb.equal(root.get(ProyectoSocio_.empresaRef), empresaRef);
-    };
+    return (root, query, cb) -> cb.equal(root.get(ProyectoSocio_.empresaRef), empresaRef);
   }
 
   /**
@@ -56,14 +54,12 @@ public class ProyectoSocioSpecifications {
    *         fechas solapadas
    */
   public static Specification<ProyectoSocio> byRangoFechaSolapados(Instant fechaInicio, Instant fechaFin) {
-    return (root, query, cb) -> {
-      return cb.and(
-          cb.or(cb.isNull(root.get(ProyectoSocio_.fechaInicio)),
-              cb.lessThanOrEqualTo(root.get(ProyectoSocio_.fechaInicio),
-                  fechaFin != null ? fechaFin : Instant.parse("2500-01-01T23:59:59Z"))),
-          cb.or(cb.isNull(root.get(ProyectoSocio_.fechaFin)), cb.greaterThanOrEqualTo(root.get(ProyectoSocio_.fechaFin),
-              fechaInicio != null ? fechaInicio : Instant.parse("1900-01-01T00:00:00Z"))));
-    };
+    return (root, query, cb) -> cb.and(
+        cb.or(cb.isNull(root.get(ProyectoSocio_.fechaInicio)),
+            cb.lessThanOrEqualTo(root.get(ProyectoSocio_.fechaInicio),
+                fechaFin != null ? fechaFin : Instant.parse("2500-01-01T23:59:59Z"))),
+        cb.or(cb.isNull(root.get(ProyectoSocio_.fechaFin)), cb.greaterThanOrEqualTo(root.get(ProyectoSocio_.fechaFin),
+            fechaInicio != null ? fechaInicio : Instant.parse("1900-01-01T00:00:00Z"))));
   }
 
   /**
@@ -80,6 +76,18 @@ public class ProyectoSocioSpecifications {
       }
       return cb.equal(root.get(ProyectoSocio_.id), id).not();
     };
+  }
+
+  /**
+   * Se obtienen los {@link ProyectoSocio} con valores para las fechas de
+   * inicio y/o fin
+   * 
+   * @return specification para obtener los {@link ProyectoSocio} con
+   *         valor en alguna de sus fechas
+   */
+  public static Specification<ProyectoSocio> withFechaInicioOrFechaFin() {
+    return (root, query, cb) -> cb.or(cb.isNotNull(root.get(ProyectoSocio_.fechaInicio)),
+        cb.isNotNull(root.get(ProyectoSocio_.fechaFin)));
   }
 
 }

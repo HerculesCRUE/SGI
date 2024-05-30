@@ -3,12 +3,17 @@ package org.crue.hercules.sgi.csp.service.impl;
 import java.util.List;
 
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
+import org.crue.hercules.sgi.csp.exceptions.CardinalidadRelacionSgiSgeException;
+import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoProyectoSgeNotFoundException;
+import org.crue.hercules.sgi.csp.model.Configuracion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
 import org.crue.hercules.sgi.csp.repository.ProyectoProyectoSgeRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.ProyectoProyectoSgePredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoProyectoSgeSpecifications;
+import org.crue.hercules.sgi.csp.service.ConfiguracionService;
 import org.crue.hercules.sgi.csp.service.ProyectoProyectoSgeService;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -21,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -28,19 +34,15 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeService {
 
   private final ProyectoProyectoSgeRepository repository;
+  private final ProyectoRepository proyectoRepository;
   private final ProyectoHelper proyectoHelper;
   private final SgiConfigProperties sgiConfigProperties;
-
-  public ProyectoProyectoSgeServiceImpl(ProyectoProyectoSgeRepository proyectoProrrogaRepository,
-      ProyectoHelper proyectoHelper, SgiConfigProperties sgiConfigProperties) {
-    this.repository = proyectoProrrogaRepository;
-    this.proyectoHelper = proyectoHelper;
-    this.sgiConfigProperties = sgiConfigProperties;
-  }
+  private final ConfiguracionService configuracionService;
 
   /**
    * Guarda la entidad {@link ProyectoProyectoSge}.
@@ -57,9 +59,46 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
     Assert.notNull(proyectoProyectoSge.getProyectoId(), "Id Proyecto no puede ser null para crear ProyectoProyectoSge");
     Assert.notNull(proyectoProyectoSge.getProyectoSgeRef(),
         "Ref ProyectoSge no puede ser null para crear ProyectoProyectoSge");
+
+    if (!proyectoRepository.existsById(proyectoProyectoSge.getProyectoId())) {
+      throw new ProyectoNotFoundException(proyectoProyectoSge.getProyectoId());
+    }
+
+    validateCardinalidadRelacionSgiSge(proyectoProyectoSge.getProyectoId(), proyectoProyectoSge.getProyectoSgeRef());
+
     ProyectoProyectoSge returnValue = repository.save(proyectoProyectoSge);
     log.debug("create(ProyectoProyectoSge proyectoProyectoSge) - end");
     return returnValue;
+  }
+
+  /**
+   * Actualiza el {@link ProyectoProyectoSge#proyectoSgeRef} al que esta asociado
+   * el {@link ProyectoProyectoSge#proyectoId}.
+   * 
+   * @param proyectoProyectoSge la entidad {@link ProyectoProyectoSge} a guardar.
+   * @return la entidad {@link ProyectoProyectoSge} actualizada.
+   */
+  @Override
+  @Transactional
+  public ProyectoProyectoSge reasignar(ProyectoProyectoSge proyectoProyectoSge) {
+    log.debug("reasignar(ProyectoProyectoSge proyectoProyectoSge) - start");
+
+    Assert.notNull(proyectoProyectoSge.getId(),
+        "ProyectoProyectoSge id no puede ser null para reasignar un ProyectoProyectoSge");
+    Assert.notNull(proyectoProyectoSge.getProyectoId(), "Id Proyecto no puede ser null para crear ProyectoProyectoSge");
+    Assert.notNull(proyectoProyectoSge.getProyectoSgeRef(),
+        "Ref ProyectoSge no puede ser null para crear ProyectoProyectoSge");
+
+    validateCardinalidadRelacionSgiSge(proyectoProyectoSge.getId(), proyectoProyectoSge.getProyectoId(),
+        proyectoProyectoSge.getProyectoSgeRef());
+
+    return repository.findById(proyectoProyectoSge.getId()).map(data -> {
+      data.setProyectoSgeRef(proyectoProyectoSge.getProyectoSgeRef());
+      ProyectoProyectoSge returnValue = repository.save(proyectoProyectoSge);
+
+      log.debug("reasignar(ProyectoProyectoSge proyectoProyectoSge) - end");
+      return returnValue;
+    }).orElseThrow(() -> new ProyectoProyectoSgeNotFoundException(proyectoProyectoSge.getId()));
   }
 
   /**
@@ -182,6 +221,71 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
     boolean returnValue = repository.existsByProyectoId(proyectoId);
     log.debug("existsByProyecto(Long proyectoId) - end");
     return returnValue;
+  }
+
+  /**
+   * Comprueba si con la cardinalidad definida en la configuracion es posible
+   * crear una nueva relacion entre los proyectos
+   * 
+   * @param proyectoSgiId  Identificador del {@link Proyecto} del SGI
+   * @param proyectoSgeRef Identificador del proyecto del SGE
+   */
+  private void validateCardinalidadRelacionSgiSge(Long proyectoSgiId, String proyectoSgeRef) {
+    validateCardinalidadRelacionSgiSge(null, proyectoSgiId, proyectoSgeRef);
+  }
+
+  /**
+   * Comprueba si con la cardinalidad definida en la configuracion es posible
+   * actualizar una relacion entre los proyectos
+   * 
+   * @param id             Identificador del {@link ProyectoProyectoSge}
+   * @param proyectoSgiId  Identificador del {@link Proyecto} del SGI
+   * @param proyectoSgeRef Identificador del proyecto del SGE
+   */
+  private void validateCardinalidadRelacionSgiSge(Long id, Long proyectoSgiId, String proyectoSgeRef) {
+    log.debug("validateCardinalidadRelacionSgiSge({}, {}) - start", proyectoSgiId, proyectoSgeRef);
+
+    Specification<ProyectoProyectoSge> specs = ProyectoProyectoSgeSpecifications.byProyectoId(proyectoSgiId).or(
+        ProyectoProyectoSgeSpecifications.byProyectoSgeRef(proyectoSgeRef));
+
+    if (id != null) {
+      specs = specs.and(ProyectoProyectoSgeSpecifications.notId(id));
+    }
+
+    List<ProyectoProyectoSge> relaciones = repository.findAll(specs);
+
+    Configuracion configuracion = configuracionService.findConfiguracion();
+    switch (configuracion.getCardinalidadRelacionSgiSge()) {
+      case SGI_1_SGE_1:
+        if (!relaciones.isEmpty()) {
+          throw new CardinalidadRelacionSgiSgeException();
+        }
+        log.debug("validateCardinalidadRelacionSgiSge({}, {}) - Cardinalidad (1:1) validada", proyectoSgiId,
+            proyectoSgeRef);
+        break;
+      case SGI_1_SGE_N:
+        if (relaciones.stream().map(ProyectoProyectoSge::getProyectoSgeRef)
+            .anyMatch(ref -> ref.equals(proyectoSgeRef))) {
+          throw new CardinalidadRelacionSgiSgeException();
+        }
+        log.debug("validateCardinalidadRelacionSgiSge({}, {}) - Cardinalidad (1:n) validada", proyectoSgiId,
+            proyectoSgeRef);
+        break;
+      case SGI_N_SGE_1:
+        if (relaciones.stream().map(ProyectoProyectoSge::getProyectoId)
+            .anyMatch(proyectoId -> proyectoId.equals(proyectoSgiId))) {
+          throw new CardinalidadRelacionSgiSgeException();
+        }
+        log.debug("validateCardinalidadRelacionSgiSge({}, {}) - Cardinalidad (n:1) validada", proyectoSgiId,
+            proyectoSgeRef);
+        break;
+      case SGI_N_SGE_N:
+        log.debug("validateCardinalidadRelacionSgiSge({}, {}) - Cardinalidad (n:n) validada", proyectoSgiId,
+            proyectoSgeRef);
+        break;
+    }
+
+    log.debug("validateCardinalidadRelacionSgiSge({}, {}) - end", proyectoSgiId, proyectoSgeRef);
   }
 
 }

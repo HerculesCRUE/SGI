@@ -27,4 +27,6 @@ public interface SolicitudProyectoResponsableEconomicoRepository
    */
   List<SolicitudProyectoResponsableEconomico> findAllBySolicitudProyectoId(Long solicitudProyectoId);
 
+  boolean existsBySolicitudProyectoId(Long solicitudProyectoId);
+
 }

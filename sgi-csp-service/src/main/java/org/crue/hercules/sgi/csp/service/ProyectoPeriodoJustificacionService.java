@@ -25,6 +25,7 @@ import org.crue.hercules.sgi.csp.exceptions.TipoFinalException;
 import org.crue.hercules.sgi.csp.model.EstadoProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.model.RequerimientoJustificacion;
 import org.crue.hercules.sgi.csp.repository.EstadoProyectoPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
@@ -208,7 +209,7 @@ public class ProyectoPeriodoJustificacionService {
       throw new ProyectoPeriodoJustificacionNotFoundException(id);
     }
 
-    if (!checkDeleteable(id)) {
+    if (!hasRequerimientosJustificacion(id)) {
       throw new ProyectoPeriodoJustificacionNotDeleteableException();
     }
 
@@ -339,20 +340,21 @@ public class ProyectoPeriodoJustificacionService {
   }
 
   /**
-   * Comprueba si una entidad {@link ProyectoPeriodoJustificacion} se puede
-   * eliminar.
-   * 
+   * Comprueba si existe algun {@link RequerimientoJustificacion} vinculado a la
+   * entidad {@link ProyectoPeriodoJustificacion}.
+   *
    * @param id Identificador de la entidad {@link ProyectoPeriodoJustificacion}.
-   * @return true/false
+   * @return true si existe una o mas / false en caso contrario.
    */
-  public boolean checkDeleteable(Long id) {
-    log.debug("checkDeleteable(Long id) - start");
+  public boolean hasRequerimientosJustificacion(Long id) {
+    log.debug("hasRequerimientosJustificacion(Long id) - start");
 
     AssertHelper.idNotNull(id, ProyectoPeriodoJustificacion.class);
 
     boolean isDeleteable = !requerimientoJustificacionService.existsAnyByProyectoPeriodoJustificacionId(id);
 
-    log.debug("checkDeleteable(Long id) - end");
+    log.debug("hasRequerimientosJustificacion(Long id) - end");
     return isDeleteable;
   }
+
 }

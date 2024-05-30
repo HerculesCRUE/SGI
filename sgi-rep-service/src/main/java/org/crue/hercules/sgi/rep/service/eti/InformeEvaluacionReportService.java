@@ -38,7 +38,7 @@ public class InformeEvaluacionReportService extends InformeEvaluacionEvaluadorBa
       SgiApiConfService sgiApiConfService, PersonaService personaService,
       EvaluacionService evaluacionService,
       ConfiguracionService configuracionService,
-      BaseApartadosRespuestasReportDocxService baseApartadosRespuestasService) {
+      BaseApartadosRespuestasReportService baseApartadosRespuestasService) {
 
     super(sgiConfigProperties, sgiApiConfService, personaService, evaluacionService, baseApartadosRespuestasService);
     this.configuracionService = configuracionService;
@@ -131,7 +131,7 @@ public class InformeEvaluacionReportService extends InformeEvaluacionEvaluadorBa
 
     dataReport.put("bloqueApartados",
         generarBloqueApartados(evaluacion.getDictamen().getId(),
-            getInformeEvaluacion(evaluacion.getId())));
+            getInformeEvaluacion(evaluacion.getId()), "rep-eti-bloque-apartado-docx"));
 
     return compileReportData(path, dataReport);
   }

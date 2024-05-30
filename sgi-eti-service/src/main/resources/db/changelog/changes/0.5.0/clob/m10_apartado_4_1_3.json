@@ -1,0 +1,32 @@
+[
+  {
+    "key": "ap4_1_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipoMemoria.id === 3",
+      "label": "4.1.3 Minimización del riesgo o molestias superiores al mínimo"
+    },
+    "hideExpression": "(!formState.mainModel.ap4_1.ap4_1_1 || !formState.mainModel.ap4_1.ap4_1_1.tipoRiesgosOMolestiasCheck || formState.mainModel.ap4_1.ap4_1_1.tipoRiesgosOMolestiasCheck.some((c) => c === 'sinRiesgoPorTratarseDeDatos')) || (!formState.mainModel.ap4_1.ap4_1_2 || !formState.mainModel.ap4_1.ap4_1_2.valoracionRiesgosMolestiasCheck || !formState.mainModel.ap4_1.ap4_1_2.valoracionRiesgosMolestiasCheck.some(r => r === 'riesgoSuperior'))",
+    "fieldGroup": [
+      {
+        "template": "<p>¿Qué mecanismos se han previsto para reducir el riesgo o las molestias que se han calificado como superiores al mínimo?</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>El criterio de no maleficencia en investigación (no hacer daño y hacer buenas prácticas científicas) implica que no debe causarse daño a los sujetos de investigación.</p><p>Cuando el riesgo o las molestias son incoherentes a la propia investigación, es responsabilidad del/la investigador principal reducirlas al mínimo. P.ej: aplicar anestesia en intervenciones invasivas para obtención de muestras, disponer de tratamiento de rescate para posibles acontecimientos adversos (desde shock anafiláctico hasta crisis de ansiedad), preservar la intimidad si se habla y se toman datos personales sensibles, monitorizar las constantes al realizar pruebas físicas, mantener la presencia de padres o tutores en poblaciones vulnerables etc.</p>"
+      },
+      {
+        "key": "minimizacionRiesgo",
+        "type": "ckeditor",
+        "templateOptions": {
+          "name": "Mecanismos",
+          "required": true
+        }
+      }
+    ]
+  }
+]

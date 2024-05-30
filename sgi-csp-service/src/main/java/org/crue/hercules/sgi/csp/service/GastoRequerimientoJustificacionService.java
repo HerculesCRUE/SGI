@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.service;
 
 import org.crue.hercules.sgi.csp.exceptions.GastoRequerimientoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.GastoRequerimientoJustificacion;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.RequerimientoJustificacion;
 import org.crue.hercules.sgi.csp.repository.GastoRequerimientoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.specification.GastoRequerimientoJustificacionSpecifications;
@@ -162,4 +163,19 @@ public class GastoRequerimientoJustificacionService {
 
     return repository.findAll(specs, paging);
   }
+
+  /**
+   * Comprueba si existe algun {@link RequerimientoJustificacion} vinculado a la
+   * entidad {@link ProyectoPeriodoJustificacion}.
+   *
+   * @param identificadorJustificacion Identificador de justificacion.
+   * @return true si existe una o mas / false en caso contrario.
+   */
+  public boolean existsWithIndentificadorJustificacion(String identificadorJustificacion) {
+    log.debug("existsWithIndentificadorJustificacion(String identificadorJustificacion) - start");
+    boolean exists = !repository.existsByIdentificadorJustificacion(identificadorJustificacion);
+    log.debug("existsWithIndentificadorJustificacion(String identificadorJustificacion) - end");
+    return exists;
+  }
+
 }

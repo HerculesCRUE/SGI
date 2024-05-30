@@ -27,6 +27,10 @@ export class GrupoDatosGeneralesFragment extends FormFragment<IGrupo> {
   readonly especialesInvestigacion$ = new BehaviorSubject<IGrupoEspecialInvestigacion[]>([]);
   equipoInvestigacion$ = new BehaviorSubject<IGrupoEquipoListado[]>([]);
 
+  get showProyectoSge(): boolean {
+    return this.isEjecucionEconomicaGruposEnabled ?? false;
+  }
+
   constructor(
     private readonly logger: NGXLogger,
     key: number,
@@ -35,6 +39,7 @@ export class GrupoDatosGeneralesFragment extends FormFragment<IGrupo> {
     private readonly palabraClaveService: PalabraClaveService,
     private readonly rolProyectoService: RolProyectoService,
     private readonly vinculacionService: VinculacionService,
+    private readonly isEjecucionEconomicaGruposEnabled: boolean,
     private readonly: boolean
   ) {
     super(key);

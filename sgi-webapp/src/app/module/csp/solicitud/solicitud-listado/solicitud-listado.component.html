@@ -12,9 +12,8 @@
           </sgi-select-convocatoria>
         </mat-form-field>
 
-
         <!-- Estado solicitud -->
-        <mat-form-field fxFlex="33%">
+        <mat-form-field fxFlex="16%">
           <mat-label>{{'csp.solicitud.estado-solicitud' | translate}}</mat-label>
           <mat-select matNativeControl formControlName="estadoSolicitud">
             <mat-option [value]="undefined"></mat-option>
@@ -24,34 +23,25 @@
           </mat-select>
         </mat-form-field>
 
-        <!-- Título Solicitud -->
+        <!-- Tipo formulario-->
+        <mat-form-field fxFlex="16%">
+          <mat-label>{{'csp.solicitud.formulario-solicitud' | translate}}</mat-label>
+          <mat-select matNativeControl formControlName="formularioSolicitud">
+            <mat-option *ngFor="let formularioSolicitud of FORMULARIO_SOLICITUD_MAP | keyvalue"
+              [value]="formularioSolicitud.key">
+              {{ formularioSolicitud.value | translate}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Acronimo -->
         <mat-form-field fxFlex="33%">
-          <mat-label>{{'csp.solicitud.titulo-listado' | translate}}</mat-label>
-          <input matInput formControlName="tituloSolicitud" type="text" id="tituloSolicitud"
-            placeholder="{{'csp.solicitud.titulo-listado' | translate}}">
+          <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.acronimo' | translate}}</mat-label>
+          <input matInput formControlName="acronimo" type="text" id="acronimo"
+            placeholder="{{'csp.solicitud-datos-proyecto-ficha-general.acronimo' | translate}}">
         </mat-form-field>
       </div>
 
-
-      <!-- Acciones -->
-      <div class="buttons-final" *ngIf="!busquedaAvanzada">
-        <div class="col filter-button">
-          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
-            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
-          </button>
-          <button class="link-busqueda underline" aria-label="Center Align" mat-button
-            (click)="toggleBusquedaAvanzada()">
-            {{'btn.search.advanced'| translate}}
-          </button>
-          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
-            translate}}
-          </button>
-        </div>
-      </div>
-    </form>
-
-    <form *ngIf="busquedaAvanzada" [ngClass]="busquedaAvanzada ? 'busqueda-avanzada' : ''" [formGroup]="formGroup"
-      fxLayout="column">
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <!-- solicitante Investigador -->
         <mat-form-field fxFlex="33%">
@@ -76,16 +66,81 @@
         </mat-form-field>
       </div>
 
+      <!-- Acciones -->
+      <div class="buttons-final" *ngIf="!busquedaAvanzada">
+        <div class="col filter-button">
+          <button color="primary" aria-label="Center Align" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button class="link-busqueda underline" aria-label="Center Align" mat-button
+            (click)="toggleBusquedaAvanzada()">
+            {{'btn.search.advanced'| translate}}
+          </button>
+          <button color="warn" aria-label="Center Align" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <form *ngIf="busquedaAvanzada" [ngClass]="busquedaAvanzada ? 'busqueda-avanzada' : ''" [formGroup]="formGroup"
+      fxLayout="column">
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Título Solicitud -->
+        <mat-form-field fxFlex="34%">
+          <mat-label>{{'csp.solicitud.titulo-listado' | translate}}</mat-label>
+          <input matInput formControlName="tituloSolicitud" type="text" id="tituloSolicitud"
+            placeholder="{{'csp.solicitud.titulo-listado' | translate}}">
+        </mat-form-field>
+        <!-- Entidad convocantes -->
+        <mat-form-field class="input-form" fxFlex="33%">
+          <mat-label>{{'title.csp.solicitud-entidad-convocante' | translate}}</mat-label>
+          <sgi-select-empresa placeholder="{{'title.csp.solicitud-entidad-convocante' | translate}}"
+            formControlName="entidadConvocante">
+          </sgi-select-empresa>
+        </mat-form-field>
+
+        <!-- Plan de investigacion -->
+        <mat-form-field class="input-form" fxFlex="33%">
+          <mat-label>{{'csp.solicitud.plan-investigacion' | translate}}</mat-label>
+          <sgi-select-entity formControlName="planInvestigacion" [options]="planInvestigaciones$ | async">
+          </sgi-select-entity>
+        </mat-form-field>
+
+      </div>
+
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+
+        <!-- Entidad financiadora -->
+        <mat-form-field class="input-form" fxFlex="33%">
+          <mat-label>{{'csp.solicitud-entidad-financiadora' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
+          </mat-label>
+          <sgi-select-empresa
+            placeholder="{{'csp.solicitud-entidad-financiadora' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"
+            formControlName="entidadFinanciadora">
+          </sgi-select-empresa>
+        </mat-form-field>
+
+        <!-- Fuente financiacion -->
+        <mat-form-field class="input-form" fxFlex="33%">
+          <mat-label>{{'csp.solicitud.fuente-financiacion' | translate}}</mat-label>
+          <sgi-select-fuente-financiacion formControlName="fuenteFinanciacion" todos="true" extended="false">
+          </sgi-select-fuente-financiacion>
+        </mat-form-field>
+      </div>
+
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <!-- plazoAbierto -->
-        <mat-checkbox color="primary" formControlName="plazoAbierto">{{'csp.solicitud.plazo.abierto' | translate}}
+        <mat-checkbox class="checkplazo" color="primary" formControlName="plazoAbierto">{{'csp.solicitud.plazo.abierto'
+          | translate}}
         </mat-checkbox>
       </div>
 
-      <div class="checkplazo" fxFlex fxLayout="row" fxLayoutGap="10px" *ngIf="formGroup.controls.plazoAbierto.value">
+      <div class="fieldset-form" fxFlex="100%">
         {{'csp.solicitud.plazo-presentacion' | translate}}
       </div>
-      <div fxFlex fxLayout="row" fxLayoutGap="10px" *ngIf="formGroup.controls.plazoAbierto.value">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <!-- fechaInicioDesde -->
         <mat-form-field class=" input-form" fxFlex="25%">
           <mat-label>{{'csp.solicitud.fecha-inicio-desde' | translate}}</mat-label>
@@ -123,49 +178,12 @@
         </mat-form-field>
       </div>
 
-      <div fxFlex fxLayout="row" fxLayoutGap="10px">
-        <!-- Entidad convocantes -->
-        <mat-form-field class="input-form" fxFlex="33%">
-          <mat-label>{{'title.csp.solicitud-entidad-convocante' | translate}}</mat-label>
-          <sgi-select-empresa placeholder="{{'title.csp.solicitud-entidad-convocante' | translate}}"
-            formControlName="entidadConvocante">
-          </sgi-select-empresa>
-        </mat-form-field>
-
-        <!-- Plan de investigacion -->
-        <mat-form-field class="input-form" fxFlex="33%">
-          <mat-label>{{'csp.solicitud.plan-investigacion' | translate}}</mat-label>
-          <sgi-select-entity formControlName="planInvestigacion" [options]="planInvestigaciones$ | async">
-          </sgi-select-entity>
-        </mat-form-field>
-
-      </div>
-
-      <div fxFlex fxLayout="row" fxLayoutGap="10px">
-
-        <!-- Entidad financiadora -->
-        <mat-form-field class="input-form" fxFlex="33%">
-          <mat-label>{{'csp.solicitud-entidad-financiadora' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
-          </mat-label>
-          <sgi-select-empresa
-            placeholder="{{'csp.solicitud-entidad-financiadora' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"
-            formControlName="entidadFinanciadora">
-          </sgi-select-empresa>
-        </mat-form-field>
-
-        <!-- Fuente financiacion -->
-        <mat-form-field class="input-form" fxFlex="33%">
-          <mat-label>{{'csp.solicitud.fuente-financiacion' | translate}}</mat-label>
-          <sgi-select-fuente-financiacion formControlName="fuenteFinanciacion" extended="false">
-          </sgi-select-fuente-financiacion>
-        </mat-form-field>
-      </div>
       <div class="fieldset-form" fxFlex="100%">
         {{'csp.solicitud.fecha-publicacion-convocatoria' | translate}}
       </div>
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <!-- fechaPublicacionConvocatoriaDesde-->
-        <mat-form-field fxFlex="19%">
+        <mat-form-field fxFlex="25%">
           <mat-label>{{'csp.solicitud.fecha-publicacion-convocatoria-desde' | translate}}</mat-label>
           <input matInput formControlName="fechaPublicacionConvocatoriaDesde"
             [matDatepicker]="pickerFechaPublicacionConvocatoriaDesde"
@@ -176,7 +194,7 @@
         </mat-form-field>
 
         <!-- fechaPublicacionConvocatoriaHasta-->
-        <mat-form-field sgiEndDate fxFlex="19%">
+        <mat-form-field sgiEndDate fxFlex="25%">
           <mat-label>{{'csp.solicitud.fecha-publicacion-convocatoria-hasta' | translate}}</mat-label>
           <input matInput formControlName="fechaPublicacionConvocatoriaHasta"
             [matDatepicker]="pickerFechaPublicacionConvocatoriaHasta"

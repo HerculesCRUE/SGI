@@ -4,8 +4,8 @@
     <mat-form-field>
       <mat-label>{{label | translate}}</mat-label>
       <input matInput type="text" placeholder="{{label | translate:labelParams}}"
-        [matTooltip]="configValue?.description" matTooltipShowDelay="200" formControlName="configValue"
-        [required]="required">
+        [matTooltip]="(configValue?.description ? configValue.description : description) | translate"
+        matTooltipShowDelay="200" formControlName="configValue" [required]="required">
       <mat-error *ngIf="formGroup.controls.configValue.errors?.required">
         {{ 'error.required.field' | translate:msgParamLabel }}
       </mat-error>

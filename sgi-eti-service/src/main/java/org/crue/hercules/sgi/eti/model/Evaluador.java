@@ -67,7 +67,7 @@ public class Evaluador extends BaseEntity {
   private Instant fechaBaja;
 
   /** Resumen */
-  @Column(name = "resumen", length = 4000)
+  @Column(name = "resumen", length = 4000, columnDefinition = "clob")
   private String resumen;
 
   /** Referencia persona */

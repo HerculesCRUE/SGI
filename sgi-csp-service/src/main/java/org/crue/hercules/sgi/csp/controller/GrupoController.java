@@ -372,15 +372,15 @@ public class GrupoController {
    * <code>true</code>.
    * 
    * @param id Identificador del {@link Grupo}.
-   * @return la lista de personaRef de los investigadores principales del
-   *         {@link Grupo} en el momento actual.
+   * @return la lista deinvestigadores principales del {@link Grupo} en el momento
+   *         actual.
    */
   @GetMapping(PATH_INVESTIGADORES_PRINCIPALES)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-EJEC-V', 'CSP-EJEC-E', 'CSP-EJEC-INV-VR')")
-  public ResponseEntity<List<String>> findPersonaRefInvestigadoresPrincipales(@PathVariable Long id) {
-    log.debug("findPersonaRefInvestigadoresPrincipales(Long id) - start");
-    List<String> returnValue = grupoEquipoService.findPersonaRefInvestigadoresPrincipales(id);
-    log.debug("findPersonaRefInvestigadoresPrincipales(Long id) - end");
+  public ResponseEntity<List<GrupoEquipo>> findInvestigadoresPrincipales(@PathVariable Long id) {
+    log.debug("findInvestigadoresPrincipales(Long id) - start");
+    List<GrupoEquipo> returnValue = grupoEquipoService.findInvestigadoresPrincipales(id);
+    log.debug("findInvestigadoresPrincipales(Long id) - end");
     return returnValue.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
         : new ResponseEntity<>(returnValue, HttpStatus.OK);
   }

@@ -10,13 +10,22 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConfigService } from '@core/services/cnf/config.service';
 import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economica.service';
-import { Subscription } from 'rxjs';
+import { Subscription, of } from 'rxjs';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
 import { PersonalContratadoModalComponent } from '../../modals/personal-contratado-modal/personal-contratado-modal.component';
 import { IDesgloseEconomicoExportData, RowTreeDesglose } from '../desglose-economico.fragment';
-import { IDesglose } from '../facturas-justificantes.fragment';
+import { GastosClasficadosSgiEnum, IDesglose } from '../facturas-justificantes.fragment';
 import { PersonalContratadoExportModalComponent } from './export/personal-contratado-export-modal.component';
 import { PersonalContratadoFragment } from './personal-contratado.fragment';
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { DialogService } from '@core/services/dialog.service';
+import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
+import { ValidacionClasificacionGastos } from '@core/models/csp/configuracion';
+import { filter, map, switchMap } from 'rxjs/operators';
+import { DatoEconomicoDetalleClasificacionModalData, FacturasJustificantesClasificacionModal } from '../../modals/facturas-justificantes-clasificacion-modal/facturas-justificantes-clasificacion-modal.component';
+
+const MODAL_CLASIFICACION_TITLE_KEY = marker('title.csp.ejecucion-economica.personal-contratado');
+const MSG_ACCEPT_CLASIFICACION = marker('csp.ejecucion-economica.clasificacion-gastos.aceptar');
 
 @Component({
   selector: 'sgi-personal-contratado',
@@ -42,10 +51,20 @@ export class PersonalContratadoComponent extends FragmentComponent implements On
     return MSG_PARAMS;
   }
 
+  get GastosClasficadosSgiEnum() {
+    return GastosClasficadosSgiEnum;
+  }
+
+  get isClasificacionGastosEnabled(): boolean {
+    return this.formPart.configuracionValidacionClasificacionGastos === ValidacionClasificacionGastos.CLASIFICACION;
+  }
+
   constructor(
     actionService: EjecucionEconomicaActionService,
     private ejecucionEconomicaService: EjecucionEconomicaService,
+    private gastoProyectoService: GastoProyectoService,
     private matDialog: MatDialog,
+    private dialogService: DialogService,
     private readonly cnfService: ConfigService
   ) {
     super(actionService.FRAGMENT.PERSONAL_CONTRATADO, actionService);
@@ -72,6 +91,72 @@ export class PersonalContratadoComponent extends FragmentComponent implements On
   }
 
   showDetail(element: IDesglose): void {
+    if (this.isClasificacionGastosEnabled) {
+      this.openModalClasificacion(element);
+    } else {
+      this.openModalView(element);
+    }
+  }
+
+  acceptClasificacion(element: IDesglose): void {
+    this.subscriptions.push(
+      this.dialogService.showConfirmation(MSG_ACCEPT_CLASIFICACION).pipe(
+        filter(aceptado => !!aceptado)
+      ).subscribe(() => {
+        this.formPart.acceptClasificacionGastosProyectos(
+          this.dataSourceDesglose.data.find(desgloseRow => desgloseRow.level === 3 && desgloseRow.item.id === element.id)
+        );
+      })
+    );
+
+  }
+
+  isAcceptClasificacionAllowed(element: IDesglose): boolean {
+    return element.clasificadoAutomaticamente && !this.formPart.isGastoProyectoUpdated(element.id);
+  }
+
+  openModalClasificacion(element: IDesglose): void {
+    this.subscriptions.push(
+      this.ejecucionEconomicaService.getFacturaGasto(element.id).pipe(
+        map(detalle => {
+          const datoEconomicoDetalle = detalle as DatoEconomicoDetalleClasificacionModalData;
+          datoEconomicoDetalle.proyectosSgiIds = this.formPart.relaciones$.value.map(relacion => relacion.id);
+          datoEconomicoDetalle.proyecto = element.proyecto;
+          return datoEconomicoDetalle;
+        }),
+        switchMap((detalle) => {
+          detalle.gastoProyecto = this.formPart.getGastoProyectoUpdated(element.id);
+          if (!detalle.gastoProyecto) {
+            return this.gastoProyectoService.findByGastoRef(element.id).pipe(
+              map(gastoProyecto => {
+                detalle.gastoProyecto = gastoProyecto;
+                return detalle;
+              })
+            );
+          }
+          return of(detalle);
+        }),
+        switchMap(modalData => {
+          modalData.tituloModal = MODAL_CLASIFICACION_TITLE_KEY;
+          modalData.showDatosCongreso = false;
+          modalData.disableProyectoSgi = this.formPart.disableProyectoSgi;
+          const config: MatDialogConfig<DatoEconomicoDetalleClasificacionModalData> = {
+            data: modalData,
+          };
+
+          return this.matDialog.open(FacturasJustificantesClasificacionModal, config).afterClosed();
+        }),
+        filter(modalData => !!modalData)
+      ).subscribe(
+        modalData => {
+          this.formPart.updateGastoProyecto(modalData.gastoProyecto);
+        },
+        this.formPart.processError
+      )
+    );
+  }
+
+  openModalView(element: IDesglose): void {
     this.subscriptions.push(this.ejecucionEconomicaService.getPersonaContratada(element.id).subscribe(
       (detalle) => {
         const config: MatDialogConfig<IDatoEconomicoDetalle> = {
@@ -90,7 +175,9 @@ export class PersonalContratadoComponent extends FragmentComponent implements On
           columns: exportData?.columns,
           data: exportData?.data,
           totalRegistrosExportacionExcel: this.totalElementos,
-          limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel)
+          limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel),
+          showColumClasificadoAutomaticamente: this.formPart.isClasificacionGastosEnabled,
+          showColumnProyectoSgi: !this.formPart.disableProyectoSgi
         };
 
         const config = {

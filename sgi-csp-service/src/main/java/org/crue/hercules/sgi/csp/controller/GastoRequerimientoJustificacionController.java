@@ -6,6 +6,7 @@ import org.crue.hercules.sgi.csp.converter.GastoRequerimientoJustificacionConver
 import org.crue.hercules.sgi.csp.dto.GastoRequerimientoJustificacionInput;
 import org.crue.hercules.sgi.csp.dto.GastoRequerimientoJustificacionOutput;
 import org.crue.hercules.sgi.csp.model.GastoRequerimientoJustificacion;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.service.GastoRequerimientoJustificacionService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,6 +40,7 @@ public class GastoRequerimientoJustificacionController {
   public static final String PATH_DELIMITER = "/";
   public static final String REQUEST_MAPPING = PATH_DELIMITER + "gastos-requerimientos-justificacion";
   public static final String PATH_ID = PATH_DELIMITER + "{id}";
+  public static final String PATH_BY_JUSTIFICACION_ID = PATH_DELIMITER + "byidentificadorjustificacion";
 
   private final GastoRequerimientoJustificacionService service;
   private final GastoRequerimientoJustificacionConverter converter;
@@ -109,4 +112,25 @@ public class GastoRequerimientoJustificacionController {
     return !page.isEmpty() ? ResponseEntity.ok().body(converter.convert(page))
         : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
+
+  /**
+   * Comprueba si la entidad {@link ProyectoPeriodoJustificacion} se puede
+   * eliminar.
+   * 
+   * @param identificadorJustificacion Identificador de la justificacion
+   * 
+   * @return {@link HttpStatus#OK} si existe,
+   *         {@link HttpStatus#NO_CONTENT} en cualquier otro caso
+   */
+  @RequestMapping(method = RequestMethod.HEAD, path = PATH_BY_JUSTIFICACION_ID)
+  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  public ResponseEntity<Void> existsWithIndentificadorJustificacion(
+      @RequestParam(required = true) String identificadorJustificacion) {
+    log.debug("existsWithIndentificadorJustificacion(Long id) - start");
+    boolean hasRequerimientosJustificacion = service.existsWithIndentificadorJustificacion(identificadorJustificacion);
+    log.debug("existsWithIndentificadorJustificacion(Long id) - end");
+    return hasRequerimientosJustificacion ? new ResponseEntity<>(HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
 }

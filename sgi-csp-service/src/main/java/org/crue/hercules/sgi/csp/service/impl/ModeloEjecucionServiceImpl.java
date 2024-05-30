@@ -1,7 +1,10 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.List;
+
 import org.crue.hercules.sgi.csp.exceptions.ModeloEjecucionNotFoundException;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucion_;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.repository.ModeloEjecucionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
@@ -11,6 +14,7 @@ import org.crue.hercules.sgi.csp.service.ModeloEjecucionService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,18 +153,19 @@ public class ModeloEjecucionServiceImpl implements ModeloEjecucionService {
    * Obtener todas las entidades {@link ModeloEjecucion} activas paginadas y/o
    * filtradas.
    *
-   * @param pageable la información de la paginación.
-   * @param query    la información del filtro.
+   * @param query la información del filtro.
    * @return la lista de entidades {@link ModeloEjecucion} paginadas y/o
    *         filtradas.
    */
   @Override
-  public Page<ModeloEjecucion> findAll(String query, Pageable pageable) {
+  public List<ModeloEjecucion> findAll(String query) {
     log.debug("findAll(String query, Pageable pageable) - start");
-    Specification<ModeloEjecucion> specs = ModeloEjecucionSpecifications.activos()
+    Specification<ModeloEjecucion> specs = ModeloEjecucionSpecifications.distinct()
+        .and(ModeloEjecucionSpecifications.activos())
         .and(SgiRSQLJPASupport.toSpecification(query));
 
-    Page<ModeloEjecucion> returnValue = modeloEjecucionRepository.findAll(specs, pageable);
+    List<ModeloEjecucion> returnValue = modeloEjecucionRepository.findAll(specs,
+        Sort.by(Sort.Direction.ASC, ModeloEjecucion_.NOMBRE));
     log.debug("findAll(String query, Pageable pageable) - end");
     return returnValue;
   }

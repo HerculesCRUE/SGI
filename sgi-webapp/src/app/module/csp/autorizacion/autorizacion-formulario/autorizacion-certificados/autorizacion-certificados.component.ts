@@ -121,6 +121,8 @@ export class AutorizacionCertificadosComponent extends FragmentComponent impleme
       hasSomeOtherCertificadoAutorizacionVisible: this.formPart.certificadosAutorizacion$.value.some(certificado =>
         certificado.value.certificado.visible && !wrapper?.value?.certificado.visible),
       generadoAutomatico: wrapper?.value.generadoAutomatico,
+      fechaSolicitud: this.actionService.autorizacionData?.fechaFirstEstado,
+      solicitante: this.actionService.autorizacionData?.solicitante
     } as ICertificadoAutorizacionModalData;
 
     const config = {

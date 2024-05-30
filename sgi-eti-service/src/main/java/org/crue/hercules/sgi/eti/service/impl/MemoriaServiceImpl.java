@@ -54,6 +54,7 @@ import org.crue.hercules.sgi.eti.repository.MemoriaRepository;
 import org.crue.hercules.sgi.eti.repository.PeticionEvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.RespuestaRepository;
 import org.crue.hercules.sgi.eti.repository.TareaRepository;
+import org.crue.hercules.sgi.eti.repository.predicate.MemoriaPredicateResolver;
 import org.crue.hercules.sgi.eti.repository.specification.MemoriaSpecifications;
 import org.crue.hercules.sgi.eti.service.ComunicadosService;
 import org.crue.hercules.sgi.eti.service.ConfiguracionService;
@@ -307,7 +308,8 @@ public class MemoriaServiceImpl implements MemoriaService {
   @Override
   public Page<MemoriaPeticionEvaluacion> findAll(String query, Pageable paging) {
     log.debug("findAll(String query,Pageable paging) - start");
-    Specification<Memoria> specs = MemoriaSpecifications.activos().and(SgiRSQLJPASupport.toSpecification(query));
+    Specification<Memoria> specs = MemoriaSpecifications.activos()
+        .and(SgiRSQLJPASupport.toSpecification(query, MemoriaPredicateResolver.getInstance()));
 
     Page<MemoriaPeticionEvaluacion> returnValue = memoriaRepository.findAllMemoriasEvaluaciones(specs, paging, null);
     log.debug("findAll(String query,Pageable paging) - end");
@@ -419,23 +421,6 @@ public class MemoriaServiceImpl implements MemoriaService {
   }
 
   /**
-   * Elimina una entidad {@link Memoria} por id.
-   *
-   * @param id el id de la entidad {@link Memoria}.
-   */
-  @Transactional
-  @Override
-  public void delete(Long id) throws MemoriaNotFoundException {
-    log.debug("Petición a delete Memoria : {}  - start", id);
-    Assert.notNull(id, "El id de Memoria no puede ser null.");
-    if (!memoriaRepository.existsById(id)) {
-      throw new MemoriaNotFoundException(id);
-    }
-    memoriaRepository.deleteById(id);
-    log.debug("Petición a delete Memoria : {}  - end", id);
-  }
-
-  /**
    * Actualiza los datos del {@link Memoria}.
    * 
    * @param memoriaActualizar {@link Memoria} con los datos actualizados.
@@ -453,31 +438,33 @@ public class MemoriaServiceImpl implements MemoriaService {
     Assert.notNull(memoriaActualizar.getId(), "Memoria id no puede ser null para actualizar un tipo memoria");
 
     return memoriaRepository.findById(memoriaActualizar.getId()).map(memoria -> {
-
-      // Se comprueba si se está desactivando la memoria
-      if (Boolean.TRUE.equals(memoria.getActivo()) && Boolean.FALSE.equals(memoriaActualizar.getActivo())) {
-        Assert.isTrue(
-            Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_EN_ELABORACION)
-                || Objects.equals(memoria.getEstadoActual().getId(), Constantes.TIPO_ESTADO_MEMORIA_COMPLETADA),
-            "El estado actual de la memoria no es el correcto para desactivar la memoria");
-      }
-
-      memoria.setNumReferencia(memoriaActualizar.getNumReferencia());
-      memoria.setPeticionEvaluacion(memoriaActualizar.getPeticionEvaluacion());
-      memoria.setComite((memoriaActualizar.getComite()));
       memoria.setTitulo(memoriaActualizar.getTitulo());
       memoria.setPersonaRef(memoriaActualizar.getPersonaRef());
-      memoria.setTipoMemoria(memoriaActualizar.getTipoMemoria());
-      memoria.setEstadoActual(memoriaActualizar.getEstadoActual());
-      memoria.setFechaEnvioSecretaria(memoriaActualizar.getFechaEnvioSecretaria());
-      memoria.setRequiereRetrospectiva(memoriaActualizar.getRequiereRetrospectiva());
-      memoria.setRetrospectiva(memoriaActualizar.getRetrospectiva());
-      memoria.setActivo(memoriaActualizar.getActivo());
 
       Memoria returnValue = memoriaRepository.save(memoria);
       log.debug("update(Memoria memoriaActualizar) - end");
       return returnValue;
     }).orElseThrow(() -> new MemoriaNotFoundException(memoriaActualizar.getId()));
+  }
+
+  /**
+   * Se crea el nuevo estado para la memoria recibida y se actualiza el estado
+   * actual de esta.
+   * 
+   * @param id                    Identificador de la {@link Memoria}
+   * @param requiereRetrospectiva flag para identificar si la {@link Memoria}
+   *                              requiere retrospectiva
+   * @param retrospectiva         la {@link Retrospectiva}
+   */
+  @Transactional
+  @Override
+  public void updateDatosRetrospectiva(Long id, boolean requiereRetrospectiva, Retrospectiva retrospectiva) {
+    log.debug("updateDatosRetrospectiva(Long id, boolean requiereRetrospectiva, Retrospectiva retrospectiva) - start");
+    Memoria memoria = memoriaRepository.findById(id).orElseThrow(() -> new MemoriaNotFoundException(id));
+    memoria.setRequiereRetrospectiva(requiereRetrospectiva);
+    memoria.setRetrospectiva(retrospectiva);
+    memoriaRepository.save(memoria);
+    log.debug("updateDatosRetrospectiva(Long id, boolean requiereRetrospectiva, Retrospectiva retrospectiva) - end");
   }
 
   /**
@@ -490,6 +477,22 @@ public class MemoriaServiceImpl implements MemoriaService {
   @Override
   public List<MemoriaPeticionEvaluacion> findMemoriaByPeticionEvaluacionMaxVersion(Long idPeticionEvaluacion) {
     return memoriaRepository.findMemoriasEvaluacion(idPeticionEvaluacion, null);
+  }
+
+  /**
+   * Se crea el nuevo estado para la memoria recibida y se actualiza el estado
+   * actual de esta.
+   * 
+   * @param memoriaId           Identificador de la {@link Memoria}.
+   * @param tipoEstadoMemoriaId Identificador del estado nuevo de la memoria.
+   */
+  @Transactional
+  @Override
+  public void updateEstadoMemoria(Long memoriaId, Long tipoEstadoMemoriaId) {
+    log.debug("updateEstadoMemoria(Long memoriaId, Long tipoEstadoMemoriaId) - start");
+    Memoria memoria = memoriaRepository.findById(memoriaId).orElseThrow(() -> new MemoriaNotFoundException(memoriaId));
+    updateEstadoMemoria(memoria, tipoEstadoMemoriaId, null);
+    log.debug("updateEstadoMemoria(Long memoriaId, Long tipoEstadoMemoriaId) - end");
   }
 
   /**
@@ -600,12 +603,14 @@ public class MemoriaServiceImpl implements MemoriaService {
     Assert.isTrue(Objects.equals(tipoEstadoMemoriaActual, TipoEstadoMemoria.Tipo.EN_SECRETARIA)
         || Objects.equals(tipoEstadoMemoriaActual, TipoEstadoMemoria.Tipo.EN_SECRETARIA_REVISION_MINIMA)
         || Objects.equals(tipoEstadoMemoriaActual, TipoEstadoMemoria.Tipo.ARCHIVADA)
-        || Objects.equals(tipoEstadoMemoriaActual, TipoEstadoMemoria.Tipo.EN_EVALUACION),
+        || Objects.equals(tipoEstadoMemoriaActual, TipoEstadoMemoria.Tipo.EN_EVALUACION)
+        || Objects.equals(tipoEstadoMemoriaActual, TipoEstadoMemoria.Tipo.EN_EVALUACION_REVISION_MINIMA),
         "El estado actual de la memoria no es el correcto para recuperar el estado anterior");
 
     // Si la memoria se cambió al estado anterior estando en evaluación, se
     // eliminará la evaluación.
-    if (Objects.equals(tipoEstadoMemoriaActual, TipoEstadoMemoria.Tipo.EN_EVALUACION)) {
+    if (Objects.equals(tipoEstadoMemoriaActual, TipoEstadoMemoria.Tipo.EN_EVALUACION)
+        || Objects.equals(tipoEstadoMemoriaActual, TipoEstadoMemoria.Tipo.EN_EVALUACION_REVISION_MINIMA)) {
       Evaluacion evaluacion = evaluacionRepository
           .findFirstByMemoriaIdAndActivoTrueOrderByVersionDescCreationDateDesc(memoria.getId()).orElse(null);
 
@@ -724,6 +729,34 @@ public class MemoriaServiceImpl implements MemoriaService {
   }
 
   /**
+   * Procesa la notificacion de revision minima y actualiza el estado de la
+   * {@link Memoria} a EN_EVALUACION_REVISION_MINIMA, crea la evaluacion de
+   * revision minima y envia un comunicado para notificar el cambio
+   * 
+   * @param memoriaId Identificador de la memoria
+   */
+  @Transactional
+  @Override
+  public void notificarRevisionMinima(Long memoriaId) {
+    log.debug("notificarRevisionMinima({}) - start", memoriaId);
+
+    Memoria memoria = memoriaRepository.findById(memoriaId).orElseThrow(() -> new MemoriaNotFoundException(memoriaId));
+
+    updateEstadoMemoria(memoria, TipoEstadoMemoria.Tipo.EN_EVALUACION_REVISION_MINIMA.getId());
+    Evaluacion evaluacion = this.crearEvaluacionRevMinima(memoria, TipoEvaluacion.Tipo.MEMORIA);
+
+    try {
+      this.comunicadosService.enviarComunicadoCambiosEvaluacionEti(evaluacion.getEvaluador1().getPersonaRef(),
+          evaluacion.getEvaluador2().getPersonaRef(),
+          evaluacion.getMemoria().getComite().getNombreInvestigacion(), evaluacion.getMemoria().getNumReferencia(),
+          evaluacion.getMemoria().getPeticionEvaluacion().getTitulo());
+      log.debug("notificarRevisionMinima({})  - end", memoriaId);
+    } catch (Exception e) {
+      log.debug("notificarRevisionMinima({}) - error al enviar comunicado", memoriaId, e);
+    }
+  }
+
+  /**
    * Actualiza el estado de la {@link Memoria} al estado en secretaria
    * correspondiente al {@link TipoEvaluacion} y {@link TipoEstadoMemoria}
    * actuales de la {@link Memoria}.
@@ -777,7 +810,6 @@ public class MemoriaServiceImpl implements MemoriaService {
         updateEstadoMemoria(memoria, TipoEstadoMemoria.Tipo.EN_SECRETARIA.getId());
         break;
       case FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS:
-        crearEvaluacionRevMinima = true;
         updateEstadoMemoria(memoria, TipoEstadoMemoria.Tipo.EN_SECRETARIA_REVISION_MINIMA.getId());
         break;
       case COMPLETADA_SEGUIMIENTO_ANUAL:
@@ -826,7 +858,7 @@ public class MemoriaServiceImpl implements MemoriaService {
    * @param memoria        la {@link Memoria} para la que se crea la evaluacion
    * @param tipoEvaluacion el tipo de {@link Evaluacion}
    */
-  private void crearEvaluacionRevMinima(Memoria memoria, TipoEvaluacion.Tipo tipoEvaluacion) {
+  private Evaluacion crearEvaluacionRevMinima(Memoria memoria, TipoEvaluacion.Tipo tipoEvaluacion) {
     log.debug("crearEvaluacionRevMinima(Memoria memoria, TipoEvaluacion.Tipo tipoEvaluacion) - start");
     Evaluacion evaluacion = evaluacionRepository
         .findFirstByMemoriaIdAndTipoEvaluacionIdAndActivoTrueOrderByVersionDesc(memoria.getId(), tipoEvaluacion.getId())
@@ -840,9 +872,10 @@ public class MemoriaServiceImpl implements MemoriaService {
     evaluacionNueva.setDictamen(null);
     evaluacionNueva.setTipoEvaluacion(TipoEvaluacion.builder().id(tipoEvaluacion.getId()).build());
     evaluacionNueva.setActivo(true);
-    evaluacionRepository.save(evaluacionNueva);
+    Evaluacion evaluacionCreated = evaluacionRepository.save(evaluacionNueva);
 
     log.debug("crearEvaluacionRevMinima(Memoria memoria, TipoEvaluacion.Tipo tipoEvaluacion) - end");
+    return evaluacionCreated;
   }
 
   private void crearInforme(Memoria memoria, Long tipoEvaluacion) {

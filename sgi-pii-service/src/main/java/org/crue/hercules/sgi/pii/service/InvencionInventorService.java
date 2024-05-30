@@ -5,6 +5,7 @@ import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAME
 import static org.crue.hercules.sgi.pii.util.AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -12,13 +13,17 @@ import javax.validation.Valid;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
+import org.crue.hercules.sgi.pii.exceptions.InvencionInventorNoDeletableException;
 import org.crue.hercules.sgi.pii.exceptions.InvencionInventorNotFoundException;
 import org.crue.hercules.sgi.pii.exceptions.InvencionNotFoundException;
 import org.crue.hercules.sgi.pii.model.Invencion;
 import org.crue.hercules.sgi.pii.model.InvencionInventor;
 import org.crue.hercules.sgi.pii.repository.InvencionInventorRepository;
 import org.crue.hercules.sgi.pii.repository.InvencionRepository;
+import org.crue.hercules.sgi.pii.repository.RepartoEquipoInventorRepository;
 import org.crue.hercules.sgi.pii.repository.specification.InvencionInventorSpecifications;
+import org.crue.hercules.sgi.pii.repository.specification.RepartoEquipoInventorSpecifications;
+import org.crue.hercules.sgi.pii.util.AssertHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -40,11 +45,14 @@ public class InvencionInventorService {
 
   private final InvencionInventorRepository repository;
   private final InvencionRepository invencionRepository;
+  private final RepartoEquipoInventorRepository repartoEquipoInventorRepository;
 
   public InvencionInventorService(InvencionInventorRepository invencionInventorRepository,
-      InvencionRepository invencionRepository) {
+      InvencionRepository invencionRepository,
+      RepartoEquipoInventorRepository repartoEquipoInventorRepository) {
     this.repository = invencionInventorRepository;
     this.invencionRepository = invencionRepository;
+    this.repartoEquipoInventorRepository = repartoEquipoInventorRepository;
   }
 
   /**
@@ -161,6 +169,8 @@ public class InvencionInventorService {
       List<InvencionInventor> invencionInventores) {
     log.debug("saveUpdateOrDeleteBatchMode(Long invencionId, List<InvencionInventor> invencionInventores) - start");
 
+    AssertHelper.idNotNull(invencionId, InvencionInventor.class);
+
     if (!this.invencionRepository.existsById(invencionId)) {
       throw new InvencionNotFoundException(invencionId);
     }
@@ -169,7 +179,7 @@ public class InvencionInventorService {
         .map(InvencionInventor::getId).collect(Collectors.toList());
     final Boolean allInvencionInventorIncluded = invecionInventoresId.isEmpty() ? Boolean.TRUE
         : this.repository.inventoresBelongsToInvencion(invencionId, invecionInventoresId);
-    final Double totalParticipacion = invencionInventores.stream().filter(InvencionInventor::getActivo)
+    final Double totalParticipacion = invencionInventores.stream()
         .mapToDouble(el -> el.getParticipacion().doubleValue()).sum();
 
     Assert.isTrue(allInvencionInventorIncluded,
@@ -184,11 +194,25 @@ public class InvencionInventorService {
             .build());
     invencionInventores.forEach(elem -> commonEntityValidations(elem, true));
 
-    repository
-        .deleteInBatch(invencionInventores.stream().filter(elem -> !elem.getActivo()).collect(Collectors.toList()));
+    List<InvencionInventor> inventoresBD = repository.findByInvencionId(invencionId);
 
-    List<InvencionInventor> returnValue = repository
-        .saveAll(invencionInventores.stream().filter(InvencionInventor::getActivo).collect(Collectors.toList()));
+    List<InvencionInventor> inventoresEliminar = inventoresBD.stream()
+        .filter(inventor -> invencionInventores.stream().map(InvencionInventor::getId)
+            .noneMatch(id -> Objects.equals(id, inventor.getId())))
+        .collect(Collectors.toList());
+
+    if (!inventoresEliminar.isEmpty()) {
+      inventoresEliminar.forEach(inventor -> {
+        if (repartoEquipoInventorRepository
+            .count(RepartoEquipoInventorSpecifications.byInvencionInventorId(inventor.getId())) > 0) {
+          throw new InvencionInventorNoDeletableException(inventor.getId());
+        }
+
+        this.repository.deleteById(inventor.getId());
+      });
+    }
+
+    List<InvencionInventor> returnValue = repository.saveAll(invencionInventores);
 
     log.debug("saveUpdateOrDeleteBatchMode(Long invencionId, List<InvencionInventor> invencionInventores) - end");
     return returnValue;
@@ -233,14 +257,15 @@ public class InvencionInventorService {
   }
 
   /**
-   * Desactiva el {@link InvencionInventor}.
+   * Elimina el {@link InvencionInventor}.
    *
    * @param id Id del {@link InvencionInventor}.
-   * @return Entidad {@link InvencionInventor} persistida desactivada.
+   * 
+   * @return true si es eliminable, false en caso contrario
    */
   @Transactional
-  public InvencionInventor desactivar(Long id) {
-    log.debug("desactivar(Long id) - start");
+  public boolean deletable(Long id) {
+    log.debug("deletable(Long id) - start");
 
     Assert.notNull(id,
         // Defer message resolution untill is needed
@@ -249,18 +274,15 @@ public class InvencionInventorService {
             .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(InvencionInventor.class))
             .build());
 
-    return repository.findById(id).map(invencionInventor -> {
-      if (!invencionInventor.getActivo().booleanValue()) {
-        // Si no esta activo no se hace nada
-        return invencionInventor;
-      }
+    if (!this.repository.existsById(id)) {
+      throw new InvencionInventorNotFoundException(id);
+    }
 
-      invencionInventor.setActivo(false);
+    boolean deletable = repartoEquipoInventorRepository
+        .count(RepartoEquipoInventorSpecifications.byInvencionInventorId(id)) == 0;
 
-      InvencionInventor returnValue = repository.save(invencionInventor);
-      log.debug("desactivar(Long id) - end");
-      return returnValue;
-    }).orElseThrow(() -> new InvencionInventorNotFoundException(id));
+    log.debug("deletable(Long id) - end");
+    return deletable;
   }
 
   private void commonEntityValidations(InvencionInventor invencionInventor, boolean isUpdate) {

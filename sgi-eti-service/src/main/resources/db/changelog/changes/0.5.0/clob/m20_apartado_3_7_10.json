@@ -1,0 +1,67 @@
+[
+  {
+    "key": "ap3_7_10",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.10 Privación de alimento y/o agua"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿El animal va a ser privado de alimento y/o bebida en algún momento?"
+      },
+      {
+        "key": "privacionRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "key": "tipoPrivacionCheck",
+        "type": "multicheckbox",
+        "hideExpression": "!model.privacionRadio || model.privacionRadio === 'no'",
+        "templateOptions": {
+          "label": "Seleccionar",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "privacionAlimento",
+              "label": "Privación de alimento"
+            },
+            {
+              "value": "privacionAgua",
+              "label": "Privación de agua"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Describir a continuación la pauta de la privación de alimento y/o agua indicando la hora de inicio y la duración (en horas)",
+        "hideExpression": "!model.privacionRadio || model.privacionRadio === 'no'"
+      },
+      {
+        "key": "describirPrivacion",
+        "type": "ckeditor",
+        "hideExpression": "!model.privacionRadio || model.privacionRadio === 'no'",
+        "templateOptions": {
+          "name": "Describir",
+          "required": true
+        }
+      }
+    ]
+  }
+]

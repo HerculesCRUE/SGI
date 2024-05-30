@@ -104,7 +104,8 @@ export class ConvocatoriaCalendarioJustificacionListadoExportService
       const columnNumPeriodoCalendarioJustificacion: ISgiColumnReport = {
         name: CALENDARIO_NUM_PERIODO_JUSTIFICACION_FIELD + idCalendarioJustificacion,
         title: titleCalendarioJustificacion + idCalendarioJustificacion + ': ' + this.translate.instant(CALENDARIO_JUSTIFICACION_NUM_PERIODO_KEY),
-        type: ColumnType.STRING,
+        type: ColumnType.NUMBER,
+        format: '#'
       };
       columns.push(columnNumPeriodoCalendarioJustificacion);
 
@@ -118,28 +119,30 @@ export class ConvocatoriaCalendarioJustificacionListadoExportService
       const columnFechaInicioCalendarioJustificacion: ISgiColumnReport = {
         name: CALENDARIO_JUSTIFICACION_FECHA_INICIO_FIELD + idCalendarioJustificacion,
         title: titleCalendarioJustificacion + idCalendarioJustificacion + ': ' + this.translate.instant(CALENDARIO_JUSTIFICACION_MES_INICIO_KEY),
-        type: ColumnType.STRING,
+        type: ColumnType.NUMBER,
+        format: '#'
       };
       columns.push(columnFechaInicioCalendarioJustificacion);
 
       const columnFechaFinCalendarioJustificacion: ISgiColumnReport = {
         name: CALENDARIO_JUSTIFICACION_FECHA_FIN_FIELD + idCalendarioJustificacion,
         title: titleCalendarioJustificacion + idCalendarioJustificacion + ': ' + this.translate.instant(CALENDARIO_JUSTIFICACION_MES_FIN_KEY),
-        type: ColumnType.STRING,
+        type: ColumnType.NUMBER,
+        format: '#'
       };
       columns.push(columnFechaFinCalendarioJustificacion);
 
       const columnFechaInicioPresentacionCalendarioJustificacion: ISgiColumnReport = {
         name: CALENDARIO_JUSTIFICACION_FECHA_INICIO_PRESENTACION_FIELD + idCalendarioJustificacion,
         title: titleCalendarioJustificacion + idCalendarioJustificacion + ': ' + this.translate.instant(CALENDARIO_JUSTIFICACION_FECHA_INICIO_PRESENTACION_KEY),
-        type: ColumnType.STRING,
+        type: ColumnType.DATE,
       };
       columns.push(columnFechaInicioPresentacionCalendarioJustificacion);
 
       const columnFechaFinPresentacionCalendarioJustificacion: ISgiColumnReport = {
         name: CALENDARIO_JUSTIFICACION_FECHA_FIN_PRESENTACION_FIELD + idCalendarioJustificacion,
         title: titleCalendarioJustificacion + idCalendarioJustificacion + ': ' + this.translate.instant(CALENDARIO_JUSTIFICACION_FECHA_FIN_PRESENTACION_KEY),
-        type: ColumnType.STRING,
+        type: ColumnType.DATE,
       };
       columns.push(columnFechaFinPresentacionCalendarioJustificacion);
     }

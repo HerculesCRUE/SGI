@@ -1,11 +1,13 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.List;
+
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacion;
-import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoPago;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacionDocumento;
+import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoPago;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -66,6 +68,14 @@ public interface ProyectoSocioService {
   Page<ProyectoSocio> findAllByProyecto(Long proyectoId, String query, Pageable paging);
 
   /**
+   * Obtiene todas las entidades {@link ProyectoSocio} para un {@link Proyecto}.
+   *
+   * @param proyectoId el id de la {@link Proyecto}.
+   * @return el listado de entidades {@link ProyectoSocio} del {@link Proyecto}.
+   */
+  List<ProyectoSocio> findAllByProyecto(Long proyectoId);
+
+  /**
    * Comprueba si existe algun {@link ProyectoSocio} que tenga un rol con el flag
    * coordinador a true para el proyecto.
    * 
@@ -111,4 +121,23 @@ public interface ProyectoSocioService {
   boolean existsProyectoSocioPeriodoPagoByProyectoSocioId(Long proyectoId);
 
   boolean existsProyectoSocioPeriodoJustificacionByProyectoSocioId(Long proyectoId);
+
+  /**
+   * Comprueba si alguno de los {@link ProyectoSocio} del {@link Proyecto}
+   * tienen fechas
+   * 
+   * @param proyectoId el id del {@link Proyecto}.
+   * @return true si existen y false en caso contrario.
+   */
+  boolean proyectoHasSociosWithDates(Long proyectoId);
+
+  /**
+   * Comprueba si el rango de fechas del socio se solapa con alguno de los rangos
+   * de ese mismo socio en el proyecto.
+   * 
+   * @param proyectoSocio un {@link ProyectoSocio}.
+   * @return true si se solapa o false si no hay solapamiento.
+   */
+  boolean isRangoFechasSolapado(ProyectoSocio proyectoSocio);
+
 }

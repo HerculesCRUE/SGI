@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
+import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { SharedModule } from '@shared/shared.module';
 import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
@@ -18,18 +19,19 @@ import { ProyectoRoutingInvModule } from './proyecto-routing-inv.module';
   ],
   imports: [
     CommonModule,
-    SharedModule,
-    ProyectoRoutingInvModule,
-    MaterialDesignModule,
-    ReactiveFormsModule,
-    TranslateModule,
-    FormsModule,
     CspSharedModule,
-    SgiAuthModule,
+    FormsModule,
+    MaterialDesignModule,
+    ProyectoRoutingInvModule,
+    ReactiveFormsModule,
     SgempSharedModule,
-    SgpSharedModule
+    SgiAuthModule,
+    SgpSharedModule,
+    SharedModule,
+    TranslateModule
   ],
   providers: [
+    LuxonDatePipe,
     ProyectoDataResolver
   ]
 })

@@ -66,4 +66,7 @@ public interface ConvocatoriaConceptoGastoRepository
    *         {@link Convocatoria}
    */
   List<ConvocatoriaConceptoGasto> findByConvocatoriaId(Long convocatoriaId);
+
+  boolean existsByConvocatoriaId(Long convocatoriaId);
+
 }

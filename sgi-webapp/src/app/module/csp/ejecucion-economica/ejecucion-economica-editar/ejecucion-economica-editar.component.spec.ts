@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Data } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { ValidacionClasificacionGastos } from '@core/models/csp/configuracion';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthService } from '@sgi/framework/auth';
@@ -24,7 +25,8 @@ describe('EjecucionEconomicaEditarComponent', () => {
       relaciones: [{ id: 1 } as IRelacionEjecucionEconomicaWithResponsables],
       readonly: false,
       configuracion: {
-        validacionGastos: false
+        validacionClasificacionGastos: ValidacionClasificacionGastos.ELEGIBILIDAD,
+        ejecucionEconomicaGruposEnabled: true
       }
     } as IEjecucionEconomicaData
   };

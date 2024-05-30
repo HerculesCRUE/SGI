@@ -222,6 +222,31 @@ public class GrupoEquipoService {
   }
 
   /**
+   * Devuelve una lista filtrada de investigadores principales del {@link Grupo}
+   * en el momento actual.
+   *
+   * Son investiador principales los {@link GrupoEquipo} que a fecha actual
+   * tiene el rol con el flag RolGrupo#rolPrincipal a
+   * <code>true</code>.
+   * 
+   * @param grupoId Identificador del {@link Grupo}.
+   * @return la lista de investigadores principales del {@link Grupo} en el
+   *         momento actual.
+   */
+  public List<GrupoEquipo> findInvestigadoresPrincipales(Long grupoId) {
+    log.debug("findInvestigadoresPrincipales(Long grupoId) - start");
+
+    AssertHelper.idNotNull(grupoId, Grupo.class);
+    authorityHelper.checkUserHasAuthorityViewGrupo(grupoId);
+
+    Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
+    List<GrupoEquipo> returnValue = repository.findInvestigadoresPrincipales(grupoId, fechaActual);
+
+    log.debug("findInvestigadoresPrincipales(Long grupoId) - end");
+    return returnValue;
+  }
+
+  /**
    * Comprueba si personaRef pertenece a un grupo de investigación con un rol con
    * el flag de baremable a true a fecha 31 de diciembre del año que se esta
    * baremando y el grupo al que pertenecen los autores (tabla Grupo) este activo

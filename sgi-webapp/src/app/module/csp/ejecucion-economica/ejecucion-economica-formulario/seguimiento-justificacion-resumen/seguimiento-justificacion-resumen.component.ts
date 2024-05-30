@@ -8,8 +8,8 @@ import { TIPO_JUSTIFICACION_MAP } from '@core/enums/tipo-justificacion';
 import { TIPO_SEGUIMIENTO_MAP } from '@core/enums/tipo-seguimiento';
 import { ISeguimientoJustificacionAnualidad } from '@core/models/csp/seguimiento-justificacion-anualidad';
 import { ConfigService } from '@core/services/cnf/config.service';
+import { ConfigService as CspConfigService } from '@core/services/csp/config.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { SgiRestFindOptions } from '@sgi/framework/http';
 import { Subscription } from 'rxjs';
 import { CSP_ROUTE_NAMES } from '../../../csp-route-names';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
@@ -35,6 +35,7 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
 
   private totalElementos = 0;
   private limiteRegistrosExportacionExcel: string;
+  private _gastosJustificadosSgeEnabled: boolean = true;
 
   proyectosSGIElementosPagina = [5, 10, 25, 100];
   proyectosSGIDisplayedColumns = [
@@ -45,6 +46,7 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
     'responsables',
     'fechaInicio',
     'fechaFin',
+    'fechaFinDefinitiva',
     'tituloConvocatoria',
     'entidadesFinanciadoras',
     'importeConcedido',
@@ -147,10 +149,15 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
     return TIPO_SEGUIMIENTO_MAP;
   }
 
+  get gastosJustificadosSgeEnabled(): boolean {
+    return this._gastosJustificadosSgeEnabled;
+  }
+
   constructor(
     private readonly actionService: EjecucionEconomicaActionService,
     private matDialog: MatDialog,
-    private readonly cnfService: ConfigService) {
+    private readonly cnfService: ConfigService,
+    private readonly cspConfigService: CspConfigService) {
     super(actionService.FRAGMENT.SEGUIMIENTO_JUSTIFICACION_RESUMEN, actionService);
     this.formPart = this.fragment as SeguimientoJustificacionResumenFragment;
   }
@@ -167,6 +174,12 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
       this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-seguimiento-justificacion-resumen').subscribe(value => {
         this.limiteRegistrosExportacionExcel = value;
       }));
+
+    this.subscriptions.push(
+      this.cspConfigService.isGastosJustificadosSgeEnabled().subscribe(gastosJustificadosSgeEnabled => {
+        this._gastosJustificadosSgeEnabled = gastosJustificadosSgeEnabled;
+      })
+    );
   }
 
   private initProyectosSGITable(): void {
@@ -328,7 +341,6 @@ export class SeguimientoJustificacionResumenComponent extends FragmentComponent 
     dialogRef.afterClosed().subscribe(
       (modalData: StatusWrapper<IProyectoPeriodoJustificacionWithTituloProyecto>) => {
         if (modalData) {
-          const { tituloProyecto, ...proyectoPeriodoJustificacion } = modalData.value;
           this.formPart.updatePeriodoJustificacion(modalData);
         }
       }

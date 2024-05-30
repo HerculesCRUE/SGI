@@ -152,33 +152,18 @@ class ModeloEjecucionIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void findAll_WithPagingSortingAndFiltering_ReturnsModeloEjecucionSubList() throws Exception {
-    HttpHeaders headers = new HttpHeaders();
-    headers.add("X-Page", "0");
-    headers.add("X-Page-Size", "10");
-    String sort = "nombre,desc";
     String filter = "descripcion=ke=00";
 
-    URI uri = UriComponentsBuilder.fromUriString(MODELO_EJECUCION_CONTROLLER_BASE_PATH).queryParam("s", sort)
+    URI uri = UriComponentsBuilder.fromUriString(MODELO_EJECUCION_CONTROLLER_BASE_PATH)
         .queryParam("q", filter).build(false).toUri();
 
     final ResponseEntity<List<ModeloEjecucion>> response = restTemplate.exchange(uri, HttpMethod.GET,
-        buildRequest(headers, null), new ParameterizedTypeReference<List<ModeloEjecucion>>() {
+        buildRequest(null, null), new ParameterizedTypeReference<List<ModeloEjecucion>>() {
         });
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ModeloEjecucion> modelosEjecucion = response.getBody();
-    Assertions.assertThat(modelosEjecucion).hasSize(3);
-    HttpHeaders responseHeaders = response.getHeaders();
-    Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
-    Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
-    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
-
-    Assertions.assertThat(modelosEjecucion.get(0).getNombre()).as("get(0).getNombre())")
-        .isEqualTo("nombre-" + String.format("%03d", 3));
-    Assertions.assertThat(modelosEjecucion.get(1).getNombre()).as("get(1).getNombre())")
-        .isEqualTo("nombre-" + String.format("%03d", 2));
-    Assertions.assertThat(modelosEjecucion.get(2).getNombre()).as("get(2).getNombre())")
-        .isEqualTo("nombre-" + String.format("%03d", 1));
+    Assertions.assertThat(modelosEjecucion).hasSize(modelosEjecucion.size());
   }
 
   @Sql

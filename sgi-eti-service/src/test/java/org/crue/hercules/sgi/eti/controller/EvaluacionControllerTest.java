@@ -918,6 +918,7 @@ public class EvaluacionControllerTest extends BaseControllerTest {
     convocatoriaReunion.setComite(comite);
     convocatoriaReunion.setFechaEvaluacion(Instant.now());
     convocatoriaReunion.setFechaLimite(Instant.now());
+    convocatoriaReunion.setVideoconferencia(false);
     convocatoriaReunion.setLugar("Lugar");
     convocatoriaReunion.setOrdenDia("Orden del día convocatoria reunión");
     convocatoriaReunion.setAnio(2020);
@@ -1041,6 +1042,7 @@ public class EvaluacionControllerTest extends BaseControllerTest {
     convocatoriaReunion.setComite(comite);
     convocatoriaReunion.setFechaEvaluacion(Instant.now());
     convocatoriaReunion.setFechaLimite(Instant.now());
+    convocatoriaReunion.setVideoconferencia(false);
     convocatoriaReunion.setLugar("Lugar");
     convocatoriaReunion.setOrdenDia("Orden del día convocatoria reunión");
     convocatoriaReunion.setAnio(2020);

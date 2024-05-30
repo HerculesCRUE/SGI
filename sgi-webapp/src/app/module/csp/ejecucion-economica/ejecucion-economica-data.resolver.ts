@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { sortGrupoEquipoByPersonaNombre, sortGrupoEquipoByRolProyectoOrden } from '@core/models/csp/grupo-equipo';
+import { sortProyectoEquipoByPersonaNombre, sortProyectoEquipoByRolProyectoOrden } from '@core/models/csp/proyecto-equipo';
 import { TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
+import { IPersona } from '@core/models/sgp/persona';
 import { SgiResolverResolver } from '@core/resolver/sgi-resolver';
 import { ConfigService } from '@core/services/csp/config.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
@@ -34,7 +37,7 @@ export class EjecucionEconomicaDataResolver extends SgiResolverResolver<IEjecuci
     private personaService: PersonaService,
     private proyectoService: ProyectoService,
     private proyectoSgeService: ProyectoSgeService,
-    private configuracionService: ConfigService,
+    private configuracionService: ConfigService
   ) {
     super(logger, router, snackBar, MSG_NOT_FOUND);
   }
@@ -64,29 +67,64 @@ export class EjecucionEconomicaDataResolver extends SgiResolverResolver<IEjecuci
       switchMap(response =>
         from(response.relaciones).pipe(
           mergeMap(relacion => {
-            let serviceGetResponsables: GrupoService | ProyectoService;
+            let responsables$: Observable<IPersona[]>;
 
             switch (relacion.tipoEntidad) {
               case TipoEntidad.GRUPO:
-                serviceGetResponsables = this.grupoService;
+                responsables$ = this.grupoService.findInvestigadoresPrincipales(relacion.id).pipe(
+                  filter(responsables => !!responsables),
+                  switchMap(responsables => this.personaService.findAllByIdIn(responsables.map(responsable => responsable.persona.id)).pipe(
+                    map(personas => {
+                      responsables.forEach(responsable => {
+                        responsable.persona = personas.items.find(persona => persona.id === responsable.persona.id);
+                      })
+
+                      responsables.sort((a, b) => {
+                        return sortGrupoEquipoByRolProyectoOrden(a, b)
+                          || sortGrupoEquipoByPersonaNombre(a, b);
+                      });
+
+                      return responsables.map(responsable => responsable.persona)
+                    }),
+                    catchError((error) => {
+                      this.logger.error(error);
+                      return EMPTY;
+                    })
+                  ))
+                );
+
                 break;
               case TipoEntidad.PROYECTO:
-                serviceGetResponsables = this.proyectoService;
+                responsables$ = this.proyectoService.findInvestigadoresPrincipales(relacion.id).pipe(
+                  filter(responsables => !!responsables),
+                  switchMap(responsables => this.personaService.findAllByIdIn(responsables.map(responsable => responsable.persona.id)).pipe(
+                    map(personas => {
+                      responsables.forEach(responsable => {
+                        responsable.persona = personas.items.find(persona => persona.id === responsable.persona.id);
+                      })
+
+                      responsables.sort((a, b) => {
+                        return sortProyectoEquipoByRolProyectoOrden(a, b)
+                          || sortProyectoEquipoByPersonaNombre(a, b);
+                      });
+
+                      return responsables.map(responsable => responsable.persona)
+                    }),
+                    catchError((error) => {
+                      this.logger.error(error);
+                      return EMPTY;
+                    })
+                  ))
+                );
+
                 break;
               default:
                 throw Error(`Invalid tipoEntidad "${relacion.tipoEntidad}"`);
             }
 
-            return serviceGetResponsables.findPersonaRefInvestigadoresPrincipales(relacion.id).pipe(
-              filter(personaRefs => !!personaRefs),
-              switchMap(personaRefs => this.personaService.findAllByIdIn(personaRefs).pipe(
-                catchError((error) => {
-                  this.logger.error(error);
-                  return EMPTY;
-                })
-              )),
+            return responsables$.pipe(
               map(responsables => {
-                relacion.responsables = responsables.items;
+                relacion.responsables = responsables;
                 return relacion;
               })
             );

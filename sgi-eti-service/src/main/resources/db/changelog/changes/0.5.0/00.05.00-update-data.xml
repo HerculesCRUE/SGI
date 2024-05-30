@@ -1,0 +1,215 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="00.05.00-respuesta">
+    <delete tableName="respuesta">
+      <where>apartado_id = (SELECT a.id FROM ${schemaPrefix}apartado a INNER JOIN
+      ${schemaPrefix}bloque b on a.bloque_id = b.id INNER JOIN ${schemaPrefix}apartado padre on
+      padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden = 3 AND padre.orden = 7 and
+      a.orden = 7) </where>
+    </delete>
+
+    <sql>UPDATE ${schemaPrefix}respuesta SET apartado_id = ( SELECT a.id FROM
+      ${schemaPrefix}apartado a INNER JOIN ${schemaPrefix}bloque b on a.bloque_id = b.id INNER JOIN
+      ${schemaPrefix}apartado padre on padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden =
+      3 and padre.orden = 7 and a.orden = 7 ) WHERE apartado_id in ( SELECT a.id FROM
+      ${schemaPrefix}apartado a INNER JOIN ${schemaPrefix}bloque b on a.bloque_id = b.ID INNER JOIN
+      ${schemaPrefix}apartado padre on padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden =
+      3 and padre.orden = 7 and a.orden = 8 )</sql>
+
+    <sql>UPDATE ${schemaPrefix}respuesta SET apartado_id = ( SELECT a.id FROM
+      ${schemaPrefix}apartado a INNER JOIN ${schemaPrefix}bloque b on a.bloque_id = b.id INNER JOIN
+      ${schemaPrefix}apartado padre on padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden =
+      3 and padre.orden = 7 and a.orden = 8 ) WHERE apartado_id in ( SELECT a.id FROM
+      ${schemaPrefix}apartado a INNER JOIN ${schemaPrefix}bloque b on a.bloque_id = b.ID INNER JOIN
+      ${schemaPrefix}apartado padre on padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden =
+      3 and padre.orden = 7 and a.orden = 9 )</sql>
+
+    <sql>UPDATE ${schemaPrefix}respuesta SET apartado_id = ( SELECT a.id FROM
+      ${schemaPrefix}apartado a INNER JOIN ${schemaPrefix}bloque b on a.bloque_id = b.id INNER JOIN
+      ${schemaPrefix}apartado padre on padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden =
+      3 and padre.orden = 7 and a.orden = 9 ) WHERE apartado_id in ( SELECT a.id FROM
+      ${schemaPrefix}apartado a INNER JOIN ${schemaPrefix}bloque b on a.bloque_id = b.ID INNER JOIN
+      ${schemaPrefix}apartado padre on padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden =
+      3 and padre.orden = 7 and a.orden = 10 )</sql>
+
+    <sql>UPDATE ${schemaPrefix}respuesta SET apartado_id = ( SELECT a.id FROM
+      ${schemaPrefix}apartado a INNER JOIN ${schemaPrefix}bloque b on a.bloque_id = b.id INNER JOIN
+      ${schemaPrefix}apartado padre on padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden =
+      3 and padre.orden = 7 and a.orden = 10 ) WHERE apartado_id in ( SELECT a.id FROM
+      ${schemaPrefix}apartado a INNER JOIN ${schemaPrefix}bloque b on a.bloque_id = b.ID INNER JOIN
+      ${schemaPrefix}apartado padre on padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden =
+      3 and padre.orden = 7 and a.orden = 11 )</sql>
+
+    <sql>UPDATE ${schemaPrefix}respuesta SET apartado_id = ( SELECT a.id FROM
+      ${schemaPrefix}apartado a INNER JOIN ${schemaPrefix}bloque b on a.bloque_id = b.id INNER JOIN
+      ${schemaPrefix}apartado padre on padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden =
+      3 and padre.orden = 7 and a.orden = 11 ) WHERE apartado_id in ( SELECT a.id FROM
+      ${schemaPrefix}apartado a INNER JOIN ${schemaPrefix}bloque b on a.bloque_id = b.ID INNER JOIN
+      ${schemaPrefix}apartado padre on padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden =
+      3 and padre.orden = 7 and a.orden = 12 )</sql>
+
+    <sql>UPDATE ${schemaPrefix}respuesta SET apartado_id = ( SELECT a.id FROM
+      ${schemaPrefix}apartado a INNER JOIN ${schemaPrefix}bloque b on a.bloque_id = b.id INNER JOIN
+      ${schemaPrefix}apartado padre on padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden =
+      3 and padre.orden = 7 and a.orden = 12 ) WHERE apartado_id in ( SELECT a.id FROM
+      ${schemaPrefix}apartado a INNER JOIN ${schemaPrefix}bloque b on a.bloque_id = b.ID INNER JOIN
+      ${schemaPrefix}apartado padre on padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden =
+      3 and padre.orden = 7 and a.orden = 13 )</sql>
+
+    <sql>UPDATE ${schemaPrefix}respuesta SET apartado_id = ( SELECT a.id FROM
+      ${schemaPrefix}apartado a INNER JOIN ${schemaPrefix}bloque b on a.bloque_id = b.id INNER JOIN
+      ${schemaPrefix}apartado padre on padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden =
+      3 and padre.orden = 7 and a.orden = 13 ) WHERE apartado_id in ( SELECT a.id FROM
+      ${schemaPrefix}apartado a INNER JOIN ${schemaPrefix}bloque b on a.bloque_id = b.ID INNER JOIN
+      ${schemaPrefix}apartado padre on padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden =
+      3 and padre.orden = 7 and a.orden = 14 )</sql>
+
+    <sql>UPDATE ${schemaPrefix}respuesta SET apartado_id = ( SELECT a.id FROM
+      ${schemaPrefix}apartado a INNER JOIN ${schemaPrefix}bloque b on a.bloque_id = b.id INNER JOIN
+      ${schemaPrefix}apartado padre on padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden =
+      3 and padre.orden = 7 and a.orden = 14 ) WHERE apartado_id in ( SELECT a.id FROM
+      ${schemaPrefix}apartado a INNER JOIN ${schemaPrefix}bloque b on a.bloque_id = b.ID INNER JOIN
+      ${schemaPrefix}apartado padre on padre.id = a.padre_id WHERE b.formulario_id = 2 and b.orden =
+      3 and padre.orden = 7 and a.orden = 15 )</sql>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.05.00-convocatoria-reunion">
+    <update tableName="convocatoria_reunion">
+      <column name="videoconferencia" valueBoolean="false"></column>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.05.00-strip-html-function">
+    <sql dbms="mssql">
+        <![CDATA[
+        CREATE FUNCTION ${schemaPrefix}stripHtmlFunction
+        (
+        @HTMLText nvarchar(MAX)
+        )
+        RETURNS nvarchar(MAX)
+        AS
+        BEGIN
+        DECLARE @Start  int
+        DECLARE @End    int
+        DECLARE @Length int
+
+        set @HTMLText = replace(@htmlText, '<br>',CHAR(13) + CHAR(10))
+        set @HTMLText = replace(@htmlText, '<br/>',CHAR(13) + CHAR(10))
+        set @HTMLText = replace(@htmlText, '<br />',CHAR(13) + CHAR(10))
+        set @HTMLText = replace(@htmlText, '<li>','- ')
+        set @HTMLText = replace(@htmlText, '</li>',CHAR(13) + CHAR(10))
+
+        set @HTMLText = replace(@htmlText, '&rsquo;', '''')
+        set @HTMLText = replace(@htmlText, '&quot;', '"')
+        set @HTMLText = replace(@htmlText, '&amp;', '&')
+        set @HTMLText = replace(@htmlText, '&euro;', '€')
+        set @HTMLText = replace(@htmlText, '&lt;', '<')
+        set @HTMLText = replace(@htmlText, '&gt;', '>')
+        set @HTMLText = replace(@htmlText, '&oelig;', 'oe')
+        set @HTMLText = replace(@htmlText, '&nbsp;', ' ')
+        set @HTMLText = replace(@htmlText, '&copy;', '©')
+        set @HTMLText = replace(@htmlText, '&laquo;', '«')
+        set @HTMLText = replace(@htmlText, '&reg;', '®')
+        set @HTMLText = replace(@htmlText, '&plusmn;', '±')
+        set @HTMLText = replace(@htmlText, '&sup2;', '²')
+        set @HTMLText = replace(@htmlText, '&sup3;', '³')
+        set @HTMLText = replace(@htmlText, '&micro;', 'µ')
+        set @HTMLText = replace(@htmlText, '&middot;', '·')
+        set @HTMLText = replace(@htmlText, '&ordm;', 'º')
+        set @HTMLText = replace(@htmlText, '&raquo;', '»')
+        set @HTMLText = replace(@htmlText, '&frac14;', '¼')
+        set @HTMLText = replace(@htmlText, '&frac12;', '½')
+        set @HTMLText = replace(@htmlText, '&frac34;', '¾')
+        set @HTMLText = replace(@htmlText, '&Aelig', 'Æ')
+        set @HTMLText = replace(@htmlText, '&Ccedil;', 'Ç')
+        set @HTMLText = replace(@htmlText, '&Egrave;', 'È')
+        set @HTMLText = replace(@htmlText, '&Eacute;', 'É')
+        set @HTMLText = replace(@htmlText, '&Ecirc;', 'Ê')
+        set @HTMLText = replace(@htmlText, '&Ouml;', 'Ö')
+        set @HTMLText = replace(@htmlText, '&agrave;', 'à')
+        set @HTMLText = replace(@htmlText, '&acirc;', 'â')
+        set @HTMLText = replace(@htmlText, '&auml;', 'ä')
+        set @HTMLText = replace(@htmlText, '&aelig;', 'æ')
+        set @HTMLText = replace(@htmlText, '&ccedil;', 'ç')
+        set @HTMLText = replace(@htmlText, '&egrave;', 'è')
+        set @HTMLText = replace(@htmlText, '&eacute;', 'é')
+        set @HTMLText = replace(@htmlText, '&ecirc;', 'ê')
+        set @HTMLText = replace(@htmlText, '&euml;', 'ë')
+        set @HTMLText = replace(@htmlText, '&icirc;', 'î')
+        set @HTMLText = replace(@htmlText, '&ocirc;', 'ô')
+        set @HTMLText = replace(@htmlText, '&ouml;', 'ö')
+        set @HTMLText = replace(@htmlText, '&divide;', '÷')
+        set @HTMLText = replace(@htmlText, '&oslash;', 'ø')
+        set @HTMLText = replace(@htmlText, '&ugrave;', 'ù')
+        set @HTMLText = replace(@htmlText, '&uacute;', 'ú')
+        set @HTMLText = replace(@htmlText, '&ucirc;', 'û')
+        set @HTMLText = replace(@htmlText, '&uuml;', 'ü')
+        set @HTMLText = replace(@htmlText, '&quot;', '"')
+        set @HTMLText = replace(@htmlText, '&amp;', '&')
+        set @HTMLText = replace(@htmlText, '&lsaquo;', '<')
+        set @HTMLText = replace(@htmlText, '&rsaquo;', '>')
+
+        -- Remove anything between <STYLE> tags
+        SET @Start = CHARINDEX('<STYLE', @HTMLText)
+        SET @End = CHARINDEX('</STYLE>', @HTMLText, CHARINDEX('<', @HTMLText)) + 7
+        SET @Length = (@End - @Start) + 1
+
+        WHILE (@Start > 0 AND @End > 0 AND @Length > 0) BEGIN
+        SET @HTMLText = STUFF(@HTMLText, @Start, @Length, '')
+        SET @Start = CHARINDEX('<STYLE', @HTMLText)
+        SET @End = CHARINDEX('</STYLE>', @HTMLText, CHARINDEX('</STYLE>', @HTMLText)) + 7
+        SET @Length = (@End - @Start) + 1
+        END
+
+        -- Remove anything between <whatever> tags
+        SET @Start = CHARINDEX('<', @HTMLText)
+        SET @End = CHARINDEX('>', @HTMLText, CHARINDEX('<', @HTMLText))
+        SET @Length = (@End - @Start) + 1
+
+        WHILE (@Start > 0 AND @End > 0 AND @Length > 0) BEGIN
+        SET @HTMLText = STUFF(@HTMLText, @Start, @Length, '')
+        SET @Start = CHARINDEX('<', @HTMLText)
+        SET @End = CHARINDEX('>', @HTMLText, CHARINDEX('<', @HTMLText))
+        SET @Length = (@End - @Start) + 1
+        END
+
+        RETURN LTRIM(RTRIM(@HTMLText))
+        END
+        ]]>
+    </sql>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.05.00-get-all-json-values-function">
+    <sql dbms="mssql">
+        <![CDATA[
+       CREATE FUNCTION ${schemaPrefix}getAllJSONValuesFunction
+        (
+            @jsonString NVARCHAR(MAX)
+        )
+        RETURNS NVARCHAR(MAX)
+        AS
+        BEGIN
+            DECLARE @result NVARCHAR(MAX)
+            SET @result = ''
+
+            SELECT @result = @result + [Value] + ','
+            FROM OPENJSON(@jsonString)
+
+            -- Eliminar la última coma
+            IF LEN(@result) > 0
+                SET @result = LEFT(@result, LEN(@result) - 1)
+
+            RETURN @result
+        END
+        ]]>
+    </sql>
+  </changeSet>
+</databaseChangeLog>

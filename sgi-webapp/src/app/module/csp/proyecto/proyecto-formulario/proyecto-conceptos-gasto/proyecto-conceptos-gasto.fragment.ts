@@ -10,7 +10,7 @@ import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { DateTime } from 'luxon';
-import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, from, merge, of } from 'rxjs';
 import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 import { compareConceptoGasto, getFechaFinConceptoGasto, getFechaInicioConceptoGasto } from '../../../proyecto-concepto-gasto/proyecto-concepto-gasto.utils';
 
@@ -44,6 +44,7 @@ export interface ConceptoGastoListado {
 
 export class ProyectoConceptosGastoFragment extends Fragment {
 
+  proyecto$ = new Subject<IProyecto>();
   proyectoConceptosGastoPermitidos$ = new BehaviorSubject<ConceptoGastoListado[]>([]);
   proyectoConceptosGastoNoPermitidos$ = new BehaviorSubject<ConceptoGastoListado[]>([]);
   private proyectoConceptosGastoEliminados: StatusWrapper<IProyectoConceptoGasto>[] = [];
@@ -75,12 +76,26 @@ export class ProyectoConceptosGastoFragment extends Fragment {
     return form;
   }
 
+  public reloadData(): void {
+    this.loadTablesData();
+  }
+
   protected onInitialize(): void {
+    this.loadTablesData();
+
+    this.subscriptions.push(
+      this.proyecto$.subscribe(proyecto => this.proyecto = proyecto)
+    );
+  }
+
+  private loadTablesData(): void {
     const key = this.getKey() as number;
     if (key) {
 
       this.subscriptions.push(
-        this.proyectoService.findAllProyectoConceptosGastoNoPermitidos(key as number).pipe(
+        this.proyecto$.pipe(
+          tap(proyecto => this.proyecto = proyecto),
+          switchMap(() => this.proyectoService.findAllProyectoConceptosGastoNoPermitidos(key as number)),
           map((response) => response.items.map(item => {
             const conceptoGastoListado = {
               proyectoConceptoGasto: new StatusWrapper<IProyectoConceptoGasto>(item),
@@ -131,7 +146,9 @@ export class ProyectoConceptosGastoFragment extends Fragment {
         }));
 
       this.subscriptions.push(
-        this.proyectoService.findAllProyectoConceptosGastoPermitidos(key as number).pipe(
+        this.proyecto$.pipe(
+          tap(proyecto => this.proyecto = proyecto),
+          switchMap(() => this.proyectoService.findAllProyectoConceptosGastoPermitidos(key as number)),
           map((response) => response.items.map(item => {
             const conceptoGastoListado = {
               proyectoConceptoGasto: new StatusWrapper<IProyectoConceptoGasto>(item),

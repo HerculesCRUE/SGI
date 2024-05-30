@@ -63,6 +63,10 @@ export class SelectEmpresaPublicTypeComponent extends FieldType implements OnIni
       return;
     }
 
+    if (this.value.id) {
+      this.formControl.setValue(this.value.id);
+    }
+
     this.empresas$ = this.empresaService.findById(this.value).pipe(
       map(response => [response]),
       catchError((error) => {

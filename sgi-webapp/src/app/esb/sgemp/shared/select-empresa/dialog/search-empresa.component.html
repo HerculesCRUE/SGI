@@ -86,10 +86,13 @@
 
   <ng-container *sgiHasAuthority="'ESB-EMP-C'">
     <div class="separation-button">
-      <button color="three" mat-raised-button (click)="openEmpresaCreateModal()">
+      <button color="three" mat-raised-button (click)="openEmpresaCreateModal()" [disabled]="sgempAltaDisabled">
         <mat-icon color="accent">add_circle</mat-icon>
         {{ 'btn.request.add.entity' | translate:msgParamEntity }}
       </button>
+      <sgi-field-info matSuffix [visible]="sgempAltaDisabled"
+        message="{{'msg.sgemp.alta-empresa-disabled' | translate}}">
+      </sgi-field-info>
     </div>
   </ng-container>
 </sgi-dialog-content>

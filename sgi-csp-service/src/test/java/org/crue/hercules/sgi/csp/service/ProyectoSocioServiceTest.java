@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.service;
 
+import static org.mockito.ArgumentMatchers.anyLong;
+
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -16,10 +18,11 @@ import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoResponsableEconomicoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioEquipoRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoJustificacionDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoPagoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioRepository;
-import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoJustificacionDocumentoRepository;
+import org.crue.hercules.sgi.csp.repository.RolSocioRepository;
 import org.crue.hercules.sgi.csp.service.impl.ProyectoSocioServiceImpl;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,6 +56,8 @@ class ProyectoSocioServiceTest extends BaseServiceTest {
   private ProyectoEquipoRepository proyectoEquipoRepository;
   @Mock
   private ProyectoResponsableEconomicoRepository proyectoResponsableEconomicoRepository;
+  @Mock
+  private RolSocioRepository rolSocioRepository;
 
   private ProyectoHelper proyectoHelper;
   private ProyectoSocioService service;
@@ -62,7 +67,7 @@ class ProyectoSocioServiceTest extends BaseServiceTest {
     proyectoHelper = new ProyectoHelper(proyectoRepository, proyectoEquipoRepository,
         proyectoResponsableEconomicoRepository);
     service = new ProyectoSocioServiceImpl(repository, equipoRepository, periodoPagoRepository, documentoRepository,
-        periodoJustificacionRepository, proyectoRepository, this.proyectoHelper);
+        periodoJustificacionRepository, proyectoRepository, rolSocioRepository, this.proyectoHelper);
   }
 
   @Test
@@ -180,17 +185,20 @@ class ProyectoSocioServiceTest extends BaseServiceTest {
       throws Exception {
     // given: a ProyectoSocio with RolSocio with coordinador false
     Long proyectoId = 1L;
+    Long rolUniversidadSocio = 1L;
     Proyecto proyecto = generarMockProyecto(proyectoId);
     ProyectoSocio proyectoSocioExistente = generarMockProyectoSocio(1L);
     proyecto.getEstado().setEstado(EstadoProyecto.Estado.CONCEDIDO);
     proyecto.setColaborativo(true);
-    proyecto.setCoordinadorExterno(true);
+    proyecto.setRolUniversidadId(rolUniversidadSocio);
 
     ProyectoSocio proyectoSocio = generarMockProyectoSocio(1L);
     proyectoSocio.setRolSocio(RolSocio.builder().id(2L).coordinador(false).build());
 
     BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(proyecto));
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(proyectoSocioExistente));
+    BDDMockito.given(rolSocioRepository.findById(anyLong()))
+        .willReturn(Optional.of(RolSocio.builder().coordinador(false).build()));
     BDDMockito.given(repository.count(ArgumentMatchers.<Specification<ProyectoSocio>>any())).willReturn(0L);
 
     Assertions.assertThatThrownBy(
@@ -198,7 +206,7 @@ class ProyectoSocioServiceTest extends BaseServiceTest {
         () -> service.update(proyectoSocio))
         // then: throw exception
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Debe existir al menos un socio con TipoRolSocio que tenga el campo coordinador a true");
+        .hasMessage("Debe existir al menos un socio coordinador");
   }
 
   @Test
@@ -239,14 +247,17 @@ class ProyectoSocioServiceTest extends BaseServiceTest {
     // given: no existing id
     Long proyectoId = 1L;
     Proyecto proyecto = generarMockProyecto(proyectoId);
+    Long rolUniversidadSocio = 1L;
     Long id = 1L;
     ProyectoSocio proyectoSocio = generarMockProyectoSocio(1L);
     proyecto.getEstado().setEstado(EstadoProyecto.Estado.CONCEDIDO);
     proyecto.setColaborativo(true);
-    proyecto.setCoordinadorExterno(true);
+    proyecto.setRolUniversidadId(rolUniversidadSocio);
 
     BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(proyecto));
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(proyectoSocio));
+    BDDMockito.given(rolSocioRepository.findById(anyLong()))
+        .willReturn(Optional.of(RolSocio.builder().coordinador(false).build()));
     BDDMockito.given(repository.count(ArgumentMatchers.<Specification<ProyectoSocio>>any())).willReturn(0L);
 
     Assertions.assertThatThrownBy(
@@ -254,7 +265,7 @@ class ProyectoSocioServiceTest extends BaseServiceTest {
         () -> service.delete(id))
         // then: NotFoundException is thrown
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Debe existir al menos un socio con TipoRolSocio que tenga el campo coordinador a true");
+        .hasMessage("Debe existir al menos un socio coordinador");
   }
 
   @Test

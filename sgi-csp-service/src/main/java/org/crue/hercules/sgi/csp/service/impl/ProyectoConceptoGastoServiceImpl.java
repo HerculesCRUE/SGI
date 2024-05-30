@@ -83,9 +83,12 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
     Proyecto proyecto = proyectoRepository.findById(proyectoConceptoGasto.getProyectoId())
         .orElseThrow(() -> new ProyectoNotFoundException(proyectoConceptoGasto.getProyectoId()));
 
-    if (proyectoConceptoGasto.getFechaInicio() != null) {
-      if (proyectoConceptoGasto.getFechaFin() != null) {
-        Assert.isTrue(!proyectoConceptoGasto.getFechaFin().isAfter(proyecto.getFechaFin()),
+    Instant proyectoFechaFin = proyecto.getFechaFinDefinitiva() != null ? proyecto.getFechaFinDefinitiva()
+        : proyecto.getFechaFin();
+
+    if (proyectoConceptoGasto.getFechaInicio() != null && proyecto.getFechaInicio() != null) {
+      if (proyectoConceptoGasto.getFechaFin() != null && proyectoFechaFin != null) {
+        Assert.isTrue(!proyectoConceptoGasto.getFechaFin().isAfter(proyectoFechaFin),
             "La fecha de fin no puede ser posterior a la fecha de fin del proyecto");
 
         if (proyectoConceptoGasto.getFechaInicio() != null) {
@@ -93,7 +96,7 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
               "La fecha de inicio debe ser anterior a la fecha de fin");
         }
       } else if (proyectoConceptoGasto.getFechaInicio() != null) {
-        Assert.isTrue(proyectoConceptoGasto.getFechaInicio().isBefore(proyecto.getFechaFin()),
+        Assert.isTrue(proyectoFechaFin == null || proyectoConceptoGasto.getFechaInicio().isBefore(proyectoFechaFin),
             "La fecha de inicio no puede ser posterior a la fecha de fin del proyecto");
       }
     }
@@ -137,18 +140,23 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
     Proyecto proyecto = proyectoRepository.findById(proyectoConceptoGastoActualizar.getProyectoId())
         .orElseThrow(() -> new ProyectoNotFoundException(proyectoConceptoGastoActualizar.getProyectoId()));
 
-    if (proyectoConceptoGastoActualizar.getFechaInicio() != null) {
-      if (proyectoConceptoGastoActualizar.getFechaFin() != null) {
-        Assert.isTrue(!proyectoConceptoGastoActualizar.getFechaFin().isAfter(proyecto.getFechaFin()),
+    Instant proyectoFechaFin = proyecto.getFechaFinDefinitiva() != null ? proyecto.getFechaFinDefinitiva()
+        : proyecto.getFechaFin();
+
+    if (proyectoConceptoGastoActualizar.getFechaInicio() != null && proyecto.getFechaInicio() != null) {
+      if (proyectoConceptoGastoActualizar.getFechaFin() != null && proyectoFechaFin != null) {
+        Assert.isTrue(!proyectoConceptoGastoActualizar.getFechaFin().isAfter(proyectoFechaFin),
             "La fecha de fin no puede ser posterior a la fecha de fin del proyecto");
 
         if (proyectoConceptoGastoActualizar.getFechaInicio() != null) {
           Assert.isTrue(
-              proyectoConceptoGastoActualizar.getFechaInicio().isBefore(proyectoConceptoGastoActualizar.getFechaFin()),
+              proyectoConceptoGastoActualizar.getFechaInicio()
+                  .isBefore(proyectoConceptoGastoActualizar.getFechaFin()),
               "La fecha de inicio debe ser anterior a la fecha de fin");
         }
       } else if (proyectoConceptoGastoActualizar.getFechaInicio() != null) {
-        Assert.isTrue(proyectoConceptoGastoActualizar.getFechaInicio().isBefore(proyecto.getFechaFin()),
+        Assert.isTrue(
+            proyectoFechaFin == null || proyectoConceptoGastoActualizar.getFechaInicio().isBefore(proyectoFechaFin),
             "La fecha de inicio no puede ser posterior a la fecha de fin del proyecto");
       }
     }
@@ -310,6 +318,25 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
     return returnValue;
   }
 
+  /**
+   * Comprueba si alguno de los {@link ProyectoConceptoGasto} del {@link Proyecto}
+   * tienen fechas
+   * 
+   * @param proyectoId el id del {@link Proyecto}.
+   * @return true si existen y false en caso contrario.
+   */
+  @Override
+  public boolean proyectoHasConceptosGastoWithDates(Long proyectoId) {
+    log.debug("proyectoHasConceptosGastoWithDates({})  - start", proyectoId);
+
+    Specification<ProyectoConceptoGasto> specs = ProyectoConceptoGastoSpecifications.byProyecto(proyectoId)
+        .and(ProyectoConceptoGastoSpecifications.withFechaInicioOrFechaFin());
+
+    boolean hasConceptosGastoWithDates = repository.count(specs) > 0;
+    log.debug("proyectoHasConceptosGastoWithDates({})  - end", proyectoId);
+    return hasConceptosGastoWithDates;
+  }
+
   private boolean compareWithCodigosEcConvocatoria(ProyectoConceptoGastoCodigoEc conceptoGastoProyecto,
       List<ConvocatoriaConceptoGastoCodigoEc> conceptosGastoConvocatoria) {
 
@@ -321,8 +348,9 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
     if (conceptoGastoConvocatoriaEncontrado != null) {
       return !conceptoGastoProyecto.getCodigoEconomicoRef()
           .equals(conceptoGastoConvocatoriaEncontrado.getCodigoEconomicoRef())
-          || !conceptoGastoProyecto.getFechaInicio().equals(conceptoGastoConvocatoriaEncontrado.getFechaInicio())
-          || !conceptoGastoProyecto.getFechaFin().equals(conceptoGastoConvocatoriaEncontrado.getFechaFin())
+          || !Objects.equals(conceptoGastoProyecto.getFechaInicio(),
+              conceptoGastoConvocatoriaEncontrado.getFechaInicio())
+          || !Objects.equals(conceptoGastoProyecto.getFechaFin(), conceptoGastoConvocatoriaEncontrado.getFechaFin())
           || (StringUtils.isNotBlank(conceptoGastoProyecto.getObservaciones()) != StringUtils
               .isNotBlank(conceptoGastoConvocatoriaEncontrado.getObservaciones())
               && !conceptoGastoProyecto.getObservaciones()
@@ -351,6 +379,22 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
   }
 
   /**
+   * Obtiene los {@link ProyectoConceptoGasto} de un {@link Proyecto}
+   *
+   * @param proyectoId el id del {@link Proyecto}.
+   * @return la lista de entidades {@link ProyectoConceptoGasto} del
+   *         {@link Proyecto}.
+   */
+  @Override
+  public List<ProyectoConceptoGasto> findAllByProyectoId(Long proyectoId) {
+    log.debug("findAllByProyectoId(Long proyectoId) - start");
+    List<ProyectoConceptoGasto> returnValue = repository
+        .findAllByProyectoIdAndConceptoGastoActivoTrue(proyectoId);
+    log.debug("findAllByProyectoId(Long proyectoId) - end");
+    return returnValue;
+  }
+
+  /**
    * Se valida la unicidad del concepto de gasto. Para un {@link Proyecto} el
    * mismo concepto de gasto solo puede aparecer una vez, salvo que lo haga en
    * periodos de meses no solapados (independientemente del valor del campo
@@ -359,7 +403,8 @@ public class ProyectoConceptoGastoServiceImpl implements ProyectoConceptoGastoSe
    * @param proyectoConceptoGasto el {@link ProyectoConceptoGasto} a evaluar
    * @return true validación correcta/ false validacion incorrecta
    */
-  private boolean existsProyectoConceptoGastoConMesesSolapados(ProyectoConceptoGasto proyectoConceptoGasto) {
+  @Override
+  public boolean existsProyectoConceptoGastoConMesesSolapados(ProyectoConceptoGasto proyectoConceptoGasto) {
     log.debug("existsProyectoConceptoGastoConMesesSolapados(ProyectoConceptoGasto proyectoConceptoGasto)");
 
     Specification<ProyectoConceptoGasto> specByProyecto = ProyectoConceptoGastoSpecifications

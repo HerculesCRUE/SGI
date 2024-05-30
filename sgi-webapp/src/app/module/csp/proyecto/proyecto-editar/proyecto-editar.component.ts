@@ -124,7 +124,9 @@ export class ProyectoEditarComponent extends ActionComponent implements OnInit {
     }
     else {
       this.actionService.saveOrUpdate().subscribe(
-        () => { },
+        () => {
+          this.snackBarService.showSuccess(this.textoEditarSuccess);
+        },
         (error) => {
           this.logger.error(error);
           if (error instanceof SgiError) {
@@ -135,9 +137,6 @@ export class ProyectoEditarComponent extends ActionComponent implements OnInit {
           else {
             this.snackBarService.showError(this.textoEditarError);
           }
-        },
-        () => {
-          this.snackBarService.showSuccess(this.textoEditarSuccess);
         }
       );
     }

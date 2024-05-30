@@ -93,7 +93,8 @@ export class EvaluacionGeneralListadoExportService extends
       }, {
         title: this.translate.instant(EVALUACION_VERSION_KEY),
         name: 'version',
-        type: ColumnType.STRING
+        type: ColumnType.NUMBER,
+        format: '#'
       }
     ] as ISgiColumnReport[];
   }

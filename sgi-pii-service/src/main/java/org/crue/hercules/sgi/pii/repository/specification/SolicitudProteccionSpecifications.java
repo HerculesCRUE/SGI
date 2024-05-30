@@ -2,7 +2,6 @@ package org.crue.hercules.sgi.pii.repository.specification;
 
 import javax.persistence.criteria.Predicate;
 
-import org.crue.hercules.sgi.framework.data.jpa.domain.Activable_;
 import org.crue.hercules.sgi.pii.model.Invencion_;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion_;
@@ -20,8 +19,7 @@ public class SolicitudProteccionSpecifications {
     return (root, query, cb) -> {
       Predicate queryPredicate = cb.and(
           cb.equal(root.get(SolicitudProteccion_.viaProteccion).get(ViaProteccion_.id), idViaProteccion),
-          cb.equal(root.get(SolicitudProteccion_.invencion).get(Invencion_.id), idInvencion),
-          cb.equal(root.get(Activable_.activo), Boolean.TRUE));
+          cb.equal(root.get(SolicitudProteccion_.invencion).get(Invencion_.id), idInvencion));
       if (solicitudProteccionId != null) {
         return cb.and(queryPredicate, cb.notEqual(root.get(SolicitudProteccion_.id), solicitudProteccionId));
       }

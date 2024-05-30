@@ -14,4 +14,6 @@ public interface ProyectoFacturacionRepository
   Page<ProyectoFacturacion> findByProyectoId(Long proyectoId, Pageable paging);
 
   Optional<ProyectoFacturacion> findFirstByProyectoIdOrderByNumeroPrevisionDesc(Long proyectoId);
+
+  boolean existsByProyectoProrrogaId(Long proyectoProrrogaId);
 }

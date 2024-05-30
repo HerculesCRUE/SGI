@@ -1,6 +1,7 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { TipoJustificacion } from '@core/enums/tipo-justificacion';
 import { IConvocatoriaPeriodoJustificacion } from '@core/models/csp/convocatoria-periodo-justificacion';
+import { Estado } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
 import { Fragment } from '@core/services/action-service';
@@ -10,7 +11,7 @@ import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
-import { concatMap, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
+import { concatMap, filter, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { comparePeriodoJustificacion, getFechaFinPeriodoSeguimiento, getFechaInicioPeriodoSeguimiento } from '../../../proyecto-periodo-seguimiento/proyecto-periodo-seguimiento.utils';
 
 const PROYECTO_PERIODO_JUSTIFICACION_NO_COINCIDE_KEY = marker('info.csp.proyecto-periodo-justificacion.no-coincide-convocatoria');
@@ -60,76 +61,80 @@ export class ProyectoCalendarioJustificacionFragment extends Fragment {
 
   protected onInitialize(): void {
     if (this.getKey()) {
-      this.proyectoService.findAllPeriodoJustificacion(this.getKey() as number).pipe(
-        map((response) => response.items.map(item => {
-          const periodoJustificacionListado = {
-            proyectoPeriodoJustificacion: new StatusWrapper<IProyectoPeriodoJustificacion>(item),
-          } as IPeriodoJustificacionListado;
-          return periodoJustificacionListado;
-        })),
-        concatMap(periodosJustificacionListado => {
-          if (this.readonly) {
-            return of(periodosJustificacionListado);
-          }
-          return from(periodosJustificacionListado)
-            .pipe(
-              mergeMap(periodoJustificacionListado =>
-                this.proyectoPeriodoJustifiacionService.checkDeleteable(periodoJustificacionListado.proyectoPeriodoJustificacion.value.id)
-                  .pipe(
-                    map(isDeleteable => {
-                      periodoJustificacionListado.isProyectoPeriodoJustificacionDeleteable = isDeleteable;
-                      return periodoJustificacionListado;
-                    })
-                  )
-              ),
-              toArray()
-            );
-        }),
-        switchMap(periodosJustificacionListado => {
-          let requestConvocatoriaPeriodosJustificacion: Observable<IPeriodoJustificacionListado[]>;
-
-          if (this.proyecto.convocatoriaId) {
-            requestConvocatoriaPeriodosJustificacion = this.convocatoriaService
-              .getPeriodosJustificacion(this.proyecto.convocatoriaId)
+      this.subscriptions.push(
+        this.proyectoService.findEstadoProyecto(this.getKey() as number).pipe(
+          filter(response => response.items.some(estado => estado.estado === Estado.CONCEDIDO)),
+          switchMap(() => this.proyectoService.findAllPeriodoJustificacion(this.getKey() as number)),
+          map((response) => response.items.map(item => {
+            const periodoJustificacionListado = {
+              proyectoPeriodoJustificacion: new StatusWrapper<IProyectoPeriodoJustificacion>(item),
+            } as IPeriodoJustificacionListado;
+            return periodoJustificacionListado;
+          })),
+          concatMap(periodosJustificacionListado => {
+            if (this.readonly) {
+              return of(periodosJustificacionListado);
+            }
+            return from(periodosJustificacionListado)
               .pipe(
-                map((response) => response.items),
-                map(periodoJustificacionConvocatoria => {
-                  periodosJustificacionListado.forEach(periodoJustificacionListado => {
-                    if (periodoJustificacionListado.proyectoPeriodoJustificacion.value.convocatoriaPeriodoJustificacionId) {
-                      const index = periodoJustificacionConvocatoria.findIndex(justificacionConvocatoria =>
-                        justificacionConvocatoria.id ===
-                        periodoJustificacionListado.proyectoPeriodoJustificacion.value.convocatoriaPeriodoJustificacionId
-                      );
-                      if (index >= 0) {
-                        periodoJustificacionListado.convocatoriaPeriodoJustificacion = periodoJustificacionConvocatoria[index];
-                        periodoJustificacionConvocatoria.splice(index, 1);
-                      }
-                    }
-                  });
-
-                  if (periodoJustificacionConvocatoria.length > 0) {
-                    periodosJustificacionListado.push(...periodoJustificacionConvocatoria.map(convocatoriaPeriodojustificacion => {
-                      const periodoJustificacionListado = {
-                        convocatoriaPeriodoJustificacion: convocatoriaPeriodojustificacion,
-                        isProyectoPeriodoJustificacionDeleteable: true
-                      } as IPeriodoJustificacionListado;
-                      return periodoJustificacionListado;
-                    }));
-                  }
-
-                  return periodosJustificacionListado;
-                })
+                mergeMap(periodoJustificacionListado =>
+                  this.proyectoPeriodoJustifiacionService.hasRequerimientosJustificacion(periodoJustificacionListado.proyectoPeriodoJustificacion.value.id)
+                    .pipe(
+                      map(isDeleteable => {
+                        periodoJustificacionListado.isProyectoPeriodoJustificacionDeleteable = isDeleteable;
+                        return periodoJustificacionListado;
+                      })
+                    )
+                ),
+                toArray()
               );
-          } else {
-            requestConvocatoriaPeriodosJustificacion = of(periodosJustificacionListado);
-          }
-          return requestConvocatoriaPeriodosJustificacion;
-        }),
-      ).subscribe((periodoJustificacionListado) => {
-        periodoJustificacionListado.forEach(element => this.fillListadoFields(element));
-        this.periodoJustificaciones$?.next(periodoJustificacionListado);
-        this.recalcularNumPeriodos();
-      });
+          }),
+          switchMap(periodosJustificacionListado => {
+            let requestConvocatoriaPeriodosJustificacion: Observable<IPeriodoJustificacionListado[]>;
+
+            if (this.proyecto.convocatoriaId) {
+              requestConvocatoriaPeriodosJustificacion = this.convocatoriaService
+                .getPeriodosJustificacion(this.proyecto.convocatoriaId)
+                .pipe(
+                  map((response) => response.items),
+                  map(periodoJustificacionConvocatoria => {
+                    periodosJustificacionListado.forEach(periodoJustificacionListado => {
+                      if (periodoJustificacionListado.proyectoPeriodoJustificacion.value.convocatoriaPeriodoJustificacionId) {
+                        const index = periodoJustificacionConvocatoria.findIndex(justificacionConvocatoria =>
+                          justificacionConvocatoria.id ===
+                          periodoJustificacionListado.proyectoPeriodoJustificacion.value.convocatoriaPeriodoJustificacionId
+                        );
+                        if (index >= 0) {
+                          periodoJustificacionListado.convocatoriaPeriodoJustificacion = periodoJustificacionConvocatoria[index];
+                          periodoJustificacionConvocatoria.splice(index, 1);
+                        }
+                      }
+                    });
+
+                    if (periodoJustificacionConvocatoria.length > 0) {
+                      periodosJustificacionListado.push(...periodoJustificacionConvocatoria.map(convocatoriaPeriodojustificacion => {
+                        const periodoJustificacionListado = {
+                          convocatoriaPeriodoJustificacion: convocatoriaPeriodojustificacion,
+                          isProyectoPeriodoJustificacionDeleteable: true
+                        } as IPeriodoJustificacionListado;
+                        return periodoJustificacionListado;
+                      }));
+                    }
+
+                    return periodosJustificacionListado;
+                  })
+                );
+            } else {
+              requestConvocatoriaPeriodosJustificacion = of(periodosJustificacionListado);
+            }
+            return requestConvocatoriaPeriodosJustificacion;
+          }),
+        ).subscribe((periodoJustificacionListado) => {
+          periodoJustificacionListado.forEach(element => this.fillListadoFields(element));
+          this.periodoJustificaciones$?.next(periodoJustificacionListado);
+          this.recalcularNumPeriodos();
+        })
+      );
     }
   }
 

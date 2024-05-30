@@ -5,6 +5,7 @@ export interface IAnualidadIngresoResponse {
   proyectoPartida: {
     id: number;
     codigo: string;
+    partidaRef: string;
   };
   importeConcedido: number;
   proyectoSgeRef: string;

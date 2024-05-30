@@ -76,11 +76,14 @@
               <mat-icon>highlight_off</mat-icon>
             </button>
           </ng-container>
-
           <ng-container *sgiHasAuthorityForAnyUO="'ETI-MEM-CEST'">
-            <button color="primary" *ngIf="wrapper.value.estadoActual.id === 3 || wrapper.value.estadoActual.id === 4 || 
-                              wrapper.value.estadoActual.id === 10 || wrapper.value.estadoActual.id === 5"
-              mat-icon-button (click)="recuperarEstadoAnterior(wrapper.value)"
+            <button color="primary" *ngIf="showNotificarRevisionMinima(wrapper.value)" mat-icon-button
+              (click)="notificarRevisionMinima(wrapper.value)"
+              matTooltip="{{'btn.eti.memoria.notificar-rev-minima' | translate}}">
+              <mat-icon>add_alert</mat-icon>
+            </button>
+            <button color="primary" *ngIf="showRecuperarEstadoAnterior(wrapper.value)" mat-icon-button
+              (click)="recuperarEstadoAnterior(wrapper.value)"
               matTooltip="{{'btn.eti.memoria.estado-anterior' | translate}}">
               <mat-icon>restore</mat-icon>
             </button>

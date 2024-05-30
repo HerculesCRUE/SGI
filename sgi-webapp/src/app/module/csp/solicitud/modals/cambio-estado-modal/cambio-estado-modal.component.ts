@@ -1,12 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { SgiError, ValidationError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
-import { Estado, ESTADO_MAP, IEstadoSolicitud } from '@core/models/csp/estado-solicitud';
+import { ESTADO_MAP, Estado, IEstadoSolicitud } from '@core/models/csp/estado-solicitud';
 import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
@@ -24,7 +24,7 @@ const SOLICITUD_CAMBIO_ESTADO_FECHA_ESTADO = marker('csp.solicitud.estado-solici
 const MSG_FIELD_REQUIRED = marker('error.required.field');
 const MSG_DOCUMENTOS_CONVOCATORIA_REQUIRED = marker('msg.csp.solicitud.documentos-requeridos');
 const SOLICITUD_PROYECTO_COORDINADO = marker('csp.solicitud-datos-proyecto-ficha-general.proyecto-coordinado');
-const SOLICITUD_PROYECTO_COORDINADOR_EXTERNO = marker('csp.solicitud-datos-proyecto-ficha-general.coordinador-externo');
+const SOLICITUD_PROYECTO_ROL_UNIVERSIDAD = marker('csp.solicitud-datos-proyecto-ficha-general.rol-universidad');
 const MSG_SOLICITUD_EQUIPO_SOLICITANTE_REQUIRED = marker('msg.csp.solicitud.solicitante-miembro-equipo');
 const MSG_CAMBIO_ESTADO_CONFIRMACION = marker('confirmacion.csp.solicitud.cambio-estado');
 const MSG_CAMBIO_ESTADO_ERROR = marker('msg.csp.solicitud.cambio-estado.error');
@@ -83,7 +83,7 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoSol
   msgParamFechaEstadoEntity = {};
   msgDocumentosConvocatoriaRequired: string;
   msgSolicitudProyectoCoordinadoRequired: string;
-  msgSolicitudProyectoCoordinadorExternoRequired: string;
+  msgSolicitudProyectoRolUniversidadRequired: string;
   msgSolicitudEquipoSolicitanteRequired: string;
   msgCambioEstadoError: string;
 
@@ -145,9 +145,9 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoSol
       MSG_FIELD_REQUIRED,
       { field: this.translate.instant(SOLICITUD_PROYECTO_COORDINADO) }
     );
-    this.msgSolicitudProyectoCoordinadorExternoRequired = this.translate.instant(
+    this.msgSolicitudProyectoRolUniversidadRequired = this.translate.instant(
       MSG_FIELD_REQUIRED,
-      { field: this.translate.instant(SOLICITUD_PROYECTO_COORDINADOR_EXTERNO) }
+      { field: this.translate.instant(SOLICITUD_PROYECTO_ROL_UNIVERSIDAD) }
     );
     this.msgSolicitudEquipoSolicitanteRequired = this.translate.instant(MSG_SOLICITUD_EQUIPO_SOLICITANTE_REQUIRED);
     this.msgCambioEstadoError = this.translate.instant(MSG_CAMBIO_ESTADO_ERROR);
@@ -249,8 +249,8 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoSol
   private validateCoordinadorExternoFilled(): ValidationError[] {
     const problems: ValidationError[] = [];
     if (!!this.data.solicitudProyecto.coordinado
-      && (this.data.solicitudProyecto.coordinadorExterno === undefined || this.data.solicitudProyecto.coordinadorExterno === null)) {
-      problems.push(this.buildValidationError(this.msgSolicitudProyectoCoordinadorExternoRequired));
+      && (this.data.solicitudProyecto.rolUniversidad === undefined || this.data.solicitudProyecto.rolUniversidad === null)) {
+      problems.push(this.buildValidationError(this.msgSolicitudProyectoRolUniversidadRequired));
     }
 
     return problems;

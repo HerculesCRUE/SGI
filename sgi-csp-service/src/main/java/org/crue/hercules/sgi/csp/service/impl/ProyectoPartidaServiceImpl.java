@@ -184,13 +184,11 @@ public class ProyectoPartidaServiceImpl implements ProyectoPartidaService {
     Assert.isTrue(proyectoPartida.getProyectoId() != null,
         "Id Proyecto no puede ser null para realizar la acción sobre ProyectoPartida");
 
-    Assert.isTrue(proyectoPartida.getCodigo() != null,
-        "Codigo no puede ser null para realizar la acción sobre ProyectoPartida");
-
-    configuracionRepository.findFirstByOrderByIdAsc().ifPresent(configuracion -> {
-      Assert.isTrue(proyectoPartida.getCodigo().matches(configuracion.getFormatoPartidaPresupuestaria()),
-          "Formato de codigo no valido");
-    });
+    configuracionRepository.findFirstByOrderByIdAsc()
+        .ifPresent(configuracion -> Assert.isTrue(
+            Boolean.TRUE.equals(configuracion.getPartidasPresupuestariasSGE())
+                || proyectoPartida.getCodigo().matches(configuracion.getFormatoPartidaPresupuestaria()),
+            "Formato de codigo no valido"));
 
     Assert.isTrue(this.modificable(proyectoPartida.getId(), "CSP-PRO-E"),
         "No se puede modificar ProyectoPartida. No tiene los permisos necesarios o el proyecto tiene presupuestos anuales enviados al SGE.");

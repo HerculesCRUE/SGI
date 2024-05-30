@@ -95,7 +95,7 @@ public class CustomGrupoEquipoRepositoryImpl implements CustomGrupoEquipoReposit
    * @param grupoId identificador del {@link Grupo}.
    * @param fecha   fecha en la que se busca el investigador principal.
    * @return la lista de personaRef de los investigadores principales del
-   *         {@link Grupo} en el momento actual.
+   *         {@link Grupo} en la fecha.
    */
   @Override
   public List<String> findPersonaRefInvestigadoresPrincipales(Long grupoId, Instant fecha) {
@@ -105,38 +105,9 @@ public class CustomGrupoEquipoRepositoryImpl implements CustomGrupoEquipoReposit
     CriteriaQuery<String> cq = cb.createQuery(String.class);
     Root<GrupoEquipo> root = cq.from(GrupoEquipo.class);
 
-    Subquery<String> queryRolPrincipalFechaFinNull = cq.subquery(String.class);
-    Root<GrupoEquipo> subqRolPrincipalFechaFinNull = queryRolPrincipalFechaFinNull.from(GrupoEquipo.class);
-    Join<GrupoEquipo, RolProyecto> joinRolProyectoFechaFinNull = subqRolPrincipalFechaFinNull.join(GrupoEquipo_.rol);
-    Predicate rolPrincipalFechaFinNull = cb
-        .equal(joinRolProyectoFechaFinNull.get(RolProyecto_.rolPrincipal), true);
-    Predicate grupoEqualsFechaFinNull = cb.equal(subqRolPrincipalFechaFinNull.get(GrupoEquipo_.grupoId), grupoId);
-    queryRolPrincipalFechaFinNull.select(subqRolPrincipalFechaFinNull.get(GrupoEquipo_.personaRef))
-        .where(cb.and(
-            rolPrincipalFechaFinNull,
-            grupoEqualsFechaFinNull,
-            cb.isNull(subqRolPrincipalFechaFinNull.get(GrupoEquipo_.fechaFin))));
-
-    Subquery<Instant> queryMaxFechaFin = cq.subquery(Instant.class);
-    Root<GrupoEquipo> subqRootMaxFechaFin = queryMaxFechaFin.from(GrupoEquipo.class);
-    Join<GrupoEquipo, RolProyecto> joinRolProyectoMaxFechaFin = subqRootMaxFechaFin.join(GrupoEquipo_.rol);
-    Predicate rolPrincipalMaxFechaFin = cb.equal(joinRolProyectoMaxFechaFin.get(RolProyecto_.rolPrincipal), true);
-    Predicate grupoEqualsMaxFechaFin = cb.equal(subqRootMaxFechaFin.get(GrupoEquipo_.grupoId), grupoId);
-
-    queryMaxFechaFin.select(cb.greatest(subqRootMaxFechaFin.get(GrupoEquipo_.fechaFin)))
-        .where(cb.and(
-            rolPrincipalMaxFechaFin,
-            grupoEqualsMaxFechaFin));
-
     cq.select(root.get(GrupoEquipo_.personaRef)).where(cb.and(
         getPredicateRolPrincipalFecha(root, cb, grupoId, fecha),
-        cb.or(
-            cb.and(
-                root.get(GrupoEquipo_.personaRef).in(queryRolPrincipalFechaFinNull)),
-            cb.and(
-                cb.exists(queryRolPrincipalFechaFinNull).not(),
-                cb.equal(root.get(GrupoEquipo_.fechaFin),
-                    queryMaxFechaFin)))))
+        getPredicateRolPrincipalFechaFin(root, cq, cb, grupoId)))
         .distinct(true);
 
     List<String> returnValue = entityManager.createQuery(cq).getResultList();
@@ -145,26 +116,37 @@ public class CustomGrupoEquipoRepositoryImpl implements CustomGrupoEquipoReposit
     return returnValue;
   }
 
-  private Predicate getPredicateRolPrincipalFecha(Root<GrupoEquipo> root, CriteriaBuilder cb, Long grupoId,
-      Instant fecha) {
-    Join<GrupoEquipo, Grupo> joinGrupo = root.join(GrupoEquipo_.grupo);
-    Join<GrupoEquipo, RolProyecto> joinRolProyecto = root.join(GrupoEquipo_.rol);
+  /**
+   * {@link GrupoEquipo} que son investigador o investigadores principales del
+   * {@link Grupo} con el id indicado.
+   * 
+   * Se considera investiador principal al {@link GrupoEquipo} que a fecha actual
+   * tiene el {@link RolProyecto} con el flag "principal" a true. En caso de que
+   * varios coincidan se devuelven todos los que coincidan.
+   * 
+   * @param grupoId identificador del {@link Grupo}.
+   * @param fecha   fecha en la que se busca el investigador principal.
+   * @return la lista de personaRef de los investigadores principales del
+   *         {@link Grupo} en la fecha.
+   */
+  @Override
+  public List<GrupoEquipo> findInvestigadoresPrincipales(Long grupoId, Instant fecha) {
+    log.debug("findInvestigadoresPrincipales(Long grupoId, Instant fecha) - start");
 
-    Predicate grupoEquals = cb.equal(root.get(GrupoEquipo_.grupoId), grupoId);
-    Predicate rolPrincipal = cb.equal(joinRolProyecto.get(RolProyecto_.rolPrincipal), true);
-    Predicate greaterThanFechaInicio = cb.lessThanOrEqualTo(root.get(GrupoEquipo_.fechaInicio), fecha);
-    Predicate lowerThanFechaFin = cb.or(cb.isNull(root.get(GrupoEquipo_.fechaFin)),
-        cb.greaterThanOrEqualTo(root.get(GrupoEquipo_.fechaFin), fecha));
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<GrupoEquipo> cq = cb.createQuery(GrupoEquipo.class);
+    Root<GrupoEquipo> root = cq.from(GrupoEquipo.class);
 
-    Predicate fechaLowerThanFechaInicioGrupo = cb.greaterThan(joinGrupo.get(Grupo_.fechaInicio),
-        fecha);
-    Predicate fechaGreaterThanFechaFinGrupo = cb.lessThan(joinGrupo.get(Grupo_.fechaFin), fecha);
+    cq.select(root).where(
+        cb.and(
+            getPredicateRolPrincipalFecha(root, cb, grupoId, fecha),
+            getPredicateRolPrincipalFechaFin(root, cq, cb, grupoId)))
+        .distinct(true);
 
-    return cb.and(
-        grupoEquals,
-        rolPrincipal,
-        cb.or(fechaLowerThanFechaInicioGrupo, greaterThanFechaInicio),
-        cb.or(fechaGreaterThanFechaFinGrupo, lowerThanFechaFin));
+    List<GrupoEquipo> returnValue = entityManager.createQuery(cq).getResultList();
+
+    log.debug("findInvestigadoresPrincipales(Long grupoId, Instant fecha) - end");
+    return returnValue;
   }
 
   /**
@@ -350,6 +332,63 @@ public class CustomGrupoEquipoRepositoryImpl implements CustomGrupoEquipoReposit
 
     log.debug("findMiembrosEquipoUsuario(String personaRef, Instant fecha) - end");
     return returnValue;
+  }
+
+  private Predicate getPredicateRolPrincipalFecha(Root<GrupoEquipo> root, CriteriaBuilder cb, Long grupoId,
+      Instant fecha) {
+    Join<GrupoEquipo, Grupo> joinGrupo = root.join(GrupoEquipo_.grupo);
+    Join<GrupoEquipo, RolProyecto> joinRolProyecto = root.join(GrupoEquipo_.rol);
+
+    Predicate grupoEquals = cb.equal(root.get(GrupoEquipo_.grupoId), grupoId);
+    Predicate rolPrincipal = cb.equal(joinRolProyecto.get(RolProyecto_.rolPrincipal), true);
+    Predicate greaterThanFechaInicio = cb.lessThanOrEqualTo(root.get(GrupoEquipo_.fechaInicio), fecha);
+    Predicate lowerThanFechaFin = cb.or(cb.isNull(root.get(GrupoEquipo_.fechaFin)),
+        cb.greaterThanOrEqualTo(root.get(GrupoEquipo_.fechaFin), fecha));
+
+    Predicate fechaLowerThanFechaInicioGrupo = cb.greaterThan(joinGrupo.get(Grupo_.fechaInicio),
+        fecha);
+    Predicate fechaGreaterThanFechaFinGrupo = cb.lessThan(joinGrupo.get(Grupo_.fechaFin), fecha);
+
+    return cb.and(
+        grupoEquals,
+        rolPrincipal,
+        cb.or(fechaLowerThanFechaInicioGrupo, greaterThanFechaInicio),
+        cb.or(fechaGreaterThanFechaFinGrupo, lowerThanFechaFin));
+  }
+
+  private Predicate getPredicateRolPrincipalFechaFin(Root<GrupoEquipo> root, CriteriaQuery<?> cq, CriteriaBuilder cb,
+      Long grupoId) {
+
+    Subquery<String> queryRolPrincipalFechaFinNull = cq.subquery(String.class);
+    Root<GrupoEquipo> subqRolPrincipalFechaFinNull = queryRolPrincipalFechaFinNull.from(GrupoEquipo.class);
+    Join<GrupoEquipo, RolProyecto> joinRolProyectoFechaFinNull = subqRolPrincipalFechaFinNull.join(GrupoEquipo_.rol);
+    Predicate rolPrincipalFechaFinNull = cb
+        .equal(joinRolProyectoFechaFinNull.get(RolProyecto_.rolPrincipal), true);
+    Predicate grupoEqualsFechaFinNull = cb.equal(subqRolPrincipalFechaFinNull.get(GrupoEquipo_.grupoId), grupoId);
+    queryRolPrincipalFechaFinNull.select(subqRolPrincipalFechaFinNull.get(GrupoEquipo_.personaRef))
+        .where(cb.and(
+            rolPrincipalFechaFinNull,
+            grupoEqualsFechaFinNull,
+            cb.isNull(subqRolPrincipalFechaFinNull.get(GrupoEquipo_.fechaFin))));
+
+    Subquery<Instant> queryMaxFechaFin = cq.subquery(Instant.class);
+    Root<GrupoEquipo> subqRootMaxFechaFin = queryMaxFechaFin.from(GrupoEquipo.class);
+    Join<GrupoEquipo, RolProyecto> joinRolProyectoMaxFechaFin = subqRootMaxFechaFin.join(GrupoEquipo_.rol);
+    Predicate rolPrincipalMaxFechaFin = cb.equal(joinRolProyectoMaxFechaFin.get(RolProyecto_.rolPrincipal), true);
+    Predicate grupoEqualsMaxFechaFin = cb.equal(subqRootMaxFechaFin.get(GrupoEquipo_.grupoId), grupoId);
+
+    queryMaxFechaFin.select(cb.greatest(subqRootMaxFechaFin.get(GrupoEquipo_.fechaFin)))
+        .where(cb.and(
+            rolPrincipalMaxFechaFin,
+            grupoEqualsMaxFechaFin));
+
+    return cb.or(
+        cb.and(
+            root.get(GrupoEquipo_.personaRef).in(queryRolPrincipalFechaFinNull)),
+        cb.and(
+            cb.exists(queryRolPrincipalFechaFinNull).not(),
+            cb.equal(root.get(GrupoEquipo_.fechaFin),
+                queryMaxFechaFin)));
   }
 
 }

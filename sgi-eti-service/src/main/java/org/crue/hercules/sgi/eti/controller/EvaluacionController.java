@@ -277,7 +277,9 @@ public class EvaluacionController {
    * Obtener todas las entidades {@link Comentario} activas para una
    * determinada {@link Evaluacion} de tipoComentario ACTA_EVALUADOR.
    *
-   * @param id Id de {@link Evaluacion}.
+   * @param id            Id de {@link Evaluacion}.
+   * @param authorization autenticación
+   * 
    * @return la lista de entidades {@link Comentario}.
    */
   @GetMapping("/{id}/comentarios-acta-evaluador")
@@ -351,8 +353,10 @@ public class EvaluacionController {
   /**
    * Crea un nuevo {@link Comentario} de tipo "ACTA_EVALUADOR".
    * 
-   * @param id         Id de {@link Evaluacion}.
-   * @param comentario {@link Comentario} a crear.
+   * @param id            Id de {@link Evaluacion}.
+   * @param comentario    {@link Comentario} a crear.
+   * @param authorization autenticación
+   * 
    * @return Nuevo {@link Comentario} creado.
    */
   @PostMapping("/{id}/comentario-acta-evaluador")
@@ -621,23 +625,6 @@ public class EvaluacionController {
     }
     log.debug("isSeguimientoEvaluable(Long id, Authentication authorization) - end");
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-  }
-
-  /**
-   * Permite enviar el comunicado de
-   * {@link Evaluacion}
-   * 
-   * @param id Id del {@link Evaluacion}.
-   * @return HTTP-200 Si se puede enviar / HTTP-204 Si no se puede enviar
-   */
-  @RequestMapping(path = "/{id}/comunicado", method = RequestMethod.HEAD)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL')")
-  public ResponseEntity<Evaluacion> enviarComunicado(@PathVariable Long id) {
-    log.debug("enviarComunicado(Long id) - start");
-    Boolean returnValue = service.enviarComunicado(id);
-    log.debug("enviarComunicado(Long id) - end");
-    return Boolean.TRUE.equals(returnValue) ? new ResponseEntity<>(HttpStatus.OK)
-        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   /**

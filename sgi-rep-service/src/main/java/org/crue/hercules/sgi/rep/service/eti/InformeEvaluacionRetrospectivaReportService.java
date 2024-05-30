@@ -22,9 +22,10 @@ public class InformeEvaluacionRetrospectivaReportService extends InformeEvaluaci
 
   public InformeEvaluacionRetrospectivaReportService(SgiConfigProperties sgiConfigProperties,
       SgiApiConfService sgiApiConfService,
-      PersonaService personaService, EvaluacionService evaluacionService) {
+      PersonaService personaService, EvaluacionService evaluacionService,
+      BaseApartadosRespuestasReportService baseApartadosRespuestasService) {
 
-    super(sgiConfigProperties, sgiApiConfService, personaService, evaluacionService, null);
+    super(sgiConfigProperties, sgiApiConfService, personaService, evaluacionService, baseApartadosRespuestasService);
   }
 
   protected XWPFDocument getDocument(EvaluacionDto evaluacion, HashMap<String, Object> dataReport, InputStream path) {

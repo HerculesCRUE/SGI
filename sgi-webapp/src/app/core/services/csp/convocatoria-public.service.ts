@@ -7,7 +7,6 @@ import { CONVOCATORIA_ENLACE_CONVERTER } from '@core/converters/csp/convocatoria
 import { CONVOCATORIA_ENTIDAD_CONVOCANTE_CONVERTER } from '@core/converters/csp/convocatoria-entidad-convocante.converter';
 import { CONVOCATORIA_ENTIDAD_FINANCIADORA_CONVERTER } from '@core/converters/csp/convocatoria-entidad-financiadora.converter';
 import { CONVOCATORIA_ENTIDAD_GESTORA_CONVERTER } from '@core/converters/csp/convocatoria-entidad-gestora.converter';
-import { CONVOCATORIA_PARTIDA_PRESUPUESTARIA_CONVERTER } from '@core/converters/csp/convocatoria-partida.converter';
 import { CONVOCATORIA_PERIODO_JUSTIFICACION_CONVERTER } from '@core/converters/csp/convocatoria-periodo-justificacion.converter';
 import { CONVOCATORIA_PERIODO_SEGUIMIENTO_CIENTIFICO_CONVERTER } from '@core/converters/csp/convocatoria-periodo-seguimiento-cientifico.converter';
 import { CONVOCATORIA_CONVERTER } from '@core/converters/csp/convocatoria.converter';
@@ -19,7 +18,6 @@ import { IConvocatoriaEnlaceBackend } from '@core/models/csp/backend/convocatori
 import { IConvocatoriaEntidadConvocanteBackend } from '@core/models/csp/backend/convocatoria-entidad-convocante-backend';
 import { IConvocatoriaEntidadFinanciadoraBackend } from '@core/models/csp/backend/convocatoria-entidad-financiadora-backend';
 import { IConvocatoriaEntidadGestoraBackend } from '@core/models/csp/backend/convocatoria-entidad-gestora-backend';
-import { IConvocatoriaPartidaPresupuestariaBackend } from '@core/models/csp/backend/convocatoria-partida-backend';
 import { IConvocatoriaPeriodoJustificacionBackend } from '@core/models/csp/backend/convocatoria-periodo-justificacion-backend';
 import { IConvocatoriaPeriodoSeguimientoCientificoBackend } from '@core/models/csp/backend/convocatoria-periodo-seguimiento-cientifico-backend';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
@@ -41,7 +39,7 @@ import { IRequisitoEquipoNivelAcademico } from '@core/models/csp/requisito-equip
 import { IRequisitoIPCategoriaProfesional } from '@core/models/csp/requisito-ip-categoria-profesional';
 import { IRequisitoIPNivelAcademico } from '@core/models/csp/requisito-ip-nivel-academico';
 import { environment } from '@env';
-import { FindByIdCtor, mixinFindById, SgiRestBaseService, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http/';
+import { FindByIdCtor, SgiRestBaseService, SgiRestFindOptions, SgiRestListResult, mixinFindById } from '@sgi/framework/http/';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IConvocatoriaFaseResponse } from './convocatoria-fase/convocatoria-fase-response';
@@ -50,6 +48,8 @@ import { IConvocatoriaHitoResponse } from './convocatoria-hito/convocatoria-hito
 import { CONVOCATORIA_HITO_RESPONSE_CONVERTER } from './convocatoria-hito/convocatoria-hito-response.converter';
 import { IConvocatoriaPalabraClaveResponse } from './convocatoria-palabra-clave/convocatoria-palabra-clave-response';
 import { CONVOCATORIA_PALABRACLAVE_RESPONSE_CONVERTER } from './convocatoria-palabra-clave/convocatoria-palabra-clave-response.converter';
+import { IConvocatoriaPartidaPresupuestariaResponse } from './convocatoria-partida-presupuestaria/convocatoria-partida-presupuestaria-response';
+import { CONVOCATORIA_PARTIDA_PRESUPUESTARIA_RESPONSE_CONVERTER } from './convocatoria-partida-presupuestaria/convocatoria-partida-presupuestaria-response.converter';
 import { IRequisitoEquipoCategoriaProfesionalResponse } from './requisito-equipo-categoria-profesional/requisito-equipo-categoria-profesional-response';
 import { REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER } from './requisito-equipo-categoria-profesional/requisito-equipo-categoria-profesional-response.converter';
 import { IRequisitoEquipoNivelAcademicoResponse } from './requisito-equipo-nivel-academico/requisito-equipo-nivel-academico-response';
@@ -177,10 +177,10 @@ export class ConvocatoriaPublicService extends _ConvocatoriaMixinBase {
 
   findPartidasPresupuestarias(id: number, options?: SgiRestFindOptions)
     : Observable<SgiRestListResult<IConvocatoriaPartidaPresupuestaria>> {
-    return this.find<IConvocatoriaPartidaPresupuestariaBackend, IConvocatoriaPartidaPresupuestaria>(
+    return this.find<IConvocatoriaPartidaPresupuestariaResponse, IConvocatoriaPartidaPresupuestaria>(
       `${this.endpointUrl}/${id}/convocatoria-partidas-presupuestarias`,
       options,
-      CONVOCATORIA_PARTIDA_PRESUPUESTARIA_CONVERTER
+      CONVOCATORIA_PARTIDA_PRESUPUESTARIA_RESPONSE_CONVERTER
     );
   }
 

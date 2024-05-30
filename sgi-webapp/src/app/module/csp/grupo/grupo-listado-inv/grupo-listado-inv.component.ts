@@ -5,12 +5,13 @@ import { IGrupo } from '@core/models/csp/grupo';
 import { TIPO_MAP } from '@core/models/csp/grupo-tipo';
 import { IPersona } from '@core/models/sgp/persona';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfigService } from '@core/services/csp/config.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { EMPTY, from, Observable } from 'rxjs';
+import { EMPTY, Observable, from } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 
@@ -29,15 +30,22 @@ export class GrupoListadoInvComponent extends AbstractTablePaginationComponent<I
 
   grupos$: Observable<IGrupoListado[]>;
 
+  private _isEjecucionEconomicaGruposEnabled: boolean;
+
   get TIPO_MAP() {
     return TIPO_MAP;
+  }
+
+  get isEjecucionEconomicaGruposEnabled(): boolean {
+    return this._isEjecucionEconomicaGruposEnabled ?? false;
   }
 
   constructor(
     private readonly logger: NGXLogger,
     private grupoService: GrupoService,
     private personaService: PersonaService,
-    public authService: SgiAuthService
+    public authService: SgiAuthService,
+    private readonly configService: ConfigService
   ) {
     super();
   }
@@ -46,6 +54,13 @@ export class GrupoListadoInvComponent extends AbstractTablePaginationComponent<I
     super.ngOnInit();
     this.buildFormGroup();
     this.filter = this.createFilter();
+
+    this.suscripciones.push(
+      this.configService.isEjecucionEconomicaGruposEnabled().subscribe(value => {
+        this._isEjecucionEconomicaGruposEnabled = value;
+      })
+    );
+
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IGrupoListado>> {
@@ -108,8 +123,9 @@ export class GrupoListadoInvComponent extends AbstractTablePaginationComponent<I
 
   private fillInvestigadorPrincipal(grupo: IGrupoListado): Observable<IGrupoListado> {
     let idsInvestigadoresPrincipales: string[];
-    return this.grupoService.findPersonaRefInvestigadoresPrincipales(grupo.id).pipe(
+    return this.grupoService.findInvestigadoresPrincipales(grupo.id).pipe(
       filter(investigadoresPrincipales => !!investigadoresPrincipales),
+      map(investigadoresPrincipales => investigadoresPrincipales.map(investigador => investigador.persona.id)),
       tap(investigadoresPrincipales => idsInvestigadoresPrincipales = [...investigadoresPrincipales]),
       switchMap(investigadoresPrincipales => this.personaService.findAllByIdIn(investigadoresPrincipales)),
       map(investigadoresPrincipales => {

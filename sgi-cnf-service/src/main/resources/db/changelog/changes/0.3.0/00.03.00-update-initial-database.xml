@@ -8,8 +8,15 @@
                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
 
-  <changeSet author="user (generated)" id="00.03.00-1">
+  <changeSet author="user (generated)" id="00.03.00-1" dbms="!mssql">
     <modifyDataType tableName="config" columnName="name" newDataType="VARCHAR(100)" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="00.03.00-2" dbms="mssql">
+    <dropPrimaryKey tableName="config" />
+    <modifyDataType tableName="config" columnName="name" newDataType="VARCHAR(100)" />
+    <addNotNullConstraint tableName="config" columnName="name" columnDataType="VARCHAR(100)" />
+    <addPrimaryKey tableName="config" columnNames="name" />
   </changeSet>
 
 </databaseChangeLog>

@@ -78,8 +78,8 @@ public class SolicitudProyecto extends BaseEntity {
   private Boolean colaborativo;
 
   /** Coordinador externo */
-  @Column(name = "coordinador_externo", nullable = true)
-  private Boolean coordinadorExterno;
+  @Column(name = "rol_universidad", nullable = true)
+  private Long rolUniversidadId;
 
   /** Coordinado */
   @Column(name = "coordinado", nullable = true)
@@ -156,6 +156,12 @@ public class SolicitudProyecto extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final Solicitud solicitud = null;
+
+  @ManyToOne
+  @JoinColumn(name = "rol_universidad", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_SOLICITUDPROYECTO_ROLSOCIO"))
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final RolSocio rolUniversidad = null;
 
   @OneToMany(mappedBy = "solicitudProyecto")
   @Getter(AccessLevel.NONE)

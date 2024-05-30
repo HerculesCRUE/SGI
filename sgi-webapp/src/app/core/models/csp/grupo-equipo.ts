@@ -2,7 +2,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DateTime } from 'luxon';
 import { IPersona } from '../sgp/persona';
 import { IGrupo } from './grupo';
-import { IRolProyecto } from './rol-proyecto';
+import { IRolProyecto, Orden } from './rol-proyecto';
 
 export interface IGrupoEquipo {
   id: number;
@@ -28,3 +28,21 @@ export const DEDICACION_MAP: Map<Dedicacion, string> = new Map([
 ]);
 
 export const PARTICIPACION_MAX = 100;
+
+export function sortGrupoEquipoByRolProyectoOrden(miembroEquipoA: IGrupoEquipo, miembroEquipoB: IGrupoEquipo): number {
+  if (miembroEquipoA.rol.orden === Orden.PRIMARIO && miembroEquipoB.rol.orden === Orden.SECUNDARIO) {
+    return -1;
+  }
+
+  if (miembroEquipoA.rol.orden === Orden.SECUNDARIO && miembroEquipoB.rol.orden === Orden.PRIMARIO) {
+    return 1;
+  }
+
+  return 0;
+}
+
+export function sortGrupoEquipoByPersonaNombre(miembroEquipoA: IGrupoEquipo, miembroEquipoB: IGrupoEquipo): number {
+  const nombreConceptoGastoItemA = miembroEquipoA?.persona?.nombre ?? '';
+  const nombreConceptoGastoItemB = miembroEquipoB?.persona?.nombre ?? '';
+  return nombreConceptoGastoItemA.localeCompare(nombreConceptoGastoItemB);
+}

@@ -9,4 +9,5 @@ export interface IRelacionEjecucionEconomicaResponse {
   fechaFin: string;
   proyectoSgeRef: string;
   tipoEntidad: TipoEntidad;
+  fechaFinDefinitiva: string;
 }

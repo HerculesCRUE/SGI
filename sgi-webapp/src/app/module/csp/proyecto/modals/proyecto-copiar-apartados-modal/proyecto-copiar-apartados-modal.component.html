@@ -1,0 +1,51 @@
+<sgi-dialog-content>
+  <p>{{ 'msg.csp.proyecto.copiar-apartadados-fechas' | translate}}</p>
+  <ng-container *ngIf="hasApartadosToBeCopied()">
+    <ul>
+      <li *ngIf="data.apartadosToBeCopied.elegibilidad">
+        {{'msg.csp.proyecto.copiar-apartadados-fechas.elegibilidad' | translate}}
+      </li>
+      <li *ngIf="data.apartadosToBeCopied.equipo">
+        {{'msg.csp.proyecto.copiar-apartadados-fechas.equipo' | translate}}
+      </li>
+      <li *ngIf="data.apartadosToBeCopied.equiposSocios">
+        {{'msg.csp.proyecto.copiar-apartadados-fechas.equiposSocios' | translate}}
+      </li>
+      <li *ngIf="data.apartadosToBeCopied.responsableEconomico">
+        {{'msg.csp.proyecto.copiar-apartadados-fechas.responsableEconomico' | translate}}
+      </li>
+      <li *ngIf="data.apartadosToBeCopied.socios">
+        {{'msg.csp.proyecto.copiar-apartadados-fechas.socios' | translate}}
+      </li>
+    </ul>
+  </ng-container>
+  <ng-container *ngIf="hasApartadosWithDates()">
+    <p>{{ 'msg.csp.proyecto.copiar-apartadados-fechas.apartados-con-fechas' | translate}}</p>
+    <ul>
+      <li *ngIf="data.apartadosWithDates.elegibilidad">
+        {{'msg.csp.proyecto.copiar-apartadados-fechas.elegibilidad' | translate}}
+      </li>
+      <li *ngIf="data.apartadosWithDates.equipo">
+        {{'msg.csp.proyecto.copiar-apartadados-fechas.equipo' | translate}}
+      </li>
+      <li *ngIf="data.apartadosWithDates.equiposSocios">
+        {{'msg.csp.proyecto.copiar-apartadados-fechas.equiposSocios' | translate}}
+      </li>
+      <li *ngIf="data.apartadosWithDates.responsableEconomico">
+        {{'msg.csp.proyecto.copiar-apartadados-fechas.responsableEconomico' | translate}}
+      </li>
+      <li *ngIf="data.apartadosWithDates.socios">
+        {{'msg.csp.proyecto.copiar-apartadados-fechas.socios' | translate}}
+      </li>
+    </ul>
+    <p [innerHTML]="'msg.csp.proyecto.copiar-apartadados-fechas.apartados-con-fechas-aviso' | translate"></p>
+  </ng-container>
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="aceptar()" mat-raised-button type="submit">
+    {{'btn.ok' | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

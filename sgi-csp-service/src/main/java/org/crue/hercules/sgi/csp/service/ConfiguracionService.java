@@ -82,7 +82,6 @@ public class ConfiguracionService {
     String value = this.findConfiguracion().getParamValue(param).toString();
     ConfigParamOutput returnValue = ConfigParamOutput.builder()
         .name(param.getKey())
-        .description(param.getDescription())
         .value(value)
         .build();
     log.debug("get(String name) - end");
@@ -109,7 +108,6 @@ public class ConfiguracionService {
 
       ConfigParamOutput returnValue = ConfigParamOutput.builder()
           .name(param.getKey())
-          .description(param.getDescription())
           .value(data.getParamValue(param).toString())
           .build();
 

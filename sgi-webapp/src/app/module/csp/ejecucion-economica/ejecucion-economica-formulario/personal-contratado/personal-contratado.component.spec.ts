@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Data } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { IConfiguracion } from '@core/models/csp/configuracion';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
@@ -21,6 +22,7 @@ describe('PersonalContratadoComponent', () => {
     [EJECUCION_ECONOMICA_DATA_KEY]: {
       proyectoSge: {},
       relaciones: [{ id: 1 } as IRelacionEjecucionEconomicaWithResponsables],
+      configuracion: { ejecucionEconomicaGruposEnabled: true } as IConfiguracion,
       readonly: false
     } as IEjecucionEconomicaData
   };

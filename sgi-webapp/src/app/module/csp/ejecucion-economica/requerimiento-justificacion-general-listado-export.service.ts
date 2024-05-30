@@ -319,6 +319,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
       name: REQUERIMIENTO_JUSTIFICACION_CODIGO_PROYECTO_SGI_FIELD,
       title: this.translate.instant(REQUERIMIENTO_JUSTIFICACION_CODIGO_PROYECTO_SGI_KEY),
       type: ColumnType.NUMBER,
+      format: '#'
     };
     columns.push(columnCodigoSGI);
 
@@ -419,6 +420,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
       name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_CONCEDIDO_FIELD,
       title: this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_CONCEDIDO_KEY),
       type: ColumnType.NUMBER,
+      format: null
     };
     columns.push(columnImporteConcedido);
 
@@ -426,6 +428,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
       name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_CONCEDIDO_CD_FIELD,
       title: this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_CONCEDIDO_CD_KEY),
       type: ColumnType.NUMBER,
+      format: null
     };
     columns.push(columnImporteConcedidoCD);
 
@@ -433,6 +436,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
       name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_CONCEDIDO_CI_FIELD,
       title: this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_CONCEDIDO_CI_KEY),
       type: ColumnType.NUMBER,
+      format: null
     };
     columns.push(columnImporteConcedidoCI);
 
@@ -446,6 +450,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_NUM_REQUERIMIENTO_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_NUM_REQUERIMIENTO_KEY),
         type: ColumnType.NUMBER,
+        format: '#'
       };
       columns.push(columnNumRequerimiento);
 
@@ -460,6 +465,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_PERIODO_JUSTIFICACION_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_PERIODO_JUSTIFICACION_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnPeriodoJustificacion);
 
@@ -488,6 +494,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_ACEPTADO_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_ACEPTADO_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteAceptado);
 
@@ -495,6 +502,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_ACEPTADO_CD_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_ACEPTADO_CD_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteAceptadoCD);
 
@@ -502,6 +510,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_ACEPTADO_CI_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_ACEPTADO_CI_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteAceptadoCI);
 
@@ -509,6 +518,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_RECHAZADO_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_RECHAZADO_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteRechazado);
 
@@ -516,6 +526,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_RECHAZADO_CD_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_RECHAZADO_CD_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteRechazadoCD);
 
@@ -523,6 +534,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_RECHAZADO_CI_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_RECHAZADO_CI_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteRechazadoCI);
 
@@ -530,6 +542,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_REINTEGRAR_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_REINTEGRAR_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteReintegrar);
 
@@ -537,6 +550,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_REINTEGRAR_CD_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_REINTEGRAR_CD_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteReintegrarCD);
 
@@ -544,6 +558,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_REINTEGRAR_CI_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_REINTEGRAR_CI_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteReintegrarCI);
 
@@ -551,6 +566,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_SUBVENCION_JUSTIFICADA_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_SUBVENCION_JUSTIFICADA_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnSubvencionJustificada);
 
@@ -558,6 +574,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_DEFECTO_SUBVENCION_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_DEFECTO_SUBVENCION_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnDefectoSubvencion);
 
@@ -565,6 +582,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_ANTICIPO_JUSTIFICADO_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_ANTICIPO_JUSTIFICADO_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnAnticipoJustificado);
 
@@ -572,6 +590,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_DEFECTO_ANTICIPO_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_DEFECTO_ANTICIPO_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnDefectoAnticipo);
 
@@ -593,6 +612,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_ALEGADO_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_ALEGADO_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteAlegado);
 
@@ -600,6 +620,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_ALEGADO_CD_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_ALEGADO_CD_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteAlegadoCD);
 
@@ -607,6 +628,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_ALEGADO_CI_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_ALEGADO_CI_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteAlegadoCI);
 
@@ -614,6 +636,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_REINTEGRADO_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_REINTEGRADO_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteReintegrado);
 
@@ -621,6 +644,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_REINTEGRADO_CD_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_REINTEGRADO_CD_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteReintegradoCD);
 
@@ -628,6 +652,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_IMPORTE_REINTEGRADO_CI_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_IMPORTE_REINTEGRADO_CI_KEY),
         type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteReintegradoCI);
 
@@ -635,6 +660,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
         name: REQUERIMIENTO_JUSTIFICACION_INTERESES_REINTEGRADOS_FIELD + idRequerimientosJustificacion,
         title: titleRequerimientos + idRequerimientosJustificacion + this.getValuePrefix('') + this.translate.instant(REQUERIMIENTO_JUSTIFICACION_INTERESES_REINTEGRADOS_KEY),
         type: ColumnType.NUMBER,
+        format: '#'
       };
       columns.push(columnInteresesReintegrados);
 

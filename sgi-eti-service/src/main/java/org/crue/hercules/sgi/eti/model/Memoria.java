@@ -15,10 +15,13 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Memoria
@@ -109,5 +112,11 @@ public class Memoria extends BaseEntity {
   @OneToOne
   @JoinColumn(name = "memoria_original_id", nullable = true, foreignKey = @ForeignKey(name = "FK_MEMORIA_MEMORIAORIGINAL"))
   private Memoria memoriaOriginal;
+
+  // Relations mapping, only for JPA metamodel generation
+  @Column(name = "peticion_evaluacion_id", insertable = false, updatable = false)
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final Long peticionEvaluacionId = null;
 
 }

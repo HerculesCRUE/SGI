@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEmpresa } from '@core/models/sgemp/empresa';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormlyUtils } from '@core/utils/formly-utils';
@@ -25,15 +26,24 @@ export interface IEmpresaFormlyData {
   styleUrls: ['./empresa-formly-modal.component.scss']
 })
 export class EmpresaFormlyModalComponent extends BaseFormlyModalComponent<IEmpresaFormlyData, IEmpresa> implements OnInit {
+  private sgempModificacion: boolean = true;
+
+  get sgempModificacionDisabled(): boolean {
+    return !this.sgempModificacion;
+  }
 
   constructor(
     protected readonly snackBarService: SnackBarService,
     public readonly matDialogRef: MatDialogRef<EmpresaFormlyModalComponent>,
     @Inject(MAT_DIALOG_DATA) public empresaData: IEmpresaFormlyData,
     protected readonly translate: TranslateService,
-    private readonly empresaService: EmpresaService
+    private readonly empresaService: EmpresaService,
+    private configService: ConfigService
   ) {
     super(matDialogRef, empresaData?.action === ACTION_MODAL_MODE.EDIT, translate);
+    this.subscriptions.push(this.configService.isModificacionSgempEnabled().subscribe(value => {
+      this.sgempModificacion = value;
+    }));
   }
 
   protected initializer = (): Observable<void> => this.loadFormlyData(this.empresaData?.action, this.empresaData?.empresaId);
@@ -64,6 +74,7 @@ export class EmpresaFormlyModalComponent extends BaseFormlyModalComponent<IEmpre
       case ACTION_MODAL_MODE.EDIT:
         load$ = this.empresaService.getFormlyUpdate().pipe(
           map(fields => {
+            this.setDisableFields(fields);
             return this.initFormlyData(fields);
           }),
           switchMap((formlyData): Observable<IFormlyData> => {
@@ -134,6 +145,20 @@ export class EmpresaFormlyModalComponent extends BaseFormlyModalComponent<IEmpre
     return this.empresaService.updateEmpresa(empresaId, formlyData.model).pipe(
       switchMap(() => this.empresaService.findById(empresaId))
     );
+  }
+
+  setDisableFields(fields: FormlyFieldConfig[]): void {
+    if (this.sgempModificacionDisabled) {
+      fields.forEach(field => {
+        if (field.fieldGroup) {
+          this.setDisableFields(field.fieldGroup);
+        } else {
+          if (field.templateOptions) {
+            field.templateOptions.disabled = true;
+          }
+        }
+      });
+    }
   }
 
 }

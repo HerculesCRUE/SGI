@@ -35,7 +35,8 @@ export class GrupoGeneralListadoExportService extends AbstractTableExportFillSer
   }
 
   public getData(grupoData: IGrupoReportData): Observable<IGrupoReportData> {
-    return this.grupoService.findPersonaRefInvestigadoresPrincipales(grupoData?.id).pipe(
+    return this.grupoService.findInvestigadoresPrincipales(grupoData?.id).pipe(
+      map(investigadoresPrincipales => investigadoresPrincipales.map(investigador => investigador.persona.id)),
       map((response) => {
         grupoData.investigadoresPrincipales = '';
         return response;

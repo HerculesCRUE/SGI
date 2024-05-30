@@ -10,6 +10,7 @@ import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContext
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 public class FormatoIdentificadorJustificacionProyectoPeriodoJustificacionValidator
     implements
@@ -31,8 +32,8 @@ public class FormatoIdentificadorJustificacionProyectoPeriodoJustificacionValida
   @Override
   @Transactional(readOnly = true, propagation = Propagation.NOT_SUPPORTED)
   public boolean isValid(ProyectoPeriodoJustificacion value, ConstraintValidatorContext context) {
-    if (value == null || value.getIdentificadorJustificacion() == null) {
-      return false;
+    if (value == null || StringUtils.isEmpty(value.getIdentificadorJustificacion())) {
+      return true;
     }
     Configuracion configuracion = configuracionService.findConfiguracion();
 

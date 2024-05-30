@@ -30,6 +30,7 @@ const CONVOCATORIA_FECHA_LIMITE_KEY = marker('error.eti.convocatoria-reunion.fec
 const CONVOCATORIA_TIPO_KEY = marker('eti.convocatoria-reunion.tipo');
 const CONVOCATORIA_HORA_INICIO_KEY = marker('eti.convocatoria-reunion.hora-inicio');
 const CONVOCATORIA_HORA_INICIO_SEGUNDA_KEY = marker('eti.convocatoria-reunion.hora-inicio-segunda');
+const CONVOCATORIA_VIDEOCONFERENCIA_KEY = marker('eti.convocatoria-reunion.videoconferencia');
 const CONVOCATORIA_LUGAR_KEY = marker('eti.convocatoria-reunion.lugar');
 const CONVOCATORIA_ORDEN_DIA_KEY = marker('eti.convocatoria-reunion.orden-dia');
 const CONVOCATORIA_CONVOCANTES_KEY = marker('eti.convocatoria-reunion.convocantes');
@@ -60,6 +61,7 @@ export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComp
   msgParamLugarEntity = {};
   msgParamOrdenDiaEntity = {};
   msgParamConvocantesEntity = {};
+  msgParamVideoconferenciaEntity = {};
 
   constructor(
     private logger: NGXLogger,
@@ -72,23 +74,6 @@ export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComp
   ) {
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
     this.formFragment = this.fragment as ConvocatoriaReunionDatosGeneralesFragment;
-
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(33%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(32.7%-10px)';
-    this.fxFlexProperties.order = '2';
-
-    this.fxFlexPropertiesInline = new FxFlexProperties();
-    this.fxFlexPropertiesInline.sm = '0 1 calc(100%-10px)';
-    this.fxFlexPropertiesInline.md = '0 1 calc(100%-10px)';
-    this.fxFlexPropertiesInline.gtMd = '0 1 calc(100%-10px)';
-    this.fxFlexPropertiesInline.order = '3';
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
   }
 
   ngOnInit() {
@@ -140,6 +125,11 @@ export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComp
       CONVOCATORIA_ORDEN_DIA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamOrdenDiaEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      CONVOCATORIA_VIDEOCONFERENCIA_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamVideoconferenciaEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       CONVOCATORIA_LUGAR_KEY,

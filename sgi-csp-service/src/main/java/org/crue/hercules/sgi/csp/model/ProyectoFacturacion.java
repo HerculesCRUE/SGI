@@ -70,12 +70,6 @@ public class ProyectoFacturacion extends BaseEntity {
   @Column(name = "proyecto_id", nullable = false)
   private Long proyectoId;
 
-  @ManyToOne
-  @JoinColumn(name = "proyecto_id", nullable = false, insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_PROYECTOFACTURACION_PROYECTO"))
-  @Getter(AccessLevel.NONE)
-  @Setter(AccessLevel.NONE)
-  private Proyecto proyecto;
-
   @OneToOne
   @JoinColumn(name = "estado_validacion_ip_id", nullable = true, foreignKey = @ForeignKey(name = "FK_PROYECTOFACTURACION_ESTADOVALIDACIONIP"))
   private EstadoValidacionIP estadoValidacionIP;
@@ -83,5 +77,24 @@ public class ProyectoFacturacion extends BaseEntity {
   @ManyToOne
   @JoinColumn(name = "tipo_facturacion_id", nullable = true, foreignKey = @ForeignKey(name = "FK_PROYECTOFACTURACION_TIPOFACTURACION"))
   private TipoFacturacion tipoFacturacion;
+
+  @Column(name = "proyecto_prorroga_id", nullable = false)
+  private Long proyectoProrrogaId;
+
+  @Column(name = "proyecto_sge_ref", nullable = true)
+  private String proyectoSgeRef;
+
+  // Relation mappings for JPA metamodel generation only
+  @ManyToOne
+  @JoinColumn(name = "proyecto_id", nullable = false, insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_PROYECTOFACTURACION_PROYECTO"))
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final Proyecto proyecto = null;
+
+  @ManyToOne
+  @JoinColumn(name = "proyecto_prorroga_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_PROYECTOFACTURACION_PROYECTOPRORROGA"))
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final ProyectoProrroga prorroga = null;
 
 }

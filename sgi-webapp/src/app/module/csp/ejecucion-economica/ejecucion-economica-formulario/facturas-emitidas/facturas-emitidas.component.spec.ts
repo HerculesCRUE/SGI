@@ -13,6 +13,7 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { EJECUCION_ECONOMICA_DATA_KEY } from '../../ejecucion-economica-data.resolver';
 import { EjecucionEconomicaActionService, IEjecucionEconomicaData, IRelacionEjecucionEconomicaWithResponsables } from '../../ejecucion-economica.action.service';
 import { FacturasEmitidasComponent } from './facturas-emitidas.component';
+import { IConfiguracion } from '@core/models/csp/configuracion';
 
 describe('FacturasEmitidasComponent', () => {
   let component: FacturasEmitidasComponent;
@@ -21,6 +22,7 @@ describe('FacturasEmitidasComponent', () => {
     [EJECUCION_ECONOMICA_DATA_KEY]: {
       proyectoSge: {},
       relaciones: [{ id: 1 } as IRelacionEjecucionEconomicaWithResponsables],
+      configuracion: { ejecucionEconomicaGruposEnabled: true } as IConfiguracion,
       readonly: false
     } as IEjecucionEconomicaData
   };

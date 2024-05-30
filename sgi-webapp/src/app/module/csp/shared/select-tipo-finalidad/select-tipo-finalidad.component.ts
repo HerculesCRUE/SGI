@@ -10,10 +10,11 @@ import { ITipoFinalidad } from '@core/models/csp/tipos-configuracion';
 import { Module } from '@core/module';
 import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { TipoFinalidadService } from '@core/services/csp/tipo-finalidad.service';
+import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { SgiAuthService } from '@sgi/framework/auth';
-import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
+import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 import { MODELO_EJECUCION_ROUTE_NAMES } from '../../modelo-ejecucion/modelo-ejecucion-route-names';
 import { TipoFinalidadModalComponent } from '../../tipo-finalidad/tipo-finalidad-modal/tipo-finalidad-modal.component';
@@ -66,6 +67,22 @@ export class SelectTipoFinalidadComponent extends SelectServiceExtendedComponent
   // tslint:disable-next-line: variable-name
   private _excluded: ITipoFinalidad[] = [];
 
+  @Input()
+  get unidadGestionRef(): string {
+    return this._unidadGestionRef;
+  }
+  set unidadGestionRef(value: string) {
+    const changes = this._unidadGestionRef !== value;
+    this._unidadGestionRef = value;
+    if (this.ready && changes) {
+      this.loadData();
+    }
+    this.stateChanges.next();
+  }
+
+  // tslint:disable-next-line: variable-name
+  private _unidadGestionRef: string;
+
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
@@ -73,7 +90,8 @@ export class SelectTipoFinalidadComponent extends SelectServiceExtendedComponent
     dialog: MatDialog,
     private service: TipoFinalidadService,
     private modeloEjecucionService: ModeloEjecucionService,
-    private authService: SgiAuthService
+    private authService: SgiAuthService,
+    private unidadGestionService: UnidadGestionService,
   ) {
     super(defaultErrorStateMatcher, ngControl, platformLocation, dialog);
 
@@ -91,21 +109,68 @@ export class SelectTipoFinalidadComponent extends SelectServiceExtendedComponent
     if (this.requestByModeloEjecucion) {
       // If empty, null or zero, an empty array is returned
       if (!!!this.modeloEjecucionId) {
-        return of([]);
+        return this.findAllFinalidadByUnidadesGestionUsuario();
+      } else {
+        const findOptions: SgiRestFindOptions = {
+          filter: new RSQLSgiRestFilter('modelosTipoFinalidad.modeloEjecucion.id', SgiRestFilterOperator.EQUALS, this.modeloEjecucionId.toString())
+        };
+        return this.service.findAll(findOptions).pipe(
+          map(response => response.items)
+        );
       }
-      const findOptions: SgiRestFindOptions = {
-        filter: new RSQLSgiRestFilter('tipoFinalidad.activo', SgiRestFilterOperator.EQUALS, 'true'),
-        sort: new RSQLSgiRestSort('tipoFinalidad.nombre', SgiRestSortDirection.ASC)
-      };
-      return this.modeloEjecucionService.findModeloTipoFinalidad(this.modeloEjecucionId, findOptions).pipe(
-        map(response => response.items.map(item => item.tipoFinalidad))
-      );
+
     }
     else {
-      const findOptions: SgiRestFindOptions = {
-        sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
+      return this.service.findTodos().pipe(map(response => response.items));
+    }
+  }
+
+  private findAllFinalidadByUnidadesGestionUsuario(): Observable<ITipoFinalidad[]> {
+
+    if (this.unidadGestionRef) {
+      const findOptionsUges: SgiRestFindOptions = {
+        filter: new RSQLSgiRestFilter('modelosUnidad.unidadGestionRef', SgiRestFilterOperator.EQUALS, this.unidadGestionRef.toString())
       };
-      return this.service.findAll(findOptions).pipe(map(response => response.items));
+      return this.modeloEjecucionService.findAll(findOptionsUges).pipe(
+        map(response => response.items.map(item => item.id.toString())),
+        switchMap(modelosEjecucion => {
+          if (modelosEjecucion.length > 0) {
+            const findOptions: SgiRestFindOptions = {
+              filter: new RSQLSgiRestFilter('modelosTipoFinalidad.modeloEjecucion.id', SgiRestFilterOperator.IN, modelosEjecucion)
+            };
+            return this.service.findAll(findOptions).pipe(
+              map(response => response.items)
+            );
+          } else {
+            return of([]);
+          }
+
+        })
+      );
+    } else {
+      return this.unidadGestionService.findAllRestringidos().pipe(
+        map(response => response.items.map(uGes => uGes.id.toString())),
+        switchMap(unidadesGestionUsuario => {
+          if (unidadesGestionUsuario.length > 0) {
+            const findOptionsUges: SgiRestFindOptions = {
+              filter: new RSQLSgiRestFilter('modelosUnidad.unidadGestionRef', SgiRestFilterOperator.IN, unidadesGestionUsuario)
+            };
+            return this.modeloEjecucionService.findAll(findOptionsUges).pipe(
+              map(response => response.items.map(item => item.id.toString())),
+              switchMap(modelosEjecucion => {
+                const findOptions: SgiRestFindOptions = {
+                  filter: new RSQLSgiRestFilter('modelosTipoFinalidad.modeloEjecucion.id', SgiRestFilterOperator.IN, modelosEjecucion)
+                };
+                return this.service.findAll(findOptions).pipe(
+                  map(response => response.items)
+                );
+              })
+            );
+          } else {
+            return of([]);
+          }
+        })
+      );
     }
   }
 

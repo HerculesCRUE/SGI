@@ -4,7 +4,10 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
+import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.Memoria_;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion_;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLPredicateResolver;
@@ -17,10 +20,15 @@ public class PeticionEvaluacionPredicateResolver implements SgiRSQLPredicateReso
   private static final String BAD_NUMBER_OF_ARGUMENTS_FOR = "Bad number of arguments for ";
   private static final String FOR = " for ";
   private static final String UNSUPPORTED_OPERATOR = "Unsupported operator: ";
+  private static final String LIKE_WILDCARD_PERCENT = "%";
 
   private enum Property {
-    TITULO("peticionEvaluacion.titulo"), COMITE("comite.id"), PERSONA("peticionEvaluacion.personaRef"),
-    ESTADO("estadoActual.id"), CODIGO("peticionEvaluacion.codigo");
+    TITULO("peticionEvaluacion.titulo"),
+    COMITE("comite.id"),
+    PERSONA("peticionEvaluacion.personaRef"),
+    ESTADO("estadoActual.id"),
+    CODIGO("peticionEvaluacion.codigo"),
+    NUM_REFERENCIA("numReferencia");
 
     private String code;
 
@@ -105,6 +113,30 @@ public class PeticionEvaluacionPredicateResolver implements SgiRSQLPredicateReso
     return cb.and(titulo);
   }
 
+  private static Predicate buildFilterNumReferencia(ComparisonNode node, Root<PeticionEvaluacion> root,
+      CriteriaQuery<?> query,
+      CriteriaBuilder cb) {
+    ComparisonOperator operator = node.getOperator();
+    if (!operator.equals(RSQLOperators.IGNORE_CASE_LIKE)) {
+      // Unsupported Operator
+      throw new IllegalArgumentException(UNSUPPORTED_OPERATOR + operator + FOR + node.getSelector());
+    }
+    if (node.getArguments().size() != 1) {
+      // Bad number of arguments
+      throw new IllegalArgumentException(BAD_NUMBER_OF_ARGUMENTS_FOR + node.getSelector());
+    }
+    String numReferencia = node.getArguments().get(0);
+
+    Subquery<Long> subquery = query.subquery(Long.class);
+    Root<Memoria> rootSubquery = subquery.from(Memoria.class);
+
+    subquery.select(rootSubquery.get(Memoria_.peticionEvaluacionId)).where(
+        cb.like(rootSubquery.get(Memoria_.numReferencia),
+            LIKE_WILDCARD_PERCENT + numReferencia + LIKE_WILDCARD_PERCENT));
+
+    return root.get(PeticionEvaluacion_.id).in(subquery);
+  }
+
   @Override
   public boolean isManaged(ComparisonNode node) {
     Property property = Property.fromCode(node.getSelector());
@@ -132,6 +164,8 @@ public class PeticionEvaluacionPredicateResolver implements SgiRSQLPredicateReso
         return buildNonFilter(root, criteriaBuilder);
       case COMITE:
         return buildNonFilter(root, criteriaBuilder);
+      case NUM_REFERENCIA:
+        return buildFilterNumReferencia(node, root, query, criteriaBuilder);
       default:
         return null;
     }

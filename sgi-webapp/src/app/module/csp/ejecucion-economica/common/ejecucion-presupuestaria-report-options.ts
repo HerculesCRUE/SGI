@@ -5,4 +5,6 @@ import { IColumnDefinition } from '../ejecucion-economica-formulario/desglose-ec
 export interface IEjecucionPresupuestariaReportOptions extends IReportOptions {
   data: IDatoEconomico[];
   columns: IColumnDefinition[];
+  showColumClasificadoAutomaticamente?: boolean;
+  showColumnProyectoSgi?: boolean;
 }

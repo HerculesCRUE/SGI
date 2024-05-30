@@ -36,6 +36,7 @@ import { CONVOCATORIA_ACTION_LINK_KEY } from '../../convocatoria/convocatoria.ac
 import { ISolicitudCrearProyectoModalData, SolicitudCrearProyectoModalComponent } from '../modals/solicitud-crear-proyecto-modal/solicitud-crear-proyecto-modal.component';
 import { SolicitudGrupoModalComponent } from '../modals/solicitud-grupo-modal/solicitud-grupo-modal.component';
 import { SolicitudListadoExportModalComponent } from '../modals/solicitud-listado-export-modal/solicitud-listado-export-modal.component';
+import { FORMULARIO_SOLICITUD_MAP } from '@core/enums/formulario-solicitud';
 
 const MSG_BUTTON_NEW = marker('btn.add.entity');
 const MSG_DEACTIVATE = marker('msg.deactivate.entity');
@@ -111,6 +112,10 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
     return Estado;
   }
 
+  get FORMULARIO_SOLICITUD_MAP() {
+    return FORMULARIO_SOLICITUD_MAP;
+  }
+
   constructor(
     private readonly logger: NGXLogger,
     private dialogService: DialogService,
@@ -171,6 +176,7 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
     this.formGroup = new FormGroup({
       convocatoria: new FormControl(undefined),
       estadoSolicitud: new FormControl(''),
+      acronimo: new FormControl(''),
       plazoAbierto: new FormControl(false),
       fechaInicioDesde: new FormControl(null),
       fechaInicioHasta: new FormControl(null),
@@ -188,6 +194,7 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
       entidadFinanciadora: new FormControl(undefined),
       fuenteFinanciacion: new FormControl(undefined),
       palabrasClave: new FormControl(null),
+      formularioSolicitud: new FormControl(null),
     });
 
     this.getPlanesInvestigacion();
@@ -422,25 +429,24 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
     const rsqlFilter = new RSQLSgiRestFilter('convocatoria.id', SgiRestFilterOperator.EQUALS, controls.convocatoria.value?.id?.toString())
+      .and('solicitudProyecto.acronimo', SgiRestFilterOperator.LIKE_ICASE, controls.acronimo.value)
       .and('estado.estado', SgiRestFilterOperator.EQUALS, controls.estadoSolicitud.value)
-      .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.tituloSolicitud.value);
+      .and('formularioSolicitud', SgiRestFilterOperator.EQUALS, controls.formularioSolicitud.value)
+      .and('solicitanteRef', SgiRestFilterOperator.EQUALS, controls.solicitante.value?.id)
+      .and('solicitanteExterno.nombre', SgiRestFilterOperator.LIKE_ICASE, controls.nombreSolicitanteExterno.value)
+      .and('solicitanteExterno.apellidos', SgiRestFilterOperator.LIKE_ICASE, controls.apellidosSolicitanteExterno.value)
+      ;
     if (this.busquedaAvanzada) {
-      if (controls.plazoAbierto.value) {
-        rsqlFilter
-          .and('abiertoPlazoPresentacionSolicitud', SgiRestFilterOperator.EQUALS, controls.plazoAbierto.value.toString())
-          .and('convocatoria.configuracionSolicitud.fasePresentacionSolicitudes.fechaInicio',
-            SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioDesde.value))
-          .and('convocatoria.configuracionSolicitud.fasePresentacionSolicitudes.fechaInicio',
-            SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioHasta.value))
-          .and('convocatoria.configuracionSolicitud.fasePresentacionSolicitudes.fechaFin',
-            SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinDesde.value))
-          .and('convocatoria.configuracionSolicitud.fasePresentacionSolicitudes.fechaFin',
-            SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinHasta.value));
-      }
       rsqlFilter
-        .and('solicitanteRef', SgiRestFilterOperator.EQUALS, controls.solicitante.value?.id)
-        .and('solicitanteExterno.nombre', SgiRestFilterOperator.LIKE_ICASE, controls.nombreSolicitanteExterno.value)
-        .and('solicitanteExterno.apellidos', SgiRestFilterOperator.LIKE_ICASE, controls.apellidosSolicitanteExterno.value)
+        .and('abiertoPlazoPresentacionSolicitud', SgiRestFilterOperator.EQUALS, controls.plazoAbierto.value.toString())
+        .and('convocatoria.configuracionSolicitud.fasePresentacionSolicitudes.fechaInicio',
+          SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioDesde.value))
+        .and('convocatoria.configuracionSolicitud.fasePresentacionSolicitudes.fechaInicio',
+          SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioHasta.value))
+        .and('convocatoria.configuracionSolicitud.fasePresentacionSolicitudes.fechaFin',
+          SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinDesde.value))
+        .and('convocatoria.configuracionSolicitud.fasePresentacionSolicitudes.fechaFin',
+          SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaFinHasta.value))
         .and('activo', SgiRestFilterOperator.EQUALS, controls.activo.value)
         .and('convocatoria.fechaPublicacion', SgiRestFilterOperator.GREATHER_OR_EQUAL,
           LuxonUtils.toBackend(controls.fechaPublicacionConvocatoriaDesde.value))
@@ -450,7 +456,8 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
         .and('planInvestigacion', SgiRestFilterOperator.EQUALS, controls.planInvestigacion.value?.id?.toString())
         .and('convocatoria.entidadesFinanciadoras.entidadRef', SgiRestFilterOperator.EQUALS, controls.entidadFinanciadora.value?.id)
         .and('convocatoria.entidadesFinanciadoras.fuenteFinanciacion.id',
-          SgiRestFilterOperator.EQUALS, controls.fuenteFinanciacion.value?.id?.toString());
+          SgiRestFilterOperator.EQUALS, controls.fuenteFinanciacion.value?.id?.toString())
+        .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.tituloSolicitud.value);
 
       const palabrasClave = controls.palabrasClave.value as string[];
       if (Array.isArray(palabrasClave) && palabrasClave.length > 0) {

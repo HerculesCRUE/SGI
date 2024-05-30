@@ -5,10 +5,11 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IMemoria } from '@core/models/eti/memoria';
 import { IMemoriaPeticionEvaluacion } from '@core/models/eti/memoria-peticion-evaluacion';
-import { ESTADO_MEMORIA_MAP } from '@core/models/eti/tipo-estado-memoria';
+import { ESTADO_MEMORIA, ESTADO_MEMORIA_MAP } from '@core/models/eti/tipo-estado-memoria';
 import { IPersona } from '@core/models/sgp/persona';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
@@ -22,17 +23,19 @@ import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { MEMORIAS_ROUTE } from '../memoria-route-names';
 import { IMemoriaListadoModalData, MemoriaListadoExportModalComponent } from '../modals/memoria-listado-export-modal/memoria-listado-export-modal.component';
 
 const MSG_BUTTON_SAVE = marker('btn.add.entity');
-const MSG_ERROR = marker('error.load');
 const MSG_ESTADO_ANTERIOR_OK = marker('msg.eti.memoria.estado-anterior.success');
 const MSG_ESTADO_ANTERIOR_ERROR = marker('error.eti.memoria.estado-anterior');
 const MSG_RECUPERAR_ESTADO = marker('msg.eti.memoria.estado-anterior');
 const PETICION_EVALUACION_KEY = marker('eti.peticion-evaluacion-etica-proyecto');
+const MSG_SUCCESS_NOTIFICAR_REV_MINIMA = marker('msg.eti.memoria.notificar-revision-minima.success');
+const MSG_ERROR_NOTIFICAR_REV_MINIMA = marker('msg.eti.memoria.notificar-revision-minima.error');
+const MSG_CONFIRMACION_NOTIFICAR_REV_MINIMA = marker('msg.eti.memoria.notificar-rev-minima.confirmacion');
 
 @Component({
   selector: 'sgi-memoria-listado-ges',
@@ -50,6 +53,8 @@ export class MemoriaListadoGesComponent extends AbstractTablePaginationComponent
   totalElementos: number;
 
   textoCrear: string;
+  textoNotificarRevMinimaSuccess: string;
+  textoNotificarRevMinimaError: string;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -105,6 +110,7 @@ export class MemoriaListadoGesComponent extends AbstractTablePaginationComponent
       numReferencia: new FormControl('', []),
       tipoEstadoMemoria: new FormControl(null, []),
       solicitante: new FormControl('', []),
+      texto: new FormControl(null, []),
     });
 
     this.suscripciones.push(
@@ -125,6 +131,14 @@ export class MemoriaListadoGesComponent extends AbstractTablePaginationComponent
         );
       })
     ).subscribe((value) => this.textoCrear = value);
+
+    this.translate.get(
+      MSG_SUCCESS_NOTIFICAR_REV_MINIMA,
+    ).subscribe((value) => this.textoNotificarRevMinimaSuccess = value);
+
+    this.translate.get(
+      MSG_ERROR_NOTIFICAR_REV_MINIMA
+    ).subscribe((value) => this.textoNotificarRevMinimaError = value);
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IMemoriaPeticionEvaluacion>> {
@@ -176,7 +190,8 @@ export class MemoriaListadoGesComponent extends AbstractTablePaginationComponent
       .and('peticionEvaluacion.titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
       .and('numReferencia', SgiRestFilterOperator.LIKE_ICASE, controls.numReferencia.value)
       .and('estadoActual.id', SgiRestFilterOperator.EQUALS, controls.tipoEstadoMemoria.value?.toString())
-      .and('peticionEvaluacion.personaRef', SgiRestFilterOperator.EQUALS, controls.solicitante.value.id);
+      .and('peticionEvaluacion.personaRef', SgiRestFilterOperator.EQUALS, controls.solicitante.value.id)
+      .and('textoContenidoRespuestaFormulario', SgiRestFilterOperator.LIKE_ICASE, this.formGroup.controls.texto.value);
   }
 
   protected loadTable(reset?: boolean) {
@@ -249,4 +264,39 @@ export class MemoriaListadoGesComponent extends AbstractTablePaginationComponent
     };
     this.matDialog.open(MemoriaListadoExportModalComponent, config);
   }
+
+  public showRecuperarEstadoAnterior(memoria: IMemoriaPeticionEvaluacion): boolean {
+    return [
+      ESTADO_MEMORIA.EN_SECRETARIA,
+      ESTADO_MEMORIA.EN_SECRETARIA_REVISION_MINIMA,
+      ESTADO_MEMORIA.EN_EVALUACION,
+      ESTADO_MEMORIA.ARCHIVADA,
+      ESTADO_MEMORIA.EN_EVALUACION_REVISION_MINIMA
+    ].includes(memoria.estadoActual.id);
+  }
+
+  public showNotificarRevisionMinima(memoria: IMemoriaPeticionEvaluacion): boolean {
+    return ESTADO_MEMORIA.EN_SECRETARIA_REVISION_MINIMA === memoria.estadoActual.id;
+  }
+
+  public notificarRevisionMinima(memoria: IMemoriaPeticionEvaluacion): void {
+    this.suscripciones.push(
+      this.dialogService.showConfirmation(MSG_CONFIRMACION_NOTIFICAR_REV_MINIMA).pipe(
+        filter(aceptado => !!aceptado),
+        switchMap(() => this.memoriaService.notificarRevisionMinima(memoria.id))
+      ).subscribe(() => {
+        this.snackBarService.showSuccess(this.textoNotificarRevMinimaSuccess);
+        this.loadTable(true);
+      },
+        (error) => {
+          if (error instanceof SgiError) {
+            this.processError(error);
+          } else {
+            this.processError(new SgiError(this.textoNotificarRevMinimaError));
+          }
+        }
+      )
+    );
+  }
+
 }

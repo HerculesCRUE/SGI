@@ -1,0 +1,34 @@
+<sgi-dialog-header [title]="title"></sgi-dialog-header>
+<sgi-dialog-content>
+  <form [formGroup]="formGroup">
+    <div fxLayout="row">
+      <mat-form-field>
+        <mat-label>{{'eti.convocatoria-reunion.documento.nombre' | translate}}</mat-label>
+        <input matInput type="text" formControlName="nombre" required>
+        <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
+          {{'error.required.entity' | translate:msgParamNombreEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <!-- File -->
+    <div fxLayout="row">
+      <mat-form-field>
+        <mat-label>{{'eti.convocatoria-reunion.documento.fichero' | translate}}</mat-label>
+        <sgi-file-upload #uploader formControlName="fichero" required autoUpload="false"
+          (uploadEventChange)="onUploadProgress($event)">
+        </sgi-file-upload>
+        <mat-error *ngIf="formGroup.controls.fichero.errors?.required">
+          {{'error.required.entity' | translate:msgParamFicheroEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+  </form>
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button color="accent" (click)="doAction()" [disabled]="data?.readonly" mat-raised-button type="submit">
+    <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
+  </button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
+    translate}}</button>
+</mat-dialog-actions>

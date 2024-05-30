@@ -22,7 +22,7 @@
       <div fxFlex>
         <mat-form-field>
           <mat-label>{{'csp.solicitud-proyecto.fecha-inicio'| translate}}</mat-label>
-          <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio" required>
+          <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio">
           <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
           <mat-datepicker #pickerFechaInicio>
           </mat-datepicker>
@@ -38,7 +38,7 @@
       <div fxFlex>
         <mat-form-field sgiEndDate>
           <mat-label>{{'csp.solicitud-proyecto.fecha-fin'| translate}}</mat-label>
-          <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin" required>
+          <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin">
           <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
           <mat-datepicker #pickerFechaFin>
           </mat-datepicker>

@@ -44,9 +44,23 @@ public interface CustomGrupoEquipoRepository {
    * @param grupoId identificador del {@link Grupo}.
    * @param fecha   fecha en la que se busca el investigador principal.
    * @return la lista de personaRef de los investigadores principales del
-   *         {@link Grupo} en el momento actual.
+   *         {@link Grupo} en la fecha.
    */
   List<String> findPersonaRefInvestigadoresPrincipales(Long grupoId, Instant fecha);
+
+  /**
+   * {@link GrupoEquipo} que son investigador o investigadores principales del
+   * {@link Grupo} con el id indicado.
+   * 
+   * Son investiador principales los {@link GrupoEquipo} que a fecha actual
+   * tiene el {@link RolProyecto} con el flag {@link RolProyecto#rolPrincipal} a
+   * <code>true</code>.
+   * 
+   * @param grupoId identificador del {@link Grupo}.
+   * @param fecha   fecha en la que se busca el investigador principal.
+   * @return la lista de investigadores principales del {@link Grupo} en la fecha.
+   */
+  List<GrupoEquipo> findInvestigadoresPrincipales(Long grupoId, Instant fecha);
 
   /**
    * Comprueba si personaRef pertenece a un grupo de investigación con un rol con

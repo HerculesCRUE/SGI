@@ -4,6 +4,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
+import { ProyectoProrrogaService } from '@core/services/csp/proyecto-prorroga.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
@@ -13,7 +14,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilterOperator } from '@sgi/framework/http';
 import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { NGXLogger } from 'ngx-logger';
-import { from, Observable, of } from 'rxjs';
+import { Observable, from, of } from 'rxjs';
 import { map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
 import { IProyectoFacturacionData } from './proyecto-formulario/proyecto-calendario-facturacion/proyecto-calendario-facturacion.fragment';
 import { IProyectoReportData, IProyectoReportOptions } from './proyecto-listado-export.service';
@@ -29,6 +30,7 @@ const CALENDARIO_FACTURACION_TIPO_KEY = marker('csp.proyecto-calendario-facturac
 const CALENDARIO_FACTURACION_ESTADO_VALIDACION_KEY = marker('csp.proyecto-calendario-facturacion.estado-validacion');
 const CALENDARIO_FACTURACION_FECHA_CONFORMIDAD_KEY = marker('csp.proyecto-calendario-facturacion.fecha-conformidad');
 const CALENDARIO_FACTURACION_NUM_FACTURA_EMITIDA_KEY = marker('csp.proyecto-calendario-facturacion.numero-factura-emitida');
+const CALENDARIO_FACTURACION_PRORROGA_KEY = marker('csp.proyecto-calendario-facturacion.prorroga');
 
 const CALENDARIO_FACTURACION_FIELD = 'calendarioFacturacion';
 const CALENDARIO_FACTURACION_TIPO_FIELD = 'tipoCalendarioFacturacion';
@@ -40,6 +42,7 @@ const CALENDARIO_FACTURACION_IMPORTE_TOTAL_FIELD = 'importeTotalFacturacion';
 const CALENDARIO_FACTURACION_ESTADO_VALIDACION_FIELD = 'estadoValidacionFacturacion';
 const CALENDARIO_FACTURACION_FECHA_CONFORMIDAD_FIELD = 'fechaConformidadFacturacion';
 const CALENDARIO_FACTURACION_NUM_FACTURA_EMITIDA_FIELD = 'numFacturaEmitidaFacturacion';
+const CALENDARIO_FACTURACION_PRORROGA_FIELD = 'prorroga';
 
 @Injectable()
 export class ProyectoCalendarioFacturacionListadoExportService
@@ -52,6 +55,7 @@ export class ProyectoCalendarioFacturacionListadoExportService
     private readonly decimalPipe: DecimalPipe,
     private readonly percentPipe: PercentPipe,
     private readonly proyectoService: ProyectoService,
+    private readonly proyectoProrrogaService: ProyectoProrrogaService,
     private readonly facturaPrevistaEmitidaService: FacturaPrevistaEmitidaService
   ) {
     super(translate);
@@ -68,6 +72,27 @@ export class ProyectoCalendarioFacturacionListadoExportService
         return from(responseCalendarioFacturacion).pipe(
           mergeMap((proyectoCalendarioFacturacion) => {
             return this.getNumeroFacturaEmitida(proyectoCalendarioFacturacion);
+          }, this.DEFAULT_CONCURRENT),
+          map(() => responseCalendarioFacturacion)
+        );
+      }),
+      switchMap((responseCalendarioFacturacion) => {
+        if (responseCalendarioFacturacion.length === 0) {
+          return of(responseCalendarioFacturacion);
+        }
+
+        return from(responseCalendarioFacturacion).pipe(
+          mergeMap((proyectoCalendarioFacturacion) => {
+            if (!proyectoCalendarioFacturacion.proyectoProrroga?.id) {
+              return of(proyectoCalendarioFacturacion);
+            }
+
+            return this.proyectoProrrogaService.findById(proyectoCalendarioFacturacion.proyectoProrroga.id).pipe(
+              map(proyectoProrroga => {
+                proyectoCalendarioFacturacion.proyectoProrroga = proyectoProrroga;
+                return proyectoCalendarioFacturacion;
+              })
+            );
           }, this.DEFAULT_CONCURRENT),
           map(() => responseCalendarioFacturacion)
         );
@@ -126,6 +151,7 @@ export class ProyectoCalendarioFacturacionListadoExportService
       ' - ' + this.translate.instant(CALENDARIO_FACTURACION_IVA_KEY) +
       ' - ' + this.translate.instant(CALENDARIO_FACTURACION_IMPORTE_TOTAL_KEY) +
       ' - ' + this.translate.instant(CALENDARIO_FACTURACION_TIPO_KEY) +
+      ' - ' + this.translate.instant(CALENDARIO_FACTURACION_PRORROGA_KEY) +
       ' - ' + this.translate.instant(CALENDARIO_FACTURACION_ESTADO_VALIDACION_KEY) +
       ' - ' + this.translate.instant(CALENDARIO_FACTURACION_FECHA_CONFORMIDAD_KEY) +
       ' - ' + this.translate.instant(CALENDARIO_FACTURACION_NUM_FACTURA_EMITIDA_KEY) +
@@ -151,7 +177,7 @@ export class ProyectoCalendarioFacturacionListadoExportService
       const columnNumPrevisionCalendarioFacturacion: ISgiColumnReport = {
         name: CALENDARIO_FACTURACION_NUM_PREVISION_FIELD + idCalendarioFacturacion,
         title: titleCalendarioFacturacion + idCalendarioFacturacion + ': ' + this.translate.instant(CALENDARIO_FACTURACION_NUM_PREVISION_KEY),
-        type: ColumnType.STRING,
+        type: ColumnType.NUMBER,
       };
       columns.push(columnNumPrevisionCalendarioFacturacion);
 
@@ -172,7 +198,8 @@ export class ProyectoCalendarioFacturacionListadoExportService
       const columnIvaCalendarioFacturacion: ISgiColumnReport = {
         name: CALENDARIO_FACTURACION_IVA_FIELD + idCalendarioFacturacion,
         title: titleCalendarioFacturacion + idCalendarioFacturacion + ': ' + this.translate.instant(CALENDARIO_FACTURACION_IVA_KEY),
-        type: ColumnType.STRING,
+        type: ColumnType.NUMBER,
+        format: '#,#" "%'
       };
       columns.push(columnIvaCalendarioFacturacion);
 
@@ -189,6 +216,13 @@ export class ProyectoCalendarioFacturacionListadoExportService
         type: ColumnType.STRING,
       };
       columns.push(columnTipoCalendarioFacturacion);
+
+      const columnProrogaCalendarioFacturacion: ISgiColumnReport = {
+        name: CALENDARIO_FACTURACION_PRORROGA_FIELD + idCalendarioFacturacion,
+        title: titleCalendarioFacturacion + idCalendarioFacturacion + ': ' + this.translate.instant(CALENDARIO_FACTURACION_PRORROGA_KEY),
+        type: ColumnType.STRING,
+      };
+      columns.push(columnProrogaCalendarioFacturacion);
 
       const columnEstadoValidacionCalendarioFacturacion: ISgiColumnReport = {
         name: CALENDARIO_FACTURACION_ESTADO_VALIDACION_FIELD + idCalendarioFacturacion,
@@ -261,6 +295,8 @@ export class ProyectoCalendarioFacturacionListadoExportService
       calendarioFacturacionContent += '\n';
       calendarioFacturacionContent += proyectoCalendarioFacturacion.tipoFacturacion?.nombre ?? '';
       calendarioFacturacionContent += '\n';
+      calendarioFacturacionContent += proyectoCalendarioFacturacion.proyectoProrroga?.numProrroga ? `${proyectoCalendarioFacturacion.proyectoProrroga?.numProrroga} - ${this.luxonDatePipe.transform(LuxonUtils.toBackend(proyectoCalendarioFacturacion?.fechaEmision, true), 'shortDate')}` : '';
+      calendarioFacturacionContent += '\n';
       calendarioFacturacionContent += proyectoCalendarioFacturacion.estadoValidacionIP?.estado ?? '';
       calendarioFacturacionContent += '\n';
       calendarioFacturacionContent += this.luxonDatePipe.transform(
@@ -286,16 +322,17 @@ export class ProyectoCalendarioFacturacionListadoExportService
       elementsRow.push(proyectoCalendarioFacturacion.numeroPrevision ?? '');
       elementsRow.push(LuxonUtils.toBackend(proyectoCalendarioFacturacion?.fechaEmision) ?? '');
       elementsRow.push(proyectoCalendarioFacturacion.importeBase.toString() ?? '');
-      elementsRow.push(proyectoCalendarioFacturacion.porcentajeIVA ?
-        this.percentPipe.transform(proyectoCalendarioFacturacion.porcentajeIVA / 100) : '');
+      elementsRow.push(proyectoCalendarioFacturacion.porcentajeIVA ? proyectoCalendarioFacturacion.porcentajeIVA / 100 : '');
       elementsRow.push(this.getImporteTotal(
         proyectoCalendarioFacturacion.importeBase, proyectoCalendarioFacturacion.porcentajeIVA
       ).toString() ?? '');
       elementsRow.push(proyectoCalendarioFacturacion.tipoFacturacion?.nombre ?? '');
+      elementsRow.push(proyectoCalendarioFacturacion.proyectoProrroga?.numProrroga ? `${proyectoCalendarioFacturacion.proyectoProrroga?.numProrroga} - ${LuxonUtils.toBackend(proyectoCalendarioFacturacion?.fechaEmision)}` : '');
       elementsRow.push(proyectoCalendarioFacturacion.estadoValidacionIP?.estado ?? '');
       elementsRow.push(LuxonUtils.toBackend(proyectoCalendarioFacturacion?.fechaConformidad) ?? '');
       elementsRow.push(proyectoCalendarioFacturacion.numeroFacturaEmitida ?? '');
     } else {
+      elementsRow.push('');
       elementsRow.push('');
       elementsRow.push('');
       elementsRow.push('');

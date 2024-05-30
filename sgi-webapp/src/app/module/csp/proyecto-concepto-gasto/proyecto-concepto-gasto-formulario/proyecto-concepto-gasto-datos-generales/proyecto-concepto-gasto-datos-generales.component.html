@@ -69,11 +69,8 @@
             <mat-error *ngIf="formGroup.controls.fechaInicio.hasError('overlappedConceptoAndCodigo')">
               {{'error.csp.proyecto-concepto-gasto.overlapped-concepto-and-codigo' | translate}}
             </mat-error>
-            <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.minDate">
-              {{'error.csp.proyecto-concepto-gasto.fecha-inicio.min' | translate}}
-            </mat-error>
-            <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.maxDate">
-              {{'error.csp.proyecto-concepto-gasto.fecha-inicio.max' | translate}}
+            <mat-error *ngIf="formGroup.controls.fechaFin.errors?.invalid">
+              {{'error.csp.proyecto-concepto-gasto.fecha.invalid' | translate}}
             </mat-error>
           </mat-form-field>
         </div>
@@ -89,7 +86,7 @@
             <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
             <mat-datepicker #picker2></mat-datepicker>
             <mat-error *ngIf="formGroup.controls.fechaFin.hasError('after')">
-              {{'error.after.mes-final' | translate}}
+              {{'error.after.fecha-fin' | translate}}
             </mat-error>
             <mat-error *ngIf="formGroup.controls.fechaFin.hasError('overlapped')">
               {{'error.overlapping.record.entity' | translate:msgParamConceptoGastoEntity}}
@@ -97,11 +94,8 @@
             <mat-error *ngIf="formGroup.controls.fechaFin.hasError('overlappedConceptoAndCodigo')">
               {{'error.csp.proyecto-concepto-gasto.overlapped-concepto-and-codigo' | translate}}
             </mat-error>
-            <mat-error *ngIf="formGroup.controls.fechaFin.errors?.minDate">
-              {{'error.csp.proyecto-concepto-gasto.fecha-fin.min' | translate}}
-            </mat-error>
-            <mat-error *ngIf="formGroup.controls.fechaFin.errors?.maxDate">
-              {{'error.csp.proyecto-concepto-gasto.fecha-fin.max' | translate}}
+            <mat-error *ngIf="formGroup.controls.fechaFin.errors?.invalid">
+              {{'error.csp.proyecto-concepto-gasto.fecha.invalid' | translate}}
             </mat-error>
           </mat-form-field>
         </div>

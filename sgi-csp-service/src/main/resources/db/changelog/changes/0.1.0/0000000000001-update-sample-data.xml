@@ -38,8 +38,7 @@
     </update>
   </changeSet>
 
-  <!-- TODO: Mover al fichero adecuado ya que no se trata de datos de prueba -->
-  <changeSet context="!test" author="master" id="0000000000001-rol_proyecto_colectivo">
+  <changeSet context="dev" author="master" id="0000000000001-rol_proyecto_colectivo">
     <!-- Rol Proyecto 1-->
     <update tableName="rol_proyecto_colectivo">
       <column name="colectivo_ref" value="3" />

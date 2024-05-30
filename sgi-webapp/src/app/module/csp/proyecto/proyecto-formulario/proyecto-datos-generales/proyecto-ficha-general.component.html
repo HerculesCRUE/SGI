@@ -47,11 +47,8 @@
       <!-- Identificadores Sge -->
       <mat-form-field fxFlex="33%" *ngIf="this.formPart.isEdit()">
         <mat-label>{{'csp.proyecto.codigos-sge' | translate}}</mat-label>
-        <mat-select matNativeControl formControlName="codigosSge" multiple>
-          <mat-option *ngFor="let proyecto of this.proyectosSge" [value]="proyecto">
-            {{proyecto.value.proyectoSge?.id}}
-          </mat-option>
-        </mat-select>
+        <input type="text" placeholder="{{'csp.proyecto.codigos-sge' | translate}}" matInput
+          formControlName="codigosSge">
       </mat-form-field>
 
     </div>
@@ -197,6 +194,7 @@
         <mat-label>{{'csp.proyecto.finalidad' | translate}}</mat-label>
         <sgi-select-tipo-finalidad formControlName="finalidad" [required]="formPart.abiertoRequired"
           [modeloEjecucionId]="formGroup.controls.modeloEjecucion.value?.id"
+          [unidadGestionRef]="formGroup.controls.unidadGestion.value?.id"
           [resetOnChange]="modeloEjecucion.selectionChange">
         </sgi-select-tipo-finalidad>
         <sgi-field-info matSuffix
@@ -213,7 +211,8 @@
       <!-- Fecha inicio -->
       <mat-form-field color="primary" fxFlex="33%">
         <mat-label>{{'csp.proyecto.fecha-inicio'| translate}}</mat-label>
-        <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio" required>
+        <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio"
+          [required]="formPart.abiertoRequired">
         <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaInicio"></mat-datepicker-toggle>
         <mat-datepicker #pickerFechaInicio>
         </mat-datepicker>
@@ -228,7 +227,8 @@
       <!-- Fecha fin -->
       <mat-form-field color="primary" sgiEndDate fxFlex="33%">
         <mat-label>{{'csp.proyecto.fecha-fin'| translate}}</mat-label>
-        <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin" required>
+        <input matInput [matDatepicker]="pickerFechaFin" formControlName="fechaFin"
+          [required]="formPart.abiertoRequired">
         <mat-datepicker-toggle class="fechaIcon" matSuffix [for]="pickerFechaFin"></mat-datepicker-toggle>
         <mat-datepicker #pickerFechaFin>
         </mat-datepicker>
@@ -255,6 +255,9 @@
         </mat-datepicker>
         <mat-error *ngIf="formGroup.controls.fechaFinDefinitiva.errors?.after">
           {{'error.after.fecha-fin-definitiva' | translate}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.fechaFinDefinitiva.errors?.fechaFinRequired">
+          {{'error.csp.proyecto-ficha-general.fecha-fin-definitiva.fecha-fin-required' | translate}}
         </mat-error>
       </mat-form-field>
     </div>
@@ -294,21 +297,21 @@
         </mat-error>
       </mat-form-field>
 
-      <!-- Coordinador externo -->
+      <!-- Rol universidad -->
       <mat-form-field fxFlex="33%" *ngIf="(formPart.coordinado$ | async)">
-        <mat-label>{{'csp.proyecto.coordinador-externo' | translate}}</mat-label>
-        <sgi-select-boolean formControlName="coordinadorExterno" [required]="(formPart.coordinado$ | async)">
-        </sgi-select-boolean>
+        <mat-label>{{'csp.proyecto.rol-universidad' | translate}}</mat-label>
+        <sgi-select-rol-socio formControlName="rolUniversidad"
+          [required]="(formPart.coordinado$ | async)"></sgi-select-rol-socio>
         <sgi-field-info matSuffix
-          [visible]="formPart.disableCoordinadorExterno && formGroup.controls?.coordinadorExterno.value === false && !formPart.isInvestigador && !formPart.isVisor"
+          [visible]="formPart.disableRolUniversidad && !!formGroup.controls.rolUniversidad.value?.coordinador && !formPart.isInvestigador && !formPart.isVisor"
           message="{{'msg.csp.solicitud-proyecto.unmodifiable-due-periodos-socios-dependencies.info' | translate}}">
         </sgi-field-info>
         <sgi-field-info matSuffix
           [visible]="!(formPart.hasAnyProyectoSocioWithRolCoordinador$ | async) && (formPart.coordinadorExterno$ | async) && !formPart.isInvestigador && !formPart.isVisor"
           message="{{'info.csp.solicitud-proyecto-socio.socio-con-rol-coordinador.no-informado.tooltip' | translate}}">
         </sgi-field-info>
-        <mat-error *ngIf="formGroup.controls.coordinadorExterno.errors?.required">
-          {{'error.required.entity' | translate:msgParamCoordinadorExternoEntity}}
+        <mat-error *ngIf="formGroup.controls.rolUniversidad.errors?.required">
+          {{'error.required.entity' | translate:msgParamRolUniversidadEntity}}
         </mat-error>
       </mat-form-field>
 
@@ -339,17 +342,14 @@
     </div>
 
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
-      <!-- Palabras Clave -->
-      <mat-form-field fxFill fxFlex="100%">
-        <mat-label>{{'csp.proyecto.palabras-clave' | translate}}</mat-label>
-        <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
-          placeholder="{{'csp.proyecto.palabras-clave' | translate}}"></sgi-palabra-clave>
+      <!-- IVA deducible -->
+      <mat-form-field fxFlex="33%">
+        <mat-label>{{'csp.proyecto.iva-deducible' | translate}}</mat-label>
+        <sgi-select-boolean formControlName="ivaDeducible"></sgi-select-boolean>
       </mat-form-field>
-    </div>
 
-    <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <!-- Porcentaje IVA -->
-      <mat-form-field fxFlex="50%">
+      <mat-form-field fxFlex="33%">
         <mat-label>{{'csp.proyecto.iva' | translate}}</mat-label>
         <input matInput formControlName="iva" type="number" id="iva" min="0" max="100"
           placeholder="{{'csp.proyecto.iva' | translate}}">
@@ -368,7 +368,7 @@
       </mat-form-field>
 
       <!-- Causa Exencion -->
-      <mat-form-field fxFlex="50%" *ngIf="formPart.mostrarCausaExencion">
+      <mat-form-field fxFlex="33%" *ngIf="formPart.mostrarCausaExencion">
         <mat-label>{{'csp.proyecto.causa-exencion' | translate}}</mat-label>
         <sgi-select-enum formControlName="causaExencion" [enumMap]="CAUSA_EXENCION_MAP" required></sgi-select-enum>
       </mat-form-field>
@@ -419,5 +419,15 @@
           placeholder="{{'csp.proyecto.observaciones' | translate}}"></textarea>
       </mat-form-field>
     </div>
+
+    <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Palabras Clave -->
+      <mat-form-field fxFill fxFlex="100%">
+        <mat-label>{{'csp.proyecto.palabras-clave' | translate}}</mat-label>
+        <sgi-palabra-clave formControlName="palabrasClave" id="palabrasClave"
+          placeholder="{{'csp.proyecto.palabras-clave' | translate}}"></sgi-palabra-clave>
+      </mat-form-field>
+    </div>
+
   </form>
 </sgi-fragment>

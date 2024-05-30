@@ -18,6 +18,7 @@ import { merge, Observable, of } from 'rxjs';
 import { catchError, map, tap, switchMap } from 'rxjs/operators';
 import { ACTION_MODAL_MODE } from 'src/app/esb/shared/formly-forms/core/base-formly-modal.component';
 import { EmpresaFormlyModalComponent, IEmpresaFormlyData } from '../../../formly-forms/empresa-formly-modal/empresa-formly-modal.component';
+import { ConfigService } from '@core/services/cnf/config.service';
 
 const TIPO_EMPRESA_KEY = marker('sgemp.empresa');
 const MSG_SAVE_SUCCESS = marker('msg.save.request.entity.success');
@@ -53,6 +54,12 @@ export class SearchEmpresaModalComponent extends DialogCommonComponent implement
   private textoCrearSuccess: string;
   private textoUpdateSuccess: string;
 
+  private sgempAlta: boolean = true;
+
+  get sgempAltaDisabled(): boolean {
+    return !this.sgempAlta;
+  }
+
   constructor(
     private readonly logger: NGXLogger,
     private readonly snackBarService: SnackBarService,
@@ -61,8 +68,12 @@ export class SearchEmpresaModalComponent extends DialogCommonComponent implement
     private empresaService: EmpresaService,
     private readonly translate: TranslateService,
     private empresaCreateMatDialog: MatDialog,
+    private configService: ConfigService
   ) {
     super(dialogRef);
+    this.subscriptions.push(this.configService.isAltaSgempEnabled().subscribe(value => {
+      this.sgempAlta = value;
+    }));
   }
 
   ngOnInit(): void {

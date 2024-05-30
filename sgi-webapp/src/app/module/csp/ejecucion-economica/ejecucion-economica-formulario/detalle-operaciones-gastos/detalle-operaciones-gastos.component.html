@@ -1,7 +1,8 @@
 <sgi-fragment title="{{'menu.csp.ejecucion-economica.detalle-operaciones' | translate}} -
     {{'menu.csp.ejecucion-economica.detalle-operaciones.gastos' | translate}}">
   <div fxLayout="column" fxLayoutGap="10px">
-    <sgi-ejecucion-economica-table-proyectos-relacionados [data]="formPart.relaciones$ | async">
+    <sgi-ejecucion-economica-table-proyectos-relacionados [data]="formPart.relaciones$ | async"
+      [isEjecucionEconomicaGruposEnabled]="formPart.isEjecucionEconomicaGruposEnabled">
     </sgi-ejecucion-economica-table-proyectos-relacionados>
 
     <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px" class="separation-button">
@@ -20,7 +21,7 @@
       </button>
     </div>
 
-    <div class="mat-elevation-z4">
+    <div class="mat-elevation-z4 table-container">
       <mat-table [dataSource]="dataSourceDesglose" multiTemplateDataRows>
 
         <ng-container matColumnDef="anualidad">
@@ -33,6 +34,12 @@
             </mat-icon>
             {{element.level === 0 ? element.item.anualidad : '' }}
           </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+            <button mat-button matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()"
+              [disabled]="!dataSourceDesglose.data.length">
+              <mat-icon color="primary">insert_chart_outlined</mat-icon>
+            </button>
+          </mat-footer-cell>
         </ng-container>
 
         <ng-container matColumnDef="aplicacionPresupuestaria">
@@ -45,6 +52,9 @@
             </mat-icon>
             {{element.level === 1 ? element.item.partidaPresupuestaria : '' }}
           </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+
+          </mat-footer-cell>
         </ng-container>
 
         <ng-container matColumnDef="codigoEconomico">
@@ -53,6 +63,9 @@
           <mat-cell *matCellDef="let element">
             {{ getCodigoEconomicoTitle(element.item.codigoEconomico) }}
           </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+
+          </mat-footer-cell>
         </ng-container>
 
         <ng-container *ngFor="let column of formPart.columns" [matColumnDef]="column.id">
@@ -66,17 +79,17 @@
               {{element.item.columnas[column.id]}}
             </ng-container>
           </mat-cell>
+          <mat-footer-cell *matFooterCellDef>
+
+          </mat-footer-cell>
         </ng-container>
 
-        <mat-header-row *matHeaderRowDef="formPart.displayColumns"></mat-header-row>
+        <mat-header-row *matHeaderRowDef="formPart.displayColumns; sticky: true"></mat-header-row>
         <mat-row *matRowDef="let row; columns: formPart.displayColumns;"
           [class.expanded-row]="!!row.parent && !!!row.parent?.expanded">
         </mat-row>
+        <mat-footer-row *matFooterRowDef="formPart.displayColumns; sticky: true"></mat-footer-row>
       </mat-table>
-      <button mat-button matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()"
-        [disabled]="!dataSourceDesglose.data.length">
-        <mat-icon color="primary">insert_chart_outlined</mat-icon>
-      </button>
     </div>
   </div>
 </sgi-fragment>

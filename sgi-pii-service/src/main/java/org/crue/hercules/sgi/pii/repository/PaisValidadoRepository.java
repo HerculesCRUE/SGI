@@ -12,4 +12,7 @@ public interface PaisValidadoRepository
     extends JpaRepository<PaisValidado, Long>, JpaSpecificationExecutor<PaisValidado> {
 
   Page<PaisValidado> findBySolicitudProteccionId(Long solicitudProteccionId, Pageable paging);
+
+  boolean existsBySolicitudProteccionId(Long solicitudProteccionId);
+
 }

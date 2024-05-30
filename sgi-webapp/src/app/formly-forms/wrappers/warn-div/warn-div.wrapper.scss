@@ -1,0 +1,11 @@
+@import "colors.scss";
+
+.warn {
+  mat-icon {
+    color: map-get($sgi-custom-colors, warning);
+  }
+
+  padding: 1em;
+  margin-bottom: 2em;
+  background-color: map-get($sgi-custom-colors, bg);
+}

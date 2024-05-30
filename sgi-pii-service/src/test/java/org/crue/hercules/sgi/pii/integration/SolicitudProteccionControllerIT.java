@@ -11,9 +11,7 @@ import org.crue.hercules.sgi.pii.dto.ProcedimientoOutput;
 import org.crue.hercules.sgi.pii.dto.SolicitudProteccionInput;
 import org.crue.hercules.sgi.pii.dto.SolicitudProteccionOutput;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion;
-import org.crue.hercules.sgi.pii.repository.SolicitudProteccionRepository;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.core.ParameterizedTypeReference;
@@ -31,13 +29,8 @@ class SolicitudProteccionControllerIT extends BaseIT {
 
   private static final String CONTROLLER_BASE_PATH = "/solicitudesproteccion";
   private static final String PATH_PARAMETER_ID = "/{id}";
-  private static final String PATH_ACTIVAR = "/activar";
-  private static final String PATH_DESACTIVAR = "/desactivar";
   private static final String PATH_PAISESVALIDADOS = "/{solicitudProteccionId}/paisesvalidados";
   private static final String PATH_PROCEDIMIENTOS = "/{solicitudProteccionId}/procedimientos";
-
-  @Autowired
-  private SolicitudProteccionRepository solicitudProteccionRepository;
 
   private HttpEntity<Object> buildRequest(HttpHeaders headers,
       Object entity, String... roles) throws Exception {
@@ -79,7 +72,6 @@ class SolicitudProteccionControllerIT extends BaseIT {
 
     Assertions.assertThat(founded).isNotNull();
     Assertions.assertThat(founded.getId()).as("getId()").isEqualTo(solicitudProteccionId);
-    Assertions.assertThat(founded.getActivo()).as("getActivo()").isTrue();
     Assertions.assertThat(founded.getFechaCaducidad()).as("getFechaCaducidad()")
         .isNull();
     Assertions.assertThat(founded.getFechaConcesion()).as("getFechaConcesion()")
@@ -242,60 +234,17 @@ class SolicitudProteccionControllerIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  void activar_ReturnsActivatedSolicitudProteccionOutput() throws Exception {
+  void deleteSolicitudProteccionOutput() throws Exception {
     String roles[] = { "PII-INV-E" };
     Long solicitudProteccionId = 1L;
 
-    SolicitudProteccion solicitudProteccion = this.solicitudProteccionRepository.findById(solicitudProteccionId).get();
-    solicitudProteccion.setActivo(Boolean.FALSE);
-    solicitudProteccion = this.solicitudProteccionRepository.save(solicitudProteccion);
-
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_ACTIVAR)
+    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID)
         .buildAndExpand(solicitudProteccionId).toUri();
 
-    ResponseEntity<SolicitudProteccionOutput> response = this.restTemplate.exchange(uri, HttpMethod.PATCH,
+    ResponseEntity<SolicitudProteccionOutput> response = this.restTemplate.exchange(uri, HttpMethod.DELETE,
         this.buildRequest(null, null, roles), SolicitudProteccionOutput.class);
 
-    Assertions.assertThat(response).isNotNull();
-    Assertions.assertThat(response.getBody()).isNotNull();
-
-    SolicitudProteccionOutput output = response.getBody();
-    Assertions.assertThat(output.getId()).isEqualTo(solicitudProteccionId);
-    Assertions.assertThat(output.getActivo()).isTrue();
-
-  }
-
-  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
-    // @formatter:off
-    "classpath:scripts/tipo_proteccion.sql",
-    "classpath:scripts/invencion.sql",
-    "classpath:scripts/tipo_caducidad.sql",
-    "classpath:scripts/via_proteccion.sql",
-    "classpath:scripts/solicitud_proteccion.sql"
-    // @formatter:on
-  })
-  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @Test
-  void desactivarReturnsDeactivatedSolicitudProteccionOutput() throws Exception {
-    String roles[] = { "PII-INV-E" };
-    Long solicitudProteccionId = 1L;
-
-    SolicitudProteccion solicitudProteccion = this.solicitudProteccionRepository.findById(solicitudProteccionId).get();
-    solicitudProteccion.setActivo(Boolean.TRUE);
-    solicitudProteccion = this.solicitudProteccionRepository.save(solicitudProteccion);
-
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_DESACTIVAR)
-        .buildAndExpand(solicitudProteccionId).toUri();
-
-    ResponseEntity<SolicitudProteccionOutput> response = this.restTemplate.exchange(uri, HttpMethod.PATCH,
-        this.buildRequest(null, null, roles), SolicitudProteccionOutput.class);
-
-    Assertions.assertThat(response).isNotNull();
-    Assertions.assertThat(response.getBody()).isNotNull();
-
-    SolicitudProteccionOutput output = response.getBody();
-    Assertions.assertThat(output.getId()).isEqualTo(solicitudProteccionId);
-    Assertions.assertThat(output.getActivo()).isFalse();
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {

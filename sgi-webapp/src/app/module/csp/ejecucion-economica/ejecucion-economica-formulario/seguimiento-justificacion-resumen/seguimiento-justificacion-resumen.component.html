@@ -76,6 +76,16 @@
           </td>
         </ng-container>
 
+        <!-- Fecha fin Definitiva Column -->
+        <ng-container matColumnDef="fechaFinDefinitiva">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{'csp.ejecucion-economica.seguimiento-justificacion.resumen.fecha-fin-definitiva' | translate}}
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{element.fechaFinDefinitiva | luxon:'shortDate'}}
+          </td>
+        </ng-container>
+
         <!-- Convocatoria Column -->
         <ng-container matColumnDef="tituloConvocatoria">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -686,8 +696,9 @@
     </div>
   </section>
   <div class="export-button">
-    <button color="primary" matTooltip="{{'btn.export.gastos.justificados' | translate}}" class="rounded"
-      mat-raised-button (click)="openExportModal()">
+    <button color="primary" *ngIf="gastosJustificadosSgeEnabled"
+      matTooltip="{{'btn.export.gastos.justificados' | translate}}" class="rounded" mat-raised-button
+      (click)="openExportModal()">
       <mat-icon>insert_chart_outlined</mat-icon>
       {{'btn.export.gastos.justificados'| translate}}
     </button>

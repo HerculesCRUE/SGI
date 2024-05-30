@@ -4,6 +4,32 @@
     [message]="'error.csp.grupo.equipo-investigacion.ip-sin-participacion' | translate">
   </sgi-error-message>
   <div class="mat-elevation-z4">
+    <form class="formulario" [formGroup]="formGroup" fxLayout="column">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
+        <!-- Activo -->
+        <mat-form-field fxFlex="20%">
+          <mat-label>{{'csp.grupo-equipo.listado-miembros' | translate}}</mat-label>
+          <mat-select matNativeControl formControlName="activo">
+            <mat-option value="true">{{'label.activos' | translate}}</mat-option>
+            <mat-option value="false">{{'label.no-activos' | translate}}</mat-option>
+            <mat-option value="todos">{{'label.todos' | translate}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Acciones -->
+      <div class="buttons-final">
+        <div class="col filter-button">
+          <button color="primary" mat-raised-button (click)="onSearch()">
+            <mat-icon>search</mat-icon> {{'btn.search'| translate}}
+          </button>
+          <button color="warn" (click)="onClearFilters()" mat-button>{{'btn.clean'|
+            translate}}
+          </button>
+        </div>
+      </div>
+    </form>
+
     <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear>
 
       <!-- nº identificacion Column -->

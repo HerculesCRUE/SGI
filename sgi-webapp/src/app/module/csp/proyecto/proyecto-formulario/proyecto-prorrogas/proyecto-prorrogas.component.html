@@ -89,7 +89,8 @@
   </div>
   <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
     <div class="separation-button">
-      <button color="three" mat-button mat-raised-button [routerLink]="[ROUTE_NAMES.NEW]">
+      <button color="three" [disabled]="!isProyectoEstadoConcedido()" mat-button mat-raised-button
+        [routerLink]="[ROUTE_NAMES.NEW]">
         <mat-icon color="accent">add_circle</mat-icon>
         {{ 'btn.add.entity' | translate:msgParamEntity }}
       </button>

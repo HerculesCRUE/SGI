@@ -79,8 +79,8 @@ export class SgiInputWithThousandSeparator {
 
   private _onChange: (value: any) => void = () => { };
 
-  private formatValue(value: number | null): void {
-    if (value !== null) {
+  private formatValue(value: number | string | null): void {
+    if (value !== null && value !== '') {
       this.stringValue = formatNumber(+value, this.locale, '1.2-2');
     } else {
       this.stringValue = '';

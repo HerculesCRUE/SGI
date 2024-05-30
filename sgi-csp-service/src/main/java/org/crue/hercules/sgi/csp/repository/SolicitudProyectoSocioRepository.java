@@ -31,4 +31,8 @@ public interface SolicitudProyectoSocioRepository extends JpaRepository<Solicitu
 
   boolean existsBySolicitudProyectoIdAndRolSocioCoordinador(Long solicitudProyectoId, boolean isCoordinador);
 
+  boolean existsBySolicitudProyectoId(Long solicitudProyectoId);
+
+  boolean existsByIdAndEmpresaRef(Long id, String empresaRef);
+
 }

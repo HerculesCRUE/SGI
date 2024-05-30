@@ -1,5 +1,6 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
+import { CardinalidadRelacionSgiSge, IConfiguracion } from '@core/models/csp/configuracion';
 import { Estado as EstadoGastoProyecto } from '@core/models/csp/estado-gasto-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
@@ -9,7 +10,7 @@ import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-pr
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { GastoService } from '@core/services/sge/gasto/gasto.service';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
-import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, from, of } from 'rxjs';
 import { concatAll, concatMap, map, switchMap, tap } from 'rxjs/operators';
 import { IColumnDefinition } from '../desglose-economico.fragment';
 
@@ -41,12 +42,18 @@ export class ValidacionGastosFragment extends Fragment {
     return ESTADO_TIPO_MAP;
   }
 
+  get disableProyectoSgi(): boolean {
+    return this.config.cardinalidadRelacionSgiSge === CardinalidadRelacionSgiSge.SGI_1_SGE_1
+      || this.config.cardinalidadRelacionSgiSge === CardinalidadRelacionSgiSge.SGI_N_SGE_1;
+  }
+
   constructor(
     key: number,
     private proyectoSge: IProyectoSge,
     private gastoService: GastoService,
     private proyectoService: ProyectoService,
     private gastoProyectoService: GastoProyectoService,
+    private readonly config: IConfiguracion
   ) {
     super(key);
     this.setComplete(true);

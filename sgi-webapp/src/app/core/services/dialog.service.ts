@@ -41,4 +41,27 @@ export class DialogService {
       map((confirmed: boolean) => confirmed ? confirmed : false)
     );
   }
+
+  showInfoDialog(
+    message: string,
+    params: {} = {},
+    ok: string = MSG_BUTTON_OK,
+    okStyle: string = DIALOG_BUTTON_STYLE.BTN_STYLE_ACCENT
+  ): Observable<boolean> {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      ...this.dialog,
+      data: {
+        message,
+        params,
+        ok,
+        okStyle
+      } as DialogData,
+      panelClass: 'info-dialog',
+      disableClose: true
+    });
+    return dialogRef.afterClosed().pipe(
+      map((confirmed: boolean) => confirmed ? confirmed : false)
+    );
+  }
+
 }

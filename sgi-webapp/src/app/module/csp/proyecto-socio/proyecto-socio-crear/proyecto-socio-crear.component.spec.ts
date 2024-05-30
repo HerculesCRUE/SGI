@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Data } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { IRolSocio } from '@core/models/csp/rol-socio';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthService } from '@sgi/framework/auth';
@@ -21,7 +22,8 @@ describe('ProyectoSocioCrearComponent', () => {
   const routeData: Data = {
     [PROYECTO_SOCIO_DATA_KEY]: {
       proyecto: {
-        id: 1
+        id: 1,
+        rolUniversidad: { id: 1 } as IRolSocio
       }
     } as IProyectoSocioData
   };

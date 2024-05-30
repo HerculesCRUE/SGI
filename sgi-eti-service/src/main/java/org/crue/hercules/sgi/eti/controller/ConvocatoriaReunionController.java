@@ -9,10 +9,15 @@ import org.crue.hercules.sgi.eti.model.Acta;
 import org.crue.hercules.sgi.eti.model.Asistentes;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Dictamen;
+import org.crue.hercules.sgi.eti.model.DocumentacionConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.DocumentacionConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
+import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.service.ActaService;
 import org.crue.hercules.sgi.eti.service.AsistentesService;
 import org.crue.hercules.sgi.eti.service.ConvocatoriaReunionService;
+import org.crue.hercules.sgi.eti.service.DocumentacionConvocatoriaReunionService;
 import org.crue.hercules.sgi.eti.service.EvaluacionService;
 import org.crue.hercules.sgi.framework.exception.NotFoundException;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
@@ -21,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -64,20 +70,28 @@ public class ConvocatoriaReunionController {
   private ActaService actaService;
 
   /**
+   * DocumentacionConvocatoriaReunion service
+   */
+  private DocumentacionConvocatoriaReunionService documentacionConvocatoriaReunionService;
+
+  /**
    * Instancia un nuevo ConvocatoriaReunionController.
    *
-   * @param asistenteService           {@link AsistentesService}
-   * @param evaluacionService          {@link EvaluacionService}
-   * @param convocatoriaReunionService {@link ConvocatoriaReunionService}
-   * @param actaService                {@link ActaService}
+   * @param asistenteService                        {@link AsistentesService}
+   * @param evaluacionService                       {@link EvaluacionService}
+   * @param convocatoriaReunionService              {@link ConvocatoriaReunionService}
+   * @param actaService                             {@link ActaService}
+   * @param documentacionConvocatoriaReunionService {@link DocumentacionConvocatoriaReunionService}
    */
   public ConvocatoriaReunionController(AsistentesService asistenteService, EvaluacionService evaluacionService,
-      ConvocatoriaReunionService convocatoriaReunionService, ActaService actaService) {
+      ConvocatoriaReunionService convocatoriaReunionService, ActaService actaService,
+      DocumentacionConvocatoriaReunionService documentacionConvocatoriaReunionService) {
     log.debug("ConvocatoriaReunionController(ConvocatoriaReunionService service) - start");
     this.convocatoriaReunionService = convocatoriaReunionService;
     this.asistenteService = asistenteService;
     this.evaluacionService = evaluacionService;
     this.actaService = actaService;
+    this.documentacionConvocatoriaReunionService = documentacionConvocatoriaReunionService;
     log.debug("ConvocatoriaReunionController(ConvocatoriaReunionService service) - end");
   }
 
@@ -415,4 +429,98 @@ public class ConvocatoriaReunionController {
     return Boolean.TRUE.equals(returnValue) ? new ResponseEntity<>(HttpStatus.OK)
         : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
+
+  /**
+   * Obtener todas las entidades paginadas
+   * {@link DocumentacionConvocatoriaReunion} activas
+   * para una determinada {@link ConvocatoriaReunion}
+   *
+   * @param id       Id de {@link ConvocatoriaReunion}.
+   * @param pageable la información de la paginación.
+   * @return la lista de entidades {@link DocumentacionConvocatoriaReunion}
+   *         paginadas.
+   */
+  @GetMapping("/{id}/documentaciones")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-V', 'ETI-EVC-VR', 'ETI-EVC-INV-VR', 'ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR', 'ETI-MEM-EDOC')")
+  ResponseEntity<Page<DocumentacionConvocatoriaReunion>> getDocumentaciones(@PathVariable Long id,
+      @RequestPageable(sort = "s") Pageable pageable) {
+    log.debug("getDocumentaciones(Long id, Long idTipoEvaluacion, Pageable pageable) - start");
+    Page<DocumentacionConvocatoriaReunion> page = documentacionConvocatoriaReunionService
+        .findDocumentacionConvocatoriaReunion(id, pageable);
+
+    if (page.isEmpty()) {
+      log.debug("getDocumentaciones(Long id, Long idTipoEvaluacion, Pageable pageable) - end");
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    log.debug("getDocumentaciones(Long id, Long idTipoEvaluacion, Pageable pageable) - end");
+    return new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  /**
+   * Crea nueva {@link DocumentacionConvocatoriaReunion}.
+   * 
+   * @param id                               Identificador de la
+   *                                         {@link ConvocatoriaReunion}.
+   * @param documentacionConvocatoriaReunion {@link DocumentacionConvocatoriaReunion}.
+   *                                         que se quiere crear.
+   * @return Nueva {@link DocumentacionConvocatoriaReunion} creada.
+   */
+  @PostMapping("/{id}/documentacion")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNV-C', 'ETI-CNV-E')")
+  public ResponseEntity<DocumentacionConvocatoriaReunion> newDocumentacionConvocatoriaReunion(
+      @PathVariable Long id,
+      @Valid @RequestBody DocumentacionConvocatoriaReunion documentacionConvocatoriaReunion) {
+    log.debug(
+        "newDocumentacionConvocatoriaReunion(Long id, DocumentacionConvocatoriaReunion documentacionConvocatoriaReunion) - start");
+    DocumentacionConvocatoriaReunion returnValue = documentacionConvocatoriaReunionService.createDocumentacion(
+        id,
+        documentacionConvocatoriaReunion);
+    log.debug(
+        "newDocumentacionConvocatoriaReunion(Long id, DocumentacionConvocatoriaReunion documentacionConvocatoriaReunion) - end");
+    return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
+  }
+
+  /**
+   * Actualiza {@link DocumentacionConvocatoriaReunion}.
+   * 
+   * @param id                               Identificador de la
+   *                                         {@link ConvocatoriaReunion}.
+   * @param documentacionConvocatoriaReunion {@link DocumentacionConvocatoriaReunion}.
+   *                                         que se quiere crear.
+   * @return Nueva {@link DocumentacionConvocatoriaReunion} creada.
+   */
+  @PutMapping("/{id}/documentacion/{idDocumentacionConvocatoriaReunion}")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNV-E')")
+  public ResponseEntity<DocumentacionConvocatoriaReunion> updateDocumentacionConvocatoriaReunion(
+      @PathVariable Long id, @PathVariable Long idDocumentacionConvocatoriaReunion,
+      @Valid @RequestBody DocumentacionConvocatoriaReunion documentacionConvocatoriaReunion) {
+    log.debug(
+        "newDocumentacionConvocatoriaReunion(Long id, DocumentacionConvocatoriaReunion documentacionConvocatoriaReunion) - start");
+    DocumentacionConvocatoriaReunion returnValue = documentacionConvocatoriaReunionService.updateDocumentacion(
+        id,
+        idDocumentacionConvocatoriaReunion,
+        documentacionConvocatoriaReunion);
+    log.debug(
+        "newDocumentacionConvocatoriaReunion(Long id, DocumentacionConvocatoriaReunion documentacionConvocatoriaReunion) - end");
+    return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
+  }
+
+  /**
+   * Elimina la {@link DocumentacionConvocatoriaReunion} del tipo retrospectiva.
+   * 
+   * @param id                                 Id {@link Memoria}.
+   * @param idDocumentacionConvocatoriaReunion id
+   *                                           {@link DocumentacionConvocatoriaReunion}
+   *                                           a eliminar.
+   * @param authentication                     Authentication
+   */
+  @DeleteMapping("/{id}/documentacion/{idDocumentacionConvocatoriaReunion}")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-CNV-E')")
+  void deleteDocumentacion(@PathVariable Long id, @PathVariable Long idDocumentacionConvocatoriaReunion,
+      Authentication authentication) {
+    log.debug("deleteDocumentacion(Long id, Long idDocumentacionConvocatoriaReunion) - start");
+    documentacionConvocatoriaReunionService.deleteDocumentacion(id, idDocumentacionConvocatoriaReunion, authentication);
+    log.debug("deleteDocumentacion(Long id, Long idDocumentacionConvocatoriaReunion) - end");
+  }
+
 }

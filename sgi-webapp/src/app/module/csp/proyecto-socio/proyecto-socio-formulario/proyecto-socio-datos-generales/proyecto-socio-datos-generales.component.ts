@@ -185,6 +185,9 @@ export class ProyectoSocioDatosGeneralesComponent extends FormFragmentComponent<
 
       if (empresaForm.errors) {
         delete empresaForm.errors.overlapped;
+        if (Object.keys(empresaForm.errors).length === 0) {
+          empresaForm.setErrors(null);
+        }
         empresaForm.updateValueAndValidity({ onlySelf: true });
       }
     }

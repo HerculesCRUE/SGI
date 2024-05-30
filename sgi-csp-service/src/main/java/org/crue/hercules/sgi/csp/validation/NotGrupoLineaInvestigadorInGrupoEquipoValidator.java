@@ -39,11 +39,7 @@ public class NotGrupoLineaInvestigadorInGrupoEquipoValidator
         .and(specByRangoFechaSolapados).and(specByPersonaRef);
     List<GrupoLineaInvestigador> grupoLineaInvestigador = this.grupoLineaInvestigadorRepository.findAll(specs);
 
-    if (!grupoLineaInvestigador.isEmpty()) {
-      return false;
-    }
-
-    return true;
+    return grupoLineaInvestigador.isEmpty();
   }
 
 }

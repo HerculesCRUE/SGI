@@ -60,7 +60,6 @@ public abstract class BaseReportServiceTest extends BaseServiceTest {
         .path("report/eti/mxx.prpt")
         .name("informeDinamico")
         .outputType(outputType)
-        .dataModel(generarMockDataModel())
         .parameters(generarMockDataReportParameters())
         .build();
   }

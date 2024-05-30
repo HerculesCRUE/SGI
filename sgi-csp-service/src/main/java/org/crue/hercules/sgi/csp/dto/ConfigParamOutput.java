@@ -17,7 +17,6 @@ public class ConfigParamOutput implements Serializable {
   /** Serial version */
   private static final long serialVersionUID = 1L;
 
-  private String description;
   private String name;
   private String value;
 }

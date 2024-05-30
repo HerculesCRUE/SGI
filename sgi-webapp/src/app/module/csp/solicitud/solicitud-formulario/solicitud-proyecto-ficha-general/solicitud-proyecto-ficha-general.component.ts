@@ -23,7 +23,7 @@ const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_ACRONIMO_KEY = marker('csp.solicitu
 const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_COD_EXTERNO_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.codigo-externo');
 const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_COLABORATIVO_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.proyecto-colaborativo');
 const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_COORDINADO_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.proyecto-coordinado');
-const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_COORDINADOR_EXTERNO_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.coordinador-externo');
+const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_ROL_UNIVERSIDAD_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.rol-universidad');
 const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_TIPO_DESGLOSE_PRESUPUESTO_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.tipo-desglose-presupuesto');
 const AREA_TEMATICA_KEY = marker('csp.area-tematica');
 const AREA_KEY = marker('csp.area');
@@ -48,7 +48,7 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
   msgParamAcronimoEntity = {};
   msgParamColaborativoEntity = {};
   msgParamCoordinadoEntity = {};
-  msgParamCoordinadorExternoEntity = {};
+  msgParamRolUniversidadEntity = {};
   msgParamTipoDesglosePresupuestoEntity = {};
   msgParamAreaTematicaEntities = {};
   msgParamAreaEntities: {};
@@ -142,10 +142,10 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
     );
 
     this.translate.get(
-      SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_COORDINADOR_EXTERNO_KEY,
+      SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_ROL_UNIVERSIDAD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) =>
-      this.msgParamCoordinadorExternoEntity = {
+      this.msgParamRolUniversidadEntity = {
         entity: value,
         ...MSG_PARAMS.GENDER.MALE,
         ...MSG_PARAMS.CARDINALIRY.SINGULAR

@@ -21,6 +21,5 @@ public class InvencionInventorOutput implements Serializable {
   private String inventorRef;
   private BigDecimal participacion;
   private Boolean repartoUniversidad;
-  private Boolean activo;
 
 }

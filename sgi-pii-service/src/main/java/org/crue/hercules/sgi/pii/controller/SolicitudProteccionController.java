@@ -10,9 +10,11 @@ import org.crue.hercules.sgi.pii.dto.PaisValidadoOutput;
 import org.crue.hercules.sgi.pii.dto.ProcedimientoOutput;
 import org.crue.hercules.sgi.pii.dto.SolicitudProteccionInput;
 import org.crue.hercules.sgi.pii.dto.SolicitudProteccionOutput;
+import org.crue.hercules.sgi.pii.model.InvencionGasto;
 import org.crue.hercules.sgi.pii.model.PaisValidado;
 import org.crue.hercules.sgi.pii.model.Procedimiento;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion;
+import org.crue.hercules.sgi.pii.service.InvencionGastoService;
 import org.crue.hercules.sgi.pii.service.PaisValidadoService;
 import org.crue.hercules.sgi.pii.service.ProcedimientoService;
 import org.crue.hercules.sgi.pii.service.SolicitudProteccionService;
@@ -23,13 +25,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -40,15 +43,18 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(SolicitudProteccionController.MAPPING)
 @Slf4j
 public class SolicitudProteccionController {
-  public static final String MAPPING = "/solicitudesproteccion";
+  public static final String PATH_DELIMITER = "/";
 
-  public static final String PATH_PROCEDIMIENTOS = "/{solicitudProteccionId}/procedimientos";
+  public static final String MAPPING = PATH_DELIMITER + "solicitudesproteccion";
 
-  public static final String PATH_PAISESVALIDADOS = "/{solicitudProteccionId}/paisesvalidados";
+  public static final String PATH_PROCEDIMIENTOS = PATH_DELIMITER + "{solicitudProteccionId}/procedimientos";
+  public static final String PATH_PAISESVALIDADOS = PATH_DELIMITER + "{solicitudProteccionId}/paisesvalidados";
+  public static final String PATH_INVENCIONGASTOS = PATH_DELIMITER + "{solicitudProteccionId}/invenciongastos";
 
   private final SolicitudProteccionService solicitudProteccionService;
   private final PaisValidadoService paisValidadoService;
   private final ProcedimientoService procedimientoService;
+  private final InvencionGastoService invencionGastoService;
   private final ModelMapper modelMapper;
 
   /**
@@ -100,29 +106,34 @@ public class SolicitudProteccionController {
   }
 
   /**
-   * Activa el {@link SolicitudProteccion} con id indicado.
+   * Elimina la {@link SolicitudProteccion} con id indicado.
    * 
    * @param id Identificador de {@link SolicitudProteccion}.
-   * @return {@link SolicitudProteccion} actualizado.
+   * @return {@link HttpStatus#NO_CONTENT}
    */
-  @PatchMapping("/{id}/activar")
+  @DeleteMapping("/{id}")
   @PreAuthorize("hasAuthority('PII-INV-E')")
-  public SolicitudProteccionOutput activar(@PathVariable Long id) {
-
-    return convert(this.solicitudProteccionService.activar(id));
+  public ResponseEntity<Void> delete(@PathVariable Long id) {
+    log.debug("deleteById(Long id) - start");
+    solicitudProteccionService.delete(id);
+    log.debug("deleteById(Long id) - end");
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   /**
-   * Desactiva el {@link SolicitudProteccion} con id indicado.
-   * 
-   * @param id Identificador de {@link SolicitudProteccion}.
-   * @return objeto de tipo {@link SolicitudProteccionOutput}
+   * Comprueba la existencia de {@link PaisValidado} relacionados con el
+   * id recibido.
+   *
+   * @param solicitudProteccionId Identificador de {@link SolicitudProteccion}.
+   * @return HTTP 200 si existe alguna relación y HTTP 204 si no.
    */
-  @PatchMapping("/{id}/desactivar")
-  @PreAuthorize("hasAuthority('PII-INV-E')")
-  public SolicitudProteccionOutput desactivar(@PathVariable Long id) {
-
-    return convert(this.solicitudProteccionService.desactivar(id));
+  @RequestMapping(path = PATH_PAISESVALIDADOS, method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthority('PII-INV-E', 'PII-INV-V')")
+  public ResponseEntity<Void> hasPaisesValidados(@PathVariable Long solicitudProteccionId) {
+    log.debug("hasPaisesValidados(Long solicitudProteccionId) - start");
+    boolean hasPaisesValidaddos = paisValidadoService.existsBySolicitudProteccionId(solicitudProteccionId);
+    log.debug("hasPaisesValidados(Long solicitudProteccionId) - end");
+    return hasPaisesValidaddos ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   /**
@@ -153,6 +164,22 @@ public class SolicitudProteccionController {
   }
 
   /**
+   * Comprueba la existencia de {@link Procedimiento} relacionados con el
+   * id recibido.
+   *
+   * @param solicitudProteccionId Identificador de {@link SolicitudProteccion}.
+   * @return HTTP 200 si existe alguna relación y HTTP 204 si no.
+   */
+  @RequestMapping(path = PATH_PROCEDIMIENTOS, method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthority('PII-INV-E', 'PII-INV-V')")
+  public ResponseEntity<Void> hasProcedimientos(@PathVariable Long solicitudProteccionId) {
+    log.debug("hasProcedimientos(Long solicitudProteccionId) - start");
+    boolean hasPaisesValidaddos = procedimientoService.existsBySolicitudProteccionId(solicitudProteccionId);
+    log.debug("hasProcedimientos(Long solicitudProteccionId) - end");
+    return hasPaisesValidaddos ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+  }
+
+  /**
    * Devuelve los {@link Procedimiento} asociados a la {@link SolicitudProteccion}
    * con el id indicado.
    * 
@@ -161,7 +188,6 @@ public class SolicitudProteccionController {
    * @return Elementos paginados de tipo {@link Procedimiento} asociados a la
    *         {@link SolicitudProteccion}
    */
-
   @GetMapping(PATH_PROCEDIMIENTOS)
   @PreAuthorize("hasAnyAuthority('PII-INV-E', 'PII-INV-C')")
   public ResponseEntity<Page<ProcedimientoOutput>> findProcedimientosBySolicitudProteccion(
@@ -179,6 +205,22 @@ public class SolicitudProteccionController {
     log.debug(
         "findProcedimientosBySolicitudProteccion(@PathVariable Long solicitudProteccionId, @RequestParam(name = 'q' @RequestPageable(sort = 's') Pageable paging) - end");
     return ResponseEntity.ok().body(convertToProcedimientoPage(page));
+  }
+
+  /**
+   * Comprueba la existencia de {@link InvencionGasto} relacionados con el
+   * id recibido.
+   *
+   * @param solicitudProteccionId Identificador de {@link SolicitudProteccion}.
+   * @return HTTP 200 si existe alguna relación y HTTP 204 si no.
+   */
+  @RequestMapping(path = PATH_INVENCIONGASTOS, method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthority('PII-INV-E', 'PII-INV-V')")
+  public ResponseEntity<Void> hasInvencionGastos(@PathVariable Long solicitudProteccionId) {
+    log.debug("hasInvencionGastos(Long solicitudProteccionId) - start");
+    boolean hasPaisesValidaddos = invencionGastoService.existsBySolicitudProteccionId(solicitudProteccionId);
+    log.debug("hasInvencionGastos(Long solicitudProteccionId) - end");
+    return hasPaisesValidaddos ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   /****************/

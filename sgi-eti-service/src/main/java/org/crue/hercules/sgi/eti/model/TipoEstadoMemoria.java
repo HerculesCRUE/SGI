@@ -71,7 +71,9 @@ public class TipoEstadoMemoria extends BaseEntity {
     /** Solicitud modificación seguimiento anual <code>24L</code> */
     SOLICITUD_MODIFICACION_SEGUIMIENTO_ANUAL(24L),
     /** En secretaría seguimiento anual modificación <code>25L</code> */
-    EN_SECRETARIA_SEGUIMIENTO_ANUAL_MODIFICACION(25L);
+    EN_SECRETARIA_SEGUIMIENTO_ANUAL_MODIFICACION(25L),
+    /** En evaluación revision mínima <code>26L</code> */
+    EN_EVALUACION_REVISION_MINIMA(26L);
 
     private final Long id;
 

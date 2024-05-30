@@ -1,5 +1,5 @@
 export interface IFacturaPrevistaEmitida {
-  id: number;
+  id: string;
   proyectoIdSGI: number;
   numeroFactura: string;
   numeroPrevision: number;

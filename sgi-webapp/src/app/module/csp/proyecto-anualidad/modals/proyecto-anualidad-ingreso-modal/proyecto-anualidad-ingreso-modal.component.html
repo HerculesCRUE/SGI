@@ -33,9 +33,10 @@
       <mat-form-field>
         <mat-label>{{'csp.proyecto-anualidad.partida.partida-presupuestaria' |
           translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
-        <sgi-select-entity formControlName="proyectoPartida" [options]=" proyectoPartida$ | async" required
-          [displayWith]="displayerProyectoPartida">
-        </sgi-select-entity>
+        <sgi-select-proyecto-partida formControlName="proyectoPartida" [proyectoId]="data.proyectoId"
+          [tipoPartida]="tipoPartidaIngreso" (selectValuesChange)="selectFirstProyectoPartidaIfOnlyOneOption($event)"
+          required>
+        </sgi-select-proyecto-partida>
         <mat-error *ngIf="formGroup.controls.proyectoPartida.errors?.required">
           {{'error.required.entity' | translate:msgParamPartidaPresupuestaria}}
         </mat-error>

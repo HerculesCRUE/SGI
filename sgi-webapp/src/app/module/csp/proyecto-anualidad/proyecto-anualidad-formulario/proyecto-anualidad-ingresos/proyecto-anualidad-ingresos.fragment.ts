@@ -1,66 +1,80 @@
 import { IAnualidadIngreso } from '@core/models/csp/anualidad-ingreso';
+import { CardinalidadRelacionSgiSge } from '@core/models/csp/configuracion';
+import { ICodigoEconomicoIngreso } from '@core/models/sge/codigo-economico-ingreso';
+import { IPartidaPresupuestariaSge } from '@core/models/sge/partida-presupuestaria-sge';
 import { Fragment } from '@core/services/action-service';
 import { AnualidadIngresoService } from '@core/services/csp/anualidad-ingreso/anualidad-ingreso.service';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
 import { CodigoEconomicoIngresoService } from '@core/services/sge/codigo-economico-ingreso.service';
+import { PartidaPresupuestariaIngresoSgeService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-ingreso-sge.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, merge, Observable, of } from 'rxjs';
-import { map, switchMap, takeLast, tap } from 'rxjs/operators';
+import { BehaviorSubject, forkJoin, from, Observable, of } from 'rxjs';
+import { map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
 
 export class ProyectoAnualidadIngresosFragment extends Fragment {
 
   anualidadIngresos$ = new BehaviorSubject<StatusWrapper<IAnualidadIngreso>[]>([]);
 
+  get disableIndentificadorSge(): boolean {
+    return this.cardinalidadRelacionSgiSge === CardinalidadRelacionSgiSge.SGI_1_SGE_1
+      || this.cardinalidadRelacionSgiSge === CardinalidadRelacionSgiSge.SGI_N_SGE_1;
+  }
+
   constructor(
     private readonly logger: NGXLogger,
     key: number,
     readonly proyectoId: number,
-    private proyectoAnualidadService: ProyectoAnualidadService,
-    private anualidadIngresoService: AnualidadIngresoService,
-    private codigoEconomicoIngresoService: CodigoEconomicoIngresoService
+    private readonly anualidadIngresoService: AnualidadIngresoService,
+    private readonly codigoEconomicoIngresoService: CodigoEconomicoIngresoService,
+    private readonly partidaPresupuestariaIngresoSgeService: PartidaPresupuestariaIngresoSgeService,
+    private readonly proyectoAnualidadService: ProyectoAnualidadService,
+    private readonly cardinalidadRelacionSgiSge: CardinalidadRelacionSgiSge
   ) {
     super(key);
     this.setComplete(true);
   }
 
   protected onInitialize(): void {
-    if (this.getKey()) {
-      const id = this.getKey() as number;
-      this.subscriptions.push(
-        this.proyectoAnualidadService.findAllAnualidadIngreso(id)
-          .pipe(
-            switchMap(response => {
-              const requestsCodigoEconomico: Observable<IAnualidadIngreso>[] = [];
-              response.items.filter(anualidad => anualidad.codigoEconomico?.id).forEach(anualidadIngreso => {
-                requestsCodigoEconomico.push(
-                  this.codigoEconomicoIngresoService.findById(anualidadIngreso.codigoEconomico.id)
-                    .pipe(
-                      map(codigoEconomico => {
-                        anualidadIngreso.codigoEconomico = codigoEconomico;
-                        return anualidadIngreso;
-                      })
-                    )
-                );
-              });
-              return of(response).pipe(
-                tap(() => merge(...requestsCodigoEconomico).subscribe())
-              );
-            })
-          ).subscribe(
-            result => {
-              this.anualidadIngresos$.next(
-                result.items.map(anualidadIngreso =>
-                  new StatusWrapper<IAnualidadIngreso>(anualidadIngreso)
-                )
-              );
-            },
-            error => {
-              this.logger.error(error);
-            }
-          )
-      );
+    if (!this.getKey()) {
+      return;
     }
+
+    this.subscriptions.push(
+      this.proyectoAnualidadService.findAllAnualidadIngreso(this.getKey() as number)
+        .pipe(
+          map(response => response.items),
+          switchMap(anualidadIngresos =>
+            from(anualidadIngresos).pipe(
+              mergeMap(anualidadIngreso =>
+                forkJoin({
+                  codigoEconomico: this.getCodigoEconomico(anualidadIngreso.codigoEconomico?.id),
+                  partidaSge: this.getPartidaPresupuestariaSge(anualidadIngreso.proyectoPartida.partidaSge?.id)
+                }).pipe(
+                  map(({ codigoEconomico, partidaSge }) => {
+                    anualidadIngreso.codigoEconomico = codigoEconomico;
+                    anualidadIngreso.proyectoPartida.partidaSge = partidaSge;
+                    return anualidadIngreso;
+                  })
+                )
+              ),
+              toArray(),
+              map(() => {
+                return anualidadIngresos;
+              })
+            )
+          ),
+          map(anualidadIngresos => anualidadIngresos.map(anualidadIngreso => new StatusWrapper<IAnualidadIngreso>(anualidadIngreso)))
+        ).subscribe(
+          (anualidadIngresosWrapped) => {
+            this.anualidadIngresos$.next(anualidadIngresosWrapped);
+          },
+          (error) => {
+            this.logger.error(error);
+          }
+        )
+    );
+
   }
 
   addAnualidadIngreso(element: IAnualidadIngreso) {
@@ -125,8 +139,25 @@ export class ProyectoAnualidadIngresosFragment extends Fragment {
       );
   }
 
+  private getPartidaPresupuestariaSge(partidaSgeId: string): Observable<IPartidaPresupuestariaSge> {
+    if (!partidaSgeId) {
+      return of(null);
+    }
+
+    return this.partidaPresupuestariaIngresoSgeService.findById(partidaSgeId);
+  }
+
+  private getCodigoEconomico(codigoEconomicoId: string): Observable<ICodigoEconomicoIngreso> {
+    if (!codigoEconomicoId) {
+      return of(null);
+    }
+
+    return this.codigoEconomicoIngresoService.findById(codigoEconomicoId);
+  }
+
   private isSaveOrUpdateComplete(): boolean {
     const hasTouched = this.anualidadIngresos$.value.some((wrapper) => wrapper.touched);
     return !hasTouched;
   }
+
 }

@@ -202,8 +202,11 @@ public class RespuestaServiceImpl implements RespuestaService {
       throw new RespuestaRetrospectivaFormularioNotValidException();
     }
 
+    boolean requiereRetrospectivaUpdated = false;
+    Retrospectiva retrospectivaUpdated = null;
+
     if (respuestaRetrospectiva.getEvaluacionRetrospectivaRadio().equalsIgnoreCase(SI)) {
-      memoria.setRequiereRetrospectiva(true);
+      requiereRetrospectivaUpdated = true;
       Retrospectiva retrospectiva = memoria.getRetrospectiva();
       if (retrospectiva == null) {
         retrospectiva = new Retrospectiva();
@@ -217,20 +220,21 @@ public class RespuestaServiceImpl implements RespuestaService {
           : null);
 
       if (retrospectiva.getId() == null) {
-        memoria.setRetrospectiva(retrospectivaService.create(retrospectiva));
+        retrospectivaUpdated = retrospectivaService.create(retrospectiva);
       } else {
-        memoria.setRetrospectiva(retrospectivaService.update(retrospectiva));
+        retrospectivaUpdated = retrospectivaService.update(retrospectiva);
       }
 
     } else {
       if (memoria.getRetrospectiva() != null) {
         retrospectivaService.delete(memoria.getRetrospectiva().getId());
-        memoria.setRetrospectiva(null);
+        retrospectivaUpdated = null;
       }
-      memoria.setRequiereRetrospectiva(false);
+      requiereRetrospectivaUpdated = false;
     }
 
-    memoriaService.update(memoria);
+    memoriaService.updateDatosRetrospectiva(respuesta.getMemoria().getId(), requiereRetrospectivaUpdated,
+        retrospectivaUpdated);
 
   }
 

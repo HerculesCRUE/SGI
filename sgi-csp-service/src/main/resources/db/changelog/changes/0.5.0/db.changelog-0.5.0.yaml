@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: classpath*:db/changelog/changes/0.5.0/0.5.0-update-initial-database.xml
+  - include:
+      file: classpath*:db/changelog/changes/0.5.0/0.5.0-update-initial-master-data.xml
+  - include:
+      file: classpath*:db/changelog/changes/0.5.0/0.5.0-update-data.xml
+  - include:
+      file: classpath*:db/changelog/changes/0.5.0/0.5.0-fixup-initial-database.xml

@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.List;
+
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,11 +49,10 @@ public interface TipoFinalidadService {
    * Obtiene todas las entidades {@link TipoFinalidad} activas paginadas y
    * filtradas.
    *
-   * @param query  información del filtro.
-   * @param paging información de paginación.
+   * @param query información del filtro.
    * @return el listado de entidades {@link TipoFinalidad} paginadas y filtradas.
    */
-  Page<TipoFinalidad> findAll(String query, Pageable paging);
+  List<TipoFinalidad> findAll(String query);
 
   /**
    * Obtiene todas las entidades {@link TipoFinalidad} paginadas y filtradas.

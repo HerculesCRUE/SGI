@@ -77,6 +77,16 @@ export abstract class ConfigSelectComponent implements OnInit, OnDestroy, AfterV
   // tslint:disable-next-line: variable-name
   private _required = false;
 
+  @Input()
+  set description(description: string) {
+    this._description = description ?? '';
+  }
+  get description(): string {
+    return this._description;
+  }
+  // tslint:disable-next-line: variable-name
+  private _description = '';
+
   @Output()
   readonly error = new EventEmitter<Error>();
 

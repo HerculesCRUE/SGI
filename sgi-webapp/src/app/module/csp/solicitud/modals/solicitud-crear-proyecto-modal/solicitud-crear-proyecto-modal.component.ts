@@ -157,14 +157,14 @@ export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<
     const formGroup = new FormGroup(
       {
         titulo: new FormControl(titulo || null, [Validators.required, Validators.maxLength(250)]),
-        fechaInicio: new FormControl(null, [Validators.required]),
-        fechaFin: new FormControl(null, [Validators.required]),
+        fechaInicio: new FormControl(null),
+        fechaFin: new FormControl(null),
         modeloEjecucion: new FormControl(null, [Validators.required]
         )
       },
       {
         validators: [
-          DateValidator.isAfter('fechaInicio', 'fechaFin', false),
+          DateValidator.isAfter('fechaInicio', 'fechaFin'),
           DateValidator.isBefore('fechaFin', 'fechaInicio', false)
         ]
       }

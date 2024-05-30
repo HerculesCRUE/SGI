@@ -51,8 +51,8 @@
         </mat-form-field>
       </div>
       <!-- Importe Solicitado-->
-      <div *sgiHasAuthorityForAnyUO="'CSP-SOL-INV-C', 'CSP-SOL-INV-ER'" [fxFlex.sm]="fxFlexProperties.sm"
-        [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
+      <div *ngIf="formPart.isInvestigador" [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
+        [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field class="input-form">
           <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.importeSolicitado' | translate}}</mat-label>
           <input matInput formControlName="importeSolicitado" type="text" id="importeSolicitado"
@@ -80,23 +80,22 @@
         </mat-form-field>
       </div>
 
-      <!-- Coordinador Externo -->
+      <!-- Rol universisad -->
       <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
         [fxFlexOrder]="fxFlexProperties.order" *ngIf="(formPart.coordinado$ | async)">
         <mat-form-field class="input-form">
-          <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.coordinador-externo' | translate}}</mat-label>
-          <sgi-select-boolean matNativeControl formControlName="coordinadorExterno"
-            [required]="(formPart.coordinado$ | async)">
-          </sgi-select-boolean>
+          <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.rol-universidad' | translate}}</mat-label>
+          <sgi-select-rol-socio formControlName="rolUniversidad" [required]="(formPart.coordinado$ | async)">
+          </sgi-select-rol-socio>
           <sgi-field-info matSuffix [visible]="(formPart.hasPopulatedPeriodosSocios$ | async) && !formPart.readonly"
             message="{{'msg.csp.solicitud-proyecto.unmodifiable-due-periodos-socios-dependencies.info' | translate}}">
           </sgi-field-info>
           <sgi-field-info matSuffix
-            [visible]="!(formPart.hasAnySolicitudProyectoSocioWithRolCoordinador$ | async) && (formPart.coordinadorExterno$ | async)"
+            [visible]="!(actionService.hasAnySolicitudProyectoSocioWithRolCoordinador$ | async) && (formPart.coordinadorExterno$ | async)"
             message="{{'info.csp.solicitud-proyecto-socio.socio-con-rol-coordinador.no-informado.tooltip' | translate}}">
           </sgi-field-info>
-          <mat-error *ngIf="formGroup.controls.coordinadorExterno.errors?.required">
-            {{'error.required.entity' | translate:msgParamCoordinadorExternoEntity}}
+          <mat-error *ngIf="formGroup.controls.rolUniversidad.errors?.required">
+            {{'error.required.entity' | translate:msgParamRolUniversidadEntity}}
           </mat-error>
         </mat-form-field>
       </div>

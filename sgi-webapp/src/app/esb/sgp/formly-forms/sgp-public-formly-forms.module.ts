@@ -11,6 +11,7 @@ import { SharedModule } from '@shared/shared.module';
 import { SharedFormlyFormsModule } from '../../shared/formly-forms/shared-formly-forms.module';
 import { PersonaFormlyPublicModalComponent } from './persona-formly-public-modal/persona-formly-public-modal.component';
 import { SelectCategoriasProfesionalesPublicTypeComponent } from './types/select-categorias-profesionales-public.type';
+import { SelectColectivosPublicTypeComponent } from './types/select-colectivos-public.type';
 import { SelectEmpresaPublicTypeComponent } from './types/select-empresa-public.type';
 import { SelectNivelesAcademicosPublicTypeComponent } from './types/select-niveles-academicos-public.type';
 import { SelectSexosPublicTypeComponent } from './types/select-sexo-public.type';
@@ -19,8 +20,9 @@ import { SelectTiposDocumentosPublicTypeComponent } from './types/select-tipos-d
 @NgModule({
   declarations: [
     PersonaFormlyPublicModalComponent,
-    SelectEmpresaPublicTypeComponent,
+    SelectColectivosPublicTypeComponent,
     SelectCategoriasProfesionalesPublicTypeComponent,
+    SelectEmpresaPublicTypeComponent,
     SelectNivelesAcademicosPublicTypeComponent,
     SelectSexosPublicTypeComponent,
     SelectTiposDocumentosPublicTypeComponent
@@ -39,13 +41,18 @@ import { SelectTiposDocumentosPublicTypeComponent } from './types/select-tipos-d
     FormlyModule.forChild({
       types: [
         {
-          name: 'select-empresas',
-          component: SelectEmpresaPublicTypeComponent,
+          name: 'select-categorias-profesionales',
+          component: SelectCategoriasProfesionalesPublicTypeComponent,
           wrappers: ['form-field']
         },
         {
-          name: 'select-categorias-profesionales',
-          component: SelectCategoriasProfesionalesPublicTypeComponent,
+          name: 'select-colectivos',
+          component: SelectColectivosPublicTypeComponent,
+          wrappers: ['form-field']
+        },
+        {
+          name: 'select-empresas',
+          component: SelectEmpresaPublicTypeComponent,
           wrappers: ['form-field']
         },
         {
@@ -68,8 +75,9 @@ import { SelectTiposDocumentosPublicTypeComponent } from './types/select-tipos-d
   ],
   exports: [
     PersonaFormlyPublicModalComponent,
-    SelectEmpresaPublicTypeComponent,
     SelectCategoriasProfesionalesPublicTypeComponent,
+    SelectColectivosPublicTypeComponent,
+    SelectEmpresaPublicTypeComponent,
     SelectNivelesAcademicosPublicTypeComponent,
     SelectSexosPublicTypeComponent,
     SelectTiposDocumentosPublicTypeComponent

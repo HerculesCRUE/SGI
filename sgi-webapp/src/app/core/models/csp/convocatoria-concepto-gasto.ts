@@ -11,6 +11,8 @@ export interface IConvocatoriaConceptoGasto {
   observaciones: string;
   /** Importe máximo */
   importeMaximo: number;
+  /** Porcentaje máximo */
+  porcentajeMaximo: number;
   /** Permitido */
   permitido: boolean;
   /** Mes inicial */

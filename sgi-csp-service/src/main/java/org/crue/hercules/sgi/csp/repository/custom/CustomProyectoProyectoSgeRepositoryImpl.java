@@ -91,7 +91,9 @@ public class CustomProyectoProyectoSgeRepositoryImpl implements CustomProyectoPr
         root.get(ProyectoProyectoSge_.proyecto).get(Proyecto_.fechaFin).alias(
             ProyectoProyectoSgePredicateResolver.Property.FECHA_FIN_PROYECTO.getCode()),
         root.get(ProyectoProyectoSge_.proyectoSgeRef),
-        cb.literal(RelacionEjecucionEconomica.TipoEntidad.PROYECTO.toString()));
+        cb.literal(RelacionEjecucionEconomica.TipoEntidad.PROYECTO.toString()),
+        root.get(ProyectoProyectoSge_.proyecto).get(Proyecto_.fechaFinDefinitiva).alias(
+            ProyectoProyectoSgePredicateResolver.Property.FECHA_FIN_DEFINITIVA_PROYECTO.getCode()));
 
     countQuery.select(cb.count(rootCount));
 
@@ -147,6 +149,7 @@ public class CustomProyectoProyectoSgeRepositoryImpl implements CustomProyectoPr
         ProyectoProyectoSgePredicateResolver.Property.NOMBRE_PROYECTO.getCode(),
         ProyectoProyectoSgePredicateResolver.Property.FECHA_INICIO_PROYECTO.getCode(),
         ProyectoProyectoSgePredicateResolver.Property.FECHA_FIN_PROYECTO.getCode(),
+        ProyectoProyectoSgePredicateResolver.Property.FECHA_FIN_DEFINITIVA_PROYECTO.getCode(),
         ProyectoProyectoSgePredicateResolver.Property.CODIGO_EXTERNO.getCode(),
         ProyectoProyectoSgePredicateResolver.Property.TITULO_CONVOCATORIA.getCode(),
         ProyectoProyectoSgePredicateResolver.Property.IMPORTE_CONCEDIDO.getCode(),
@@ -168,6 +171,8 @@ public class CustomProyectoProyectoSgeRepositoryImpl implements CustomProyectoPr
             ProyectoProyectoSgePredicateResolver.Property.FECHA_INICIO_PROYECTO.getCode()),
         joinProyecto.get(Proyecto_.fechaFin).alias(
             ProyectoProyectoSgePredicateResolver.Property.FECHA_FIN_PROYECTO.getCode()),
+        joinProyecto.get(Proyecto_.fechaFinDefinitiva).alias(
+            ProyectoProyectoSgePredicateResolver.Property.FECHA_FIN_DEFINITIVA_PROYECTO.getCode()),
         joinConvocatoria.get(Convocatoria_.titulo).alias(
             ProyectoProyectoSgePredicateResolver.Property.TITULO_CONVOCATORIA.getCode()),
         joinProyecto.get(Proyecto_.importeConcedido).alias(

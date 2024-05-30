@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
@@ -7,7 +8,6 @@ import { VALIDACION_REQUISITOS_EQUIPO_IP_MAP } from '@core/enums/validaciones-re
 import { MSG_PARAMS } from '@core/i18n';
 import { Estado } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
-import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
 import { Module } from '@core/module';
 import { ActionService } from '@core/services/action-service';
@@ -31,7 +31,7 @@ import { ProyectoFaseService } from '@core/services/csp/proyecto-fase.service';
 import { ProyectoHitoService } from '@core/services/csp/proyecto-hito/proyecto-hito.service';
 import { ProyectoIVAService } from '@core/services/csp/proyecto-iva.service';
 import { ProyectoPaqueteTrabajoService } from '@core/services/csp/proyecto-paquete-trabajo.service';
-import { ProyectoPartidaService } from '@core/services/csp/proyecto-partida.service';
+import { ProyectoPartidaPresupuestariaService } from '@core/services/csp/proyecto-partida-presupuestaria/proyecto-partida-presupuestaria.service';
 import { ProyectoPeriodoAmortizacionService } from '@core/services/csp/proyecto-periodo-amortizacion/proyecto-periodo-amortizacion.service';
 import { ProyectoPeriodoJustificacionService } from '@core/services/csp/proyecto-periodo-justificacion/proyecto-periodo-justificacion.service';
 import { ProyectoPeriodoSeguimientoService } from '@core/services/csp/proyecto-periodo-seguimiento.service';
@@ -41,6 +41,7 @@ import { ProyectoResponsableEconomicoService } from '@core/services/csp/proyecto
 import { ProyectoSocioPeriodoJustificacionService } from '@core/services/csp/proyecto-socio-periodo-justificacion.service';
 import { ProyectoSocioService } from '@core/services/csp/proyecto-socio.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { RolSocioService } from '@core/services/csp/rol-socio/rol-socio.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { TipoAmbitoGeograficoService } from '@core/services/csp/tipo-ambito-geografico/tipo-ambito-geografico.service';
 import { TipoFinalidadService } from '@core/services/csp/tipo-finalidad.service';
@@ -50,8 +51,12 @@ import { InvencionService } from '@core/services/pii/invencion/invencion.service
 import { RelacionService } from '@core/services/rel/relaciones/relacion.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { FacturaPrevistaEmitidaService } from '@core/services/sge/factura-prevista-emitida/factura-prevista-emitida.service';
+import { FacturaPrevistaService } from '@core/services/sge/factura-prevista/factura-prevista.service';
+import { PartidaPresupuestariaGastoSgeService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-gasto-sge.service';
+import { PartidaPresupuestariaIngresoSgeService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-ingreso-sge.service';
 import { PeriodoAmortizacionService } from '@core/services/sge/periodo-amortizacion/periodo-amortizacion.service';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
+import { SolicitudProyectoSgeService } from '@core/services/sge/solicitud-proyecto-sge/solicitud-proyecto-sge.service';
 import { DatosContactoService } from '@core/services/sgemp/datos-contacto/datos-contacto.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { AreaConocimientoService } from '@core/services/sgo/area-conocimiento.service';
@@ -64,10 +69,13 @@ import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.s
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
+import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, merge, Observable, of, Subject, throwError } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, forkJoin, merge, Observable, of, Subject, throwError } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../csp-route-names';
+import { ProyectoCopiarAparatadosModalComponent, ProyectoCopiarApartadosModalData } from './modals/proyecto-copiar-apartados-modal/proyecto-copiar-apartados-modal.component';
+import { ProyectoInfoModificarFechasModalComponent } from './modals/proyecto-info-modificar-fechas-modal/proyecto-info-modificar-fechas-modal.component';
 import { PROYECTO_DATA_KEY } from './proyecto-data.resolver';
 import { ProyectoAgrupacionGastoFragment } from './proyecto-formulario/proyecto-agrupaciones-gasto/proyecto-agrupaciones-gasto.fragment';
 import { ProyectoAmortizacionFondosFragment } from './proyecto-formulario/proyecto-amortizacion-fondos/proyecto-amortizacion-fondos.fragment';
@@ -83,7 +91,7 @@ import { ProyectoDocumentosFragment } from './proyecto-formulario/proyecto-docum
 import { ProyectoEntidadGestoraFragment } from './proyecto-formulario/proyecto-entidad-gestora/proyecto-entidad-gestora.fragment';
 import { ProyectoEntidadesConvocantesFragment } from './proyecto-formulario/proyecto-entidades-convocantes/proyecto-entidades-convocantes.fragment';
 import { ProyectoEntidadesFinanciadorasFragment } from './proyecto-formulario/proyecto-entidades-financiadoras/proyecto-entidades-financiadoras.fragment';
-import { ProyectoEquipoFragment } from './proyecto-formulario/proyecto-equipo/proyecto-equipo.fragment';
+import { IFechaFinMaxUpdate, ProyectoEquipoFragment } from './proyecto-formulario/proyecto-equipo/proyecto-equipo.fragment';
 import { ProyectoHistoricoEstadosFragment } from './proyecto-formulario/proyecto-historico-estados/proyecto-historico-estados.fragment';
 import { ProyectoHitosFragment } from './proyecto-formulario/proyecto-hitos/proyecto-hitos.fragment';
 import { ProyectoPaqueteTrabajoFragment } from './proyecto-formulario/proyecto-paquete-trabajo/proyecto-paquete-trabajo.fragment';
@@ -106,7 +114,7 @@ export interface IProyectoData {
   solicitanteRefSolicitud: string;
   solicitudFormularioSolicitud: FormularioSolicitud;
   readonly: boolean;
-  disableCoordinadorExterno: boolean;
+  disableRolUniversidad: boolean;
   hasAnyProyectoSocioCoordinador: boolean;
   isVisor: boolean;
   isInvestigador: boolean;
@@ -175,6 +183,7 @@ export class ProyectoActionService extends ActionService {
 
   private readonly data: IProyectoData;
 
+  public readonly proyecto$ = new Subject<IProyecto>();
   public readonly showPaquetesTrabajo$: Subject<boolean> = new BehaviorSubject(false);
   public readonly disableAddSocios$ = new BehaviorSubject<boolean>(false);
   private readonly hasFases$ = new BehaviorSubject<boolean>(false);
@@ -182,7 +191,6 @@ export class ProyectoActionService extends ActionService {
   private readonly hasDocumentos$ = new BehaviorSubject<boolean>(false);
   readonly showAlertNotSocioCoordinadorExist$ = new BehaviorSubject<boolean>(false);
   readonly showSocios$: Subject<boolean> = new BehaviorSubject(false);
-  public readonly proyectosSge$ = new BehaviorSubject<StatusWrapper<IProyectoProyectoSge>[]>([]);
 
   get proyecto(): IProyecto {
     return this.fichaGeneral.getValue();
@@ -236,6 +244,10 @@ export class ProyectoActionService extends ActionService {
     return this.fichaGeneral.getValue().titulo;
   }
 
+  get fechaFinDefinitivaProyecto(): DateTime {
+    return this.fichaGeneral.getValue().fechaFinDefinitiva ?? this.fichaGeneral.getValue().fechaFin;
+  }
+
   get isInvestigador(): boolean {
     return this.data?.isInvestigador ?? (this.isModuleINV() && this.hasAnyAuthorityInv());
   }
@@ -244,58 +256,64 @@ export class ProyectoActionService extends ActionService {
     fb: FormBuilder,
     logger: NGXLogger,
     private route: ActivatedRoute,
+    private matDialog: MatDialog,
     protected proyectoService: ProyectoService,
-    empresaService: EmpresaService,
-    proyectoSocioService: ProyectoSocioService,
-    unidadGestionService: UnidadGestionService,
-    modeloEjecucionService: ModeloEjecucionService,
-    tipoFinalidadService: TipoFinalidadService,
-    tipoAmbitoGeograficoService: TipoAmbitoGeograficoService,
-    convocatoriaService: ConvocatoriaService,
-    proyectoEntidadFinanciadoraService: ProyectoEntidadFinanciadoraService,
-    proyectoHitoService: ProyectoHitoService,
-    proyectoPaqueteTrabajoService: ProyectoPaqueteTrabajoService,
-    proyectoPlazoService: ProyectoFaseService,
-    contextoProyectoService: ContextoProyectoService,
-    proyectoPeriodoSeguimientoService: ProyectoPeriodoSeguimientoService,
-    documentoService: DocumentoService,
-    proyectoEntidadGestora: ProyectoEntidadGestoraService,
-    proyectoEquipoService: ProyectoEquipoService,
-    personaService: PersonaService,
-    proyectoProrrogaService: ProyectoProrrogaService,
-    proyectoDocumentoService: ProyectoDocumentoService,
-    solicitudService: SolicitudService,
-    proyectoIvaService: ProyectoIVAService,
-    proyectoSocioPeriodoJustificacionService: ProyectoSocioPeriodoJustificacionService,
-    proyectoClasificacionService: ProyectoClasificacionService,
-    clasificacionService: ClasificacionService,
-    proyectoAreaConocimiento: ProyectoAreaConocimientoService,
-    areaConocimientoService: AreaConocimientoService,
-    proyectoProyectoSgeService: ProyectoProyectoSgeService,
-    proyectoSgeService: ProyectoSgeService,
-    proyectoPartidaService: ProyectoPartidaService,
-    proyectoConceptoGastoService: ProyectoConceptoGastoService,
-    proyectoResponsableEconomicoService: ProyectoResponsableEconomicoService,
-    proyectoAgrupacionGastoService: ProyectoAgrupacionGastoService,
-    private translate: TranslateService,
-    proyectoAnualidadService: ProyectoAnualidadService,
-    proyectoPeriodoJustificacionService: ProyectoPeriodoJustificacionService,
-    datosAcademicosService: DatosAcademicosService,
-    convocatoriaRequisitoIPService: ConvocatoriaRequisitoIPService,
-    viculacionService: VinculacionService,
-    convocatoriaRequisitoEquipoService: ConvocatoriaRequisitoEquipoService,
-    datosPersonalesService: DatosPersonalesService,
-    relacionService: RelacionService,
-    invencionService: InvencionService,
+    private readonly areaConocimientoService: AreaConocimientoService,
+    private readonly clasificacionService: ClasificacionService,
+    private readonly configService: ConfigService,
+    private readonly contextoProyectoService: ContextoProyectoService,
+    private readonly convocatoriaRequisitoEquipoService: ConvocatoriaRequisitoEquipoService,
+    private readonly convocatoriaRequisitoIPService: ConvocatoriaRequisitoIPService,
+    private readonly convocatoriaService: ConvocatoriaService,
+    private readonly datosAcademicosService: DatosAcademicosService,
+    private readonly datosContactoService: DatosContactoService,
+    private readonly datosPersonalesService: DatosPersonalesService,
+    private readonly dialogService: DialogService,
+    private readonly documentoService: DocumentoService,
+    private readonly empresaService: EmpresaService,
+    private readonly facturaPrevistaEmitidaService: FacturaPrevistaEmitidaService,
+    private readonly facturaPrevistaService: FacturaPrevistaService,
+    private readonly invencionService: InvencionService,
+    private readonly modeloEjecucionService: ModeloEjecucionService,
+    private readonly palabraClaveService: PalabraClaveService,
+    private readonly partidaPresupuestariaGastoSgeService: PartidaPresupuestariaGastoSgeService,
+    private readonly partidaPresupuestariaIngresoSgeService: PartidaPresupuestariaIngresoSgeService,
+    private readonly periodoAmortizacionService: PeriodoAmortizacionService,
+    private readonly personaService: PersonaService,
+    private readonly proyectoAgrupacionGastoService: ProyectoAgrupacionGastoService,
+    private readonly proyectoAnualidadService: ProyectoAnualidadService,
+    private readonly proyectoAreaConocimiento: ProyectoAreaConocimientoService,
+    private readonly proyectoClasificacionService: ProyectoClasificacionService,
+    private readonly proyectoConceptoGastoService: ProyectoConceptoGastoService,
+    private readonly proyectoDocumentoService: ProyectoDocumentoService,
+    private readonly proyectoEntidadFinanciadoraService: ProyectoEntidadFinanciadoraService,
+    private readonly proyectoEntidadGestora: ProyectoEntidadGestoraService,
+    private readonly proyectoEquipoService: ProyectoEquipoService,
+    private readonly proyectoFacturacionService: ProyectoFacturacionService,
+    private readonly proyectoHitoService: ProyectoHitoService,
+    private readonly proyectoIvaService: ProyectoIVAService,
+    private readonly proyectoPaqueteTrabajoService: ProyectoPaqueteTrabajoService,
+    private readonly proyectoPartidaPresupuestariaService: ProyectoPartidaPresupuestariaService,
+    private readonly proyectoPeriodoAmortizacionService: ProyectoPeriodoAmortizacionService,
+    private readonly proyectoPeriodoJustificacionService: ProyectoPeriodoJustificacionService,
+    private readonly proyectoPeriodoSeguimientoService: ProyectoPeriodoSeguimientoService,
+    private readonly proyectoPlazoService: ProyectoFaseService,
+    private readonly proyectoProrrogaService: ProyectoProrrogaService,
+    private readonly proyectoProyectoSgeService: ProyectoProyectoSgeService,
+    private readonly proyectoResponsableEconomicoService: ProyectoResponsableEconomicoService,
+    private readonly proyectoSgeService: ProyectoSgeService,
+    private readonly proyectoSocioPeriodoJustificacionService: ProyectoSocioPeriodoJustificacionService,
+    private readonly proyectoSocioService: ProyectoSocioService,
+    private readonly relacionService: RelacionService,
+    private readonly rolSocioService: RolSocioService,
     private readonly sgiAuthService: SgiAuthService,
-    proyectoFacturacionService: ProyectoFacturacionService,
-    facturaPrevistaEmitidaService: FacturaPrevistaEmitidaService,
-    palabraClaveService: PalabraClaveService,
-    proyectoPeriodoAmortizacionService: ProyectoPeriodoAmortizacionService,
-    periodoAmortizacionService: PeriodoAmortizacionService,
-    datosContactoService: DatosContactoService,
-    private dialogService: DialogService,
-    private configuracionService: ConfigService
+    private readonly solicitudProyectoSgeService: SolicitudProyectoSgeService,
+    private readonly solicitudService: SolicitudService,
+    private readonly tipoAmbitoGeograficoService: TipoAmbitoGeograficoService,
+    private readonly tipoFinalidadService: TipoFinalidadService,
+    private readonly translate: TranslateService,
+    private readonly unidadGestionService: UnidadGestionService,
+    private readonly viculacionService: VinculacionService
   ) {
     super();
     this.data = route.snapshot.data[PROYECTO_DATA_KEY];
@@ -303,6 +321,8 @@ export class ProyectoActionService extends ActionService {
 
     if (this.data && id) {
       this.enableEdit();
+      this.proyecto$.next(this.data.proyecto);
+
       if (this.data.proyecto?.solicitudId && !this.data.isInvestigador) {
         this.addSolicitudLink(this.data.proyecto.solicitudId);
       }
@@ -315,22 +335,41 @@ export class ProyectoActionService extends ActionService {
       logger, fb, id, proyectoService, unidadGestionService,
       modeloEjecucionService, tipoFinalidadService, tipoAmbitoGeograficoService, convocatoriaService, solicitudService, proyectoIvaService,
       this.data?.readonly,
-      this.data?.disableCoordinadorExterno,
+      this.data?.disableRolUniversidad,
       this.data?.hasAnyProyectoSocioCoordinador,
       this.data?.isVisor,
       this.data?.isInvestigador,
       relacionService,
       palabraClaveService,
       sgiAuthService,
-      configuracionService
+      configService,
+      rolSocioService
     );
     this.addFragment(this.FRAGMENT.FICHA_GENERAL, this.fichaGeneral);
 
     if (this.data?.isInvestigador) {
-      this.proyectoCalendarioFacturacion = new ProyectoCalendarioFacturacionFragment(this.data?.proyecto?.id, this.data?.proyecto,
-        proyectoService, proyectoFacturacionService, facturaPrevistaEmitidaService, this.isInvestigador);
-      this.proyectosSge = new ProyectoProyectosSgeFragment(id, proyectoProyectoSgeService, proyectoService,
-        proyectoSgeService, this.readonly, this.data?.isVisor);
+      this.proyectoCalendarioFacturacion = new ProyectoCalendarioFacturacionFragment(
+        this.data?.proyecto?.id,
+        this.data?.proyecto,
+        proyectoService,
+        proyectoFacturacionService,
+        facturaPrevistaService,
+        facturaPrevistaEmitidaService,
+        proyectoProrrogaService,
+        configService,
+        this.isInvestigador
+      );
+
+      this.proyectosSge = new ProyectoProyectosSgeFragment(
+        id,
+        proyectoProyectoSgeService,
+        proyectoService,
+        proyectoSgeService,
+        solicitudProyectoSgeService,
+        configService,
+        this.readonly,
+        this.data?.isVisor
+      );
 
       this.addFragment(this.FRAGMENT.CALENDARIO_FACTURACION, this.proyectoCalendarioFacturacion);
       this.addFragment(this.FRAGMENT.PROYECTOS_SGE, this.proyectosSge);
@@ -340,7 +379,7 @@ export class ProyectoActionService extends ActionService {
       if (this.isEdit()) {
         this.subscriptions.push(this.fichaGeneral.initialized$.subscribe(() => this.proyectosSge.initialize()));
         this.subscriptions.push(this.proyectosSge.proyectosSge$.subscribe(value => {
-          this.proyectosSge$.next(value);
+          this.fichaGeneral.proyectosSgeIds$.next(value.map(v => v.value.proyectoSge.id));
         }));
       }
 
@@ -413,10 +452,27 @@ export class ProyectoActionService extends ActionService {
         );
         this.clasificaciones = new ProyectoClasificacionesFragment(id, proyectoClasificacionService, proyectoService,
           clasificacionService, this.readonly, this.data?.isVisor);
-        this.proyectosSge = new ProyectoProyectosSgeFragment(id, proyectoProyectoSgeService, proyectoService,
-          proyectoSgeService, this.readonly, this.data?.isVisor);
-        this.partidasPresupuestarias = new ProyectoPartidasPresupuestariasFragment(id, this.data?.proyecto,
-          proyectoService, proyectoPartidaService, convocatoriaService, this.readonly);
+        this.proyectosSge = new ProyectoProyectosSgeFragment(
+          id,
+          proyectoProyectoSgeService,
+          proyectoService,
+          proyectoSgeService,
+          solicitudProyectoSgeService,
+          configService,
+          this.readonly,
+          this.data?.isVisor
+        );
+        this.partidasPresupuestarias = new ProyectoPartidasPresupuestariasFragment(
+          id,
+          this.data?.proyecto,
+          configService,
+          convocatoriaService,
+          partidaPresupuestariaGastoSgeService,
+          partidaPresupuestariaIngresoSgeService,
+          proyectoPartidaPresupuestariaService,
+          proyectoService,
+          this.readonly
+        );
         this.elegibilidad = new ProyectoConceptosGastoFragment(id, this.data.proyecto, proyectoService, proyectoConceptoGastoService,
           convocatoriaService, this.readonly, this.data?.isVisor);
         this.presupuesto = new ProyectoPresupuestoFragment(logger, id, proyectoService, proyectoAnualidadService,
@@ -429,12 +485,21 @@ export class ProyectoActionService extends ActionService {
           this.readonly, proyectoService, proyectoPeriodoJustificacionService, convocatoriaService);
         this.amortizacionFondos = new ProyectoAmortizacionFondosFragment(this.data?.proyecto?.id, this.data?.proyecto?.anualidades,
           this.data.proyecto?.solicitudId, proyectoPeriodoAmortizacionService, proyectoEntidadFinanciadoraService, empresaService,
-          proyectoAnualidadService, periodoAmortizacionService);
+          proyectoAnualidadService, periodoAmortizacionService, configService);
         this.consultaPresupuesto = new ProyectoConsultaPresupuestoFragment(this.data?.proyecto?.id, this.proyectoService);
         this.relaciones = new ProyectoRelacionFragment(
           id, this.data.proyecto, this.readonly, relacionService, convocatoriaService, invencionService, proyectoService, sgiAuthService);
-        this.proyectoCalendarioFacturacion = new ProyectoCalendarioFacturacionFragment(this.data?.proyecto?.id, this.data?.proyecto,
-          proyectoService, proyectoFacturacionService, facturaPrevistaEmitidaService, this.isInvestigador);
+        this.proyectoCalendarioFacturacion = new ProyectoCalendarioFacturacionFragment(
+          this.data?.proyecto?.id,
+          this.data?.proyecto,
+          proyectoService,
+          proyectoFacturacionService,
+          facturaPrevistaService,
+          facturaPrevistaEmitidaService,
+          proyectoProrrogaService,
+          configService,
+          this.isInvestigador
+        );
 
         this.addFragment(this.FRAGMENT.ENTIDADES_FINANCIADORAS, this.entidadesFinanciadoras);
         this.addFragment(this.FRAGMENT.SOCIOS, this.socios);
@@ -518,6 +583,18 @@ export class ProyectoActionService extends ActionService {
               (value) => this.fichaGeneral.ultimaProrroga$.next(value)
             )
           );
+          this.subscriptions.push(
+            this.prorrogas.ultimaFechaFinProrrogas$.subscribe(value => {
+              const fechaFinCurrent = this.fechaFinDefinitivaProyecto;
+              this.fichaGeneral.ultimaFechaFinProrrogas$.next(value);
+              const fechaFinMaxUpdate: IFechaFinMaxUpdate = {
+                fechaFinMaxCurrent: fechaFinCurrent,
+                fechaFinMaxNew: this.fechaFinDefinitivaProyecto
+              };
+              this.proyectoEquipo.fechaFinMaxUpdate$.next(fechaFinMaxUpdate);
+            })
+          );
+
 
           // Propagate changes
           this.subscriptions.push(
@@ -537,9 +614,10 @@ export class ProyectoActionService extends ActionService {
             )
           );
 
-          this.subscriptions.push(this.proyectosSge$.subscribe(value => {
+          this.subscriptions.push(this.proyectosSge.proyectosSge$.subscribe(value => {
             this.fichaGeneral.vinculacionesProyectosSge$.next(value.length > 0);
             this.amortizacionFondos.proyectosSGE$.next(value.map(wraper => wraper.value));
+            this.proyectoCalendarioFacturacion.proyectosSGE$.next(value.map(wraper => wraper.value.proyectoSge));
           }));
 
           // Syncronize changes
@@ -551,6 +629,18 @@ export class ProyectoActionService extends ActionService {
               this.showSocios$.next(value);
             }
           ));
+
+          this.subscriptions.push(
+            this.elegibilidad.initialized$.pipe(
+              filter(initialized => !!initialized)
+            ).subscribe(() => this.elegibilidad.proyecto$.next(this.data.proyecto))
+          );
+
+          this.subscriptions.push(
+            this.proyecto$.subscribe(proyecto => {
+              this.elegibilidad.proyecto$.next(proyecto)
+            })
+          );
         }
 
 
@@ -563,7 +653,7 @@ export class ProyectoActionService extends ActionService {
         if (this.isEdit()) {
           this.subscriptions.push(this.fichaGeneral.initialized$.subscribe(() => this.proyectosSge.initialize()));
           this.subscriptions.push(this.proyectosSge.proyectosSge$.subscribe(value => {
-            this.proyectosSge$.next(value);
+            this.fichaGeneral.proyectosSgeIds$.next(value.map(v => v.value.proyectoSge.id));
           }));
         }
 
@@ -669,7 +759,63 @@ export class ProyectoActionService extends ActionService {
     let cascade = of(void 0);
 
     if (this.isEdit()) {
+      if (this.fichaGeneral?.hasChanges()) {
+        this.fichaGeneral.colaborativo$
+        const proyecto = this.fichaGeneral.getValue();
+        if (!!proyecto.fechaInicio && !proyecto.fechaInicioStarted && (!!proyecto.solicitudId || !!proyecto.convocatoriaId)) {
+
+          cascade = cascade.pipe(
+            switchMap(() =>
+              forkJoin({
+                apartadosToBeCopied: this.proyectoService.hasApartadosToBeCopied(proyecto.id),
+                apartadosWithDates: this.proyectoService.hasApartadosWithDates(proyecto.id)
+              }).pipe(
+                switchMap(({ apartadosToBeCopied, apartadosWithDates }) => {
+
+                  const hasApartadosWithDates = apartadosWithDates?.elegibilidad
+                    || apartadosWithDates?.equiposSocios
+                    || apartadosWithDates?.equipo
+                    || apartadosWithDates?.responsableEconomico
+                    || apartadosWithDates?.socios;
+
+                  const hasApartadosToBeCopied = apartadosToBeCopied?.elegibilidad
+                    || apartadosToBeCopied?.equiposSocios
+                    || apartadosToBeCopied?.equipo
+                    || apartadosToBeCopied?.responsableEconomico
+                    || apartadosToBeCopied?.socios;
+
+                  if (hasApartadosWithDates || hasApartadosToBeCopied) {
+                    const config = {
+                      data: {
+                        apartadosToBeCopied,
+                        apartadosWithDates
+                      } as ProyectoCopiarApartadosModalData,
+                    };
+
+                    return this.matDialog.open(ProyectoCopiarAparatadosModalComponent, config).afterClosed().pipe(
+                      filter(aceptado => !!aceptado)
+                    );
+                  }
+
+                  return of(void 0);
+                })
+              )
+            )
+          );
+        } else if (this.fichaGeneral.fechasHasChanges) {
+          cascade = cascade.pipe(
+            switchMap(() => this.matDialog.open(ProyectoInfoModificarFechasModalComponent).afterClosed())
+          );
+        }
+      }
+
       if (this.prorrogas?.hasChanges()) {
+        if (this.proyectoEquipo?.hasChanges()) {
+          cascade = cascade.pipe(
+            switchMap(() => this.proyectoEquipo.saveOrUpdate().pipe(tap(() => this.proyectoEquipo.refreshInitialState(true))))
+          );
+        }
+
         cascade = cascade.pipe(
           switchMap(() => this.prorrogas.saveOrUpdate().pipe(tap(() => this.prorrogas.refreshInitialState(true))))
         );
@@ -701,29 +847,57 @@ export class ProyectoActionService extends ActionService {
     }
 
     return cascade.pipe(
-      switchMap(() => super.saveOrUpdate())
+      switchMap(() => super.saveOrUpdate()),
+      tap(() => {
+        if (this.data?.proyecto) {
+          this.updateAndEmitProyecto();
+        }
+      }),
+      switchMap(() => {
+        const proyecto = this.fichaGeneral.getValue();
+        if (!!proyecto.fechaInicio && !proyecto.fechaInicioStarted) {
+          return this.proyectoService.initFechaInicio(proyecto.id).pipe(
+            tap(() => {
+              this.fichaGeneral.fechaInicioStarted = true;
+              this.updateAndEmitProyecto();
+
+              if (this.elegibilidad.isInitialized()) {
+                this.elegibilidad.reloadData();
+              }
+
+              if (this.proyectoEquipo.isInitialized()) {
+                this.proyectoEquipo.reloadData();
+              }
+
+              if (this.responsableEconomico.isInitialized()) {
+                this.responsableEconomico.reloadData();
+              }
+
+              if (this.socios.isInitialized()) {
+                this.socios.reloadData();
+              }
+            })
+          );
+        }
+
+        return of(void 0);
+      })
     );
   }
 
-  private onProyectoSocioListChangeHandle(proyectoSocios: StatusWrapper<IProyectoSocio>[]): void {
+  private updateAndEmitProyecto(): void {
+    this.data.proyecto = this.fichaGeneral.getValue();
+    this.proyecto$.next(this.data.proyecto);
+  }
 
+  private onProyectoSocioListChangeHandle(proyectoSocios: StatusWrapper<IProyectoSocio>[]): void {
     if (this.data?.proyecto?.coordinado) {
       const numSocios = proyectoSocios.length;
       this.hasPopulatedSocios$.next(numSocios > 0);
     }
-    let needShow = false;
-    if (this.data?.proyecto?.coordinado && this.data?.proyecto?.coordinadorExterno) {
-      const socioCoordinador = proyectoSocios.find((socio: StatusWrapper<IProyectoSocio>) => socio.value.rolSocio.coordinador);
 
-      if (socioCoordinador) {
-        needShow = false;
-      } else {
-        needShow = true;
-      }
-    } else {
-      needShow = false;
-    }
-    this.hasAnyProyectoSocioWithRolCoordinador$.next(!needShow);
+    const hasSocioCoordinador = proyectoSocios.some((socio: StatusWrapper<IProyectoSocio>) => socio.value.rolSocio.coordinador);
+    this.hasAnyProyectoSocioWithRolCoordinador$.next(hasSocioCoordinador);
   }
 
   private isModuleINV(): boolean {

@@ -20,15 +20,21 @@ import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContext
 import org.crue.hercules.sgi.pii.config.SgiConfigProperties;
 import org.crue.hercules.sgi.pii.dto.InvencionDto.SolicitudProteccionDto;
 import org.crue.hercules.sgi.pii.enums.TipoPropiedad;
+import org.crue.hercules.sgi.pii.exceptions.SolicitudProteccionNoDeletableException;
 import org.crue.hercules.sgi.pii.exceptions.SolicitudProteccionNotFoundException;
 import org.crue.hercules.sgi.pii.exceptions.ViaProteccionNotFoundException;
 import org.crue.hercules.sgi.pii.model.Invencion;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion.EstadoSolicitudProteccion;
-import org.crue.hercules.sgi.pii.model.SolicitudProteccion.OnActivar;
 import org.crue.hercules.sgi.pii.model.ViaProteccion;
+import org.crue.hercules.sgi.pii.repository.InvencionGastoRepository;
+import org.crue.hercules.sgi.pii.repository.PaisValidadoRepository;
+import org.crue.hercules.sgi.pii.repository.ProcedimientoRepository;
 import org.crue.hercules.sgi.pii.repository.SolicitudProteccionRepository;
 import org.crue.hercules.sgi.pii.repository.ViaProteccionRepository;
+import org.crue.hercules.sgi.pii.repository.specification.InvencionGastoSpecifications;
+import org.crue.hercules.sgi.pii.repository.specification.PaisValidadoSpecifications;
+import org.crue.hercules.sgi.pii.repository.specification.ProcedimientoSpecifications;
 import org.crue.hercules.sgi.pii.repository.specification.SolicitudProteccionSpecifications;
 import org.crue.hercules.sgi.pii.util.PeriodDateUtil;
 import org.springframework.data.domain.Page;
@@ -50,6 +56,9 @@ public class SolicitudProteccionService {
 
   private final SolicitudProteccionRepository solicitudProteccionRepository;
   private final ViaProteccionRepository viaProteccionRepository;
+  private final PaisValidadoRepository paisValidadoRepository;
+  private final ProcedimientoRepository procedimientoRepository;
+  private final InvencionGastoRepository invencionGastoRepository;
   private final Validator validator;
   private final SgiConfigProperties sgiConfigProperties;
 
@@ -83,8 +92,6 @@ public class SolicitudProteccionService {
             .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
                 ApplicationContextSupport.getMessage(SolicitudProteccion.class))
             .build());
-
-    solicitudProteccion.setActivo(true);
 
     return this.solicitudProteccionRepository.save(solicitudProteccion);
   }
@@ -201,13 +208,11 @@ public class SolicitudProteccionService {
   }
 
   /**
-   * Activar {@link SolicitudProteccion}.
+   * Elimina la {@link SolicitudProteccion}.
    *
    * @param id Id del {@link SolicitudProteccion}.
-   * @return Entidad {@link SolicitudProteccion} persistida activada.
    */
-  @Validated({ SolicitudProteccion.OnActivar.class })
-  public SolicitudProteccion activar(Long id) {
+  public void delete(Long id) {
 
     Assert.notNull(id,
         () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
@@ -216,47 +221,17 @@ public class SolicitudProteccionService {
                 ApplicationContextSupport.getMessage(SolicitudProteccion.class))
             .build());
 
-    return this.solicitudProteccionRepository.findById(id).map(solicitudProteccion -> {
-      if (Boolean.TRUE.equals(solicitudProteccion.getActivo())) {
-        return solicitudProteccion;
-      }
-      // Invocar validaciones asociadas a OnActivar
-      Set<ConstraintViolation<SolicitudProteccion>> result = validator.validate(solicitudProteccion, OnActivar.class);
-      if (!result.isEmpty()) {
-        throw new ConstraintViolationException(result);
-      }
+    if (!this.solicitudProteccionRepository.existsById(id)) {
+      throw new SolicitudProteccionNotFoundException(id);
+    }
 
-      solicitudProteccion.setActivo(true);
+    if (invencionGastoRepository.count(InvencionGastoSpecifications.bySolicitudProteccionId(id)) > 0
+        || paisValidadoRepository.count(PaisValidadoSpecifications.bySolicitudProteccionId(id)) > 0
+        || procedimientoRepository.count(ProcedimientoSpecifications.bySolicitudProteccionId(id)) > 0) {
+      throw new SolicitudProteccionNoDeletableException(id);
+    }
 
-      return this.solicitudProteccionRepository.save(solicitudProteccion);
-
-    }).orElseThrow(() -> new SolicitudProteccionNotFoundException(id));
-  }
-
-  /**
-   * Desactiva el {@link SolicitudProteccion}.
-   *
-   * @param id Id del {@link SolicitudProteccion}.
-   * @return Entidad {@link SolicitudProteccion} persistida desactivada.
-   */
-  public SolicitudProteccion desactivar(Long id) {
-
-    Assert.notNull(id,
-        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
-            .parameter(PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage("id"))
-            .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY,
-                ApplicationContextSupport.getMessage(SolicitudProteccion.class))
-            .build());
-
-    return this.solicitudProteccionRepository.findById(id).map(solicitudProteccion -> {
-
-      if (Boolean.FALSE.equals(solicitudProteccion.getActivo())) {
-        return solicitudProteccion;
-      }
-      solicitudProteccion.setActivo(false);
-
-      return this.solicitudProteccionRepository.save(solicitudProteccion);
-    }).orElseThrow(() -> new SolicitudProteccionNotFoundException(id));
+    this.solicitudProteccionRepository.deleteById(id);
   }
 
   /**

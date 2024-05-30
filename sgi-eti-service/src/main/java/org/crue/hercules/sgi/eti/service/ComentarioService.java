@@ -119,7 +119,8 @@ public interface ComentarioService {
    * su
    * evaluación.
    *
-   * @param id el id de la entidad {@link Evaluacion}.
+   * @param id         el id de la entidad {@link Evaluacion}.
+   * @param personaRef Id de la persona
    * @return la lista de entidades {@link Comentario}.
    */
   List<Comentario> findByEvaluacionIdActaEvaluador(Long id, String personaRef);

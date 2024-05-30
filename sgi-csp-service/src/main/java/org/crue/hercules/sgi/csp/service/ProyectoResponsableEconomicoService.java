@@ -134,9 +134,9 @@ public class ProyectoResponsableEconomicoService {
         emptyFechaFin = true;
       }
 
-      if ((responsableEconomico.getFechaInicio() != null
+      if ((responsableEconomico.getFechaInicio() != null && proyecto.getFechaInicio() != null
           && responsableEconomico.getFechaInicio().isBefore(proyecto.getFechaInicio()))
-          || (responsableEconomico.getFechaFin() != null
+          || (responsableEconomico.getFechaFin() != null && fechaFinProyecto != null
               && responsableEconomico.getFechaFin().isAfter(fechaFinProyecto))) {
         throw new ProyectoResponsableEconomicoProjectRangeException(responsableEconomico.getFechaInicio(),
             fechaFinProyecto);
@@ -165,7 +165,7 @@ public class ProyectoResponsableEconomicoService {
   }
 
   /**
-   * Obtiene los {@link ProyectoResponsableEconomico} para una {@link Proyecto}.
+   * Obtiene los {@link ProyectoResponsableEconomico} para un {@link Proyecto}.
    *
    * @param proyectoId el id de la {@link Proyecto}.
    * @param query      la información del filtro.
@@ -184,6 +184,23 @@ public class ProyectoResponsableEconomicoService {
   }
 
   /**
+   * Obtiene los {@link ProyectoResponsableEconomico} para un {@link Proyecto}.
+   *
+   * @param proyectoId el id de la {@link Proyecto}.
+   * @return la lista de entidades {@link ProyectoResponsableEconomico} de la
+   *         {@link Proyecto} paginadas.
+   */
+  public List<ProyectoResponsableEconomico> findAllByProyectoId(Long proyectoId) {
+    log.debug("findAllByProyectoId(Long proyectoId) - start");
+    Specification<ProyectoResponsableEconomico> specs = ProyectoResponsableEconomicoSpecifications
+        .byProyectoId(proyectoId);
+
+    List<ProyectoResponsableEconomico> returnValue = repository.findAll(specs);
+    log.debug("findAllByProyectoId(Long proyectoId) - end");
+    return returnValue;
+  }
+
+  /**
    * Obtiene {@link ProyectoResponsableEconomico} por su id.
    *
    * @param id el id de la entidad {@link ProyectoResponsableEconomico}.
@@ -195,6 +212,25 @@ public class ProyectoResponsableEconomicoService {
         .orElseThrow(() -> new ProyectoResponsableEconomicoNotFoundException(id));
     log.debug("findById(Long id)  - end");
     return returnValue;
+  }
+
+  /**
+   * Comprueba si alguno de los {@link ProyectoResponsableEconomico} del
+   * {@link Proyecto} tienen fechas
+   * 
+   * @param proyectoId el id del {@link Proyecto}.
+   * @return true si existen y false en caso contrario.
+   */
+  public boolean proyectoHasProyectoResponsableEconomicoWithDates(Long proyectoId) {
+    log.debug("proyectoHasProyectoResponsableEconomicoWithDates({})  - start", proyectoId);
+
+    Specification<ProyectoResponsableEconomico> specs = ProyectoResponsableEconomicoSpecifications
+        .byProyectoId(proyectoId)
+        .and(ProyectoResponsableEconomicoSpecifications.withFechaInicioOrFechaFin());
+
+    boolean hasProyectoResponsableEconomicoWithDates = repository.count(specs) > 0;
+    log.debug("proyectoHasProyectoResponsableEconomicoWithDates({})  - end", proyectoId);
+    return hasProyectoResponsableEconomicoWithDates;
   }
 
 }

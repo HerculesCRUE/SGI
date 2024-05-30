@@ -5,7 +5,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IProyectoProrroga, Tipo, TIPO_MAP } from '@core/models/csp/proyecto-prorroga';
+import { Estado } from '@core/models/csp/estado-proyecto';
+import { IProyectoProrroga, TIPO_MAP, Tipo } from '@core/models/csp/proyecto-prorroga';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
@@ -64,7 +65,12 @@ export class ProyectoProrrogasComponent extends FragmentComponent implements OnI
       (proyectoProrrogas) => {
         this.dataSource.data = proyectoProrrogas;
         if (proyectoProrrogas.length > 0) {
-          this.lastProyectoProrroga = proyectoProrrogas[proyectoProrrogas.length - 1].value;
+          this.lastProyectoProrroga = proyectoProrrogas.map(wrapper => wrapper.value).reduce((ultimaProrroga: IProyectoProrroga | null, prorroga: IProyectoProrroga) => {
+            if (!ultimaProrroga || prorroga.fechaConcesion > ultimaProrroga.fechaConcesion) {
+              return prorroga;
+            }
+            return ultimaProrroga;
+          }, null);
         }
       }
     );
@@ -103,13 +109,20 @@ export class ProyectoProrrogasComponent extends FragmentComponent implements OnI
               this.recalcularNumProrrogas();
               const ultimaProrroga =
                 this.formPart.prorrogas$.value.length > 0 ?
-                this.formPart.prorrogas$.value[this.formPart.prorrogas$.value.length - 1].value : null;
+                  this.formPart.prorrogas$.value[this.formPart.prorrogas$.value.length - 1].value : null;
               this.formPart.ultimaProrroga$.next(ultimaProrroga);
+
+              const ultimaFechaProrrogas = this.formPart.prorrogas$.value.reverse().find(prorroga => prorroga.value.fechaFin !== null)?.value.fechaFin ?? null;
+              this.formPart.ultimaFechaFinProrrogas$.next(ultimaFechaProrrogas);
             }
           }
         )
       );
     });
+  }
+
+  isProyectoEstadoConcedido(): boolean {
+    return this.actionService.estado === Estado.CONCEDIDO;
   }
 
   /**

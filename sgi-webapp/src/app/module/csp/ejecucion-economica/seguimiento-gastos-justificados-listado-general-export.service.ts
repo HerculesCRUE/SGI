@@ -848,6 +848,7 @@ export class SeguimientoGastosJustificadosResumenListadoGeneralExportService
           title: 'Requerimiento ' + i + ': Núm. req',
           name: 'requerimientoNumReq' + i,
           type: ColumnType.NUMBER,
+          format: '#'
         }
       );
       columns.push(

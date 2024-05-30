@@ -62,6 +62,18 @@ public class ProyectoConceptoGastoSpecifications {
   }
 
   /**
+   * Se obtienen los {@link ProyectoConceptoGasto} con valores para las fechas de
+   * inicio y/o fin
+   * 
+   * @return specification para obtener los {@link ProyectoConceptoGasto} con
+   *         valor en alguna de sus fechas
+   */
+  public static Specification<ProyectoConceptoGasto> withFechaInicioOrFechaFin() {
+    return (root, query, cb) -> cb.or(cb.isNotNull(root.get(ProyectoConceptoGasto_.fechaInicio)),
+        cb.isNotNull(root.get(ProyectoConceptoGasto_.fechaFin)));
+  }
+
+  /**
    * {@link ProyectoConceptoGasto} de la {@link Proyecto} con meses solapados
    * 
    * @param fechaInicio fecha inicio de {@link ProyectoConceptoGasto}

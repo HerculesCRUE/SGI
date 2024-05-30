@@ -59,7 +59,8 @@
               (click)="element.expanded ? element.collapse() : element.expand()">
               {{element.expanded ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
-            {{element.level === 1 ? element.item.conceptoGasto?.nombre: ''}}
+            {{element.level === 1 ? (element.item.conceptoGasto?.nombre ? element.item.conceptoGasto?.nombre :
+            ('csp.proyecto-consulta-presupuesto.concepto-gasto.sin-clasificar' | translate)): ''}}
           </mat-cell>
         </ng-container>
 

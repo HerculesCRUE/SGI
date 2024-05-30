@@ -1,17 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { MatListIconCssMatStyler } from '@angular/material/list';
 import { IConfigValue } from '@core/models/cnf/config-value';
 import { IRecipient } from '@core/models/com/recipient';
 import { environment } from '@env';
 import { CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate, mixinFindAll, mixinFindById, mixinUpdate, SgiRestBaseService, UpdateCtor } from '@sgi/framework/http';
 import { Observable, of } from 'rxjs';
-import { map, switchMap, catchError } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { TimeZoneConfigService } from '../timezone.service';
 import { IConfigValueRequest } from './config-value-request';
 import { CONFIG_VALUE_REQUEST_CONVERTER } from './config-value-request.converter';
 import { IConfigValueResponse } from './config-value-response';
 import { CONFIG_VALUE_RESPONSE_CONVERTER } from './config-value-response.converter';
+import { ConfigGlobal } from 'src/app/module/adm/config-global/config-global.component';
 
 // tslint:disable-next-line: variable-name
 const _ConfigServiceMixinBase:
@@ -122,6 +122,30 @@ export class ConfigService extends _ConfigServiceMixinBase implements TimeZoneCo
     } else {
       return this.findById('exp-max-num-registros-excel').pipe(map(value => value?.value ?? null));
     }
+  }
+
+  isAltaSgpEnabled(): Observable<boolean> {
+    return this.findById(ConfigGlobal.SGP_ALTA).pipe(
+      map(configValue => configValue?.value && configValue.value === 'true')
+    );
+  }
+
+  isModificacionSgpEnabled(): Observable<boolean> {
+    return this.findById(ConfigGlobal.SGP_MODIFICACION).pipe(
+      map(configValue => configValue?.value && configValue.value === 'true')
+    );
+  }
+
+  isAltaSgempEnabled(): Observable<boolean> {
+    return this.findById(ConfigGlobal.SGEMP_ALTA).pipe(
+      map(configValue => configValue?.value && configValue.value === 'true')
+    );
+  }
+
+  isModificacionSgempEnabled(): Observable<boolean> {
+    return this.findById(ConfigGlobal.SGEMP_MODIFICACION).pipe(
+      map(configValue => configValue?.value && configValue.value === 'true')
+    );
   }
 
 }

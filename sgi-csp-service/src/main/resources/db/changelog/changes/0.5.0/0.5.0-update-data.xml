@@ -1,0 +1,40 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <changeSet context="!test" author="master" id="0.5.0-solicitud-proyecto">
+    <update tableName="solicitud_proyecto">
+      <column name="rol_universidad"
+        valueComputed="(select id from ${schemaPrefix}rol_socio WHERE nombre = 'Socio')" />
+      <where>coordinador_externo = '1'</where>
+    </update>
+    <update tableName="solicitud_proyecto">
+      <column name="rol_universidad"
+        valueComputed="(select id from ${schemaPrefix}rol_socio WHERE nombre = 'Coordinador')" />
+      <where>coordinador_externo = '0'</where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0.5.0-proyecto">
+    <update tableName="proyecto">
+      <column name="rol_universidad"
+        valueComputed="(select id from ${schemaPrefix}rol_socio WHERE nombre = 'Socio')" />
+      <where>coordinador_externo = '1'</where>
+    </update>
+    <update tableName="proyecto">
+      <column name="rol_universidad"
+        valueComputed="(select id from ${schemaPrefix}rol_socio WHERE nombre = 'Coordinador')" />
+      <where>coordinador_externo = '0'</where>
+    </update>
+    <update tableName="proyecto">
+      <column name="fecha_inicio_started" valueBoolean="true" />
+      <where>fecha_inicio IS NOT NULL</where>
+    </update>
+  </changeSet>
+
+</databaseChangeLog>

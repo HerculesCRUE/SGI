@@ -796,7 +796,7 @@ class InvencionIT extends BaseIT {
     String filter = "";
     String inventorRef1 = "11223344";
     String inventorRef2 = "11223345";
-    String inventorRef3 = "U0186304";
+
     BigDecimal participacion1 = new BigDecimal(50L);
     BigDecimal participacion2 = new BigDecimal(50L);
 
@@ -818,19 +818,16 @@ class InvencionIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<InvencionInventorOutput> invencionesInventorOutput = response.getBody();
 
-    Assertions.assertThat(invencionesInventorOutput).hasSize(3);
+    Assertions.assertThat(invencionesInventorOutput).hasSize(2);
 
-    InvencionInventorOutput inventor1 = invencionesInventorOutput.get(2);
-    InvencionInventorOutput inventor2 = invencionesInventorOutput.get(1);
-    InvencionInventorOutput inventor3 = invencionesInventorOutput.get(0);
+    InvencionInventorOutput inventor1 = invencionesInventorOutput.get(1);
+    InvencionInventorOutput inventor2 = invencionesInventorOutput.get(0);
 
     Assertions.assertThat(inventor1.getId()).as("getId()").isEqualTo(1L);
     Assertions.assertThat(inventor2.getId()).as("getId()").isEqualTo(2L);
-    Assertions.assertThat(inventor3.getId()).as("getId()").isEqualTo(3L);
 
     Assertions.assertThat(inventor1.getInventorRef()).as("getInventorRef()").isEqualTo(inventorRef1);
     Assertions.assertThat(inventor2.getInventorRef()).as("getInventorRef()").isEqualTo(inventorRef2);
-    Assertions.assertThat(inventor3.getInventorRef()).as("getInventorRef()").isEqualTo(inventorRef3);
 
     Assertions.assertThat(inventor1.getParticipacion().longValue()).as("getParticipacion()")
         .isEqualTo(participacion1.longValue());

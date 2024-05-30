@@ -31,6 +31,7 @@ import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitud;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud.Estado;
 import org.crue.hercules.sgi.csp.model.Programa;
+import org.crue.hercules.sgi.csp.model.RolSocio;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudDocumento;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
@@ -45,6 +46,7 @@ import org.crue.hercules.sgi.csp.repository.DocumentoRequeridoSolicitudRepositor
 import org.crue.hercules.sgi.csp.repository.EstadoSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
+import org.crue.hercules.sgi.csp.repository.RolSocioRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudExternaRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEquipoRepository;
@@ -145,6 +147,9 @@ class SolicitudServiceTest extends BaseServiceTest {
   @Mock
   private SolicitudExternaRepository solicitudExternaRepository;
 
+  @Mock
+  private RolSocioRepository rolSocioRepository;
+
   private SolicitudService service;
 
   @BeforeEach
@@ -168,7 +173,8 @@ class SolicitudServiceTest extends BaseServiceTest {
         solicitudAuthorityHelper,
         grupoAuthorityHelper,
         solicitudRrhhComService,
-        solicitudComService);
+        solicitudComService,
+        rolSocioRepository);
   }
 
   @Test
@@ -1006,6 +1012,7 @@ class SolicitudServiceTest extends BaseServiceTest {
   @Test
   void cambiarEstado_WithDocumentoRequerido_ThrowsSolicitudProyectoWithoutSocioCoordinadorException() {
     Long solicitudId = 1L;
+    Long rolUniversidadSocioId = 1L;
     Solicitud solicitud = generarMockSolicitud(solicitudId, 1L, null);
     EstadoSolicitud newEstado = EstadoSolicitud.builder()
         .estado(Estado.CONCEDIDA)
@@ -1028,12 +1035,14 @@ class SolicitudServiceTest extends BaseServiceTest {
     BDDMockito.given(solicitudProyectoRepository.findById(anyLong())).willReturn(Optional.of(SolicitudProyecto.builder()
         .id(1L)
         .colaborativo(Boolean.TRUE)
-        .coordinadorExterno(Boolean.TRUE)
+        .rolUniversidadId(rolUniversidadSocioId)
         .build()));
     // @formatter: on
     BDDMockito
         .given(solicitudProyectoEquipoRepository.findAllBySolicitudProyectoIdAndPersonaRef(anyLong(), anyString()))
         .willReturn(Arrays.asList(SolicitudProyectoEquipo.builder().build()));
+    BDDMockito.given(rolSocioRepository.findById(anyLong()))
+        .willReturn(Optional.of(RolSocio.builder().coordinador(false).build()));
 
     Assertions.assertThatThrownBy(() -> service.cambiarEstado(solicitudId, newEstado))
         .isInstanceOf(SolicitudProyectoWithoutSocioCoordinadorException.class);

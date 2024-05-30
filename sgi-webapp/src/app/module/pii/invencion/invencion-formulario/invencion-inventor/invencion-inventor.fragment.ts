@@ -15,8 +15,6 @@ import { catchError, filter, map, mergeMap, switchMap, takeLast, tap, toArray } 
 export class InvencionInventorFragment extends Fragment {
 
   // tslint:disable-next-line: variable-name
-  private _invencionInventoresDelete$ = new BehaviorSubject<StatusWrapper<IInvencionInventor>[]>([]);
-  // tslint:disable-next-line: variable-name
   private _participacionCompleta$ = new BehaviorSubject<boolean>(true);
   // tslint:disable-next-line: variable-name
   private _verificarParticipacion$ = new BehaviorSubject<any>(null);
@@ -80,7 +78,6 @@ export class InvencionInventorFragment extends Fragment {
   saveOrUpdate(): Observable<string | number | void> {
     const invencionId = this.getKey() as number;
     this._invencionInventores$.value.forEach(el => el.value.invencion = { id: invencionId } as IInvencion);
-    this._invencionInventoresDelete$.value.forEach(el => el.value.invencion = { id: invencionId } as IInvencion);
 
     return this._persistChangesInvencionInventor().pipe(
       takeLast(1),
@@ -107,24 +104,12 @@ export class InvencionInventorFragment extends Fragment {
    */
   deleteInvencionInventor(invencionInventor: StatusWrapper<IInvencionInventor>) {
     const current = this._invencionInventores$.value;
-
-    const toDelete = invencionInventor;
-    const index = current.findIndex(
-      (value) => value === invencionInventor
-    );
-    if (!this._isValidIndex(current, index)) {
-      return;
+    const index = current.findIndex((value) => value === invencionInventor);
+    if (index >= 0) {
+      current.splice(index, 1);
+      this._invencionInventores$.next(current);
+      this.setChanges(true);
     }
-    current.splice(index, 1);
-    if (!toDelete.created && toDelete.value?.id) {
-      toDelete.setDeleted();
-      toDelete.value.activo = false;
-      const currentDeleted = this._invencionInventoresDelete$.value;
-      currentDeleted.push(toDelete);
-      this._invencionInventoresDelete$.next(currentDeleted);
-    }
-    this._invencionInventores$.next(current);
-    this.setChanges(true);
   }
 
   /**
@@ -225,7 +210,7 @@ export class InvencionInventorFragment extends Fragment {
       )
 
   private _persistChangesInvencionInventor(): Observable<void> {
-    const invencionInventoresToPersist = this._invencionInventores$.value.concat(this._invencionInventoresDelete$.value);
+    const invencionInventoresToPersist = this._invencionInventores$.value;
     return this.invencionService.
       bulkSaveOrUpdateInvencionInventores(this.getKey() as number, invencionInventoresToPersist.map(elem => elem.value)).pipe(
         tap(invencionInventoresPersisted => this.refreshInvencionInventoresData(invencionInventoresPersisted)),
@@ -234,7 +219,6 @@ export class InvencionInventorFragment extends Fragment {
   }
 
   private refreshInvencionInventoresData(invencionInventoresPersisted: IInvencionInventor[]): void {
-    this._invencionInventoresDelete$.next([]);
     const currentInvencionInventores = this._invencionInventores$.value.map((wrapper) => wrapper.value);
     const invencionInventoresRefreshed = invencionInventoresPersisted.map(invencionInventorPersisted => {
       this.copyInvencionInventorRelatedAttributes(this.findInvencionInventorSource(currentInvencionInventores, invencionInventorPersisted), invencionInventorPersisted);

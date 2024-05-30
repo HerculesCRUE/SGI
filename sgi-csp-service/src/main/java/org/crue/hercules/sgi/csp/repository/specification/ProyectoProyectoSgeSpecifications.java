@@ -15,14 +15,25 @@ import lombok.NoArgsConstructor;
 public class ProyectoProyectoSgeSpecifications {
 
   /**
+   * {@link ProyectoProyectoSge} con id distinto
+   * 
+   * @param id identificador del {@link ProyectoProyectoSge}.
+   * @return specification para obtener los {@link ProyectoProyectoSge} con id
+   *         distinto.
+   */
+  public static Specification<ProyectoProyectoSge> notId(Long id) {
+    return (root, query, cb) -> cb.equal(root.get(ProyectoProyectoSge_.id), id).not();
+  }
+
+  /**
    * {@link ProyectoProyectoSge} del {@link Proyecto} con el id indicado.
    * 
-   * @param id identificador del {@link Proyecto}.
+   * @param proyectoId identificador del {@link Proyecto}.
    * @return specification para obtener los {@link ProyectoProyectoSge} del
    *         {@link Proyecto} con el id indicado.
    */
-  public static Specification<ProyectoProyectoSge> byProyectoId(Long id) {
-    return (root, query, cb) -> cb.equal(root.get(ProyectoProyectoSge_.proyecto).get(Proyecto_.id), id);
+  public static Specification<ProyectoProyectoSge> byProyectoId(Long proyectoId) {
+    return (root, query, cb) -> cb.equal(root.get(ProyectoProyectoSge_.proyecto).get(Proyecto_.id), proyectoId);
 
   }
 

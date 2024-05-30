@@ -11,6 +11,7 @@ export interface IRelacionEjecucionEconomica {
   fechaFin: DateTime;
   proyectoSge: IProyectoSge;
   tipoEntidad: TipoEntidad;
+  fechaFinDefinitiva: DateTime;
 }
 
 export enum TipoEntidad {

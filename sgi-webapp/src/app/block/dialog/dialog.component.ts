@@ -39,8 +39,8 @@ export class DialogComponent {
       this.params = data.params || {};
       this.cancelButtonText = data.cancel || '';
       this.continuarButtonText = data.ok || '';
-      this.cancelButtonStyle = data.cancelStyle || DIALOG_BUTTON_STYLE.BTN_STYLE_LINK;
-      this.continuarButtonStyle = data.okStyle || DIALOG_BUTTON_STYLE.BTN_STYLE_ACCENT;
+      this.cancelButtonStyle = data.cancelStyle;
+      this.continuarButtonStyle = data.okStyle;
     }
   }
 

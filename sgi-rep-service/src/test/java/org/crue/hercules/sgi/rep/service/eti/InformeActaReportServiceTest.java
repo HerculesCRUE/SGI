@@ -47,14 +47,14 @@ class InformeActaReportServiceTest extends BaseReportEtiServiceTest {
   private EvaluacionService evaluacionService;
 
   @Mock
-  private BaseActaComentariosReportService baseActaComentariosReportService;
+  private BaseApartadosRespuestasReportService baseApartadosRespuestasReportService;
 
   @BeforeEach
   public void setUp() throws Exception {
     informeActaReportService = new InformeActaReportService(sgiConfigProperties,
         personaService, sgiApiConfService,
         convocatoriaReunionService, actaService, evaluacionService,
-        baseActaComentariosReportService);
+        baseApartadosRespuestasReportService);
   }
 
   @Test

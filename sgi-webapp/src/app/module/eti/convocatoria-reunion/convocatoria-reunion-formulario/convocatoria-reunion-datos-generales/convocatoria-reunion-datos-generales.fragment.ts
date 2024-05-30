@@ -44,7 +44,8 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
       tipoConvocatoriaReunion: [null, new NullIdValidador().isValid()],
       horaInicio: [null, Validators.required],
       horaInicioSegunda: [null],
-      lugar: ['', [Validators.maxLength(250), Validators.required]],
+      videoconferencia: [null, Validators.required],
+      lugar: ['', [Validators.maxLength(250)]],
       ordenDia: ['', [Validators.maxLength(2000), Validators.required]],
       convocantes: ['', Validators.required],
     },
@@ -61,6 +62,10 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
     if (this.readonly) {
       fb.disable();
     }
+
+    fb.controls.videoconferencia.valueChanges.subscribe(value => {
+      this.setupValidatorsLugar(fb, value);
+    })
 
     return fb;
   }
@@ -156,6 +161,7 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
       tipoConvocatoriaReunion: value.tipoConvocatoriaReunion,
       horaInicio: this.getDate(value.horaInicio, value.minutoInicio),
       horaInicioSegunda: value.horaInicioSegunda ? this.getDate(value.horaInicioSegunda, value.minutoInicioSegunda) : null,
+      videoconferencia: value.videoconferencia,
       lugar: value.lugar,
       ordenDia: value.ordenDia,
     };
@@ -173,7 +179,6 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
       // Para que en la carga inicial no se permita editar si hay evaluaciones asignadas.
       if (value.numEvaluaciones > 0) {
         this.getFormGroup().controls.comite.disable({ onlySelf: true });
-        this.getFormGroup().controls.fechaLimite.disable({ onlySelf: true });
         this.getFormGroup().controls.tipoConvocatoriaReunion.disable({ onlySelf: true });
       } else if (value.fechaEnvio) {
         // Si ya se ha enviado no se podrá modificar el comité
@@ -211,6 +216,7 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
     this.convocatoriaReunion.minutoInicioSegunda = form.controls.horaInicioSegunda.value?.getMinutes();
     this.convocatoriaReunion.lugar = form.controls.lugar.value;
     this.convocatoriaReunion.ordenDia = form.controls.ordenDia.value;
+    this.convocatoriaReunion.videoconferencia = form.controls.videoconferencia.value;
     return this.convocatoriaReunion;
   }
 
@@ -280,5 +286,21 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
       takeLast(1),
       map(() => convocatoriaReunion)
     );
+  }
+
+  private setupValidatorsLugar(formGroup: FormGroup, value: boolean): void {
+    const lugarFormControl = formGroup.controls.lugar;
+    if (!value) {
+      lugarFormControl.setValidators([
+        Validators.required,
+        Validators.maxLength(250)
+      ]);
+    }
+    else {
+      lugarFormControl.setValidators([
+        Validators.maxLength(250)
+      ]);
+    }
+    lugarFormControl.updateValueAndValidity({ emitEvent: false });
   }
 }

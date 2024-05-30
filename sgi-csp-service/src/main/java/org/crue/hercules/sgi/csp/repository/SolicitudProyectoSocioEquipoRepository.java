@@ -29,4 +29,6 @@ public interface SolicitudProyectoSocioEquipoRepository
    */
   void deleteBySolicitudProyectoSocioId(Long solicitudProyectoSocioId);
 
+  boolean existsBySolicitudProyectoSocioSolicitudProyectoId(Long solicitudProyectoId);
+
 }

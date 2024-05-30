@@ -14,6 +14,7 @@ import org.crue.hercules.sgi.eti.model.Bloque;
 import org.crue.hercules.sgi.eti.model.Comentario;
 import org.crue.hercules.sgi.eti.model.Comentario.TipoEstadoComentario;
 import org.crue.hercules.sgi.eti.model.Comite;
+import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.crue.hercules.sgi.eti.model.Formulario;
@@ -670,22 +671,22 @@ public class ComentarioServiceImpl implements ComentarioService {
   private void validateEstadoEvaluacion(Evaluacion evaluacion) {
     Assert.isTrue((evaluacion.getMemoria().getRetrospectiva() == null &&
         evaluacion.getMemoria().getEstadoActual().getId()
-            .equals(Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA)
-        || evaluacion.getMemoria().getEstadoActual().getId().equals(Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION)
+            .equals(TipoEstadoMemoria.Tipo.EN_EVALUACION_REVISION_MINIMA.getId())
+        || evaluacion.getMemoria().getEstadoActual().getId().equals(TipoEstadoMemoria.Tipo.EN_EVALUACION.getId())
         || evaluacion.getMemoria().getEstadoActual().getId()
-            .equals(Constantes.TIPO_ESTADO_MEMORIA_FAVORABLE_PENDIENTE_MOD_MINIMAS)
+            .equals(TipoEstadoMemoria.Tipo.FAVORABLE_PENDIENTE_MODIFICACIONES_MINIMAS.getId())
         || evaluacion.getMemoria().getEstadoActual().getId()
             .equals(TipoEstadoMemoria.Tipo.EN_EVALUACION_SEGUIMIENTO_ANUAL.getId())
         || evaluacion.getMemoria().getEstadoActual().getId()
             .equals(TipoEstadoMemoria.Tipo.EN_SECRETARIA_SEGUIMIENTO_ANUAL_MODIFICACION.getId())
         || evaluacion.getMemoria().getEstadoActual().getId()
-            .equals(Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_SEGUIMIENTO_FINAL_ACLARACIONES)
+            .equals(TipoEstadoMemoria.Tipo.EN_SECRETARIA_SEGUIMIENTO_FINAL_ACLARACIONES.getId())
         || evaluacion.getMemoria().getEstadoActual().getId()
-            .equals(Constantes.TIPO_ESTADO_MEMORIA_EN_EVALUACION_SEGUIMIENTO_FINAL))
+            .equals(TipoEstadoMemoria.Tipo.EN_EVALUACION_SEGUIMIENTO_FINAL.getId()))
         || (evaluacion.getMemoria()
             .getRetrospectiva() != null
             && evaluacion.getMemoria().getRetrospectiva().getEstadoRetrospectiva().getId()
-                .equals(Constantes.TIPO_ESTADO_MEMORIA_EN_SECRETARIA_REVISION_MINIMA)),
+                .equals(EstadoRetrospectiva.Tipo.EN_EVALUACION.getId())),
         "La Evaluación no está en un estado adecuado para añadir comentarios.");
   }
 

@@ -169,7 +169,8 @@ export class GrupoEquipoListadoExportService extends AbstractTableExportFillServ
       const columnParticipacion: ISgiColumnReport = {
         name: EQUIPO_PARTICIPACION_FIELD + idEquipo,
         title: titleEquipo + idEquipo + ': ' + this.translate.instant(EQUIPO_PARTICIPACION_KEY),
-        type: ColumnType.STRING,
+        type: ColumnType.NUMBER,
+        format: '#,#" "%'
       };
       columns.push(columnParticipacion);
     }
@@ -231,8 +232,7 @@ export class GrupoEquipoListadoExportService extends AbstractTableExportFillServ
       elementsRow.push(miembroEquipo.rol?.nombre ?? '');
       elementsRow.push(LuxonUtils.toBackend(miembroEquipo.fechaInicio) ?? '');
       elementsRow.push(LuxonUtils.toBackend(miembroEquipo.fechaFin) ?? '');
-      elementsRow.push(miembroEquipo?.participacion ?
-        this.percentPipe.transform(miembroEquipo?.participacion / 100) : '');
+      elementsRow.push(miembroEquipo?.participacion ? miembroEquipo?.participacion / 100 : '');
     } else {
       elementsRow.push('');
       elementsRow.push('');

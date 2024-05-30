@@ -152,6 +152,7 @@ class ProyectoProyectoSgeIT extends BaseIT {
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
   // @formatter:off
+    "classpath:scripts/configuracion.sql",
     "classpath:scripts/modelo_ejecucion.sql",
     "classpath:scripts/modelo_unidad.sql",
     "classpath:scripts/tipo_finalidad.sql",

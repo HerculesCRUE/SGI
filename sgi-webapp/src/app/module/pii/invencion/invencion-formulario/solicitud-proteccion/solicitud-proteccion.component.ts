@@ -14,11 +14,12 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { ROUTE_NAMES } from '@core/route.names';
 import { ConfigService } from '@core/services/cnf/config.service';
 import { DialogService } from '@core/services/dialog.service';
+import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { BehaviorSubject, Subscription, forkJoin, of } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs/operators';
 import { InvencionActionService } from '../../invencion.action.service';
 import { ISolicitudProteccionListadoModalData, SolicitudProteccionListadoExportModalComponent } from '../../modals/solicitud-proteccion-listado-export-modal/solicitud-proteccion-listado-export-modal.component';
 import { SolicitudProteccionFragment } from './solicitud-proteccion.fragment';
@@ -28,13 +29,15 @@ const MSG_SAVE_SUCCESS = marker('msg.save.entity.success');
 const MSG_SAVE_ERROR = marker('error.save.entity');
 const MSG_UPDATE_ERROR = marker('error.update.entity');
 const MSG_UPDATE_SUCCESS = marker('msg.update.entity.success');
-const MSG_REACTIVE = marker('msg.reactivate.entity');
-const MSG_SUCCESS_REACTIVE = marker('msg.reactivate.entity.success');
-const MSG_ERROR_REACTIVE = marker('error.reactivate.entity');
-const MSG_DEACTIVATE = marker('msg.deactivate.entity');
-const MSG_ERROR_DEACTIVATE = marker('error.deactivate.entity');
-const MSG_SUCCESS_DEACTIVATE = marker('msg.deactivate.entity.success');
+const MSG_DELETE = marker('msg.delete.entity');
+const MSG_ERROR_DELETE = marker('error.delete.entity');
+const MSG_SUCCESS_DELETE = marker('msg.delete.entity.success');
 const SOLICITUD_PROTECCION_KEY = marker('pii.solicitud-proteccion');
+const SOLICITUD_PROTECCION_NO_DELETABLE = marker('pii.solicitud-proteccion.no-deletable');
+const INVENCION_GASTO_KEY = marker('pii.invencion-gastos');
+const PAIESES_VALIDADOS_KEY = marker('pii.solicitud-proteccion.pais-validado.titulo');
+const PROCEDIMIENTOS_KEY = marker('pii.solicitud-proteccion.procedimiento');
+const MSG_AND = marker('msg.and');
 
 
 @Component({
@@ -60,7 +63,6 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
       'fechaPrioridadSolicitud',
       'numeroSolicitud',
       'numeroRegistro',
-      'activo',
       'acciones'],
     industrial: [
       'viaProteccion.nombre',
@@ -70,7 +72,6 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
       'numeroPublicacion',
       'numeroConcesion',
       'estado',
-      'activo',
       'acciones'
     ]
   };
@@ -82,12 +83,10 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
   textCrearError: string;
   textUpdateSuccess: string;
   textUpdateError: string;
-  textDesactivar: string;
-  textReactivar: string;
-  textErrorDesactivar: string;
-  textSuccessDesactivar: string;
-  textSuccessReactivar: string;
-  textErrorReactivar: string;
+  msgConfirmDelete: string;
+  msgNoDeletable: string;
+  textErrorDelete: string;
+  textSuccessDelete: string;
 
   public elementosPagina: number[];
   public totalElementos: number;
@@ -110,7 +109,8 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
     private translate: TranslateService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
-    private readonly cnfService: ConfigService
+    private readonly cnfService: ConfigService,
+    private solicitudProteccionService: SolicitudProteccionService
   ) {
     super(actionService.FRAGMENT.SOLICITUDES_PROTECCION, actionService);
     this.formPart = this.fragment as SolicitudProteccionFragment;
@@ -225,11 +225,11 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
     ).pipe(
       switchMap((value) => {
         return this.translate.get(
-          MSG_DEACTIVATE,
+          MSG_DELETE,
           { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
         );
       })
-    ).subscribe((value) => this.textDesactivar = value);
+    ).subscribe((value) => this.msgConfirmDelete = value);
 
     this.translate.get(
       SOLICITUD_PROTECCION_KEY,
@@ -237,11 +237,11 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
     ).pipe(
       switchMap((value) => {
         return this.translate.get(
-          MSG_ERROR_DEACTIVATE,
+          MSG_ERROR_DELETE,
           { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
         );
       })
-    ).subscribe((value) => this.textErrorDesactivar = value);
+    ).subscribe((value) => this.textErrorDelete = value);
 
     this.translate.get(
       SOLICITUD_PROTECCION_KEY,
@@ -249,47 +249,12 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
     ).pipe(
       switchMap((value) => {
         return this.translate.get(
-          MSG_SUCCESS_DEACTIVATE,
+          MSG_SUCCESS_DELETE,
           { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
         );
       })
-    ).subscribe((value) => this.textSuccessDesactivar = value);
+    ).subscribe((value) => this.textSuccessDelete = value);
 
-    this.translate.get(
-      SOLICITUD_PROTECCION_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_REACTIVE,
-          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
-        );
-      })
-    ).subscribe((value) => this.textReactivar = value);
-
-    this.translate.get(
-      SOLICITUD_PROTECCION_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_SUCCESS_REACTIVE,
-          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
-        );
-      })
-    ).subscribe((value) => this.textSuccessReactivar = value);
-
-    this.translate.get(
-      SOLICITUD_PROTECCION_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).pipe(
-      switchMap((value) => {
-        return this.translate.get(
-          MSG_ERROR_REACTIVE,
-          { entity: value, ...MSG_PARAMS.GENDER.FEMALE }
-        );
-      })
-    ).subscribe((value) => this.textErrorReactivar = value);
   }
 
   public getSuitableColumnsDef(tipoPropiedad: TipoPropiedad): string[] {
@@ -300,49 +265,56 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
   }
 
   /**
-   * Desactivar Solicitud de Proteccion.
+   * Eliminar Solicitud de Proteccion.
    * @param solicitudProteccion: ISolicitudProteccion
    */
-  deactivateSolicitudProteccion(solicitudProteccion: ISolicitudProteccion, row: number): void {
-    const subscription = this.dialogService.showConfirmation(this.textDesactivar)
-      .subscribe((accept) => {
-        if (accept && !this.formPart.deactivateSolicitudesProteccion.find(toDeactivate => toDeactivate === solicitudProteccion.id)) {
-          const indexToActivate =
-            this.formPart.activateSolicitudesProteccion.findIndex(toActivate => toActivate === solicitudProteccion.id);
-          if (indexToActivate >= 0) {
-            this.formPart.activateSolicitudesProteccion.splice(indexToActivate, 1);
-            this.formPart.checkIfSaveChangesIsNeeded();
-          } else {
-            this.formPart.deactivateSolicitudesProteccion.push(solicitudProteccion.id);
-            this.formPart.setChanges(true);
-          }
-          solicitudProteccion.activo = false;
-        }
-      });
-    this.subscriptions.push(subscription);
-  }
+  deleteSolicitudProteccion(solicitudProteccion: ISolicitudProteccion): void {
+    let eliminable$ = of(true);
+    if (solicitudProteccion?.id) {
+      eliminable$ = forkJoin({
+        hasInvencionGastos: this.solicitudProteccionService.hasInvencionGastos(solicitudProteccion.id),
+        hasPaisesValidados: this.solicitudProteccionService.hasPaisesValidados(solicitudProteccion.id),
+        hasProcedimientos: this.solicitudProteccionService.hasProcedimientos(solicitudProteccion.id)
+      }).pipe(
+        switchMap(({ hasInvencionGastos, hasPaisesValidados, hasProcedimientos }) => {
+          const isEliminable = !hasInvencionGastos && !hasPaisesValidados && !hasProcedimientos
+          if (!isEliminable) {
+            const relaciones = [];
+            if (hasInvencionGastos) {
+              relaciones.push(this.translate.instant(INVENCION_GASTO_KEY));
+            }
 
-  /**
-   * Activar un registro de Solicitud de Proteccion
-   * @param solicitudProteccion: ISolicitudProteccion
-   */
-  activateSolicitudProteccion(solicitudProteccion: ISolicitudProteccion, row: number): void {
-    const subscription = this.dialogService.showConfirmation(this.textReactivar)
-      .subscribe((accept) => {
-        if (accept && !this.formPart.activateSolicitudesProteccion.find(toDeactivate => toDeactivate === solicitudProteccion.id)) {
-          const indexToDeactivate =
-            this.formPart.deactivateSolicitudesProteccion.findIndex(toDeactivate => toDeactivate === solicitudProteccion.id);
-          if (indexToDeactivate >= 0) {
-            this.formPart.deactivateSolicitudesProteccion.splice(indexToDeactivate, 1);
-            this.formPart.checkIfSaveChangesIsNeeded();
-          } else {
-            this.formPart.activateSolicitudesProteccion.push(solicitudProteccion.id);
-            this.formPart.setChanges(true);
+            if (hasPaisesValidados) {
+              relaciones.push(this.translate.instant(PAIESES_VALIDADOS_KEY, MSG_PARAMS.CARDINALIRY.PLURAL));
+            }
+
+            if (hasProcedimientos) {
+              relaciones.push(this.translate.instant(PROCEDIMIENTOS_KEY, MSG_PARAMS.CARDINALIRY.PLURAL));
+            }
+
+            let relacionesMsg = '';
+            if (relaciones.length > 2) {
+              const lastRelacion = relaciones.pop();
+              relacionesMsg = `${relaciones.join(', ')} ${this.translate.instant(MSG_AND)} ${lastRelacion}`;
+            } else {
+              relacionesMsg = relaciones.join(` ${this.translate.instant(MSG_AND)} `);
+            }
+
+            return this.dialogService.showInfoDialog(SOLICITUD_PROTECCION_NO_DELETABLE, { entities: relacionesMsg });
           }
-          solicitudProteccion.activo = true;
-        }
-      });
-    this.subscriptions.push(subscription);
+
+          return this.dialogService.showConfirmation(this.msgConfirmDelete).pipe(
+            filter(accepted => !!accepted),
+            tap(() => this.formPart.deleteSolicitudProteccion(solicitudProteccion))
+          )
+
+        })
+      );
+    }
+
+    this.subscriptions.push(
+      eliminable$.subscribe()
+    );
   }
 
   private setupLayout(): void {

@@ -48,15 +48,11 @@ export function compareConceptoGasto(
  * @returns la fecha de inicio
  */
 export function getFechaInicioConceptoGasto(fechaInicioProyecto: DateTime, mesInicialConceptoGasto: number): DateTime {
-  let fechaInicioConvocatoriaConceptoGasto = fechaInicioProyecto.plus({ months: mesInicialConceptoGasto - 1 });
-
-  if (mesInicialConceptoGasto > 1) {
-    fechaInicioConvocatoriaConceptoGasto = fechaInicioConvocatoriaConceptoGasto.set({
-      day: 1, hour: 0, minute: 0, second: 0
-    });
+  if (!fechaInicioProyecto) {
+    return;
   }
 
-  return fechaInicioConvocatoriaConceptoGasto;
+  return fechaInicioProyecto.plus({ months: mesInicialConceptoGasto - 1 });
 }
 
 /**
@@ -75,13 +71,18 @@ export function getFechaInicioConceptoGasto(fechaInicioProyecto: DateTime, mesIn
  */
 export function getFechaFinConceptoGasto(
   fechaInicioProyecto: DateTime, fechaFinProyecto: DateTime,
-  mesFinalConceptoGasto: number, fechaInicioConceptoGasto: DateTime): DateTime {
+  mesFinalConceptoGasto: number, fechaInicioConceptoGasto: DateTime
+): DateTime {
+
+  if (!fechaInicioProyecto) {
+    return;
+  }
 
   let fechaFinConvocatoriaConceptoGasto = fechaInicioProyecto
     .plus({ months: mesFinalConceptoGasto })
     .minus({ seconds: 1 });
 
-  if ((!fechaInicioConceptoGasto || fechaInicioConceptoGasto < fechaFinProyecto) && fechaFinProyecto < fechaFinConvocatoriaConceptoGasto) {
+  if (fechaFinProyecto != null && (!fechaInicioConceptoGasto || fechaInicioConceptoGasto < fechaFinProyecto) && fechaFinProyecto < fechaFinConvocatoriaConceptoGasto) {
     fechaFinConvocatoriaConceptoGasto = fechaFinProyecto;
   }
 

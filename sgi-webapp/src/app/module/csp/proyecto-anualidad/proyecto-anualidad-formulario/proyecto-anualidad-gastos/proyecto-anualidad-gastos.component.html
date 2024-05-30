@@ -38,7 +38,10 @@
           {{'csp.proyecto-anualidad.partida.partida-presupuestaria' |
           translate}}
         </th>
-        <td mat-cell *matCellDef="let wrapper">{{wrapper.value.proyectoPartida?.codigo}}</td>
+        <td mat-cell *matCellDef="let wrapper">
+          {{wrapper.value.proyectoPartida?.codigo ? wrapper.value.proyectoPartida.codigo :
+          wrapper.value.proyectoPartida.partidaSge?.codigo}}
+        </td>
       </ng-container>
 
       <!-- importePresupuesto Column -->

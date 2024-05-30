@@ -96,6 +96,7 @@ export class ProyectoAnualidadIngresosComponent extends FragmentComponent implem
     const data: ProyectoAnualidadIngresoModalData = {
       anualidadIngreso: anualidadIngreso ? anualidadIngreso : {} as IAnualidadIngreso,
       proyectoId: this.formPart.proyectoId,
+      disableIndentificadorSge: this.formPart.disableIndentificadorSge,
       isEdit: false,
       readonly: this.actionService.readonly
     };

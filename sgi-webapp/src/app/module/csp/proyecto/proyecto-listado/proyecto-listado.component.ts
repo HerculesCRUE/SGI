@@ -8,13 +8,11 @@ import { IBaseExportModalData } from '@core/component/base-export/base-export-mo
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
-import { Estado, ESTADO_MAP } from '@core/models/csp/estado-proyecto';
+import { ESTADO_MAP, Estado } from '@core/models/csp/estado-proyecto';
 import { IPrograma } from '@core/models/csp/programa';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IRolProyecto } from '@core/models/csp/rol-proyecto';
 import { ITipoAmbitoGeografico } from '@core/models/csp/tipos-configuracion';
-import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
-import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ConfigService } from '@core/services/cnf/config.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
@@ -31,7 +29,7 @@ import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, merge, Observable, of, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, merge, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { CONVOCATORIA_ACTION_LINK_KEY } from '../../convocatoria/convocatoria.action.service';
 import { SOLICITUD_ACTION_LINK_KEY } from '../../solicitud/solicitud.action.service';
@@ -67,8 +65,6 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
   textoSuccessReactivar: string;
   textoErrorReactivar: string;
 
-  fxFlexProperties: FxFlexProperties;
-  fxLayoutProperties: FxLayoutProperties;
   proyecto$: Observable<IProyectoListadoData[]>;
 
   colectivosResponsableProyecto: string[];
@@ -121,17 +117,6 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
     private readonly cnfService: ConfigService
   ) {
     super();
-    this.fxFlexProperties = new FxFlexProperties();
-    this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
-    this.fxFlexProperties.md = '0 1 calc(33%-10px)';
-    this.fxFlexProperties.gtMd = '0 1 calc(22%-10px)';
-    this.fxFlexProperties.order = '2';
-
-    this.fxLayoutProperties = new FxLayoutProperties();
-    this.fxLayoutProperties.gap = '20px';
-    this.fxLayoutProperties.layout = 'row wrap';
-    this.fxLayoutProperties.xs = 'column';
-
     if (route.snapshot.queryParamMap.get(CONVOCATORIA_ACTION_LINK_KEY)) {
       this.convocatoriaId = Number(route.snapshot.queryParamMap.get(CONVOCATORIA_ACTION_LINK_KEY));
     }
@@ -196,6 +181,9 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
       finalizado: new FormControl(''),
       prorrogado: new FormControl(''),
       palabrasClave: new FormControl(null),
+      modeloEjecucion: new FormControl(null),
+      finalidad: new FormControl(null),
+      rolUniversidad: new FormControl(null)
     });
     this.loadAmbitoGeografico();
     this.loadPlanInvestigacion();
@@ -394,7 +382,10 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
       .and('entidadesFinanciadoras.fuenteFinanciacion.id', SgiRestFilterOperator.EQUALS, controls.fuenteFinanciacion.value?.id?.toString())
       .and('finalizado', SgiRestFilterOperator.EQUALS, controls.finalizado.value?.toString())
       .and('prorrogado', SgiRestFilterOperator.EQUALS, controls.prorrogado.value?.toString())
-      .and('solicitudId', SgiRestFilterOperator.EQUALS, this.solicitudId?.toString());
+      .and('solicitudId', SgiRestFilterOperator.EQUALS, this.solicitudId?.toString())
+      .and('modeloEjecucion.id', SgiRestFilterOperator.EQUALS, controls.modeloEjecucion.value?.id?.toString())
+      .and('finalidad.id', SgiRestFilterOperator.EQUALS, controls.finalidad.value?.id?.toString())
+      .and('rolUniversidadId', SgiRestFilterOperator.EQUALS, controls.rolUniversidad.value?.id?.toString());
 
     const palabrasClave = controls.palabrasClave.value as string[];
     if (Array.isArray(palabrasClave) && palabrasClave.length > 0) {
@@ -502,7 +493,7 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
    */
   private loadAmbitoGeografico() {
     this.suscripciones.push(
-      this.tipoAmbitoGeograficoService.findAll().subscribe(
+      this.tipoAmbitoGeograficoService.findTodos().subscribe(
         (res) => this.ambitoGeografico$.next(res.items),
         (error) => this.logger.error(error)
       )

@@ -44,7 +44,7 @@ export class SolicitudProyectoSocioActionService extends ActionService {
   private readonly data: ISolicitudProyectoSocioData;
 
   get solicitudProyectoCoordinadorExterno(): boolean {
-    return this.data.solicitudProyecto.coordinadorExterno;
+    return !this.data.solicitudProyecto.rolUniversidad?.coordinador;
   }
 
   get solicitudProyectoDuracion(): number {
@@ -76,11 +76,11 @@ export class SolicitudProyectoSocioActionService extends ActionService {
   }
 
   get showPeriodoJustificacion(): boolean {
-    return !this.data.solicitudProyecto.coordinadorExterno;
+    return !this.solicitudProyectoCoordinadorExterno;
   }
 
   get showPeriodoPago(): boolean {
-    return !this.data.solicitudProyecto.coordinadorExterno;
+    return !this.solicitudProyectoCoordinadorExterno;
   }
 
   constructor(

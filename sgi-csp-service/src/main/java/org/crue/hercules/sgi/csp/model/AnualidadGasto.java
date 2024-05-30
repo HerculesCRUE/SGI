@@ -51,7 +51,7 @@ public class AnualidadGasto extends BaseEntity {
 
   /** Concepto gasto */
   @ManyToOne
-  @JoinColumn(name = "concepto_gasto_id", nullable = false, foreignKey = @ForeignKey(name = "FK_ANUALIDADGASTO_CONCEPTGASTO"))
+  @JoinColumn(name = "concepto_gasto_id", nullable = true, foreignKey = @ForeignKey(name = "FK_ANUALIDADGASTO_CONCEPTGASTO"))
   private ConceptoGasto conceptoGasto;
 
   /** Referencia código económico */

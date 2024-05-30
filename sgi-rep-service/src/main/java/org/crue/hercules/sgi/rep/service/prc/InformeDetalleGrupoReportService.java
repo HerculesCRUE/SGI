@@ -1,26 +1,38 @@
 package org.crue.hercules.sgi.rep.service.prc;
 
-import java.util.Vector;
-
-import javax.swing.table.DefaultTableModel;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.prc.DetalleGrupoInvestigacionOutput;
-import org.crue.hercules.sgi.rep.dto.prc.ReportInformeDetalleGrupo;
 import org.crue.hercules.sgi.rep.dto.prc.DetalleGrupoInvestigacionOutput.ResumenCosteIndirectoOutput;
 import org.crue.hercules.sgi.rep.dto.prc.DetalleGrupoInvestigacionOutput.ResumenSexenioOutput;
+import org.crue.hercules.sgi.rep.dto.prc.DetalleGrupoInvestigacionOutput.ResumenTotalOutput;
+import org.crue.hercules.sgi.rep.dto.prc.DetalleProduccionInvestigadorOutput;
+import org.crue.hercules.sgi.rep.dto.prc.ReportInformeDetalleGrupo;
+import org.crue.hercules.sgi.rep.dto.prc.ReportInformeDetalleProduccionInvestigador;
+import org.crue.hercules.sgi.rep.dto.prc.ReportInformeResumenPuntuacionGrupos;
+import org.crue.hercules.sgi.rep.dto.prc.ResumenPuntuacionGrupoAnioOutput;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
-import org.crue.hercules.sgi.rep.service.SgiReportService;
+import org.crue.hercules.sgi.rep.service.SgiReportDocxService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiPrcService;
-import org.pentaho.reporting.engine.classic.core.Band;
-import org.pentaho.reporting.engine.classic.core.MasterReport;
-import org.pentaho.reporting.engine.classic.core.SubReport;
-import org.pentaho.reporting.engine.classic.core.TableDataFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
+import com.nimbusds.oauth2.sdk.util.CollectionUtils;
+
+import fr.opensagres.poi.xwpf.converter.pdf.PdfConverter;
+import fr.opensagres.poi.xwpf.converter.pdf.PdfOptions;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -29,11 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Validated
-public class InformeDetalleGrupoReportService extends SgiReportService {
-
-  private static final String IMPORTE = "importe";
-  private static final String PUNTOS = "puntos";
-  private static final String NUMERO = "numero";
+public class InformeDetalleGrupoReportService extends SgiReportDocxService {
 
   private final SgiApiPrcService sgiApiPrcService;
 
@@ -42,221 +50,248 @@ public class InformeDetalleGrupoReportService extends SgiReportService {
 
     super(sgiConfigProperties, sgiApiConfService);
     this.sgiApiPrcService = sgiApiPrcService;
+
   }
 
-  private DefaultTableModel getTableModelGeneral(DetalleGrupoInvestigacionOutput detalleGrupo) {
+  private XWPFDocument getDocument(DetalleGrupoInvestigacionOutput detalleGrupo, HashMap<String, Object> dataReport,
+      InputStream path) {
 
-    Vector<Object> columnsData = new Vector<>();
-    Vector<Vector<Object>> rowsData = new Vector<>();
-    Vector<Object> elementsRow = new Vector<>();
+    Assert.notNull(
+        detalleGrupo,
+        // Defer message resolution untill is needed
+        () -> ProblemMessage.builder().key(Assert.class, "notNull")
+            .parameter("field",
+                ApplicationContextSupport
+                    .getMessage("org.crue.hercules.sgi.rep.dto.eti.DetalleGrupoInvestigacionOutput.message"))
+            .parameter("entity",
+                ApplicationContextSupport.getMessage(DetalleGrupoInvestigacionOutput.class))
+            .build());
 
-    columnsData.add("anio");
-    elementsRow.add(detalleGrupo.getAnio());
+    dataReport.put("anio", detalleGrupo.getAnio());
 
-    columnsData.add("grupo");
-    elementsRow.add(detalleGrupo.getGrupo());
+    dataReport.put("grupo", detalleGrupo.getGrupo());
 
-    columnsData.add("precioPuntoProduccion");
-    elementsRow.add(detalleGrupo.getPrecioPuntoProduccion());
+    dataReport.put("precioPuntoProduccion", detalleGrupo.getPrecioPuntoProduccion());
 
-    columnsData.add("precioPuntoSexenio");
-    elementsRow.add(detalleGrupo.getPrecioPuntoSexenio());
+    dataReport.put("precioPuntoSexenio", detalleGrupo.getPrecioPuntoSexenio());
 
-    columnsData.add("precioPuntoCostesIndirectos");
-    elementsRow.add(detalleGrupo.getPrecioPuntoCostesIndirectos());
+    dataReport.put("precioPuntoCostesIndirectos", detalleGrupo.getPrecioPuntoCostesIndirectos());
 
-    columnsData.add("resourcesBaseURL");
-    elementsRow.add(getRepResourcesBaseURL());
+    addTableDatosInvestigadores(detalleGrupo, dataReport);
 
-    rowsData.add(elementsRow);
+    addTableSexenios(detalleGrupo, dataReport);
 
-    DefaultTableModel tableModel = new DefaultTableModel();
-    tableModel.setDataVector(rowsData, columnsData);
-    return tableModel;
+    addTableProduccion(detalleGrupo, dataReport);
+
+    addTableCostesIndirectos(detalleGrupo, dataReport);
+
+    addTableDineroTotal(detalleGrupo, dataReport);
+
+    return compileReportData(path, dataReport);
   }
 
-  private DefaultTableModel getTableModelInvestigadores(DetalleGrupoInvestigacionOutput detalleGrupo) {
-    Vector<Object> columnsData = new Vector<>();
-    Vector<Vector<Object>> rowsData = new Vector<>();
-
-    columnsData.add("nombre");
-    columnsData.add("puntosCostesIndirectos");
-    columnsData.add("puntosProduccion");
-
-    ListUtils.emptyIfNull(detalleGrupo.getInvestigadores()).stream().forEach(investigador -> {
-      Vector<Object> elementsRow = new Vector<>();
-      elementsRow.add(investigador.getInvestigador());
-      elementsRow.add(investigador.getPuntosCostesIndirectos());
-      elementsRow.add(investigador.getPuntosProduccion());
-
-      rowsData.add(elementsRow);
-    });
-
-    DefaultTableModel tableModel = new DefaultTableModel();
-    tableModel.setDataVector(rowsData, columnsData);
-    return tableModel;
+  private void addTableDatosInvestigadores(DetalleGrupoInvestigacionOutput detalleGrupo,
+      HashMap<String, Object> dataReport) {
+    if (CollectionUtils.isNotEmpty(detalleGrupo.getInvestigadores())) {
+      dataReport.put("investigadores", detalleGrupo.getInvestigadores());
+    } else {
+      dataReport.put("investigadores", null);
+    }
   }
 
-  private DefaultTableModel getTableModelSexenios(DetalleGrupoInvestigacionOutput detalleGrupo) {
-    Vector<Object> columnsData = new Vector<>();
-    Vector<Vector<Object>> rowsData = new Vector<>();
-
-    columnsData.add(NUMERO);
-    columnsData.add(PUNTOS);
-    columnsData.add(IMPORTE);
-
-    Vector<Object> elementsRow = new Vector<>();
-    if (null == detalleGrupo.getSexenios()) {
+  private void addTableSexenios(DetalleGrupoInvestigacionOutput detalleGrupo, HashMap<String, Object> dataReport) {
+    if (ObjectUtils.isEmpty(detalleGrupo.getSexenios())) {
       detalleGrupo.setSexenios(ResumenSexenioOutput.builder().build());
     }
-    elementsRow.add(detalleGrupo.getSexenios().getNumero());
-    elementsRow.add(detalleGrupo.getSexenios().getPuntos());
-    elementsRow.add(detalleGrupo.getSexenios().getImporte());
-
-    rowsData.add(elementsRow);
-
-    DefaultTableModel tableModel = new DefaultTableModel();
-    tableModel.setDataVector(rowsData, columnsData);
-    return tableModel;
+    dataReport.put("sexeniosNumero", detalleGrupo.getSexenios().getNumero());
+    dataReport.put("sexeniosPuntos", detalleGrupo.getSexenios().getPuntos());
+    dataReport.put("sexeniosImporte", detalleGrupo.getSexenios().getImporte());
   }
 
-  private DefaultTableModel getTableModelProduccion(DetalleGrupoInvestigacionOutput detalleGrupo) {
-    Vector<Object> columnsData = new Vector<>();
-    Vector<Vector<Object>> rowsData = new Vector<>();
+  private void addTableProduccion(DetalleGrupoInvestigacionOutput detalleGrupo, HashMap<String, Object> dataReport) {
 
-    columnsData.add("tipo");
-    columnsData.add(NUMERO);
-    columnsData.add(PUNTOS);
-    columnsData.add(IMPORTE);
-
-    ListUtils.emptyIfNull(detalleGrupo.getProduccionesCientificas()).stream().forEach(prc -> {
-      Vector<Object> elementsRow = new Vector<>();
-      elementsRow.add(prc.getTipo());
-      elementsRow.add(prc.getNumero());
-      elementsRow.add(prc.getPuntos());
-      elementsRow.add(prc.getImporte());
-
-      rowsData.add(elementsRow);
-    });
-
-    DefaultTableModel tableModel = new DefaultTableModel();
-    tableModel.setDataVector(rowsData, columnsData);
-    return tableModel;
+    if (CollectionUtils.isNotEmpty(detalleGrupo.getProduccionesCientificas())) {
+      dataReport.put("produccionesCientificas", detalleGrupo.getProduccionesCientificas());
+    } else {
+      dataReport.put("produccionesCientificas", null);
+    }
   }
 
-  private DefaultTableModel getTableModelCostesIndirectos(DetalleGrupoInvestigacionOutput detalleGrupo) {
-    Vector<Object> columnsData = new Vector<>();
-    Vector<Vector<Object>> rowsData = new Vector<>();
+  private void addTableCostesIndirectos(DetalleGrupoInvestigacionOutput detalleGrupo,
+      HashMap<String, Object> dataReport) {
 
-    columnsData.add(NUMERO);
-    columnsData.add(PUNTOS);
-    columnsData.add(IMPORTE);
-
-    Vector<Object> elementsRow = new Vector<>();
-    if (null == detalleGrupo.getCostesIndirectos()) {
+    if (ObjectUtils.isEmpty(detalleGrupo.getCostesIndirectos())) {
       detalleGrupo.setCostesIndirectos(ResumenCosteIndirectoOutput.builder().build());
     }
-    elementsRow.add(detalleGrupo.getCostesIndirectos().getNumero());
-    elementsRow.add(detalleGrupo.getCostesIndirectos().getPuntos());
-    elementsRow.add(detalleGrupo.getCostesIndirectos().getImporte());
-
-    rowsData.add(elementsRow);
-
-    DefaultTableModel tableModel = new DefaultTableModel();
-    tableModel.setDataVector(rowsData, columnsData);
-    return tableModel;
+    dataReport.put("costesIndirectosNumero", detalleGrupo.getCostesIndirectos().getNumero());
+    dataReport.put("costesIndirectosPuntos", detalleGrupo.getCostesIndirectos().getPuntos());
+    dataReport.put("costesIndirectosImporte", detalleGrupo.getCostesIndirectos().getImporte());
   }
 
-  private DefaultTableModel getTableModelDineroTotal(DetalleGrupoInvestigacionOutput detalleGrupo) {
-    Vector<Object> columnsData = new Vector<>();
-    Vector<Vector<Object>> rowsData = new Vector<>();
-
-    columnsData.add("tipo");
-    columnsData.add(IMPORTE);
-
+  private void addTableDineroTotal(DetalleGrupoInvestigacionOutput detalleGrupo,
+      HashMap<String, Object> dataReport) {
+    List<ResumenTotalOutput> dineroTotalList = new ArrayList();
     ListUtils.emptyIfNull(detalleGrupo.getProduccionesCientificas()).stream().forEach(prc -> {
-      Vector<Object> elementsRow = new Vector<>();
-      elementsRow.add(prc.getTipo());
-      elementsRow.add(prc.getImporte());
-
-      rowsData.add(elementsRow);
+      ResumenTotalOutput dineroTotal = new ResumenTotalOutput();
+      dineroTotal.setTipo(prc.getTipo());
+      dineroTotal.setImporte(prc.getImporte());
+      dineroTotalList.add(dineroTotal);
     });
 
     ListUtils.emptyIfNull(detalleGrupo.getTotales()).stream().forEach(total -> {
-      Vector<Object> elementsRow = new Vector<>();
-      elementsRow.add(total.getTipo());
-      elementsRow.add(total.getImporte());
-
-      rowsData.add(elementsRow);
+      ResumenTotalOutput dineroTotal = new ResumenTotalOutput();
+      dineroTotal.setTipo(total.getTipo());
+      dineroTotal.setImporte(total.getImporte());
+      dineroTotalList.add(dineroTotal);
     });
 
-    DefaultTableModel tableModel = new DefaultTableModel();
-    tableModel.setDataVector(rowsData, columnsData);
-    return tableModel;
+    dataReport.put("dineroTotal", dineroTotalList);
   }
 
-  public byte[] getReportDetalleGrupo(ReportInformeDetalleGrupo sgiReport, Integer anio, Long grupoId) {
+  private XWPFDocument getReportFromDetalleGrupo(ReportInformeDetalleGrupo sgiReport, Integer anio,
+      Long grupoId) {
     try {
 
-      final MasterReport report = getReportDefinition(sgiReport.getPath());
+      HashMap<String, Object> dataReport = new HashMap<>();
+
+      dataReport.put("headerImg", getImageHeaderLogo());
 
       DetalleGrupoInvestigacionOutput detalleGrupo = sgiApiPrcService.getDataReportDetalleGrupo(anio, grupoId);
 
-      String queryGeneral = QUERY_TYPE + SEPARATOR_KEY + NAME_GENERAL_TABLE_MODEL + SEPARATOR_KEY
-          + "informeDetalleGrupo";
-      DefaultTableModel tableModelGeneral = getTableModelGeneral(detalleGrupo);
+      XWPFDocument document = getDocument(detalleGrupo, dataReport,
+          getReportDefinitionStream(sgiReport.getPath()));
 
-      TableDataFactory dataFactory = new TableDataFactory();
-      dataFactory.addTable(queryGeneral, tableModelGeneral);
-      report.setDataFactory(dataFactory);
+      ByteArrayOutputStream outputPdf = new ByteArrayOutputStream();
+      PdfOptions pdfOptions = PdfOptions.create();
 
-      String queryInvestigadores = QUERY_TYPE + SEPARATOR_KEY + "investigadores";
-      DefaultTableModel tableModelInvestigadores = getTableModelInvestigadores(detalleGrupo);
-      TableDataFactory dataFactorySubReportInvestigadores = new TableDataFactory();
-      dataFactorySubReportInvestigadores.addTable(queryInvestigadores, tableModelInvestigadores);
-      Band bandInvestigadores = (Band) report.getItemBand().getElement(1);
-      SubReport subreportInvestigadores = (SubReport) bandInvestigadores.getElement(0);
-      subreportInvestigadores.setDataFactory(dataFactorySubReportInvestigadores);
+      PdfConverter.getInstance().convert(document, outputPdf, pdfOptions);
 
-      String querySexenios = QUERY_TYPE + SEPARATOR_KEY + "sexenios";
-      DefaultTableModel tableModelSexenios = getTableModelSexenios(detalleGrupo);
-      TableDataFactory dataFactorySubReportSexenios = new TableDataFactory();
-      dataFactorySubReportSexenios.addTable(querySexenios, tableModelSexenios);
-      Band bandSexenios = (Band) report.getItemBand().getElement(3);
-      SubReport subreportSexenios = (SubReport) bandSexenios.getElement(0);
-      subreportSexenios.setDataFactory(dataFactorySubReportSexenios);
-
-      String queryProduccion = QUERY_TYPE + SEPARATOR_KEY + "produccion";
-      DefaultTableModel tableModelProduccion = getTableModelProduccion(detalleGrupo);
-      TableDataFactory dataFactorySubReportProduccion = new TableDataFactory();
-      dataFactorySubReportProduccion.addTable(queryProduccion, tableModelProduccion);
-      Band bandProduccion = (Band) report.getItemBand().getElement(4);
-      SubReport subreportProduccion = (SubReport) bandProduccion.getElement(0);
-      subreportProduccion.setDataFactory(dataFactorySubReportProduccion);
-
-      String queryCostesIndirectos = QUERY_TYPE + SEPARATOR_KEY + "costesIndirectos";
-      DefaultTableModel tableModelCostesIndirectos = getTableModelCostesIndirectos(detalleGrupo);
-      TableDataFactory dataFactorySubReportCostesIndirectos = new TableDataFactory();
-      dataFactorySubReportCostesIndirectos.addTable(queryCostesIndirectos, tableModelCostesIndirectos);
-      Band bandCostesIndirectos = (Band) report.getItemBand().getElement(5);
-      SubReport subreportCostesIndirectos = (SubReport) bandCostesIndirectos.getElement(0);
-      subreportCostesIndirectos.setDataFactory(dataFactorySubReportCostesIndirectos);
-
-      String queryDineroTotal = QUERY_TYPE + SEPARATOR_KEY + "dineroTotal";
-      DefaultTableModel tableModelDineroTotal = getTableModelDineroTotal(detalleGrupo);
-      TableDataFactory dataFactorySubReportDineroTotal = new TableDataFactory();
-      dataFactorySubReportDineroTotal.addTable(queryDineroTotal, tableModelDineroTotal);
-      Band bandDineroTotal = (Band) report.getItemBand().getElement(6);
-      SubReport subreportDineroTotal = (SubReport) bandDineroTotal.getElement(0);
-      subreportDineroTotal.setDataFactory(dataFactorySubReportDineroTotal);
-
-      sgiReport.setContent(generateReportOutput(sgiReport.getOutputType(), report));
+      sgiReport.setContent(outputPdf.toByteArray());
+      return document;
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new GetDataReportException();
     }
+  }
 
+  public byte[] getReportDetalleGrupo(ReportInformeDetalleGrupo sgiReport, Integer anio, Long grupoId) {
+    getReportFromDetalleGrupo(sgiReport, anio, grupoId);
+    return sgiReport.getContent();
+  }
+
+  private XWPFDocument getDocumentResumenPuntuacionGrupos(ResumenPuntuacionGrupoAnioOutput resumenGrupo,
+      HashMap<String, Object> dataReport,
+      InputStream path) {
+
+    Assert.notNull(
+        resumenGrupo,
+        // Defer message resolution untill is needed
+        () -> ProblemMessage.builder().key(Assert.class, "notNull")
+            .parameter("field",
+                ApplicationContextSupport
+                    .getMessage("org.crue.hercules.sgi.rep.dto.eti.DetalleGrupoInvestigacionOutput.message"))
+            .parameter("entity",
+                ApplicationContextSupport.getMessage(DetalleGrupoInvestigacionOutput.class))
+            .build());
+
+    dataReport.put("anio", resumenGrupo.getAnio());
+
+    dataReport.put("puntuacionesGrupos", resumenGrupo.getPuntuacionesGrupos());
+
+    return compileReportData(path, dataReport);
+  }
+
+  private XWPFDocument getReportFromResumenPuntuacionGrupos(ReportInformeResumenPuntuacionGrupos sgiReport,
+      Integer anio) {
+    try {
+
+      HashMap<String, Object> dataReport = new HashMap<>();
+
+      dataReport.put("headerImg", getImageHeaderLogo());
+
+      ResumenPuntuacionGrupoAnioOutput resumen = sgiApiPrcService.getDataReportResumenPuntuacionGrupos(anio);
+
+      XWPFDocument document = getDocumentResumenPuntuacionGrupos(resumen, dataReport,
+          getReportDefinitionStream(sgiReport.getPath()));
+
+      ByteArrayOutputStream outputPdf = new ByteArrayOutputStream();
+      PdfOptions pdfOptions = PdfOptions.create();
+
+      PdfConverter.getInstance().convert(document, outputPdf, pdfOptions);
+
+      sgiReport.setContent(outputPdf.toByteArray());
+      return document;
+
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      throw new GetDataReportException();
+    }
+  }
+
+  public byte[] getReportResumenPuntuacionGrupos(ReportInformeResumenPuntuacionGrupos sgiReport, Integer anio) {
+    getReportFromResumenPuntuacionGrupos(sgiReport, anio);
+    return sgiReport.getContent();
+  }
+
+  private XWPFDocument getDocumentDetalleProduccionInvestigador(
+      DetalleProduccionInvestigadorOutput detalleProduccionInvestigador,
+      HashMap<String, Object> dataReport,
+      InputStream path) {
+
+    Assert.notNull(
+        detalleProduccionInvestigador,
+        // Defer message resolution untill is needed
+        () -> ProblemMessage.builder().key(Assert.class, "notNull")
+            .parameter("field",
+                ApplicationContextSupport
+                    .getMessage("org.crue.hercules.sgi.rep.dto.eti.DetalleProduccionInvestigadorOutput.message"))
+            .parameter("entity",
+                ApplicationContextSupport.getMessage(DetalleProduccionInvestigadorOutput.class))
+            .build());
+
+    dataReport.put("anio", detalleProduccionInvestigador.getAnio());
+
+    dataReport.put("investigador", detalleProduccionInvestigador.getInvestigador());
+
+    dataReport.put("producciones", detalleProduccionInvestigador.getTipos());
+
+    return compileReportData(path, dataReport);
+  }
+
+  private XWPFDocument getReportFromDetalleProduccionInvestigador(
+      ReportInformeDetalleProduccionInvestigador sgiReport,
+      Integer anio, String personaRef) {
+    try {
+
+      HashMap<String, Object> dataReport = new HashMap<>();
+
+      dataReport.put("headerImg", getImageHeaderLogo());
+
+      DetalleProduccionInvestigadorOutput detalleProduccionInvestigador = sgiApiPrcService
+          .getDataReportDetalleProduccionInvestigador(anio, personaRef);
+
+      XWPFDocument document = getDocumentDetalleProduccionInvestigador(detalleProduccionInvestigador, dataReport,
+          getReportDefinitionStream(sgiReport.getPath()));
+
+      ByteArrayOutputStream outputPdf = new ByteArrayOutputStream();
+      PdfOptions pdfOptions = PdfOptions.create();
+
+      PdfConverter.getInstance().convert(document, outputPdf, pdfOptions);
+
+      sgiReport.setContent(outputPdf.toByteArray());
+      return document;
+
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      throw new GetDataReportException();
+    }
+  }
+
+  public byte[] getReportDetalleProduccionInvestigador(ReportInformeDetalleProduccionInvestigador sgiReport,
+      Integer anio,
+      String personaRef) {
+    getReportFromDetalleProduccionInvestigador(sgiReport, anio, personaRef);
     return sgiReport.getContent();
   }
 }

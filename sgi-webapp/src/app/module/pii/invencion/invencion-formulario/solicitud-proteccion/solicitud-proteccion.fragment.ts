@@ -14,9 +14,7 @@ import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operat
 export class SolicitudProteccionFragment extends Fragment {
 
   public solicitudesProteccion$ = new BehaviorSubject<StatusWrapper<ISolicitudProteccion>[]>([]);
-  public deactivateSolicitudesProteccion: number[] = [];
-  public activateSolicitudesProteccion: number[] = [];
-  private needSaveSolicitudesProteccion: number[] = [];
+  private solicitudesProteccionEliminadas: StatusWrapper<ISolicitudProteccion>[] = [];
 
   public paises$ = new BehaviorSubject<IPais[]>([]);
 
@@ -45,73 +43,47 @@ export class SolicitudProteccionFragment extends Fragment {
   }
 
   saveOrUpdate(): Observable<void> {
-    return merge(
-      this.checkAndActivateSolicitudesProteccion(),
-      this.checkAndDeactivateSolicitudesProteccion()
-    ).pipe(
-      takeLast(1)
-    );
+    return this.deleteSolicitudesProteccion()
+      .pipe(
+        takeLast(1),
+        tap(() => {
+          if (this.isSaveOrUpdateComplete()) {
+            this.setChanges(false);
+          }
+        })
+      );
   }
 
-  private checkAndActivateSolicitudesProteccion(): Observable<void> {
-    if (this.activateSolicitudesProteccion.length === 0) {
+  public deleteSolicitudProteccion(solicitudProteccion: ISolicitudProteccion) {
+    const current = this.solicitudesProteccion$.value;
+    const index = current.findIndex(value => value.value.id === solicitudProteccion.id);
+    if (index >= 0) {
+      this.solicitudesProteccionEliminadas.push(current[index]);
+      current.splice(index, 1);
+      this.solicitudesProteccion$.next(current);
+      this.setChanges(true);
+    }
+  }
+
+  private deleteSolicitudesProteccion(): Observable<void> {
+    const deleted = this.solicitudesProteccionEliminadas.filter((value) => value.value.id);
+    if (deleted.length === 0) {
       return of(void 0);
     }
-    return from(this.activateSolicitudesProteccion).pipe(
-      mergeMap((solicitudProteccionId: number) => {
-        return this.activateSolicitudProteccion(solicitudProteccionId).pipe(
-          tap(() => {
-            this.activateSolicitudesProteccion.splice(
-              this.activateSolicitudesProteccion.findIndex(currentSolicitudProtId =>
-                currentSolicitudProtId === solicitudProteccionId), 1);
-          }),
-          switchMap(() => this.checkIfSaveChangesIsNeeded()),
-          takeLast(1)
-        );
+    return from(deleted).pipe(
+      mergeMap((wrapped) => {
+        return this.solicitudProteccionService.deleteById(wrapped.value.id)
+          .pipe(
+            tap(() => {
+              this.solicitudesProteccionEliminadas = deleted.filter(solicitudProteccion => solicitudProteccion.value.id !== wrapped.value.id);
+            })
+          );
       })
     );
   }
 
-  private checkAndDeactivateSolicitudesProteccion(): Observable<void> {
-    if (this.deactivateSolicitudesProteccion.length === 0) {
-      return of(void 0);
-    }
-    return from(this.deactivateSolicitudesProteccion).pipe(
-      mergeMap((solicitudProteccionId: number) => {
-        return this.deactivateSolicitudProteccion(solicitudProteccionId).pipe(
-          tap(() => {
-            this.deactivateSolicitudesProteccion.splice(
-              this.deactivateSolicitudesProteccion.findIndex(currentSolicitudProtId =>
-                currentSolicitudProtId === solicitudProteccionId), 1);
-          }),
-          switchMap(() => this.checkIfSaveChangesIsNeeded()),
-          takeLast(1)
-        );
-      })
-    );
-  }
-
-  /**
-   * Desactivar Solicitud de Proteccion.
-   * @param solicitudProteccionId: number
-   */
-  private deactivateSolicitudProteccion(solicitudProteccionId: number): Observable<void> {
-    return this.solicitudProteccionService.deactivate(solicitudProteccionId);
-  }
-
-  /**
-   * Activar un registro de Solicitud de Proteccion
-   * @param solicitudProteccionId: number
-   */
-  private activateSolicitudProteccion(solicitudProteccionId: number): Observable<void> {
-    return this.solicitudProteccionService.activate(solicitudProteccionId);
-  }
-
-  public checkIfSaveChangesIsNeeded(): Observable<void> {
-    if (this.activateSolicitudesProteccion.length === 0 && this.deactivateSolicitudesProteccion.length === 0) {
-      this.setChanges(false);
-    }
-    return of(void 0);
+  private isSaveOrUpdateComplete(): boolean {
+    return this.solicitudesProteccionEliminadas.length === 0;
   }
 
   private loadPaises$(): Observable<IPais[]> {

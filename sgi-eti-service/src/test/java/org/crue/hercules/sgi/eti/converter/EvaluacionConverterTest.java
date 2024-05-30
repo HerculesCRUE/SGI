@@ -205,6 +205,7 @@ public class EvaluacionConverterTest extends BaseServiceTest {
     convocatoriaReunion.setComite(comite);
     convocatoriaReunion.setFechaEvaluacion(Instant.parse("2020-05-10T00:00:00Z"));
     convocatoriaReunion.setFechaLimite(Instant.now());
+    convocatoriaReunion.setVideoconferencia(false);
     convocatoriaReunion.setLugar("Lugar");
     convocatoriaReunion.setOrdenDia("Orden del día convocatoria reunión");
     convocatoriaReunion.setAnio(2020);

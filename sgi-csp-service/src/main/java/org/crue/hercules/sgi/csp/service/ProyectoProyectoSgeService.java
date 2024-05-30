@@ -20,6 +20,15 @@ public interface ProyectoProyectoSgeService {
   ProyectoProyectoSge create(ProyectoProyectoSge proyectoProyectoSge);
 
   /**
+   * Actualiza el {@link ProyectoProyectoSge#proyectoSgeRef} al que esta asociado
+   * el {@link ProyectoProyectoSge#proyectoId}.
+   * 
+   * @param proyectoProyectoSge la entidad {@link ProyectoProyectoSge} a guardar.
+   * @return la entidad {@link ProyectoProyectoSge} actualizada.
+   */
+  ProyectoProyectoSge reasignar(ProyectoProyectoSge proyectoProyectoSge);
+
+  /**
    * Elimina el {@link ProyectoProyectoSge}.
    *
    * @param id Id del {@link ProyectoProyectoSge}.

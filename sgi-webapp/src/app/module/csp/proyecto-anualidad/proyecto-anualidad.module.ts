@@ -5,6 +5,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
+import { CspSharedModule } from '../shared/csp-shared.module';
 import { ProyectoAnualidadGastoModalComponent } from './modals/proyecto-anualidad-gasto-modal/proyecto-anualidad-gasto-modal.component';
 import { ProyectoAnualidadIngresoModalComponent } from './modals/proyecto-anualidad-ingreso-modal/proyecto-anualidad-ingreso-modal.component';
 import { ProyectoAnualidadCrearComponent } from './proyecto-anualidad-crear/proyecto-anualidad-crear.component';
@@ -17,20 +18,27 @@ import { ProyectoAnualidadResumenComponent } from './proyecto-anualidad-formular
 import { ProyectoAnualidadRouting } from './proyecto-anualidad-routing.module';
 
 @NgModule({
-  declarations: [ProyectoAnualidadCrearComponent, ProyectoAnualidadDatosGeneralesComponent,
-    ProyectoAnualidadGastosComponent, ProyectoAnualidadGastoModalComponent,
-    ProyectoAnualidadIngresosComponent, ProyectoAnualidadIngresoModalComponent,
-    ProyectoAnualidadResumenComponent, ProyectoAnualidadEditarComponent],
+  declarations: [
+    ProyectoAnualidadCrearComponent,
+    ProyectoAnualidadDatosGeneralesComponent,
+    ProyectoAnualidadEditarComponent,
+    ProyectoAnualidadGastoModalComponent,
+    ProyectoAnualidadGastosComponent,
+    ProyectoAnualidadIngresoModalComponent,
+    ProyectoAnualidadIngresosComponent,
+    ProyectoAnualidadResumenComponent,
+  ],
 
   imports: [
-    SharedModule,
     CommonModule,
-    TranslateModule,
+    CspSharedModule,
+    FormsModule,
     MaterialDesignModule,
     ProyectoAnualidadRouting,
+    ReactiveFormsModule,
     SgiAuthModule,
-    FormsModule,
-    ReactiveFormsModule
+    SharedModule,
+    TranslateModule
   ],
   providers: [
     ProyectoAnualidadDataResolver

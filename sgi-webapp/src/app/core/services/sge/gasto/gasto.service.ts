@@ -78,6 +78,15 @@ export class GastoService extends _GastoServiceMixinBase {
     return this.getGastos(null, proyectoEconomicoId, fechaDesde, fechaHasta, Estado.VALIDADO, reducida);
   }
 
+  getGastosAnyEstado(
+    proyectoEconomicoId: string,
+    fechaDesde: string,
+    fechaHasta: string,
+    reducida = false
+  ): Observable<IDatoEconomico[]> {
+    return this.getGastos(null, proyectoEconomicoId, fechaDesde, fechaHasta, null, reducida);
+  }
+
   private getGastos(
     ids: string[],
     proyectoEconomicoId: string,

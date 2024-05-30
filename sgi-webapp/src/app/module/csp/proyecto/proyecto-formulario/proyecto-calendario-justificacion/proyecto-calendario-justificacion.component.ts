@@ -7,6 +7,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { TIPO_JUSTIFICACION_MAP } from '@core/enums/tipo-justificacion';
 import { MSG_PARAMS } from '@core/i18n';
+import { Estado } from '@core/models/csp/estado-proyecto';
 import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
@@ -179,6 +180,9 @@ export class ProyectoCalendarioJustificacionComponent extends FragmentComponent 
     );
   }
 
+  isProyectoEstadoConcedido(): boolean {
+    return this.actionService.estado === Estado.CONCEDIDO;
+  }
 
   /**
    * Recalcula los numeros de los periodos de todos los periodos de justificacion de la tabla en funcion de su mes inicial.

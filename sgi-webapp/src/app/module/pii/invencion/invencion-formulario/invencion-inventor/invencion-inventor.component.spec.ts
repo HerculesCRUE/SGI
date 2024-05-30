@@ -11,7 +11,6 @@ import { SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { InvencionActionService } from '../../invencion.action.service';
-
 import { InvencionInventorComponent } from './invencion-inventor.component';
 
 describe('InvencionInventorComponent', () => {

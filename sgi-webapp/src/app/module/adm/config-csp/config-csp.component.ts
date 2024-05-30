@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractMenuContentComponent } from '@core/component/abstract-menu-content.component';
 import { ConfigModule, ConfigType, IConfigOptions } from '@core/models/cnf/config-options';
+import { CARDINALIDAD_RELACION_SGI_SGE_MAP, MODO_EJECUCION_MAP, VALIDACION_CLASIFICACION_GASTOS_MAP } from '@core/models/csp/configuracion';
 import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { Observable, of } from 'rxjs';
@@ -12,7 +13,7 @@ export enum ConfigCsp {
   CSP_NOMBRE_SISTEMA_GESTION_EXTERNO = 'nombre-sistema-gestion-externo',
   CSP_URL_SISTEMA_GESTION_EXTERNO = 'url-sistema-gestion-externo',
   // Autorizacion y notificaciones CVN
-  CSP_REP_PROYECTO_EXT_CERTIFICADO_AUTORIZACION_PRPT = 'rep-csp-certificado-autorizacion-proyecto-externo-prpt',
+  CSP_REP_PROYECTO_EXT_CERTIFICADO_AUTORIZACION_PRPT = 'rep-csp-certificado-autorizacion-proyecto-externo-docx',
   CSP_COM_PROYECTO_EXT_MODIFICAR_AUTORIZACION_ESTADO_PARTICIPACION_DESTINATARIOS = 'csp-pro-ex-mod-aut-participacion-destinatarios',
   CSP_COM_PROYECTO_EXT_RECEP_NOTIFICACION_CVN_DESTINATARIOS = 'csp-pro-recep-not-cvn-pext-destinatarios',
   // Convocatoria
@@ -54,15 +55,28 @@ export enum ConfigCsp {
   TITLE_PROYECTO_EXTERNO = 'title-proyecto-externo',
   TITLE_SOLICITUD = 'title-solicitud',
   TITLE_EXPORTACIÓN = 'title-exportacion',
+  TITLE_INTEGRACION_SISTEMAS_CORPORATIVOS = 'title-integracion-sistemas-corporativos',
   // Config CSP service
-  CSP_FORMATO_PARTIDA_PRESUPUESTARIA = 'formatoPartidaPresupuestaria',
-  CSP_FORMATO_PARTIDA_PRESUPUESTARIA_PLANTILLA = 'plantillaFormatoPartidaPresupuestaria',
-  CSP_VALIDACION_GASTOS = 'validacionGastos',
+  CSP_ALTA_BUSCADOR_SGE_ENABLED = "altaBuscadorSgeEnabled",
+  CSP_AMORTIZACION_FONDOS_SGE_ENABLED = "amortizacionFondosSgeEnabled",
+  CSP_CALENDARIO_FACTURACION_SGE_ENABLED = "calendarioFacturacionSgeEnabled",
+  CSP_CARDINALIDAD_RELACION_SGI_SGE = 'cardinalidadRelacionSgiSge',
+  CSP_DEDICACION_MINIMA_GRUPO = 'dedicacionMinimaGrupo',
+  CSP_DETALLE_OPERACIONES_MODIFICACIONES_ENABLED = "detalleOperacionesModificacionesEnabled",
+  CSP_EJECUCION_ECONOMICA_GRUPOS_ENABLED = 'ejecucionEconomicaGruposEnabled',
+  CSP_FORMATO_CODIGO_INTERNO_PROYECTO = 'formatoCodigoInternoProyecto',
+  CSP_FORMATO_CODIGO_INTERNO_PROYECTO_PLANTILLA = 'plantillaFormatoCodigoInternoProyecto',
   CSP_FORMATO_IDENTIFICADOR_JUSTIFICACION = 'formatoIdentificadorJustificacion',
   CSP_FORMATO_IDENTIFICADOR_JUSTIFICACION_PLANTILLA = 'plantillaFormatoIdentificadorJustificacion',
-  CSP_DEDICACION_MINIMA_GRUPO = 'dedicacionMinimaGrupo',
-  CSP_FORMATO_CODIGO_INTERNO_PROYECTO = 'formatoCodigoInternoProyecto',
-  CSP_FORMATO_CODIGO_INTERNO_PROYECTO_PLANTILLA = 'plantillaFormatoCodigoInternoProyecto'
+  CSP_FORMATO_PARTIDA_PRESUPUESTARIA = 'formatoPartidaPresupuestaria',
+  CSP_FORMATO_PARTIDA_PRESUPUESTARIA_PLANTILLA = 'plantillaFormatoPartidaPresupuestaria',
+  CSP_GASTOS_JUSTIFICADOS_SGE_ENABLED = "gastosJustificadosSgeEnabled",
+  CSP_MODIFICACION_PROYECTO_SGE_ENABLED = "modificacionProyectoSgeEnabled",
+  CSP_PARTIDAS_PRESUPUESTARIAS_SGE_ENABLED = "partidasPresupuestariasSgeEnabled",
+  CSP_PROYECTO_SGE_ALTA_MODO_EJECUCION = "proyectoSgeAltaModoEjecucion",
+  CSP_PROYECTO_SGE_MODIFICACION_MODO_EJECUCION = "proyectoSgeModificacionModoEjecucion",
+  CSP_SECTOR_IVA_SGE_ENABLED = "sectorIvaSgeEnabled",
+  CSP_VALIDACION_CLASIFICACION_GASTOS = 'validacionClasificacionGastos'
 }
 
 @Component({
@@ -73,17 +87,30 @@ export enum ConfigCsp {
 export class ConfigCspComponent extends AbstractMenuContentComponent {
 
   private readonly _CONFIG_MAP: Map<ConfigCsp, IConfigOptions> = new Map([
-    [ConfigCsp.CSP_VALIDACION_GASTOS, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_VALIDACION_GASTOS`), options: this.getBooleanValues(), required: true, module: ConfigModule.CSP }],
+    [ConfigCsp.CSP_VALIDACION_CLASIFICACION_GASTOS, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_VALIDACION_CLASIFICACION_GASTOS`), options: this.getValidacionclasificacionGastoValues(), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_VALIDACION_CLASIFICACION_GASTOS.description`) }],
     [ConfigCsp.CSP_NOMBRE_SISTEMA_GESTION_EXTERNO, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_NOMBRE_SISTEMA_GESTION_EXTERNO`), required: false, module: ConfigModule.CNF }],
     [ConfigCsp.CSP_URL_SISTEMA_GESTION_EXTERNO, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_URL_SISTEMA_GESTION_EXTERNO`), required: false, module: ConfigModule.CNF }],
-    [ConfigCsp.CSP_FORMATO_PARTIDA_PRESUPUESTARIA, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_FORMATO_PARTIDA_PRESUPUESTARIA`), required: true, module: ConfigModule.CSP }],
-    [ConfigCsp.CSP_FORMATO_PARTIDA_PRESUPUESTARIA_PLANTILLA, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_FORMATO_PARTIDA_PRESUPUESTARIA_PLANTILLA`), required: true, module: ConfigModule.CSP }],
-    [ConfigCsp.CSP_FORMATO_CODIGO_INTERNO_PROYECTO, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_FORMATO_CODIGO_INTERNO_PROYECTO`), required: true, module: ConfigModule.CSP }],
-    [ConfigCsp.CSP_FORMATO_CODIGO_INTERNO_PROYECTO_PLANTILLA, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_FORMATO_CODIGO_INTERNO_PROYECTO_PLANTILLA`), required: true, module: ConfigModule.CSP }],
-    [ConfigCsp.CSP_FORMATO_IDENTIFICADOR_JUSTIFICACION, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_FORMATO_IDENTIFICADOR_JUSTIFICACION`), required: true, module: ConfigModule.CSP }],
-    [ConfigCsp.CSP_FORMATO_IDENTIFICADOR_JUSTIFICACION_PLANTILLA, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_FORMATO_IDENTIFICADOR_JUSTIFICACION_PLANTILLA`), required: true, module: ConfigModule.CSP }],
-    [ConfigCsp.CSP_DEDICACION_MINIMA_GRUPO, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_DEDICACION_MINIMA_GRUPO`), required: true, module: ConfigModule.CSP }],
+    [ConfigCsp.CSP_FORMATO_PARTIDA_PRESUPUESTARIA, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_FORMATO_PARTIDA_PRESUPUESTARIA`), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_FORMATO_PARTIDA_PRESUPUESTARIA.description`) }],
+    [ConfigCsp.CSP_FORMATO_PARTIDA_PRESUPUESTARIA_PLANTILLA, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_FORMATO_PARTIDA_PRESUPUESTARIA_PLANTILLA`), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_FORMATO_PARTIDA_PRESUPUESTARIA_PLANTILLA.description`) }],
+    [ConfigCsp.CSP_FORMATO_CODIGO_INTERNO_PROYECTO, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_FORMATO_CODIGO_INTERNO_PROYECTO`), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_FORMATO_CODIGO_INTERNO_PROYECTO.description`), }],
+    [ConfigCsp.CSP_FORMATO_CODIGO_INTERNO_PROYECTO_PLANTILLA, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_FORMATO_CODIGO_INTERNO_PROYECTO_PLANTILLA`), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_FORMATO_CODIGO_INTERNO_PROYECTO_PLANTILLA.description`) }],
+    [ConfigCsp.CSP_FORMATO_IDENTIFICADOR_JUSTIFICACION, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_FORMATO_IDENTIFICADOR_JUSTIFICACION`), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_FORMATO_IDENTIFICADOR_JUSTIFICACION.description`) }],
+    [ConfigCsp.CSP_FORMATO_IDENTIFICADOR_JUSTIFICACION_PLANTILLA, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_FORMATO_IDENTIFICADOR_JUSTIFICACION_PLANTILLA`), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_FORMATO_IDENTIFICADOR_JUSTIFICACION_PLANTILLA.description`) }],
+    [ConfigCsp.CSP_DEDICACION_MINIMA_GRUPO, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_DEDICACION_MINIMA_GRUPO`), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_DEDICACION_MINIMA_GRUPO.description`) }],
     [ConfigCsp.CSP_REP_PROYECTO_EXT_CERTIFICADO_AUTORIZACION_PRPT, { type: ConfigType.FILE, label: marker(`adm.config.csp.CSP_REP_PROYECTO_EXT_CERTIFICADO_AUTORIZACION_PRPT`), module: ConfigModule.CNF }],
+    [ConfigCsp.TITLE_INTEGRACION_SISTEMAS_CORPORATIVOS, { type: ConfigType.CONFIG_GROUP_TITLE, label: marker(`adm.config.group-title.integracion-sistemas-corporativos`), module: ConfigModule.NONE }],
+    [ConfigCsp.CSP_CARDINALIDAD_RELACION_SGI_SGE, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_CARDINALIDAD_RELACION_SGI_SGE`), options: this.getCardinalidadRelacionSgiSgeValues(), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_CARDINALIDAD_RELACION_SGI_SGE.description`) }],
+    [ConfigCsp.CSP_PROYECTO_SGE_ALTA_MODO_EJECUCION, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_PROYECTO_SGE_ALTA_MODO_EJECUCION`), options: this.getModosEjecucionValues(), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_PROYECTO_SGE_ALTA_MODO_EJECUCION.description`) }],
+    [ConfigCsp.CSP_PROYECTO_SGE_MODIFICACION_MODO_EJECUCION, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_PROYECTO_SGE_MODIFICACION_MODO_EJECUCION`), options: this.getModosEjecucionValues(), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_PROYECTO_SGE_MODIFICACION_MODO_EJECUCION.description`) }],
+    [ConfigCsp.CSP_EJECUCION_ECONOMICA_GRUPOS_ENABLED, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_EJECUCION_ECONOMICA_GRUPOS_ENABLED`), options: this.getBooleanValues(), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_EJECUCION_ECONOMICA_GRUPOS_ENABLED.description`) }],
+    [ConfigCsp.CSP_PARTIDAS_PRESUPUESTARIAS_SGE_ENABLED, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_PARTIDAS_PRESUPUESTARIAS_SGE_ENABLED`), options: this.getBooleanValues(), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_PARTIDAS_PRESUPUESTARIAS_SGE_ENABLED.description`) }],
+    [ConfigCsp.CSP_MODIFICACION_PROYECTO_SGE_ENABLED, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_MODIFICACION_PROYECTO_SGE_ENABLED`), options: this.getBooleanValues(), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_MODIFICACION_PROYECTO_SGE_ENABLED.description`) }],
+    [ConfigCsp.CSP_ALTA_BUSCADOR_SGE_ENABLED, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_ALTA_BUSCADOR_SGE_ENABLED`), options: this.getBooleanValues(), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_ALTA_BUSCADOR_SGE_ENABLED.description`) }],
+    [ConfigCsp.CSP_SECTOR_IVA_SGE_ENABLED, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_SECTOR_IVA_SGE_ENABLED`), options: this.getBooleanValues(), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_SECTOR_IVA_SGE_ENABLED.description`) }],
+    [ConfigCsp.CSP_AMORTIZACION_FONDOS_SGE_ENABLED, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_AMORTIZACION_FONDOS_SGE_ENABLED`), options: this.getBooleanValues(), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_AMORTIZACION_FONDOS_SGE_ENABLED.description`) }],
+    [ConfigCsp.CSP_CALENDARIO_FACTURACION_SGE_ENABLED, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_CALENDARIO_FACTURACION_SGE_ENABLED`), options: this.getBooleanValues(), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_CALENDARIO_FACTURACION_SGE_ENABLED.description`) }],
+    [ConfigCsp.CSP_DETALLE_OPERACIONES_MODIFICACIONES_ENABLED, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_DETALLE_OPERACIONES_MODIFICACIONES_ENABLED`), options: this.getBooleanValues(), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_DETALLE_OPERACIONES_MODIFICACIONES_ENABLED.description`) }],
+    [ConfigCsp.CSP_GASTOS_JUSTIFICADOS_SGE_ENABLED, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_GASTOS_JUSTIFICADOS_SGE_ENABLED`), options: this.getBooleanValues(), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_GASTOS_JUSTIFICADOS_SGE_ENABLED.description`) }],
     [ConfigCsp.TITLE_CONVONCATORIA, { type: ConfigType.CONFIG_GROUP_TITLE, label: marker(`adm.config.group-title.convocatoria`), module: ConfigModule.NONE }],
     [ConfigCsp.CSP_COM_CONVOCATORIA_FASES_DESTINATARIOS_UO, { type: ConfigType.EMAILS_UO, label: marker(`adm.config.csp.CSP_COM_CONVOCATORIA_FASES_DESTINATARIOS_UO`), required: true, module: ConfigModule.CNF }],
     [ConfigCsp.CSP_COM_CONVOCATORIA_HITOS_DESTINATARIOS_UO, { type: ConfigType.EMAILS_UO, label: marker(`adm.config.csp.CSP_COM_CONVOCATORIA_HITOS_DESTINATARIOS_UO`), required: true, module: ConfigModule.CNF }],
@@ -163,6 +190,36 @@ export class ConfigCspComponent extends AbstractMenuContentComponent {
     } else {
       this.clearProblems();
     }
+  }
+
+  private getCardinalidadRelacionSgiSgeValues(): Observable<KeyValue<string, string>[]> {
+    const keyValueList: KeyValue<string, string>[] = [];
+
+    for (const [key, value] of CARDINALIDAD_RELACION_SGI_SGE_MAP.entries()) {
+      keyValueList.push({ key, value });
+    }
+
+    return of(keyValueList);
+  }
+
+  private getModosEjecucionValues(): Observable<KeyValue<string, string>[]> {
+    const keyValueList: KeyValue<string, string>[] = [];
+
+    for (const [key, value] of MODO_EJECUCION_MAP.entries()) {
+      keyValueList.push({ key, value });
+    }
+
+    return of(keyValueList);
+  }
+
+  private getValidacionclasificacionGastoValues(): Observable<KeyValue<string, string>[]> {
+    const keyValueList: KeyValue<string, string>[] = [];
+
+    for (const [key, value] of VALIDACION_CLASIFICACION_GASTOS_MAP.entries()) {
+      keyValueList.push({ key, value });
+    }
+
+    return of(keyValueList);
   }
 
   private getBooleanValues(): Observable<KeyValue<string, string>[]> {

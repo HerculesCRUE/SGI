@@ -111,7 +111,8 @@
 
   <ng-container *sgiHasAuthorityForAnyUO="'CSP-PRO-E'">
     <div class="separation-button">
-      <button *ngIf="!this.actionService.readonly" color="three" mat-button mat-raised-button (click)="openModal()">
+      <button *ngIf="!this.actionService.readonly" [disabled]="!isProyectoEstadoConcedido()" color="three" mat-button
+        mat-raised-button (click)="openModal()">
         <mat-icon color="accent">add_circle</mat-icon>
         {{ 'btn.add.entity' | translate:msgParamEntity }}
       </button>

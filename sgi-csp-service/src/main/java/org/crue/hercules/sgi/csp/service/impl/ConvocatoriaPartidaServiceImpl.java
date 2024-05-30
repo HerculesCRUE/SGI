@@ -1,6 +1,9 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import javax.validation.Valid;
+
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaPartidaNotFoundException;
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPartida;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionRepository;
@@ -16,6 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
+@Validated
 public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaService {
 
   private final ConvocatoriaPartidaRepository repository;
@@ -47,7 +52,8 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
    */
   @Override
   @Transactional
-  public ConvocatoriaPartida create(ConvocatoriaPartida convocatoriaPartida) {
+  @Validated({ BaseEntity.Create.class })
+  public ConvocatoriaPartida create(@Valid ConvocatoriaPartida convocatoriaPartida) {
     log.debug("create(ConvocatoriaPartida convocatoriaPartida) - start");
 
     Assert.isNull(convocatoriaPartida.getId(), "Id tiene que ser null para crear ConvocatoriaPartida");
@@ -71,7 +77,8 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
    */
   @Override
   @Transactional
-  public ConvocatoriaPartida update(ConvocatoriaPartida convocatoriaPartidaActualizar) {
+  @Validated({ BaseEntity.Update.class })
+  public ConvocatoriaPartida update(@Valid ConvocatoriaPartida convocatoriaPartidaActualizar) {
     log.debug("update(ConvocatoriaPartida convocatoriaPartidaActualizar) - start");
 
     Assert.notNull(convocatoriaPartidaActualizar.getId(),
@@ -159,12 +166,10 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
     Assert.isTrue(convocatoriaPartida.getConvocatoriaId() != null,
         "Id Convocatoria no puede ser null para realizar la acción sobre ConvocatoriaPartida");
 
-    Assert.isTrue(convocatoriaPartida.getCodigo() != null,
-        "Codigo no puede ser null para realizar la acción sobre ConvocatoriaPartida");
-
     configuracionRepository.findFirstByOrderByIdAsc()
         .ifPresent(configuracion -> Assert.isTrue(
-            convocatoriaPartida.getCodigo().matches(configuracion.getFormatoPartidaPresupuestaria()),
+            Boolean.TRUE.equals(configuracion.getPartidasPresupuestariasSGE()) ||
+                convocatoriaPartida.getCodigo().matches(configuracion.getFormatoPartidaPresupuestaria()),
             "Formato de codigo no valido"));
 
     Assert.isTrue(this.modificable(convocatoriaPartida.getId(), ConvocatoriaAuthorityHelper.CSP_CON_E),

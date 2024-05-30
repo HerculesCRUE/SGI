@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.List;
+
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoConceptoGasto;
@@ -94,5 +96,34 @@ public interface ProyectoConceptoGastoService {
    * @return true si existen diferencias y false en caso contrario.
    */
   boolean hasDifferencesCodigosEcConvocatoria(final Long id);
+
+  /**
+   * Comprueba si alguno de los {@link ProyectoConceptoGasto} del {@link Proyecto}
+   * tienen fechas
+   * 
+   * @param proyectoId el id del {@link Proyecto}.
+   * @return true si existen y false en caso contrario.
+   */
+  boolean proyectoHasConceptosGastoWithDates(Long proyectoId);
+
+  /**
+   * Obtiene los {@link ProyectoConceptoGasto} de un {@link Proyecto}
+   *
+   * @param proyectoId el id del {@link Proyecto}.
+   * @return la lista de entidades {@link ProyectoConceptoGasto} del
+   *         {@link Proyecto}.
+   */
+  List<ProyectoConceptoGasto> findAllByProyectoId(Long proyectoId);
+
+  /**
+   * Se valida la unicidad del concepto de gasto. Para un {@link Proyecto} el
+   * mismo concepto de gasto solo puede aparecer una vez, salvo que lo haga en
+   * periodos de meses no solapados (independientemente del valor del campo
+   * "permitido").
+   * 
+   * @param proyectoConceptoGasto el {@link ProyectoConceptoGasto} a evaluar
+   * @return true validación correcta/ false validacion incorrecta
+   */
+  boolean existsProyectoConceptoGastoConMesesSolapados(ProyectoConceptoGasto proyectoConceptoGasto);
 
 }

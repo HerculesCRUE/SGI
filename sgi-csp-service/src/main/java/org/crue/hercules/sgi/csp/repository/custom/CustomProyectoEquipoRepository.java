@@ -25,8 +25,23 @@ public interface CustomProyectoEquipoRepository {
    * @param proyectoId identificador del {@link Proyecto}.
    * @param fecha      fecha en la que se busca el investigador principal.
    * @return la lista de personaRef de los investigadores principales del
-   *         {@link Proyecto} en el momento actual.
+   *         {@link Proyecto} en la fecha.
    */
   List<String> findPersonaRefInvestigadoresPrincipales(Long proyectoId, Instant fecha);
+
+  /**
+   * {@link ProyectoEquipo} que son investigador o investigadores principales del
+   * {@link Proyecto} con el id indicado.
+   * 
+   * Son investiador principales los {@link ProyectoEquipo} que a fecha actual
+   * tiene el {@link RolProyecto} con el flag {@link RolProyecto#rolPrincipal} a
+   * <code>true</code>.
+   * 
+   * @param proyectoId identificador del {@link Proyecto}.
+   * @param fecha      fecha en la que se busca el investigador principal.
+   * @return la lista de {@link ProyectoEquipo} de los investigadores principales
+   *         del {@link Proyecto} en la fecha.
+   */
+  List<ProyectoEquipo> findInvestigadoresPrincipales(Long proyectoId, Instant fecha);
 
 }

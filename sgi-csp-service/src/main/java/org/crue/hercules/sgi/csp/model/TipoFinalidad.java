@@ -1,20 +1,26 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "tipo_finalidad")
@@ -52,4 +58,8 @@ public class TipoFinalidad extends BaseEntity {
   @Column(name = "activo", columnDefinition = "boolean default true", nullable = false)
   private Boolean activo;
 
+  @OneToMany(mappedBy = "tipoFinalidad")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<ModeloTipoFinalidad> modelosTipoFinalidad = null;
 }

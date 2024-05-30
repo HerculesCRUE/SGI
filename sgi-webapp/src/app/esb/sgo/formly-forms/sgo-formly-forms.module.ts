@@ -8,6 +8,8 @@ import { FormlyMaterialModule } from '@ngx-formly/material';
 import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedModule } from '@shared/shared.module';
+import { SelectAreasConocimientoTypeComponent } from './types/select-areas-conocimiento.type';
+import { SelectCentrosTypeComponent } from './types/select-centros.type';
 import { SelectComunidadesTypeComponent } from './types/select-comunidades.type';
 import { SelectDepartamentosTypeComponent } from './types/select-departamentos.type';
 import { SelectPaisesTypeComponent } from './types/select-paises.type';
@@ -16,27 +18,34 @@ import { TableCRUDClasificacionesTypeComponent } from './types/table-crud-clasif
 
 @NgModule({
   declarations: [
-    SelectPaisesTypeComponent,
+    SelectAreasConocimientoTypeComponent,
+    SelectCentrosTypeComponent,
     SelectComunidadesTypeComponent,
-    SelectProvinciasTypeComponent,
     SelectDepartamentosTypeComponent,
+    SelectPaisesTypeComponent,
+    SelectProvinciasTypeComponent,
     TableCRUDClasificacionesTypeComponent
   ],
   imports: [
-    SharedModule,
     CommonModule,
-    TranslateModule,
-    MaterialDesignModule,
-    FormsModule,
-    ReactiveFormsModule,
     FormlyMatDatepickerModule,
     FormlyMaterialModule,
     FormlySelectModule,
+    FormsModule,
+    MaterialDesignModule,
+    ReactiveFormsModule,
+    SharedModule,
+    TranslateModule,
     FormlyModule.forChild({
       types: [
         {
-          name: 'select-paises',
-          component: SelectPaisesTypeComponent,
+          name: 'select-areas-conocimiento',
+          component: SelectAreasConocimientoTypeComponent,
+          wrappers: ['form-field']
+        },
+        {
+          name: 'select-centros',
+          component: SelectCentrosTypeComponent,
           wrappers: ['form-field']
         },
         {
@@ -45,13 +54,19 @@ import { TableCRUDClasificacionesTypeComponent } from './types/table-crud-clasif
           wrappers: ['form-field']
         },
         {
-          name: 'select-provincias',
-          component: SelectProvinciasTypeComponent,
+          name: 'select-departamentos',
+          component: SelectDepartamentosTypeComponent,
           wrappers: ['form-field']
         },
         {
-          name: 'select-departamentos',
-          component: SelectDepartamentosTypeComponent,
+          name: 'select-paises',
+          component: SelectPaisesTypeComponent,
+          wrappers: ['form-field']
+        },
+
+        {
+          name: 'select-provincias',
+          component: SelectProvinciasTypeComponent,
           wrappers: ['form-field']
         },
         {
@@ -62,10 +77,12 @@ import { TableCRUDClasificacionesTypeComponent } from './types/table-crud-clasif
     })
   ],
   exports: [
-    SelectPaisesTypeComponent,
+    SelectAreasConocimientoTypeComponent,
+    SelectCentrosTypeComponent,
     SelectComunidadesTypeComponent,
-    SelectProvinciasTypeComponent,
     SelectDepartamentosTypeComponent,
+    SelectPaisesTypeComponent,
+    SelectProvinciasTypeComponent,
     TableCRUDClasificacionesTypeComponent
   ]
 })

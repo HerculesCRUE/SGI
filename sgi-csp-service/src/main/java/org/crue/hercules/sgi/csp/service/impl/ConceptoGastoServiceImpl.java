@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.service.impl;
 import org.crue.hercules.sgi.csp.exceptions.ConceptoGastoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
 import org.crue.hercules.sgi.csp.repository.ConceptoGastoRepository;
+import org.crue.hercules.sgi.csp.repository.predicate.ConceptoGastoPredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.ConceptoGastoSpecifications;
 import org.crue.hercules.sgi.csp.service.ConceptoGastoService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -182,7 +183,7 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
   public Page<ConceptoGasto> findAll(String query, Pageable pageable) {
     log.debug("findAll(String query, Pageable pageable) - start");
     Specification<ConceptoGasto> specs = ConceptoGastoSpecifications.activos()
-        .and(SgiRSQLJPASupport.toSpecification(query));
+        .and(SgiRSQLJPASupport.toSpecification(query, ConceptoGastoPredicateResolver.getInstance()));
 
     Page<ConceptoGasto> returnValue = repository.findAll(specs, pageable);
     log.debug("findAll(String query, Pageable pageable) - end");
@@ -199,7 +200,8 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
   @Override
   public Page<ConceptoGasto> findAllTodos(String query, Pageable pageable) {
     log.debug("findAllTodos(String query, Pageable pageable) - start");
-    Specification<ConceptoGasto> specs = SgiRSQLJPASupport.toSpecification(query);
+    Specification<ConceptoGasto> specs = SgiRSQLJPASupport.toSpecification(query,
+        ConceptoGastoPredicateResolver.getInstance());
 
     Page<ConceptoGasto> returnValue = repository.findAll(specs, pageable);
     log.debug("findAllTodos(String query, Pageable pageable) - end");

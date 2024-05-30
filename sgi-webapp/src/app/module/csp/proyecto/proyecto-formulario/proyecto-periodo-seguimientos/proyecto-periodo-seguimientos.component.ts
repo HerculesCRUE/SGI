@@ -6,6 +6,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { TIPO_SEGUIMIENTO_MAP } from '@core/enums/tipo-seguimiento';
 import { MSG_PARAMS } from '@core/i18n';
+import { Estado } from '@core/models/csp/estado-proyecto';
 import { IProyectoPeriodoSeguimiento } from '@core/models/csp/proyecto-periodo-seguimiento';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
@@ -138,6 +139,10 @@ export class ProyectoPeriodoSeguimientosComponent extends FragmentComponent impl
 
   getConvocatoriaPeriodoSeguimientoState(convocatoriaPeriodoSeguimientoId: number) {
     return { [CONVOCATORIA_PERIODO_SEGUIMIENTO_ID_KEY]: convocatoriaPeriodoSeguimientoId };
+  }
+
+  isProyectoEstadoConcedido(): boolean {
+    return this.actionService.estado === Estado.CONCEDIDO;
   }
 
 }

@@ -182,11 +182,15 @@ export class DateValidator {
    *
    * @param minDate fecha minima
    * @param maxDate fecha maxima
+   * @param errorIfFirstDateEmpty Mostrar error si las fechas minDate y/o maxDate son null o undefined (por defecto true).
    */
-  static isBetween(minDate: DateTime, maxDate: DateTime): ValidatorFn {
+  static isBetween(minDate: DateTime, maxDate: DateTime, errorIfDatesEmpty = true): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       if (control.value) {
-        if (!(minDate <= control.value && maxDate >= control.value)) {
+        if (!(
+          ((!errorIfDatesEmpty && !minDate) || minDate <= control.value)
+          && ((!errorIfDatesEmpty && !maxDate) || maxDate >= control.value))
+        ) {
           return { invalid: true };
         }
       }

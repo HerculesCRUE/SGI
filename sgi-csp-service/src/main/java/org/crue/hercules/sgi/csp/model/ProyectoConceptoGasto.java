@@ -104,4 +104,9 @@ public class ProyectoConceptoGasto extends BaseEntity {
   @JsonIgnore
   private final List<ProyectoConceptoGastoCodigoEc> codigosEc = null;
 
+  @Column(name = "concepto_gasto_id", insertable = false, updatable = false)
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final Long conceptoGastoId = null;
+
 }

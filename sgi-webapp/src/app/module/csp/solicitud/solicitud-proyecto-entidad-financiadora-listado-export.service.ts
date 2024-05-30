@@ -204,7 +204,8 @@ export class SolicitudProyectoEntidadFinanciadoraListadoExportService
         title: titleEntidadFinanciadora
           + idEntidadFinanciadora + ': '
           + this.translate.instant(ENTIDAD_FINANCIADORA_IMPORTE_FINANCIACION_KEY),
-        type: ColumnType.STRING,
+        type: ColumnType.NUMBER,
+        format: null
       };
       columns.push(columnImporteFinanciacionEntidadFinanciadora);
 
@@ -213,7 +214,7 @@ export class SolicitudProyectoEntidadFinanciadoraListadoExportService
         title: titleEntidadFinanciadora
           + idEntidadFinanciadora + ': '
           + this.translate.instant(ENTIDAD_FINANCIADORA_PORCENTAJE_FINANCIACION_KEY),
-        type: ColumnType.STRING,
+        type: ColumnType.STRING
       };
       columns.push(columnPorcentajeFinanciacionEntidadFinanciadora);
 

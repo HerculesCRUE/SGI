@@ -9,10 +9,11 @@ import { Module } from '@core/module';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { ModeloUnidadService } from '@core/services/csp/modelo-unidad.service';
+import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { SgiAuthService } from '@sgi/framework/auth';
-import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
+import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 
 @Component({
@@ -70,38 +71,54 @@ export class SelectModeloEjecucionComponent extends SelectServiceExtendedCompone
     @Self() @Optional() ngControl: NgControl,
     platformLocation: PlatformLocation,
     private service: ModeloEjecucionService,
-    private unidadModeloService: ModeloUnidadService,
-    private authService: SgiAuthService
+    private authService: SgiAuthService,
+    private unidadGestionService: UnidadGestionService,
   ) {
     super(defaultErrorStateMatcher, ngControl, platformLocation);
     this.addTarget = `/${Module.CSP.path}/${CSP_ROUTE_NAMES.MODELO_EJECUCION}/${ROUTE_NAMES.NEW}`;
+
   }
 
   protected loadServiceOptions(): Observable<IModeloEjecucion[]> {
+    const findOptions: SgiRestFindOptions = {};
+
+    if (this.requestByExterno) {
+      findOptions.filter = (new RSQLSgiRestFilter('externo', SgiRestFilterOperator.EQUALS, this.externo.toString()));
+    }
+
     if (this.requestByUnidadGestion) {
-      // If empty, or null, an empty array is returned
-      if (!!!this.unidadGestionRef) {
-        return of([]);
+      if (this.unidadGestionRef) {
+        if (findOptions.filter) {
+          findOptions.filter.and(new RSQLSgiRestFilter('modelosUnidad.unidadGestionRef', SgiRestFilterOperator.EQUALS, this.unidadGestionRef?.toString()));
+        } else {
+          findOptions.filter = (new RSQLSgiRestFilter('modelosUnidad.unidadGestionRef', SgiRestFilterOperator.EQUALS, this.unidadGestionRef?.toString()));
+        }
+      } else {
+        return this.unidadGestionService.findAllRestringidos().pipe(
+          map(response => response.items.map(uGes => uGes.id.toString())),
+          switchMap(unidadesGestionUsuario => {
+            if (unidadesGestionUsuario.length > 0) {
+              if (findOptions.filter) {
+                findOptions.filter.and(new RSQLSgiRestFilter('modelosUnidad.unidadGestionRef', SgiRestFilterOperator.IN, unidadesGestionUsuario));
+              } else {
+                findOptions.filter = (new RSQLSgiRestFilter('modelosUnidad.unidadGestionRef', SgiRestFilterOperator.IN, unidadesGestionUsuario));
+              }
+              return this.service.findAll(findOptions).pipe(
+                map(response => response.items)
+              );
+            } else {
+              return of([]);
+            }
+          })
+        );
       }
-      const findOptions: SgiRestFindOptions = {
-        filter: new RSQLSgiRestFilter('unidadGestionRef', SgiRestFilterOperator.EQUALS, this.unidadGestionRef?.toString()),
-        sort: new RSQLSgiRestSort('modeloEjecucion.nombre', SgiRestSortDirection.ASC)
-      };
-      if (this.requestByExterno) {
-        findOptions.filter.and(new RSQLSgiRestFilter('modeloEjecucion.externo', SgiRestFilterOperator.EQUALS, this.externo.toString()));
-      }
-      return this.unidadModeloService.findAll(findOptions).pipe(
-        map(response => response.items.map(item => item.modeloEjecucion))
+
+      return this.service.findAll(findOptions).pipe(
+        map(response => response.items)
       );
     }
     else {
-      const findOptions: SgiRestFindOptions = {
-        sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
-      };
-      if (this.requestByExterno) {
-        findOptions.filter = (new RSQLSgiRestFilter('modeloEjecucion.externo', SgiRestFilterOperator.EQUALS, this.externo.toString()));
-      }
-      return this.service.findAll(findOptions).pipe(map(response => response.items));
+      return this.service.findAllTodos(findOptions).pipe(map(response => response.items));
     }
   }
 

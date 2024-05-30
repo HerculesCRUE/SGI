@@ -49,22 +49,15 @@ export class SolicitudProyectoSocioDataResolver extends SgiResolverResolver<ISol
   }
 
   private loadSolicitudProyectoSocioData(solicitudData: ISolicitudData): Observable<ISolicitudProyectoSocioData> {
-    return this.solicitudService.findSolicitudProyecto(solicitudData.solicitud.id).pipe(
-      map(solicitudProyecto => {
+    return this.solicitudService.findAllSolicitudProyectoSocio(solicitudData.solicitud.id).pipe(
+      map(socios => {
         return {
           readonly: solicitudData.readonly,
-          solicitudProyecto,
-          solicitudProyectoSocios: []
+          solicitudProyecto: solicitudData.solicitudProyecto,
+          solicitudProyectoSocios: socios.items
         };
-      }),
-      switchMap(data => {
-        return this.solicitudService.findAllSolicitudProyectoSocio(solicitudData.solicitud.id).pipe(
-          map(socios => {
-            data.solicitudProyectoSocios = socios.items;
-            return data;
-          })
-        );
       })
     );
   }
+
 }

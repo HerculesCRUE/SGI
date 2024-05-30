@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -14,10 +14,10 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { from, merge, Observable, of } from 'rxjs';
+import { EMPTY, Observable, from, merge, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { ACTION_MODAL_MODE } from 'src/app/esb/shared/formly-forms/core/base-formly-modal.component';
-import { IPersonaFormlyData, PersonaFormlyModalComponent } from '../../../formly-forms/persona-formly-modal/persona-formly-modal.component';
+import { IPersonaFormlyData } from '../../../formly-forms/persona-formly-modal/persona-formly-modal.component';
 import { PersonaFormlyPublicModalComponent } from '../../../formly-forms/persona-formly-public-modal/persona-formly-public-modal.component';
 
 const TIPO_PERSONA_KEY = marker('sgp.persona');
@@ -152,6 +152,11 @@ export class SearchPersonaPublicModalComponent extends DialogCommonComponent imp
                   map(empresa => {
                     persona.entidad = empresa;
                     return persona;
+                  }),
+                  catchError((error) => {
+                    this.logger.error(error);
+                    this.processError(error);
+                    return EMPTY;
                   })
                 );
               }
@@ -163,6 +168,11 @@ export class SearchPersonaPublicModalComponent extends DialogCommonComponent imp
                   map(empresa => {
                     persona.entidadPropia = empresa;
                     return persona;
+                  }),
+                  catchError((error) => {
+                    this.logger.error(error);
+                    this.processError(error);
+                    return EMPTY;
                   })
                 );
               }

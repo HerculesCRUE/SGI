@@ -1,7 +1,8 @@
 <sgi-fragment title="{{'menu.csp.ejecucion-economica.ejecucion-presupuestaria' | translate}} -
     {{'menu.csp.ejecucion-economica.ejecucion-presupuestaria.ingresos' | translate}}">
   <div fxLayout="column" fxLayoutGap="10px">
-    <sgi-ejecucion-economica-table-proyectos-relacionados [data]="formPart.relaciones$ | async">
+    <sgi-ejecucion-economica-table-proyectos-relacionados [data]="formPart.relaciones$ | async"
+      [isEjecucionEconomicaGruposEnabled]="formPart.isEjecucionEconomicaGruposEnabled">
     </sgi-ejecucion-economica-table-proyectos-relacionados>
 
     <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px" class="separation-button">

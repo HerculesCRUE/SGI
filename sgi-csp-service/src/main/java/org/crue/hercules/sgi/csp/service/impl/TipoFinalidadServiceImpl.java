@@ -1,19 +1,23 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.List;
+import java.util.Objects;
+
 import org.crue.hercules.sgi.csp.exceptions.TipoFinalidadNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidad_;
 import org.crue.hercules.sgi.csp.repository.TipoFinalidadRepository;
 import org.crue.hercules.sgi.csp.repository.specification.TipoFinalidadSpecifications;
 import org.crue.hercules.sgi.csp.service.TipoFinalidadService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -137,17 +141,17 @@ public class TipoFinalidadServiceImpl implements TipoFinalidadService {
    * Obtiene todas las entidades {@link TipoFinalidad} activas paginadas y
    * filtradas.
    *
-   * @param query  información del filtro.
-   * @param paging información de paginación.
+   * @param query información del filtro.
    * @return el listado de entidades {@link TipoFinalidad} paginadas y filtradas.
    */
   @Override
-  public Page<TipoFinalidad> findAll(String query, Pageable paging) {
+  public List<TipoFinalidad> findAll(String query) {
     log.debug("findAll(String query, Pageable paging) - start");
-    Specification<TipoFinalidad> specs = TipoFinalidadSpecifications.activos()
+    Specification<TipoFinalidad> specs = TipoFinalidadSpecifications.distinct()
+        .and(TipoFinalidadSpecifications.activos())
         .and(SgiRSQLJPASupport.toSpecification(query));
 
-    Page<TipoFinalidad> returnValue = repository.findAll(specs, paging);
+    List<TipoFinalidad> returnValue = repository.findAll(specs, Sort.by(Sort.Direction.ASC, TipoFinalidad_.NOMBRE));
     log.debug("findAll(String query, Pageable paging) - end");
     return returnValue;
   }

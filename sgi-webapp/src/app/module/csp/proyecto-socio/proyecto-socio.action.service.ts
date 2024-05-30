@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Estado } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
 import { ActionService } from '@core/services/action-service';
@@ -41,7 +42,7 @@ export class ProyectoSocioActionService extends ActionService {
   private data: IProyectoSocioData;
 
   get coordinadorExterno(): boolean {
-    return this.data.proyecto.coordinadorExterno;
+    return !this.data.proyecto.rolUniversidad.coordinador;
   }
 
   get proyectoSocios(): IProyectoSocio[] {
@@ -52,12 +53,16 @@ export class ProyectoSocioActionService extends ActionService {
     return this.datosGenerales.getValue();
   }
 
+  get proyectoEstado(): Estado {
+    return this.data?.proyecto?.estado?.estado;
+  }
+
   get showPeriodoJustificacion(): boolean {
-    return !this.data.proyecto.coordinadorExterno;
+    return !this.coordinadorExterno;
   }
 
   get showPeriodoPago(): boolean {
-    return !this.data.proyecto.coordinadorExterno;
+    return !this.coordinadorExterno;
   }
 
   get readonly(): boolean {

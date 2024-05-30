@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -15,10 +15,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { from, merge, Observable, of } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, from, merge, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { ACTION_MODAL_MODE } from 'src/app/esb/shared/formly-forms/core/base-formly-modal.component';
 import { IPersonaFormlyData, PersonaFormlyModalComponent } from '../../../formly-forms/persona-formly-modal/persona-formly-modal.component';
+import { ConfigService } from '@core/services/cnf/config.service';
 
 const TIPO_PERSONA_KEY = marker('sgp.persona');
 const MSG_SAVE_SUCCESS = marker('msg.save.request.entity.success');
@@ -50,9 +51,14 @@ export class SearchPersonaModalComponent extends DialogCommonComponent implement
   msgParamEntity: {};
   private textoCrearSuccess: string;
   private textoUpdateSuccess: string;
+  private sgpAlta: boolean = true;
 
   get selectionDisableWith() {
     return this._selectionDisableWith;
+  }
+
+  get sgpAltaDisabled(): boolean {
+    return !this.sgpAlta;
   }
   // tslint:disable-next-line: variable-name
   private _selectionDisableWith: (persona: IPersona) => boolean = () => false;
@@ -66,12 +72,17 @@ export class SearchPersonaModalComponent extends DialogCommonComponent implement
     private empresaService: EmpresaService,
     private readonly translate: TranslateService,
     private readonly authService: SgiAuthService,
-    private personaCreateMatDialog: MatDialog
+    private personaCreateMatDialog: MatDialog,
+    private configService: ConfigService
   ) {
     super(dialogRef);
     if (!!data.selectionDisableWith) {
       this._selectionDisableWith = data.selectionDisableWith;
     }
+
+    this.subscriptions.push(this.configService.isAltaSgpEnabled().subscribe(value => {
+      this.sgpAlta = value;
+    }));
   }
 
   ngOnInit(): void {
@@ -155,6 +166,11 @@ export class SearchPersonaModalComponent extends DialogCommonComponent implement
                   map(empresa => {
                     persona.entidad = empresa;
                     return persona;
+                  }),
+                  catchError((error) => {
+                    this.logger.error(error);
+                    this.processError(error);
+                    return EMPTY;
                   })
                 );
               }
@@ -166,6 +182,11 @@ export class SearchPersonaModalComponent extends DialogCommonComponent implement
                   map(empresa => {
                     persona.entidadPropia = empresa;
                     return persona;
+                  }),
+                  catchError((error) => {
+                    this.logger.error(error);
+                    this.processError(error);
+                    return EMPTY;
                   })
                 );
               }
@@ -266,5 +287,4 @@ export class SearchPersonaModalComponent extends DialogCommonComponent implement
     );
 
   }
-
 }

@@ -41,7 +41,7 @@ class InformeEvaluacionReportServiceTest extends BaseReportEtiServiceTest {
   private PersonaService personaService;
 
   @Mock
-  private BaseApartadosRespuestasReportDocxService baseApartadosrespuestasService;
+  private BaseApartadosRespuestasReportService baseApartadosrespuestasService;
 
   @BeforeEach
   public void setUp() throws Exception {

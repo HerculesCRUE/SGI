@@ -38,7 +38,7 @@ class SolicitudProyectoSocioEquipoRepositoryTest extends BaseRepositoryTest {
         .build());
     // @formatter:on
     SolicitudProyecto solicitudProyecto = entityManager.persistAndFlush(
-        new SolicitudProyecto(solicitud1.getId(), null, null, null, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, null,
+        new SolicitudProyecto(solicitud1.getId(), null, null, null, Boolean.TRUE, null, Boolean.FALSE, null,
             null, null, null, null, null, TipoPresupuesto.GLOBAL, null, null, null, null, null, null, null, null));
 
     // @formatter:off

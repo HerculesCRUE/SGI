@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.service;
 
+import static org.mockito.ArgumentMatchers.any;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
@@ -252,40 +255,22 @@ class ModeloEjecucionServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void findAll_ReturnsPage() {
+  void findAll_ReturnsList() {
     // given: Una lista con 37 ModeloEjecucion
     List<ModeloEjecucion> modelosEjecucion = new ArrayList<>();
     for (long i = 1; i <= 37; i++) {
       modelosEjecucion.add(generarMockModeloEjecucion(i, "ModeloEjecucion" + String.format("%03d", i)));
     }
 
-    BDDMockito.given(modeloEjecucionRepository.findAll(ArgumentMatchers.<Specification<ModeloEjecucion>>any(),
-        ArgumentMatchers.<Pageable>any())).willAnswer(new Answer<Page<ModeloEjecucion>>() {
-          @Override
-          public Page<ModeloEjecucion> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            toIndex = toIndex > modelosEjecucion.size() ? modelosEjecucion.size() : toIndex;
-            List<ModeloEjecucion> content = modelosEjecucion.subList(fromIndex, toIndex);
-            Page<ModeloEjecucion> page = new PageImpl<>(content, pageable, modelosEjecucion.size());
-            return page;
-          }
-        });
+    BDDMockito
+        .given(modeloEjecucionRepository.findAll(ArgumentMatchers.<Specification<ModeloEjecucion>>any(),
+            ArgumentMatchers.<Sort>any()))
+        .willReturn(modelosEjecucion);
 
-    // when: Get page=3 with pagesize=10
-    Pageable paging = PageRequest.of(3, 10);
-    Page<ModeloEjecucion> page = modeloEjecucionService.findAll(null, paging);
-
-    // then: Devuelve la pagina 3 con los ModeloEjecucion del 31 al 37
-    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
-    Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
-    Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
-    Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
-    for (int i = 31; i <= 37; i++) {
-      ModeloEjecucion modeloEjecucion = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
+    List<ModeloEjecucion> listado = modeloEjecucionService.findAll(null);
+    Assertions.assertThat(listado.size()).isEqualTo(37);
+    for (int i = 31; i < 37; i++) {
+      ModeloEjecucion modeloEjecucion = listado.get(i - 1);
       Assertions.assertThat(modeloEjecucion.getNombre()).isEqualTo("ModeloEjecucion" + String.format("%03d", i));
     }
   }

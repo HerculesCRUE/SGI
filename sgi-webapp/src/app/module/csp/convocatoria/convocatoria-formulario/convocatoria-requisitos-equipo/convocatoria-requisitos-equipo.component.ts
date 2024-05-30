@@ -23,7 +23,6 @@ import { ConvocatoriaRequisitosEquipoFragment } from './convocatoria-requisitos-
 
 const MSG_DELETE_KEY = marker('msg.delete.entity');
 const CONVOCATORIA_REQUISITOS_EQUIPO_MODALIDAD_CONTRATO_KEY = marker('csp.convocatoria-requisito-equipo.modalidad-contrato');
-const CONVOCATORIA_REQUISITOS_EQUIPO_NIVEL_ACADEMICO_KEY = marker('csp.convocatoria-requisito-equipo.nivel-academico');
 const CONVOCATORIA_CATEGORIA_PROFESIONAL_KEY = marker('csp.convocatoria.categoria-profesional');
 const CONVOCATORIA_NIVEL_ACADEMICO_KEY = marker('csp.convocatoria.nivel-academico');
 const CONVOCATORIA_REQUISITO_EQUIPO_SEXO_RATIO_MINIMO_EXIGIDO_KEY = marker('csp.convocatoria-requisito-equipo.sexo-ratio');
@@ -143,12 +142,6 @@ export class ConvocatoriaRequisitosEquipoComponent extends FormFragmentComponent
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamModalidadContratoEntity =
       { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
-
-    this.translate.get(
-      CONVOCATORIA_REQUISITOS_EQUIPO_NIVEL_ACADEMICO_KEY,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamNivelAcademicoEntity =
-      { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
       CONVOCATORIA_NIVEL_ACADEMICO_KEY,

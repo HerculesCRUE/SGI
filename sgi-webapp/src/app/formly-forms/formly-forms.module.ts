@@ -8,6 +8,8 @@ import { FormlyMaterialModule } from '@ngx-formly/material';
 import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
 import { TranslateModule } from '@ngx-translate/core';
 import { CKEditorTemplate } from './types/ckeditor-template';
+import { SelectEntityTypeComponent } from './types/select-entity.type';
+import { SelectProcedimientosTypeComponent } from './types/select-procedimientos.type';
 import { TipoValorSocialComponent } from './types/tipo-valor-social.component';
 import { IDateBetweenValidatorOptions, IDateValidatorOptions, dateIsAfter, dateIsBetween } from './validators/date.validator';
 import { IMulticheckboxValidatorOptions, multicheckboxRestricted } from './validators/multicheckbox.validator';
@@ -16,34 +18,47 @@ import { InfoDivWrapperComponent } from './wrappers/info-div/info-div.wrapper';
 import { PanelWrapperComponent } from './wrappers/panel/panel.wrapper';
 import { SubtitleDivWrapperComponent } from './wrappers/subtitle-div/subtitle-div.wrapper';
 import { TitleDivWrapperComponent } from './wrappers/title-div/title-div.wrapper';
+import { WarnDivWrapperComponent } from './wrappers/warn-div/warn-div.wrapper';
+import { FormlySelectModule } from '@ngx-formly/core/select';
 
 @NgModule({
   declarations: [
-    PanelWrapperComponent,
-    TitleDivWrapperComponent,
-    SubtitleDivWrapperComponent,
+    CKEditorTemplate,
     InfoDivWrapperComponent,
+    PanelWrapperComponent,
+    SelectEntityTypeComponent,
+    SelectProcedimientosTypeComponent,
+    SubtitleDivWrapperComponent,
     TipoValorSocialComponent,
-    CKEditorTemplate
+    TitleDivWrapperComponent,
+    WarnDivWrapperComponent,
   ],
   imports: [
+    CKEditorModule,
     CommonModule,
-    MaterialDesignModule,
-    TranslateModule,
-    FormsModule,
-    ReactiveFormsModule,
     FormlyMatDatepickerModule,
+    FormlyMaterialModule,
     FormlyModule.forChild({
       types: [
         {
-          name: 'tipo-valor-social',
-          component: TipoValorSocialComponent,
+          name: 'ckeditor',
+          component: CKEditorTemplate,
           wrappers: ['form-field'],
         },
         { name: 'documento', extends: 'radio' },
         {
-          name: 'ckeditor',
-          component: CKEditorTemplate,
+          name: 'select-entity',
+          component: SelectEntityTypeComponent,
+          wrappers: ['form-field'],
+        },
+        {
+          name: 'selector-procedimientos',
+          component: SelectProcedimientosTypeComponent,
+          wrappers: ['form-field'],
+        },
+        {
+          name: 'tipo-valor-social',
+          component: TipoValorSocialComponent,
           wrappers: ['form-field'],
         },
       ],
@@ -63,6 +78,10 @@ import { TitleDivWrapperComponent } from './wrappers/title-div/title-div.wrapper
         {
           name: 'info-div',
           component: InfoDivWrapperComponent
+        },
+        {
+          name: 'warn-div',
+          component: WarnDivWrapperComponent
         },
       ],
       validators: [
@@ -86,14 +105,17 @@ import { TitleDivWrapperComponent } from './wrappers/title-div/title-div.wrapper
         }
       ]
     }),
-    FormlyMaterialModule,
-    CKEditorModule
+    FormlySelectModule,
+    FormsModule,
+    MaterialDesignModule,
+    ReactiveFormsModule,
+    TranslateModule
   ],
   exports: [
+    CKEditorModule,
     FormlyMatDatepickerModule,
-    FormlyModule,
     FormlyMaterialModule,
-    CKEditorModule
+    FormlyModule
   ]
 })
 export class FormlyFormsModule { }

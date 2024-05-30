@@ -59,7 +59,9 @@ public class ProyectoProyectoSgePredicateResolver implements SgiRSQLPredicateRes
     /* Entidad convocante */
     ENTIDAD_CONVOCANTE("entidadConvocante"),
     /* Entidad financiadora */
-    ENTIDAD_FINANCIADORA("entidadFinanciadora");
+    ENTIDAD_FINANCIADORA("entidadFinanciadora"),
+    /* Fecha fin definitiva proyecto */
+    FECHA_FIN_DEFINITIVA_PROYECTO("fechaFinDefinitiva");
 
     private String code;
 

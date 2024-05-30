@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { MSG_PARAMS } from '@core/i18n';
@@ -14,6 +14,7 @@ import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { SolicitudProyectoService } from '@core/services/csp/solicitud-proyecto.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
+import { PersonaService } from '@core/services/sgp/persona.service';
 import { FormlyUtils } from '@core/utils/formly-utils';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -32,10 +33,27 @@ export interface IProyectoEconomicoFormlyData {
   grupoInvestigacion: IGrupo;
 }
 
+export interface IProyectoEconomicoFormlyResponse {
+  createdOrUpdated: boolean;
+  proyectoSge?: IProyectoSge;
+}
+
 interface IResponsable {
   fechaInicio: DateTime;
   fechaFin: DateTime;
   persona: IPersona;
+}
+
+enum FormlyFields {
+  CAUSA_EXENCION = 'causaExencion',
+  CODIGO_INTERNO = 'codigoInterno',
+  FINALIDAD = 'finalidad',
+  IMPORTE_TOTAL_GASTOS = 'importeTotalGastos',
+  IMPORTE_TOTAL_INGRESOS = 'importeTotalIngresos',
+  IVA_DEDUCIBLE = 'ivaDeducible',
+  NUMERO_DOCUMENTO_RESPONSABLE = 'numeroDocumentoResponsable',
+  POR_IVA = 'porIva',
+  RESPONSABLE_REF = 'responsableRef'
 }
 
 @Component({
@@ -43,8 +61,10 @@ interface IResponsable {
   styleUrls: ['./proyecto-economico-formly-modal.component.scss']
 })
 export class ProyectoEconomicoFormlyModalComponent
-  extends BaseFormlyModalComponent<IProyectoEconomicoFormlyData, IProyectoSge>
+  extends BaseFormlyModalComponent<IProyectoEconomicoFormlyData, IProyectoEconomicoFormlyResponse>
   implements OnInit {
+
+  formlyFieldKeys: string[];
 
   constructor(
     public readonly matDialogRef: MatDialogRef<ProyectoEconomicoFormlyModalComponent>,
@@ -54,7 +74,8 @@ export class ProyectoEconomicoFormlyModalComponent
     private readonly proyectoSgeService: ProyectoSgeService,
     private readonly solicitudProyectoService: SolicitudProyectoService,
     private readonly solicitudService: SolicitudService,
-    private readonly grupoService: GrupoService
+    private readonly grupoService: GrupoService,
+    private readonly personaService: PersonaService
 
   ) {
     super(matDialogRef, proyectoData?.action === ACTION_MODAL_MODE.EDIT, translate);
@@ -91,34 +112,51 @@ export class ProyectoEconomicoFormlyModalComponent
     let formly$: Observable<FormlyFieldConfig[]>;
     switch (action) {
       case ACTION_MODAL_MODE.EDIT:
+      case ACTION_MODAL_MODE.SELECT_AND_NOTIFY:
         formly$ = this.proyectoSgeService.getFormlyUpdate();
         break;
       case ACTION_MODAL_MODE.NEW:
         formly$ = this.proyectoSgeService.getFormlyCreate();
+        break;
+      case ACTION_MODAL_MODE.VIEW:
+        formly$ = this.proyectoSgeService.getFormlyView();
         break;
       default:
         formly$ = of([]);
     }
 
     let load$: Observable<IFormlyData>;
-
+    this.options.formState.isGrupo = !!grupo;
     if (grupo == null) {
       load$ = this.fillProyectoData(formly$, action, proyectoSgiId, proyectoSgeId);
     } else {
       load$ = this.fillGrupoData(formly$, grupo);
     }
 
+    switch (action) {
+      case ACTION_MODAL_MODE.EDIT:
+      case ACTION_MODAL_MODE.VIEW:
+        load$ = load$.pipe(
+          switchMap((formlyData) => {
+            return this.fillProyectoSgeFormlyModelById(proyectoSgeId, formlyData);
+          })
+        );
+        break;
+      case ACTION_MODAL_MODE.NEW:
+      case ACTION_MODAL_MODE.SELECT_AND_NOTIFY:
+        break;
+    }
+
     return load$.pipe(
       tap(formlyData => {
         this.options.formState.mainModel = formlyData.data;
-        this.formlyData.model = {};
         this.formlyData = formlyData;
       }),
       switchMap(() => of(void 0))
     );
   }
 
-  protected saveOrUpdate(): Observable<IProyectoSge> {
+  protected saveOrUpdate(): Observable<IProyectoEconomicoFormlyResponse> {
     delete this.formlyData.model.proyectoSgeId;
     this.parseModel();
 
@@ -127,9 +165,22 @@ export class ProyectoEconomicoFormlyModalComponent
       : this.updateProyectoSge(this.proyectoData.proyectoSge, this.formlyData);
   }
 
+  private fillProyectoSgeFormlyModelById(id: string, formlyData: IFormlyData): Observable<IFormlyData> {
+    return this.proyectoSgeService.getFormlyModelById(id).pipe(
+      map((model) => {
+        FormlyUtils.convertJSONToFormly(model, formlyData.fields);
+        formlyData.data.proyectoSge = model;
+        return formlyData;
+      })
+    );
+  }
 
   private fillProyectoData(
-    load$: Observable<FormlyFieldConfig[]>, action: ACTION_MODAL_MODE, proyectoSgiId: number, proyectoSgeId: any): Observable<IFormlyData> {
+    load$: Observable<FormlyFieldConfig[]>,
+    action: ACTION_MODAL_MODE,
+    proyectoSgiId: number,
+    proyectoSgeId: string
+  ): Observable<IFormlyData> {
     return load$.pipe(
       map(fields => {
         return {
@@ -138,55 +189,145 @@ export class ProyectoEconomicoFormlyModalComponent
           model: {}
         } as IFormlyData;
       }),
+      tap(formlyData => this.fillFormlyFieldKeys(formlyData)),
       switchMap((formlyData) => {
         return this.proyectoService.findById(proyectoSgiId).pipe(
           map((proyecto) => {
             formlyData.data.proyecto = proyecto;
-            formlyData.data.fechaInicio = proyecto.fechaInicio;
-            formlyData.data.fechaFin = proyecto.fechaFin;
-            formlyData.data.porIva = proyecto.iva?.iva;
-            formlyData.data.importeTotalGastos = proyecto.importePresupuesto;
-            formlyData.data.causaExencion = proyecto.causaExencion;
-            formlyData.data.tipoFinalidad = proyecto.finalidad;
+
+            if (this.formlyContainsField(FormlyFields.CAUSA_EXENCION)) {
+              formlyData.data.causaExencion = proyecto.causaExencion;
+
+              if (formlyData.data.causaExencion) {
+                formlyData.data.causaExencionDesc = this.translate.instant(
+                  CAUSA_EXENCION_MAP.get(formlyData.data.causaExencion)
+                );
+              }
+            }
+
+            if (this.formlyContainsField(FormlyFields.CODIGO_INTERNO)) {
+              formlyData.data.codigoInterno = proyecto.codigoInterno;
+            }
+
+            if (this.formlyContainsField(FormlyFields.FINALIDAD)) {
+              formlyData.data.tipoFinalidad = proyecto.finalidad;
+            }
+
+            if (this.formlyContainsField(FormlyFields.IVA_DEDUCIBLE)) {
+              formlyData.data.ivaDeducible = proyecto.ivaDeducible;
+            }
+
+            if (this.formlyContainsField(FormlyFields.IMPORTE_TOTAL_GASTOS)) {
+              formlyData.data.importeTotalGastos = proyecto.importePresupuesto;
+            }
+
+            if (this.formlyContainsField(FormlyFields.POR_IVA)) {
+              formlyData.data.porIva = proyecto.iva?.iva;
+            }
+
             if (action === ACTION_MODAL_MODE.EDIT) {
               formlyData.data.sgeId = proyectoSgeId;
             }
 
-            if (formlyData.data.causaExencion) {
-              formlyData.data.causaExencionDesc = this.translate.instant(
-                CAUSA_EXENCION_MAP.get(formlyData.data.causaExencion)
-              );
-            }
             return formlyData;
           })
         );
       }),
-      switchMap((formlyData) => {
-        return this.fillNumeroDocumentoResponsableEcnomicoOrMiembroEquipo(proyectoSgiId, formlyData);
-      }),
-      switchMap((formlyData) => {
-        const proyectoEconomico = formlyData.data.proyecto;
+      switchMap((formlyData) => this.fillResponsableRef(formlyData, proyectoSgiId)),
+      switchMap((formlyData) => this.fillNumeroDocumentoResponsable(formlyData, proyectoSgiId)),
+      switchMap((formlyData) => this.fillImporteTotalGastos(formlyData)),
+      switchMap((formlyData) => this.fillImporteTotalIngresos(formlyData))
+    );
+  }
 
-        if (!formlyData.data.importeTotalGastos && proyectoEconomico.solicitudId) {
-          return this.fillImportePresupuestoBySolicitudProyecto(proyectoEconomico, formlyData);
-        } else {
-          return of(formlyData);
-        }
-      }),
-      switchMap((formlyData) => {
-        const proyectoEconomico = formlyData.data.proyecto;
+  /**
+   * Rellena el campo responsableRef si esta presente en el formly
+   */
+  private fillResponsableRef(formlyData: IFormlyData, proyectoSgiId: number): Observable<IFormlyData> {
+    if (this.formlyContainsField(FormlyFields.RESPONSABLE_REF)) {
+      return this.proyectoService.findAllProyectoResponsablesEconomicos(proyectoSgiId).pipe(
+        map(response => response.items.map(responsable => {
+          return {
+            fechaInicio: responsable.fechaInicio,
+            fechaFin: responsable.fechaFin,
+            persona: responsable.persona
+          } as IResponsable;
+        })),
+        map((responsablesEconomicos: IResponsable[]) => {
+          return this.getCurrentResponsable(responsablesEconomicos);
+        }),
+        switchMap((result: IResponsable) => {
+          if (!result?.persona) {
+            return this.getCurrentMiembroEquipoWithRolOrdenPrimario(proyectoSgiId);
+          }
+          return of(result);
+        }),
+        switchMap((result) => {
+          if (result) {
+            return this.personaService.findById(result.persona.id).pipe(
+              map(persona => {
+                formlyData.data.responsable = {
+                  id: persona.id,
+                  nombreCompleto: (persona?.nombre ?? '') + ' ' + (persona?.apellidos ?? '')
+                };
 
-        if (!formlyData.data.importeTotalGastos && proyectoEconomico.solicitudId) {
-          return this.fillImportePresupuestoBySolicitudProyectoGastos(proyectoEconomico, formlyData);
-        } else {
+                return formlyData;
+              })
+            )
+
+          }
           return of(formlyData);
-        }
-      }),
+        })
+      );
+    }
+
+    return of(formlyData);
+  }
+
+  /**
+   * Rellena el campo numeroDocumentoResponsable si esta presente en el formly
+   */
+  private fillNumeroDocumentoResponsable(formlyData: IFormlyData, proyectoSgiId: number): Observable<IFormlyData> {
+    if (this.formlyContainsField(FormlyFields.NUMERO_DOCUMENTO_RESPONSABLE)) {
+      return this.fillNumeroDocumentoResponsableEcnomicoOrMiembroEquipo(proyectoSgiId, formlyData);
+    }
+
+    return of(formlyData);
+  }
+
+  /**
+   * Rellena el campo importeTotalGastos si esta presente en el formly y no esta ya relleno
+   */
+  private fillImporteTotalGastos(formlyData: IFormlyData): Observable<IFormlyData> {
+    const solicitudId = formlyData.data.proyecto.solicitudId;
+
+    let formlyData$: Observable<IFormlyData>
+    if (this.formlyContainsField(FormlyFields.IMPORTE_TOTAL_GASTOS) && !formlyData.data.importeTotalGastos && solicitudId) {
+      formlyData$ = this.fillImportePresupuestoBySolicitudProyecto(solicitudId, formlyData);
+    } else {
+      formlyData$ = of(formlyData);
+    }
+
+    return formlyData$.pipe(
       switchMap((formlyData) => {
-        formlyData.data.importeTotalIngresos = formlyData.data.importeTotalGastos;
+        if (this.formlyContainsField(FormlyFields.IMPORTE_TOTAL_GASTOS) && !formlyData.data.importeTotalGastos && solicitudId) {
+          return this.fillImportePresupuestoBySolicitudProyectoGastos(solicitudId, formlyData);
+        }
+
         return of(formlyData);
       })
     );
+  }
+
+  /**
+   * Rellena el campo importeTotalIngresos si esta presente en el formly
+   */
+  private fillImporteTotalIngresos(formlyData: IFormlyData): Observable<IFormlyData> {
+    if (this.formlyContainsField(FormlyFields.IMPORTE_TOTAL_GASTOS)) {
+      formlyData.data.importeTotalIngresos = formlyData.data.importeTotalGastos;
+    }
+
+    return of(formlyData);
   }
 
   private fillGrupoData(
@@ -203,21 +344,12 @@ export class ProyectoEconomicoFormlyModalComponent
             proyecto: {
               id: grupo?.id,
               titulo: grupo?.nombre,
-              finalidad: {
-                id: 17,
-                nombre: 'Grupo de investigación o proyecto de fondos propios'
-              },
+              finalidad: {},
               fechaInicio: grupo?.fechaInicio,
               fechaFin: grupo?.fechaFin,
-              modeloEjecucion: {
-                id: 3,
-                nombre: 'Recursos propios'
-              }
+              modeloEjecucion: {}
             },
-            tipoFinalidad: {
-              id: 17,
-              nombre: 'Grupo de investigación o proyecto de fondos propios'
-            }
+            tipoFinalidad: {}
           },
           model: {}
         } as IFormlyData;
@@ -228,14 +360,17 @@ export class ProyectoEconomicoFormlyModalComponent
     );
   }
 
-  private fillImportePresupuestoBySolicitudProyecto(proyectoEconomico: any, formlyData: IFormlyData): Observable<IFormlyData> {
-    return this.solicitudService.findById(proyectoEconomico.solicitudId).pipe(
+  /**
+   * Rellena el campo importeTotalGastos del formly
+   */
+  private fillImportePresupuestoBySolicitudProyecto(solicitudId: number, formlyData: IFormlyData): Observable<IFormlyData> {
+    return this.solicitudService.findById(solicitudId).pipe(
       switchMap(solicitud => {
         if (!!!solicitud || solicitud.formularioSolicitud !== FormularioSolicitud.PROYECTO) {
           return of(formlyData);
         }
 
-        return this.solicitudProyectoService.findById(proyectoEconomico.solicitudId).pipe(
+        return this.solicitudProyectoService.findById(solicitudId).pipe(
           switchMap((solicitudProyecto) => {
             if (solicitudProyecto.importePresupuestado) {
               formlyData.data.importeTotalGastos = solicitudProyecto.importePresupuestado;
@@ -247,8 +382,11 @@ export class ProyectoEconomicoFormlyModalComponent
     );
   }
 
-  private fillImportePresupuestoBySolicitudProyectoGastos(proyectoEconomico: any, formlyData: IFormlyData): Observable<IFormlyData> {
-    return this.solicitudService.findAllSolicitudProyectoPresupuesto(proyectoEconomico.solicitudId).pipe(
+  /**
+   * Rellena el campo importeTotalGastos del formly
+   */
+  private fillImportePresupuestoBySolicitudProyectoGastos(solicitudId: number, formlyData: IFormlyData): Observable<IFormlyData> {
+    return this.solicitudService.findAllSolicitudProyectoPresupuesto(solicitudId).pipe(
       map(response => {
         return response.items.reduce(
           (total, solicitudProyectoConceptoGasto) => total + solicitudProyectoConceptoGasto.importePresupuestado, 0);
@@ -260,6 +398,9 @@ export class ProyectoEconomicoFormlyModalComponent
     );
   }
 
+  /**
+   * Rellena el campo numeroDocumentoResponsable del formly
+   */
   private fillNumeroDocumentoResponsableEcnomicoOrMiembroEquipo(id: number, formlyData: IFormlyData): Observable<IFormlyData> {
     return this.proyectoService.findAllProyectoResponsablesEconomicos(id).pipe(
       map(response => response.items.map(responsable => {
@@ -287,6 +428,9 @@ export class ProyectoEconomicoFormlyModalComponent
     );
   }
 
+  /**
+   * Rellena el campo numeroDocumentoResponsable del formly
+   */
   private fillNumeroDocumentoResponsableEconomicoOrMiembroEquipo(grupo: IGrupo, formlyData: IFormlyData): Observable<IFormlyData> {
     return this.grupoService.findResponsablesEconomicos(grupo?.id).pipe(
       map(response => response.items.map(responsable => {
@@ -339,16 +483,24 @@ export class ProyectoEconomicoFormlyModalComponent
   private parseModel() {
     FormlyUtils.convertFormlyToJSON(this.formlyData.model, this.formlyData.fields);
     this.formlyData.model.causaExencion = this.formlyData.data.causaExencion;
-    this.formlyData.model.modeloEjecucion = {
-      id: this.formlyData.model.modeloEjecucion?.id,
-      nombre: this.formlyData.model.modeloEjecucion?.nombre,
-    };
-    this.formlyData.model.tipoFinalidad = {
-      id: this.formlyData.model.tipoFinalidad?.id,
-      nombre: this.formlyData.model.tipoFinalidad?.nombre,
-    };
-  }
+    if (this.formlyData.model.modeloEjecucion?.id) {
+      this.formlyData.model.modeloEjecucion = {
+        id: this.formlyData.model.modeloEjecucion?.id,
+        nombre: this.formlyData.model.modeloEjecucion?.nombre,
+      };
+    } else {
+      this.formlyData.model.modeloEjecucion = null;
+    }
 
+    if (this.formlyData.model.tipoFinalidad?.id) {
+      this.formlyData.model.tipoFinalidad = {
+        id: this.formlyData.model.tipoFinalidad?.id,
+        nombre: this.formlyData.model.tipoFinalidad?.nombre,
+      };
+    } else {
+      this.formlyData.model.tipoFinalidad = null;
+    }
+  }
   private getCurrentMiembroEquipoWithRolOrdenPrimario(id: number): Observable<IResponsable> {
     const options: SgiRestFindOptions = {
       filter: new RSQLSgiRestFilter('rolProyecto.rolPrincipal', SgiRestFilterOperator.EQUALS, 'true')
@@ -387,16 +539,56 @@ export class ProyectoEconomicoFormlyModalComponent
     );
   }
 
-  private createProyectoSge(formlyData: IFormlyData): Observable<IProyectoSge> {
+  private createProyectoSge(formlyData: IFormlyData): Observable<IProyectoEconomicoFormlyResponse> {
     return this.proyectoSgeService.createProyecto(formlyData.model).pipe(
-      switchMap(response => this.proyectoSgeService.findById(response))
+      switchMap(response => {
+        if (!response) {
+          return of({ createdOrUpdated: true } as IProyectoEconomicoFormlyResponse);
+        }
+        return this.proyectoSgeService.findById(response).pipe(
+          map(proyectoSge => {
+            return {
+              createdOrUpdated: true,
+              proyectoSge
+            }
+          })
+        );
+      })
     );
   }
 
-  private updateProyectoSge(proyectoSge: IProyectoSge, formlyData: IFormlyData): Observable<IProyectoSge> {
+  private updateProyectoSge(proyectoSge: IProyectoSge, formlyData: IFormlyData): Observable<IProyectoEconomicoFormlyResponse> {
     return this.proyectoSgeService.updateProyecto(proyectoSge.id, formlyData.model).pipe(
-      map(() => proyectoSge)
+      map(() => {
+        return {
+          createdOrUpdated: true,
+          proyectoSge
+        }
+      })
     );
+  }
+
+  private getFormlyFieldKeys(field: any, formlyFieldKeys: string[]): string[] {
+    if (field.hasOwnProperty('fieldGroup') && Array.isArray(field.fieldGroup)) {
+      field.fieldGroup.forEach((fieldGroupItem: any) => {
+        if (fieldGroupItem.hasOwnProperty('fieldGroup') && Array.isArray(fieldGroupItem.fieldGroup)) {
+          this.getFormlyFieldKeys(fieldGroupItem, formlyFieldKeys);
+        } else if (fieldGroupItem.hasOwnProperty('key')) {
+          formlyFieldKeys.push(fieldGroupItem.key);
+        }
+      });
+    }
+    return formlyFieldKeys;
+  }
+
+  private fillFormlyFieldKeys(formlyData: IFormlyData): void {
+    let formlyFields: string[] = [];
+    formlyData.fields.forEach(field => this.getFormlyFieldKeys(field, formlyFields));
+    this.formlyFieldKeys = formlyFields;
+  }
+
+  private formlyContainsField(formlyField: FormlyFields): boolean {
+    return this.formlyFieldKeys.some(field => field === formlyField);
   }
 
 }

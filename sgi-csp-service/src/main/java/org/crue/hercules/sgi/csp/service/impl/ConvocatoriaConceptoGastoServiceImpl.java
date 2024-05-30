@@ -165,6 +165,7 @@ public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConcept
       convocatoriaConceptoGasto.setConceptoGasto(convocatoriaConceptoGastoActualizar.getConceptoGasto());
       convocatoriaConceptoGasto.setConvocatoriaId(convocatoriaConceptoGastoActualizar.getConvocatoriaId());
       convocatoriaConceptoGasto.setImporteMaximo(convocatoriaConceptoGastoActualizar.getImporteMaximo());
+      convocatoriaConceptoGasto.setPorcentajeMaximo(convocatoriaConceptoGastoActualizar.getPorcentajeMaximo());
       convocatoriaConceptoGasto.setMesInicial(convocatoriaConceptoGastoActualizar.getMesInicial());
       convocatoriaConceptoGasto.setMesFinal(convocatoriaConceptoGastoActualizar.getMesFinal());
       convocatoriaConceptoGasto.setObservaciones(convocatoriaConceptoGastoActualizar.getObservaciones());

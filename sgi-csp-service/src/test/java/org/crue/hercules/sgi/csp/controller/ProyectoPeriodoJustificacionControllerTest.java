@@ -31,7 +31,7 @@ class ProyectoPeriodoJustificacionControllerTest extends BaseControllerTest {
   private static final String CONTROLLER_BASE_PATH = ProyectoPeriodoJustificacionController.REQUEST_MAPPING;
   private static final String PATH_PARAMETER_ID = ProyectoPeriodoJustificacionController.PATH_PARAMETER_ID;
   private static final String PATH_IDENTIFICADOR_JUSTIFICACION = ProyectoPeriodoJustificacionController.PATH_IDENTIFICADOR_JUSTIFICACION;
-  private static final String PATH_DELETEABLE = ProyectoPeriodoJustificacionController.PATH_DELETEABLE;
+  private static final String PATH_DELETEABLE = ProyectoPeriodoJustificacionController.PATH_HAS_REQUERIMIENTOS_JUSTIFICACION;
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SJUS-E" })
@@ -103,7 +103,7 @@ class ProyectoPeriodoJustificacionControllerTest extends BaseControllerTest {
     Long id = 1L;
 
     // when: ProyectoPeriodoJustificacion is not deleteable
-    BDDMockito.given(service.checkDeleteable(ArgumentMatchers.anyLong()))
+    BDDMockito.given(service.hasRequerimientosJustificacion(ArgumentMatchers.anyLong()))
         .willReturn(Boolean.FALSE);
 
     mockMvc
@@ -123,7 +123,7 @@ class ProyectoPeriodoJustificacionControllerTest extends BaseControllerTest {
     Long id = 1L;
 
     // when: ProyectoPeriodoJustificacion is deleteable
-    BDDMockito.given(service.checkDeleteable(ArgumentMatchers.anyLong()))
+    BDDMockito.given(service.hasRequerimientosJustificacion(ArgumentMatchers.anyLong()))
         .willReturn(Boolean.TRUE);
 
     mockMvc

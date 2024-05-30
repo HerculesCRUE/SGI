@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.util.List;
 
+import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioEquipo;
 import org.springframework.data.domain.Page;
@@ -40,5 +41,23 @@ public interface ProyectoSocioEquipoService {
    * @return lista paginada.
    */
   Page<ProyectoSocioEquipo> findAllByProyectoSocio(Long idProyectoSocio, String query, Pageable paging);
+
+  /**
+   * Recupera la lista de miembros del equipo del socio de una
+   * {@link ProyectoSocio}.
+   * 
+   * @param proyectoSocioId Identificador de la {@link ProyectoSocio}.
+   * @return lista de {@link ProyectoSocioEquipo}.
+   */
+  List<ProyectoSocioEquipo> findAllByProyectoSocio(Long proyectoSocioId);
+
+  /**
+   * Comprueba si alguno de los {@link ProyectoSocioEquipo} del {@link Proyecto}
+   * tienen fechas
+   * 
+   * @param proyectoId el id del {@link Proyecto}.
+   * @return true si existen y false en caso contrario.
+   */
+  boolean proyectoHasProyectoSocioEquipoWithDates(Long proyectoId);
 
 }

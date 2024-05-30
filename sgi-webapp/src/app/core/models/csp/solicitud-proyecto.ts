@@ -1,5 +1,6 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IAreaTematica } from './area-tematica';
+import { IRolSocio } from './rol-socio';
 
 export interface ISolicitudProyecto {
   id: number;
@@ -8,7 +9,7 @@ export interface ISolicitudProyecto {
   duracion: number;
   colaborativo: boolean;
   coordinado: boolean;
-  coordinadorExterno: boolean;
+  rolUniversidad: IRolSocio;
   objetivos: string;
   intereses: string;
   resultadosPrevistos: string;

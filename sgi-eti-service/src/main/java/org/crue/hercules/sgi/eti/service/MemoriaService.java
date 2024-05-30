@@ -9,6 +9,7 @@ import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.EstadoMemoria;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
+import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria.Tipo;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
@@ -110,13 +111,6 @@ public interface MemoriaService {
   Memoria findById(Long id) throws MemoriaNotFoundException;
 
   /**
-   * Elimina el {@link Memoria} por id.
-   *
-   * @param id el id de la entidad {@link Memoria}.
-   */
-  void delete(Long id) throws MemoriaNotFoundException;
-
-  /**
    * Devuelve las memorias de una petición evaluación con su fecha límite y de
    * evaluación.
    * 
@@ -126,14 +120,32 @@ public interface MemoriaService {
   List<MemoriaPeticionEvaluacion> findMemoriaByPeticionEvaluacionMaxVersion(Long idPeticionEvaluacion);
 
   /**
+   * Se crea el nuevo estado para la memoria recibida y se actualiza el estado
+   * actual de esta.
    * 
-   * Actualiza el estado de la {@link Memoria}.**
-   * 
-   * @param memoria a actualizar.*
-   * @param id      del estado de la memoria nuevo.
+   * @param memoriaId           Identificador de la {@link Memoria}.
+   * @param tipoEstadoMemoriaId Identificador del estado nuevo de la memoria.
    */
+  void updateEstadoMemoria(Long memoriaId, Long tipoEstadoMemoriaId);
 
-  void updateEstadoMemoria(Memoria memoria, long id);
+  /**
+   * Actualiza el estado de la {@link Memoria}.
+   * 
+   * @param memoria             a actualizar.
+   * @param tipoEstadoMemoriaId del estado de la memoria nuevo.
+   */
+  void updateEstadoMemoria(Memoria memoria, long tipoEstadoMemoriaId);
+
+  /**
+   * Se crea el nuevo estado para la memoria recibida y se actualiza el estado
+   * actual de esta.
+   * 
+   * @param id                    Identificador de la {@link Memoria}
+   * @param requiereRetrospectiva flag para identificar si la {@link Memoria}
+   *                              requiere retrospectiva
+   * @param retrospectiva         la {@link Retrospectiva}
+   */
+  void updateDatosRetrospectiva(Long id, boolean requiereRetrospectiva, Retrospectiva retrospectiva);
 
   /**
    * Obtener todas las entidades {@link MemoriaPeticionEvaluacion} paginadas y/o
@@ -320,5 +332,14 @@ public interface MemoriaService {
    * @return lista de memorias asignables a la petición de evaluación.
    */
   List<Memoria> findAllMemoriasAsignablesPeticionEvaluacion(Long idPeticionEvaluacion);
+
+  /**
+   * Procesa la notificacion de revision minima y actualiza el estado de la
+   * {@link Memoria} a EN_EVALUACION_REVISION_MINIMA, crea la evaluacion de
+   * revision minima y envia un comunicado para notificar el cambio
+   * 
+   * @param memoriaId Identificador de la memoria
+   */
+  void notificarRevisionMinima(Long memoriaId);
 
 }

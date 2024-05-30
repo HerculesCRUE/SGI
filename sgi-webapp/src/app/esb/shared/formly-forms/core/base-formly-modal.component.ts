@@ -18,7 +18,8 @@ const MSG_GENERIC_FORMLY_ERROR_CONTENT = marker('error.formly.generic.message');
 export enum ACTION_MODAL_MODE {
   VIEW = 'view',
   NEW = 'new',
-  EDIT = 'edit'
+  EDIT = 'edit',
+  SELECT_AND_NOTIFY = 'selectAndNotify'
 }
 export interface IFormlyData {
   fields: FormlyFieldConfig[];

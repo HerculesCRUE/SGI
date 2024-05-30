@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.groups.Default;
 
@@ -96,25 +98,23 @@ public class ModeloEjecucionController {
   /**
    * Devuelve una lista paginada y filtrada {@link ModeloEjecucion} activos.
    * 
-   * @param query  filtro de búsqueda.
-   * @param paging pageable.
+   * @param query filtro de búsqueda.
    * @return el listado de entidades {@link ModeloEjecucion}
    *         paginadas y filtradas.
    */
   @GetMapping()
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-MOD-V', 'CSP-PRO-E', 'CSP-PRO-V')")
-  public ResponseEntity<Page<ModeloEjecucion>> findAll(@RequestParam(name = "q", required = false) String query,
-      @RequestPageable(sort = "s") Pageable paging) {
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-MOD-V', 'CSP-PRO-E', 'CSP-PRO-V', 'CSP-CNV-V', 'CSP-CNV-E', 'CSP-PRO-INV-VR', 'CSP-PRO-INV-ER')")
+  public ResponseEntity<List<ModeloEjecucion>> findAll(@RequestParam(name = "q", required = false) String query) {
     log.debug("findAll(String query, Pageable paging) - start");
-    Page<ModeloEjecucion> page = modeloEjecucionService.findAll(query, paging);
+    List<ModeloEjecucion> returnValue = modeloEjecucionService.findAll(query);
 
-    if (page.isEmpty()) {
+    if (returnValue.isEmpty()) {
       log.debug("findAll(String query, Pageable paging) - end");
       return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     log.debug("findAll(String query, Pageable paging) - end");
-    return new ResponseEntity<>(page, HttpStatus.OK);
+    return new ResponseEntity<>(returnValue, HttpStatus.OK);
   }
 
   /**
@@ -126,7 +126,7 @@ public class ModeloEjecucionController {
    *         paginadas y filtradas.
    */
   @GetMapping("/todos")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-ME-V', 'CSP-ME-C', 'CSP-ME-E', 'CSP-ME-B', 'CSP-ME-R')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-ME-V', 'CSP-ME-C', 'CSP-ME-E', 'CSP-ME-B', 'CSP-ME-R','CSP-PRO-V', 'CSP-PRO-E', 'CSP-CNV-V', 'CSP-CNV-E')")
   public ResponseEntity<Page<ModeloEjecucion>> findAllTodos(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodos(String query, Pageable paging) - start");

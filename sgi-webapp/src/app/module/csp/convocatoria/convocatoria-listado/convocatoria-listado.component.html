@@ -92,9 +92,7 @@
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field class="input-form">
             <mat-label>{{'csp.convocatoria.modelo-ejecucion' | translate}}</mat-label>
-            <sgi-select-modelo-ejecucion #modeloEjecucion formControlName="modeloEjecucion"
-              [unidadGestionRef]="formGroup.controls.unidadGestion.value?.id"
-              [resetOnChange]="unidadGestion.selectionChange" extended="false">
+            <sgi-select-modelo-ejecucion formControlName="modeloEjecucion" extended="false">
             </sgi-select-modelo-ejecucion>
           </mat-form-field>
         </div>
@@ -104,9 +102,7 @@
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field class="input-form">
             <mat-label>{{'csp.convocatoria.finalidad' | translate}}</mat-label>
-            <sgi-select-tipo-finalidad formControlName="finalidad"
-              [modeloEjecucionId]="formGroup.controls.modeloEjecucion.value?.id"
-              [resetOnChange]="modeloEjecucion.selectionChange" extended="false">
+            <sgi-select-tipo-finalidad formControlName="finalidad" extended="false">
             </sgi-select-tipo-finalidad>
           </mat-form-field>
         </div>
@@ -220,7 +216,7 @@
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field class="input-form">
             <mat-label>{{'list.entity' | translate:msgParamAreaTematicaEntity}}</mat-label>
-            <sgi-select-area-tematica formControlName="areaTematica"></sgi-select-area-tematica>
+            <sgi-select-area-tematica formControlName="areaTematica" todos="true"></sgi-select-area-tematica>
           </mat-form-field>
         </div>
 

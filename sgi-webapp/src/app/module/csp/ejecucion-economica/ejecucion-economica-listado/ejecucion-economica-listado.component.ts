@@ -2,10 +2,14 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { sortGrupoEquipoByPersonaNombre, sortGrupoEquipoByRolProyectoOrden } from '@core/models/csp/grupo-equipo';
+import { sortProyectoEquipoByPersonaNombre, sortProyectoEquipoByRolProyectoOrden } from '@core/models/csp/proyecto-equipo';
 import { IRelacionEjecucionEconomica, TIPO_ENTIDAD_MAP, TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
 import { IRolProyecto } from '@core/models/csp/rol-proyecto';
+import { IPersona } from '@core/models/sgp/persona';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ConfigService } from '@core/services/cnf/config.service';
+import { ConfigService as ConfigCspService } from '@core/services/csp/config.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { RelacionEjecucionEconomicaService } from '@core/services/csp/relacion-ejecucion-economica/relacion-ejecucion-economica.service';
@@ -64,7 +68,8 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
     private relacionEjecucionEconomicaService: RelacionEjecucionEconomicaService,
     private grupoService: GrupoService,
     private readonly matDialog: MatDialog,
-    private readonly cnfService: ConfigService
+    private readonly cnfService: ConfigService,
+    private readonly configCspService: ConfigCspService
   ) {
     super();
   }
@@ -82,16 +87,13 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IRelacionEjecucionEconomicaWithResponsables>> {
     let relaciones$: Observable<SgiRestListResult<IRelacionEjecucionEconomica>>;
-    let serviceGetResponsables: GrupoService | ProyectoService;
 
     switch (this.tipoEntidadSelected) {
       case TipoEntidad.GRUPO:
         relaciones$ = this.relacionEjecucionEconomicaService.findRelacionesGrupos(this.getFindOptions(reset));
-        serviceGetResponsables = this.grupoService;
         break;
       case TipoEntidad.PROYECTO:
         relaciones$ = this.relacionEjecucionEconomicaService.findRelacionesProyectos(this.getFindOptions(reset));
-        serviceGetResponsables = this.proyectoService;
         break;
       default:
         throw Error(`Invalid tipoEntidad "${this.tipoEntidadSelected}"`);
@@ -104,20 +106,66 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
       switchMap(response =>
         from(response.items).pipe(
           mergeMap(relacion => {
-            this.idsProyectoSge.push(relacion.proyectoSge?.id);
-            return serviceGetResponsables.findPersonaRefInvestigadoresPrincipales(relacion.id).pipe(
-              filter(personaRefs => !!personaRefs),
-              switchMap(personaRefs => this.personaService.findAllByIdIn(personaRefs).pipe(
-                catchError((error) => {
-                  this.logger.error(error);
-                  this.processError(error);
-                  return EMPTY;
-                })
-              )),
+            let responsables$: Observable<IPersona[]>;
+
+            switch (relacion.tipoEntidad) {
+              case TipoEntidad.GRUPO:
+                responsables$ = this.grupoService.findInvestigadoresPrincipales(relacion.id).pipe(
+                  filter(responsables => !!responsables),
+                  switchMap(responsables => this.personaService.findAllByIdIn(responsables.map(responsable => responsable.persona.id)).pipe(
+                    map(personas => {
+                      responsables.forEach(responsable => {
+                        responsable.persona = personas.items.find(persona => persona.id === responsable.persona.id);
+                      })
+
+                      responsables.sort((a, b) => {
+                        return sortGrupoEquipoByRolProyectoOrden(a, b)
+                          || sortGrupoEquipoByPersonaNombre(a, b);
+                      });
+
+                      return responsables.map(responsable => responsable.persona)
+                    }),
+                    catchError((error) => {
+                      this.logger.error(error);
+                      return EMPTY;
+                    })
+                  ))
+                );
+
+                break;
+              case TipoEntidad.PROYECTO:
+                responsables$ = this.proyectoService.findInvestigadoresPrincipales(relacion.id).pipe(
+                  filter(responsables => !!responsables),
+                  switchMap(responsables => this.personaService.findAllByIdIn(responsables.map(responsable => responsable.persona.id)).pipe(
+                    map(personas => {
+                      responsables.forEach(responsable => {
+                        responsable.persona = personas.items.find(persona => persona.id === responsable.persona.id);
+                      })
+
+                      responsables.sort((a, b) => {
+                        return sortProyectoEquipoByRolProyectoOrden(a, b)
+                          || sortProyectoEquipoByPersonaNombre(a, b);
+                      });
+
+                      return responsables.map(responsable => responsable.persona)
+                    }),
+                    catchError((error) => {
+                      this.logger.error(error);
+                      return EMPTY;
+                    })
+                  ))
+                );
+
+                break;
+              default:
+                throw Error(`Invalid tipoEntidad "${relacion.tipoEntidad}"`);
+            }
+
+            return responsables$.pipe(
               map(responsables => {
-                relacion.responsables = responsables.items;
+                relacion.responsables = responsables;
                 return relacion;
-              }),
+              })
             );
           }),
           toArray(),
@@ -226,6 +274,16 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
     });
 
     this.initFormGroup();
+
+    this.suscripciones.push(
+      this.configCspService.isEjecucionEconomicaGruposEnabled().subscribe(enabled => {
+        if (enabled) {
+          this.formGroup.controls.tipoEntidad.enable();
+        } else {
+          this.formGroup.controls.tipoEntidad.disable();
+        }
+      })
+    );
   }
 
   private initFormGroup(reset = false): void {

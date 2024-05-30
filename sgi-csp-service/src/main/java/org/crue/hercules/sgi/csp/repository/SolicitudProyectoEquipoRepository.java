@@ -49,4 +49,6 @@ public interface SolicitudProyectoEquipoRepository
    */
   boolean existsBySolicitudProyectoIdAndPersonaRef(Long solicitudProyectoId, String personaRef);
 
+  boolean existsBySolicitudProyectoId(Long solicitudProyectoId);
+
 }

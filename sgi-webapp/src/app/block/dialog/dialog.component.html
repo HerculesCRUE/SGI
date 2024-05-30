@@ -1,15 +1,17 @@
-<mat-dialog-content align="center">
+<mat-dialog-content>
   {{message | translate:params}}
 </mat-dialog-content>
-<mat-dialog-actions align="center">
+<mat-dialog-actions>
   <button [color]="continuarButtonStyle" mat-raised-button (click)="confirmacionClick()" mat-dialog-close
     tabindex="-1">{{continuarButtonText | translate}}</button>
 
-  <button *ngIf="cancelButtonStyle !== DIALOG_BUTTON_STYLE.BTN_STYLE_LINK" [color]="cancelButtonStyle" mat-raised-button
-    mat-dialog-close tabindex="-1">{{cancelButtonText | translate}}</button>
+  <ng-container *ngIf="!!cancelButtonText">
+    <button *ngIf="cancelButtonStyle !== DIALOG_BUTTON_STYLE.BTN_STYLE_LINK" [color]="cancelButtonStyle"
+      mat-raised-button mat-dialog-close tabindex="-1">{{cancelButtonText | translate}}</button>
 
-  <button *ngIf="cancelButtonStyle === DIALOG_BUTTON_STYLE.BTN_STYLE_LINK" class="link-cancelar" mat-button
-    mat-dialog-close tabindex="-1">
-    <span class="underline">{{cancelButtonText| translate}}</span>
-  </button>
+    <button *ngIf="cancelButtonStyle === DIALOG_BUTTON_STYLE.BTN_STYLE_LINK" class="link-cancelar" mat-button
+      mat-dialog-close tabindex="-1">
+      <span class="underline">{{cancelButtonText| translate}}</span>
+    </button>
+  </ng-container>
 </mat-dialog-actions>

@@ -40,7 +40,7 @@ class SolicitudPeriodoJustificacionRepositoryTest extends BaseRepositoryTest {
         .build());
     // @formatter:on
     SolicitudProyecto solicitudProyecto = entityManager.persistAndFlush(
-        SolicitudProyecto.builder().id(solicitud1.getId()).colaborativo(Boolean.TRUE).coordinadorExterno(Boolean.TRUE)
+        SolicitudProyecto.builder().id(solicitud1.getId()).colaborativo(Boolean.TRUE)
             .coordinado(Boolean.TRUE).colaborativo(Boolean.TRUE).tipoPresupuesto(TipoPresupuesto.GLOBAL).build());
 
     // @formatter:off

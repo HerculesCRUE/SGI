@@ -154,6 +154,29 @@ public class ProyectoConceptoGastoCodigoEcServiceImpl implements ProyectoConcept
   }
 
   /**
+   * Obtiene los {@link ProyectoConceptoGastoCodigoEc} para un
+   * {@link ProyectoConceptoGasto}
+   *
+   * @param proyectoConceptoGastoId el id del {@link ProyectoConceptoGasto}.
+   * @return la lista de entidades {@link ProyectoConceptoGastoCodigoEc} del
+   *         {@link ProyectoConceptoGasto}.
+   */
+  @Override
+  public List<ProyectoConceptoGastoCodigoEc> findAllByProyectoConceptoGasto(Long proyectoConceptoGastoId) {
+    log.debug("findAllByProyectoConceptoGasto(Long proyectoConceptoGastoId)) - start");
+    Specification<ProyectoConceptoGastoCodigoEc> specByProyectoConceptoGasto = ProyectoConceptoGastoCodigoEcSpecifications
+        .byProyectoConceptoGasto(proyectoConceptoGastoId);
+    Specification<ProyectoConceptoGastoCodigoEc> specByConceptoGastoActivo = ProyectoConceptoGastoCodigoEcSpecifications
+        .byConceptoGastoActivo();
+
+    Specification<ProyectoConceptoGastoCodigoEc> specs = Specification.where(specByProyectoConceptoGasto)
+        .and(specByConceptoGastoActivo);
+    List<ProyectoConceptoGastoCodigoEc> proyectoConceptoGastoCodigosEc = repository.findAll(specs);
+    log.debug("findAllByProyectoConceptoGasto(Long proyectoConceptoGastoId)) - end");
+    return proyectoConceptoGastoCodigosEc;
+  }
+
+  /**
    * Se valida la unicidad del código económico. Para un
    * {@link ProyectoConceptoGasto} el mismo código económico solo puede aparecer
    * una vez, salvo que lo haga en periodos de vigencia no solapados.
@@ -163,7 +186,8 @@ public class ProyectoConceptoGastoCodigoEcServiceImpl implements ProyectoConcept
    * 
    * @return true validación correcta/ false validacion incorrecta
    */
-  private boolean existsProyectoConceptoGastoCodigoEcConFechasSolapadas(
+  @Override
+  public boolean existsProyectoConceptoGastoCodigoEcConFechasSolapadas(
       ProyectoConceptoGastoCodigoEc proyectoConceptoGastoCodigoEc, Boolean conceptoGastoPermitido) {
 
     Specification<ProyectoConceptoGastoCodigoEc> specByProyectoConceptoGasto = ProyectoConceptoGastoCodigoEcSpecifications
@@ -200,7 +224,8 @@ public class ProyectoConceptoGastoCodigoEcServiceImpl implements ProyectoConcept
    * @param proyectoId                    Identifiacdor del {@link Proyecto}
    * @return true validación correcta/ false validacion incorrecta
    */
-  private boolean existsProyectoConceptoGastoCodigoEcAndConceptoGastoConFechasSolapadas(
+  @Override
+  public boolean existsProyectoConceptoGastoCodigoEcAndConceptoGastoConFechasSolapadas(
       ProyectoConceptoGastoCodigoEc proyectoConceptoGastoCodigoEc,
       Instant fechaInicioConceptoGasto, Instant fechaFinConceptoGasto, Long proyectoId) {
 

@@ -128,7 +128,7 @@ public class ProyectoProrrogaController {
    * @return {@link ProyectoProrroga} correspondiente al id.
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E', 'CSP-PRO-INV-VR', 'CSP-PRO-INV-ER')")
   public ProyectoProrroga findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     ProyectoProrroga returnValue = service.findById(id);

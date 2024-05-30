@@ -14,6 +14,7 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { CspSharedModule } from '../../shared/csp-shared.module';
 import { SolicitudActionService } from '../solicitud.action.service';
 import { SolicitudListadoComponent } from './solicitud-listado.component';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 
 describe('SolicitudListadoComponent', () => {
   let component: SolicitudListadoComponent;
@@ -36,7 +37,8 @@ describe('SolicitudListadoComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         SharedModule,
-        CspSharedModule
+        CspSharedModule,
+        SgpSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

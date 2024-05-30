@@ -37,7 +37,7 @@ import { ESTADO_MEMORIA_RESPONSE_CONVERTER } from './estado-memoria/estado-memor
 @Injectable({
   providedIn: 'root'
 })
-export class MemoriaService extends SgiMutableRestService<number, IMemoriaBackend, IMemoria>{
+export class MemoriaService extends SgiMutableRestService<number, IMemoriaBackend, IMemoria> {
   private static readonly MAPPING = '/memorias';
 
   constructor(private readonly logger: NGXLogger, protected http: HttpClient) {
@@ -487,11 +487,11 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
   }
 
   /**
- * Devuelve todas las memorias de una petición de evaluación asignables a la convocatoria
- *
- * @param idPeticionEvaluacion id petición de evaluación.
- * @return las memorias asignables a la convocatoria.
- */
+   * Devuelve todas las memorias de una petición de evaluación asignables a la convocatoria
+   *
+   * @param idPeticionEvaluacion id petición de evaluación.
+   * @return las memorias asignables a la convocatoria.
+   */
   findAllMemoriasAsignablesPeticionEvaluacion(idPeticionEvaluacion: number): Observable<SgiRestListResult<IMemoria>> {
     return this.find<IMemoriaBackend, IMemoria>(
       `${this.endpointUrl}/asignables-peticion-evaluacion/${idPeticionEvaluacion}`,
@@ -499,5 +499,15 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
       MEMORIA_CONVERTER
     );
   }
+
+  /**
+   * Notifica el paso de la memoria de en secretaria revision minima a en evalucion revision minima
+   * 
+   * @param id Id de la Memoria
+   */
+  notificarRevisionMinima(id: number): Observable<void> {
+    return this.http.patch<void>(`${this.endpointUrl}/${id}/notificar-revision-minima`, undefined);
+  }
+
 
 }

@@ -166,14 +166,14 @@ export class ProyectoResponsableEconomicoModalComponent
     if (this.requiredFechaInicio) {
       formGroup.controls.fechaInicio.setValidators([
         Validators.required,
-        DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax),
+        DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax, false),
         DateValidator.notOverlaps(intervals),
         DateValidator.notOverlapsDependentForStart(intervals, formGroup.controls.fechaFin)
       ]);
     }
     else {
       formGroup.controls.fechaInicio.setValidators([
-        DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax),
+        DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax, false),
         DateValidator.notOverlaps(intervals),
         DateValidator.notOverlapsDependentForStart(intervals, formGroup.controls.fechaFin)
       ]);
@@ -182,7 +182,7 @@ export class ProyectoResponsableEconomicoModalComponent
       formGroup.controls.fechaFin.setValidators([
         Validators.required,
         DateValidator.isAfterOther(formGroup.controls.fechaInicio),
-        DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax),
+        DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax, false),
         DateValidator.notOverlaps(intervals),
         DateValidator.notOverlapsDependentForEnd(intervals, formGroup.controls.fechaInicio)
       ]);
@@ -190,7 +190,7 @@ export class ProyectoResponsableEconomicoModalComponent
     else {
       formGroup.controls.fechaFin.setValidators([
         DateValidator.isAfterOther(formGroup.controls.fechaInicio),
-        DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax),
+        DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax, false),
         DateValidator.notOverlaps(intervals),
         DateValidator.notOverlapsDependentForEnd(intervals, formGroup.controls.fechaInicio)
       ]);

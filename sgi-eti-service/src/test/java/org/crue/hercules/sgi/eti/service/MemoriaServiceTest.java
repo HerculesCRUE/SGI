@@ -533,30 +533,10 @@ class MemoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void update_EstadoActualEnElaboracion_ReturnsMemoria() {
-    // given: Una nueva Memoria con el servicio actualizado
-    Memoria memoriaServicioActualizado = generarMockMemoria(1L, "numRef-99", "Memoria 1 actualizada", 1, 1L);
-
-    Memoria memoria = generarMockMemoria(1L, "numRef-5598", "Memoria1", 1, 1L);
-
-    BDDMockito.given(memoriaRepository.findById(1L)).willReturn(Optional.of(memoria));
-    BDDMockito.given(memoriaRepository.save(memoria)).willReturn(memoriaServicioActualizado);
-
-    // when: Actualizamos la Memoria
-    Memoria memoriaActualizado = memoriaService.update(memoria);
-
-    // then: La Memoria se actualiza correctamente.
-    Assertions.assertThat(memoriaActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(memoriaActualizado.getTitulo()).isEqualTo("Memoria 1 actualizada");
-    Assertions.assertThat(memoriaActualizado.getNumReferencia()).isEqualTo("numRef-99");
-
-  }
-
-  @Test
-  void update_EstadoActualCompletada_ReturnsMemoria() {
-    // given: Una nueva Memoria inactiva
+  void update_ResponsableMemoria_ReturnsMemoria() {
+    // given: Una Memoria
     Memoria memoriaServicioActualizado = generarMockMemoria(1L, "numRef-99", "Memoria 1 actualizada", 1, 2L);
-    memoriaServicioActualizado.setActivo(Boolean.FALSE);
+    memoriaServicioActualizado.setPersonaRef("personaRef");
 
     Memoria memoria = generarMockMemoria(1L, "numRef-5598", "Memoria1", 1, 3L);
 
@@ -568,9 +548,7 @@ class MemoriaServiceTest extends BaseServiceTest {
 
     // then: La Memoria se actualiza correctamente.
     Assertions.assertThat(memoriaActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(memoriaActualizado.getTitulo()).isEqualTo("Memoria 1 actualizada");
-    Assertions.assertThat(memoriaActualizado.getNumReferencia()).isEqualTo("numRef-99");
-
+    Assertions.assertThat(memoriaActualizado.getPersonaRef()).isEqualTo("personaRef");
   }
 
   @Test
@@ -594,63 +572,6 @@ class MemoriaServiceTest extends BaseServiceTest {
         () -> memoriaService.update(memoria))
         // then: Lanza una excepción, el id es necesario
         .isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  void update_EstadoActualInvalid_ThrowsIllegalArgumentException() {
-
-    // given: Una nueva Memoria con activo a false
-    Memoria memoriaInactiva = generarMockMemoria(1L, "numRef-99", "Memoria", 1, 1L);
-    memoriaInactiva.setActivo(Boolean.FALSE);
-
-    Memoria memoria = generarMockMemoria(1L, "numRef-5598", "Memoria1", 1, 1L);
-
-    memoria.getEstadoActual().setId(3L);
-
-    BDDMockito.given(memoriaRepository.findById(1L)).willReturn(Optional.of(memoria));
-
-    Assertions.assertThatThrownBy(
-        // when: create Convocatoria
-        () -> memoriaService.update(memoriaInactiva))
-        // then: throw exception as id can't be provided
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El estado actual de la memoria no es el correcto para desactivar la memoria");
-
-  }
-
-  @Test
-  void delete_WithoutId_ThrowsIllegalArgumentException() {
-    // given: Sin id
-    Assertions.assertThatThrownBy(
-        // when: Delete sin id
-        () -> memoriaService.delete(null))
-        // then: Lanza una excepción
-        .isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  void delete_NonExistingId_ThrowsMemoriaNotFoundException() {
-    // given: Id no existe
-    BDDMockito.given(memoriaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.FALSE);
-
-    Assertions.assertThatThrownBy(
-        // when: Delete un id no existente
-        () -> memoriaService.delete(1L))
-        // then: Lanza MemoriaNotFoundException
-        .isInstanceOf(MemoriaNotFoundException.class);
-  }
-
-  @Test
-  void delete_WithExistingId_DeletesMemoria() {
-    // given: Id existente
-    BDDMockito.given(memoriaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
-    BDDMockito.doNothing().when(memoriaRepository).deleteById(ArgumentMatchers.anyLong());
-
-    Assertions.assertThatCode(
-        // when: Delete con id existente
-        () -> memoriaService.delete(1L))
-        // then: No se lanza ninguna excepción
-        .doesNotThrowAnyException();
   }
 
   @Test
@@ -1218,7 +1139,7 @@ class MemoriaServiceTest extends BaseServiceTest {
 
     BDDMockito.given(memoriaRepository.findAll(ArgumentMatchers.<Specification<Memoria>>any())).willReturn(memorias);
     TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
-    tipoEstadoMemoria.setId(Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO);
+    tipoEstadoMemoria.setId(TipoEstadoMemoria.Tipo.ARCHIVADA.getId());
     EstadoMemoria estadoMemoria = new EstadoMemoria(null, memoria, tipoEstadoMemoria, Instant.now(), null);
 
     memoriaServicioActualizado.setEstadoActual(tipoEstadoMemoria);
@@ -1229,7 +1150,7 @@ class MemoriaServiceTest extends BaseServiceTest {
     memoriaService.archivarNoPresentados();
 
     Assertions.assertThat(memoriaServicioActualizado.getEstadoActual().getId())
-        .isEqualTo(Constantes.TIPO_ESTADO_MEMORIA_ARCHIVADO);
+        .isEqualTo(TipoEstadoMemoria.Tipo.ARCHIVADA.getId());
 
   }
 
@@ -1448,6 +1369,7 @@ class MemoriaServiceTest extends BaseServiceTest {
     convocatoriaReunion.setComite(comite);
     convocatoriaReunion.setFechaEvaluacion(Instant.now().plus(5, ChronoUnit.DAYS));
     convocatoriaReunion.setFechaLimite(Instant.now().plus(4, ChronoUnit.DAYS));
+    convocatoriaReunion.setVideoconferencia(false);
     convocatoriaReunion.setLugar("Lugar");
     convocatoriaReunion.setOrdenDia("Orden del día convocatoria reunión");
     convocatoriaReunion.setAnio(2020);

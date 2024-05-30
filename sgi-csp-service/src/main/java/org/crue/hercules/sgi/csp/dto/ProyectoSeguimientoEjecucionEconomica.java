@@ -21,6 +21,7 @@ public class ProyectoSeguimientoEjecucionEconomica {
   private String codigoExterno;
   private Instant fechaInicio;
   private Instant fechaFin;
+  private Instant fechaFinDefinitiva;
   private String tituloConvocatoria;
   private BigDecimal importeConcedido;
   private BigDecimal importeConcedidoCostesIndirectos;
