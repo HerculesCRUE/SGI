@@ -71,8 +71,8 @@ public class MemoriaPredicateResolver implements SgiRSQLPredicateResolver<Memori
 
     Expression<String> expression = subqRoot.get(Respuesta_.valor);
     expression = cb.function("remove_accents", String.class, expression);
-    expression = cb.function("remove_html_tags", String.class, expression);
     expression = cb.function("search_in_value_of_json", String.class, expression);
+    expression = cb.function("remove_html_tags", String.class, expression);
 
     String respuestaSinTildes = removeAccentsAndSpecialChars(respuesta);
     predicates.add(cb.like(

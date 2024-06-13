@@ -1,0 +1,67 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+  <changeSet context="!test" author="master" id="00.05.01-REMOVE_ACCENTS_FUNCTION">
+    <preConditions onFail="MARK_RAN">
+      <dbms type="oracle" />
+      <sqlCheck expectedResult="0"> SELECT COUNT(owner) FROM all_objects WHERE object_type =
+        'FUNCTION' AND object_name = 'REMOVE_ACCENTS' </sqlCheck>
+    </preConditions>
+    <sqlFile encoding="utf8"
+      dbms="oracle"
+      path="sql/remove-accents-function.sql"
+      relativeToChangelogFile="true"
+      splitStatements="false"
+      stripComments="false"
+    />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.05.01-STRIP_HTML_FUNCTION">
+    <preConditions onFail="MARK_RAN">
+      <dbms type="oracle" />
+      <sqlCheck expectedResult="0"> SELECT COUNT(owner) FROM all_objects WHERE object_type =
+        'FUNCTION' AND object_name = 'STRIP_HTML_FUNCTION' </sqlCheck>
+    </preConditions>
+    <sqlFile encoding="utf8"
+      dbms="oracle"
+      path="sql/strip-html-function.sql"
+      relativeToChangelogFile="true"
+      splitStatements="false"
+      stripComments="false"
+    />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.05.01-GET_ALL_JSON_VALUES_FUNCTION">
+    <preConditions onFail="MARK_RAN">
+      <dbms type="oracle" />
+      <sqlCheck expectedResult="0"> SELECT COUNT(owner) FROM all_objects WHERE object_type =
+        'FUNCTION' AND object_name = 'GET_ALL_JSON_VALUES_FUNCTION' </sqlCheck>
+    </preConditions>
+    <sqlFile encoding="utf8"
+      dbms="oracle"
+      path="sql/get-all-json-values-function.sql"
+      relativeToChangelogFile="true"
+      splitStatements="false"
+      stripComments="false"
+    />
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.05.01-fix-database-changelog">
+    <sql> DELETE FROM ${schemaPrefix}DATABASECHANGELOG WHERE id='00.06.00-REMOVE_ACCENTS_FUNCTION'
+      AND author='master' AND filename =
+      'classpath*:db/changelog/changes/0.6.0/00.06.00-update-initial-database.xml' </sql>
+    <sql> DELETE FROM ${schemaPrefix}DATABASECHANGELOG WHERE id='00.06.00-STRIP_HTML_FUNCTION' AND
+      author='master' AND filename =
+      'classpath*:db/changelog/changes/0.6.0/00.06.00-update-initial-database.xml' </sql>
+    <sql> DELETE FROM ${schemaPrefix}DATABASECHANGELOG WHERE
+      id='00.06.00-GET_ALL_JSON_VALUES_FUNCTION' AND author='master' AND filename =
+      'classpath*:db/changelog/changes/0.6.0/00.06.00-update-initial-database.xml' </sql>
+  </changeSet>
+
+</databaseChangeLog>
