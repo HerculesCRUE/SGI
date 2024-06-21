@@ -2106,6 +2106,7 @@
   "eti.estado-memoria.EN_ACLARACION_SEGUIMIENTO_FINAL": "En aclaración seguimiento final",
   "eti.estado-memoria.EN_ELABORACION": "En elaboración",
   "eti.estado-memoria.EN_EVALUACION": "En evaluación",
+  "eti.estado-memoria.EN_EVALUACION_REVISION_MINIMA": "En evaluación revision mínima",
   "eti.estado-memoria.EN_EVALUACION_SEGUIMIENTO_ANUAL": "En evaluación seguimiento anual",
   "eti.estado-memoria.EN_EVALUACION_SEGUIMIENTO_FINAL": "En evaluación seguimiento final",
   "eti.estado-memoria.EN_SECRETARIA": "En secretaría",

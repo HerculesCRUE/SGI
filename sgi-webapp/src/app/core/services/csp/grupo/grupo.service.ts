@@ -181,7 +181,7 @@ export class GrupoService extends _GrupoMixinBase {
    */
   findInvestigadoresPrincipales(id: number): Observable<IGrupoEquipo[]> {
     return this.get<IGrupoEquipoResponse[]>(`${this.endpointUrl}/${id}/investigadoresprincipales`).pipe(
-      map((response => GRUPO_EQUIPO_RESPONSE_CONVERTER.toTargetArray(response)))
+      map((response => GRUPO_EQUIPO_RESPONSE_CONVERTER.toTargetArray(response ?? [])))
     );
   }
 

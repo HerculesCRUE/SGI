@@ -847,7 +847,7 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    */
   findInvestigadoresPrincipales(id: number): Observable<IProyectoEquipo[]> {
     return this.http.get<IProyectoEquipoBackend[]>(`${this.endpointUrl}/${id}/investigadoresprincipales`).pipe(
-      map((response => PROYECTO_EQUIPO_CONVERTER.toTargetArray(response)))
+      map((response => PROYECTO_EQUIPO_CONVERTER.toTargetArray(response ?? [])))
     );
   }
 

@@ -18,8 +18,8 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { EMPTY, Observable, Subscription, from } from 'rxjs';
-import { catchError, filter, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
+import { EMPTY, Observable, Subscription, from, of } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { EJECUCION_ECONOMICA_ROUTE_NAMES } from '../ejecucion-economica-route-names';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../ejecucion-economica.action.service';
 import { IRequerimientoJustificacionListadoModalData, RequerimientoJustificacionListadoExportModalComponent } from '../modals/requerimiento-justificacion-listado-export-modal/requerimiento-justificacion-listado-export-modal.component';
@@ -111,49 +111,59 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
             switch (relacion.tipoEntidad) {
               case TipoEntidad.GRUPO:
                 responsables$ = this.grupoService.findInvestigadoresPrincipales(relacion.id).pipe(
-                  filter(responsables => !!responsables),
-                  switchMap(responsables => this.personaService.findAllByIdIn(responsables.map(responsable => responsable.persona.id)).pipe(
-                    map(personas => {
-                      responsables.forEach(responsable => {
-                        responsable.persona = personas.items.find(persona => persona.id === responsable.persona.id);
+                  switchMap(responsables => {
+                    if (!responsables?.length) {
+                      return of([]);
+                    }
+
+                    return this.personaService.findAllByIdIn(responsables.map(responsable => responsable.persona.id)).pipe(
+                      map(personas => {
+                        responsables.forEach(responsable => {
+                          responsable.persona = personas.items.find(persona => persona.id === responsable.persona.id);
+                        })
+
+                        responsables.sort((a, b) => {
+                          return sortGrupoEquipoByRolProyectoOrden(a, b)
+                            || sortGrupoEquipoByPersonaNombre(a, b);
+                        });
+
+                        return responsables.map(responsable => responsable.persona)
+                      }),
+                      catchError((error) => {
+                        this.logger.error(error);
+                        return EMPTY;
                       })
-
-                      responsables.sort((a, b) => {
-                        return sortGrupoEquipoByRolProyectoOrden(a, b)
-                          || sortGrupoEquipoByPersonaNombre(a, b);
-                      });
-
-                      return responsables.map(responsable => responsable.persona)
-                    }),
-                    catchError((error) => {
-                      this.logger.error(error);
-                      return EMPTY;
-                    })
-                  ))
+                    )
+                  })
                 );
 
                 break;
               case TipoEntidad.PROYECTO:
                 responsables$ = this.proyectoService.findInvestigadoresPrincipales(relacion.id).pipe(
-                  filter(responsables => !!responsables),
-                  switchMap(responsables => this.personaService.findAllByIdIn(responsables.map(responsable => responsable.persona.id)).pipe(
-                    map(personas => {
-                      responsables.forEach(responsable => {
-                        responsable.persona = personas.items.find(persona => persona.id === responsable.persona.id);
+                  switchMap(responsables => {
+                    if (!responsables?.length) {
+                      return of([]);
+                    }
+
+                    return this.personaService.findAllByIdIn(responsables.map(responsable => responsable.persona.id)).pipe(
+                      map(personas => {
+                        responsables.forEach(responsable => {
+                          responsable.persona = personas.items.find(persona => persona.id === responsable.persona.id);
+                        })
+
+                        responsables.sort((a, b) => {
+                          return sortProyectoEquipoByRolProyectoOrden(a, b)
+                            || sortProyectoEquipoByPersonaNombre(a, b);
+                        });
+
+                        return responsables.map(responsable => responsable.persona)
+                      }),
+                      catchError((error) => {
+                        this.logger.error(error);
+                        return EMPTY;
                       })
-
-                      responsables.sort((a, b) => {
-                        return sortProyectoEquipoByRolProyectoOrden(a, b)
-                          || sortProyectoEquipoByPersonaNombre(a, b);
-                      });
-
-                      return responsables.map(responsable => responsable.persona)
-                    }),
-                    catchError((error) => {
-                      this.logger.error(error);
-                      return EMPTY;
-                    })
-                  ))
+                    )
+                  })
                 );
 
                 break;

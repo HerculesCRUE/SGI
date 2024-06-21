@@ -229,15 +229,15 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
     Join<Memoria, Retrospectiva> joinMemoriaRetrospectiva = root.join(Memoria_.retrospectiva, JoinType.LEFT);
 
     Predicate memoriasSecretaria = cb.equal(joinMemoriaTipoEstado.get(TipoEstadoMemoria_.id),
-        TipoEstadoMemoria.Tipo.EN_SECRETARIA);
+        TipoEstadoMemoria.Tipo.EN_SECRETARIA.getId());
     Predicate retrospectivaSecretaria = cb.equal(
         joinMemoriaRetrospectiva.get(Retrospectiva_.estadoRetrospectiva).get(EstadoRetrospectiva_.id),
-        EstadoRetrospectiva.Tipo.EN_SECRETARIA);
+        EstadoRetrospectiva.Tipo.EN_SECRETARIA.getId());
     Predicate revMinima = cb.equal(joinMemoriaTipoEstado.get(TipoEstadoMemoria_.id),
-        TipoEstadoMemoria.Tipo.EN_SECRETARIA_REVISION_MINIMA);
+        TipoEstadoMemoria.Tipo.EN_SECRETARIA_REVISION_MINIMA.getId());
     Predicate memoriasSecretariaSeguimientoAnualYFinal = joinMemoriaTipoEstado.get(TipoEstadoMemoria_.id)
-        .in(Arrays.asList(TipoEstadoMemoria.Tipo.EN_SECRETARIA_SEGUIMIENTO_ANUAL,
-            TipoEstadoMemoria.Tipo.EN_SECRETARIA_SEGUIMIENTO_FINAL));
+        .in(Arrays.asList(TipoEstadoMemoria.Tipo.EN_SECRETARIA_SEGUIMIENTO_ANUAL.getId(),
+            TipoEstadoMemoria.Tipo.EN_SECRETARIA_SEGUIMIENTO_FINAL.getId()));
     Predicate memoriasPredicate = cb.or(memoriasSecretaria, retrospectivaSecretaria, revMinima,
         memoriasSecretariaSeguimientoAnualYFinal);
 

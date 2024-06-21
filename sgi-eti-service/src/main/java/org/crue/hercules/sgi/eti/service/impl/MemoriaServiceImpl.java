@@ -628,14 +628,17 @@ public class MemoriaServiceImpl implements MemoriaService {
       evaluacionRepository.save(evaluacion);
     }
 
+    boolean downgradeVersionMemoria = false;
     if (Objects.equals(tipoEstadoMemoriaActual, TipoEstadoMemoria.Tipo.EN_SECRETARIA)
         || Objects.equals(tipoEstadoMemoriaActual, TipoEstadoMemoria.Tipo.EN_SECRETARIA_REVISION_MINIMA)) {
       informeService.deleteLastInformeMemoria(memoria.getId());
+      downgradeVersionMemoria = true;
     }
 
-    // Se retrocede el estado de la memoria, no se hace nada con el estado de la
-    // retrospectiva
-    this.updateMemoriaToEstadoAnterior(memoria, true);
+    // Se retrocede el estado de la memoria solo si desde el estado anterior se
+    // puede volver a incrementar el estado de la memoria, no se hace nada con el
+    // estado de la retrospectiva
+    this.updateMemoriaToEstadoAnterior(memoria, downgradeVersionMemoria);
 
     // Se actualiza la memoria con el estado anterior
     return memoriaRepository.save(memoria);

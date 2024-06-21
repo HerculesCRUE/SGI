@@ -12,7 +12,7 @@
 
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-eti-service</artifactId>
-  <version>0.5.1</version>
+  <version>0.5.2</version>
   <packaging>jar</packaging>
   <name>sgi-eti-service</name>
   <description>Servicio Etica SGI HERCULES</description>

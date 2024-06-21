@@ -10,8 +10,8 @@ public class CustomSQLServer2012Dialect extends SQLServer2012Dialect {
     super();
     registerFunction("remove_accents", new EmptySQLFunction("remove_accents"));
     registerFunction("remove_html_tags",
-        new SQLFunctionTemplate(StandardBasicTypes.STRING, "ETI_SGI.stripHtmlFunction(?1)"));
+        new SQLFunctionTemplate(StandardBasicTypes.STRING, "stripHtmlFunction(?1)"));
     registerFunction("search_in_value_of_json",
-        new SQLFunctionTemplate(StandardBasicTypes.STRING, "ETI_SGI.getAllJSONValuesFunction(?1)"));
+        new SQLFunctionTemplate(StandardBasicTypes.STRING, "getAllJSONValuesFunction(?1)"));
   }
 }

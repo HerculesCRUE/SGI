@@ -18,7 +18,7 @@ import { map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators
 
 export interface IProyectoFacturacionData extends IProyectoFacturacion {
   numeroFacturaEmitida: string;
-  facturaEmitida: IFacturaPrevistaEmitida;
+  facturasEmitidas: IFacturaPrevistaEmitida[];
   estadosNotSaved: IEstadoValidacionIP[];
 }
 export class ProyectoCalendarioFacturacionFragment extends Fragment {
@@ -77,8 +77,8 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
       }).subscribe(({ itemsFacturacion, facturasPrevistasEmitidas }) => {
 
         const itemsFacturacionWrapped = itemsFacturacion.map(item => {
-          item.facturaEmitida = facturasPrevistasEmitidas.find(factura => factura.numeroPrevision === item.numeroPrevision);
-          item.numeroFacturaEmitida = item.facturaEmitida?.numeroFactura;
+          item.facturasEmitidas = facturasPrevistasEmitidas.filter(factura => factura.numeroPrevision === item.numeroPrevision?.toString());
+          item.numeroFacturaEmitida = item.facturasEmitidas?.map(factura => factura.numeroFactura).join('*');
           return new StatusWrapper(item);
         })
 
@@ -94,7 +94,7 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
 
 
   private getProyectosFacturacionByProyectoId(proyectoId: number): Observable<IProyectoFacturacionData[]> {
-    return this.proyectoService.findProyectosFacturacionByProyectoId(this.getKey() as number).pipe(
+    return this.proyectoService.findProyectosFacturacionByProyectoId(proyectoId).pipe(
       map(response => response.items.map(item => this.proyectoFacturacionToIProyectoFacturacionData(item))),
       switchMap(response =>
         from(response).pipe(
@@ -236,7 +236,7 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
         if (this.isCalendarioFacturacionSgeEnabled && currentEstado?.estado === TipoEstadoValidacion.VALIDADA) {
           obs$ = obs$.pipe(
             switchMap((itemFacturacion: IProyectoFacturacionData) => {
-              itemFacturacion.facturaEmitida = toUpdate.value.facturaEmitida;
+              itemFacturacion.facturasEmitidas = toUpdate.value.facturasEmitidas;
               itemFacturacion.tipoFacturacion = toUpdate.value.tipoFacturacion;
 
               return this.createOrUpdateFacturaPrevista(itemFacturacion);
@@ -252,7 +252,7 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
               proyectoFacturacionListado.id = updatedItem.id;
 
               if (this.isCalendarioFacturacionSgeEnabled) {
-                proyectoFacturacionListado.facturaEmitida = updatedItem.facturaEmitida;
+                proyectoFacturacionListado.facturasEmitidas = updatedItem.facturasEmitidas;
               }
 
               this.proyectosFacturacion$.value[index] = new StatusWrapper<IProyectoFacturacionData>(proyectoFacturacionListado);
@@ -268,7 +268,7 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
     let facturaPrevista$: Observable<IFacturaPrevista>;
 
     const facturaPrevista: IFacturaPrevista = {
-      id: itemFacturacion.facturaEmitida?.id,
+      id: itemFacturacion?.facturasEmitidas && itemFacturacion?.facturasEmitidas.length > 0 ? itemFacturacion.facturasEmitidas[0]?.id : null,
       comentario: itemFacturacion.comentario,
       fechaEmision: itemFacturacion.fechaEmision,
       importeBase: itemFacturacion.importeBase,
@@ -287,8 +287,8 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
 
     return facturaPrevista$.pipe(
       switchMap(facturaPrevistaResponse => {
-        if (!itemFacturacion.facturaEmitida) {
-          itemFacturacion.facturaEmitida = { id: facturaPrevistaResponse.id } as IFacturaPrevistaEmitida
+        if (!itemFacturacion.facturasEmitidas) {
+          itemFacturacion.facturasEmitidas = [{ id: facturaPrevistaResponse.id } as IFacturaPrevistaEmitida];
         }
         return of(itemFacturacion);
       })
@@ -323,7 +323,7 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
               proyectoFacturacionListado.id = createdProyectoFacturacion.id;
 
               if (this.isCalendarioFacturacionSgeEnabled) {
-                proyectoFacturacionListado.facturaEmitida = createdProyectoFacturacion.facturaEmitida;
+                proyectoFacturacionListado.facturasEmitidas = createdProyectoFacturacion.facturasEmitidas;
               }
 
               this.proyectosFacturacion$.value[index] = new StatusWrapper<IProyectoFacturacionData>(proyectoFacturacionListado);
