@@ -14,7 +14,7 @@
           </mat-select>
         </mat-form-field>
 
-        <ng-container *ngIf="isClasificacionGastosEnabled">
+        <ng-container *ngIf="formPart.rowConfig.clasificadoAutomaticamenteShow">
           <mat-form-field fxFlex>
             <mat-label>{{'csp.ejecucion-economica.gastos-clasificados-sgi' | translate}}</mat-label>
             <mat-select matNativeControl [formControl]="formPart.gastosClasficadosSgiControl">
@@ -64,9 +64,21 @@
         <ng-container matColumnDef="proyecto">
           <mat-header-cell *matHeaderCellDef>{{'sge.dato-economico.proyecto' | translate}}
           </mat-header-cell>
-          <mat-cell *matCellDef="let element">
-            {{element.item.proyecto?.titulo }}
-          </mat-cell>
+          <ng-container
+            *ngIf="(formPart.rowConfig.proyectoGroupBy && !formPart.rowConfig.anualidadGroupBy) else notExpand">
+            <mat-cell *matCellDef="let element">
+              <mat-icon color="primary" *ngIf="element.level === 0 && element.childs.length > 0"
+                (click)="element.expanded ? element.collapse() : element.expand()">
+                {{element.expanded ? 'expand_more' : 'chevron_right'}}
+              </mat-icon>
+              {{element.level === 0 ? element.item.proyecto?.titulo : '' }}
+            </mat-cell>
+          </ng-container>
+          <ng-template #notExpand>
+            <mat-cell *matCellDef="let element">
+              {{element.level === 0 ? element.item.proyecto?.titulo : '' }}
+            </mat-cell>
+          </ng-template>
         </ng-container>
 
         <ng-container matColumnDef="conceptoGasto">
@@ -139,7 +151,7 @@
               *ngIf="element.childs.length === 0" matTooltip="{{'btn.view' | translate}}">
               <mat-icon>visibility</mat-icon>
             </button>
-            <ng-container *ngIf="isClasificacionGastosEnabled">
+            <ng-container *ngIf="formPart.rowConfig.clasificadoAutomaticamenteShow">
               <button mat-icon-button color="primary" (click)="acceptClasificacion(element.item)"
                 *ngIf="isAcceptClasificacionAllowed(element.item)"
                 matTooltip="{{'csp.ejecucion-economica.facturas-justificantes.confirmar-clasificacion' | translate}}">

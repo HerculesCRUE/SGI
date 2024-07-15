@@ -1,8 +1,7 @@
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { IProyecto } from '@core/models/csp/proyecto';
-import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { IInvencion } from '@core/models/pii/invencion';
-import { IRelacion, TipoEntidad, TIPO_ENTIDAD_HREF_MAP } from '@core/models/rel/relacion';
+import { IRelacion, TIPO_ENTIDAD_HREF_MAP, TipoEntidad } from '@core/models/rel/relacion';
 import { IPersona } from '@core/models/sgp/persona';
 import { Fragment } from '@core/services/action-service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
@@ -11,8 +10,7 @@ import { InvencionService } from '@core/services/pii/invencion/invencion.service
 import { RelacionService } from '@core/services/rel/relaciones/relacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { SgiAuthService } from '@sgi/framework/auth';
-import { SgiRestListResult } from '@sgi/framework/http';
-import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
+import { BehaviorSubject, forkJoin, from, merge, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
 import { IProyectoListadoData } from '../../proyecto-listado/proyecto-listado.component';
 
@@ -38,6 +36,10 @@ export class ProyectoRelacionFragment extends Fragment {
 
   miembrosEquipoProyecto: IPersona[] = [];
 
+  private get proyectoId(): number {
+    return this.getKey() as number;
+  }
+
   constructor(
     key: number,
     private proyecto: IProyecto,
@@ -53,82 +55,50 @@ export class ProyectoRelacionFragment extends Fragment {
   }
 
   protected onInitialize(): void | Observable<any> {
-    const proyectoId = this.getKey() as number;
-    if (proyectoId) {
-      return this.relacionService.findProyectoRelaciones(proyectoId).pipe(
-        map((relaciones: IRelacion[]) => relaciones.map(
-          relacion => new StatusWrapper(this.createProyectoRelacionTableDataFromRelacion(relacion))
+    if (this.proyectoId) {
+      return this.relacionService.findProyectoRelaciones(this.proyectoId).pipe(
+        switchMap(relaciones => from(relaciones).pipe(
+          map(relacion => new StatusWrapper(this.createProyectoRelacionTableDataFromRelacion(relacion))),
+          mergeMap(relacionWrapper => this.fillEntidadRelacionada$(relacionWrapper), 100),
+          toArray()
         )),
-        switchMap(relacionesWrapped => this.fillAdditionalData$(relacionesWrapped)),
         tap(relacionesWrapped => this.proyectoRelacionesTableData$.next(relacionesWrapped))
       );
     }
   }
 
   private createProyectoRelacionTableDataFromRelacion(relacion: IRelacion): IProyectoRelacionTableData {
-    const proyectoId = this.getKey() as number;
-    let data: IProyectoRelacionTableData;
-    if (this.isEntidadOrigenProyectoRelatedEntity(relacion, proyectoId)) {
-      data = {
-        id: relacion.id,
-        entidadRelacionada: relacion.entidadOrigen,
-        observaciones: relacion.observaciones,
-        tipoEntidadRelacionada: relacion.tipoEntidadOrigen,
-        entidadConvocanteRef: '',
-        codigosSge: '',
-        tipoRelacion: null
-      };
+    let data: IProyectoRelacionTableData = {
+      id: relacion.id,
+      entidadRelacionada: null,
+      observaciones: relacion.observaciones,
+      tipoEntidadRelacionada: null,
+      entidadConvocanteRef: '',
+      codigosSge: '',
+      tipoRelacion: null
+    };
 
+    if (this.isEntidadOrigenRelatedEntity(relacion, this.proyectoId)) {
+      data.entidadRelacionada = relacion.entidadOrigen;
+      data.tipoEntidadRelacionada = relacion.tipoEntidadOrigen;
     } else {
-
-      data = {
-        id: relacion.id,
-        tipoEntidadRelacionada: relacion.tipoEntidadDestino,
-        observaciones: relacion.observaciones,
-        entidadRelacionada: relacion.entidadDestino,
-        entidadConvocanteRef: '',
-        codigosSge: '',
-        tipoRelacion: null
-      };
-    }
-
-    if (this.isEntidadRelacionadaProyecto(relacion)) {
-      this.fillCodigosSge(this.getEntidadRelacionadaId(relacion), data);
-      this.fillEntidadConvocanteRef(relacion, data);
+      data.entidadRelacionada = relacion.entidadDestino;
+      data.tipoEntidadRelacionada = relacion.tipoEntidadDestino;
     }
 
     return data;
   }
 
-  private getEntidadRelacionadaId(relacion: IRelacion): number {
-    return relacion.entidadOrigen.id === this.getKey() ? relacion.entidadDestino.id : relacion.entidadOrigen.id;
-  }
-
-  private isEntidadRelacionadaProyecto(relacion: IRelacion): boolean {
-    return relacion.entidadOrigen.id === this.getKey()
-      ? relacion.tipoEntidadDestino === TipoEntidad.PROYECTO
-      : relacion.tipoEntidadOrigen === TipoEntidad.PROYECTO;
-  }
-
-  private fillEntidadConvocanteRef(relacion: IRelacion, data: IProyectoRelacionTableData): void {
-    this.subscriptions.push(
-      this.proyectoService.findById(this.getEntidadRelacionadaId(relacion))
-        .subscribe(proyecto => data.entidadConvocanteRef = proyecto.codigoExterno)
-    );
-  }
-
-  private isEntidadOrigenProyectoRelatedEntity(relacion: IRelacion, proyectoId: number): boolean {
+  /**
+   * Comprueba si la entidad origen de la relacion es la entidad relacionada con el proyecto actual
+   * 
+   * @param relacion La relacion
+   * @param proyectoId Id del proyecto actual
+   * @returns True si la entidad origen de la relacion es la entidad relacionada con el proyecto actual, false si la entidad origen es el proyecto actual
+   */
+  private isEntidadOrigenRelatedEntity(relacion: IRelacion, proyectoId: number): boolean {
     return relacion.entidadOrigen.id !== proyectoId ||
       relacion.entidadOrigen.id === proyectoId && relacion.tipoEntidadOrigen !== TipoEntidad.PROYECTO;
-  }
-
-  private fillAdditionalData$(
-    wrapperList: StatusWrapper<IProyectoRelacionTableData>[]
-  ): Observable<StatusWrapper<IProyectoRelacionTableData>[]> {
-    return from(wrapperList).pipe(
-      mergeMap(wrapper => this.fillEntidadRelacionada$(wrapper)),
-      toArray()
-    );
   }
 
   private fillEntidadRelacionada$(
@@ -154,14 +124,20 @@ export class ProyectoRelacionFragment extends Fragment {
           catchError(() => of(wrapper))
         );
       case TipoEntidad.PROYECTO:
-        return this.proyectoService.findById(wrapper.value.entidadRelacionada.id).pipe(
-          map((proyecto) => {
+        return forkJoin({
+          proyecto: this.proyectoService.findById(wrapper.value.entidadRelacionada.id),
+          proyectosSge: this.proyectoService.findAllProyectosSgeProyecto(wrapper.value.entidadRelacionada.id)
+        }).pipe(
+          map(({ proyecto, proyectosSge }) => {
             wrapper.value.entidadRelacionada = proyecto;
             wrapper.value.entidadRelacionadaHref = this.createEntidadRelacionadaHref(proyecto.id, tipoEntidad);
+            wrapper.value.entidadConvocanteRef = proyecto.codigoExterno;
+            wrapper.value.codigosSge = proyectosSge.items.map(element => element.proyectoSge.id).join(', ');
             return wrapper;
           }),
           catchError(() => of(wrapper))
         );
+
       default:
         return of(wrapper);
     }
@@ -346,12 +322,4 @@ export class ProyectoRelacionFragment extends Fragment {
     target.entidadRelacionadaHref = source.entidadRelacionadaHref;
   }
 
-  private fillCodigosSge(proyectoId: number, data: IProyectoRelacionTableData): void {
-    this.subscriptions.push(
-      this.proyectoService.findAllProyectosSgeProyecto(proyectoId)
-        .pipe(
-          tap((proyectosSge: SgiRestListResult<IProyectoProyectoSge>) => {
-            data.codigosSge = proyectosSge.items.map(element => element.proyectoSge.id).join(', ');
-          })).subscribe());
-  }
 }

@@ -6,6 +6,7 @@ import { triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { DocumentoService } from '@core/services/sge/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { Subscription } from 'rxjs';
+import { IRowConfig } from '../../ejecucion-economica-formulario/desglose-economico.fragment';
 
 const MSG_DOWNLOAD_ERROR = marker('error.file.download');
 
@@ -18,6 +19,9 @@ export class DetalleEconomicoComponent {
 
   @Input()
   detalle: IDatoEconomicoDetalle;
+
+  @Input()
+  rowConfig: IRowConfig;
 
   private subscriptions: Subscription[] = [];
 

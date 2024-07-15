@@ -1,6 +1,7 @@
 <sgi-dialog-header title="Detalle de gasto"></sgi-dialog-header>
 <sgi-dialog-content>
-  <sgi-ejecucion-economica-detalle-economico [detalle]="data"></sgi-ejecucion-economica-detalle-economico>
+  <sgi-ejecucion-economica-detalle-economico [detalle]="data" [rowConfig]="data.rowConfig">
+  </sgi-ejecucion-economica-detalle-economico>
 </sgi-dialog-content>
 <mat-dialog-actions>
   <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |

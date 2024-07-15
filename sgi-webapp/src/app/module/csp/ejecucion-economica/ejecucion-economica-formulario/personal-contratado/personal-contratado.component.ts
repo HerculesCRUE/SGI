@@ -3,26 +3,25 @@ import { MatOption } from '@angular/material/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatSelect } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
+import { ValidacionClasificacionGastos } from '@core/models/csp/configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConfigService } from '@core/services/cnf/config.service';
+import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
+import { DialogService } from '@core/services/dialog.service';
 import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economica.service';
 import { Subscription, of } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
-import { PersonalContratadoModalComponent } from '../../modals/personal-contratado-modal/personal-contratado-modal.component';
+import { DatoEconomicoDetalleClasificacionModalData, FacturasJustificantesClasificacionModal } from '../../modals/facturas-justificantes-clasificacion-modal/facturas-justificantes-clasificacion-modal.component';
+import { PersonalContratadoDetalleModalData, PersonalContratadoModalComponent } from '../../modals/personal-contratado-modal/personal-contratado-modal.component';
 import { IDesgloseEconomicoExportData, RowTreeDesglose } from '../desglose-economico.fragment';
 import { GastosClasficadosSgiEnum, IDesglose } from '../facturas-justificantes.fragment';
 import { PersonalContratadoExportModalComponent } from './export/personal-contratado-export-modal.component';
 import { PersonalContratadoFragment } from './personal-contratado.fragment';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { DialogService } from '@core/services/dialog.service';
-import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
-import { ValidacionClasificacionGastos } from '@core/models/csp/configuracion';
-import { filter, map, switchMap } from 'rxjs/operators';
-import { DatoEconomicoDetalleClasificacionModalData, FacturasJustificantesClasificacionModal } from '../../modals/facturas-justificantes-clasificacion-modal/facturas-justificantes-clasificacion-modal.component';
 
 const MODAL_CLASIFICACION_TITLE_KEY = marker('title.csp.ejecucion-economica.personal-contratado');
 const MSG_ACCEPT_CLASIFICACION = marker('csp.ejecucion-economica.clasificacion-gastos.aceptar');
@@ -159,8 +158,11 @@ export class PersonalContratadoComponent extends FragmentComponent implements On
   openModalView(element: IDesglose): void {
     this.subscriptions.push(this.ejecucionEconomicaService.getPersonaContratada(element.id).subscribe(
       (detalle) => {
-        const config: MatDialogConfig<IDatoEconomicoDetalle> = {
-          data: detalle
+        const config: MatDialogConfig<PersonalContratadoDetalleModalData> = {
+          data: {
+            ...detalle,
+            rowConfig: this.formPart.rowConfig
+          }
         };
         this.matDialog.open(PersonalContratadoModalComponent, config);
       }
@@ -176,8 +178,7 @@ export class PersonalContratadoComponent extends FragmentComponent implements On
           data: exportData?.data,
           totalRegistrosExportacionExcel: this.totalElementos,
           limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel),
-          showColumClasificadoAutomaticamente: this.formPart.isClasificacionGastosEnabled,
-          showColumnProyectoSgi: !this.formPart.disableProyectoSgi
+          rowConfig: this.formPart.rowConfig
         };
 
         const config = {

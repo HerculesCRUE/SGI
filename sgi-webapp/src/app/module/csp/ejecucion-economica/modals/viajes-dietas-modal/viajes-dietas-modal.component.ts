@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
@@ -9,8 +9,9 @@ import { IProyecto } from '@core/models/csp/proyecto';
 import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { TranslateService } from '@ngx-translate/core';
-import { from, Observable, of } from 'rxjs';
+import { Observable, from, of } from 'rxjs';
 import { mergeMap, toArray } from 'rxjs/operators';
+import { IRowConfig } from '../../ejecucion-economica-formulario/desglose-economico.fragment';
 
 const IMPORTE_INSCRIPCION_KEY = marker('csp.ejecucion-economica.facturas-justificantes.importe-inscripcion');
 const PROYECTO_KEY = marker('csp.ejecucion-economica.facturas-justificantes.proyecto-sgi');
@@ -20,6 +21,7 @@ export interface DatoEconomicoDetalleModalData extends IDatoEconomicoDetalle {
   proyecto: IProyecto;
   gastoProyecto: IGastoProyecto;
   vinculacion: string;
+  rowConfig: IRowConfig;
 }
 
 @Component({

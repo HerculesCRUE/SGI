@@ -1,16 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { DATO_ECONOMICO_CONVERTER } from '@core/converters/sge/dato-economico.converter';
-import { IDatoEconomicoBackend } from '@core/models/sge/backend/dato-economico-backend';
 import { IColumna } from '@core/models/sge/columna';
-import { IDatoEconomico } from '@core/models/sge/dato-economico';
-import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
+import { IFacturaEmitida } from '@core/models/sge/factura-emitida';
+import { IFacturaEmitidaDetalle } from '@core/models/sge/factura-emitida-detalle';
+import { LuxonUtils } from '@core/utils/luxon-utils';
 import { environment } from '@env';
 import {
-  RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestBaseService, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSort, SgiRestSortDirection
+  RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestBaseService, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection
 } from '@sgi/framework/http';
+import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IFacturaEmitidaResponse } from './factura-emitida/factura-emitida-response';
+import { FACTURA_EMITIDA_RESPONSE_CONVERTER } from './factura-emitida/factura-emitida-response.converter';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +27,42 @@ export class CalendarioFacturacionService extends SgiRestBaseService {
     );
   }
 
+  getColumnasFacturasEmitidas(proyectoEconomicoId: string): Observable<IColumna[]> {
+    return this.getColumnas(proyectoEconomicoId, true);
+  }
+
+  getFacturasEmitidas(
+    proyectoEconomicoId: string,
+    fechaFacturaRange?: { desde: DateTime, hasta: DateTime },
+  ): Observable<IFacturaEmitida[]> {
+    const sort = new RSQLSgiRestSort('anualidad', SgiRestSortDirection.DESC);
+    const filter = new RSQLSgiRestFilter('proyectoId', SgiRestFilterOperator.EQUALS, proyectoEconomicoId);
+
+    if (fechaFacturaRange?.desde) {
+      filter.and('fechaFactura', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(fechaFacturaRange.desde, true));
+    }
+
+    if (fechaFacturaRange?.hasta) {
+      filter.and('fechaFactura', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(fechaFacturaRange.hasta, true));
+    }
+
+    const options: SgiRestFindOptions = {
+      filter,
+      sort
+    };
+    return this.find<IFacturaEmitidaResponse, IFacturaEmitida>(
+      `${this.endpointUrl}`,
+      options,
+      FACTURA_EMITIDA_RESPONSE_CONVERTER
+    ).pipe(
+      map(response => response.items)
+    );
+  }
+
+  getFacturaEmitidaDetalle(id: string): Observable<IFacturaEmitidaDetalle> {
+    return this.http.get<IFacturaEmitidaDetalle>(`${this.endpointUrl}/${id}`, { params: {} });
+  }
+
   private getColumnas(proyectoEconomicoId: string, reducido = false): Observable<IColumna[]> {
     const filter = new RSQLSgiRestFilter('proyectoId', SgiRestFilterOperator.EQUALS, proyectoEconomicoId)
       .and('reducida', SgiRestFilterOperator.EQUALS, `${reducido}`);
@@ -37,49 +75,6 @@ export class CalendarioFacturacionService extends SgiRestBaseService {
     ).pipe(
       map(response => response.items)
     );
-  }
-
-  getColumnasFacturasEmitidas(proyectoEconomicoId: string): Observable<IColumna[]> {
-    return this.getColumnas(proyectoEconomicoId, true);
-  }
-
-  private getDatosEconomicos(
-    sort: SgiRestSort,
-    proyectoEconomicoId: string,
-    fechaFacturaRange?: { desde: string, hasta: string }
-  ): Observable<IDatoEconomico[]> {
-    const filter = new RSQLSgiRestFilter('proyectoId', SgiRestFilterOperator.EQUALS, proyectoEconomicoId);
-    if (fechaFacturaRange?.desde && fechaFacturaRange?.hasta) {
-      filter.and('fechaFactura', SgiRestFilterOperator.GREATHER_OR_EQUAL, fechaFacturaRange.desde)
-        .and('fechaFactura', SgiRestFilterOperator.LOWER_OR_EQUAL, fechaFacturaRange.hasta);
-    }
-    const options: SgiRestFindOptions = {
-      filter,
-      sort
-    };
-    return this.find<IDatoEconomicoBackend, IDatoEconomico>(
-      `${this.endpointUrl}`,
-      options,
-      DATO_ECONOMICO_CONVERTER
-    ).pipe(
-      map(response => response.items)
-    );
-  }
-
-  getFacturasEmitidas(
-    proyectoEconomicoId: string,
-    fechaFacturaRange?: { desde: string, hasta: string },
-  ): Observable<IDatoEconomico[]> {
-    const sort = new RSQLSgiRestSort('anualidad', SgiRestSortDirection.DESC);
-    return this.getDatosEconomicos(
-      sort,
-      proyectoEconomicoId,
-      fechaFacturaRange
-    );
-  }
-
-  getFacturaEmitidaDetalle(id: string): Observable<IDatoEconomicoDetalle> {
-    return this.http.get<IDatoEconomicoDetalle>(`${this.endpointUrl}/${id}`, { params: {} });
   }
 
 }

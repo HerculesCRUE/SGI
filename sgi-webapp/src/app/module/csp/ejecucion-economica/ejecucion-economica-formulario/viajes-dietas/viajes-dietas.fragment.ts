@@ -1,4 +1,4 @@
-import { IConfiguracion } from '@core/models/csp/configuracion';
+import { FacturasJustificantesColumnasFijasConfigurables, IConfiguracion } from '@core/models/csp/configuracion';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
@@ -10,7 +10,7 @@ import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economic
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../../ejecucion-economica.action.service';
-import { IColumnDefinition, RowTreeDesglose } from '../desglose-economico.fragment';
+import { IColumnDefinition, IRowConfig, RowTreeDesglose } from '../desglose-economico.fragment';
 import { FacturasJustificantesFragment, IDesglose } from '../facturas-justificantes.fragment';
 
 export class ViajesDietasFragment extends FacturasJustificantesFragment {
@@ -37,21 +37,7 @@ export class ViajesDietasFragment extends FacturasJustificantesFragment {
     this.subscriptions.push(this.getColumns(true).subscribe(
       (columns) => {
         this.columns = columns;
-        this.displayColumns = [
-          'anualidad',
-          'proyecto',
-          'conceptoGasto',
-          'clasificacionSGE',
-          'aplicacionPresupuestaria',
-          'codigoEconomico',
-          'fechaDevengo',
-          ...columns.map(column => column.id),
-          'acciones'
-        ];
-
-        if (this.disableProyectoSgi) {
-          this.displayColumns.splice(1, 1);
-        }
+        this.displayColumns = this.getDisplayColumns(this.getRowConfig(), columns);
       }
     ));
   }
@@ -61,6 +47,22 @@ export class ViajesDietasFragment extends FacturasJustificantesFragment {
       .pipe(
         map(response => this.toColumnDefinition(response))
       );
+  }
+
+  protected getRowConfig(): IRowConfig {
+    return {
+      anualidadGroupBy: true,
+      anualidadShow: true,
+      aplicacionPresupuestariaGroupBy: this.config.viajesDietasColumnasFijasVisibles?.some(c => c === FacturasJustificantesColumnasFijasConfigurables.APLICACION_PRESUPUESTARIA),
+      aplicacionPresupuestariaShow: this.config.viajesDietasColumnasFijasVisibles?.some(c => c === FacturasJustificantesColumnasFijasConfigurables.APLICACION_PRESUPUESTARIA),
+      clasificacionSgeGroupBy: this.config.viajesDietasColumnasFijasVisibles?.some(c => c === FacturasJustificantesColumnasFijasConfigurables.CLASIFICACION_SGE),
+      clasificacionSgeShow: this.config.viajesDietasColumnasFijasVisibles?.some(c => c === FacturasJustificantesColumnasFijasConfigurables.CLASIFICACION_SGE),
+      clasificadoAutomaticamenteShow: this.isClasificacionGastosEnabled,
+      proyectoGroupBy: !this.disableProyectoSgi,
+      proyectoShow: !this.disableProyectoSgi,
+      tipoGroupBy: false,
+      tipoShow: false
+    };
   }
 
   protected getDatosEconomicos(
@@ -79,27 +81,59 @@ export class ViajesDietasFragment extends FacturasJustificantesFragment {
   }
 
   protected sortRowsTree(rows: RowTreeDesglose<IDesglose>[]): void {
+    const rowConfig = this.getRowConfig();
     rows.sort((a, b) => {
-      return this.compareAnualidadRowTree(b, a)
-        || (this.disableProyectoSgi ? 0 : this.compareProyectoTituloRowTree(a, b))
+      return this.compareAnualidadRowTree(b, a, rowConfig)
+        || this.compareProyectoTituloRowTree(a, b, rowConfig)
         || this.compareConceptoGastoNombreRowTree(a, b)
-        || this.compareClasificacionSGENombreRowTree(a, b)
-        || this.comparePartidaPresupuestariaRowTree(a, b)
+        || this.compareClasificacionSGENombreRowTree(a, b, rowConfig)
+        || this.comparePartidaPresupuestariaRowTree(a, b, rowConfig)
         || this.compareCodigoEconomicoRowTree(a, b)
         || this.compareFechaDevengoRowTree(a, b);
     });
   }
 
   protected sortRowsDesglose(rows: IDesglose[]): void {
+    const rowConfig = this.getRowConfig();
     rows.sort((a, b) => {
-      return this.compareAnualidadDesglose(b, a)
-        || (this.disableProyectoSgi ? 0 : this.compareProyectoTituloDesglose(a, b))
+      return this.compareAnualidadDesglose(b, a, rowConfig)
+        || this.compareProyectoTituloDesglose(a, b, rowConfig)
         || this.compareConceptoGastoNombreDesglose(a, b)
-        || this.compareClasificacionSGENombreDesglose(a, b)
-        || this.comparePartidaPresupuestariaDesglose(a, b)
+        || this.compareClasificacionSGENombreDesglose(a, b, rowConfig)
+        || this.comparePartidaPresupuestariaDesglose(a, b, rowConfig)
         || this.compareCodigoEconomicoDesglose(a, b)
         || this.compareFechaDevengoDesglose(a, b);
     });
+  }
+
+
+  private getDisplayColumns(rowConfig: IRowConfig, columns: IColumnDefinition[]): string[] {
+    const displayColumns = [];
+
+    if (rowConfig?.anualidadShow) {
+      displayColumns.push('anualidad');
+    }
+
+    if (rowConfig?.proyectoShow) {
+      displayColumns.push('proyecto');
+    }
+
+    displayColumns.push('conceptoGasto');
+
+    if (rowConfig?.clasificacionSgeShow) {
+      displayColumns.push('clasificacionSGE');
+    }
+
+    if (rowConfig?.aplicacionPresupuestariaShow) {
+      displayColumns.push('aplicacionPresupuestaria');
+    }
+
+    displayColumns.push('codigoEconomico');
+    displayColumns.push('fechaDevengo');
+    displayColumns.push(...columns.map(column => column.id));
+    displayColumns.push('acciones');
+
+    return displayColumns;
   }
 
 }

@@ -7,7 +7,6 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ValidacionClasificacionGastos } from '@core/models/csp/configuracion';
-import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConfigService } from '@core/services/cnf/config.service';
@@ -17,7 +16,7 @@ import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economic
 import { Subscription, of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
-import { FacturasGastosModalComponent } from '../../modals/facturas-gastos-modal/facturas-gastos-modal.component';
+import { FacturasGastosDetalleModalData, FacturasGastosModalComponent } from '../../modals/facturas-gastos-modal/facturas-gastos-modal.component';
 import { DatoEconomicoDetalleClasificacionModalData, FacturasJustificantesClasificacionModal } from '../../modals/facturas-justificantes-clasificacion-modal/facturas-justificantes-clasificacion-modal.component';
 import { IDesgloseEconomicoExportData, RowTreeDesglose } from '../desglose-economico.fragment';
 import { GastosClasficadosSgiEnum, IDesglose } from '../facturas-justificantes.fragment';
@@ -159,8 +158,11 @@ export class FacturasGastosComponent extends FragmentComponent implements OnInit
   openModalView(element: IDesglose): void {
     this.subscriptions.push(this.ejecucionEconomicaService.getFacturaGasto(element.id).subscribe(
       (detalle) => {
-        const config: MatDialogConfig<IDatoEconomicoDetalle> = {
-          data: detalle
+        const config: MatDialogConfig<FacturasGastosDetalleModalData> = {
+          data: {
+            ...detalle,
+            rowConfig: this.formPart.rowConfig
+          }
         };
         this.matDialog.open(FacturasGastosModalComponent, config);
       }
@@ -176,8 +178,7 @@ export class FacturasGastosComponent extends FragmentComponent implements OnInit
           data: exportData?.data,
           totalRegistrosExportacionExcel: this.totalElementos,
           limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel),
-          showColumClasificadoAutomaticamente: this.formPart.isClasificacionGastosEnabled,
-          showColumnProyectoSgi: !this.formPart.disableProyectoSgi
+          rowConfig: this.formPart.rowConfig
         };
 
         const config = {

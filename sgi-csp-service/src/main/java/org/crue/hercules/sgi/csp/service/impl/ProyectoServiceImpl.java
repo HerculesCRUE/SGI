@@ -810,7 +810,9 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     // Validar que no haya proyecto proyectosge vinculados, y si los hay que el
     // porcentaje de IVA sea mayor que cero
-    if (newProyectoIVA.getIva() != null && newProyectoIVA.getIva().equals(0)) {
+    if ((proyectoGuardado.getIva() != null && proyectoGuardado.getIva().getIva() != null
+        && !proyectoGuardado.getIva().getIva().equals(0))
+        && newProyectoIVA.getIva() != null && newProyectoIVA.getIva().equals(0)) {
       Boolean hasProyectosSgeVinculados = proyectoProyectoSGERepository.existsByProyectoId(proyectoGuardado.getId());
       if (hasProyectosSgeVinculados.booleanValue()) {
         throw new ProyectoIVAException();

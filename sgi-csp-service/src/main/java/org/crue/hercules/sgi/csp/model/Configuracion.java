@@ -1,6 +1,9 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import org.apache.commons.lang3.StringUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,6 +53,16 @@ public class Configuracion extends BaseEntity {
     SGI_1_SGE_N,
     SGI_N_SGE_1,
     SGI_N_SGE_N;
+  }
+
+  public enum SgeFacturasJustificantesColumnasFijas {
+    ANUALIDAD,
+    PROYECTO,
+    CONCEPTO_GASTO,
+    CLASIFICACION_SGE,
+    APLICACION_PRESUPUESTARIA,
+    CODIGO_ECONOMICO,
+    FECHA_DEVENGO
   }
 
   public enum Param {
@@ -142,7 +157,22 @@ public class Configuracion extends BaseEntity {
      * indicar si se van a notificar las facturas previstas validadas del calendario
      * de facturación al SGE
      */
-    CALENDARIO_FACTURACION_SGE_ENABLED("calendarioFacturacionSgeEnabled");
+    CALENDARIO_FACTURACION_SGE_ENABLED("calendarioFacturacionSgeEnabled"),
+    /**
+     * Columnas a mostrar en Facturas y gastos (ejecución económica - facturas y
+     * justificantes)
+     */
+    FACTURAS_GASTOS_COLUMNAS_FIJAS_VISIBLES("facturasGastosColumnasFijasVisibles"),
+    /**
+     * Columnas a mostrar en Viajes y dietas (ejecución económica - facturas y
+     * justificantes)
+     */
+    VIAJES_DIETAS_COLUMNAS_FIJAS_VISIBLES("viajesDietasColumnasFijasVisibles"),
+    /**
+     * Columnas a mostrar en Personal Contratado (ejecución económica - facturas y
+     * justificantes)
+     */
+    PERSONAL_CONTRATADO_COLUMNAS_FIJAS_VISIBLES("personalContratadoColumnasFijasVisibles");
 
     private final String key;
 
@@ -280,6 +310,27 @@ public class Configuracion extends BaseEntity {
   private ModoEjecucion proyectoSgeModificacionModoEjecucion;
 
   /**
+   * Columnas a mostrar en Facturas y gastos (ejecución económica - facturas y
+   * justificantes)
+   */
+  @Column(name = "sge_facturas_columnas_visibles", nullable = true, unique = true)
+  private String facturasGastosColumnasFijasVisibles;
+
+  /**
+   * Columnas a mostrar en Viajes y dietas (ejecución económica - facturas y
+   * justificantes)
+   */
+  @Column(name = "sge_viajes_columnas_visibles", nullable = true, unique = true)
+  private String viajesDietasColumnasFijasVisibles;
+
+  /**
+   * Columnas a mostrar en Personal Contratado (ejecución económica - facturas y
+   * justificantes)
+   */
+  @Column(name = "sge_personal_columnas_visibles", nullable = true, unique = true)
+  private String personalContratadoColumnasFijasVisibles;
+
+  /**
    * Determina si hay integración del calendario facturación con el SGE para
    * indicar si se van a notificar las facturas previstas validadas del calendario
    * de facturación al SGE
@@ -329,6 +380,12 @@ public class Configuracion extends BaseEntity {
         return this.getProyectoSgeModificacionModoEjecucion();
       case CALENDARIO_FACTURACION_SGE_ENABLED:
         return this.getCalendarioFacturacionSgeEnabled();
+      case FACTURAS_GASTOS_COLUMNAS_FIJAS_VISIBLES:
+        return this.getFacturasGastosColumnasFijasVisibles();
+      case VIAJES_DIETAS_COLUMNAS_FIJAS_VISIBLES:
+        return this.getViajesDietasColumnasFijasVisibles();
+      case PERSONAL_CONTRATADO_COLUMNAS_FIJAS_VISIBLES:
+        return this.getPersonalContratadoColumnasFijasVisibles();
       default:
         return null;
     }
@@ -396,6 +453,34 @@ public class Configuracion extends BaseEntity {
       case CALENDARIO_FACTURACION_SGE_ENABLED:
         this.setCalendarioFacturacionSgeEnabled(new Boolean(newValue));
         break;
+      case FACTURAS_GASTOS_COLUMNAS_FIJAS_VISIBLES:
+        if (isValidEnumString(newValue, SgeFacturasJustificantesColumnasFijas.class, true)) {
+          this.setFacturasGastosColumnasFijasVisibles(newValue);
+        }
+        break;
+      case VIAJES_DIETAS_COLUMNAS_FIJAS_VISIBLES:
+        if (isValidEnumString(newValue, SgeFacturasJustificantesColumnasFijas.class, true)) {
+          this.setViajesDietasColumnasFijasVisibles(newValue);
+        }
+        break;
+      case PERSONAL_CONTRATADO_COLUMNAS_FIJAS_VISIBLES:
+        if (isValidEnumString(newValue, SgeFacturasJustificantesColumnasFijas.class, true)) {
+          this.setPersonalContratadoColumnasFijasVisibles(newValue);
+        }
+        break;
     }
+  }
+
+  private static boolean isValidEnumString(String input, Class<? extends Enum<?>> enumClass, boolean allowNull) {
+    if (StringUtils.isEmpty(input)) {
+      return allowNull;
+    }
+
+    Set<String> validValues = Arrays.stream(enumClass.getEnumConstants())
+        .map(Enum::name)
+        .collect(Collectors.toSet());
+
+    return Arrays.stream(input.split(","))
+        .allMatch(validValues::contains);
   }
 }

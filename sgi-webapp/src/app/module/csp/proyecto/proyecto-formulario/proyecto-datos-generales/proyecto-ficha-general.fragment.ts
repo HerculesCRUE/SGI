@@ -12,7 +12,7 @@ import { IModeloEjecucion, ITipoAmbitoGeografico, ITipoFinalidad } from '@core/m
 import { IRelacion, TipoEntidad } from '@core/models/rel/relacion';
 import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
 import { FormFragment } from '@core/services/action-service';
-import { ConfigService } from '@core/services/csp/config.service';
+import { ConfigService } from '@core/services/csp/configuracion/config.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { ProyectoIVAService } from '@core/services/csp/proyecto-iva.service';
@@ -64,6 +64,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
 
   proyectosSgeIds$ = new Subject<string[]>();
   proyectoIva$ = new BehaviorSubject<StatusWrapper<IProyectoIVA>[]>([]);
+  private initialIva;
 
   readonly permitePaquetesTrabajo$: Subject<boolean> = new BehaviorSubject<boolean>(null);
   readonly colaborativo$: Subject<boolean> = new BehaviorSubject<boolean>(null);
@@ -214,7 +215,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
         disabled: true
       }),
       titulo: new FormControl('', [
-        Validators.required, Validators.maxLength(200)]),
+        Validators.required, Validators.maxLength(250)]),
       acronimo: new FormControl('', [Validators.maxLength(50)]),
       codigoInterno: new FormControl(null, [Validators.maxLength(50)]),
       codigoExterno: new FormControl(null, [Validators.maxLength(50)]),
@@ -225,7 +226,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
         value: '',
         disabled: this.isEdit()
       }),
-      convocatoriaExterna: new FormControl(null, [Validators.maxLength(200)]),
+      convocatoriaExterna: new FormControl(null, [Validators.maxLength(50)]),
       unidadGestion: new FormControl(null, Validators.required),
       modeloEjecucion: new FormControl(null, Validators.required),
       finalidad: new FormControl(null),
@@ -404,14 +405,14 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       this.subscriptions.push(
         this._proyectoRelaciones$.pipe(
           tap(relaciones => {
-            const codigos = relaciones.filter(relacion => relacion.tipoEntidadRelacionada === TipoEntidad.PROYECTO).map(relacion => (relacion.entidadRelacionada as IProyecto).codigoExterno).join(', ');
+            const codigos = relaciones.filter(relacion => relacion.tipoEntidadRelacionada === TipoEntidad.PROYECTO).map(relacion => (relacion.entidadRelacionada as IProyecto).id).join(', ');
             form.controls?.proyectosRelacionados.setValue(codigos);
           })
         )
           .subscribe()
       );
       this.subscriptions.push(
-        this.getCodigosExternosProyectosRelacionados().subscribe(codigos => {
+        this.getProyectosIdsRelacionados().subscribe(codigos => {
           form.controls?.proyectosRelacionados.setValue(codigos.map(codigo => codigo).join(', '));
         }));
     }
@@ -518,6 +519,8 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       comentario: proyecto.estado?.comentario,
       solicitudProyecto: this.solicitud?.titulo ?? null,
     };
+
+    this.initialIva = proyecto.iva?.iva;
 
     this.checkEstado(this.getFormGroup(), proyecto);
 
@@ -716,6 +719,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
     return obs.pipe(
       map((value) => {
         this.proyecto = value;
+        this.initialIva = value.iva?.iva;
         this.proyectoWithoutChanges = { ...value };
         this.loadHistoricoProyectoIVA(this.proyecto.id);
         return this.proyecto.id;
@@ -838,14 +842,14 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
 
   private buildValidatorIva(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (this.vinculacionesProyectosSge && control.value === 0) {
+      if (this.vinculacionesProyectosSge && control.value === 0 && !!this.initialIva) {
         return { ivaProyectosSge: true };
       }
       return null;
     };
   }
 
-  private getCodigosExternosProyectosRelacionados(): Observable<string[]> {
+  private getProyectosIdsRelacionados(): Observable<string[]> {
     const options: SgiRestFindOptions = {
       filter: new RSQLSgiRestFilter('tipoEntidadOrigen', SgiRestFilterOperator.EQUALS, TipoEntidad.PROYECTO)
         .and('tipoEntidadDestino', SgiRestFilterOperator.EQUALS, TipoEntidad.PROYECTO).and(
@@ -855,18 +859,8 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
     };
 
     return this.relacionService.findAll(options).pipe(
-      map(response => this.getProyectosRelacionadosIds(response.items)),
-      switchMap(proyectosIds =>
-        from(proyectosIds).pipe(
-          mergeMap(proyectoId => this.service.findById(proyectoId).pipe(
-            map(response => response.codigoExterno))),
-          toArray()
-        )
-      ));
-  }
-
-  private getProyectosRelacionadosIds(relaciones: IRelacion[]): number[] {
-    return relaciones.map(relacion => this.getEntidadRelacionadaId(relacion));
+      map(response => response.items.map(relacion => this.getEntidadRelacionadaId(relacion)?.toString() ?? ''))
+    );
   }
 
   private getEntidadRelacionadaId(relacion: IRelacion): number {

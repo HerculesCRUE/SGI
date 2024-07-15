@@ -178,7 +178,10 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
     ).subscribe(
       (detalle) => {
         const config: MatDialogConfig<DatoEconomicoDetalleModalData> = {
-          data: detalle
+          data: {
+            ...detalle,
+            rowConfig: this.formPart.rowConfig
+          }
         };
         const dialogRef = this.matDialog.open(ViajesDietasModalComponent, config);
         dialogRef.afterClosed().subscribe((modalData: DatoEconomicoDetalleModalData) => {
@@ -200,8 +203,7 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
           data: exportData?.data,
           totalRegistrosExportacionExcel: this.totalElementos,
           limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel),
-          showColumClasificadoAutomaticamente: this.formPart.isClasificacionGastosEnabled,
-          showColumnProyectoSgi: !this.formPart.disableProyectoSgi
+          rowConfig: this.formPart.rowConfig
         };
 
         const config = {

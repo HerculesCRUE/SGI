@@ -3,7 +3,7 @@ import { Estado } from '@core/models/csp/convocatoria';
 import { IConvocatoriaPartidaPresupuestaria } from '@core/models/csp/convocatoria-partida-presupuestaria';
 import { IPartidaPresupuestariaSge } from '@core/models/sge/partida-presupuestaria-sge';
 import { Fragment } from '@core/services/action-service';
-import { ConfigService } from '@core/services/csp/config.service';
+import { ConfigService } from '@core/services/csp/configuracion/config.service';
 import { ConvocatoriaPartidaPresupuestariaService } from '@core/services/csp/convocatoria-partida-presupuestaria/convocatoria-partida-presupuestaria.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { PartidaPresupuestariaGastoSgeService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-gasto-sge.service';

@@ -12,7 +12,7 @@ import { ILineaInvestigacion } from '@core/models/csp/linea-investigacion';
 import { IPersona } from '@core/models/sgp/persona';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ConfigService } from '@core/services/cnf/config.service';
-import { ConfigService as ConfigCspService } from '@core/services/csp/config.service';
+import { ConfigService as ConfigCspService } from '@core/services/csp/configuracion/config.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { LineaInvestigacionService } from '@core/services/csp/linea-investigacion/linea-investigacion.service';
 import { RolProyectoColectivoService } from '@core/services/csp/rol-proyecto-colectivo/rol-proyecto-colectivo.service';

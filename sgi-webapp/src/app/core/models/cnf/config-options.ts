@@ -7,6 +7,7 @@ export enum ConfigType {
   EMAILS_UO = 'emails-uo',
   FILE = 'file',
   SELECT = 'select',
+  SELECT_MULTIPLE = 'select-multiple',
   CONFIG_GROUP_TITLE = 'config-group-title'
 }
 

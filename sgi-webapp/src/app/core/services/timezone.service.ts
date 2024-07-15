@@ -5,7 +5,7 @@ import { Settings } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, merge, Observable, Subject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { ConfigService as CspConfigService } from './csp/config.service';
+import { ConfigService as CspConfigService } from './csp/configuracion/config.service';
 import { ConfigService as EerConfigService } from './eer/config.service';
 import { ConfigService as EtiConfigService } from './eti/config.service';
 import { ConfigService as PiiConfigService } from './pii/config.service';

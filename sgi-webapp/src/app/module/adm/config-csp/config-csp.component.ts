@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractMenuContentComponent } from '@core/component/abstract-menu-content.component';
 import { ConfigModule, ConfigType, IConfigOptions } from '@core/models/cnf/config-options';
-import { CARDINALIDAD_RELACION_SGI_SGE_MAP, MODO_EJECUCION_MAP, VALIDACION_CLASIFICACION_GASTOS_MAP } from '@core/models/csp/configuracion';
+import { CARDINALIDAD_RELACION_SGI_SGE_MAP, FACTURAS_JUSTIFICANTES_COLUMNAS_FIJAS_CONFIGURABLES_MAP, MODO_EJECUCION_MAP, VALIDACION_CLASIFICACION_GASTOS_MAP } from '@core/models/csp/configuracion';
 import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { Observable, of } from 'rxjs';
@@ -64,6 +64,7 @@ export enum ConfigCsp {
   CSP_DEDICACION_MINIMA_GRUPO = 'dedicacionMinimaGrupo',
   CSP_DETALLE_OPERACIONES_MODIFICACIONES_ENABLED = "detalleOperacionesModificacionesEnabled",
   CSP_EJECUCION_ECONOMICA_GRUPOS_ENABLED = 'ejecucionEconomicaGruposEnabled',
+  CSP_FACTURAS_GASTOS_COLUMNAS_FIJAS_VISIBLES = 'facturasGastosColumnasFijasVisibles',
   CSP_FORMATO_CODIGO_INTERNO_PROYECTO = 'formatoCodigoInternoProyecto',
   CSP_FORMATO_CODIGO_INTERNO_PROYECTO_PLANTILLA = 'plantillaFormatoCodigoInternoProyecto',
   CSP_FORMATO_IDENTIFICADOR_JUSTIFICACION = 'formatoIdentificadorJustificacion',
@@ -73,10 +74,12 @@ export enum ConfigCsp {
   CSP_GASTOS_JUSTIFICADOS_SGE_ENABLED = "gastosJustificadosSgeEnabled",
   CSP_MODIFICACION_PROYECTO_SGE_ENABLED = "modificacionProyectoSgeEnabled",
   CSP_PARTIDAS_PRESUPUESTARIAS_SGE_ENABLED = "partidasPresupuestariasSgeEnabled",
+  CSP_PERSONAL_CONTRATADO_COLUMNAS_FIJAS_VISIBLES = 'personalContratadoColumnasFijasVisibles',
   CSP_PROYECTO_SGE_ALTA_MODO_EJECUCION = "proyectoSgeAltaModoEjecucion",
   CSP_PROYECTO_SGE_MODIFICACION_MODO_EJECUCION = "proyectoSgeModificacionModoEjecucion",
   CSP_SECTOR_IVA_SGE_ENABLED = "sectorIvaSgeEnabled",
-  CSP_VALIDACION_CLASIFICACION_GASTOS = 'validacionClasificacionGastos'
+  CSP_VALIDACION_CLASIFICACION_GASTOS = 'validacionClasificacionGastos',
+  CSP_VIAJES_DIETAS_COLUMNAS_FIJAS_VISIBLES = 'viajesDietasColumnasFijasVisibles'
 }
 
 @Component({
@@ -111,6 +114,9 @@ export class ConfigCspComponent extends AbstractMenuContentComponent {
     [ConfigCsp.CSP_CALENDARIO_FACTURACION_SGE_ENABLED, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_CALENDARIO_FACTURACION_SGE_ENABLED`), options: this.getBooleanValues(), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_CALENDARIO_FACTURACION_SGE_ENABLED.description`) }],
     [ConfigCsp.CSP_DETALLE_OPERACIONES_MODIFICACIONES_ENABLED, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_DETALLE_OPERACIONES_MODIFICACIONES_ENABLED`), options: this.getBooleanValues(), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_DETALLE_OPERACIONES_MODIFICACIONES_ENABLED.description`) }],
     [ConfigCsp.CSP_GASTOS_JUSTIFICADOS_SGE_ENABLED, { type: ConfigType.SELECT, label: marker(`adm.config.csp.CSP_GASTOS_JUSTIFICADOS_SGE_ENABLED`), options: this.getBooleanValues(), required: true, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_GASTOS_JUSTIFICADOS_SGE_ENABLED.description`) }],
+    [ConfigCsp.CSP_FACTURAS_GASTOS_COLUMNAS_FIJAS_VISIBLES, { type: ConfigType.SELECT_MULTIPLE, label: marker(`adm.config.csp.CSP_FACTURAS_GASTOS_COLUMNAS_FIJAS_VISIBLES`), options: this.getFacturasJustificantesColumnasFijasConfigurablesValues(), required: false, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_FACTURAS_GASTOS_COLUMNAS_FIJAS_VISIBLES.description`) }],
+    [ConfigCsp.CSP_VIAJES_DIETAS_COLUMNAS_FIJAS_VISIBLES, { type: ConfigType.SELECT_MULTIPLE, label: marker(`adm.config.csp.CSP_VIAJES_DIETAS_COLUMNAS_FIJAS_VISIBLES`), options: this.getFacturasJustificantesColumnasFijasConfigurablesValues(), required: false, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_VIAJES_DIETAS_COLUMNAS_FIJAS_VISIBLES.description`) }],
+    [ConfigCsp.CSP_PERSONAL_CONTRATADO_COLUMNAS_FIJAS_VISIBLES, { type: ConfigType.SELECT_MULTIPLE, label: marker(`adm.config.csp.CSP_PERSONAL_CONTRATADO_COLUMNAS_FIJAS_VISIBLES`), options: this.getFacturasJustificantesColumnasFijasConfigurablesValues(), required: false, module: ConfigModule.CSP, description: marker(`adm.config.csp.CSP_PERSONAL_CONTRATADO_COLUMNAS_FIJAS_VISIBLES.description`) }],
     [ConfigCsp.TITLE_CONVONCATORIA, { type: ConfigType.CONFIG_GROUP_TITLE, label: marker(`adm.config.group-title.convocatoria`), module: ConfigModule.NONE }],
     [ConfigCsp.CSP_COM_CONVOCATORIA_FASES_DESTINATARIOS_UO, { type: ConfigType.EMAILS_UO, label: marker(`adm.config.csp.CSP_COM_CONVOCATORIA_FASES_DESTINATARIOS_UO`), required: true, module: ConfigModule.CNF }],
     [ConfigCsp.CSP_COM_CONVOCATORIA_HITOS_DESTINATARIOS_UO, { type: ConfigType.EMAILS_UO, label: marker(`adm.config.csp.CSP_COM_CONVOCATORIA_HITOS_DESTINATARIOS_UO`), required: true, module: ConfigModule.CNF }],
@@ -196,6 +202,16 @@ export class ConfigCspComponent extends AbstractMenuContentComponent {
     const keyValueList: KeyValue<string, string>[] = [];
 
     for (const [key, value] of CARDINALIDAD_RELACION_SGI_SGE_MAP.entries()) {
+      keyValueList.push({ key, value });
+    }
+
+    return of(keyValueList);
+  }
+
+  private getFacturasJustificantesColumnasFijasConfigurablesValues(): Observable<KeyValue<string, string>[]> {
+    const keyValueList: KeyValue<string, string>[] = [];
+
+    for (const [key, value] of FACTURAS_JUSTIFICANTES_COLUMNAS_FIJAS_CONFIGURABLES_MAP.entries()) {
       keyValueList.push({ key, value });
     }
 

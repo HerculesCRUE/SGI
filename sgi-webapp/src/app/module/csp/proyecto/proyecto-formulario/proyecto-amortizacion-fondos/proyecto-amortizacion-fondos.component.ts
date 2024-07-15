@@ -20,7 +20,6 @@ import { PROYECTO_ROUTE_NAMES } from '../../proyecto-route-names';
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { IEntidadFinanciadora } from '../proyecto-entidades-financiadoras/proyecto-entidades-financiadoras.fragment';
 import { IProyectoPeriodoAmortizacionListado, ProyectoAmortizacionFondosFragment } from './proyecto-amortizacion-fondos.fragment';
-import { ConfigService } from '@core/services/csp/config.service';
 
 const MSG_NUEVO = marker('title.new.entity');
 const MSG_DELETE = marker('msg.delete.entity');

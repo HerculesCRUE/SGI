@@ -18,7 +18,7 @@ import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@s
 import { Observable, from, of } from 'rxjs';
 import { combineAll, concatMap, filter, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../ejecucion-economica.action.service';
-import { DesgloseEconomicoFragment, IColumnDefinition, IDesgloseEconomicoExportData, RowTreeDesglose } from './desglose-economico.fragment';
+import { DesgloseEconomicoFragment, IColumnDefinition, IDesgloseEconomicoExportData, IRowConfig, RowTreeDesglose } from './desglose-economico.fragment';
 
 export interface IDesglose extends IDatoEconomico {
   proyecto: IProyecto;
@@ -65,6 +65,10 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
       || this.config.cardinalidadRelacionSgiSge === CardinalidadRelacionSgiSge.SGI_1_SGE_N;
   }
 
+  get rowConfig(): IRowConfig {
+    return this.getRowConfig();
+  }
+
   constructor(
     key: number,
     protected proyectoSge: IProyectoSge,
@@ -86,6 +90,8 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
 
   protected abstract getColumns(reducida?: boolean): Observable<IColumnDefinition[]>;
 
+  protected abstract getRowConfig(): IRowConfig;
+
   protected abstract getDatosEconomicos(
     anualidades: string[],
     devengosRang?: any,
@@ -98,31 +104,65 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
    * Crea la fila para mostrar el dato economico en la tabla y los agrupadores de  Anualidad - Proyecto SGI, Concepto gasto y Clasificacion SGE
    * que no existan ya de añadir otros datos economicos
    */
-  protected buildRows(datosEconomicos: IDatoEconomico[]): Observable<RowTreeDesglose<IDesglose>[]> {
+  protected buildRows(datosEconomicos: IDatoEconomico[], rowConfig: IRowConfig): Observable<RowTreeDesglose<IDesglose>[]> {
+
     return this.fillDatosEconomicos(datosEconomicos).pipe(
       map(values => {
         const root: RowTreeDesglose<IDesglose>[] = [];
+
+        const groupByAnualidad = rowConfig.anualidadGroupBy;
+        const groupByClasificacionSge = rowConfig?.clasificacionSgeGroupBy;
+        const groupByProyecto = rowConfig?.proyectoGroupBy;
+
         const mapTree = new Map<string, RowTreeDesglose<IDesglose>>();
         values.forEach(element => {
-          const keyAnualidad = `${element.anualidad}-${this.disableProyectoSgi ? 0 : (element.proyecto?.id ?? 0)}`;
-          const keyConcepto = `${keyAnualidad}-${element.conceptoGasto?.id ?? 0}`;
+
+          const keyAnualidad = groupByProyecto ? `${element.anualidad}-${element.proyecto?.id ?? 0}` : `${element.anualidad}-0`;
+          const keyProyecto = groupByAnualidad ? `${element.anualidad}-${element.proyecto?.id ?? 0}` : `0-${element.proyecto?.id ?? 0}`;
+          const keyConcepto = groupByAnualidad
+            ? `${keyAnualidad}-${element.conceptoGasto?.id ?? 0}`
+            : (groupByProyecto ? `${keyProyecto}-${element.conceptoGasto?.id ?? 0}` : `0-${element.conceptoGasto?.id ?? 0}`);
           const keyClasificacionSGE = `${keyConcepto}-${element.clasificacionSGE?.id ?? 0}`;
 
+          let lastParent: RowTreeDesglose<IDatoEconomico>;
+
           // Agrupador Anualidad - Proyecto SGI
-          let anualidad = mapTree.get(keyAnualidad);
-          if (!anualidad) {
-            anualidad = new RowTreeDesglose(
-              {
-                anualidad: element.anualidad,
-                proyecto: element.proyecto,
-                conceptoGasto: {},
-                partidaPresupuestaria: '',
-                codigoEconomico: {},
-                columnas: this.processColumnsValues(element.columnas, this.columns, true)
-              } as IDesglose
-            );
-            mapTree.set(keyAnualidad, anualidad);
-            root.push(anualidad);
+          if (groupByAnualidad) {
+            let anualidad = mapTree.get(keyAnualidad);
+            if (!anualidad) {
+              anualidad = new RowTreeDesglose(
+                {
+                  anualidad: element.anualidad,
+                  proyecto: element.proyecto,
+                  conceptoGasto: {},
+                  partidaPresupuestaria: '',
+                  codigoEconomico: {},
+                  columnas: this.processColumnsValues(element.columnas, this.columns, true)
+                } as IDesglose
+              );
+              mapTree.set(keyAnualidad, anualidad);
+              root.push(anualidad);
+            }
+
+            lastParent = anualidad;
+          } else if (groupByProyecto) {
+            let proyecto = mapTree.get(keyProyecto);
+            if (!proyecto) {
+              proyecto = new RowTreeDesglose(
+                {
+                  anualidad: element.anualidad,
+                  proyecto: element.proyecto,
+                  conceptoGasto: {},
+                  partidaPresupuestaria: '',
+                  codigoEconomico: {},
+                  columnas: this.processColumnsValues(element.columnas, this.columns, true)
+                } as IDesglose
+              );
+              mapTree.set(keyProyecto, proyecto);
+              root.push(proyecto);
+            }
+
+            lastParent = proyecto;
           }
 
           // Agrupador Concepto gasto
@@ -130,8 +170,8 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
           if (!conceptoGasto) {
             conceptoGasto = new RowTreeDesglose(
               {
-                anualidad: '',
-                proyecto: {},
+                anualidad: !groupByAnualidad && !groupByProyecto ? element.anualidad : '',
+                proyecto: !groupByAnualidad && !groupByProyecto ? element.proyecto : {},
                 conceptoGasto: element.conceptoGasto,
                 partidaPresupuestaria: '',
                 codigoEconomico: {},
@@ -139,41 +179,65 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
               } as IDesglose
             );
             mapTree.set(keyConcepto, conceptoGasto);
-            anualidad.addChild(conceptoGasto);
+
+            if (lastParent) {
+              lastParent.addChild(conceptoGasto);
+            } else {
+              root.push(conceptoGasto);
+            }
           }
 
+          lastParent = conceptoGasto;
+
           // Agrupador clasificacion SGE
-          let clasificacionSGE = mapTree.get(keyClasificacionSGE);
-          if (!clasificacionSGE) {
-            clasificacionSGE = new RowTreeDesglose(
-              {
-                anualidad: '',
-                proyecto: {},
-                conceptoGasto: {},
-                clasificacionSGE: element.clasificacionSGE,
-                partidaPresupuestaria: '',
-                codigoEconomico: {},
-                columnas: this.processColumnsValues(element.columnas, this.columns, true)
-              } as IDesglose
-            );
-            mapTree.set(keyClasificacionSGE, clasificacionSGE);
-            conceptoGasto.addChild(clasificacionSGE);
+          if (groupByClasificacionSge) {
+            let clasificacionSGE = mapTree.get(keyClasificacionSGE);
+            if (!clasificacionSGE) {
+              clasificacionSGE = new RowTreeDesglose(
+                {
+                  anualidad: '',
+                  proyecto: {},
+                  conceptoGasto: {},
+                  clasificacionSGE: element.clasificacionSGE,
+                  partidaPresupuestaria: '',
+                  codigoEconomico: {},
+                  columnas: this.processColumnsValues(element.columnas, this.columns, true)
+                } as IDesglose
+              );
+              mapTree.set(keyClasificacionSGE, clasificacionSGE);
+
+              if (lastParent) {
+                lastParent.addChild(clasificacionSGE);
+              } else {
+                root.push(clasificacionSGE);
+              }
+            }
+
+            lastParent = clasificacionSGE;
           }
 
           // Dato economico
-          clasificacionSGE.addChild(new RowTreeDesglose(
+          const datoEconomico = new RowTreeDesglose(
             {
               id: element.id,
               anualidad: '',
               proyecto: {},
               conceptoGasto: {},
+              clasificacionSGE: !groupByClasificacionSge ? element.clasificacionSGE : {},
               clasificadoAutomaticamente: element.clasificadoAutomaticamente,
               partidaPresupuestaria: element.partidaPresupuestaria,
               codigoEconomico: element.codigoEconomico,
               fechaDevengo: element.fechaDevengo,
               columnas: this.processColumnsValues(element.columnas, this.columns, false)
             } as IDesglose
-          ));
+          );
+
+          if (lastParent) {
+            lastParent.addChild(datoEconomico);
+          } else {
+            root.push(datoEconomico);
+          }
+
         });
         return root;
       })
@@ -181,6 +245,10 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
   }
 
   protected fillDatosEconomicos(datosEconomicos: IDatoEconomico[]): Observable<IDesglose[]> {
+    if (!datosEconomicos?.length) {
+      return of([]);
+    }
+
     return this.fillProyectosMap().pipe(
       switchMap(() =>
         from(datosEconomicos).pipe(
@@ -326,7 +394,7 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
 
     this.getDatosEconomicos(anualidades, devengoRange, contabilizacionRange, pagoRange, true)
       .pipe(
-        switchMap(response => this.buildRows(response)),
+        switchMap(response => this.buildRows(response, this.getRowConfig())),
         map(rows => this.applyFilterGastosClasficadosSgi(rows, gastosClasficadosSgiFilter))
       ).subscribe(
         (root) => {
@@ -354,25 +422,41 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     }
   }
 
-  protected compareAnualidadRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+  protected compareAnualidadRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>, rowConfig?: IRowConfig): number {
+    if (rowConfig && !rowConfig.anualidadShow) {
+      return 0;
+    }
+
     const anualidadItemA = this.getItemLevel(itemA, 0)?.item?.anualidad ?? '';
     const anualidadItemB = this.getItemLevel(itemB, 0)?.item?.anualidad ?? '';
     return anualidadItemA.localeCompare(anualidadItemB);
   }
 
-  protected compareAnualidadDesglose(itemA: IDesglose, itemB: IDesglose): number {
+  protected compareAnualidadDesglose(itemA: IDesglose, itemB: IDesglose, rowConfig?: IRowConfig): number {
+    if (rowConfig && !rowConfig.anualidadShow) {
+      return 0;
+    }
+
     const anualidadItemA = itemA?.anualidad ?? '';
     const anualidadItemB = itemB?.anualidad ?? '';
     return anualidadItemA.localeCompare(anualidadItemB);
   }
 
-  protected compareProyectoTituloRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+  protected compareProyectoTituloRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>, rowConfig?: IRowConfig): number {
+    if (rowConfig && !rowConfig.proyectoShow) {
+      return 0;
+    }
+
     const tituloProyectoItemA = this.getItemLevel(itemA, 0)?.item?.proyecto?.titulo ?? '';
     const tituloProyectoItemB = this.getItemLevel(itemB, 0)?.item?.proyecto?.titulo ?? '';
     return tituloProyectoItemA.localeCompare(tituloProyectoItemB);
   }
 
-  protected compareProyectoTituloDesglose(itemA: IDesglose, itemB: IDesglose): number {
+  protected compareProyectoTituloDesglose(itemA: IDesglose, itemB: IDesglose, rowConfig?: IRowConfig): number {
+    if (rowConfig && !rowConfig.proyectoShow) {
+      return 0;
+    }
+
     const tituloProyectoItemA = itemA?.proyecto?.titulo ?? '';
     const tituloProyectoItemB = itemB?.proyecto?.titulo ?? '';
     return tituloProyectoItemA.localeCompare(tituloProyectoItemB);
@@ -394,7 +478,11 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     return nombreConceptoGastoItemA.localeCompare(nombreConceptoGastoItemB);
   }
 
-  protected compareClasificacionSGENombreRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+  protected compareClasificacionSGENombreRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>, rowConfig?: IRowConfig): number {
+    if (rowConfig && !rowConfig.clasificacionSgeShow) {
+      return 0;
+    }
+
     if (!itemA || !itemB || itemA.level < 2 || itemB.level < 2) {
       return 0;
     }
@@ -404,13 +492,21 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     return nombreClasificacionSGEItemA.localeCompare(nombreClasificacionSGEItemB);
   }
 
-  protected compareClasificacionSGENombreDesglose(itemA: IDesglose, itemB: IDesglose): number {
+  protected compareClasificacionSGENombreDesglose(itemA: IDesglose, itemB: IDesglose, rowConfig?: IRowConfig): number {
+    if (rowConfig && !rowConfig.clasificacionSgeShow) {
+      return 0;
+    }
+
     const nombreClasificacionSGEItemA = itemA?.clasificacionSGE?.nombre ?? '';
     const nombreClasificacionSGEItemB = itemB?.clasificacionSGE?.nombre ?? '';
     return nombreClasificacionSGEItemA.localeCompare(nombreClasificacionSGEItemB);
   }
 
-  protected comparePartidaPresupuestariaRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>): number {
+  protected comparePartidaPresupuestariaRowTree(itemA: RowTreeDesglose<IDesglose>, itemB: RowTreeDesglose<IDesglose>, rowConfig?: IRowConfig): number {
+    if (rowConfig && !rowConfig.aplicacionPresupuestariaShow) {
+      return 0;
+    }
+
     if (!itemA || !itemB || itemA.level < 3 || itemB.level < 3) {
       return 0;
     }
@@ -420,7 +516,11 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     return partidaPresupuestariaItemA.localeCompare(partidaPresupuestariaItemB);
   }
 
-  protected comparePartidaPresupuestariaDesglose(itemA: IDesglose, itemB: IDesglose): number {
+  protected comparePartidaPresupuestariaDesglose(itemA: IDesglose, itemB: IDesglose, rowConfig?: IRowConfig): number {
+    if (rowConfig && !rowConfig.aplicacionPresupuestariaShow) {
+      return 0;
+    }
+
     const partidaPresupuestariaItemA = itemA?.partidaPresupuestaria ?? '';
     const partidaPresupuestariaItemB = itemB?.partidaPresupuestaria ?? '';
     return partidaPresupuestariaItemA.localeCompare(partidaPresupuestariaItemB);
@@ -546,6 +646,12 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
    * ambos como 'Sin clasificar'.
    */
   private fillDatoEconomicoClasificacionWithElegibilidad(datoEconomico: IDesglose): Observable<IDesglose> {
+    if (!datoEconomico.codigoEconomico?.id) {
+      datoEconomico.proyecto = { titulo: 'Sin clasificar' } as IProyecto;
+      datoEconomico.conceptoGasto = { nombre: 'Sin clasificar' } as IConceptoGasto;
+      return of(datoEconomico);
+    }
+
     const options: SgiRestFindOptions = {
       filter: new RSQLSgiRestFilter('codigoEconomicoRef', SgiRestFilterOperator.EQUALS, datoEconomico.codigoEconomico.id)
         .and(
@@ -604,13 +710,24 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
    * @returns la lista de filas filtradas
    */
   private applyFilterGastosClasficadosSgi(rows: RowTreeDesglose<IDesglose>[], filter: GastosClasficadosSgiEnum): RowTreeDesglose<IDesglose>[] {
+    const rowConfig = this.getRowConfig();
+    let filterLevel = 3;
+
+    if (!rowConfig.anualidadGroupBy && !rowConfig.proyectoGroupBy) {
+      filterLevel--;
+    }
+
+    if (!rowConfig.clasificacionSgeGroupBy) {
+      filterLevel--;
+    }
+
     return rows.filter(row => {
-      if (row.level < 3) {
+      if (row.level < filterLevel) {
         row.childs = this.applyFilterGastosClasficadosSgi(row.childs, filter);
       }
 
-      return (row.level < 3 && row.childs.length > 0)
-        || (row.level === 3 && this.desgloseMatchFilterGastosClasficadosSgi({
+      return (row.level < filterLevel && row.childs.length > 0)
+        || (row.level === filterLevel && this.desgloseMatchFilterGastosClasficadosSgi({
           ...row.item,
           conceptoGasto: this.getItemLevel(row, 1).item.conceptoGasto
         } as IDesglose, filter));

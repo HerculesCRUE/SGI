@@ -18,6 +18,11 @@ export enum ModoEjecucion {
   SINCRONA = 'SINCRONA'
 }
 
+export enum FacturasJustificantesColumnasFijasConfigurables {
+  CLASIFICACION_SGE = 'CLASIFICACION_SGE',
+  APLICACION_PRESUPUESTARIA = 'APLICACION_PRESUPUESTARIA'
+}
+
 export const CARDINALIDAD_RELACION_SGI_SGE_MAP: Map<CardinalidadRelacionSgiSge, string> = new Map([
   [CardinalidadRelacionSgiSge.SGI_1_SGE_1, marker(`csp.cardinalidad-relacion-sgi-sge.SGI_1_SGE_1`)],
   [CardinalidadRelacionSgiSge.SGI_1_SGE_N, marker(`csp.cardinalidad-relacion-sgi-sge.SGI_1_SGE_N`)],
@@ -34,6 +39,11 @@ export const VALIDACION_CLASIFICACION_GASTOS_MAP: Map<ValidacionClasificacionGas
   [ValidacionClasificacionGastos.VALIDACION, marker(`csp.validacion-clasificacion-gastos.VALIDACION`)],
   [ValidacionClasificacionGastos.CLASIFICACION, marker(`csp.validacion-clasificacion-gastos.CLASIFICACION`)],
   [ValidacionClasificacionGastos.ELEGIBILIDAD, marker(`csp.validacion-clasificacion-gastos.ELEGIBILIDAD`)]
+]);
+
+export const FACTURAS_JUSTIFICANTES_COLUMNAS_FIJAS_CONFIGURABLES_MAP: Map<FacturasJustificantesColumnasFijasConfigurables, string> = new Map([
+  [FacturasJustificantesColumnasFijasConfigurables.CLASIFICACION_SGE, marker(`csp.facturas-justificantes-columnas-fijas-configurables.CLASIFICACION_SGE`)],
+  [FacturasJustificantesColumnasFijasConfigurables.APLICACION_PRESUPUESTARIA, marker(`csp.facturas-justificantes-columnas-fijas-configurables.APLICACION_PRESUPUESTARIA`)]
 ]);
 
 export interface IConfiguracion {
@@ -76,4 +86,10 @@ export interface IConfiguracion {
   proyectoSgeModificacionModoEjecucion: ModoEjecucion;
   /** Determina si hay integración del calendario facturación con el SGE para indicar si se van a notificar las facturas previstas validadas del calendario de facturación al SGE */
   calendarioFacturacionSgeEnabled: ModoEjecucion;
+  /** Columnas a mostrar en Facturas y gastos (ejecución económica - facturas y justificantes) *//** Columnas a mostrar en Personal Contratado (ejecución económica - facturas y justificantes) */
+  facturasGastosColumnasFijasVisibles: FacturasJustificantesColumnasFijasConfigurables[];
+  /** Columnas a mostrar en Viajes y dietas (ejecución económica - facturas y justificantes) */
+  viajesDietasColumnasFijasVisibles: FacturasJustificantesColumnasFijasConfigurables[];
+  /** Columnas a mostrar en Personal Contratado (ejecución económica - facturas y justificantes) */
+  personalContratadoColumnasFijasVisibles: FacturasJustificantesColumnasFijasConfigurables[];
 }

@@ -144,7 +144,8 @@
         <mat-form-field fxFlex="33%" *ngIf="formPart.isEdit()">
           <mat-label>{{'csp.proyecto.proyectos-relacionados' | translate}}</mat-label>
           <input type="text" placeholder="{{'csp.proyecto.proyectos-relacionados' | translate}}" matInput
-            formControlName="proyectosRelacionados" readonly>
+            formControlName="proyectosRelacionados" readonly
+            [matTooltip]="formGroup.controls.proyectosRelacionados.value" matTooltipShowDelay="200">
         </mat-form-field>
       </ng-container>
     </div>

@@ -1,20 +1,17 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { IConfiguracion } from '@core/models/csp/configuracion';
-import { IDatoEconomico } from '@core/models/sge/dato-economico';
+import { IFacturaEmitida } from '@core/models/sge/factura-emitida';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
-import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { CalendarioFacturacionService } from '@core/services/sge/calendario-facturacion.service';
-import { LuxonUtils } from '@core/utils/luxon-utils';
+import { DateTime } from 'luxon';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../../ejecucion-economica.action.service';
-import {
-  DesgloseEconomicoFragment, IColumnDefinition,
-  IDesgloseEconomicoExportData, RowTreeDesglose
-} from '../desglose-economico.fragment';
+import { IColumnDefinition, IRowConfig } from '../desglose-economico.fragment';
+import { DesgloseFacturaEmitidaFragment, IDesgloseFacturaEmitidaExportData, RowTreeDesgloseFacturaEmitida } from '../desglose-facturas.fragment';
 
-export class FacturasEmitidasFragment extends DesgloseEconomicoFragment<IDatoEconomico> {
+export class FacturasEmitidasFragment extends DesgloseFacturaEmitidaFragment<IFacturaEmitida> {
 
   readonly formGroupFechas = new FormGroup({
     facturaDesde: new FormControl(),
@@ -26,12 +23,11 @@ export class FacturasEmitidasFragment extends DesgloseEconomicoFragment<IDatoEco
     proyectoSge: IProyectoSge,
     relaciones: IRelacionEjecucionEconomicaWithResponsables[],
     proyectoService: ProyectoService,
-    proyectoAnualidadService: ProyectoAnualidadService,
     private calendarioFacturacionService: CalendarioFacturacionService,
     protected readonly config: IConfiguracion
 
   ) {
-    super(key, proyectoSge, relaciones, proyectoService, proyectoAnualidadService, config);
+    super(key, proyectoSge, relaciones, proyectoService, config);
   }
 
   protected onInitialize(): void {
@@ -52,23 +48,23 @@ export class FacturasEmitidasFragment extends DesgloseEconomicoFragment<IDatoEco
       );
   }
 
-  protected getDatosEconomicos(facturaRange?: any): Observable<IDatoEconomico[]> {
-    return this.calendarioFacturacionService.getFacturasEmitidas(this.proyectoSge.id, facturaRange);
+  protected getFacturasEmitidas(fechaFacturaRange?: { desde: DateTime, hasta: DateTime }): Observable<IFacturaEmitida[]> {
+    return this.calendarioFacturacionService.getFacturasEmitidas(this.proyectoSge.id, fechaFacturaRange);
   }
 
-  public loadDataExport(): Observable<IDesgloseEconomicoExportData> {
+  public loadDataExport(): Observable<IDesgloseFacturaEmitidaExportData> {
     const fechas = this.formGroupFechas.controls;
     const facturaRange = {
-      desde: LuxonUtils.toBackend(fechas.facturaDesde.value, true),
-      hasta: LuxonUtils.toBackend(fechas.facturaHasta.value, true)
+      desde: fechas.facturaDesde.value,
+      hasta: fechas.facturaHasta.value
     };
-    const exportData: IDesgloseEconomicoExportData = {
+    const exportData: IDesgloseFacturaEmitidaExportData = {
       data: [],
       columns: []
     };
     return of(exportData).pipe(
       switchMap((exportDataResult) => {
-        return this.getDatosEconomicos(facturaRange).pipe(
+        return this.getFacturasEmitidas(facturaRange).pipe(
           map(data => {
             exportDataResult.data = data;
             return exportDataResult;
@@ -89,15 +85,15 @@ export class FacturasEmitidasFragment extends DesgloseEconomicoFragment<IDatoEco
   public loadDesglose(): void {
     const fechas = this.formGroupFechas.controls;
     const facturaRange = {
-      desde: LuxonUtils.toBackend(fechas.facturaDesde.value, true),
-      hasta: LuxonUtils.toBackend(fechas.facturaHasta.value, true)
+      desde: fechas.facturaDesde.value,
+      hasta: fechas.facturaHasta.value
     };
-    this.getDatosEconomicos(facturaRange)
+    this.getFacturasEmitidas(facturaRange)
       .pipe(
         switchMap(response => this.buildRows(response))
       ).subscribe(
         (root) => {
-          const regs: RowTreeDesglose<any>[] = [];
+          const regs: RowTreeDesgloseFacturaEmitida<any>[] = [];
           root.forEach(r => {
             r.compute(this.columns);
             regs.push(...this.addChilds(r));
@@ -107,37 +103,45 @@ export class FacturasEmitidasFragment extends DesgloseEconomicoFragment<IDatoEco
       );
   }
 
-  protected buildRows(datosEconomicos: IDatoEconomico[]): Observable<RowTreeDesglose<IDatoEconomico>[]> {
-    const root: RowTreeDesglose<IDatoEconomico>[] = [];
-    const mapTree = new Map<string, RowTreeDesglose<IDatoEconomico>>();
-    datosEconomicos.forEach(element => {
+  protected getRowConfig(): IRowConfig {
+    return null;
+  }
+
+  protected buildRows(facturasEmitidas: IFacturaEmitida[]): Observable<RowTreeDesgloseFacturaEmitida<IFacturaEmitida>[]> {
+    const root: RowTreeDesgloseFacturaEmitida<IFacturaEmitida>[] = [];
+    const mapTree = new Map<string, RowTreeDesgloseFacturaEmitida<IFacturaEmitida>>();
+
+    facturasEmitidas.forEach(element => {
       const keyAnualidad = `${element.anualidad}`;
       const keyFactura = `${keyAnualidad}-${element.id}`;
+
       let anualidad = mapTree.get(keyAnualidad);
       if (!anualidad) {
-        anualidad = new RowTreeDesglose(
+        anualidad = new RowTreeDesgloseFacturaEmitida(
           {
             anualidad: element.anualidad,
-            id: '',
+            numeroFactura: '',
             columnas: this.processColumnsValues(element.columnas, this.columns, true)
-          } as IDatoEconomico
+          } as IFacturaEmitida
         );
         mapTree.set(keyAnualidad, anualidad);
         root.push(anualidad);
       }
+
       let factura = mapTree.get(keyFactura);
       if (!factura) {
-        factura = new RowTreeDesglose(
+        factura = new RowTreeDesgloseFacturaEmitida(
           {
             anualidad: '',
-            id: element.id,
+            numeroFactura: element.numeroFactura,
             columnas: this.processColumnsValues(element.columnas, this.columns, false)
-          } as IDatoEconomico
+          } as IFacturaEmitida
         );
         mapTree.set(keyFactura, factura);
         anualidad.addChild(factura);
       }
     });
+
     return of(root);
   }
 

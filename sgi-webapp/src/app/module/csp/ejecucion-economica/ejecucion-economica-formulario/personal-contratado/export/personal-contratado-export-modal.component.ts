@@ -54,8 +54,7 @@ export class PersonalContratadoExportModalComponent
         data: this.modalData.data,
         columns: this.modalData.columns,
         columnMinWidth: 120,
-        showColumClasificadoAutomaticamente: this.modalData.showColumClasificadoAutomaticamente,
-        showColumnProyectoSgi: this.modalData.showColumnProyectoSgi
+        rowConfig: this.modalData.rowConfig
       }
     };
     return reportModalData;

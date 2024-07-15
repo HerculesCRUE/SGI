@@ -1,15 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IConfigValue } from '@core/models/cnf/config-value';
-import { CardinalidadRelacionSgiSge, IConfiguracion, ModoEjecucion } from '@core/models/csp/configuracion';
+import { CardinalidadRelacionSgiSge, FacturasJustificantesColumnasFijasConfigurables, IConfiguracion, ModoEjecucion } from '@core/models/csp/configuracion';
 import { environment } from '@env';
 import { FindByIdCtor, SgiRestBaseService, mixinFindById } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ConfigCsp } from 'src/app/module/adm/config-csp/config-csp.component';
-import { IConfigValueResponse } from '../cnf/config-value-response';
-import { CONFIG_VALUE_RESPONSE_CONVERTER } from '../cnf/config-value-response.converter';
-import { TimeZoneConfigService } from '../timezone.service';
+import { IConfigValueResponse } from '../../cnf/config-value-response';
+import { CONFIG_VALUE_RESPONSE_CONVERTER } from '../../cnf/config-value-response.converter';
+import { TimeZoneConfigService } from '../../timezone.service';
+import { IConfiguracionResponse } from './configuracion-response';
+import { CONFIGURACION_RESPONSE_CONVERTER } from './configuracion-response.converter';
 
 // tslint:disable-next-line: variable-name
 const _ConfigServiceMixinBase:
@@ -40,7 +42,9 @@ export class ConfigService extends _ConfigServiceMixinBase implements TimeZoneCo
    * Devuelve la configuración completa
    */
   getConfiguracion(): Observable<IConfiguracion> {
-    return this.http.get<IConfiguracion>(`${this.endpointUrl}`);
+    return this.http.get<IConfiguracionResponse>(`${this.endpointUrl}`).pipe(
+      map(response => CONFIGURACION_RESPONSE_CONVERTER.toTarget(response))
+    );
   }
 
   updateValue(key: string, value: string): Observable<IConfigValue> {
@@ -115,6 +119,26 @@ export class ConfigService extends _ConfigServiceMixinBase implements TimeZoneCo
   isCalendarioFacturacionSgeEnabled(): Observable<boolean> {
     return this.findById(ConfigCsp.CSP_CALENDARIO_FACTURACION_SGE_ENABLED).pipe(
       map(configValue => configValue?.value && configValue.value === 'true')
+    );
+  }
+
+  getFacturasGastosColumnasFijasVisibles(): Observable<FacturasJustificantesColumnasFijasConfigurables[]> {
+    return this.findById(ConfigCsp.CSP_FACTURAS_GASTOS_COLUMNAS_FIJAS_VISIBLES).pipe(
+      map(configValue => configValue?.value)
+    );
+  }
+
+  getViajesDietasColumnasFijasVisibles(): Observable<FacturasJustificantesColumnasFijasConfigurables[]> {
+    return this.findById(ConfigCsp.CSP_VIAJES_DIETAS_COLUMNAS_FIJAS_VISIBLES).pipe(
+      map(configValue => configValue?.value)
+    );
+  }
+
+  getPersonalContratadoColumnasFijasVisibles(): Observable<FacturasJustificantesColumnasFijasConfigurables[]> {
+    return this.findById(ConfigCsp.CSP_PERSONAL_CONTRATADO_COLUMNAS_FIJAS_VISIBLES).pipe(
+      map(configValue => configValue?.value.split(',').map(s => {
+        return FacturasJustificantesColumnasFijasConfigurables[s];
+      }))
     );
   }
 

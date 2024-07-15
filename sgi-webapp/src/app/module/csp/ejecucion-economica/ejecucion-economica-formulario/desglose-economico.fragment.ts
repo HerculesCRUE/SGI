@@ -13,6 +13,20 @@ import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../ejecucion-economica.action.service';
 
+export interface IRowConfig {
+  anualidadGroupBy: boolean;
+  anualidadShow: boolean;
+  aplicacionPresupuestariaGroupBy: boolean;
+  aplicacionPresupuestariaShow: boolean;
+  clasificacionSgeGroupBy: boolean;
+  clasificacionSgeShow: boolean;
+  clasificadoAutomaticamenteShow: boolean;
+  proyectoGroupBy: boolean;
+  proyectoShow: boolean;
+  tipoGroupBy: boolean;
+  tipoShow: boolean;
+}
+
 export interface IColumnDefinition {
   id: string;
   name: string;
@@ -79,8 +93,7 @@ export class RowTreeDesglose<T extends IDatoEconomico> extends RowTree<T> {
 export interface IDesgloseEconomicoExportData extends IBaseExportModalData {
   data: IDatoEconomico[];
   columns: IColumnDefinition[];
-  showColumClasificadoAutomaticamente?: boolean;
-  showColumnProyectoSgi?: boolean;
+  rowConfig?: IRowConfig;
 }
 
 export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extends Fragment {
@@ -194,7 +207,7 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
     this.clearProblems();
     this.getDatosEconomicos(anualidades)
       .pipe(
-        switchMap(response => this.buildRows(response))
+        switchMap(response => this.buildRows(response, this.getRowConfig()))
       ).subscribe(
         (root) => {
           const regs: RowTreeDesglose<T>[] = [];
@@ -215,7 +228,9 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
 
   protected abstract getDatosEconomicos(anualidades: string[]): Observable<IDatoEconomico[]>;
 
-  protected abstract buildRows(datosEconomicos: IDatoEconomico[]): Observable<RowTreeDesglose<T>[]>;
+  protected abstract buildRows(datosEconomicos: IDatoEconomico[], rowConfig: IRowConfig): Observable<RowTreeDesglose<T>[]>;
+
+  protected abstract getRowConfig(): IRowConfig;
 
   protected processColumnsValues(
     columns: {
@@ -256,4 +271,5 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
     }
     return childs;
   }
+
 }

@@ -3,7 +3,7 @@ import { IGrupo } from '@core/models/csp/grupo';
 import { IGrupoEquipo } from '@core/models/csp/grupo-equipo';
 import { ICategoriaProfesional } from '@core/models/sgp/categoria-profesional';
 import { Fragment } from '@core/services/action-service';
-import { ConfigService } from '@core/services/csp/config.service';
+import { ConfigService } from '@core/services/csp/configuracion/config.service';
 import { GrupoEquipoService } from '@core/services/csp/grupo-equipo/grupo-equipo.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -13,7 +13,7 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Observable, from, of } from 'rxjs';
-import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { catchError, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
 
 export interface IGrupoEquipoListado extends IGrupoEquipo {
   categoriaProfesional: ICategoriaProfesional;
@@ -42,50 +42,14 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
       const id = this.getKey() as number;
       this.subscriptions.push(
         this.grupoService.findMiembrosEquipo(id).pipe(
-          switchMap(result => {
-            return from(result.items).pipe(
-              mergeMap(element => {
-                return this.personaService.findById(element.persona.id).pipe(
-                  map(persona => {
-                    element.persona = persona;
-                    return element as IGrupoEquipoListado;
-                  }),
-                  catchError((err) => {
-                    this.logger.error(err);
-                    return of(element);
-                  })
-                );
-              }),
-              map(() => result)
-            );
-          }),
-          map(miembrosEquipo => {
-            return miembrosEquipo.items.map(miembroEquipo => {
+          switchMap(response => from(response.items).pipe(
+            map(miembroEquipo => {
               miembroEquipo.grupo = { id: this.getKey() } as IGrupo;
               return new StatusWrapper<IGrupoEquipoListado>(miembroEquipo as IGrupoEquipoListado);
-            });
-          }),
-          switchMap(result => {
-            return from(result).pipe(
-              mergeMap(element => {
-                const filter = new RSQLSgiRestFilter(
-                  'fechaObtencion', SgiRestFilterOperator.LOWER_OR_EQUAL,
-                  LuxonUtils.toBackend(element.value.fechaFin) ?? LuxonUtils.toBackend(element.value.fechaInicio)
-                ).and('fechaFin', SgiRestFilterOperator.GREATHER_OR_EQUAL,
-                  LuxonUtils.toBackend(element.value.fechaFin) ?? LuxonUtils.toBackend(element.value.fechaInicio));
-                const options: SgiRestFindOptions = {
-                  filter
-                };
-                return this.vinculacionService.findVinculacionesCategoriasProfesionalesByPersonaId(element.value.persona.id, options).pipe(
-                  map(vinculacionCategoria => {
-                    element.value.categoriaProfesional = vinculacionCategoria?.categoriaProfesional;
-                    return element;
-                  })
-                );
-              }),
-              map(() => result)
-            );
-          })
+            }),
+            mergeMap(miembroEquipoWrapper => this.fillMiembroEquipo$(miembroEquipoWrapper), 100),
+            toArray()
+          ))
         ).subscribe(
           result => {
             this.equipos$.next(result);
@@ -199,9 +163,9 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
   private getVinculacionPersona(element: IGrupoEquipoListado): Observable<IGrupoEquipoListado> {
     const filter = new RSQLSgiRestFilter(
       'fechaObtencion', SgiRestFilterOperator.LOWER_OR_EQUAL,
-      LuxonUtils.toBackend(element.fechaFin) ?? LuxonUtils.toBackend(element.fechaInicio)
+      LuxonUtils.toBackend(element.fechaFin, true) ?? LuxonUtils.toBackend(element.fechaInicio, true)
     ).and('fechaFin', SgiRestFilterOperator.GREATHER_OR_EQUAL,
-      LuxonUtils.toBackend(element.fechaFin) ?? LuxonUtils.toBackend(element.fechaInicio));
+      LuxonUtils.toBackend(element.fechaFin, true) ?? LuxonUtils.toBackend(element.fechaInicio, true));
     const options: SgiRestFindOptions = {
       filter
     };
@@ -210,6 +174,35 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
         element.categoriaProfesional = vinculacionCategoria?.categoriaProfesional;
         return element;
       }));
+  }
+
+  private fillMiembroEquipo$(wrapper: StatusWrapper<IGrupoEquipoListado>): Observable<StatusWrapper<IGrupoEquipoListado>> {
+    return this.personaService.findById(wrapper.value.persona.id).pipe(
+      map(persona => {
+        wrapper.value.persona = persona;
+        return wrapper;
+      }),
+      switchMap(wrapper => {
+        const filter = new RSQLSgiRestFilter(
+          'fechaObtencion', SgiRestFilterOperator.LOWER_OR_EQUAL,
+          LuxonUtils.toBackend(wrapper.value.fechaFin, true) ?? LuxonUtils.toBackend(wrapper.value.fechaInicio, true)
+        ).and('fechaFin', SgiRestFilterOperator.GREATHER_OR_EQUAL,
+          LuxonUtils.toBackend(wrapper.value.fechaFin, true) ?? LuxonUtils.toBackend(wrapper.value.fechaInicio, true));
+        const options: SgiRestFindOptions = {
+          filter
+        };
+        return this.vinculacionService.findVinculacionesCategoriasProfesionalesByPersonaId(wrapper.value.persona.id, options).pipe(
+          map(vinculacionCategoria => {
+            wrapper.value.categoriaProfesional = vinculacionCategoria?.categoriaProfesional;
+            return wrapper;
+          })
+        );
+      }),
+      catchError((err) => {
+        this.logger.error(err);
+        return of(wrapper);
+      })
+    );
   }
 
 }

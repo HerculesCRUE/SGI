@@ -1,0 +1,6 @@
+<mat-select tabindex="0" [sgiTooltip]="(value !== null && value !== undefined) ? displayWith(value) : ''" multiple>
+  <mat-option *ngFor="let value of selectValues" [value]="value.item" [class.missing]="value.missing"
+    [disabled]="value.disabled">{{
+    value.displayText | translate
+    }}</mat-option>
+</mat-select>

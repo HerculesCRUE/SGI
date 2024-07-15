@@ -1,0 +1,21 @@
+<form [formGroup]="formGroup" fxLayout="column">
+
+  <div fxFlex fxLayout="row" fxLayoutGap="10px">
+    <mat-form-field>
+      <mat-label>{{label | translate:labelParams}}</mat-label>
+      <sgi-select-multiple formControlName="configValue" [options]="options$ | async"
+        placeholder="{{label | translate:labelParams}}" [compareWith]="comparer" [displayWith]="displayer"
+        [sortWith]="sorter" [matTooltip]="configValue?.description" matTooltipShowDelay="200" [required]="required">
+      </sgi-select-multiple>
+      <mat-error *ngIf="formGroup.controls.configValue.errors?.required">
+        {{ 'error.required.field' | translate:msgParamLabel }}
+      </mat-error>
+    </mat-form-field>
+
+    <button [disabled]="!formGroup.valid || !hasChanges()" color="primary" mat-icon-button (click)="save()"
+      matTooltip="{{'btn.save' | translate}}">
+      <mat-icon>save</mat-icon>
+    </button>
+  </div>
+
+</form>

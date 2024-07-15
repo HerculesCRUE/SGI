@@ -7,7 +7,7 @@ import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economic
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../../ejecucion-economica.action.service';
-import { IColumnDefinition } from '../desglose-economico.fragment';
+import { IColumnDefinition, IRowConfig } from '../desglose-economico.fragment';
 import { EjecucionPresupuestariaFragment } from '../ejecucion-presupuestaria.fragment';
 
 export class EjecucionPresupuestariaIngresosFragment extends EjecucionPresupuestariaFragment {
@@ -30,7 +30,7 @@ export class EjecucionPresupuestariaIngresosFragment extends EjecucionPresupuest
     this.subscriptions.push(this.getColumns().subscribe(
       (columns) => {
         this.columns = columns;
-        this.displayColumns = ['anualidad', 'aplicacionPresupuestaria', ...columns.map(column => column.id)];
+        this.displayColumns = this.getDisplayColumns(this.getRowConfig(), columns);
       }
     ));
   }
@@ -42,8 +42,45 @@ export class EjecucionPresupuestariaIngresosFragment extends EjecucionPresupuest
       );
   }
 
+  protected getRowConfig(): IRowConfig {
+    return {
+      anualidadGroupBy: true,
+      anualidadShow: true,
+      aplicacionPresupuestariaGroupBy: true,
+      aplicacionPresupuestariaShow: true,
+      clasificacionSgeGroupBy: false,
+      clasificacionSgeShow: false,
+      clasificadoAutomaticamenteShow: false,
+      proyectoGroupBy: false,
+      proyectoShow: false,
+      tipoGroupBy: false,
+      tipoShow: false
+    };
+  }
+
   protected getDatosEconomicos(anualidades: string[]): Observable<IDatoEconomico[]> {
     return this.ejecucionEconomicaService.getEjecucionPresupuestariaIngresos(this.proyectoSge.id, anualidades);
   }
+
+  private getDisplayColumns(rowConfig: IRowConfig, columns: IColumnDefinition[]): string[] {
+    const displayColumns = [];
+
+    if (rowConfig?.anualidadShow) {
+      displayColumns.push('anualidad');
+    }
+
+    if (rowConfig?.tipoShow) {
+      displayColumns.push('tipo');
+    }
+
+    if (rowConfig?.aplicacionPresupuestariaShow) {
+      displayColumns.push('aplicacionPresupuestaria');
+    }
+
+    displayColumns.push(...columns.map(column => column.id));
+
+    return displayColumns;
+  }
+
 
 }

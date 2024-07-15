@@ -9,8 +9,10 @@ import { ConfigInputFileComponent } from './config-input-file /config-input-file
 import { ConfigInputTextCnfComponent } from './config-input-text-cnf/config-input-text-cnf.component';
 import { ConfigInputTextCspComponent } from './config-input-text-csp/config-input-text-csp.component';
 import { ConfigSelectCnfComponent } from './config-select-cnf/config-select-cnf.component';
-import { ResourceUploadComponent } from './resource-upload/resource-upload.component';
 import { ConfigSelectCspComponent } from './config-select-csp/config-select-csp.component';
+import { ConfigSelectMultipleCnfComponent } from './config-select-multiple-cnf/config-select-multiple-cnf.component';
+import { ConfigSelectMultipleCspComponent } from './config-select-multiple-csp/config-select-multiple-csp.component';
+import { ResourceUploadComponent } from './resource-upload/resource-upload.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +22,8 @@ import { ConfigSelectCspComponent } from './config-select-csp/config-select-csp.
     ConfigInputTextCspComponent,
     ConfigSelectCnfComponent,
     ConfigSelectCspComponent,
+    ConfigSelectMultipleCnfComponent,
+    ConfigSelectMultipleCspComponent,
     ResourceUploadComponent
   ],
   imports: [
@@ -37,6 +41,8 @@ import { ConfigSelectCspComponent } from './config-select-csp/config-select-csp.
     ConfigInputTextCspComponent,
     ConfigSelectCnfComponent,
     ConfigSelectCspComponent,
+    ConfigSelectMultipleCnfComponent,
+    ConfigSelectMultipleCspComponent,
     ResourceUploadComponent
   ]
 })

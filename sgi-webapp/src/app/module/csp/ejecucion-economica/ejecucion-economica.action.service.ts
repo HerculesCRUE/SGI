@@ -230,7 +230,6 @@ export class EjecucionEconomicaActionService extends ActionService {
       this.data.proyectoSge,
       this.data.relaciones,
       proyectoService,
-      proyectoAnualidadService,
       calendarioFacturacionService,
       this.data.configuracion
     );

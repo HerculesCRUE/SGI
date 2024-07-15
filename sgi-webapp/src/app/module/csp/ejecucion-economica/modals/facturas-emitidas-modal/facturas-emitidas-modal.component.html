@@ -4,7 +4,7 @@
 
   <div>
     <p>{{'sge.dato-economico.anualidad' | translate}}: {{data?.anualidad| translate}}</p>
-    <p>{{'sge.dato-economico.factura' | translate}}: {{data?.id}}</p>
+    <p>{{'sge.dato-economico.factura' | translate}}: {{data?.numeroFactura}}</p>
     <p *ngFor="let campo of data?.campos">{{campo?.nombre}}: {{campo?.valor}}</p>
   </div>
 

@@ -8,7 +8,7 @@ import { TIPO_JUSTIFICACION_MAP } from '@core/enums/tipo-justificacion';
 import { TIPO_SEGUIMIENTO_MAP } from '@core/enums/tipo-seguimiento';
 import { ISeguimientoJustificacionAnualidad } from '@core/models/csp/seguimiento-justificacion-anualidad';
 import { ConfigService } from '@core/services/cnf/config.service';
-import { ConfigService as CspConfigService } from '@core/services/csp/config.service';
+import { ConfigService as CspConfigService } from '@core/services/csp/configuracion/config.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { Subscription } from 'rxjs';
 import { CSP_ROUTE_NAMES } from '../../../csp-route-names';

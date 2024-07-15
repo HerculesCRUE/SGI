@@ -51,6 +51,21 @@
           <ng-container *ngSwitchDefault></ng-container>
         </ng-container>
       </ng-container>
+      <ng-container *ngSwitchCase="ConfigType.SELECT_MULTIPLE">
+        <ng-container [ngSwitch]="config.value.module">
+          <ng-container *ngSwitchCase="ConfigModule.CNF">
+            <sgi-config-select-multiple-cnf [key]="config.key" [label]="config.value.label"
+              [required]="config.value.required" [options$]="config.value.options" (error)="handleErrors($event)">
+            </sgi-config-select-multiple-cnf>
+          </ng-container>
+          <ng-container *ngSwitchCase="ConfigModule.CSP">
+            <sgi-config-select-multiple-csp [key]="config.key" [label]="config.value.label"
+              [required]="config.value.required" [options$]="config.value.options" (error)="handleErrors($event)">
+            </sgi-config-select-multiple-csp>
+          </ng-container>
+          <ng-container *ngSwitchDefault></ng-container>
+        </ng-container>
+      </ng-container>
       <ng-container *ngSwitchCase="ConfigType.CONFIG_GROUP_TITLE">
         <h3 class="config-group-title">
           {{config.value.label | translate:config.value.labelParams}}

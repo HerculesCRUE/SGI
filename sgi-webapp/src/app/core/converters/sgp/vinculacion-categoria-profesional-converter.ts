@@ -9,7 +9,6 @@ class VinculacionCategoriaProfesionalConverter extends SgiBaseConverter<IVincula
       return value as unknown as IVinculacionCategoriaProfesional;
     }
     return {
-      id: value.id,
       categoriaProfesional: value.categoriaProfesional,
       fechaObtencion: LuxonUtils.fromBackend(value.fechaObtencion),
     };
@@ -20,7 +19,6 @@ class VinculacionCategoriaProfesionalConverter extends SgiBaseConverter<IVincula
       return value as unknown as IVinculacionCategoriaProfesionalBackend;
     }
     return {
-      id: value.id,
       categoriaProfesional: value.categoriaProfesional,
       fechaObtencion: LuxonUtils.toBackend(value.fechaObtencion),
     };

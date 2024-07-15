@@ -11,7 +11,7 @@ import { NGXLogger } from 'ngx-logger';
 import { switchMap } from 'rxjs/operators';
 import { SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTO_ROUTE_NAMES } from '../seguimiento-justificacion-requerimiento-route-names';
 import { SeguimientoJustificacionRequerimientoActionService } from '../seguimiento-justificacion-requerimiento.action.service';
-import { ConfigService } from '@core/services/csp/config.service';
+import { ConfigService } from '@core/services/csp/configuracion/config.service';
 
 const MSG_BUTTON_EDIT = marker('btn.save.entity');
 const MSG_SUCCESS = marker('msg.update.entity.success');

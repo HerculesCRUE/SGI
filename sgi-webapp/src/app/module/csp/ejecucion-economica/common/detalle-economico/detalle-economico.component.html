@@ -1,7 +1,13 @@
 <div>
-  <p>{{'sge.dato-economico.anualidad' | translate}}: {{detalle?.anualidad}}</p>
-  <p>{{'sge.dato-economico.clasificacion-sge' | translate}}: {{detalle?.clasificacionSGE?.nombre}}</p>
-  <p>{{'sge.dato-economico.partida-presupuestaria' | translate}}: {{detalle?.partidaPresupuestaria}}</p>
+  <ng-container *ngIf="!rowConfig || rowConfig.anualidadShow">
+    <p>{{'sge.dato-economico.anualidad' | translate}}: {{detalle?.anualidad}}</p>
+  </ng-container>
+  <ng-container *ngIf="!rowConfig || rowConfig.clasificacionSgeShow">
+    <p>{{'sge.dato-economico.clasificacion-sge' | translate}}: {{detalle?.clasificacionSGE?.nombre}}</p>
+  </ng-container>
+  <ng-container *ngIf="!rowConfig || rowConfig.aplicacionPresupuestariaShow">
+    <p>{{'sge.dato-economico.partida-presupuestaria' | translate}}: {{detalle?.partidaPresupuestaria}}</p>
+  </ng-container>
   <p>{{'sge.dato-economico.codigo-economico' | translate}}: {{detalle?.codigoEconomico.id}}
     {{detalle?.codigoEconomico?.nombre ? ' - ' + detalle?.codigoEconomico.nombre : '' }}
   </p>

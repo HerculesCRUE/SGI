@@ -1,10 +1,10 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { SgiError } from '@core/errors/sgi-error';
-import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
 import { IDocumento } from '@core/models/sge/documento';
+import { IFacturaEmitidaDetalle } from '@core/models/sge/factura-emitida-detalle';
 import { triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { DocumentoService } from '@core/services/sge/documento.service';
 
@@ -19,7 +19,7 @@ export class FacturasEmitidasModalComponent extends DialogCommonComponent {
   constructor(
     matDialogRef: MatDialogRef<FacturasEmitidasModalComponent>,
     private documentoService: DocumentoService,
-    @Inject(MAT_DIALOG_DATA) public data: IDatoEconomicoDetalle
+    @Inject(MAT_DIALOG_DATA) public data: IFacturaEmitidaDetalle
   ) {
     super(matDialogRef);
   }

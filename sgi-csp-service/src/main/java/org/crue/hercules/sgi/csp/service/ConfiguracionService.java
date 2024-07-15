@@ -79,7 +79,7 @@ public class ConfiguracionService {
     log.debug("get(String name) - start");
     AssertHelper.fieldNotNull(name, Configuracion.class, AssertHelper.MESSAGE_KEY_NAME);
     Configuracion.Param param = Configuracion.Param.fromKey(name);
-    String value = this.findConfiguracion().getParamValue(param).toString();
+    String value = getParamValueAsString(this.findConfiguracion(), param);
     ConfigParamOutput returnValue = ConfigParamOutput.builder()
         .name(param.getKey())
         .value(value)
@@ -108,12 +108,16 @@ public class ConfiguracionService {
 
       ConfigParamOutput returnValue = ConfigParamOutput.builder()
           .name(param.getKey())
-          .value(data.getParamValue(param).toString())
+          .value(getParamValueAsString(data, param))
           .build();
 
       log.debug("updateValue(String name, String value) - end");
       return returnValue;
     }).orElseThrow(() -> new ConfiguracionNotFoundException(null));
+  }
+
+  private String getParamValueAsString(Configuracion configuracion, Configuracion.Param param) {
+    return configuracion.getParamValue(param) != null ? configuracion.getParamValue(param).toString() : "";
   }
 
 }

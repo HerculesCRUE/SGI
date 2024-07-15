@@ -7,7 +7,7 @@ import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economic
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../../ejecucion-economica.action.service';
-import { IColumnDefinition } from '../desglose-economico.fragment';
+import { IColumnDefinition, IRowConfig } from '../desglose-economico.fragment';
 import { EjecucionPresupuestariaFragment } from '../ejecucion-presupuestaria.fragment';
 
 export class DetalleOperacionesModificacionesFragment extends EjecucionPresupuestariaFragment {
@@ -30,7 +30,7 @@ export class DetalleOperacionesModificacionesFragment extends EjecucionPresupues
     this.subscriptions.push(this.getColumns().subscribe(
       (columns) => {
         this.columns = columns;
-        this.displayColumns = ['anualidad', 'aplicacionPresupuestaria', ...columns.map(column => column.id)];
+        this.displayColumns = this.getDisplayColumns(this.getRowConfig(), columns);
       }
     ));
   }
@@ -42,8 +42,41 @@ export class DetalleOperacionesModificacionesFragment extends EjecucionPresupues
       );
   }
 
+  protected getRowConfig(): IRowConfig {
+    return {
+      anualidadGroupBy: true,
+      anualidadShow: true,
+      aplicacionPresupuestariaGroupBy: true,
+      aplicacionPresupuestariaShow: true,
+      clasificacionSgeGroupBy: false,
+      clasificacionSgeShow: false,
+      clasificadoAutomaticamenteShow: false,
+      proyectoGroupBy: false,
+      proyectoShow: false,
+      tipoGroupBy: false,
+      tipoShow: false
+    };
+  }
+
   protected getDatosEconomicos(anualidades: string[]): Observable<IDatoEconomico[]> {
     return this.ejecucionEconomicaService.getDetalleOperacionesModificaciones(this.proyectoSge.id, anualidades);
+  }
+
+  private getDisplayColumns(rowConfig: IRowConfig, columns: IColumnDefinition[]): string[] {
+    const displayColumns = [];
+
+    if (rowConfig?.anualidadGroupBy) {
+      displayColumns.push('anualidad');
+    }
+
+    if (rowConfig?.aplicacionPresupuestariaShow) {
+      displayColumns.push('aplicacionPresupuestaria');
+    }
+
+    displayColumns.push('codigoEconomico');
+    displayColumns.push(...columns.map(column => column.id));
+
+    return displayColumns;
   }
 
 }

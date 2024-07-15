@@ -6,7 +6,8 @@
         {{ 'title.csp.ejecucion-economica.facturas-justificantes.datos-sge' | translate}}
       </mat-card-title>
       <mat-card-content>
-        <sgi-ejecucion-economica-detalle-economico [detalle]="data"></sgi-ejecucion-economica-detalle-economico>
+        <sgi-ejecucion-economica-detalle-economico [detalle]="data" [rowConfig]="data.rowConfig">
+        </sgi-ejecucion-economica-detalle-economico>
       </mat-card-content>
     </mat-card>
     <mat-card>

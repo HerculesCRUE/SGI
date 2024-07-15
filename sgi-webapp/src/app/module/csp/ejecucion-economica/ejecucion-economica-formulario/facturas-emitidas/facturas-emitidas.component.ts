@@ -4,8 +4,8 @@ import { MatSelect } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IDatoEconomico } from '@core/models/sge/dato-economico';
-import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
+import { IFacturaEmitida } from '@core/models/sge/factura-emitida';
+import { IFacturaEmitidaDetalle } from '@core/models/sge/factura-emitida-detalle';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConfigService } from '@core/services/cnf/config.service';
@@ -14,7 +14,7 @@ import { DateTime } from 'luxon';
 import { Subscription } from 'rxjs';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
 import { FacturasEmitidasModalComponent } from '../../modals/facturas-emitidas-modal/facturas-emitidas-modal.component';
-import { IDesgloseEconomicoExportData, RowTreeDesglose } from '../desglose-economico.fragment';
+import { IDesgloseFacturaEmitidaExportData, RowTreeDesgloseFacturaEmitida } from '../desglose-facturas.fragment';
 import { IDesglose } from '../facturas-justificantes.fragment';
 import { FacturasEmitidasExportModalComponent } from './export/facturas-emitidas-export-modal.component';
 import { FacturasEmitidasFragment } from './facturas-emitidas.fragment';
@@ -34,7 +34,7 @@ export class FacturasEmitidasComponent extends FragmentComponent implements OnIn
   msgParamEntity = {};
   textoDelete: string;
 
-  readonly dataSourceDesglose = new MatTableDataSource<RowTreeDesglose<IDatoEconomico>>();
+  readonly dataSourceDesglose = new MatTableDataSource<RowTreeDesgloseFacturaEmitida<IFacturaEmitida>>();
 
   @ViewChild('anualSel') selectAnualidades: MatSelect;
 
@@ -86,7 +86,7 @@ export class FacturasEmitidasComponent extends FragmentComponent implements OnIn
   showDetail(element: IDesglose): void {
     this.subscriptions.push(this.calendarioFacturacionService.getFacturaEmitidaDetalle(element.id).subscribe(
       (detalle) => {
-        const config: MatDialogConfig<IDatoEconomicoDetalle> = {
+        const config: MatDialogConfig<IFacturaEmitidaDetalle> = {
           data: detalle
         };
         this.matDialog.open(FacturasEmitidasModalComponent, config);
@@ -98,7 +98,7 @@ export class FacturasEmitidasComponent extends FragmentComponent implements OnIn
 
     this.subscriptions.push(this.formPart.loadDataExport().subscribe(
       (exportData) => {
-        const data: IDesgloseEconomicoExportData = {
+        const data: IDesgloseFacturaEmitidaExportData = {
           columns: exportData?.columns,
           data: exportData?.data,
           totalRegistrosExportacionExcel: this.totalElementos,

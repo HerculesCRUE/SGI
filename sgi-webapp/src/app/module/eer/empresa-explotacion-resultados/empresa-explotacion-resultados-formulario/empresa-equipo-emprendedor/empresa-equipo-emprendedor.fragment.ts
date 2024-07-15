@@ -158,7 +158,7 @@ export class EmpresaEquipoEmprendedorFragment extends Fragment {
 
   private getVinculacionPersona(element: IEmpresaEquipoEmprendedorListado): Observable<IEmpresaEquipoEmprendedorListado> {
     const filter = new RSQLSgiRestFilter(
-      'fechaObtencion', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(DateTime.now())
+      'fechaObtencion', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(DateTime.now(), true)
     );
     const options: SgiRestFindOptions = {
       filter
