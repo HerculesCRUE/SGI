@@ -8,31 +8,33 @@ import { CspInicioComponent } from './csp-inicio/csp-inicio.component';
 import { CspRootComponent } from './csp-root/csp-root.component';
 import { CSP_ROUTE_NAMES } from './csp-route-names';
 
-const MSG_ROOT_TITLE = marker('csp.root.title');
-const MSG_CONVOCATORIA_TITLE = marker('csp.convocatoria');
-const MSG_SOLICITUD_TITLE = marker('csp.solicitud');
-const MSG_TIPO_ENLACE_TITLE = marker('csp.tipo-enlace');
-const MSG_TIPO_HITO_TITLE = marker('csp.tipo-hito');
-const MSG_TIPO_FINALIDAD_TITLE = marker('csp.tipo-finalidad');
-const MSG_TIPO_DOCUMENTO_TITLE = marker('csp.tipo-documento');
-const MSG_MODELO_EJECUCION_TITLE = marker('menu.csp.configuraciones.modelos-ejecucion');
-const MSG_PLAN_INVESTIGACION_TITLE = marker('menu.csp.configuraciones.planes-investigacion');
-const MSG_GESTION_CONCEPTO_GASTO_TITLE = marker('menu.csp.configuraciones.conceptos-gasto');
-const MSG_GESTION_LINEA_INVESTIGACION_TITLE = marker('menu.csp.configuraciones.lineas-investigacion');
-const MSG_TIPO_FINANCIACION_TITLE = marker('menu.csp.configuraciones.tipos-financiacion');
-const MSG_FUENTE_FINANCIACION_TITLE = marker('menu.csp.configuraciones.fuentes-financiacion');
-const MSG_AREA_TEMATICA_TITLE = marker('menu.csp.configuraciones.areas-tematicas');
-const MSG_EJECUCION_ECONOMICA_TITLE = marker('menu.csp.ejecucion-economica');
-const MSG_TIPO_ORIGEN_FUENTE_FINANCIACION_TITLE = marker('menu.csp.tipo-origen-fuente-financiacion');
-const MSG_NOTIFICACION_PRESUPUESTO_SGE_TITLE = marker('menu.csp.notificacion-presupuesto-sge');
-const PROYECTO_KEY = marker('csp.proyectos');
 const AUTORIZACION_KEY = marker('csp.autorizacion');
 const NOTIFICACION_CVN_KEY = marker('csp.notificacion-cvn');
+const PROYECTO_KEY = marker('csp.proyectos');
+
+const MSG_AREA_TEMATICA_TITLE = marker('menu.csp.configuraciones.areas-tematicas');
+const MSG_CONVOCATORIA_TITLE = marker('csp.convocatoria');
+const MSG_EJECUCION_ECONOMICA_TITLE = marker('menu.csp.ejecucion-economica');
+const MSG_FACTURAS_PREVISTAS_PENDIENTES_TITLE = marker('menu.csp.facturas-previstas-pendientes');
+const MSG_FUENTE_FINANCIACION_TITLE = marker('menu.csp.configuraciones.fuentes-financiacion');
+const MSG_GESTION_CONCEPTO_GASTO_TITLE = marker('menu.csp.configuraciones.conceptos-gasto');
+const MSG_GESTION_LINEA_INVESTIGACION_TITLE = marker('menu.csp.configuraciones.lineas-investigacion');
 const MSG_GRUPO_TITLE = marker('csp.grupo');
-const MSG_TIPO_REGIMEN_CONCURRENCIA_TITLE = marker('csp.tipo-regimen-concurrencia');
-const MSG_TIPO_AMBITO_GEOGRAFICO_TITLE = marker('csp.tipo-ambito-geografico');
-const MSG_ROL_SOCIO_PROYECTO = marker('menu.csp.rol-socio');
+const MSG_MODELO_EJECUCION_TITLE = marker('menu.csp.configuraciones.modelos-ejecucion');
+const MSG_NOTIFICACION_PRESUPUESTO_SGE_TITLE = marker('menu.csp.notificacion-presupuesto-sge');
+const MSG_PLAN_INVESTIGACION_TITLE = marker('menu.csp.configuraciones.planes-investigacion');
 const MSG_ROL_EQUIPO_TITLE = marker('csp.rol-equipo');
+const MSG_ROL_SOCIO_PROYECTO = marker('menu.csp.rol-socio');
+const MSG_ROOT_TITLE = marker('csp.root.title');
+const MSG_SOLICITUD_TITLE = marker('csp.solicitud');
+const MSG_TIPO_AMBITO_GEOGRAFICO_TITLE = marker('csp.tipo-ambito-geografico');
+const MSG_TIPO_DOCUMENTO_TITLE = marker('csp.tipo-documento');
+const MSG_TIPO_ENLACE_TITLE = marker('csp.tipo-enlace');
+const MSG_TIPO_FINALIDAD_TITLE = marker('csp.tipo-finalidad');
+const MSG_TIPO_FINANCIACION_TITLE = marker('menu.csp.configuraciones.tipos-financiacion');
+const MSG_TIPO_HITO_TITLE = marker('csp.tipo-hito');
+const MSG_TIPO_ORIGEN_FUENTE_FINANCIACION_TITLE = marker('menu.csp.tipo-origen-fuente-financiacion');
+const MSG_TIPO_REGIMEN_CONCURRENCIA_TITLE = marker('csp.tipo-regimen-concurrencia');
 
 const routes: SgiRoutes = [
   {
@@ -379,6 +381,18 @@ const routes: SgiRoutes = [
           title: MSG_ROL_EQUIPO_TITLE,
           titleParams: MSG_PARAMS.CARDINALIRY.PLURAL,
           hasAnyAuthorityForAnyUO: ['CSP-ROLE-V', 'CSP-ROLE-E', 'CSP-ROLE-C', 'CSP-ROLE-B', 'CSP-ROLE-R']
+        }
+      },
+      {
+        path: CSP_ROUTE_NAMES.FACTURAS_PREVISTAS_PENDIENTES,
+        loadChildren: () =>
+          import('./facturas-previstas-pendientes/facturas-previstas-pendientes.module').then(
+            (m) => m.FacturasPrevistasPendientesModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_FACTURAS_PREVISTAS_PENDIENTES_TITLE,
+          hasAuthorityForAnyUO: 'CSP-PRO-E'
         }
       },
       { path: '**', component: null }

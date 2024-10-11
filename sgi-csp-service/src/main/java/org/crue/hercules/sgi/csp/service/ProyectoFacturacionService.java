@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.time.Instant;
 
+import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoFacturacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.EstadoValidacionIP;
@@ -43,12 +44,20 @@ public class ProyectoFacturacionService {
    * sea igual al que se recibe por parámetro
    * 
    * @param proyectoId id del {@link Proyecto} asociado
+   * @param query      información del filtro.
    * @param paging     Información de paginación
    * @return pagina de {@link ProyectoFacturacion}
    */
-  public Page<ProyectoFacturacion> findByProyectoId(Long proyectoId, Pageable paging) {
+  public Page<ProyectoFacturacion> findByProyectoId(Long proyectoId, String query, Pageable paging) {
     authorityHelper.checkCanAccessProyecto(proyectoId);
-    return this.proyectoFacturacionRepository.findByProyectoId(proyectoId, paging);
+
+    Specification<ProyectoFacturacion> specs = ProyectoFacturacionSpecifications.byProyectoId(proyectoId);
+
+    if (StringUtils.isNotBlank(query)) {
+      specs = specs.and(SgiRSQLJPASupport.toSpecification(query));
+    }
+
+    return this.proyectoFacturacionRepository.findAll(specs, paging);
   }
 
   /**

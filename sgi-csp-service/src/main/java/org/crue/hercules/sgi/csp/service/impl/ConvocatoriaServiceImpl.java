@@ -32,6 +32,7 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaPeriodoSeguimientoCienti
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoFinalidadRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloUnidadRepository;
+import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.TipoAmbitoGeograficoRepository;
@@ -77,6 +78,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   private final ProyectoRepository proyectoRepository;
   private final ConvocatoriaClonerService convocatoriaClonerService;
   private final AutorizacionRepository autorizacionRepository;
+  private final ProgramaRepository programaRepository;
   private final ProyectoHelper proyectoHelper;
   private final SgiConfigProperties sgiConfigProperties;
   private final ConvocatoriaAuthorityHelper authorityHelper;
@@ -90,6 +92,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
       ConfiguracionSolicitudRepository configuracionSolicitudRepository, final SolicitudRepository solicitudRepository,
       final ProyectoRepository proyectoRepository, final ConvocatoriaClonerService convocatoriaClonerService,
       AutorizacionRepository autorizacionRepository,
+      ProgramaRepository programaRepository,
       ProyectoHelper proyectoHelper,
       SgiConfigProperties sgiConfigProperties,
       ConvocatoriaAuthorityHelper authorityHelper) {
@@ -105,6 +108,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     this.proyectoRepository = proyectoRepository;
     this.convocatoriaClonerService = convocatoriaClonerService;
     this.autorizacionRepository = autorizacionRepository;
+    this.programaRepository = programaRepository;
     this.proyectoHelper = proyectoHelper;
     this.sgiConfigProperties = sgiConfigProperties;
     this.authorityHelper = authorityHelper;
@@ -395,7 +399,8 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     Specification<Convocatoria> specs = ConvocatoriaSpecifications.distinct().and(ConvocatoriaSpecifications.activos()
         .and(ConvocatoriaSpecifications.registradas())
         .and(ConvocatoriaSpecifications.configuracionSolicitudTramitacionSGI())
-        .and(SgiRSQLJPASupport.toSpecification(query, ConvocatoriaPredicateResolver.getInstance(sgiConfigProperties))));
+        .and(SgiRSQLJPASupport.toSpecification(query,
+            ConvocatoriaPredicateResolver.getInstance(programaRepository, sgiConfigProperties))));
 
     Page<Convocatoria> returnValue = repository.findAll(specs, paging);
     log.debug("findAllInvestigador(String query, Pageable paging) - end");
@@ -416,7 +421,8 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     log.debug("findAllPublicas(String query, Pageable paging) - start");
     Specification<Convocatoria> specs = ConvocatoriaSpecifications.distinct()
         .and(ConvocatoriaSpecifications.publicas())
-        .and(SgiRSQLJPASupport.toSpecification(query, ConvocatoriaPredicateResolver.getInstance(sgiConfigProperties)));
+        .and(SgiRSQLJPASupport.toSpecification(query,
+            ConvocatoriaPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
 
     Page<Convocatoria> returnValue = repository.findAll(specs, paging);
     log.debug("findAllPublicas(String query, Pageable paging) - end");
@@ -437,7 +443,8 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
 
     Specification<Convocatoria> specs = ConvocatoriaSpecifications.distinct().and(ConvocatoriaSpecifications.activos()
         .and(ConvocatoriaSpecifications.registradas())
-        .and(SgiRSQLJPASupport.toSpecification(query, ConvocatoriaPredicateResolver.getInstance(sgiConfigProperties))));
+        .and(SgiRSQLJPASupport.toSpecification(query,
+            ConvocatoriaPredicateResolver.getInstance(programaRepository, sgiConfigProperties))));
 
     Page<Convocatoria> returnValue = repository.findAll(specs, paging);
 
@@ -460,7 +467,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
 
     Specification<Convocatoria> specs = ConvocatoriaSpecifications.distinct()
         .and(SgiRSQLJPASupport.toSpecification(query,
-            ConvocatoriaPredicateResolver.getInstance(sgiConfigProperties)));
+            ConvocatoriaPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
 
     List<String> unidadesGestion = authorityHelper.getUserUOsConvocatoria();
 
@@ -889,6 +896,29 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     this.convocatoriaClonerService.clonePartidasPresupuestarias(convocatoriaId, cloned.getId());
 
     return cloned;
+  }
+
+  /**
+   * Obtiene los ids de {@link Convocatoria} modificadas que no esten activas y
+   * que
+   * cumplan las condiciones indicadas en el filtro de búsqueda
+   *
+   * @param query información del filtro.
+   * @return el listado de ids de {@link Convocatoria}.
+   */
+  @Override
+  public List<Long> findIdsConvocatoriasEliminadas(String query) {
+    log.debug("findIdsConvocatoriasEliminadas(String query) - start");
+
+    Specification<Convocatoria> specs = ConvocatoriaSpecifications.notActivos()
+        .and(SgiRSQLJPASupport.toSpecification(query,
+            ConvocatoriaPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
+
+    List<Long> returnValue = repository.findIds(specs);
+
+    log.debug("findIdsConvocatoriasEliminadas(String query) - end");
+
+    return returnValue;
   }
 
 }

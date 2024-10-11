@@ -34,6 +34,15 @@ public class ProyectoSpecifications {
   }
 
   /**
+   * {@link Proyecto} con Activo a False
+   * 
+   * @return specification para obtener los {@link Proyecto} no activos
+   */
+  public static Specification<Proyecto> notActivos() {
+    return (root, query, cb) -> cb.isFalse(root.get(Proyecto_.activo));
+  }
+
+  /**
    * {@link Proyecto} con un unidadGestionRef incluido en la lista.
    * 
    * @param unidadGestionRefs lista de unidadGestionRefs

@@ -92,6 +92,7 @@ public class GrupoController {
   public static final String PATH_GRUPO_BAREMABLE_GRUPO_REF_ANIO = PATH_DELIMITER + "grupo-baremable/{grupoRef}/{anio}";
   public static final String PATH_BAREMABLES_ANIO = PATH_DELIMITER + "baremables/{anio}";
   public static final String PATH_GRUPOS_INVESTIGADOR = PATH_DELIMITER + "investigador";
+  public static final String PATH_ELIMINADOS_IDS = PATH_DELIMITER + "eliminados-ids";
   public static final String PATH_MODIFICADOS_IDS = PATH_DELIMITER + "modificados-ids";
   public static final String PATH_INVESTIGADORES_PRINCIPALES_PERSONAS_AUTORIZADAS = PATH_DELIMITER
       + "investigadoresprincipalespersonasautorizadas";
@@ -642,6 +643,25 @@ public class GrupoController {
         .convert(grupoLineaInvestigacionService.findAllByGrupo(id, query, paging));
     log.debug("findAllGrupoLineaInvestigacion(Long id, String query, Pageable paging) - end");
     return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  /**
+   * Obtiene los ids de {@link Grupo} modificados que no esten activos y que
+   * cumplan
+   * las condiciones indicadas en el filtro de búsqueda
+   * 
+   * @param query filtro de búsqueda.
+   * @return lista de ids de {@link Grupo}.
+   */
+  @GetMapping(PATH_ELIMINADOS_IDS)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-GIN-V', 'CSP-GIN-E')")
+  public ResponseEntity<List<Long>> findIdsGruposEliminados(
+      @RequestParam(name = "q", required = false) String query) {
+    log.debug("findIdsGruposEliminados(String query) - start");
+    List<Long> returnValue = service.findIdsGruposEliminados(query);
+    log.debug("findIdsGruposEliminados(String query) - end");
+    return returnValue.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(returnValue, HttpStatus.OK);
   }
 
   /**

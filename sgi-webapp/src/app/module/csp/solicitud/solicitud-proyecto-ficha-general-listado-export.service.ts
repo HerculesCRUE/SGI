@@ -20,13 +20,13 @@ const REFERENCIA_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.codigo
 const ACRONIMO_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.acronimo');
 const DURACION_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.duracion');
 const COORDINADO_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.proyecto-coordinado');
-const ROL_UNIVERSIDAD_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.rol-universidad');
+const ROL_UNIVERSIDAD_KEY = marker('csp.solicitud.rol-participacion-universidad');
 const COLABORATIVO_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.proyecto-colaborativo');
 const AREA_TEMATICA_KEY = marker('csp.area-tematica.nombre');
 
 @Injectable()
 export class SolicitudProyectoFichaGeneralListadoExportService extends
-  AbstractTableExportFillService<ISolicitudReportData, ISolicitudReportOptions>{
+  AbstractTableExportFillService<ISolicitudReportData, ISolicitudReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,

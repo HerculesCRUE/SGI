@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.Solicitud;
+import org.crue.hercules.sgi.csp.repository.custom.CustomSolicitudRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface SolicitudRepository extends JpaRepository<Solicitud, Long>, JpaSpecificationExecutor<Solicitud> {
+public interface SolicitudRepository
+    extends JpaRepository<Solicitud, Long>, JpaSpecificationExecutor<Solicitud>, CustomSolicitudRepository {
   /**
    * Comprueba si hay alguna {@link Solicitud} asociada a la convocatoria
    * 

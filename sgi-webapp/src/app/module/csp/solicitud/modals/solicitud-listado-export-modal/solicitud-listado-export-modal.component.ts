@@ -57,6 +57,7 @@ export class SolicitudListadoExportModalComponent extends BaseExportModalCompone
       outputType: new FormControl(this.outputType, Validators.required),
       showTodos: new FormControl(true),
       showSolicitudEntidadesConvocantes: new FormControl(true),
+      showPlanesInvestigacion: new FormControl(true),
       showSolicitudProyectoFichaGeneral: new FormControl(true),
       showSolicitudProyectoAreasConocimiento: new FormControl(true),
       showSolicitudProyectoClasificaciones: new FormControl(true),
@@ -70,10 +71,18 @@ export class SolicitudListadoExportModalComponent extends BaseExportModalCompone
     Object.keys(formGroup.controls).forEach(key => {
       if (key.startsWith('show')) {
         this.subscriptions.push(formGroup.get(key).valueChanges.subscribe(() => {
+
+          if (key === 'showSolicitudEntidadesConvocantes' && !!formGroup.get(key).value) {
+            formGroup.controls.showPlanesInvestigacion.setValue(true, { emitEvent: false });
+          }
+
           let cont = 0;
           Object.keys(formGroup.controls).forEach(key => {
             if (key.startsWith('show') && !formGroup.get(key).value) {
               formGroup.controls.showTodos.setValue(false, { emitEvent: false });
+              if (key === 'showSolicitudEntidadesConvocantes') {
+                formGroup.controls.showPlanesInvestigacion.setValue(false, { emitEvent: false });
+              }
               cont++;
             } else if (cont === 0) {
               formGroup.controls.showTodos.setValue(true, { emitEvent: false });
@@ -93,6 +102,7 @@ export class SolicitudListadoExportModalComponent extends BaseExportModalCompone
       reportOptions: {
         findOptions: this.modalData.findOptions,
         showSolicitudEntidadesConvocantes: this.formGroup.controls.showSolicitudEntidadesConvocantes.value,
+        showPlanesInvestigacion: this.formGroup.controls.showPlanesInvestigacion.value,
         showSolicitudProyectoFichaGeneral: this.formGroup.controls.showSolicitudProyectoFichaGeneral.value,
         showSolicitudProyectoAreasConocimiento: this.formGroup.controls.showSolicitudProyectoAreasConocimiento.value,
         showSolicitudProyectoClasificaciones: this.formGroup.controls.showSolicitudProyectoClasificaciones.value,

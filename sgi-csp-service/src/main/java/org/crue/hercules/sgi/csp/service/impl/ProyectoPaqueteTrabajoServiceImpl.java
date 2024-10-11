@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.time.Instant;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
@@ -182,9 +183,8 @@ public class ProyectoPaqueteTrabajoServiceImpl implements ProyectoPaqueteTrabajo
 
     // Se comprueba la existencia del proyecto
     Long proyectoId = datosProyectoPaqueteTrabajo.getProyectoId();
-    if (!proyectoRepository.existsById(proyectoId)) {
-      throw new ProyectoNotFoundException(proyectoId);
-    }
+    Proyecto proyecto = proyectoRepository.findById(proyectoId)
+        .orElseThrow(() -> new ProyectoNotFoundException(proyectoId));
 
     // Solo se podrán crean, modificar o eliminar si en la pantalla "Ficha general"
     // del proyecto, el campo "Paquetes de trabajo" tiene valor afirmativo
@@ -210,10 +210,18 @@ public class ProyectoPaqueteTrabajoServiceImpl implements ProyectoPaqueteTrabajo
     }
 
     // Fechas dentro del rango del proyecto
-    Assert.isTrue(
-        proyectoRepository.existsProyectoByIdAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqual(proyectoId,
-            datosProyectoPaqueteTrabajo.getFechaInicio(), datosProyectoPaqueteTrabajo.getFechaFin()),
-        "El periodo del ProyectoPaqueteTrabajo no se encuentra dentro del rango de fechas definido para el proyecto");
+    Instant proyectoFechaFin = proyecto.getFechaFinDefinitiva() != null ? proyecto.getFechaFinDefinitiva()
+        : proyecto.getFechaFin();
+
+    if (proyecto.getFechaInicio() != null) {
+      Assert.isTrue(!datosProyectoPaqueteTrabajo.getFechaInicio().isBefore(proyecto.getFechaInicio()),
+          "El periodo del ProyectoPaqueteTrabajo no se encuentra dentro del rango de fechas definido para el proyecto");
+    }
+
+    if (proyectoFechaFin != null) {
+      Assert.isTrue(!datosProyectoPaqueteTrabajo.getFechaFin().isAfter(proyectoFechaFin),
+          "El periodo del ProyectoPaqueteTrabajo no se encuentra dentro del rango de fechas definido para el proyecto");
+    }
 
     log.debug(
         "validarProyectoPaqueteTrabajo(ProyectoPaqueteTrabajo datosProyectoPaqueteTrabajo, ProyectoPaqueteTrabajo datosOriginales) - end");

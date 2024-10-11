@@ -21,18 +21,21 @@
         <mat-checkbox color="primary" class="checkbox" formControlName="showSolicitudEntidadesConvocantes">
           {{'label.csp.entidades-convocantes' | translate}}
         </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox nested-checkbox" formControlName="showPlanesInvestigacion">
+          {{'csp.convocatoria.plan-investigacion' | translate}}
+        </mat-checkbox>
         <mat-checkbox color="primary" class="checkbox" formControlName="showSolicitudProyectoFichaGeneral">
           {{'menu.csp.solicitudes.datos-proyecto' | translate}} - {{'label.ficha-general' | translate}}
         </mat-checkbox>
         <mat-checkbox color="primary" class="checkbox" formControlName="showSolicitudProyectoAreasConocimiento">
           {{'menu.csp.solicitudes.datos-proyecto' | translate}} - {{'label.areas-conocimiento' | translate}}
         </mat-checkbox>
+      </div>
+      <div class="columns-visibility">
         <mat-checkbox color="primary" class="checkbox" formControlName="showSolicitudProyectoClasificaciones">
           {{'menu.csp.solicitudes.datos-proyecto' | translate}} - {{'csp.proyecto-clasificacion' |
           translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
         </mat-checkbox>
-      </div>
-      <div class="columns-visibility">
         <mat-checkbox color="primary" class="checkbox" formControlName="showSolicitudProyectoEquipo">
           {{'menu.csp.solicitudes.datos-proyecto' | translate}} - {{'csp.proyecto-equipo' | translate}}
         </mat-checkbox>
@@ -43,12 +46,12 @@
           {{'menu.csp.solicitudes.datos-proyecto' | translate}} - {{'csp.proyecto-socio' |
           translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
         </mat-checkbox>
+      </div>
+      <div class="columns-visibility">
         <mat-checkbox color="primary" class="checkbox" formControlName="showSolicitudProyectoEntidadesFinanciadoras">
           {{'menu.csp.solicitudes.datos-proyecto' | translate}} - {{'menu.csp.solicitudes.entidades-financiadoras' |
           translate}}
         </mat-checkbox>
-      </div>
-      <div class="columns-visibility">
         <mat-checkbox color="primary" class="checkbox" formControlName="showSolicitudRrhh">
           {{'menu.csp.solicitud.solicitud-rrhh' | translate}}
         </mat-checkbox>

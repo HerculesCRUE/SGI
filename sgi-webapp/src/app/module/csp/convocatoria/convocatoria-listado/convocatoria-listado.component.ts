@@ -137,6 +137,7 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
       ambitoGeografico: new FormControl(null),
       estado: new FormControl(null),
       entidadConvocante: new FormControl(null),
+      planInvestigacion: new FormControl(null),
       entidadFinanciadora: new FormControl(null),
       fuenteFinanciacion: new FormControl(null),
       areaTematica: new FormControl(null),
@@ -423,6 +424,7 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
       .and('finalidad.id', SgiRestFilterOperator.EQUALS, controls.finalidad.value?.id?.toString())
       .and('ambitoGeografico.id', SgiRestFilterOperator.EQUALS, controls.ambitoGeografico.value?.id?.toString())
       .and('entidadesConvocantes.entidadRef', SgiRestFilterOperator.EQUALS, controls.entidadConvocante.value?.id)
+      .and('planInvestigacion', SgiRestFilterOperator.EQUALS, controls.planInvestigacion.value?.id?.toString())
       .and('entidadesFinanciadoras.entidadRef', SgiRestFilterOperator.EQUALS, controls.entidadFinanciadora.value?.id)
       .and('entidadesFinanciadoras.fuenteFinanciacion.id', SgiRestFilterOperator.EQUALS, controls.fuenteFinanciacion.value?.id?.toString())
       .and('areasTematicas.areaTematica.padre.id', SgiRestFilterOperator.EQUALS, controls.areaTematica.value?.id?.toString());

@@ -1,0 +1,27 @@
+@import "~@angular/material/theming";
+@import "colors.scss";
+
+:host {
+  .icon-wrapper {
+    color: map-get($sgi-foreground, icon);
+    margin-top: -0.2em;
+
+    &.disabled {
+      color: $dark-disabled-text;
+    }
+
+    .mat-icon-button {
+      height: 1.5em;
+      width: 1.5em;
+      font: inherit;
+      vertical-align: baseline;
+
+      .mat-icon {
+        font-size: 1.4em;
+        width: 1em;
+        height: 1em;
+        margin-top: -0.3em;
+      }
+    }
+  }
+}

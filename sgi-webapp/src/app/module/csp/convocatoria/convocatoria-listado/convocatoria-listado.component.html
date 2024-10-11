@@ -164,6 +164,16 @@
           </mat-form-field>
         </div>
 
+        <!-- Plan de investigación -->
+        <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
+          [fxFlexOrder]="fxFlexProperties.order">
+          <mat-form-field class="input-form">
+            <mat-label>{{'csp.programa.plan-programa-investigacion' | translate}}</mat-label>
+            <sgi-select-plan-investigacion formControlName="planInvestigacion"
+              placeholder="{{'csp.programa.plan-programa-investigacion' | translate}}">
+            </sgi-select-plan-investigacion>
+          </mat-form-field>
+        </div>
       </div>
 
       <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"

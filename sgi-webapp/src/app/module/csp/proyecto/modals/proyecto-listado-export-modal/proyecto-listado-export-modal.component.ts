@@ -61,6 +61,7 @@ export class ProyectoListadoExportModalComponent extends BaseExportModalComponen
       showRelaciones: new FormControl(true),
       showEntidadGestora: new FormControl(true),
       showEntidadesConvocantes: new FormControl(true),
+      showPlanesInvestigacion: new FormControl(true),
       showEntidadesFinanciadoras: new FormControl(true),
       showMiembrosEquipo: new FormControl(true),
       showResponsablesEconomicos: new FormControl(true),
@@ -79,10 +80,18 @@ export class ProyectoListadoExportModalComponent extends BaseExportModalComponen
     Object.keys(formGroup.controls).forEach(key => {
       if (key.startsWith('show')) {
         this.subscriptions.push(formGroup.get(key).valueChanges.subscribe(() => {
+
+          if (key === 'showEntidadesConvocantes' && !!formGroup.get(key).value) {
+            formGroup.controls.showPlanesInvestigacion.setValue(true, { emitEvent: false });
+          }
+
           let cont = 0;
           Object.keys(formGroup.controls).forEach(key => {
             if (key.startsWith('show') && !formGroup.get(key).value) {
               formGroup.controls.showTodos.setValue(false, { emitEvent: false });
+              if (key === 'showEntidadesConvocantes') {
+                formGroup.controls.showPlanesInvestigacion.setValue(false, { emitEvent: false });
+              }
               cont++;
             } else if (cont === 0) {
               formGroup.controls.showTodos.setValue(true, { emitEvent: false });
@@ -105,6 +114,7 @@ export class ProyectoListadoExportModalComponent extends BaseExportModalComponen
         showRelaciones: this.formGroup.controls.showRelaciones.value,
         showEntidadGestora: this.formGroup.controls.showEntidadGestora.value,
         showEntidadesConvocantes: this.formGroup.controls.showEntidadesConvocantes.value,
+        showPlanesInvestigacion: this.formGroup.controls.showPlanesInvestigacion.value,
         showEntidadesFinanciadoras: this.formGroup.controls.showEntidadesFinanciadoras.value,
         showMiembrosEquipo: this.formGroup.controls.showMiembrosEquipo.value,
         showResponsablesEconomicos: this.formGroup.controls.showResponsablesEconomicos.value,

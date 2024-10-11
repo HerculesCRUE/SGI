@@ -109,8 +109,8 @@ export class ProyectoPaqueteTrabajoComponent extends FragmentComponent implement
     const dataModal: PaquetesTrabajoModalData = {
       paquetesTrabajo: this.dataSource.data.map(paquetes => paquetes.value),
       paqueteTrabajo: wrapper ? wrapper.value : {} as IProyectoPaqueteTrabajo,
-      fechaInicio: this.actionService.proyecto.fechaInicio,
-      fechaFin: this.actionService.proyecto.fechaFin,
+      fechaInicioMin: this.actionService.proyecto.fechaInicio,
+      fechaFinMax: this.actionService.proyecto.fechaFinDefinitiva ?? this.actionService.proyecto.fechaFin,
       readonly: this.actionService.readonly
     };
 

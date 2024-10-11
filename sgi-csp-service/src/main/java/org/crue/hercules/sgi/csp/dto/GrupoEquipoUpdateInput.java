@@ -39,12 +39,10 @@ public class GrupoEquipoUpdateInput implements Serializable {
   @NotNull
   private Long rolId;
 
-  @NotNull
   private Dedicacion dedicacion;
 
   @Min(GrupoEquipo.PARTICIPACION_MIN)
   @Max(GrupoEquipo.PARTICIPACION_MAX)
-  @NotNull
   private BigDecimal participacion;
 
   @NotNull

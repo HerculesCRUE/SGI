@@ -84,7 +84,7 @@
       <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
         [fxFlexOrder]="fxFlexProperties.order" *ngIf="(formPart.coordinado$ | async)">
         <mat-form-field class="input-form">
-          <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.rol-universidad' | translate}}</mat-label>
+          <mat-label>{{'csp.solicitud.rol-participacion-universidad' | translate}}</mat-label>
           <sgi-select-rol-socio formControlName="rolUniversidad" [required]="(formPart.coordinado$ | async)">
           </sgi-select-rol-socio>
           <sgi-field-info matSuffix [visible]="(formPart.hasPopulatedPeriodosSocios$ | async) && !formPart.readonly"

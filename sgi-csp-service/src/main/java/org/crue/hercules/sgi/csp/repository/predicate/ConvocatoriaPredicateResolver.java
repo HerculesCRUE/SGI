@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.repository.predicate;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -18,8 +19,11 @@ import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud_;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante_;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase_;
 import org.crue.hercules.sgi.csp.model.Convocatoria_;
+import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo_;
@@ -32,8 +36,11 @@ import org.crue.hercules.sgi.csp.model.RequisitoIPNivelAcademico_;
 import org.crue.hercules.sgi.csp.model.RequisitoIP_;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
 import org.crue.hercules.sgi.csp.model.RolProyecto_;
+import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
 import org.crue.hercules.sgi.csp.util.PredicateResolverUtil;
+import org.crue.hercules.sgi.framework.data.jpa.domain.Auditable_;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLPredicateResolver;
+import org.springframework.util.CollectionUtils;
 
 import cz.jirutka.rsql.parser.ast.ComparisonNode;
 import io.github.perplexhub.rsql.RSQLOperators;
@@ -42,6 +49,8 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
   private static final Pattern integerPattern = Pattern.compile("^\\d+$");
 
   private enum Property {
+    FECHA_ELIMINACION("fechaEliminacion"),
+    PLAN_INVESTIGACION("planInvestigacion"),
     PLAZO_PRESENTACION_SOLICITUD("abiertoPlazoPresentacionSolicitud"),
     /* REQUISITOS IP */
     REQUISITO_SEXO_IP("requisitoSexoIp"), REQUISITO_EDAD_IP("requisitoEdadMaximaIp"),
@@ -69,17 +78,47 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
   }
 
   private static ConvocatoriaPredicateResolver instance;
+  private final ProgramaRepository programaRepository;
   private final SgiConfigProperties sgiConfigProperties;
 
-  private ConvocatoriaPredicateResolver(SgiConfigProperties sgiConfigProperties) {
+  private ConvocatoriaPredicateResolver(ProgramaRepository programaRepository,
+      SgiConfigProperties sgiConfigProperties) {
+    this.programaRepository = programaRepository;
     this.sgiConfigProperties = sgiConfigProperties;
   }
 
-  public static ConvocatoriaPredicateResolver getInstance(SgiConfigProperties sgiConfigProperties) {
+  public static ConvocatoriaPredicateResolver getInstance(ProgramaRepository programaRepository,
+      SgiConfigProperties sgiConfigProperties) {
     if (instance == null) {
-      instance = new ConvocatoriaPredicateResolver(sgiConfigProperties);
+      instance = new ConvocatoriaPredicateResolver(programaRepository, sgiConfigProperties);
     }
     return instance;
+  }
+
+  private Predicate buildByPlanInvestigacion(ComparisonNode node, Root<Convocatoria> root, CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    List<Programa> programasQuery = new ArrayList<>();
+    List<Programa> programasHijos = new ArrayList<>();
+    Long idProgramaRaiz = Long.parseLong(node.getArguments().get(0));
+    Optional<Programa> programaRaizOpt = this.programaRepository.findById(idProgramaRaiz);
+    if (programaRaizOpt.isPresent()) {
+      programasQuery.add(programaRaizOpt.get());
+      programasHijos.add(programaRaizOpt.get());
+    }
+    programasHijos = programaRepository.findByPadreIn(programasHijos);
+    while (!CollectionUtils.isEmpty(programasHijos)) {
+      programasQuery.addAll(programasHijos);
+      programasHijos = programaRepository.findByPadreIn(programasHijos);
+    }
+
+    ListJoin<Convocatoria, ConvocatoriaEntidadConvocante> joinEntidadesConvocantes = root.join(
+        Convocatoria_.entidadesConvocantes,
+        JoinType.LEFT);
+
+    return cb.or(joinEntidadesConvocantes.get(ConvocatoriaEntidadConvocante_.programa).in(programasQuery),
+        joinEntidadesConvocantes.get(ConvocatoriaEntidadConvocante_.programa).in(programasQuery));
   }
 
   private Predicate buildInPlazoPresentacionSolicitudes(ComparisonNode node, Root<Convocatoria> root,
@@ -312,6 +351,21 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
     return subquery;
   }
 
+  private Predicate buildByFechaEliminacion(ComparisonNode node, Root<Convocatoria> root, CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.GREATER_THAN_OR_EQUAL,
+        RSQLOperators.LESS_THAN_OR_EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    String fechaEliminacionArgument = node.getArguments().get(0);
+    Instant fechaEliminacion = Instant.parse(fechaEliminacionArgument);
+
+    if (node.getOperator().equals(RSQLOperators.GREATER_THAN_OR_EQUAL)) {
+      return cb.greaterThanOrEqualTo(root.get(Auditable_.lastModifiedDate), fechaEliminacion);
+    } else {
+      return cb.lessThanOrEqualTo(root.get(Auditable_.lastModifiedDate), fechaEliminacion);
+    }
+  }
+
   @Override
   public boolean isManaged(ComparisonNode node) {
     Property property = Property.fromCode(node.getSelector());
@@ -326,6 +380,10 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
       return null;
     }
     switch (property) {
+      case FECHA_ELIMINACION:
+        return buildByFechaEliminacion(node, root, criteriaBuilder);
+      case PLAN_INVESTIGACION:
+        return buildByPlanInvestigacion(node, root, criteriaBuilder);
       case PLAZO_PRESENTACION_SOLICITUD:
         return buildInPlazoPresentacionSolicitudes(node, root, criteriaBuilder);
       /* REQUISITO IP */

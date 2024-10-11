@@ -25,12 +25,21 @@ import lombok.NoArgsConstructor;
 public class ConvocatoriaSpecifications {
 
   /**
-   * {@link Convocatoria} con Activo a True
+   * {@link Convocatoria} activas.
    * 
-   * @return specification para obtener las {@link Convocatoria} activas
+   * @return specification para obtener las {@link Convocatoria} activas.
    */
   public static Specification<Convocatoria> activos() {
-    return (root, query, cb) -> cb.equal(root.get(Convocatoria_.activo), Boolean.TRUE);
+    return (root, query, cb) -> cb.isTrue(root.get(Convocatoria_.activo));
+  }
+
+  /**
+   * {@link Convocatoria} no activas
+   * 
+   * @return specification para obtener las {@link Convocatoria} no activas
+   */
+  public static Specification<Convocatoria> notActivos() {
+    return (root, query, cb) -> cb.isFalse(root.get(Convocatoria_.activo));
   }
 
   /**

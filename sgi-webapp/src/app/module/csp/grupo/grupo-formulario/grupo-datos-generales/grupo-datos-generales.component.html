@@ -128,7 +128,7 @@
         <!-- Grupo especial investigacion -->
         <mat-form-field fxFlex="0 1 calc((100% - (10px * 2)) / 3)">
           <mat-label>{{'csp.grupo.especial-investigacion' | translate}}</mat-label>
-          <sgi-select-boolean formControlName="especialInvestigacion">
+          <sgi-select-boolean formControlName="especialInvestigacion" required>
           </sgi-select-boolean>
         </mat-form-field>
       </div>
@@ -268,7 +268,7 @@
         <!-- Grupo especial investigacion -->
         <mat-form-field fxFlex="0 1 calc((100% - (10px * 2)) / 3)">
           <mat-label>{{'csp.grupo.especial-investigacion' | translate}}</mat-label>
-          <sgi-select-boolean formControlName="especialInvestigacion">
+          <sgi-select-boolean formControlName="especialInvestigacion" required>
           </sgi-select-boolean>
           <mat-error *ngIf="formGroup.controls.especialInvestigacion.errors?.required">
             {{ 'error.required.entity' | translate:msgParamEspecialInvestigacionEntity }}

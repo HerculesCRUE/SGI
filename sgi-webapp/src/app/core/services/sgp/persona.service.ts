@@ -15,7 +15,7 @@ import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-pers
 @Injectable({
   providedIn: 'root'
 })
-export class PersonaService extends SgiMutableRestService<string, IPersonaBackend, IPersona>{
+export class PersonaService extends SgiMutableRestService<string, IPersonaBackend, IPersona> {
   private static readonly MAPPING = '/personas';
 
   constructor(protected http: HttpClient) {
@@ -59,7 +59,7 @@ export class PersonaService extends SgiMutableRestService<string, IPersonaBacken
     );
   }
 
-  createPersona(model: any): Observable<string> {
+  createPersona(model: any): Observable<string | void> {
     return this.http.post<string>(`${this.endpointUrl}/formly`, model);
   }
 

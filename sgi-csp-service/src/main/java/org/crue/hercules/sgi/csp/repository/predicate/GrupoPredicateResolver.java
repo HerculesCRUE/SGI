@@ -33,6 +33,8 @@ public class GrupoPredicateResolver implements SgiRSQLPredicateResolver<Grupo> {
     PERSONA_AUTORIZADA("personaAutorizada"),
     /* Responsable */
     RESPONSABLE("responsable"),
+    /* Fecha eliminacion */
+    FECHA_ELIMINACION("fechaEliminacion"),
     /* Fecha modificación */
     FECHA_MODIFICACION("fechaModificacion"),
     /* Miembro equipo */
@@ -87,6 +89,8 @@ public class GrupoPredicateResolver implements SgiRSQLPredicateResolver<Grupo> {
         return buildByPersonaAutorizada(node, root, query, criteriaBuilder);
       case RESPONSABLE:
         return buildByResponsable(node, root, query, criteriaBuilder);
+      case FECHA_ELIMINACION:
+        return buildByFechaEliminacion(node, root, criteriaBuilder);
       case FECHA_MODIFICACION:
         return buildByFechaModificacion(node, root, criteriaBuilder);
       case MIEMBRO_EQUIPO:
@@ -116,6 +120,21 @@ public class GrupoPredicateResolver implements SgiRSQLPredicateResolver<Grupo> {
     Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
 
     return GrupoSpecifications.byResponsable(personaRef, fechaActual).toPredicate(root, query, cb);
+  }
+
+  private Predicate buildByFechaEliminacion(ComparisonNode node, Root<Grupo> root, CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.GREATER_THAN_OR_EQUAL,
+        RSQLOperators.LESS_THAN_OR_EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    String fechaEliminacionArgument = node.getArguments().get(0);
+    Instant fechaEliminacion = Instant.parse(fechaEliminacionArgument);
+
+    if (node.getOperator().equals(RSQLOperators.GREATER_THAN_OR_EQUAL)) {
+      return cb.greaterThanOrEqualTo(root.get(Auditable_.lastModifiedDate), fechaEliminacion);
+    } else {
+      return cb.lessThanOrEqualTo(root.get(Auditable_.lastModifiedDate), fechaEliminacion);
+    }
   }
 
   private Predicate buildByFechaModificacion(ComparisonNode node, Root<Grupo> root, CriteriaBuilder cb) {

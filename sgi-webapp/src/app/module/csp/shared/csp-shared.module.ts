@@ -26,6 +26,8 @@ import { SelectFuenteFinanciacionComponent } from './select-fuente-financiacion/
 import { SelectGrupoComponent } from './select-grupo/select-grupo-component';
 import { SelectLineaInvestigacionComponent } from './select-linea-investigacion/select-linea-investigacion.component';
 import { SelectModeloEjecucionComponent } from './select-modelo-ejecucion/select-modelo-ejecucion.component';
+import { SearchPlanInvestigacionModalComponent } from './select-plan-investigacion/dialog/search-plan-investigacion.component';
+import { SelectPlanInvestigacionComponent } from './select-plan-investigacion/select-plan-investigacion.component';
 import { SelectProgramaComponent } from './select-programa/select-programa.component';
 import { SelectProyectoAnualidadComponent } from './select-proyecto-anualidad/select-proyecto-anualidad.component';
 import { SelectProyectoPartidaComponent } from './select-proyecto-partida/select-proyecto-partida.component';
@@ -61,6 +63,7 @@ import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-mod
     PlanProgramaPipe,
     SearchConvocatoriaModalComponent,
     SearchGrupoModalComponent,
+    SearchPlanInvestigacionModalComponent,
     SearchProyectoModalComponent,
     SelectAreaTematicaComponent,
     SelectConceptoGastoComponent,
@@ -70,6 +73,7 @@ import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-mod
     SelectGrupoComponent,
     SelectLineaInvestigacionComponent,
     SelectModeloEjecucionComponent,
+    SelectPlanInvestigacionComponent,
     SelectProgramaComponent,
     SelectProyectoAnualidadComponent,
     SelectProyectoComponent,
@@ -121,6 +125,7 @@ import { SolicitiudPresupuestoModalComponent } from './solicitud-presupuesto-mod
     SelectGrupoComponent,
     SelectLineaInvestigacionComponent,
     SelectModeloEjecucionComponent,
+    SelectPlanInvestigacionComponent,
     SelectProgramaComponent,
     SelectProyectoAnualidadComponent,
     SelectProyectoComponent,

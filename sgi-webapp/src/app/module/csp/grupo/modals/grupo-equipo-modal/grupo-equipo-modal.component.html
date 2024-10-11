@@ -53,7 +53,7 @@
             {{'error.overlapping.record.entity' | translate:msgParamFechaInicioEntity}}
           </mat-error>
           <mat-error
-            *ngIf="formGroup.controls.fechaInicio.errors?.invalid || formGroup.controls.fechaFin.errors?.minDate">
+            *ngIf="formGroup.controls.fechaInicio.errors?.invalid || formGroup.controls.fechaInicio.errors?.minDate">
             {{'error.csp.miembro-equipo-grupo.fecha.invalid' | translate}}
           </mat-error>
         </mat-form-field>

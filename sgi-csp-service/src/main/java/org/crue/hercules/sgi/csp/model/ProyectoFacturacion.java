@@ -78,7 +78,7 @@ public class ProyectoFacturacion extends BaseEntity {
   @JoinColumn(name = "tipo_facturacion_id", nullable = true, foreignKey = @ForeignKey(name = "FK_PROYECTOFACTURACION_TIPOFACTURACION"))
   private TipoFacturacion tipoFacturacion;
 
-  @Column(name = "proyecto_prorroga_id", nullable = false)
+  @Column(name = "proyecto_prorroga_id", nullable = true)
   private Long proyectoProrrogaId;
 
   @Column(name = "proyecto_sge_ref", nullable = true)

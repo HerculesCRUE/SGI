@@ -40,6 +40,7 @@ export interface GrupoEquipoModalData {
   fechaFinMax: DateTime;
   dedicacionMinimaGrupo: number;
   grupo: IGrupo;
+  isGrupoEspecialInvestigacion: boolean;
 }
 @Component({
   templateUrl: './grupo-equipo-modal.component.html',
@@ -209,8 +210,8 @@ export class GrupoEquipoModalComponent extends DialogFormComponent<GrupoEquipoMo
           this.data.fechaFinMax ? DateValidator.isBetween(this.data.fechaInicioMin, this.data.fechaFinMax) :
             DateValidator.minDate(this.data.fechaInicioMin)
         ]),
-        dedicacion: new FormControl(this.data?.entidad?.dedicacion, Validators.required),
-        participacion: new FormControl(this.data?.entidad?.participacion,
+        dedicacion: new FormControl({ value: this.data?.entidad?.dedicacion, disabled: this.data.isGrupoEspecialInvestigacion }, Validators.required),
+        participacion: new FormControl({ value: this.data?.entidad?.participacion, disabled: this.data.isGrupoEspecialInvestigacion },
           [
             Validators.required,
             Validators.pattern('^[0-9]*$'),
@@ -224,34 +225,36 @@ export class GrupoEquipoModalComponent extends DialogFormComponent<GrupoEquipoMo
       }
     );
 
-    this.checkSelectedDedicacion(this.data?.entidad?.dedicacion, formGroup);
+    if (!this.data.isGrupoEspecialInvestigacion) {
+      this.checkSelectedDedicacion(this.data?.entidad?.dedicacion, formGroup);
 
-    this.subscriptions.push(
-      combineLatest([
-        formGroup.get('miembro').valueChanges
-          .pipe(
-            startWith(this.data?.entidad?.persona),
-            filter((persona: IPersona) => !!persona),
-            switchMap((persona: IPersona) => this.findGruposEquipoFromOthersGruposByPersonaRef(persona.id))
-          ),
-        formGroup.get('fechaInicio').valueChanges
-          .pipe(
-            startWith(this.data?.entidad?.fechaInicio),
-            filter(fechaInicio => !!fechaInicio)
-          ),
-        formGroup.get('fechaFin').valueChanges
-          .pipe(
-            startWith(this.data?.entidad?.fechaFin)
-          ),
-        formGroup.get('participacion').valueChanges
-          .pipe(
-            startWith(this.data?.entidad?.participacion),
-            filter(participacion => !!participacion)
-          )
-      ]).subscribe(([personaGruposEquipoFromOthersGrupos, fechaInicio, fechaFin, participacion]) =>
-        this.checkPersonaParticipacionTotalPeriodo(personaGruposEquipoFromOthersGrupos, fechaInicio, fechaFin, participacion)
-      )
-    );
+      this.subscriptions.push(
+        combineLatest([
+          formGroup.get('miembro').valueChanges
+            .pipe(
+              startWith(this.data?.entidad?.persona),
+              filter((persona: IPersona) => !!persona),
+              switchMap((persona: IPersona) => this.findGruposEquipoFromOthersGruposByPersonaRef(persona.id))
+            ),
+          formGroup.get('fechaInicio').valueChanges
+            .pipe(
+              startWith(this.data?.entidad?.fechaInicio),
+              filter(fechaInicio => !!fechaInicio)
+            ),
+          formGroup.get('fechaFin').valueChanges
+            .pipe(
+              startWith(this.data?.entidad?.fechaFin)
+            ),
+          formGroup.get('participacion').valueChanges
+            .pipe(
+              startWith(this.data?.entidad?.participacion),
+              filter(participacion => !!participacion)
+            )
+        ]).subscribe(([personaGruposEquipoFromOthersGrupos, fechaInicio, fechaFin, participacion]) =>
+          this.checkPersonaParticipacionTotalPeriodo(personaGruposEquipoFromOthersGrupos, fechaInicio, fechaFin, participacion)
+        )
+      );
+    }
 
     return formGroup;
   }
@@ -362,7 +365,9 @@ export class GrupoEquipoModalComponent extends DialogFormComponent<GrupoEquipoMo
   private findGruposEquipoFromOthersGruposByPersonaRef(personaRef: string): Observable<IGrupoEquipo[]> {
     const options: SgiRestFindOptions = {
       filter: new RSQLSgiRestFilter('personaRef', SgiRestFilterOperator.EQUALS, personaRef)
-        .and('grupo.activo', SgiRestFilterOperator.EQUALS, 'true'),
+        .and('grupo.activo', SgiRestFilterOperator.EQUALS, 'true')
+        .and('grupo.especialInvestigacion.especialInvestigacion', SgiRestFilterOperator.EQUALS, 'false')
+        .and('participacion', SgiRestFilterOperator.IS_NOT_NULL, 'true'),
     };
     return this.grupoEquipoService.findAll(options)
       .pipe(

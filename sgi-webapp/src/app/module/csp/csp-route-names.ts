@@ -25,4 +25,5 @@ export const CSP_ROUTE_NAMES = {
   TIPO_FACTURACION: 'tipos-facturacion',
   ROL_SOCIO_PROYECTO: 'roles-socio-proyecto',
   ROL_EQUIPO: 'rol-equipo',
+  FACTURAS_PREVISTAS_PENDIENTES: 'facturas-previstas-pendientes'
 };

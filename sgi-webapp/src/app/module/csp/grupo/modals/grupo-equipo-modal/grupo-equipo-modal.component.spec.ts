@@ -26,7 +26,8 @@ describe('GrupoEquipoModalComponent', () => {
     fechaInicioMin: undefined,
     fechaFinMax: undefined,
     dedicacionMinimaGrupo: undefined,
-    grupo: undefined
+    grupo: undefined,
+    isGrupoEspecialInvestigacion: false
   };
 
   beforeEach(waitForAsync(() => {

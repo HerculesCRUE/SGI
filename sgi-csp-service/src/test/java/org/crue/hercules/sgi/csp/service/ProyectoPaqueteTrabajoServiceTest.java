@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPaqueteTrabajoNotFoundException;
+import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajo;
 import org.crue.hercules.sgi.csp.repository.ProyectoPaqueteTrabajoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
@@ -50,15 +51,12 @@ class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setId(null);
 
-    BDDMockito.given(proyectoRepository.existsById(ArgumentMatchers.<Long>any())).willReturn(Boolean.TRUE);
+    BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(generarMockProyecto(1L)));
     BDDMockito.given(proyectoRepository.getPermitePaquetesTrabajo(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(Boolean.TRUE));
     BDDMockito.given(repository.existsProyectoPaqueteTrabajoByProyectoIdAndNombre(ArgumentMatchers.<Long>any(),
         ArgumentMatchers.<String>any())).willReturn(Boolean.FALSE);
-    BDDMockito
-        .given(proyectoRepository.existsProyectoByIdAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqual(
-            ArgumentMatchers.<Long>any(), ArgumentMatchers.<Instant>any(), ArgumentMatchers.<Instant>any()))
-        .willReturn(Boolean.TRUE);
 
     BDDMockito.given(repository.save(proyectoPaqueteTrabajo)).will((InvocationOnMock invocation) -> {
       ProyectoPaqueteTrabajo proyectoPaqueteTrabajoCreado = invocation.getArgument(0);
@@ -192,7 +190,7 @@ class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setId(null);
 
-    BDDMockito.given(proyectoRepository.existsById(ArgumentMatchers.<Long>any())).willReturn(Boolean.FALSE);
+    BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
 
     Assertions.assertThatThrownBy(
         // when: create ProyectoPaqueteTrabajo
@@ -207,7 +205,10 @@ class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setId(null);
 
-    BDDMockito.given(proyectoRepository.existsById(ArgumentMatchers.<Long>any())).willReturn(Boolean.TRUE);
+    Proyecto proyecto = generarMockProyecto(1L);
+    proyecto.setPermitePaquetesTrabajo(false);
+
+    BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(proyecto));
     BDDMockito.given(proyectoRepository.getPermitePaquetesTrabajo(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(Boolean.FALSE));
 
@@ -225,7 +226,8 @@ class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setId(null);
 
-    BDDMockito.given(proyectoRepository.existsById(ArgumentMatchers.<Long>any())).willReturn(Boolean.TRUE);
+    BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(generarMockProyecto(1L)));
     BDDMockito.given(proyectoRepository.getPermitePaquetesTrabajo(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(Boolean.TRUE));
     BDDMockito.given(repository.existsProyectoPaqueteTrabajoByProyectoIdAndNombre(ArgumentMatchers.<Long>any(),
@@ -245,16 +247,14 @@ class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
     // given: a ProyectoPaqueteTrabajo with dates aoutside Proyecto Range
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setId(null);
+    proyectoPaqueteTrabajo.setFechaFin(Instant.parse("2022-11-20T23:59:59Z"));
 
-    BDDMockito.given(proyectoRepository.existsById(ArgumentMatchers.<Long>any())).willReturn(Boolean.TRUE);
+    BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(generarMockProyecto(1L)));
     BDDMockito.given(proyectoRepository.getPermitePaquetesTrabajo(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(Boolean.TRUE));
     BDDMockito.given(repository.existsProyectoPaqueteTrabajoByProyectoIdAndNombre(ArgumentMatchers.<Long>any(),
         ArgumentMatchers.<String>any())).willReturn(Boolean.FALSE);
-    BDDMockito
-        .given(proyectoRepository.existsProyectoByIdAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqual(
-            ArgumentMatchers.<Long>any(), ArgumentMatchers.<Instant>any(), ArgumentMatchers.<Instant>any()))
-        .willReturn(Boolean.FALSE);
 
     Assertions.assertThatThrownBy(
         // when: create ProyectoPaqueteTrabajo
@@ -273,15 +273,12 @@ class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(proyectoPaqueteTrabajo));
 
-    BDDMockito.given(proyectoRepository.existsById(ArgumentMatchers.<Long>any())).willReturn(Boolean.TRUE);
+    BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(generarMockProyecto(1L)));
     BDDMockito.given(proyectoRepository.getPermitePaquetesTrabajo(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(Boolean.TRUE));
     BDDMockito.given(repository.existsProyectoPaqueteTrabajoByIdNotAndProyectoIdAndNombre(ArgumentMatchers.<Long>any(),
         ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any())).willReturn(Boolean.FALSE);
-    BDDMockito
-        .given(proyectoRepository.existsProyectoByIdAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqual(
-            ArgumentMatchers.<Long>any(), ArgumentMatchers.<Instant>any(), ArgumentMatchers.<Instant>any()))
-        .willReturn(Boolean.TRUE);
 
     BDDMockito.given(repository.save(ArgumentMatchers.<ProyectoPaqueteTrabajo>any()))
         .will((InvocationOnMock invocation) -> invocation.getArgument(0));
@@ -420,7 +417,7 @@ class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(proyectoPaqueteTrabajoOriginal));
-    BDDMockito.given(proyectoRepository.existsById(ArgumentMatchers.<Long>any())).willReturn(Boolean.FALSE);
+    BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
 
     Assertions.assertThatThrownBy(
         // when: update ProyectoPaqueteTrabajo
@@ -438,7 +435,8 @@ class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(proyectoPaqueteTrabajoOriginal));
-    BDDMockito.given(proyectoRepository.existsById(ArgumentMatchers.<Long>any())).willReturn(Boolean.TRUE);
+    BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(generarMockProyecto(1L)));
     BDDMockito.given(proyectoRepository.getPermitePaquetesTrabajo(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(Boolean.FALSE));
 
@@ -459,7 +457,8 @@ class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(proyectoPaqueteTrabajoOriginal));
-    BDDMockito.given(proyectoRepository.existsById(ArgumentMatchers.<Long>any())).willReturn(Boolean.TRUE);
+    BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(generarMockProyecto(1L)));
     BDDMockito.given(proyectoRepository.getPermitePaquetesTrabajo(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(Boolean.TRUE));
     BDDMockito.given(repository.existsProyectoPaqueteTrabajoByIdNotAndProyectoIdAndNombre(ArgumentMatchers.<Long>any(),
@@ -480,18 +479,16 @@ class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajoOriginal = generarMockProyectoPaqueteTrabajo(1L, 1L);
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
     proyectoPaqueteTrabajo.setDescripcion("descripcion-modificada");
+    proyectoPaqueteTrabajo.setFechaFin(Instant.parse("2022-11-20T23:59:59Z"));
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(proyectoPaqueteTrabajoOriginal));
-    BDDMockito.given(proyectoRepository.existsById(ArgumentMatchers.<Long>any())).willReturn(Boolean.TRUE);
+    BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(generarMockProyecto(1L)));
     BDDMockito.given(proyectoRepository.getPermitePaquetesTrabajo(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(Boolean.TRUE));
     BDDMockito.given(repository.existsProyectoPaqueteTrabajoByIdNotAndProyectoIdAndNombre(ArgumentMatchers.<Long>any(),
         ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any())).willReturn(Boolean.FALSE);
-    BDDMockito
-        .given(proyectoRepository.existsProyectoByIdAndFechaInicioLessThanEqualAndFechaFinGreaterThanEqual(
-            ArgumentMatchers.<Long>any(), ArgumentMatchers.<Instant>any(), ArgumentMatchers.<Instant>any()))
-        .willReturn(Boolean.FALSE);
 
     Assertions.assertThatThrownBy(
         // when: update ProyectoPaqueteTrabajo
@@ -616,6 +613,22 @@ class ProyectoPaqueteTrabajoServiceTest extends BaseServiceTest {
           .get(i - (page.getSize() * page.getNumber()) - 1);
       Assertions.assertThat(proyectoPaqueteTrabajo.getId()).isEqualTo(Long.valueOf(i));
     }
+  }
+
+  private Proyecto generarMockProyecto(Long proyectoId) {
+    // @formatter:off
+    Proyecto proyecto = Proyecto.builder()
+      .id(proyectoId)
+      .titulo("proyecto 2")
+      .acronimo("PR2")
+      .fechaInicio(Instant.parse("2020-01-01T00:00:00Z"))
+      .fechaFin(Instant.parse("2021-11-20T23:59:59Z"))
+      .unidadGestionRef("2")
+      .activo(Boolean.TRUE)
+      .permitePaquetesTrabajo(true)
+      .build();
+    // @formatter:on
+    return proyecto;
   }
 
   /**

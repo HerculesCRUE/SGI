@@ -98,6 +98,8 @@ export class ConfigService extends _ConfigServiceMixinBase implements TimeZoneCo
   }
 
   getLimiteRegistrosExportacionExcel(key?: string): Observable<string> {
+    const defaultLimit$ = this.findById('exp-max-num-registros-excel').pipe(map(value => value?.value ?? null));
+
     if (key) {
       return this.findById(key).pipe(
         map(value => {
@@ -106,21 +108,17 @@ export class ConfigService extends _ConfigServiceMixinBase implements TimeZoneCo
         ),
         switchMap(limit => {
           if (!limit) {
-            return this.findById('exp-max-num-registros-excel').pipe(
-              map(value => {
-                return value?.value ?? null;
-              })
-            );
+            return defaultLimit$;
           } else {
             return of(limit);
           }
         }),
-        catchError(error => {
-          return this.findById('exp-max-num-registros-excel').pipe(map(value => value?.value ?? null));
+        catchError(_ => {
+          return defaultLimit$;
         })
       );
     } else {
-      return this.findById('exp-max-num-registros-excel').pipe(map(value => value?.value ?? null));
+      return defaultLimit$;
     }
   }
 

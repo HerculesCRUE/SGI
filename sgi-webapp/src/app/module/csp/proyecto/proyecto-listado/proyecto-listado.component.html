@@ -212,9 +212,10 @@
 
         <!-- Plan de investigación -->
         <mat-form-field fxFlex="20%">
-          <mat-label>{{'csp.proyecto.plan-investigacion' | translate}}</mat-label>
-          <sgi-select-entity formControlName="planInvestigacion" [options]="planInvestigacion$ | async">
-          </sgi-select-entity>
+          <mat-label>{{'csp.programa.plan-programa-investigacion' | translate}}</mat-label>
+          <sgi-select-plan-investigacion formControlName="planInvestigacion"
+            placeholder="{{'csp.programa.plan-programa-investigacion' | translate}}">
+          </sgi-select-plan-investigacion>
         </mat-form-field>
 
         <!-- Entidad financiadora -->

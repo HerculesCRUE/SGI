@@ -1,0 +1,11 @@
+<div fxLayout="row" fxLayoutAlign="start center">
+  <input matInput [formControl]="inputControl" (focus)="focused = true" (blur)="focused = false"
+    [placeholder]="placeholder" [attr.tabindex]="disabled ? -1 : null" class="mat-input-element">
+
+  <div class="icon-wrapper" [class.disabled]="disabled">
+    <button mat-icon-button type="button" [disabled]="disabled" (click)="showDialog()"
+      [attr.tabindex]="disabled ? -1 : null">
+      <mat-icon>search</mat-icon>
+    </button>
+  </div>
+</div>

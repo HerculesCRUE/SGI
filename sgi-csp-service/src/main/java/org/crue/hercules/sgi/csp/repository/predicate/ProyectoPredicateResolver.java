@@ -17,24 +17,35 @@ import javax.persistence.criteria.Subquery;
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.model.AnualidadGasto;
 import org.crue.hercules.sgi.csp.model.ContextoProyecto;
+import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad_;
+import org.crue.hercules.sgi.csp.model.ProyectoAreaConocimiento;
+import org.crue.hercules.sgi.csp.model.ProyectoConceptoGasto;
+import org.crue.hercules.sgi.csp.model.ProyectoDocumento;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadConvocante_;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo_;
+import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
+import org.crue.hercules.sgi.csp.model.ProyectoFase;
+import org.crue.hercules.sgi.csp.model.ProyectoHito;
+import org.crue.hercules.sgi.csp.model.ProyectoPartida;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga_;
+import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
 import org.crue.hercules.sgi.csp.model.ProyectoResponsableEconomico;
 import org.crue.hercules.sgi.csp.model.ProyectoResponsableEconomico_;
+import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.Proyecto_;
 import org.crue.hercules.sgi.csp.model.RolProyecto_;
 import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
-import org.crue.hercules.sgi.csp.repository.ProyectoProrrogaRepository;
 import org.crue.hercules.sgi.csp.util.PredicateResolverUtil;
 import org.crue.hercules.sgi.framework.data.jpa.domain.Auditable_;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLPredicateResolver;
@@ -55,6 +66,8 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
     FINALIZADO("finalizado"),
     /* Prorrogado */
     PRORROGADO("prorrogado"),
+    /* Fecha eliminacion */
+    FECHA_ELIMINACION("fechaEliminacion"),
     /* Fecha modificación */
     FECHA_MODIFICACION("fechaModificacion"),
     /* Con participación actual */
@@ -77,20 +90,17 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
   }
 
   private final ProgramaRepository programaRepository;
-  private final ProyectoProrrogaRepository proyectoProrrogaRepository;
   private final SgiConfigProperties sgiConfigProperties;
 
   private ProyectoPredicateResolver(ProgramaRepository programaRepository,
-      ProyectoProrrogaRepository proyectoProrrogaRepository,
       SgiConfigProperties sgiConfigProperties) {
     this.programaRepository = programaRepository;
-    this.proyectoProrrogaRepository = proyectoProrrogaRepository;
     this.sgiConfigProperties = sgiConfigProperties;
   }
 
   public static ProyectoPredicateResolver getInstance(ProgramaRepository programaRepository,
-      ProyectoProrrogaRepository proyectoProrrogaRepository, SgiConfigProperties sgiConfigProperties) {
-    return new ProyectoPredicateResolver(programaRepository, proyectoProrrogaRepository, sgiConfigProperties);
+      SgiConfigProperties sgiConfigProperties) {
+    return new ProyectoPredicateResolver(programaRepository, sgiConfigProperties);
   }
 
   private Predicate buildByPlanInvestigacion(ComparisonNode node, Root<Proyecto> root, CriteriaBuilder cb) {
@@ -167,6 +177,21 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
     }
   }
 
+  private Predicate buildByFechaEliminacion(ComparisonNode node, Root<Proyecto> root, CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.GREATER_THAN_OR_EQUAL,
+        RSQLOperators.LESS_THAN_OR_EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    String fechaEliminacionArgument = node.getArguments().get(0);
+    Instant fechaEliminacion = Instant.parse(fechaEliminacionArgument);
+
+    if (node.getOperator().equals(RSQLOperators.GREATER_THAN_OR_EQUAL)) {
+      return cb.greaterThanOrEqualTo(root.get(Auditable_.lastModifiedDate), fechaEliminacion);
+    } else {
+      return cb.lessThanOrEqualTo(root.get(Auditable_.lastModifiedDate), fechaEliminacion);
+    }
+  }
+
   private Predicate buildByFechaModificacion(ComparisonNode node, Root<Proyecto> root, CriteriaBuilder cb) {
     PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.GREATER_THAN_OR_EQUAL);
     PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
@@ -185,14 +210,49 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
     ListJoin<ProyectoAnualidad, AnualidadGasto> joinAnualidadGasto = joinAnualidad
         .join(ProyectoAnualidad_.anualidadesGasto, JoinType.LEFT);
 
-    return cb.or(cb.greaterThanOrEqualTo(root.get(Auditable_.lastModifiedDate), fechaModificacion),
-        cb.greaterThanOrEqualTo(joinContexto.get(Auditable_.lastModifiedDate), fechaModificacion),
-        cb.greaterThanOrEqualTo(joinEquipos.get(Auditable_.lastModifiedDate), fechaModificacion),
-        cb.greaterThanOrEqualTo(joinEntidadGestora.get(Auditable_.lastModifiedDate), fechaModificacion),
+    Join<Proyecto, EstadoProyecto> joinEstadoProyecto = root.join(Proyecto_.estado, JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoAreaConocimiento> joinAreasConocimiento = root.join(Proyecto_.areasConocimiento,
+        JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoConceptoGasto> joinConceptosGasto = root.join(Proyecto_.conceptosGasto,
+        JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoDocumento> joinDocumentos = root.join(Proyecto_.documentos, JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoFacturacion> joinFacturacion = root.join(Proyecto_.facturacion, JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoFase> joinFases = root.join(Proyecto_.fases, JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoHito> joinHitos = root.join(Proyecto_.hitos, JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoPartida> joinPartidas = root.join(Proyecto_.partidas, JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoPeriodoJustificacion> joinPeriodosJustificacion = root
+        .join(Proyecto_.periodosJustificacion, JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoPeriodoSeguimiento> joinPeriodosSeguimiento = root.join(Proyecto_.periodosSeguimiento,
+        JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoProrroga> joinProrrogas = root.join(Proyecto_.prorrogas, JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoProyectoSge> joinProyectosSge = root.join(Proyecto_.identificadoresSge, JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoResponsableEconomico> joinResponsablesEconomicos = root
+        .join(Proyecto_.responsablesEconomicos, JoinType.LEFT);
+    ListJoin<Proyecto, ProyectoSocio> joinSocios = root.join(Proyecto_.socios, JoinType.LEFT);
+
+    return cb.or(
         cb.greaterThanOrEqualTo(joinAnualidad.get(Auditable_.lastModifiedDate), fechaModificacion),
         cb.greaterThanOrEqualTo(joinAnualidadGasto.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinAreasConocimiento.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinConceptosGasto.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinContexto.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinDocumentos.get(Auditable_.lastModifiedDate), fechaModificacion),
         cb.greaterThanOrEqualTo(joinEntidadConvocante.get(Auditable_.lastModifiedDate), fechaModificacion),
-        cb.greaterThanOrEqualTo(joinEntidadFinanciadora.get(Auditable_.lastModifiedDate), fechaModificacion));
+        cb.greaterThanOrEqualTo(joinEntidadFinanciadora.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinEntidadGestora.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinEquipos.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinEstadoProyecto.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinFacturacion.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinFases.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinHitos.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinPartidas.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinPeriodosJustificacion.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinPeriodosSeguimiento.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinProrrogas.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinProyectosSge.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinResponsablesEconomicos.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinSocios.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(root.get(Auditable_.lastModifiedDate), fechaModificacion));
   }
 
   private Predicate buildByParticipacionActual(ComparisonNode node, Root<Proyecto> root, CriteriaBuilder cb) {
@@ -267,6 +327,8 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
         return buildByFinalizado(node, root, criteriaBuilder);
       case PRORROGADO:
         return buildByProrrogado(node, root, query, criteriaBuilder);
+      case FECHA_ELIMINACION:
+        return buildByFechaEliminacion(node, root, criteriaBuilder);
       case FECHA_MODIFICACION:
         return buildByFechaModificacion(node, root, criteriaBuilder);
       case PARTICIPACION_ACTUAL:

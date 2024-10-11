@@ -69,7 +69,7 @@
             <mat-error *ngIf="formGroup.controls.fechaInicio.hasError('overlappedConceptoAndCodigo')">
               {{'error.csp.proyecto-concepto-gasto.overlapped-concepto-and-codigo' | translate}}
             </mat-error>
-            <mat-error *ngIf="formGroup.controls.fechaFin.errors?.invalid">
+            <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.invalid">
               {{'error.csp.proyecto-concepto-gasto.fecha.invalid' | translate}}
             </mat-error>
           </mat-form-field>

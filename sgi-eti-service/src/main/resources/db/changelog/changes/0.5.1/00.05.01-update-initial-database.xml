@@ -63,5 +63,4 @@
       id='00.06.00-GET_ALL_JSON_VALUES_FUNCTION' AND author='master' AND filename =
       'classpath*:db/changelog/changes/0.6.0/00.06.00-update-initial-database.xml' </sql>
   </changeSet>
-
 </databaseChangeLog>

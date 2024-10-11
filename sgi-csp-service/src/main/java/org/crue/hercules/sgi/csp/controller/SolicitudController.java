@@ -112,6 +112,7 @@ public class SolicitudController {
 
   public static final String PATH_INVESTIGADOR = PATH_DELIMITER + "investigador";
   public static final String PATH_TUTOR = PATH_DELIMITER + "tutor";
+  public static final String PATH_ELIMINADAS_IDS = PATH_DELIMITER + "eliminadas-ids";
 
   public static final String PATH_ID = PATH_DELIMITER + "{id}";
   public static final String PATH_DOCUMENTOS = PATH_ID + PATH_DELIMITER + "solicituddocumentos";
@@ -1416,6 +1417,24 @@ public class SolicitudController {
     Solicitud returnValue = service.updateSolicitante(id, solicitanteRef);
     log.debug("updateSolicitante(Long id, String solicitanteRef) - end");
     return returnValue;
+  }
+
+  /**
+   * Obtiene los ids de {@link Solicitud} modificadas que no esten activas y que
+   * cumplan las condiciones indicadas en el filtro de búsqueda
+   * 
+   * @param query filtro de búsqueda.
+   * @return lista de ids de {@link Solicitud}.
+   */
+  @GetMapping(PATH_ELIMINADAS_IDS)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-V', 'CSP-SOL-E')")
+  public ResponseEntity<List<Long>> findIdsSolicitudesEliminadas(
+      @RequestParam(name = "q", required = false) String query) {
+    log.debug("findIdsSolicitudesEliminadas(String query) - start");
+    List<Long> returnValue = service.findIdsSolicitudesEliminadas(query);
+    log.debug("findIdsSolicitudesEliminadas(String query) - end");
+    return returnValue.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(returnValue, HttpStatus.OK);
   }
 
   private Page<SolicitudPalabraClaveOutput> convertSolicitudPalabraClave(Page<SolicitudPalabraClave> page) {

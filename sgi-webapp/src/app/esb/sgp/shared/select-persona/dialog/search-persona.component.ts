@@ -8,6 +8,7 @@ import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { SearchModalData } from '@core/component/select-dialog/select-dialog.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IPersona } from '@core/models/sgp/persona';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -15,11 +16,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, EMPTY, Observable, from, merge, of } from 'rxjs';
+import { EMPTY, Observable, from, merge, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { ACTION_MODAL_MODE } from 'src/app/esb/shared/formly-forms/core/base-formly-modal.component';
 import { IPersonaFormlyData, PersonaFormlyModalComponent } from '../../../formly-forms/persona-formly-modal/persona-formly-modal.component';
-import { ConfigService } from '@core/services/cnf/config.service';
 
 const TIPO_PERSONA_KEY = marker('sgp.persona');
 const MSG_SAVE_SUCCESS = marker('msg.save.request.entity.success');
@@ -278,10 +278,12 @@ export class SearchPersonaModalComponent extends DialogCommonComponent implement
     const dialogRef = this.personaCreateMatDialog.open(PersonaFormlyModalComponent, config);
 
     dialogRef.afterClosed().subscribe(
-      (persona) => {
-        if (persona) {
-          this.closeModal(persona);
+      (response) => {
+        if (response?.createdOrUpdated) {
           this.snackBarService.showSuccess(textoActionSuccess);
+          if (!!response.persona) {
+            this.closeModal(response.persona);
+          }
         }
       }
     );

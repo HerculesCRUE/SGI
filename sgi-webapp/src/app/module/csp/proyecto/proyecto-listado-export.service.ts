@@ -80,6 +80,7 @@ export interface IProyectoReportOptions extends IReportOptions {
   showRelaciones: boolean;
   showEntidadGestora: boolean;
   showEntidadesConvocantes: boolean;
+  showPlanesInvestigacion: boolean;
   showEntidadesFinanciadoras: boolean;
   showMiembrosEquipo: boolean;
   showResponsablesEconomicos: boolean;

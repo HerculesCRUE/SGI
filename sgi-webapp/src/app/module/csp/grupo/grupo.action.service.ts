@@ -1,5 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IGrupo } from '@core/models/csp/grupo';
 import { Module } from '@core/module';
 import { ActionService } from '@core/services/action-service';
@@ -13,12 +14,15 @@ import { GrupoResponsableEconomicoService } from '@core/services/csp/grupo-respo
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { LineaInvestigacionService } from '@core/services/csp/linea-investigacion/linea-investigacion.service';
 import { RolProyectoService } from '@core/services/csp/rol-proyecto/rol-proyecto.service';
+import { DialogService } from '@core/services/dialog.service';
 import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
+import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
-import { map } from 'rxjs/operators';
+import { NEVER, Observable } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { GRUPO_DATA_KEY } from './grupo-data.resolver';
 import { GrupoDatosGeneralesFragment } from './grupo-formulario/grupo-datos-generales/grupo-datos-generales.fragment';
 import { GrupoEnlaceFragment } from './grupo-formulario/grupo-enlace/grupo-enlace.fragment';
@@ -33,8 +37,12 @@ export interface IGrupoData {
   grupo: IGrupo;
   isInvestigador: boolean;
   isEjecucionEconomicaGruposEnabled: boolean;
+  isGrupoEspecialInvestigacion: boolean;
   readonly: boolean;
 }
+
+const MSG_CREATE_GRUPO_ESPECIAL = marker('msg.csp.grupo.create.grupo-especial');
+const MSG_CREATE_GRUPO_NO_ESPECIAL = marker('msg.csp.grupo.create.grupo-no-especial');
 
 @Injectable()
 export class GrupoActionService extends ActionService implements OnDestroy {
@@ -75,6 +83,8 @@ export class GrupoActionService extends ActionService implements OnDestroy {
   constructor(
     logger: NGXLogger,
     private route: ActivatedRoute,
+    private dialogService: DialogService,
+    private translate: TranslateService,
     grupoService: GrupoService,
     grupoEquipoService: GrupoEquipoService,
     palabraClaveService: PalabraClaveService,
@@ -116,7 +126,8 @@ export class GrupoActionService extends ActionService implements OnDestroy {
       personaService,
       vinculacionService,
       this.data?.readonly,
-      configuracionService
+      configuracionService,
+      this.data?.isGrupoEspecialInvestigacion
     );
 
     this.responsablesEconomicos = new GrupoResponsableEconomicoFragment(
@@ -176,6 +187,23 @@ export class GrupoActionService extends ActionService implements OnDestroy {
           map(equipoInvestigacionWrapped => equipoInvestigacionWrapped.map(({ value }) => value))
         ).subscribe(equipoInvestigacion => this.datosGenerales.equipoInvestigacion$.next(equipoInvestigacion))
     );
+  }
+
+  saveOrUpdate(): Observable<void> {
+    if (this.isEdit()) {
+      return super.saveOrUpdate();
+    } else {
+      const msgConfirm = this.grupo.especialInvestigacion ? MSG_CREATE_GRUPO_ESPECIAL : MSG_CREATE_GRUPO_NO_ESPECIAL;
+      return this.dialogService.showConfirmation(this.translate.instant(msgConfirm)).pipe(
+        switchMap((aceptado) => {
+          if (aceptado) {
+            return super.saveOrUpdate();
+          }
+
+          return NEVER;
+        })
+      )
+    }
   }
 
   private isModuleINV(): boolean {

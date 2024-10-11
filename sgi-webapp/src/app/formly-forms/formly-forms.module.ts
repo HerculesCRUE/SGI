@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { FormlyModule } from '@ngx-formly/core';
+import { FormlySelectModule } from '@ngx-formly/core/select';
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
 import { TranslateModule } from '@ngx-translate/core';
@@ -12,6 +13,8 @@ import { SelectEntityTypeComponent } from './types/select-entity.type';
 import { SelectProcedimientosTypeComponent } from './types/select-procedimientos.type';
 import { TipoValorSocialComponent } from './types/tipo-valor-social.component';
 import { IDateBetweenValidatorOptions, IDateValidatorOptions, dateIsAfter, dateIsBetween } from './validators/date.validator';
+import { emailValidator } from './validators/email.validator';
+import { fieldArrayMax } from './validators/field-array-max.validator';
 import { IMulticheckboxValidatorOptions, multicheckboxRestricted } from './validators/multicheckbox.validator';
 import { requiredChecked } from './validators/utils.validator';
 import { InfoDivWrapperComponent } from './wrappers/info-div/info-div.wrapper';
@@ -19,7 +22,6 @@ import { PanelWrapperComponent } from './wrappers/panel/panel.wrapper';
 import { SubtitleDivWrapperComponent } from './wrappers/subtitle-div/subtitle-div.wrapper';
 import { TitleDivWrapperComponent } from './wrappers/title-div/title-div.wrapper';
 import { WarnDivWrapperComponent } from './wrappers/warn-div/warn-div.wrapper';
-import { FormlySelectModule } from '@ngx-formly/core/select';
 
 @NgModule({
   declarations: [
@@ -102,6 +104,16 @@ import { FormlySelectModule } from '@ngx-formly/core/select';
           name: 'multicheckbox-restricted',
           validation: multicheckboxRestricted,
           options: {} as IMulticheckboxValidatorOptions
+        },
+        {
+          name: 'email',
+          validation: emailValidator,
+          options: {}
+        },
+        {
+          name: 'field-array-max',
+          validation: fieldArrayMax,
+          options: {}
         }
       ]
     }),

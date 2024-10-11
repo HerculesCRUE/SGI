@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
@@ -23,8 +23,8 @@ const TITLE_NEW_ENTITY = marker('title.new.entity');
 
 export interface PaquetesTrabajoModalData {
   paquetesTrabajo: IProyectoPaqueteTrabajo[];
-  fechaInicio: DateTime;
-  fechaFin: DateTime;
+  fechaInicioMin: DateTime;
+  fechaFinMax: DateTime;
   paqueteTrabajo: IProyectoPaqueteTrabajo;
   readonly: boolean;
 }
@@ -148,6 +148,10 @@ export class ValidarRangoProyecto {
   static rangoProyecto(fechaInicioInput: string, fechaFinInput: string, paqueteTrabajo: PaquetesTrabajoModalData): ValidatorFn {
     return (formGroup: FormGroup): ValidationErrors | null => {
 
+      if (!paqueteTrabajo.fechaInicioMin) {
+        return;
+      }
+
       const fechaInicioForm = formGroup.controls[fechaInicioInput];
       const fechaFinForm = formGroup.controls[fechaFinInput];
 
@@ -157,15 +161,18 @@ export class ValidarRangoProyecto {
       }
 
       if (formGroup.controls.fechaInicio.value !== null && formGroup.controls.fechaFin.value !== null) {
-        if (!((paqueteTrabajo.fechaInicio <= fechaInicioForm.value) &&
-          (paqueteTrabajo.fechaFin >= fechaFinForm.value))) {
+        if (fechaInicioForm.value < paqueteTrabajo.fechaInicioMin || (!!paqueteTrabajo.fechaFinMax && (fechaInicioForm.value > paqueteTrabajo.fechaFinMax))) {
           fechaInicioForm.setErrors({ invalid: true });
           fechaInicioForm.markAsTouched({ onlySelf: true });
+        } else {
+          fechaInicioForm.setErrors(null);
+        }
+
+        if ((!!paqueteTrabajo.fechaFinMax && fechaFinForm.value > paqueteTrabajo.fechaFinMax) || fechaFinForm.value < paqueteTrabajo.fechaInicioMin) {
           fechaFinForm.setErrors({ invalid: true });
           fechaFinForm.markAsTouched({ onlySelf: true });
         } else {
           fechaFinForm.setErrors(null);
-          fechaInicioForm.setErrors(null);
         }
 
       }

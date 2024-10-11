@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.repository.specification;
 import java.time.Instant;
 
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
@@ -10,6 +11,7 @@ import javax.persistence.criteria.Subquery;
 import org.crue.hercules.sgi.csp.model.Grupo;
 import org.crue.hercules.sgi.csp.model.GrupoEquipo;
 import org.crue.hercules.sgi.csp.model.GrupoEquipo_;
+import org.crue.hercules.sgi.csp.model.GrupoEspecialInvestigacion_;
 import org.crue.hercules.sgi.csp.model.Grupo_;
 import org.crue.hercules.sgi.framework.data.jpa.domain.Activable_;
 import org.springframework.data.jpa.domain.Specification;
@@ -117,7 +119,35 @@ public class GrupoEquipoSpecifications {
    * @return specification para obtener los {@link GrupoEquipo} cuyo grupoId no
    *         sea el recibido por parametero.
    */
-  public static Specification<GrupoEquipo> notEqualGroupoId(Long grupoId) {
+  public static Specification<GrupoEquipo> notEqualGrupoId(Long grupoId) {
     return (root, query, cb) -> cb.notEqual(root.get(GrupoEquipo_.grupoId), grupoId);
   }
+
+  /**
+   * {@link GrupoEquipo} que pertenecen a {@link Grupo}s que NO sean especiales.
+   *
+   * @return specification para obtener los {@link GrupoEquipo} que pertenecen a
+   *         {@link Grupo}s que NO sean especiales.
+   */
+  public static Specification<GrupoEquipo> byGrupoNotEspecial() {
+    return (root, query, cb) -> {
+      root.fetch(GrupoEquipo_.grupo, JoinType.INNER)
+          .fetch(Grupo_.especialInvestigacion, JoinType.INNER);
+
+      return cb.isFalse(root.get(GrupoEquipo_.grupo)
+          .get(Grupo_.especialInvestigacion)
+          .get(GrupoEspecialInvestigacion_.especialInvestigacion));
+    };
+  }
+
+  /**
+   * {@link GrupoEquipo} con participacion distinta de null
+   * 
+   * @return specification para obtener los {@link GrupoEquipo} con participacion
+   *         distinta de null.
+   */
+  public static Specification<GrupoEquipo> byParticipacionNotNull() {
+    return (root, query, cb) -> cb.isNotNull(root.get(GrupoEquipo_.participacion));
+  }
+
 }

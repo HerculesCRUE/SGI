@@ -1,0 +1,57 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+
+  <changeSet context="!test" author="master" id="00.06.00-config">
+    <insert tableName="config">
+      <column name="name"
+        value="csp-exp-max-num-registros-excel-listado-facturas-previstas-pendientes" />
+      <column name="description"
+        value="Número máximo de registros a exportar en los informes de tipo listado (csv, xlsx) de facturas previstas pendientes de emitir" />
+      <column name="value" value="" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.06.00-resources-update-oracle" dbms="oracle">
+    <update tableName="resources">
+      <column name="value" valueBlobFile="blob/rep/rep-eti-mxx.docx" />
+      <where>:name=:value AND dbms_lob.compare(value, default_value) = 0</where>
+      <whereParams>
+        <param name="name" value="rep-eti-mxx-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-mxx.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-mxx-docx" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.06.00-resources-update-!oracle" dbms="!oracle">
+    <update tableName="resources">
+      <column name="value" valueBlobFile="blob/rep/rep-eti-mxx.docx" />
+        <where>:name=:value AND value=default_value</where>
+        <whereParams>
+        <param name="name" value="rep-eti-mxx-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/rep/rep-eti-mxx.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-mxx-docx" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+</databaseChangeLog>

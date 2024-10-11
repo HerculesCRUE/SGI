@@ -1199,6 +1199,25 @@ public class ProyectoController {
   }
 
   /**
+   * Obtiene los ids de {@link Proyecto} modificados que no esten
+   * activos y con {@link Proyecto#confidencial} a <code>false</code> que cumplan
+   * las condiciones indicadas en el filtro de búsqueda
+   * 
+   * @param query filtro de búsqueda.
+   * @return lista de ids de {@link Proyecto}.
+   */
+  @GetMapping("/eliminados-ids")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V', 'CSP-PRO-E')")
+  public ResponseEntity<List<Long>> findIdsProyectosEliminados(
+      @RequestParam(name = "q", required = false) String query) {
+    log.debug("findIdsProyectosEliminados(String query) - start");
+    List<Long> returnValue = service.findIdsProyectosEliminados(query);
+    log.debug("findIdsProyectosEliminados(String query) - end");
+    return returnValue.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
+  /**
    * Devuelve una lista de {@link ProyectoAnualidad}
    * 
    * @param id Identificador del {@link Proyecto}.

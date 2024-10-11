@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.repository.custom;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -29,6 +30,7 @@ import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
 import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.crue.hercules.sgi.csp.model.TipoHito;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -195,4 +197,27 @@ public class CustomConvocatoriaRepositoryImpl implements CustomConvocatoriaRepos
     log.debug("getModeloEjecucion(Long id) - end");
     return returnValue;
   }
+
+  /**
+   * Obtiene los ids de {@link Convocatoria} que cumplen con la specification
+   * recibida.
+   * 
+   * @param specification condiciones que deben cumplir.
+   * @return lista de ids de {@link Convocatoria}.
+   */
+  @Override
+  public List<Long> findIds(Specification<Convocatoria> specification) {
+    log.debug("findIds(Specification<Convocatoria> specification) - start");
+
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+    Root<Convocatoria> root = cq.from(Convocatoria.class);
+
+    cq.select(root.get(Convocatoria_.id)).distinct(true).where(specification.toPredicate(root, cq, cb));
+
+    log.debug("findIds(Specification<Convocatoria> specification) - end");
+
+    return entityManager.createQuery(cq).getResultList();
+  }
+
 }

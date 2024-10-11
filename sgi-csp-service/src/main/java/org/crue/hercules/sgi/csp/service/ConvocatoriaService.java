@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.List;
+
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.model.Autorizacion;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
@@ -205,5 +207,15 @@ public interface ConvocatoriaService {
    *         {@link Convocatoria}.
    */
   FormularioSolicitud findFormularioSolicitudById(Long id);
+
+  /**
+   * Obtiene los ids de {@link Convocatoria} modificadas que no esten activas y
+   * que
+   * cumplan las condiciones indicadas en el filtro de búsqueda
+   *
+   * @param query información del filtro.
+   * @return el listado de ids de {@link Convocatoria}.
+   */
+  List<Long> findIdsConvocatoriasEliminadas(String query);
 
 }

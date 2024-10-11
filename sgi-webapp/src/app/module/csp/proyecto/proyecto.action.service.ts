@@ -830,20 +830,20 @@ export class ProyectoActionService extends ActionService {
           switchMap(() => this.entidadesFinanciadoras.saveOrUpdate().pipe(tap(() => this.entidadesFinanciadoras.refreshInitialState(true))))
         );
       }
-    } else {
-      if (this.fichaGeneral?.hasChanges()) {
-        cascade = cascade.pipe(
-          switchMap(() => this.fichaGeneral.saveOrUpdate().pipe(
-            tap((key) => {
-              this.fichaGeneral.refreshInitialState(true);
-              if (typeof key === 'string' || typeof key === 'number') {
-                this.onKeyChange(key);
-              }
-            })
-          )
-          )
-        );
-      }
+    }
+
+    if (this.fichaGeneral?.hasChanges()) {
+      cascade = cascade.pipe(
+        switchMap(() => this.fichaGeneral.saveOrUpdate().pipe(
+          tap((key) => {
+            this.fichaGeneral.refreshInitialState(true);
+            if (typeof key === 'string' || typeof key === 'number') {
+              this.onKeyChange(key);
+            }
+          })
+        )
+        )
+      );
     }
 
     return cascade.pipe(

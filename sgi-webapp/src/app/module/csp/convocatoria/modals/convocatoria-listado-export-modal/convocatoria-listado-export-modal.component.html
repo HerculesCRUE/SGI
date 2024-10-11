@@ -25,14 +25,17 @@
         <mat-checkbox color="primary" class="checkbox" formControlName="showEntidadesConvocantes">
           {{'csp.convocatoria-entidad-convocante' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
         </mat-checkbox>
+        <mat-checkbox color="primary" class="checkbox nested-checkbox" formControlName="showPlanesInvestigacion">
+          {{'csp.convocatoria.plan-investigacion' | translate}}
+        </mat-checkbox>
         <mat-checkbox color="primary" class="checkbox" formControlName="showEntidadesFinanciadoras">
           {{'csp.convocatoria-entidad-financiadora' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
         </mat-checkbox>
+      </div>
+      <div class="columns-visibility">
         <mat-checkbox color="primary" class="checkbox" formControlName="showEnlaces">
           {{'csp.convocatoria-enlace' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
         </mat-checkbox>
-      </div>
-      <div class="columns-visibility">
         <mat-checkbox color="primary" class="checkbox" formControlName="showFases">
           {{'csp.convocatoria-fase' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
         </mat-checkbox>
@@ -42,11 +45,11 @@
         <mat-checkbox color="primary" class="checkbox" formControlName="showPeriodosSeguimientoCientifico">
           {{'csp.proyecto-periodo-seguimiento-cientifico' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
         </mat-checkbox>
+      </div>
+      <div class="columns-visibility">
         <mat-checkbox color="primary" class="checkbox" formControlName="showHitos">
           {{'csp.hito' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
         </mat-checkbox>
-      </div>
-      <div class="columns-visibility">
         <mat-checkbox color="primary" class="checkbox" formControlName="showRequisitosIP">
           {{'csp.convocatoria-requisito-ip' | translate}}
         </mat-checkbox>
@@ -56,11 +59,11 @@
         <mat-checkbox color="primary" class="checkbox" formControlName="showElegibilidad">
           {{'csp.convocatoria-elegibilidad' | translate}}
         </mat-checkbox>
+      </div>
+      <div class="columns-visibility">
         <mat-checkbox color="primary" class="checkbox" formControlName="showPartidasPresupuestarias">
           {{'csp.convocatoria-partida-presupuestaria' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}
         </mat-checkbox>
-      </div>
-      <div class="columns-visibility">
         <mat-checkbox color="primary" class="checkbox" formControlName="showConfiguracionSolicitudes">
           {{'csp.convocatoria-configuracion-solicitud' | translate}}
         </mat-checkbox>

@@ -22,11 +22,16 @@ export interface IPersonaFormlyData {
   action: ACTION_MODAL_MODE;
 }
 
+export interface IPersonaFormlyResponse {
+  createdOrUpdated: boolean;
+  persona?: IPersona;
+}
+
 @Component({
   templateUrl: './persona-formly-modal.component.html',
   styleUrls: ['./persona-formly-modal.component.scss']
 })
-export class PersonaFormlyModalComponent extends BaseFormlyModalComponent<IPersonaFormlyData, IPersona> implements OnInit {
+export class PersonaFormlyModalComponent extends BaseFormlyModalComponent<IPersonaFormlyData, IPersonaFormlyResponse> implements OnInit {
   private sgpModificacion: boolean = true;
 
   get sgpModificacionDisabled(): boolean {
@@ -183,25 +188,42 @@ export class PersonaFormlyModalComponent extends BaseFormlyModalComponent<IPerso
   }
 
 
-  private create(formlyData: IFormlyData): Observable<IPersona> {
+  private create(formlyData: IFormlyData): Observable<IPersonaFormlyResponse> {
     return this.personaService.createPersona(formlyData.model).pipe(
-      switchMap(response => this.personaService.findById(response))
+      switchMap(response => {
+        if (!response) {
+          return of({ createdOrUpdated: true } as IPersonaFormlyResponse);
+        }
+        return this.personaService.findById(response).pipe(
+          map(persona => {
+            return {
+              createdOrUpdated: true,
+              persona
+            }
+          })
+        );
+      })
     );
   }
 
-  private update(personaId: string, formlyData: IFormlyData): Observable<IPersona> {
+  private update(personaId: string, formlyData: IFormlyData): Observable<IPersonaFormlyResponse> {
     return this.personaService.updatePersona(personaId, formlyData.model).pipe(
-      switchMap(() => this.personaService.findById(personaId))
+      map(() => {
+        return {
+          createdOrUpdated: true,
+          persona: null
+        }
+      })
     );
   }
 
   /**
    * Checks the formGroup, returns the entered data and closes the modal
    */
-  protected saveOrUpdate(): Observable<IPersona> {
+  protected saveOrUpdate(): Observable<IPersonaFormlyResponse> {
     this.parseFormlyToJSON();
 
-    const obs$: Observable<IPersona> = this.personaData.action === ACTION_MODAL_MODE.EDIT
+    const obs$: Observable<IPersonaFormlyResponse> = this.personaData.action === ACTION_MODAL_MODE.EDIT
       ? this.update(this.personaData.personaId, this.formlyData)
       : this.create(this.formlyData);
 

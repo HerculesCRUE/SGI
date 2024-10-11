@@ -39,7 +39,16 @@ public class GrupoSpecifications {
   }
 
   /**
-   * {@link Grupo} activos.
+   * {@link Grupo} con Activo a False
+   * 
+   * @return specification para obtener los {@link Grupo} no activos
+   */
+  public static Specification<Grupo> notActivos() {
+    return (root, query, cb) -> cb.isFalse(root.get(Activable_.activo));
+  }
+
+  /**
+   * {@link Grupo} con proyecto sge.
    * 
    * @return specification para obtener los {@link Grupo} cuyo proyectoSgeRef no
    *         sea null.

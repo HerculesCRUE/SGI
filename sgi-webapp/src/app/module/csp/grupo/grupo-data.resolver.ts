@@ -35,7 +35,7 @@ export class GrupoDataResolver extends SgiResolverResolver<IGrupoData> {
   protected resolveEntity(route: ActivatedRouteSnapshot): Observable<IGrupoData> {
     const grupoId = Number(route.paramMap.get(GRUPO_ROUTE_PARAMS.ID));
 
-    return this.service.exists(grupoId).pipe(
+    return this.service.findById(grupoId).pipe(
       switchMap(value => {
         if (!value) {
           return throwError('NOT_FOUND');
@@ -51,6 +51,7 @@ export class GrupoDataResolver extends SgiResolverResolver<IGrupoData> {
         return of(
           {
             grupo: { id: grupoId } as IGrupo,
+            isGrupoEspecialInvestigacion: value.especialInvestigacion,
             isInvestigador
           } as IGrupoData
         );

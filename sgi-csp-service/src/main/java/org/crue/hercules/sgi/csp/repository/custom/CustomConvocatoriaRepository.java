@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.repository.custom;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.model.Convocatoria;
@@ -9,6 +10,7 @@ import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
 import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.crue.hercules.sgi.csp.model.TipoHito;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 /**
@@ -55,5 +57,14 @@ public interface CustomConvocatoriaRepository {
    * @return {@link ModeloEjecucion} asignado
    */
   Optional<ModeloEjecucion> getModeloEjecucion(Long id);
+
+  /**
+   * Obtiene los ids de {@link Convocatoria} que cumplen con la specification
+   * recibida.
+   * 
+   * @param specification condiciones que deben cumplir.
+   * @return lista de ids de {@link Convocatoria}.
+   */
+  List<Long> findIds(Specification<Convocatoria> specification);
 
 }

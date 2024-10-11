@@ -73,6 +73,7 @@ export interface ISolicitudReportData extends ISolicitudListadoData {
 
 export interface ISolicitudReportOptions extends IReportOptions {
   showSolicitudEntidadesConvocantes: boolean;
+  showPlanesInvestigacion: boolean;
   showSolicitudProyectoFichaGeneral: boolean;
   showSolicitudProyectoAreasConocimiento: boolean;
   showSolicitudProyectoClasificaciones: boolean;

@@ -49,6 +49,7 @@ export enum ConfigCsp {
   CSP_EXP_MAX_NUM_REGISTROS_EXCEL_PROYECTO_CONSULTA_PRESUPUESTO = 'csp-exp-max-num-registros-excel-proyecto-consulta-presupuesto',
   CSP_EXP_MAX_NUM_REGISTROS_EXCEL_SOLICITUD_LISTADO = 'csp-exp-max-num-registros-excel-solicitud-listado',
   CSP_EXP_MAX_NUM_REGISTROS_EXCEL_SOLICITUD_PRESUPUESTO = 'csp-exp-max-num-registros-excel-solicitud-presupuesto',
+  CSP_EXP_MAX_NUM_REGISTROS_EXCEL_FACTURAS_PREVISTAS_PENDIENTES_LISTADO = 'csp-exp-max-num-registros-excel-listado-facturas-previstas-pendientes',
   // Titulos
   TITLE_CONVONCATORIA = 'title-convocatoria',
   TITLE_PROYECTO = 'title-proyecto',
@@ -154,6 +155,7 @@ export class ConfigCspComponent extends AbstractMenuContentComponent {
     [ConfigCsp.CSP_EXP_MAX_NUM_REGISTROS_EXCEL_PERSONAL_CONTRATADO, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_EXP_MAX_NUM_REGISTROS_EXCEL_PERSONAL_CONTRATADO`), required: false, module: ConfigModule.CNF }],
     [ConfigCsp.CSP_EXP_MAX_NUM_REGISTROS_EXCEL_FACTURAS_EMITIDAS, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_EXP_MAX_NUM_REGISTROS_EXCEL_FACTURAS_EMITIDAS`), required: false, module: ConfigModule.CNF }],
     [ConfigCsp.CSP_EXP_MAX_NUM_REGISTROS_EXCEL_SEGUIMIENTO_JUSTIFICACION_RESUMEN, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_EXP_MAX_NUM_REGISTROS_EXCEL_SEGUIMIENTO_JUSTIFICACION_RESUMEN`), required: false, module: ConfigModule.CNF }],
+    [ConfigCsp.CSP_EXP_MAX_NUM_REGISTROS_EXCEL_FACTURAS_PREVISTAS_PENDIENTES_LISTADO, { type: ConfigType.TEXT, label: marker(`adm.config.csp.CSP_EXP_MAX_NUM_REGISTROS_EXCEL_FACTURAS_PREVISTAS_PENDIENTES_LISTADO`), required: false, module: ConfigModule.CNF }]
   ]);
 
   get ConfigModule() {

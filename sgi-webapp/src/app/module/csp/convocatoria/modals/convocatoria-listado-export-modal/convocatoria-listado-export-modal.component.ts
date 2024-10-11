@@ -11,7 +11,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { ConvocatoriaListadoExportService, IConvocatoriaReportOptions } from '../../convocatoria-listado-export.service';
 
 const CONVOCATORIA_KEY = marker('csp.convocatoria');
-
 @Component({
   templateUrl: './convocatoria-listado-export-modal.component.html',
   styleUrls: ['./convocatoria-listado-export-modal.component.scss']
@@ -58,6 +57,7 @@ export class ConvocatoriaListadoExportModalComponent extends BaseExportModalComp
       showTodos: new FormControl(true),
       showAreasTematicas: new FormControl(true),
       showEntidadesConvocantes: new FormControl(true),
+      showPlanesInvestigacion: new FormControl(true),
       showEntidadesFinanciadoras: new FormControl(true),
       showEnlaces: new FormControl(true),
       showFases: new FormControl(true),
@@ -74,10 +74,18 @@ export class ConvocatoriaListadoExportModalComponent extends BaseExportModalComp
     Object.keys(formGroup.controls).forEach(key => {
       if (key.startsWith('show')) {
         this.subscriptions.push(formGroup.get(key).valueChanges.subscribe(() => {
+
+          if (key === 'showEntidadesConvocantes' && !!formGroup.get(key).value) {
+            formGroup.controls.showPlanesInvestigacion.setValue(true, { emitEvent: false });
+          }
+
           let cont = 0;
           Object.keys(formGroup.controls).forEach(key => {
             if (key.startsWith('show') && !formGroup.get(key).value) {
               formGroup.controls.showTodos.setValue(false, { emitEvent: false });
+              if (key === 'showEntidadesConvocantes') {
+                formGroup.controls.showPlanesInvestigacion.setValue(false, { emitEvent: false });
+              }
               cont++;
             } else if (cont === 0) {
               formGroup.controls.showTodos.setValue(true, { emitEvent: false });
@@ -97,6 +105,7 @@ export class ConvocatoriaListadoExportModalComponent extends BaseExportModalComp
         findOptions: this.modalData.findOptions,
         showAreasTematicas: this.formGroup.controls.showAreasTematicas.value,
         showEntidadesConvocantes: this.formGroup.controls.showEntidadesConvocantes.value,
+        showPlanesInvestigacion: this.formGroup.controls.showPlanesInvestigacion.value,
         showEntidadesFinanciadoras: this.formGroup.controls.showEntidadesFinanciadoras.value,
         showEnlaces: this.formGroup.controls.showEnlaces.value,
         showFases: this.formGroup.controls.showFases.value,

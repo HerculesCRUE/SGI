@@ -37,7 +37,7 @@ const FECHA_FIN_DEFINITIVA_KEY = marker('csp.proyecto.fecha-fin-definitiva');
 const CONFIDENCIAL_KEY = marker('csp.proyecto.confidencial');
 const CLASIFICACION_CVN_KEY = marker('csp.convocatoria.clasificacion-produccion-cientifica');
 const COORDINADO_KEY = marker('csp.proyecto.proyecto-coordinado');
-const ROL_UNIVERSIDAD_KEY = marker('csp.proyecto.rol-universidad');
+const ROL_UNIVERSIDAD_KEY = marker('csp.proyecto.rol-participacion-universidad');
 const PROYECTO_COLABORATIVO_KEY = marker('csp.proyecto.proyecto-colaborativo');
 const IVA_DECUCIBLE_KEY = marker('csp.ejecucion-economica.iva-deducible');
 const PORCENTAJE_IVA_KEY = marker('csp.ejecucion-economica.iva');
@@ -45,7 +45,7 @@ const CAUSA_EXENCION_IVA_KEY = marker('csp.proyecto.causa-exencion');
 const AREA_TEMATICA_KEY = marker('csp.area-tematica.nombre');
 
 @Injectable()
-export class ProyectoGeneralListadoExportService extends AbstractTableExportFillService<IProyectoReportData, IProyectoReportOptions>{
+export class ProyectoGeneralListadoExportService extends AbstractTableExportFillService<IProyectoReportData, IProyectoReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,

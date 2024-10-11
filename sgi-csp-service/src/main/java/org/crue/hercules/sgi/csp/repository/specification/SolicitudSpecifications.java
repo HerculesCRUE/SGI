@@ -37,12 +37,21 @@ public class SolicitudSpecifications {
   public static final String PUBLIC_ID_SPLIT_DELIMITER = "@";
 
   /**
-   * {@link Solicitud} con Activo a True
+   * {@link Solicitud} activos.
    * 
-   * @return specification para obtener las {@link Solicitud} activas
+   * @return specification para obtener las {@link Solicitud} activas.
    */
   public static Specification<Solicitud> activos() {
-    return (root, query, cb) -> cb.equal(root.get(Solicitud_.activo), Boolean.TRUE);
+    return (root, query, cb) -> cb.isTrue(root.get(Solicitud_.activo));
+  }
+
+  /**
+   * {@link Solicitud} con Activo a False
+   * 
+   * @return specification para obtener las {@link Solicitud} no activas
+   */
+  public static Specification<Solicitud> notActivos() {
+    return (root, query, cb) -> cb.isFalse(root.get(Solicitud_.activo));
   }
 
   /**
@@ -152,16 +161,15 @@ public class SolicitudSpecifications {
     String numeroDocumentoSolicitante = publicIdArray[1];
 
     return (root, query, cb) -> {
-            Subquery<Long> querySolicitanteExterno = query.subquery(Long.class);
+      Subquery<Long> querySolicitanteExterno = query.subquery(Long.class);
       Root<SolicitanteExterno> querySolicitanteExternoRoot = querySolicitanteExterno.from(SolicitanteExterno.class);
       querySolicitanteExterno.select(querySolicitanteExternoRoot.get(SolicitanteExterno_.solicitudId))
-          .where(cb.equal(querySolicitanteExternoRoot.get(SolicitanteExterno_.numeroDocumento), 
+          .where(cb.equal(querySolicitanteExternoRoot.get(SolicitanteExterno_.numeroDocumento),
               numeroDocumentoSolicitante));
 
       return cb.and(
-        root.get(Solicitud_.id).in(querySolicitanteExterno),
-        cb.equal(root.get(Solicitud_.codigoRegistroInterno), codigoRegistroInterno)
-      );
+          root.get(Solicitud_.id).in(querySolicitanteExterno),
+          cb.equal(root.get(Solicitud_.codigoRegistroInterno), codigoRegistroInterno));
     };
   }
 

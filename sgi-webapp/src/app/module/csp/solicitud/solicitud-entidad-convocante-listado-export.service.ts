@@ -3,9 +3,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IConvocatoriaEntidadConvocante } from '@core/models/csp/convocatoria-entidad-convocante';
 import { IPrograma } from '@core/models/csp/programa';
 import { ISolicitudModalidad } from '@core/models/csp/solicitud-modalidad';
-import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
-import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
@@ -22,17 +20,17 @@ const ENTIDAD_CONVOCANTE_KEY = marker('title.csp.solicitud-entidad-convocante');
 const ENTIDAD_CONVOCANTE_NOMBRE_KEY = marker('csp.convocatoria-entidad-convocante.nombre');
 const ENTIDAD_CONVOCANTE_IDENTIFICACION_KEY = marker('csp.convocatoria-entidad-convocante.numeroIdentificacion');
 const ENTIDAD_CONVOCANTE_PLAN_KEY = marker('csp.convocatoria-entidad-convocante.plan');
-const ENTIDAD_CONVOCANTE_PROGRAMA_KEY = marker('csp.proyecto-entidad-convocante.programa.programa-convocatoria');
-const ENTIDAD_CONVOCANTE_MODALIDAD_KEY = marker('csp.solicitud-modalidad');
+const ENTIDAD_CONVOCANTE_PROGRAMA_CONVOCATORIA_KEY = marker('csp.proyecto-entidad-convocante.programa.programa-convocatoria');
+const ENTIDAD_CONVOCANTE_NIVEL_KEY = marker('csp.solicitud-entidad-convocante.modalidad-nivel');
 const ENTIDAD_CONVOCANTE_FIELD = 'entidadConvocante';
 const ENTIDAD_CONVOCANTE_IDENTIFICACION_FIELD = 'identificacionEntidadConvocante';
 const ENTIDAD_CONVOCANTE_PROGRAMA_FIELD = 'programaEntidadConvocante';
 const ENTIDAD_CONVOCANTE_PLAN_FIELD = 'planEntidadConvocante';
-const ENTIDAD_CONVOCANTE_MODALIDAD_FIELD = 'modalidadEntidadConvocante';
+const ENTIDAD_CONVOCANTE_NIVEL_PROGRAMA_FIELD = 'nivelProgramaEntidadConvocante';
 
 @Injectable()
 export class SolicitudEntidadConvocanteListadoExportService
-  extends AbstractTableExportFillService<ISolicitudReportData, ISolicitudReportOptions>{
+  extends AbstractTableExportFillService<ISolicitudReportData, ISolicitudReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -94,84 +92,71 @@ export class SolicitudEntidadConvocanteListadoExportService
     solicitudes: ISolicitudReportData[],
     reportConfig: IReportConfig<ISolicitudReportOptions>
   ): ISgiColumnReport[] {
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      return this.getColumnsEntidadConvocanteNotExcel();
-    } else {
-      return this.getColumnsEntidadConvocanteExcel(solicitudes);
-    }
+    return this.getColumnsEntidadConvocanteExcel(solicitudes, reportConfig.reportOptions.showPlanesInvestigacion);
   }
 
-  private getColumnsEntidadConvocanteNotExcel(): ISgiColumnReport[] {
-    const columns: ISgiColumnReport[] = [];
-    columns.push({
-      name: ENTIDAD_CONVOCANTE_FIELD,
-      title: this.translate.instant(ENTIDAD_CONVOCANTE_KEY),
-      type: ColumnType.STRING
-    });
-    const titleI18n = this.translate.instant(ENTIDAD_CONVOCANTE_KEY) +
-      ' (' + this.translate.instant(ENTIDAD_CONVOCANTE_NOMBRE_KEY) +
-      ' - ' + this.translate.instant(ENTIDAD_CONVOCANTE_IDENTIFICACION_KEY) +
-      ' - ' + this.translate.instant(ENTIDAD_CONVOCANTE_PLAN_KEY) +
-      ' - ' + this.translate.instant(ENTIDAD_CONVOCANTE_PROGRAMA_KEY) +
-      ' - ' + this.translate.instant(ENTIDAD_CONVOCANTE_MODALIDAD_KEY) +
-      ')';
-    const columnEntidad: ISgiColumnReport = {
-      name: ENTIDAD_CONVOCANTE_FIELD,
-      title: titleI18n,
-      type: ColumnType.SUBREPORT,
-      fieldOrientation: FieldOrientation.VERTICAL,
-      columns
-    };
-    return [columnEntidad];
-  }
-
-  private getColumnsEntidadConvocanteExcel(solicituds: ISolicitudReportData[]): ISgiColumnReport[] {
+  private getColumnsEntidadConvocanteExcel(solicitudes: ISolicitudReportData[], showPlanesInvestigacion: boolean): ISgiColumnReport[] {
     const columns: ISgiColumnReport[] = [];
 
-    const maxNumEntidasConvocantes = Math.max(...solicituds.map(s => s.entidadesConvocantes ? s.entidadesConvocantes?.length : 0));
+    const maxNumEntidasConvocantes = Math.max(...solicitudes.map(s => s.entidadesConvocantes ? s.entidadesConvocantes?.length : 0));
     const titleEntidadConvocante = this.translate.instant(ENTIDAD_CONVOCANTE_KEY);
     const titlePlanEntidadConvocante = this.translate.instant(ENTIDAD_CONVOCANTE_PLAN_KEY);
+    const titleNivelPrograma = this.translate.instant(ENTIDAD_CONVOCANTE_NIVEL_KEY);
 
     for (let i = 0; i < maxNumEntidasConvocantes; i++) {
       const idEntidadConvocante: string = String(i + 1);
       const columnEntidadConvocante: ISgiColumnReport = {
         name: ENTIDAD_CONVOCANTE_FIELD + idEntidadConvocante,
-        title: titleEntidadConvocante + idEntidadConvocante + ': ' + this.translate.instant(ENTIDAD_CONVOCANTE_NOMBRE_KEY),
+        title: titleEntidadConvocante + ' ' + idEntidadConvocante + ': ' + this.translate.instant(ENTIDAD_CONVOCANTE_NOMBRE_KEY),
         type: ColumnType.STRING,
       };
       columns.push(columnEntidadConvocante);
 
       const columnCifEntidadConvocante: ISgiColumnReport = {
         name: ENTIDAD_CONVOCANTE_IDENTIFICACION_FIELD + idEntidadConvocante,
-        title: titleEntidadConvocante + idEntidadConvocante + ': ' + this.translate.instant(ENTIDAD_CONVOCANTE_IDENTIFICACION_KEY),
+        title: titleEntidadConvocante + ' ' + idEntidadConvocante + ': ' + this.translate.instant(ENTIDAD_CONVOCANTE_IDENTIFICACION_KEY),
         type: ColumnType.STRING,
       };
       columns.push(columnCifEntidadConvocante);
 
-      const columnPlanEntidadConvocante: ISgiColumnReport = {
-        name: ENTIDAD_CONVOCANTE_PLAN_FIELD + idEntidadConvocante,
-        title: titleEntidadConvocante + idEntidadConvocante + ': ' + titlePlanEntidadConvocante,
-        type: ColumnType.STRING,
-      };
-      columns.push(columnPlanEntidadConvocante);
+      if (showPlanesInvestigacion) {
+        const maxNivelProgramaEntidadConvocanteX = Math.max(...solicitudes.map(solicitud => {
 
-      const titlePlanPlusEntidadConvocante = titlePlanEntidadConvocante +
-        ' ' +
-        titleEntidadConvocante + idEntidadConvocante +
-        ': ';
-      const columnProgramaEntidadConvocante: ISgiColumnReport = {
-        name: ENTIDAD_CONVOCANTE_PROGRAMA_FIELD + idEntidadConvocante,
-        title: titlePlanPlusEntidadConvocante + this.translate.instant(ENTIDAD_CONVOCANTE_PROGRAMA_KEY),
-        type: ColumnType.STRING,
-      };
-      columns.push(columnProgramaEntidadConvocante);
+          let nivelPrograma = 0;
+          if (solicitud.entidadesConvocantes && solicitud.entidadesConvocantes.length > i) {
+            const solicitudModalidad = solicitud.modalidades
+              .find(modalidad => modalidad.entidad.id === solicitud.entidadesConvocantes[i].entidad.id);
+            nivelPrograma = this.getNivelPrograma(solicitudModalidad?.programa ?? solicitud.entidadesConvocantes[i].programa);
+          }
 
-      const columnModalidadEntidadConvocante: ISgiColumnReport = {
-        name: ENTIDAD_CONVOCANTE_MODALIDAD_FIELD + idEntidadConvocante,
-        title: titlePlanPlusEntidadConvocante + this.translate.instant(ENTIDAD_CONVOCANTE_MODALIDAD_KEY),
-        type: ColumnType.STRING,
-      };
-      columns.push(columnModalidadEntidadConvocante);
+          return nivelPrograma;
+        }));
+
+        for (let j = 0; j <= maxNivelProgramaEntidadConvocanteX; j++) {
+          if (j === 0) {
+            const columnPlanEntidadConvocante: ISgiColumnReport = {
+              name: ENTIDAD_CONVOCANTE_PLAN_FIELD + idEntidadConvocante,
+              title: titleEntidadConvocante + ' ' + idEntidadConvocante + ': ' + titlePlanEntidadConvocante,
+              type: ColumnType.STRING,
+            };
+            columns.push(columnPlanEntidadConvocante);
+
+            const columnProgramaEntidadConvocanteConvocatoria: ISgiColumnReport = {
+              name: ENTIDAD_CONVOCANTE_PROGRAMA_FIELD + idEntidadConvocante,
+              title: titlePlanEntidadConvocante + ' ' + titleEntidadConvocante + ' ' + idEntidadConvocante + ': ' + this.translate.instant(ENTIDAD_CONVOCANTE_PROGRAMA_CONVOCATORIA_KEY),
+              type: ColumnType.STRING,
+            };
+            columns.push(columnProgramaEntidadConvocanteConvocatoria);
+          } else {
+            const columnProgramaEntidadConvocante: ISgiColumnReport = {
+              name: ENTIDAD_CONVOCANTE_NIVEL_PROGRAMA_FIELD + idEntidadConvocante + '_' + j,
+              title: titlePlanEntidadConvocante + ' ' + titleEntidadConvocante + ' ' + idEntidadConvocante + ': ' + titleNivelPrograma + ' ' + j,
+              type: ColumnType.STRING,
+            };
+            columns.push(columnProgramaEntidadConvocante);
+          }
+        }
+      }
     }
 
     return columns;
@@ -181,96 +166,67 @@ export class SolicitudEntidadConvocanteListadoExportService
     const solicitud = solicitudes[index];
 
     const elementsRow: any[] = [];
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      this.fillRowsEntidadConvocanteNotExcel(solicitud, elementsRow);
-    } else {
+    const maxNumEntidasConvocantes = Math.max(...solicitudes.map(s => s.entidadesConvocantes ? s.entidadesConvocantes?.length : 0));
 
-      const maxNumEntidasConvocantes = Math.max(...solicitudes.map(s => s.entidadesConvocantes ? s.entidadesConvocantes?.length : 0));
-      for (let i = 0; i < maxNumEntidasConvocantes; i++) {
-        const entidadConvocante = solicitud.entidadesConvocantes && solicitud.entidadesConvocantes.length > 0 ? solicitud.entidadesConvocantes[i] : null;
-        this.fillRowsEntidadExcel(elementsRow, entidadConvocante, solicitud);
-      }
+    for (let i = 0; i < maxNumEntidasConvocantes; i++) {
+      const entidadConvocante = solicitud.entidadesConvocantes && solicitud.entidadesConvocantes.length > 0 ? solicitud.entidadesConvocantes[i] : null;
+
+      const maxNivelProgramaEntidadConvocanteX = Math.max(...solicitudes.map(solicitud => {
+
+        let nivelPrograma = 0;
+        if (solicitud.entidadesConvocantes && solicitud.entidadesConvocantes.length > i) {
+          const solicitudModalidad = solicitud.modalidades
+            .find(modalidad => modalidad.entidad.id === solicitud.entidadesConvocantes[i].entidad.id);
+          nivelPrograma = this.getNivelPrograma(solicitudModalidad?.programa ?? solicitud.entidadesConvocantes[i].programa);
+        }
+
+        return nivelPrograma;
+      }));
+
+      this.fillRowsEntidadExcel(elementsRow, entidadConvocante, solicitud, maxNivelProgramaEntidadConvocanteX, reportConfig.reportOptions.showPlanesInvestigacion);
     }
+
     return elementsRow;
   }
 
-  private fillRowsEntidadConvocanteNotExcel(solicitud: ISolicitudReportData, elementsRow: any[]) {
-    const rowsReport: ISgiRowReport[] = [];
-
-    solicitud.entidadesConvocantes?.forEach(entidadConvocante => {
-      const entidadConvocanteElementsRow: any[] = [];
-
+  private fillRowsEntidadExcel(
+    elementsRow: any[],
+    entidadConvocanteConvocatoria: IConvocatoriaEntidadConvocante,
+    solicitud: ISolicitudReportData,
+    maxNivelProgramaEntidadConvocante: number,
+    showPlanesInvestigacion: boolean
+  ) {
+    if (entidadConvocanteConvocatoria) {
       const solicitudModalidad = solicitud.modalidades
-        .find(modalidad => modalidad.entidad.id === entidadConvocante.entidad.id);
+        .find(modalidad => modalidad.entidad.id === entidadConvocanteConvocatoria.entidad.id);
 
-      let entidadTable = entidadConvocante.entidad?.nombre ?? '';
-      entidadTable += '\n';
-      entidadTable += entidadConvocante.entidad?.numeroIdentificacion ?? '';
-      entidadTable += '\n';
-      entidadTable += this.getPlan(entidadConvocante)?.nombre ?? '';
-      entidadTable += '\n';
-      entidadTable += entidadConvocante.programa?.nombre ?? '';
-      entidadTable += '\n';
-      entidadTable += solicitudModalidad?.programa?.nombre ?? '';
+      elementsRow.push(entidadConvocanteConvocatoria.entidad?.nombre ?? '');
+      elementsRow.push(entidadConvocanteConvocatoria.entidad?.numeroIdentificacion ?? '');
 
-      entidadConvocanteElementsRow.push(entidadTable);
+      if (showPlanesInvestigacion) {
+        const nombresNivelesPrograma = this.getNombresNivelesPrograma(solicitudModalidad?.programa ?? entidadConvocanteConvocatoria.programa);
+        for (let i = 0; i <= maxNivelProgramaEntidadConvocante; i++) {
+          const nivel = nombresNivelesPrograma.length > i ? nombresNivelesPrograma[i] : '';
+          elementsRow.push(nivel);
 
-      const rowReport: ISgiRowReport = {
-        elements: entidadConvocanteElementsRow
-      };
-      rowsReport.push(rowReport);
-    });
+          if (i === 0) {
+            elementsRow.push(entidadConvocanteConvocatoria?.programa?.nombre ?? '');
+          }
+        }
+      }
 
-    elementsRow.push({
-      rows: rowsReport
-    });
-  }
-
-  private fillRowsEntidadExcel(elementsRow: any[], entidadConvocante: IConvocatoriaEntidadConvocante, solicitud: ISolicitudReportData) {
-    if (entidadConvocante) {
-      const solicitudModalidad = solicitud.modalidades
-        .find(modalidad => modalidad.entidad.id === entidadConvocante.entidad.id);
-
-      elementsRow.push(entidadConvocante.entidad?.nombre ?? '');
-      elementsRow.push(entidadConvocante.entidad?.numeroIdentificacion ?? '');
-      elementsRow.push(this.getPlan(entidadConvocante)?.nombre ?? '');
-      elementsRow.push(entidadConvocante?.programa?.nombre ?? '');
-      elementsRow.push(solicitudModalidad?.programa?.nombre ?? '');
     } else {
       elementsRow.push('');
       elementsRow.push('');
-      elementsRow.push('');
-      elementsRow.push('');
-      elementsRow.push('');
-    }
-  }
 
-  private getPlan(value: IConvocatoriaEntidadConvocante): IPrograma {
-    if (value.programa != null) {
-      return this.getTopLevel(value.programa);
-    }
-    return null;
-  }
+      if (showPlanesInvestigacion) {
+        elementsRow.push('');
 
-  private getTopLevel(programa: IPrograma): IPrograma {
-    if (programa.padre == null) {
-      return programa;
-    }
-    return this.getTopLevel(programa.padre);
-  }
-
-  private getModalidad(value: IConvocatoriaEntidadConvocante, solicitudId: number): Observable<string> {
-
-    return this.getSolicitudModalidades(solicitudId).pipe(
-      switchMap(solicitudModalidades => {
-        const solicitudModalidad = solicitudModalidades
-          .find(modalidad => modalidad.entidad.id === value.entidad.id);
-        if (solicitudModalidad) {
-          return solicitudModalidad.programa.nombre;
+        for (let i = 0; i <= maxNivelProgramaEntidadConvocante; i++) {
+          elementsRow.push('');
         }
-      })
-    );
-
+      }
+    }
   }
 
   /**
@@ -286,4 +242,51 @@ export class SolicitudEntidadConvocanteListadoExportService
       })
     );
   }
+
+  /**
+   * Obtiene el nivel del programa en el arbol
+   * 
+   * @param programa un programa
+   * @returns el nivel del programa en el arbol
+   */
+  private getNivelPrograma(programa: IPrograma): number {
+    if (!programa) {
+      return 0;
+    }
+
+    let level = 0;
+    let currentPrograma = programa;
+
+    while (currentPrograma.padre) {
+      level++;
+      currentPrograma = currentPrograma.padre;
+    }
+
+    return level;
+  }
+
+  /**
+   * Lista con los nombres de todos los niveles desde el nodo raiz hasta el programa
+   * 
+   * @param programa un programa
+   * @returns la lista de los nombres de todos los niveles desde el nodo raiz hasta el programa
+   */
+  private getNombresNivelesPrograma(programa: IPrograma): string[] {
+    if (!programa) {
+      return [];
+    }
+
+    let nombres = [];
+    let currentPrograma = programa;
+
+    while (currentPrograma.padre) {
+      nombres.push(currentPrograma.nombre ?? '');
+      currentPrograma = currentPrograma.padre;
+    }
+
+    nombres.push(currentPrograma.nombre ?? '');
+
+    return nombres.reverse();
+  }
+
 }

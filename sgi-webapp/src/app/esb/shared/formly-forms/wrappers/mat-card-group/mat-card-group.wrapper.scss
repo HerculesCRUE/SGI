@@ -37,8 +37,14 @@
     .flex-6 {
       flex: 6;
     }
+    .flex-1-25 {
+      flex: 0 1 calc(25% - 0.5rem);
+    }
     .flex-1-50 {
       flex: 0 1 calc(50% - 0.5rem);
+    }
+    .flex-1-75 {
+      flex: 0 1 calc(75% - 0.5rem);
     }
 	}
 }

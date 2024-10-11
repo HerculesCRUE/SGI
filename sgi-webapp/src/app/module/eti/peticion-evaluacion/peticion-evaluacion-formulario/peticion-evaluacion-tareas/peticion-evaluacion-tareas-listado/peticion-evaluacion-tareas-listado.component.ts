@@ -167,7 +167,9 @@ export class PeticionEvaluacionTareasListadoComponent extends FragmentComponent 
     dialogRef.afterClosed().subscribe(
       (modalData: PeticionEvaluacionTareasModalComponentData) => {
         if (modalData && modalData.tarea) {
-          tarea.setEdited();
+          if (modalData.tarea.id) {
+            tarea.setEdited();
+          }
           this.fragment.setChanges(true);
           this.fragment.setComplete(true);
         }

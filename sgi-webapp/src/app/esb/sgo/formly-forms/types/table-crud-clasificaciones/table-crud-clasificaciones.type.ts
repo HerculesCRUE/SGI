@@ -65,6 +65,14 @@ export class TableCRUDClasificacionesTypeComponent extends BaseTableCRUDTypeComp
     this.table.renderRows();
   }
 
+  isEditEnabled(rowIndex: number): boolean {
+    return false;
+  }
+
+  isDeleteEnabled(rowIndex: number): boolean {
+    return true;
+  }
+
   openDialog() {
     const arrSelectedClasificaciones: IClasificacion[] = this.model.map(item => {
       return {

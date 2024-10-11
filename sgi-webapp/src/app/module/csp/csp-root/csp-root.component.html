@@ -134,4 +134,11 @@
       title="{{'menu.csp.configuraciones.lineas-investigacion' | translate}}">
     </sgi-menu-subitem>
   </sgi-menu-group>
+  <sgi-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']" title="{{'menu.csp.listados' | translate}}"
+    icon="receipt_long">
+    <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
+      [route]="[CSP_ROUTE_NAMES.FACTURAS_PREVISTAS_PENDIENTES]"
+      title="{{'menu.csp.facturas-previstas-pendientes' | translate}}">
+    </sgi-menu-subitem>
+  </sgi-menu-group>
 </sgi-root>

@@ -645,7 +645,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("findAllRestringidos(String query, Pageable paging) - start");
 
     Specification<Proyecto> specs = ProyectoSpecifications.activos().and(SgiRSQLJPASupport.toSpecification(query,
-        ProyectoPredicateResolver.getInstance(programaRepository, proyectoProrrogaRepository, sgiConfigProperties)));
+        ProyectoPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
 
     // No tiene acceso a todos los UO
     List<String> unidadesGestion = proyectoHelper.getUserUOsProyecto();
@@ -682,8 +682,7 @@ public class ProyectoServiceImpl implements ProyectoService {
             .or(ProyectoSpecifications.byResponsableEconomicoId(authentication.getName())))
         .and(ProyectoSpecifications.byEstadoNotBorrador())
         .and(SgiRSQLJPASupport.toSpecification(query,
-            ProyectoPredicateResolver.getInstance(programaRepository, proyectoProrrogaRepository,
-                sgiConfigProperties))));
+            ProyectoPredicateResolver.getInstance(programaRepository, sgiConfigProperties))));
 
     Page<Proyecto> returnValue = repository.findAll(specs, paging);
     log.debug("findAllActivosInvestigador(String query, Pageable paging) - end");
@@ -703,8 +702,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     Specification<Proyecto> specs = ProyectoSpecifications.distinct()
         .and(SgiRSQLJPASupport.toSpecification(query,
-            ProyectoPredicateResolver.getInstance(programaRepository, proyectoProrrogaRepository,
-                sgiConfigProperties)));
+            ProyectoPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
 
     List<String> unidadesGestion = SgiSecurityContextHolder
         .getUOsForAnyAuthority(new String[] { "CSP-PRO-V", "CSP-PRO-C", "CSP-PRO-E", "CSP-PRO-B", "CSP-PRO-R" });
@@ -2403,12 +2401,34 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     Specification<Proyecto> specs = ProyectoSpecifications.activos().and(ProyectoSpecifications.confidencial(false))
         .and(SgiRSQLJPASupport.toSpecification(query,
-            ProyectoPredicateResolver.getInstance(programaRepository, proyectoProrrogaRepository,
-                sgiConfigProperties)));
+            ProyectoPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
 
     List<Long> returnValue = repository.findIds(specs);
 
     log.debug("findIdsProyectosModificados(String query) - end");
+
+    return returnValue;
+  }
+
+  /**
+   * Obtiene los ids de {@link Proyecto} modificados que no esten
+   * activos y con {@link Proyecto#confidencial} a <code>false</code> que cumplan
+   * las condiciones indicadas en el filtro de búsqueda
+   *
+   * @param query información del filtro.
+   * @return el listado de ids de {@link Proyecto}.
+   */
+  @Override
+  public List<Long> findIdsProyectosEliminados(String query) {
+    log.debug("findIdsProyectosEliminados(String query) - start");
+
+    Specification<Proyecto> specs = ProyectoSpecifications.notActivos().and(ProyectoSpecifications.confidencial(false))
+        .and(SgiRSQLJPASupport.toSpecification(query,
+            ProyectoPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
+
+    List<Long> returnValue = repository.findIds(specs);
+
+    log.debug("findIdsProyectosEliminados(String query) - end");
 
     return returnValue;
   }
@@ -2478,7 +2498,7 @@ public class ProyectoServiceImpl implements ProyectoService {
    */
   @Override
   public Page<ProyectoFacturacion> findAllProyectoFacturacionByProyectoId(Long proyectoId, String query, Pageable paging){
-    return this.proyectoFacturacionService.findByProyectoId(proyectoId, paging);
+    return this.proyectoFacturacionService.findByProyectoId(proyectoId, query, paging);
   }
 
   /**

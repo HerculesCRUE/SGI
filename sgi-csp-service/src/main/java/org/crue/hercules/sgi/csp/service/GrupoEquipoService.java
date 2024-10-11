@@ -312,9 +312,7 @@ public class GrupoEquipoService {
     AssertHelper.idNotNull(grupoId, Grupo.class);
     authorityHelper.checkUserHasAuthorityViewGrupo(grupoId);
 
-    if (!grupoRepository.existsById(grupoId)) {
-      throw new GrupoNotFoundException(grupoId);
-    }
+    Grupo grupo = grupoRepository.findById(grupoId).orElseThrow(() -> new GrupoNotFoundException(grupoId));
 
     List<GrupoEquipo> grupoEquiposBD = repository.findAllByGrupoId(grupoId);
 
@@ -338,7 +336,11 @@ public class GrupoEquipoService {
     }
 
     this.validateGrupoEquipo(grupoEquipos);
-    this.validateGruposEquipoParticipacion(grupoId, grupoEquipos);
+
+    boolean validateParticipacion = !Boolean.TRUE.equals(grupo.getEspecialInvestigacion().getEspecialInvestigacion());
+    if (validateParticipacion) {
+      this.validateGruposEquipoParticipacion(grupoId, grupoEquipos);
+    }
 
     List<GrupoEquipo> returnValue = repository.saveAll(grupoEquipos);
     log.debug("update(Long grupoId, List<GrupoEquipo> grupoEquipos) - END");
@@ -364,11 +366,13 @@ public class GrupoEquipoService {
     return returnValue;
   }
 
-  public void validateGrupoEquipoByGrupo(Long grupoId) {
+  public void validateGrupoEquipoByGrupo(Long grupoId, boolean validateParticipacion) {
     List<GrupoEquipo> gruposEquipo = this.findAllByGrupo(grupoId);
 
     this.validateGrupoEquipo(gruposEquipo);
-    this.validateGruposEquipoParticipacion(grupoId, gruposEquipo);
+    if (validateParticipacion) {
+      this.validateGruposEquipoParticipacion(grupoId, gruposEquipo);
+    }
   }
 
   private void validateGrupoEquipo(List<GrupoEquipo> grupoEquipos) {
@@ -440,7 +444,9 @@ public class GrupoEquipoService {
   private void validateGruposEquipoParticipacionByPersonaRef(Long grupoId, String personaRef,
       List<GrupoEquipo> gruposEquipoToValidate, BigDecimal minDedication) {
     Specification<GrupoEquipo> specs = GrupoEquipoSpecifications.byPersonaRefAndGrupoActivo(personaRef)
-        .and(GrupoEquipoSpecifications.notEqualGroupoId(grupoId));
+        .and(GrupoEquipoSpecifications.notEqualGrupoId(grupoId))
+        .and(GrupoEquipoSpecifications.byParticipacionNotNull())
+        .and(GrupoEquipoSpecifications.byGrupoNotEspecial());
     List<GrupoEquipo> personaRefGruposEquipo = repository.findAll(specs);
     personaRefGruposEquipo.addAll(gruposEquipoToValidate);
 

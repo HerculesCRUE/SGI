@@ -100,7 +100,7 @@ export abstract class BaseTableCRUDTypeComponent extends FieldArrayType implemen
     return toRender.sort((a, b) => (a.order > b.order ? 1 : -1));
   }
 
-  getOptionSelected(value: string, options: any[]): string {
+  getOptionSelected(value: string | boolean, options: any[]): string {
     let optionSelected = '';
     if (!options.length) {
       options = [{
@@ -108,7 +108,8 @@ export abstract class BaseTableCRUDTypeComponent extends FieldArrayType implemen
         value: value
       }]
     }
-    if (value) {
+
+    if (value || (typeof value === 'boolean' && value === false)) {
       optionSelected = options.filter(option => option.value === value)[0].label;
     }
     return optionSelected;
@@ -142,4 +143,9 @@ export abstract class BaseTableCRUDTypeComponent extends FieldArrayType implemen
   abstract getMode(): TYPE_RENDER_COLUMN;
 
   protected abstract openDialog(editItemModel?: any, editIndex?: number): void;
+
+  abstract isEditEnabled(rowIndex: number): boolean;
+
+  abstract isDeleteEnabled(rowIndex: number): boolean;
+
 }

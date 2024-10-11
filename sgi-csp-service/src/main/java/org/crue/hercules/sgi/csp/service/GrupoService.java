@@ -147,7 +147,6 @@ public class GrupoService {
       data.setFechaInicio(grupoActualizar.getFechaInicio());
       data.setFechaFin(grupoActualizar.getFechaFin());
 
-      data = this.updateEspecialInvestigacion(data, grupoActualizar);
       data = this.updateTipo(data, grupoActualizar);
 
       Grupo returnValue = repository.save(data);
@@ -155,54 +154,6 @@ public class GrupoService {
       log.debug("update(Grupo grupoActualizar) - end");
       return returnValue;
     }).orElseThrow(() -> new GrupoNotFoundException(grupoActualizar.getId()));
-  }
-
-  private Grupo updateEspecialInvestigacion(Grupo data, Grupo grupoActualizar) {
-    ZonedDateTime fechaInicio = Instant.now().atZone(this.sgiConfigProperties.getTimeZone().toZoneId())
-        .with(LocalTime.MIN);
-    ZonedDateTime fechaFin = Instant.now().atZone(this.sgiConfigProperties.getTimeZone().toZoneId())
-        .with(LocalTime.MAX).withNano(0).minusDays(1);
-    // Ambos informados y distintos (actualiza la fecha de fin del anterior y crea
-    // el nuevo)
-    if (data.getEspecialInvestigacion() != null && grupoActualizar.getEspecialInvestigacion() != null
-        && !data.getEspecialInvestigacion().getEspecialInvestigacion()
-            .equals(grupoActualizar.getEspecialInvestigacion().getEspecialInvestigacion())) {
-
-      // Especial investigación anterior se actualiza tambien en el dia actual
-      if (this.isSameDay(fechaInicio,
-          data.getEspecialInvestigacion().getFechaInicio().atZone(this.sgiConfigProperties.getTimeZone().toZoneId()))) {
-        GrupoEspecialInvestigacion grupoEspecialInvestigacion = grupoEspecialInvestigacionService
-            .findById(data.getEspecialInvestigacion().getId());
-        grupoEspecialInvestigacion
-            .setEspecialInvestigacion(grupoActualizar.getEspecialInvestigacion().getEspecialInvestigacion());
-        data.setEspecialInvestigacion(grupoEspecialInvestigacionService.update(grupoEspecialInvestigacion));
-      } else {
-        GrupoEspecialInvestigacion grupoEspecialInvestigacion = GrupoEspecialInvestigacion.builder()
-            .especialInvestigacion(grupoActualizar.getEspecialInvestigacion().getEspecialInvestigacion())
-            .fechaInicio(fechaInicio.toInstant())
-            .grupoId(data.getId()).build();
-        data.getEspecialInvestigacion().setFechaFin(fechaFin.toInstant());
-        grupoEspecialInvestigacionService.update(data.getEspecialInvestigacion());
-
-        data.setEspecialInvestigacion(grupoEspecialInvestigacionService.create(grupoEspecialInvestigacion));
-      }
-    }
-    // Tipo añadido y sin tipo previo (crea el nuevo tipo)
-    else if (data.getEspecialInvestigacion() == null && grupoActualizar.getEspecialInvestigacion() != null) {
-      GrupoEspecialInvestigacion grupoEspecialInvestigacion = GrupoEspecialInvestigacion.builder()
-          .especialInvestigacion(grupoActualizar.getEspecialInvestigacion().getEspecialInvestigacion())
-          .fechaInicio(fechaInicio.toInstant())
-          .grupoId(data.getId()).build();
-
-      data.setEspecialInvestigacion(grupoEspecialInvestigacionService.create(grupoEspecialInvestigacion));
-    }
-    // Con tipo previo y eliminado (actualiza la fecha de fin del anterior)
-    else if (data.getEspecialInvestigacion() != null && grupoActualizar.getEspecialInvestigacion() == null) {
-      data.getEspecialInvestigacion().setFechaFin(fechaFin.toInstant());
-      grupoEspecialInvestigacionService.update(data.getEspecialInvestigacion());
-      data.setEspecialInvestigacion(null);
-    }
-    return data;
   }
 
   private Grupo updateTipo(Grupo data, Grupo grupoActualizar) {
@@ -418,7 +369,8 @@ public class GrupoService {
         throw new ConstraintViolationException(result);
       }
 
-      grupoEquipoService.validateGrupoEquipoByGrupo(id);
+      boolean validateParticipacion = !Boolean.TRUE.equals(grupo.getEspecialInvestigacion().getEspecialInvestigacion());
+      grupoEquipoService.validateGrupoEquipoByGrupo(id, validateParticipacion);
 
       grupo.setActivo(true);
 
@@ -508,6 +460,27 @@ public class GrupoService {
     List<Long> returnValue = repository.findIds(specs);
 
     log.debug("findIdsGruposModificados(String query) - end");
+
+    return returnValue;
+  }
+
+  /**
+   * Obtiene los ids de {@link Grupo} modificados que no esten activos y que
+   * cumplan
+   * las condiciones indicadas en el filtro de búsqueda
+   *
+   * @param query información del filtro.
+   * @return el listado de ids de {@link Grupo}.
+   */
+  public List<Long> findIdsGruposEliminados(String query) {
+    log.debug("findIdsGruposEliminados(String query) - start");
+
+    Specification<Grupo> specs = GrupoSpecifications.notActivos()
+        .and(SgiRSQLJPASupport.toSpecification(query, GrupoPredicateResolver.getInstance(sgiConfigProperties)));
+
+    List<Long> returnValue = repository.findIds(specs);
+
+    log.debug("findIdsGruposEliminados(String query) - end");
 
     return returnValue;
   }

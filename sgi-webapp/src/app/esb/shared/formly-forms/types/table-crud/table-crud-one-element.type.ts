@@ -38,6 +38,22 @@ export class TableCRUDOneElementTypeComponent extends BaseTableCRUDTypeComponent
     this.remove(rowIndex);
   }
 
+  isEditEnabled(rowIndex: number): boolean {
+    if (typeof this.to.editEnabled !== 'boolean' && !this.to.editEnabled) {
+      return true;
+    }
+
+    return eval(this.to.editEnabled);
+  }
+
+  isDeleteEnabled(rowIndex: number): boolean {
+    if (typeof this.to.deleteEnabled !== 'boolean' && !this.to.deleteEnabled) {
+      return true;
+    }
+
+    return eval(this.to.deleteEnabled);
+  }
+
   openDialog(editItemModel: any, editIndex: number) {
     const fieldGroup = this.field?.fieldArray?.fieldGroup[0];
 

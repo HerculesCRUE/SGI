@@ -31,7 +31,8 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
     private readonly personaService: PersonaService,
     private readonly vinculacionService: VinculacionService,
     public readonly readonly: boolean,
-    private readonly configuracionService: ConfigService
+    private readonly configuracionService: ConfigService,
+    public readonly isGrupoEspecialInvestigacion: boolean
   ) {
     super(key);
     this.setComplete(true);
@@ -109,7 +110,9 @@ export class GrupoEquipoInvestigacionFragment extends Fragment {
     nos aseguramos de que no existan registros sin dichos datos.
   */
   private checkErrors(miembrosEquipo: StatusWrapper<IGrupoEquipoListado>[]): void {
-    this.setErrors(this.hasDedicacionError(miembrosEquipo));
+    if (!this.isGrupoEspecialInvestigacion) {
+      this.setErrors(this.hasDedicacionError(miembrosEquipo));
+    }
   }
 
   private hasDedicacionError(miembrosEquipo: StatusWrapper<IGrupoEquipoListado>[]): boolean {

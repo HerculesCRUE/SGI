@@ -21,12 +21,19 @@ export interface IEmpresaFormlyData {
   action: ACTION_MODAL_MODE;
 }
 
+export interface IEmpresaFormlyResponse {
+  createdOrUpdated: boolean;
+  empresa?: IEmpresa;
+  msgSuccess: string;
+}
+
 @Component({
   templateUrl: './empresa-formly-modal.component.html',
   styleUrls: ['./empresa-formly-modal.component.scss']
 })
-export class EmpresaFormlyModalComponent extends BaseFormlyModalComponent<IEmpresaFormlyData, IEmpresa> implements OnInit {
+export class EmpresaFormlyModalComponent extends BaseFormlyModalComponent<IEmpresaFormlyData, IEmpresaFormlyResponse> implements OnInit {
   private sgempModificacion: boolean = true;
+  private msgSuccess: string;
 
   get sgempModificacionDisabled(): boolean {
     return !this.sgempModificacion;
@@ -104,6 +111,7 @@ export class EmpresaFormlyModalComponent extends BaseFormlyModalComponent<IEmpre
     return load$.pipe(
       tap(formlyData => {
         this.options.formState.mainModel = formlyData.model;
+        this.msgSuccess = formlyData.fields ? formlyData.fields[0].templateOptions?.msgSuccess : '';
         this.formlyData = formlyData;
       }),
       switchMap(() => of(void 0))
@@ -127,17 +135,27 @@ export class EmpresaFormlyModalComponent extends BaseFormlyModalComponent<IEmpre
   /**
    * Checks the formGroup, returns the entered data and closes the modal
    */
-  protected saveOrUpdate(): Observable<IEmpresa> {
+  protected saveOrUpdate(): Observable<IEmpresaFormlyResponse> {
     FormlyUtils.convertFormlyToJSON(this.formlyData.model, this.formlyData.fields);
 
-    return this.empresaData.action === ACTION_MODAL_MODE.NEW
+    const obs$ = this.empresaData.action === ACTION_MODAL_MODE.NEW
       ? this.createEmpresa(this.formlyData)
       : this.updateEmpresa(this.empresaData.empresaId, this.formlyData);
+
+    return obs$.pipe(
+      map(empresa => {
+        return {
+          createdOrUpdated: true,
+          msgSuccess: this.msgSuccess,
+          empresa
+        }
+      })
+    )
   }
 
   private createEmpresa(formlyData: IFormlyData): Observable<IEmpresa> {
     return this.empresaService.createEmpresa(formlyData.model).pipe(
-      switchMap(response => this.empresaService.findById(response))
+      switchMap(empresaId => empresaId ? this.empresaService.findById(empresaId) : of(null))
     );
   }
 

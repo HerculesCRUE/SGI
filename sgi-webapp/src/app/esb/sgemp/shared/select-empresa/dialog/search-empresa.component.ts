@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -8,6 +8,7 @@ import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { SearchModalData } from '@core/component/select-dialog/select-dialog.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IEmpresa } from '@core/models/sgemp/empresa';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { FormGroupUtil } from '@core/utils/form-group-util';
@@ -15,10 +16,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { merge, Observable, of } from 'rxjs';
-import { catchError, map, tap, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { ACTION_MODAL_MODE } from 'src/app/esb/shared/formly-forms/core/base-formly-modal.component';
-import { EmpresaFormlyModalComponent, IEmpresaFormlyData } from '../../../formly-forms/empresa-formly-modal/empresa-formly-modal.component';
-import { ConfigService } from '@core/services/cnf/config.service';
+import { EmpresaFormlyModalComponent, IEmpresaFormlyData, IEmpresaFormlyResponse } from '../../../formly-forms/empresa-formly-modal/empresa-formly-modal.component';
 
 const TIPO_EMPRESA_KEY = marker('sgemp.empresa');
 const MSG_SAVE_SUCCESS = marker('msg.save.request.entity.success');
@@ -217,10 +217,13 @@ export class SearchEmpresaModalComponent extends DialogCommonComponent implement
     const dialogRef = this.empresaCreateMatDialog.open(EmpresaFormlyModalComponent, config);
 
     dialogRef.afterClosed().subscribe(
-      (empresa) => {
-        if (empresa) {
-          this.closeModal(empresa);
-          this.snackBarService.showSuccess(textoActionSuccess);
+      (response: IEmpresaFormlyResponse) => {
+        if (response?.createdOrUpdated) {
+          this.snackBarService.showSuccess(response.msgSuccess ?? textoActionSuccess);
+
+          if (!!response.empresa) {
+            this.closeModal(response.empresa);
+          }
         }
       }
     );

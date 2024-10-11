@@ -5,11 +5,11 @@ import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
+import { FORMULARIO_SOLICITUD_MAP } from '@core/enums/formulario-solicitud';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { Estado, ESTADO_MAP } from '@core/models/csp/estado-solicitud';
-import { IPrograma } from '@core/models/csp/programa';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { ISolicitanteExterno } from '@core/models/csp/solicitante-externo';
 import { ISolicitud, TipoSolicitudGrupo } from '@core/models/csp/solicitud';
@@ -29,14 +29,13 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
+import { from, merge, Observable, of } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { CONVOCATORIA_ACTION_LINK_KEY } from '../../convocatoria/convocatoria.action.service';
 import { ISolicitudCrearProyectoModalData, SolicitudCrearProyectoModalComponent } from '../modals/solicitud-crear-proyecto-modal/solicitud-crear-proyecto-modal.component';
 import { SolicitudGrupoModalComponent } from '../modals/solicitud-grupo-modal/solicitud-grupo-modal.component';
 import { SolicitudListadoExportModalComponent } from '../modals/solicitud-listado-export-modal/solicitud-listado-export-modal.component';
-import { FORMULARIO_SOLICITUD_MAP } from '@core/enums/formulario-solicitud';
 
 const MSG_BUTTON_NEW = marker('btn.add.entity');
 const MSG_DEACTIVATE = marker('msg.deactivate.entity');
@@ -49,14 +48,12 @@ const MSG_SUCCESS_CREAR_PROYECTO = marker('msg.csp.solicitud.crear.proyecto');
 const MSG_SUCCESS_CREAR_GRUPO = marker('msg.csp.solicitud.crear.grupo');
 const SOLICITUD_KEY = marker('csp.solicitud');
 const GRUPO_KEY = marker('csp.grupo');
-
 export interface ISolicitudListadoData extends ISolicitud {
   convocatoria: IConvocatoria;
   showCreateGrupo: boolean;
   solicitanteExterno: ISolicitanteExterno;
   nombreSolicitante: string;
 }
-
 @Component({
   selector: 'sgi-solicitud-listado',
   templateUrl: './solicitud-listado.component.html',
@@ -77,7 +74,6 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
   textoErrorReactivar: string;
 
   busquedaAvanzada = false;
-  planInvestigaciones$: BehaviorSubject<IPrograma[]> = new BehaviorSubject<IPrograma[]>([]);
 
   mapCrearProyecto: Map<number, boolean> = new Map();
   mapModificable: Map<number, boolean> = new Map();
@@ -195,9 +191,8 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
       fuenteFinanciacion: new FormControl(undefined),
       palabrasClave: new FormControl(null),
       formularioSolicitud: new FormControl(null),
+      rolUniversidad: new FormControl(null)
     });
-
-    this.getPlanesInvestigacion();
 
     this.filter = this.createFilter();
   }
@@ -457,7 +452,8 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
         .and('convocatoria.entidadesFinanciadoras.entidadRef', SgiRestFilterOperator.EQUALS, controls.entidadFinanciadora.value?.id)
         .and('convocatoria.entidadesFinanciadoras.fuenteFinanciacion.id',
           SgiRestFilterOperator.EQUALS, controls.fuenteFinanciacion.value?.id?.toString())
-        .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.tituloSolicitud.value);
+        .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.tituloSolicitud.value)
+        .and('solicitudProyecto.rolUniversidadId', SgiRestFilterOperator.EQUALS, controls.rolUniversidad.value?.id?.toString());
 
       const palabrasClave = controls.palabrasClave.value as string[];
       if (Array.isArray(palabrasClave) && palabrasClave.length > 0) {
@@ -566,17 +562,6 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
     this.formGroup.controls.fechaPublicacionConvocatoriaHasta.setValue(null);
     this.formGroup.controls.entidadConvocante.setValue(undefined);
     this.formGroup.controls.entidadFinanciadora.setValue(undefined);
-  }
-
-  private getPlanesInvestigacion(): void {
-    this.suscripciones.push(
-      this.programaService.findAllPlan().subscribe(
-        (res) => {
-          this.planInvestigaciones$.next(res.items);
-        },
-        (error) => this.logger.error(error)
-      )
-    );
   }
 
   crearProyectoModal(solicitudData: ISolicitudListadoData): void {

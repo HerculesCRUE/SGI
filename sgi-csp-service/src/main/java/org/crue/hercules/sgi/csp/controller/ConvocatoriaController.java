@@ -94,6 +94,7 @@ public class ConvocatoriaController {
   public static final String PATH_INVESTIGADOR = PATH_DELIMITER + "investigador";
   public static final String PATH_RESTRINGIDOS = PATH_DELIMITER + "restringidos";
   public static final String PATH_TODOS_RESTRINGIDOS = PATH_DELIMITER + "todos/restringidos";
+  public static final String PATH_ELIMINADAS_IDS = PATH_DELIMITER + "eliminadas-ids";
 
   public static final String PATH_ID = PATH_DELIMITER + "{id}";
   public static final String PATH_AREAS_TEMATICAS = PATH_ID + PATH_DELIMITER + "convocatoriaareatematicas";
@@ -1310,6 +1311,24 @@ public class ConvocatoriaController {
 
     log.debug("findFormularioSolicitudByConvocatoriaId(Long id) - end");
     return new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
+  /**
+   * Obtiene los ids de {@link Convocatoria} modificadas que no esten activas y
+   * que cumplan las condiciones indicadas en el filtro de búsqueda
+   * 
+   * @param query filtro de búsqueda.
+   * @return lista de ids de {@link Convocatoria}.
+   */
+  @GetMapping(PATH_ELIMINADAS_IDS)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-V', 'CSP-CON-E')")
+  public ResponseEntity<List<Long>> findIdsConvocatoriasEliminadas(
+      @RequestParam(name = "q", required = false) String query) {
+    log.debug("findIdsConvocatoriaEliminadas(String query) - start");
+    List<Long> returnValue = service.findIdsConvocatoriasEliminadas(query);
+    log.debug("findIdsConvocatoriaEliminadas(String query) - end");
+    return returnValue.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(returnValue, HttpStatus.OK);
   }
 
   private Page<ConvocatoriaPalabraClaveOutput> convertConvocatoriaPalabraClave(Page<ConvocatoriaPalabraClave> page) {

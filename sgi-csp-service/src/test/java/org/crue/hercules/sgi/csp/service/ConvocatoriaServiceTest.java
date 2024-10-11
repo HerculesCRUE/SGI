@@ -33,6 +33,7 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaPeriodoSeguimientoCienti
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoFinalidadRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloUnidadRepository;
+import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.TipoAmbitoGeograficoRepository;
@@ -83,6 +84,8 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
   @Mock
   private AutorizacionRepository autorizacionRepository;
   @Mock
+  private ProgramaRepository programaRepository;
+  @Mock
   private ProyectoHelper proyectoHelper;
 
   private ConvocatoriaAuthorityHelper authorityHelper;
@@ -99,7 +102,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         modeloUnidadRepository, modeloTipoFinalidadRepository, tipoRegimenConcurrenciaRepository,
         tipoAmbitoGeograficoRepository, convocatoriaPeriodoSeguimientoCientificoRepository,
         configuracionSolicitudRepository, this.solicitudReposiotry, this.proyectoReposiotry, convocatoriaClonerService,
-        autorizacionRepository, proyectoHelper, sgiConfigProperties, authorityHelper);
+        autorizacionRepository, programaRepository, proyectoHelper, sgiConfigProperties, authorityHelper);
   }
 
   @Test

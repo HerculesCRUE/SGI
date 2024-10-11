@@ -72,6 +72,7 @@ export interface IConvocatoriaReportData extends IConvocatoriaListado {
 export interface IConvocatoriaReportOptions extends IReportOptions {
   showAreasTematicas: boolean;
   showEntidadesConvocantes: boolean;
+  showPlanesInvestigacion: boolean;
   showEntidadesFinanciadoras: boolean;
   showEnlaces: boolean;
   showFases: boolean;

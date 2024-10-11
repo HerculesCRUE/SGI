@@ -340,4 +340,29 @@ public class Proyecto extends BaseEntity {
   @Setter(AccessLevel.NONE)
   private final List<ProyectoResponsableEconomico> responsablesEconomicos = null;
 
+  @OneToMany(mappedBy = "proyecto")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<ProyectoAreaConocimiento> areasConocimiento = null;
+
+  @OneToMany(mappedBy = "proyecto")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<ProyectoConceptoGasto> conceptosGasto = null;
+
+  @OneToMany(mappedBy = "proyecto")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<ProyectoFacturacion> facturacion = null;
+
+  @OneToMany(mappedBy = "proyecto")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<ProyectoPartida> partidas = null;
+
+  @OneToMany(mappedBy = "proyecto")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<ProyectoPeriodoJustificacion> periodosJustificacion = null;
+
 }

@@ -35,7 +35,7 @@
             {{'error.required.entity' | translate:msgParamFechaInicioEntity}}
           </mat-error>
           <mat-error *ngIf="formGroup.controls.fechaInicio.errors?.invalid">
-            {{'error.invalid.entity' | translate:msgParamFechaInicioEntity}}
+            {{'error.csp.proyecto-paquete-trabajo.fecha.invalid' | translate}}
           </mat-error>
         </mat-form-field>
       </div>
@@ -51,7 +51,7 @@
             {{'error.required.entity' | translate:msgParamFechaFinEntity}}
           </mat-error>
           <mat-error *ngIf="formGroup.controls.fechaFin.errors?.invalid">
-            {{'error.invalid.entity' | translate:msgParamFechaFinEntity}}
+            {{'error.csp.proyecto-paquete-trabajo.fecha.invalid' | translate}}
           </mat-error>
           <mat-error *ngIf="formGroup.controls.fechaFin.errors?.after">
             {{'error.after.fecha-fin' | translate}}

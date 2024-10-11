@@ -1,6 +1,5 @@
 package org.crue.hercules.sgi.csp.repository.specification;
 
-import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad_;
 import org.springframework.data.jpa.domain.Specification;
