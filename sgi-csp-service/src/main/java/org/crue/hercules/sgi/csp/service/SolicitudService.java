@@ -431,11 +431,11 @@ public class SolicitudService {
   public Page<Solicitud> findAllRestringidos(String query, Pageable paging) {
     log.debug("findAllRestringidos(String query, Pageable paging) - start");
 
-    Specification<Solicitud> specs = SolicitudSpecifications.distinct().and(SolicitudSpecifications.activos()
+    Specification<Solicitud> specs = SolicitudSpecifications.activos()
         .and(SgiRSQLJPASupport.toSpecification(query,
-            SolicitudPredicateResolver.getInstance(programaRepository, sgiConfigProperties))));
+            SolicitudPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
 
-    Page<Solicitud> returnValue = repository.findAll(specs, paging);
+    Page<Solicitud> returnValue = repository.findAllDistinct(specs, paging);
     log.debug("findAllRestringidos(String query, Pageable paging) - end");
     return returnValue;
   }
@@ -450,9 +450,8 @@ public class SolicitudService {
   public Page<Solicitud> findAllTodosRestringidos(String query, Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
 
-    Specification<Solicitud> specs = SolicitudSpecifications.distinct()
-        .and(SgiRSQLJPASupport.toSpecification(query,
-            SolicitudPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
+    Specification<Solicitud> specs = SgiRSQLJPASupport.toSpecification(query,
+        SolicitudPredicateResolver.getInstance(programaRepository, sgiConfigProperties));
 
     List<String> unidadesGestion = SgiSecurityContextHolder.getUOsForAnyAuthority(
         new String[] { "CSP-SOL-E", "CSP-SOL-V", "CSP-SOL-B", "CSP-SOL-C", "CSP-SOL-R", "CSP-PRO-C" });
@@ -462,7 +461,7 @@ public class SolicitudService {
       specs = specs.and(specByUnidadGestionRefIn);
     }
 
-    Page<Solicitud> returnValue = repository.findAll(specs, paging);
+    Page<Solicitud> returnValue = repository.findAllDistinct(specs, paging);
     log.debug("findAll(String query, Pageable paging");
     return returnValue;
   }
@@ -485,7 +484,7 @@ public class SolicitudService {
         .and(SgiRSQLJPASupport.toSpecification(query,
             SolicitudPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
 
-    Page<Solicitud> returnValue = repository.findAll(specs, paging);
+    Page<Solicitud> returnValue = repository.findAllDistinct(specs, paging);
     log.debug("findAllInvestigador(String query, Pageable paging) - end");
     return returnValue;
   }
@@ -508,7 +507,7 @@ public class SolicitudService {
         .and(SgiRSQLJPASupport.toSpecification(query,
             SolicitudPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
 
-    Page<Solicitud> returnValue = repository.findAll(specs, paging);
+    Page<Solicitud> returnValue = repository.findAllDistinct(specs, paging);
     log.debug("findAllTutor(String query, Pageable paging) - end");
     return returnValue;
   }
@@ -1143,6 +1142,27 @@ public class SolicitudService {
     List<Long> returnValue = repository.findIds(specs);
 
     log.debug("findIdsSolicitudesEliminadas(String query) - end");
+
+    return returnValue;
+  }
+
+  /**
+   * Obtiene los ids de {@link Solicitud} modificadas que esten activos y que
+   * cumplan las condiciones indicadas en el filtro de búsqueda
+   *
+   * @param query información del filtro.
+   * @return el listado de ids de {@link Solicitud}.
+   */
+  public List<Long> findIdsSolicitudesModificadas(String query) {
+    log.debug("findIdsSolicitudesModificadas(String query) - start");
+
+    Specification<Solicitud> specs = SolicitudSpecifications.activos()
+        .and(SgiRSQLJPASupport.toSpecification(query,
+            SolicitudPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
+
+    List<Long> returnValue = repository.findIds(specs);
+
+    log.debug("findIdsSolicitudesModificadas(String query) - end");
 
     return returnValue;
   }

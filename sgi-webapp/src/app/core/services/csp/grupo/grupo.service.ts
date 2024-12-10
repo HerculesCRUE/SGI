@@ -11,13 +11,16 @@ import { IGrupoPersonaAutorizada } from '@core/models/csp/grupo-persona-autoriza
 import { IGrupoResponsableEconomico } from '@core/models/csp/grupo-responsable-economico';
 import { IGrupoTipo } from '@core/models/csp/grupo-tipo';
 import { ISolicitud } from '@core/models/csp/solicitud';
+import { LuxonUtils } from '@core/utils/luxon-utils';
 import { environment } from '@env';
 import {
   CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate, mixinFindAll, mixinFindById, mixinUpdate,
-  SgiRestBaseService, SgiRestFindOptions, SgiRestListResult, UpdateCtor
+  RSQLSgiRestFilter,
+  SgiRestBaseService, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult, UpdateCtor
 } from '@sgi/framework/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { DateTime } from 'luxon';
+import { from, Observable } from 'rxjs';
+import { map, mergeMap, reduce } from 'rxjs/operators';
 import { IGrupoEnlaceResponse } from '../grupo-enlace/grupo-enlace-response';
 import { GRUPO_ENLACE_RESPONSE_CONVERTER } from '../grupo-enlace/grupo-enlace-response.converter';
 import { IGrupoEquipoInstrumentalResponse } from '../grupo-equipo-instrumental/grupo-equipo-instrumental-response';
@@ -76,6 +79,47 @@ export class GrupoService extends _GrupoMixinBase {
     super(
       `${environment.serviceServers.csp}${GrupoService.MAPPING}`,
       http,
+    );
+  }
+
+  /**
+   * Busca todas las grupos que tengan alguno de los ids de la lista
+   *
+   * @param ids lista de identificadores de grupos
+   * @returns la lista de grupos
+   */
+  findTodosByIdIn(ids: number[]): Observable<SgiRestListResult<IGrupo>> {
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('id', SgiRestFilterOperator.IN, ids.map(id => id.toString()))
+    };
+
+    return this.findTodos(options);
+  }
+
+  /**
+   * Busca todos los grupos que tengan alguno de los ids de la lista,
+   * dividiendo la lista de ids en lotes con el tamaño maximo de batchSize 
+   * y haciendo tantas peticiones como lotes se generen para hacer la busqueda
+   *
+   * @param ids lista de identificadores de grupo
+   * @param batchSize tamaño maximo de los lotes
+   * @param maxConcurrentBatches número máximo de llamadas paralelas para recuperar los lotes (por defecto 10)
+   * @returns la lista de grupos
+   */
+  findTodosInBactchesByIdIn(ids: number[], batchSize: number, maxConcurrentBatches: number = 10): Observable<IGrupo[]> {
+    const batches: number[][] = [];
+    for (let i = 0; i < ids.length; i += batchSize) {
+      batches.push(ids.slice(i, i + batchSize));
+    }
+
+    return from(batches).pipe(
+      mergeMap(batch =>
+        this.findTodosByIdIn(batch).pipe(
+          map(response => response.items)
+        ),
+        maxConcurrentBatches
+      ),
+      reduce((acc, items) => acc.concat(items), [] as IGrupo[])
     );
   }
 
@@ -354,6 +398,33 @@ export class GrupoService extends _GrupoMixinBase {
       `${this.endpointUrl}/${id}/solicitud`
     ).pipe(
       map(response => SOLICITUD_RESUMEN_RESPONSE_CONVERTER.toTarget(response))
+    );
+  }
+
+  /**
+ * Muestra los grupos a los que pertenece el investigador actual
+ *
+ * @param personaRef Identificador de la persona
+ * @param fechaIinicio fecha de inicio de participacion de la persona
+ * @param fechaFin fecha de fin de participacion de la persona
+ */
+  findGruposPersona(personaRef: string, fechaInicio?: DateTime, fechaFin?: DateTime): Observable<IGrupo[]> {
+    let params = new HttpParams();
+    params = params.append('personaRef', personaRef);
+
+    if (fechaInicio) {
+      params = params.append('fechaInicio', LuxonUtils.toBackend(fechaInicio));
+    }
+
+    if (fechaFin) {
+      params = params.append('fechaFin', LuxonUtils.toBackend(fechaFin));
+    }
+
+    return this.http.get<IGrupoResponse[]>(
+      `${this.endpointUrl}/persona`,
+      { params }
+    ).pipe(
+      map(response => response ? GRUPO_RESPONSE_CONVERTER.toTargetArray(response) : [])
     );
   }
 

@@ -72,6 +72,7 @@ import { ProyectoRelacionesComponent } from './proyecto-formulario/proyecto-rela
 import { ProyectoResponsableEconomicoComponent } from './proyecto-formulario/proyecto-responsable-economico/proyecto-responsable-economico.component';
 import { ProyectoSociosComponent } from './proyecto-formulario/proyecto-socios/proyecto-socios.component';
 import { ProyectoGeneralListadoExportService } from './proyecto-general-listado-export.service';
+import { ProyectoGruposInvestigacionIpListadoExportService } from './proyecto-grupos-investigacion-ips-listado-export.service';
 import { ProyectoHeaderListadoExportService } from './proyecto-header-listado-export.service';
 import { ProyectoListadoExportService } from './proyecto-listado-export.service';
 import { ProyectoListadoComponent } from './proyecto-listado/proyecto-listado.component';
@@ -170,6 +171,7 @@ import { ProyectoSolicitudListadoExportService } from './proyecto-solicitud-list
     ProyectoEquipoListadoExportService,
     ProyectoFooterListadoExportService,
     ProyectoGeneralListadoExportService,
+    ProyectoGruposInvestigacionIpListadoExportService,
     ProyectoHeaderListadoExportService,
     ProyectoListadoExportService,
     ProyectoPartidaPresupuestariaListadoExportService,

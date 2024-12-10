@@ -154,7 +154,7 @@ export class SolicitudService extends SgiMutableRestService<number, ISolicitudBa
    * @param id solicitud
    * @param options opciones de búsqueda.
    */
-  findEstadoSolicitud(solicitudId: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IEstadoSolicitud>> {
+  findEstadosSolicitud(solicitudId: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IEstadoSolicitud>> {
     return this.find<IEstadoSolicitudBackend, IEstadoSolicitud>(
       `${this.endpointUrl}/${solicitudId}/estadosolicitudes`,
       options,

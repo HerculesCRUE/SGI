@@ -6,10 +6,10 @@ import { IGrupoLineaInvestigacion } from '@core/models/csp/grupo-linea-investiga
 import { IGrupoLineaInvestigador } from '@core/models/csp/grupo-linea-investigador';
 import { environment } from '@env';
 import {
-  CreateCtor, FindByIdCtor, mixinCreate, mixinFindById, mixinUpdate, SgiRestBaseService, SgiRestFindOptions, SgiRestListResult, UpdateCtor
+  CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate, mixinFindAll, mixinFindById, mixinUpdate, RSQLSgiRestFilter, SgiRestBaseService, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult, UpdateCtor
 } from '@sgi/framework/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { from, Observable } from 'rxjs';
+import { map, mergeMap, reduce } from 'rxjs/operators';
 import { IGrupoLineaClasificacionResponse } from '../grupo-linea-clasificacion/grupo-linea-clasificacion-response';
 import { GRUPO_LINEA_CLASIFICACION_RESPONSE_CONVERTER } from '../grupo-linea-clasificacion/grupo-linea-clasificacion-response.converter';
 import { IGrupoLineaEquipoInstrumentalResponse } from '../grupo-linea-equipo-instrumental/grupo-linea-equipo-instrumental-response';
@@ -32,14 +32,18 @@ const _GrupoLineaInvestigacionMixinBase:
     IGrupoLineaInvestigacionResponse
   > &
   FindByIdCtor<number, IGrupoLineaInvestigacion, IGrupoLineaInvestigacionResponse> &
-  typeof SgiRestBaseService = mixinFindById(
-    mixinUpdate(
-      mixinCreate(
-        SgiRestBaseService,
+  FindAllCtor<IGrupoLineaInvestigacion, IGrupoLineaInvestigacionResponse> &
+  typeof SgiRestBaseService = mixinFindAll(
+    mixinFindById(
+      mixinUpdate(
+        mixinCreate(
+          SgiRestBaseService,
+          GRUPO_LINEA_INVESTIGACION_REQUEST_CONVERTER,
+          GRUPO_LINEA_INVESTIGACION_RESPONSE_CONVERTER
+        ),
         GRUPO_LINEA_INVESTIGACION_REQUEST_CONVERTER,
         GRUPO_LINEA_INVESTIGACION_RESPONSE_CONVERTER
       ),
-      GRUPO_LINEA_INVESTIGACION_REQUEST_CONVERTER,
       GRUPO_LINEA_INVESTIGACION_RESPONSE_CONVERTER
     ),
     GRUPO_LINEA_INVESTIGACION_RESPONSE_CONVERTER
@@ -55,6 +59,46 @@ export class GrupoLineaInvestigacionService extends _GrupoLineaInvestigacionMixi
     super(
       `${environment.serviceServers.csp}${GrupoLineaInvestigacionService.MAPPING}`,
       http,
+    );
+  }
+
+  /**
+   * Busca todos lineas de los grupos
+   * 
+   * @param ids lista de identificadores
+   * @returns la lista de lineas
+   */
+  findAllByIdIn(ids: number[]): Observable<SgiRestListResult<IGrupoLineaInvestigacion>> {
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('id', SgiRestFilterOperator.IN, ids.map(id => id.toString()))
+    };
+
+    return this.findAll(options);
+  }
+
+  /**
+   * Busca todos las lineas de los grupos dividiendo la lista de ids en lotes con el tamaño maximo de batchSize 
+   * y haciendo tantas peticiones como lotes se generen para hacer la busqueda
+   *
+   * @param ids lista de identificadores
+   * @param batchSize tamaño maximo de los lotes
+   * @param maxConcurrentBatches número máximo de llamadas paralelas para recuperar los lotes (por defecto 10)
+   * @returns la lista de lineas
+   */
+  findAllInBactchesByIdIn(ids: number[], batchSize: number, maxConcurrentBatches: number = 10): Observable<IGrupoLineaInvestigacion[]> {
+    const batches: number[][] = [];
+    for (let i = 0; i < ids.length; i += batchSize) {
+      batches.push(ids.slice(i, i + batchSize));
+    }
+
+    return from(batches).pipe(
+      mergeMap(batch =>
+        this.findAllByIdIn(batch).pipe(
+          map(response => response.items)
+        ),
+        maxConcurrentBatches
+      ),
+      reduce((acc, items) => acc.concat(items), [] as IGrupoLineaInvestigacion[])
     );
   }
 

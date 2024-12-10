@@ -95,7 +95,7 @@ export class EjecucionEconomicaDataResolver extends SgiResolverResolver<IEjecuci
 
                 break;
               case TipoEntidad.PROYECTO:
-                responsables$ = this.proyectoService.findInvestigadoresPrincipales(relacion.id).pipe(
+                responsables$ = this.proyectoService.findInvestigadoresPrincipalesActuales(relacion.id).pipe(
                   filter(responsables => !!responsables),
                   switchMap(responsables => this.personaService.findAllByIdIn(responsables.map(responsable => responsable.persona.id)).pipe(
                     map(personas => {

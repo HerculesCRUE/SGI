@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.csp.repository.specification;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.criteria.Join;
@@ -218,6 +219,59 @@ public class GrupoSpecifications {
           rolPrincipal,
           greaterThanFechaInicio,
           lowerThanFechaFin);
+    };
+  }
+
+  /**
+   * {@link Grupo} para los que la persona esta entre los {@link GrupoEquipo} con
+   * en el rango de fechas indicado
+   * 
+   * @param personaRef  Identificador de la persona
+   * @param fechaInicio fecha de inicio para la que se hace la comprobracion
+   * @param fechaFin    fecha de fin para la que se hace la comprobracion
+   * @return specification para obtener los {@link Grupo} para los que la persona
+   *         esta entre los {@link GrupoEquipo} con en el rango de fechas indicado
+   */
+  public static Specification<Grupo> byPersonaInGrupoEquipo(String personaRef, Instant fechaInicio, Instant fechaFin) {
+    return (root, query, cb) -> {
+      Join<Grupo, GrupoEquipo> joinEquipos = root.join(Grupo_.miembrosEquipo, JoinType.LEFT);
+
+      List<Predicate> listPredicates = new ArrayList<>();
+
+      Predicate personaRefEquals = cb.equal(joinEquipos.get(GrupoEquipo_.personaRef), personaRef);
+      listPredicates.add(personaRefEquals);
+
+      Instant fechaInicioPredicate = fechaInicio;
+      Instant fechaFinPredicate = fechaFin;
+      if (fechaInicioPredicate != null && fechaFinPredicate == null) {
+        fechaFinPredicate = fechaInicioPredicate;
+      }
+
+      if (fechaFinPredicate != null && fechaInicioPredicate == null) {
+        fechaInicioPredicate = fechaFinPredicate;
+      }
+
+      if (fechaFinPredicate != null) {
+        Predicate greaterThanFechaInicio = cb.or(
+            cb.lessThanOrEqualTo(joinEquipos.get(GrupoEquipo_.fechaInicio), fechaFinPredicate),
+            cb.and(
+                cb.isNull(joinEquipos.get(GrupoEquipo_.fechaInicio)),
+                cb.lessThanOrEqualTo(root.get(Grupo_.fechaInicio), fechaFinPredicate)));
+        listPredicates.add(greaterThanFechaInicio);
+      }
+
+      if (fechaInicioPredicate != null) {
+        Predicate lowerThanFechaFin = cb.or(
+            cb.greaterThanOrEqualTo(joinEquipos.get(GrupoEquipo_.fechaFin), fechaInicioPredicate),
+            cb.and(
+                cb.isNull(joinEquipos.get(GrupoEquipo_.fechaFin)),
+                cb.or(
+                    cb.isNull(root.get(Grupo_.fechaFin)),
+                    cb.greaterThanOrEqualTo(root.get(Grupo_.fechaFin), fechaInicioPredicate))));
+        listPredicates.add(lowerThanFechaFin);
+      }
+
+      return cb.and(listPredicates.toArray(new Predicate[] {}));
     };
   }
 

@@ -13,12 +13,15 @@ import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { ErrorUtils } from '@core/utils/error-utils';
 import { TranslateService } from '@ngx-translate/core';
+import { DateTime } from 'luxon';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, filter, map, switchMap } from 'rxjs/operators';
 
 const PROYECTO_CAMBIO_ESTADO_COMENTARIO = marker('csp.proyecto.estado-proyecto.comentario');
 const PROYECTO_CAMBIO_ESTADO_NUEVO_ESTADO = marker('csp.proyecto.cambio-estado.nuevo');
+const PROYECTO_CAMBIO_ESTADO_FECHA_ESTADO = marker('csp.proyecto.estado-proyecto.fecha');
 const MSG_CAMBIO_ESTADO_CONFIRMACION = marker('confirmacion.csp.proyecto.cambio-estado');
+const MSG_CAMBIO_ESTADO_CONFIRMACION_AVISO_FECHA = marker('confirmacion.csp.proyecto.cambio-estado-aviso-fecha');
 const MSG_ENTITY_REQUIRED = marker('error.required.entity');
 const MSG_FIELD_REQUIRED = marker('error.required.field');
 const PROYECTO_FINALIDAD = marker('csp.proyecto.finalidad');
@@ -51,6 +54,7 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoPro
 
   msgParamComentarioEntity = {};
   msgParamNuevoEstadoEntity = {};
+  msgParamFechaEstadoEntity = {};
   msgProyectoFechaInicioRequired: string;
   msgProyectoFechaFinRequired: string;
   msgProyectoFinalidadRequired: string;
@@ -114,6 +118,15 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoPro
       }
     );
 
+    this.translate.get(
+      PROYECTO_CAMBIO_ESTADO_FECHA_ESTADO,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamFechaEstadoEntity = {
+      entity: value,
+      ...MSG_PARAMS.GENDER.FEMALE,
+      ...MSG_PARAMS.CARDINALIRY.SINGULAR
+    });
+
     this.msgProyectoFechaInicioRequired = this.translate.instant(
       MSG_ENTITY_REQUIRED,
       { entity: this.translate.instant(PROYECTO_FECHA_INICIO), ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }
@@ -167,7 +180,7 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoPro
       id: undefined,
       proyectoId: this.data.proyecto.id,
       estado: this.formGroup.controls.estadoNuevo.value,
-      fechaEstado: undefined,
+      fechaEstado: this.formGroup.controls.fechaEstado.value,
       comentario: this.formGroup.controls.comentario.value
     };
   }
@@ -176,6 +189,7 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoPro
     return new FormGroup({
       estadoActual: new FormControl({ value: this.data.estadoActual, disabled: true }),
       estadoNuevo: new FormControl(this.data.estadoNuevo, [Validators.required]),
+      fechaEstado: new FormControl(DateTime.now(), Validators.required),
       comentario: new FormControl('', [Validators.maxLength(2000)])
     });
   }
@@ -183,7 +197,16 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoPro
   protected saveOrUpdate(): Observable<IEstadoProyecto> {
     const estadoNew = this.getValue();
 
-    return this.confirmDialogService.showConfirmation(MSG_CAMBIO_ESTADO_CONFIRMACION).pipe(
+    let confirmation$: Observable<boolean>
+    if (!!this.data.proyecto.fechaInicio
+      && estadoNew.fechaEstado < this.data.proyecto.fechaInicio
+      && [Estado.RENUNCIADO, Estado.RESCINDIDO].includes(estadoNew.estado)) {
+      confirmation$ = this.confirmDialogService.showConfirmationHtmlMessage(MSG_CAMBIO_ESTADO_CONFIRMACION_AVISO_FECHA)
+    } else {
+      confirmation$ = this.confirmDialogService.showConfirmation(MSG_CAMBIO_ESTADO_CONFIRMACION)
+    }
+
+    return confirmation$.pipe(
       filter(aceptado => !!aceptado),
       switchMap(() => this.validateCambioEstado(estadoNew.estado)),
       switchMap(() => this.proyectoService.cambiarEstado(this.data.proyecto.id, estadoNew)),

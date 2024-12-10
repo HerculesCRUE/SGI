@@ -87,6 +87,7 @@ import lombok.extern.slf4j.Slf4j;
 public class InvencionController {
   public static final String PATH_SEPARATOR = "/";
   public static final String MAPPING = PATH_SEPARATOR + "invenciones";
+  public static final String PATH_ELIMINADAS_IDS = PATH_SEPARATOR + "eliminadas-ids";
   public static final String PATH_MODIFICADOS_IDS = PATH_SEPARATOR + "modificados-ids";
   public static final String PATH_PRC = PATH_SEPARATOR + "produccioncientifica/{anioInicio}/{anioFin}/{universidadId}";
 
@@ -674,13 +675,31 @@ public class InvencionController {
    * @param query filtro de búsqueda.
    * @return lista de ids de {@link Invencion}.
    */
-  @GetMapping("/modificados-ids")
+  @GetMapping(PATH_MODIFICADOS_IDS)
   @PreAuthorize("hasAnyAuthorityForAnyUO('PII-INV-E', 'PII-INV-V')")
   public ResponseEntity<List<Long>> findIdsInvencionesModificadas(
       @RequestParam(name = "q", required = false) String query) {
     log.debug("findIdsInvencionesModificadas(String query) - start");
     List<Long> returnValue = service.findIdsInvencionesModificadas(query);
     log.debug("findIdsInvencionesModificadas(String query) - end");
+    return returnValue.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
+  /**
+   * Obtiene los ids de {@link Invencion} modificadas que no esten
+   * activos y que cumplan las condiciones indicadas en el filtro de búsqueda
+   * 
+   * @param query filtro de búsqueda.
+   * @return lista de ids de {@link Invencion}.
+   */
+  @GetMapping(PATH_ELIMINADAS_IDS)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('PII-INV-E', 'PII-INV-V')")
+  public ResponseEntity<List<Long>> findIdsInvencionesEliminadas(
+      @RequestParam(name = "q", required = false) String query) {
+    log.debug("findIdsInvencionesEliminadas(String query) - start");
+    List<Long> returnValue = service.findIdsInvencionesEliminadas(query);
+    log.debug("findIdsInvencionesEliminadas(String query) - end");
     return returnValue.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
         : new ResponseEntity<>(returnValue, HttpStatus.OK);
   }

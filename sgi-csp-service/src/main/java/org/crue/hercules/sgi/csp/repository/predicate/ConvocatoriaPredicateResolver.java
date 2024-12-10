@@ -19,9 +19,18 @@ import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud_;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoCodigoEc;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto_;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaDocumento;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante_;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadGestora;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase_;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPartida;
 import org.crue.hercules.sgi.csp.model.Convocatoria_;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.Proyecto;
@@ -50,6 +59,7 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
 
   private enum Property {
     FECHA_ELIMINACION("fechaEliminacion"),
+    FECHA_MODIFICACION("fechaModificacion"),
     PLAN_INVESTIGACION("planInvestigacion"),
     PLAZO_PRESENTACION_SOLICITUD("abiertoPlazoPresentacionSolicitud"),
     /* REQUISITOS IP */
@@ -366,6 +376,40 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
     }
   }
 
+  private Predicate buildByFechaModificacion(ComparisonNode node, Root<Convocatoria> root, CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.GREATER_THAN_OR_EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    String fechaModificacionArgument = node.getArguments().get(0);
+    Instant fechaModificacion = Instant.parse(fechaModificacionArgument);
+    ListJoin<Convocatoria, ConvocatoriaConceptoGasto> joinConceptosGasto = root.join(Convocatoria_.conceptosGasto,
+        JoinType.LEFT);
+    ListJoin<Convocatoria, ConvocatoriaDocumento> joinDocumentos = root.join(Convocatoria_.documentos, JoinType.LEFT);
+    ListJoin<Convocatoria, ConvocatoriaEntidadConvocante> joinEntidadesConvocantes = root
+        .join(Convocatoria_.entidadesConvocantes, JoinType.LEFT);
+    ListJoin<Convocatoria, ConvocatoriaEntidadFinanciadora> joinEntidadesFinanciadoras = root
+        .join(Convocatoria_.entidadesFinanciadoras, JoinType.LEFT);
+    ListJoin<Convocatoria, ConvocatoriaEntidadGestora> joinEntidadesGestoras = root
+        .join(Convocatoria_.entidadesGestoras, JoinType.LEFT);
+    ListJoin<Convocatoria, ConvocatoriaFase> joinFases = root.join(Convocatoria_.fases, JoinType.LEFT);
+    ListJoin<Convocatoria, ConvocatoriaHito> joinHitos = root.join(Convocatoria_.hitos, JoinType.LEFT);
+    ListJoin<Convocatoria, ConvocatoriaPartida> joinPartidas = root.join(Convocatoria_.partidas, JoinType.LEFT);
+    ListJoin<ConvocatoriaConceptoGasto, ConvocatoriaConceptoGastoCodigoEc> joinCodigosEconomicosConceptosGasto = joinConceptosGasto
+        .join(ConvocatoriaConceptoGasto_.codigosEc, JoinType.LEFT);
+
+    return cb.or(cb.greaterThanOrEqualTo(root.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinConceptosGasto.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinDocumentos.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinEntidadesConvocantes.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinEntidadesFinanciadoras.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinEntidadesGestoras.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinFases.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinHitos.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinPartidas.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinCodigosEconomicosConceptosGasto.get(Auditable_.lastModifiedDate),
+            fechaModificacion));
+  }
+
   @Override
   public boolean isManaged(ComparisonNode node) {
     Property property = Property.fromCode(node.getSelector());
@@ -382,6 +426,8 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
     switch (property) {
       case FECHA_ELIMINACION:
         return buildByFechaEliminacion(node, root, criteriaBuilder);
+      case FECHA_MODIFICACION:
+        return buildByFechaModificacion(node, root, criteriaBuilder);
       case PLAN_INVESTIGACION:
         return buildByPlanInvestigacion(node, root, criteriaBuilder);
       case PLAZO_PRESENTACION_SOLICITUD:

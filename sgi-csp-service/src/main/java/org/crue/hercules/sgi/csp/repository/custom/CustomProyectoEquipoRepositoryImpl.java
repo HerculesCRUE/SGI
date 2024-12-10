@@ -45,38 +45,6 @@ public class CustomProyectoEquipoRepositoryImpl implements CustomProyectoEquipoR
    * 
    * @param proyectoId identificador del {@link Proyecto}.
    * @param fecha      fecha en la que se busca el investigador principal.
-   * @return la lista de personaRef de los investigadores principales del
-   *         {@link Proyecto} en la fecha.
-   */
-  @Override
-  public List<String> findPersonaRefInvestigadoresPrincipales(Long proyectoId, Instant fecha) {
-    log.debug("findPersonaRefInvestigadoresPrincipales(Long proyectoId, Instant fecha) - start");
-
-    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-    CriteriaQuery<String> cq = cb.createQuery(String.class);
-    Root<ProyectoEquipo> root = cq.from(ProyectoEquipo.class);
-
-    cq.select(root.get(ProyectoEquipo_.personaRef)).where(cb.and(
-        getPredicateRolPrincipalFecha(root, cb, proyectoId, fecha),
-        getPredicateRolPrincipalFechaFin(root, cq, cb, proyectoId)))
-        .distinct(true);
-
-    List<String> returnValue = entityManager.createQuery(cq).getResultList();
-
-    log.debug("findPersonaRefInvestigadoresPrincipales(Long proyectoId, Instant fecha) - end");
-    return returnValue;
-  }
-
-  /**
-   * {@link ProyectoEquipo} que son investigador o investigadores principales del
-   * {@link Proyecto} con el id indicado.
-   * 
-   * Se considera investiador principal al {@link ProyectoEquipo} que a fecha
-   * actual tiene el {@link RolProyecto} con el flag "principal" a true. En caso
-   * de que varios coincidan se devuelven todos los que coincidan.
-   * 
-   * @param proyectoId identificador del {@link Proyecto}.
-   * @param fecha      fecha en la que se busca el investigador principal.
    * @return la lista de investigadores principales del {@link Proyecto} en la
    *         fecha.
    */

@@ -11,7 +11,8 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { GRUPO_DATA_KEY } from '../../grupo-data.resolver';
-import { IGrupoData, GrupoActionService } from '../../grupo.action.service';
+import { GrupoActionService, IGrupoData } from '../../grupo.action.service';
+import { GrupoEquipoInvestigacionExportService } from './grupo-equipo-investigacion-export.service';
 import { GrupoEquipoInvestigacionComponent } from './grupo-equipo-investigacion.component';
 
 describe('GrupoEquipoInvestigacionComponent', () => {
@@ -40,6 +41,7 @@ describe('GrupoEquipoInvestigacionComponent', () => {
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
         GrupoActionService,
         SgiAuthService,
+        GrupoEquipoInvestigacionExportService,
         { provide: ActivatedRoute, useValue: routeMock }
       ],
     })

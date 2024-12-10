@@ -1,5 +1,5 @@
 import { PlatformLocation } from '@angular/common';
-import { Component, Optional, Self } from '@angular/core';
+import { Component, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -26,6 +26,16 @@ import { LineaInvestigacionModalComponent } from '../../linea-investigacion/line
 })
 export class SelectLineaInvestigacionComponent extends SelectServiceExtendedComponent<ILineaInvestigacion> {
 
+  @Input()
+  get todos(): boolean {
+    return this._todos;
+  }
+  set todos(value: boolean) {
+    this._todos = value;
+  }
+  // tslint:disable-next-line: variable-name
+  private _todos: boolean = false;
+
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
@@ -43,7 +53,12 @@ export class SelectLineaInvestigacionComponent extends SelectServiceExtendedComp
     const findOptions: SgiRestFindOptions = {
       sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
     };
-    return this.service.findAll(findOptions).pipe(map(response => response.items));
+
+    if (this.todos) {
+      return this.service.findTodos(findOptions).pipe(map(response => response.items));
+    } else {
+      return this.service.findAll(findOptions).pipe(map(response => response.items));
+    }
   }
 
   protected isAddAuthorized(): boolean {

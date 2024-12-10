@@ -3,7 +3,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -26,6 +26,7 @@ import { ProyectoEntidadGestoraListadoExportService } from '../../proyecto-entid
 import { ProyectoEquipoListadoExportService } from '../../proyecto-equipo-listado-export.service';
 import { ProyectoFooterListadoExportService } from '../../proyecto-footer-listado-export.service';
 import { ProyectoGeneralListadoExportService } from '../../proyecto-general-listado-export.service';
+import { ProyectoGruposInvestigacionIpListadoExportService } from '../../proyecto-grupos-investigacion-ips-listado-export.service';
 import { ProyectoHeaderListadoExportService } from '../../proyecto-header-listado-export.service';
 import { ProyectoListadoExportService } from '../../proyecto-listado-export.service';
 import { ProyectoPartidaPresupuestariaListadoExportService } from '../../proyecto-partida-presupuestaria-listado-export.service';
@@ -64,32 +65,33 @@ describe('ProyectoListadoExportModalComponent', () => {
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
         { provide: MatDialogRef, useValue: TestUtils.buildDialogActionMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: {} as IBaseExportModalData },
-        SgiAuthService,
-        ProyectoListadoExportService,
-        ProyectoGeneralListadoExportService,
+        DecimalPipe,
+        LuxonDatePipe,
+        PercentPipe,
         ProyectoAreaConocimientoListadoExportService,
-        ProyectoClasificacionListadoExportService,
-        ProyectoRelacionListadoExportService,
-        ProyectoEntidadGestoraListadoExportService,
-        ProyectoEntidadConvocanteListadoExportService,
-        ProyectoEntidadFinanciadoraListadoExportService,
-        ProyectoEquipoListadoExportService,
-        ProyectoResponsableEconomicoListadoExportService,
-        ProyectoSocioListadoExportService,
-        ProyectoProrrogaListadoExportService,
-        ProyectoConvocatoriaListadoExportService,
-        ProyectoSolicitudListadoExportService,
-        ProyectoPeriodoSeguimientoListadoExportService,
-        ProyectoConceptoGastoListadoExportService,
-        ProyectoPartidaPresupuestariaListadoExportService,
-        ProyectoPresupuestoListadoExportService,
         ProyectoCalendarioFacturacionListadoExportService,
         ProyectoCalendarioJustificacionListadoExportService,
-        LuxonDatePipe,
-        DecimalPipe,
-        PercentPipe,
+        ProyectoClasificacionListadoExportService,
+        ProyectoConceptoGastoListadoExportService,
+        ProyectoConvocatoriaListadoExportService,
+        ProyectoEntidadConvocanteListadoExportService,
+        ProyectoEntidadFinanciadoraListadoExportService,
+        ProyectoEntidadGestoraListadoExportService,
+        ProyectoEquipoListadoExportService,
+        ProyectoFooterListadoExportService,
+        ProyectoGeneralListadoExportService,
+        ProyectoGruposInvestigacionIpListadoExportService,
         ProyectoHeaderListadoExportService,
-        ProyectoFooterListadoExportService
+        ProyectoListadoExportService,
+        ProyectoPartidaPresupuestariaListadoExportService,
+        ProyectoPeriodoSeguimientoListadoExportService,
+        ProyectoPresupuestoListadoExportService,
+        ProyectoProrrogaListadoExportService,
+        ProyectoRelacionListadoExportService,
+        ProyectoResponsableEconomicoListadoExportService,
+        ProyectoSocioListadoExportService,
+        ProyectoSolicitudListadoExportService,
+        SgiAuthService
       ]
     })
       .compileComponents();

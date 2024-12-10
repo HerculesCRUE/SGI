@@ -1,8 +1,6 @@
-import { Estado } from '../estado-proyecto';
+import { Estado } from '../../../models/csp/estado-proyecto';
 
-export interface IEstadoProyectoBackend {
-  /** Id */
-  id: number;
+export interface IEstadoProyectoRequest {
   /** Id del proyecto */
   proyectoId: number;
   /** Estado */

@@ -74,7 +74,8 @@ export class ProyectoListadoExportModalComponent extends BaseExportModalComponen
       showPartidasPresupuestarias: new FormControl(true),
       showPresupuesto: new FormControl(true),
       showCalendarioJustificacion: new FormControl(true),
-      showCalendarioFacturacion: new FormControl(true)
+      showCalendarioFacturacion: new FormControl(true),
+      showGruposInvestigacionIp: new FormControl(true)
     });
 
     Object.keys(formGroup.controls).forEach(key => {
@@ -128,6 +129,7 @@ export class ProyectoListadoExportModalComponent extends BaseExportModalComponen
         showPresupuesto: this.formGroup.controls.showPresupuesto.value,
         showCalendarioJustificacion: this.formGroup.controls.showCalendarioJustificacion.value,
         showCalendarioFacturacion: this.formGroup.controls.showCalendarioFacturacion.value,
+        showGruposInvestigacionIps: this.formGroup.controls.showGruposInvestigacionIp.value,
         columnMinWidth: 120
       }
     };

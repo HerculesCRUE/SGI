@@ -12,7 +12,7 @@
 
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-csp-service</artifactId>
-  <version>0.7.0</version>
+  <version>0.8.0</version>
   <packaging>jar</packaging>
   <name>sgi-csp-service</name>
   <description>Servicio Convocatorias Solicitudes y Proyectos SGI HERCULES</description>

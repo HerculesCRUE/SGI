@@ -75,7 +75,7 @@ import { BehaviorSubject, forkJoin, merge, Observable, of, Subject, throwError }
 import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../csp-route-names';
 import { ProyectoCopiarAparatadosModalComponent, ProyectoCopiarApartadosModalData } from './modals/proyecto-copiar-apartados-modal/proyecto-copiar-apartados-modal.component';
-import { ProyectoInfoModificarFechasModalComponent } from './modals/proyecto-info-modificar-fechas-modal/proyecto-info-modificar-fechas-modal.component';
+import { ProyectoInfoModificarFechasModalComponent, ProyectoInfoModificarFechasModalData } from './modals/proyecto-info-modificar-fechas-modal/proyecto-info-modificar-fechas-modal.component';
 import { PROYECTO_DATA_KEY } from './proyecto-data.resolver';
 import { ProyectoAgrupacionGastoFragment } from './proyecto-formulario/proyecto-agrupaciones-gasto/proyecto-agrupaciones-gasto.fragment';
 import { ProyectoAmortizacionFondosFragment } from './proyecto-formulario/proyecto-amortizacion-fondos/proyecto-amortizacion-fondos.fragment';
@@ -797,14 +797,28 @@ export class ProyectoActionService extends ActionService {
                     );
                   }
 
-                  return of(void 0);
+                  const config = {
+                    data: {
+                      fechaInicio: this.proyecto.fechaInicio,
+                      fechaFinDefinitiva: this.proyecto.fechaFinDefinitiva
+                    } as ProyectoInfoModificarFechasModalData,
+                  };
+
+                  return this.matDialog.open(ProyectoInfoModificarFechasModalComponent, config).afterClosed();
                 })
               )
             )
           );
         } else if (this.fichaGeneral.fechasHasChanges) {
+          const config = {
+            data: {
+              fechaInicio: this.proyecto.fechaInicio,
+              fechaFinDefinitiva: this.proyecto.fechaFinDefinitiva
+            } as ProyectoInfoModificarFechasModalData,
+          };
+
           cascade = cascade.pipe(
-            switchMap(() => this.matDialog.open(ProyectoInfoModificarFechasModalComponent).afterClosed())
+            switchMap(() => this.matDialog.open(ProyectoInfoModificarFechasModalComponent, config).afterClosed())
           );
         }
       }

@@ -76,17 +76,16 @@ public interface ProyectoEquipoService {
 
   /**
    * Devuelve una lista filtrada de investigadores principales del
-   * {@link Proyecto} en el momento actual.
+   * {@link Proyecto}.
    *
-   * Son investiador principales los {@link ProyectoEquipo} que a fecha actual
-   * tiene el {@link RolProyecto} con el flag {@link RolProyecto#rolPrincipal} a
+   * Son investiador principales los {@link ProyectoEquipo} que tienen el
+   * {@link RolProyecto} con el flag {@link RolProyecto#rolPrincipal} a
    * <code>true</code>.
    * 
    * @param proyectoId Identificador del {@link Proyecto}.
-   * @return la lista de personaRef de los investigadores principales del
-   *         {@link Proyecto} en el momento actual.
+   * @return la lista investigadores principales del {@link Proyecto}.
    */
-  public List<String> findPersonaRefInvestigadoresPrincipales(Long proyectoId);
+  public List<ProyectoEquipo> findInvestigadoresPrincipales(Long proyectoId);
 
   /**
    * Devuelve una lista filtrada de investigadores principales del
@@ -100,7 +99,7 @@ public interface ProyectoEquipoService {
    * @return la lista de los investigadores principales del
    *         {@link Proyecto} en el momento actual.
    */
-  public List<ProyectoEquipo> findInvestigadoresPrincipales(Long proyectoId);
+  public List<ProyectoEquipo> findInvestigadoresPrincipalesActuales(Long proyectoId);
 
   /**
    * Comprueba si alguno de los {@link ProyectoEquipo} del {@link Proyecto}

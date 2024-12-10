@@ -59,7 +59,7 @@ export abstract class ProblemComponent {
       }
     }
 
-    return of(problem.title + (problem.detail ? (': ' + problem.detail) : ''));
+    return of(this.translate.instant(problem.title) + (problem.detail ? (': ' + this.translate.instant(problem.detail)) : ''));
   }
 
 

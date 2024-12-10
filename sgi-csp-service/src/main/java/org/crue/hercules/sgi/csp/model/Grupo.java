@@ -140,4 +140,14 @@ public class Grupo extends BaseActivableEntity {
   @Setter(AccessLevel.NONE)
   private final List<GrupoResponsableEconomico> responsableEconomicos = null;
 
+  @OneToMany(mappedBy = "grupo")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<GrupoEnlace> enlaces = null;
+
+  @OneToMany(mappedBy = "grupo")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<GrupoEquipoInstrumental> equipoInstrumental = null;
+
 }

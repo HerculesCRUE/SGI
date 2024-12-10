@@ -139,7 +139,7 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
 
                 break;
               case TipoEntidad.PROYECTO:
-                responsables$ = this.proyectoService.findInvestigadoresPrincipales(relacion.id).pipe(
+                responsables$ = this.proyectoService.findInvestigadoresPrincipalesActuales(relacion.id).pipe(
                   switchMap(responsables => {
                     if (!responsables?.length) {
                       return of([]);

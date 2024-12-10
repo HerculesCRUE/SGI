@@ -42,7 +42,17 @@
   <sgi-menu-item-external *ngIf="!!nombreSistemaGestionExterno && !!urlSistemaGestionExterno"
     [route]="urlSistemaGestionExterno" icon="logout" [title]="nombreSistemaGestionExterno">
   </sgi-menu-item-external>
-
+  <sgi-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-E', 'CSP-GIN-V', 'CSP-PRO-E', 'CSP-PRO-V']"
+    title="{{'menu.csp.listados' | translate}}" icon="receipt_long">
+    <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E', 'CSP-PRO-V']"
+      [route]="[CSP_ROUTE_NAMES.FACTURAS_PREVISTAS_PENDIENTES]"
+      title="{{'menu.csp.facturas-previstas-pendientes' | translate}}">
+    </sgi-menu-subitem>
+    <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-E', 'CSP-GIN-V']"
+      [route]="[CSP_ROUTE_NAMES.MIEMBROS_GRUPOS_INVESTIGACION]"
+      title="{{'menu.csp.miembros-grupos-investigacion' | translate}}">
+    </sgi-menu-subitem>
+  </sgi-menu-group>
   <sgi-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-TFASE-V', 'CSP-TFASE-C', 'CSP-TFASE-E','CSP-TFASE-B', 'CSP-TFASE-R',
     'CSP-TFIN-V', 'CSP-TFIN-C','CSP-TFIN-E', 'CSP-TFIN-B', 'CSP-TFIN-R', 'CSP-TDOC-V', 'CSP-TDOC-C', 'CSP-TDOC-E', 'CSP-TDOC-B', 
     'CSP-TDOC-R', 'CSP-TENL-V', 'CSP-TENL-C', 'CSP-TENL-E', 'CSP-TENL-B', 'CSP-TENL-R', 'CSP-THITO-V', 'CSP-THITO-C', 'CSP-THITO-E', 
@@ -132,13 +142,6 @@
     <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['CSP-LIN-C', 'CSP-LIN-E', 'CSP-LIN-B', 'CSP-LIN-R']"
       [route]="[CSP_ROUTE_NAMES.LINEA_INVESTIGACION]"
       title="{{'menu.csp.configuraciones.lineas-investigacion' | translate}}">
-    </sgi-menu-subitem>
-  </sgi-menu-group>
-  <sgi-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']" title="{{'menu.csp.listados' | translate}}"
-    icon="receipt_long">
-    <sgi-menu-subitem *sgiHasAnyAuthorityForAnyUO="['CSP-PRO-E']"
-      [route]="[CSP_ROUTE_NAMES.FACTURAS_PREVISTAS_PENDIENTES]"
-      title="{{'menu.csp.facturas-previstas-pendientes' | translate}}">
     </sgi-menu-subitem>
   </sgi-menu-group>
 </sgi-root>

@@ -55,6 +55,34 @@
     </faultSequence>
   </resource>
 
+  <resource methods="GET" url-mapping="/convocatorias/eliminadas-ids">
+    <inSequence>
+      <send>
+        <endpoint key="sgicsp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" url-mapping="/convocatorias/modificados-ids">
+    <inSequence>
+      <send>
+        <endpoint key="sgicsp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
   <resource methods="GET" uri-template="/convocatorias/{id}/convocatoriaareatematicas">
     <inSequence>
       <send>
@@ -367,6 +395,20 @@
     </faultSequence>
   </resource>
 
+  <resource methods="GET" url-mapping="/proyectos/eliminados-ids">
+    <inSequence>
+      <send>
+        <endpoint key="sgicsp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
   <resource methods="GET" url-mapping="/proyectos/modificados-ids">
     <inSequence>
       <send>
@@ -436,6 +478,20 @@
 
 
   <!-- Grupos -->
+  <resource methods="GET" url-mapping="/grupos/eliminados-ids">
+    <inSequence>
+      <send>
+        <endpoint key="sgicsp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
   <resource methods="GET" url-mapping="/grupos/modificados-ids">
     <inSequence>
       <send>
@@ -547,6 +603,34 @@
       </rewrite>
       <!-- Set URL HTTP transport properties by rewrited value -->
       <property name="REST_URL_POSTFIX" scope="axis2" expression="get-property('url')" />
+      <send>
+        <endpoint key="sgicsp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" url-mapping="/solicitudes/eliminadas-ids">
+    <inSequence>
+      <send>
+        <endpoint key="sgicsp-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" url-mapping="/solicitudes/modificados-ids">
+    <inSequence>
       <send>
         <endpoint key="sgicsp-endpoint" />
       </send>

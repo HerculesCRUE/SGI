@@ -316,8 +316,32 @@
       <call-template target="sgi-auth-sequence-template">
         <with-param name="requiredAuthorities" value="" />
       </call-template>
-      
+      <sequence key="sge-add-x-api-key-sequence" />
       <sequence key="sge-remove-authorization-header-sequence" />
+
+      <property value="/tipos-fondos" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call>
+        <endpoint key="sge-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposFondo"/>
+      </enrich>
+
+      <script language="js">
+        <![CDATA[
+        var tiposFondo = JSON.parse(mc.getProperty('tiposFondo'));
+
+        var tiposFondoProgramaObligatorio = [];
+        tiposFondo.forEach(function (tipoFondo) {
+        if (tipoFondo.programaObligatorio == true) {
+          tiposFondoProgramaObligatorio.push(tipoFondo.id);
+          }
+        });
+
+        mc.setProperty('tiposFondoProgramaObligatorio', JSON.stringify(tiposFondoProgramaObligatorio).replace(/"/g, "'"));
+        ]]>
+      </script>
 
       <payloadFactory media-type="json">
         <format>
@@ -504,6 +528,43 @@
                     }
                   }
                 ]
+              },
+              {
+                "fieldGroupClassName": "row-formly",
+                "fieldGroup": [
+                  {
+                    "key": "tipoFondo",
+                    "type": "select",
+                    "className": "flex-1-50",
+                    "templateOptions": {
+                      "disabled": false,
+                      "label": "Tipo de fondo europeo",
+                      "labelProp": "nombre",
+                      "options": $1,
+                      "placeholder": "Tipo de fondo europeo",
+                      "required": true,
+                      "valueProp": "id"
+                    }
+                  }
+                ]
+              },
+              {
+                "fieldGroupClassName": "row-formly",
+                "fieldGroup": [
+                  {
+                    "key": "programa",
+                    "type": "input",
+                    "className": "flex-1",
+                    "hideExpression": "!model.tipoFondo || !$2.includes(model.tipoFondo)",
+                    "templateOptions": {
+                      "disabled": false,
+                      "label": "Programa/localizador",
+                      "maxLength": 200,
+                      "placeholder": "Programa/localizador",
+                      "required": true
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -513,7 +574,10 @@
   }
 ]
         </format>
-        <args />
+        <args>
+          <arg expression="get-property('tiposFondo')"/> <!-- $1 -->
+          <arg expression="get-property('tiposFondoProgramaObligatorio')"/> <!-- $2 -->
+        </args>
       </payloadFactory>
       <respond />
     </inSequence>
@@ -530,8 +594,32 @@
       <call-template target="sgi-auth-sequence-template">
         <with-param name="requiredAuthorities" value="" />
       </call-template>
-
+      <sequence key="sge-add-x-api-key-sequence" />
       <sequence key="sge-remove-authorization-header-sequence" />
+
+      <property value="/tipos-fondos" name="REST_URL_POSTFIX" scope="axis2" type="STRING"/>
+      <call>
+        <endpoint key="sge-endpoint"/>
+      </call>
+      <enrich>
+        <source clone="false" type="body"/>
+        <target type="property" property="tiposFondo"/>
+      </enrich>
+
+      <script language="js">
+        <![CDATA[
+        var tiposFondo = JSON.parse(mc.getProperty('tiposFondo'));
+
+        var tiposFondoProgramaObligatorio = [];
+        tiposFondo.forEach(function (tipoFondo) {
+        if (tipoFondo.programaObligatorio == true) {
+          tiposFondoProgramaObligatorio.push(tipoFondo.id);
+          }
+        });
+
+        mc.setProperty('tiposFondoProgramaObligatorio', JSON.stringify(tiposFondoProgramaObligatorio).replace(/"/g, "'"));
+        ]]>
+      </script>
 
       <payloadFactory media-type="json">
         <format>
@@ -736,6 +824,43 @@
                     }
                   }
                 ]
+              },
+              {
+                "fieldGroupClassName": "row-formly",
+                "fieldGroup": [
+                  {
+                    "key": "tipoFondo",
+                    "type": "select",
+                    "className": "flex-1-50",
+                    "templateOptions": {
+                      "disabled": false,
+                      "label": "Tipo de fondo europeo",
+                      "labelProp": "nombre",
+                      "options": $1,
+                      "placeholder": "Tipo de fondo europeo",
+                      "required": true,
+                      "valueProp": "id"
+                    }
+                  }
+                ]
+              },
+              {
+                "fieldGroupClassName": "row-formly",
+                "fieldGroup": [
+                  {
+                    "key": "programa",
+                    "type": "input",
+                    "className": "flex-1",
+                    "hideExpression": "!model.tipoFondo || !$2.includes(model.tipoFondo)",
+                    "templateOptions": {
+                      "disabled": false,
+                      "label": "Programa/localizador",
+                      "maxLength": 200,
+                      "placeholder": "Programa/localizador",
+                      "required": true
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -745,7 +870,10 @@
   }
 ]
         </format>
-        <args />
+        <args>
+          <arg expression="get-property('tiposFondo')"/> <!-- $1 -->
+          <arg expression="get-property('tiposFondoProgramaObligatorio')"/> <!-- $2 -->
+        </args>
       </payloadFactory>
       <respond />
     </inSequence>
@@ -1064,6 +1192,25 @@
   </resource>
 
   <resource methods="GET" url-mapping="/facturas-previstas-emitidas">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <sequence key="sge-add-x-api-key-sequence" />
+      <sequence key="sge-remove-authorization-header-sequence" />
+      <send>
+        <endpoint key="sge-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <resource methods="GET" url-mapping="/facturas-previstas-pendientes">
     <inSequence>
       <call-template target="sgi-auth-sequence-template">
         <with-param name="requiredAuthorities" value="" />

@@ -26,7 +26,7 @@ export class SolicitudHistoricoEstadosFragment extends Fragment {
         sort: new RSQLSgiRestSort('fechaEstado', SgiRestSortDirection.DESC)
       };
 
-      this.solicitudService.findEstadoSolicitud(this.getKey() as number, options).pipe(
+      this.solicitudService.findEstadosSolicitud(this.getKey() as number, options).pipe(
         map((response) => response.items)
       ).subscribe((historicoEstados) => {
         this.historicoEstado$.next(historicoEstados.map(

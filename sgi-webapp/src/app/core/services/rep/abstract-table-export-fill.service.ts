@@ -6,14 +6,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { IReportConfig, IReportOptions } from './abstract-table-export.service';
 
-
 const MSG_TRUE = marker('label.si');
 const MSG_FALSE = marker('label.no');
 
-
 @Directive()
 // tslint:disable-next-line: directive-class-suffix
-export abstract class AbstractTableExportFillService<T, R extends IReportOptions>  {
+export abstract class AbstractTableExportFillService<T, R extends IReportOptions> {
 
   protected DEFAULT_CONCURRENT = 5;
 

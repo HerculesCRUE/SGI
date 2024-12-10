@@ -11,6 +11,7 @@ import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { CspSharedModule } from '../../shared/csp-shared.module';
+import { FacturasPrevistasPendientesListadoExportService } from '../facturas-previstas-pendientes-listado-export.service';
 import { FacturasPrevistasPendientesListadoComponent } from './facturas-previstas-pendientes-listado.component';
 
 describe('FacturasPrevistasPendientesListadoComponent', () => {
@@ -38,6 +39,7 @@ describe('FacturasPrevistasPendientesListadoComponent', () => {
       ],
       providers: [
         SgiAuthService,
+        FacturasPrevistasPendientesListadoExportService,
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() }
       ]
     })

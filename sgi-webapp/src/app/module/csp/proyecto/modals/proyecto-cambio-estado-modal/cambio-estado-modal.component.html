@@ -19,6 +19,19 @@
         </mat-error>
       </mat-form-field>
     </div>
+    <div fxLayout="row">
+      <!-- fecha Estado-->
+      <mat-form-field>
+        <mat-label>{{'csp.proyecto.estado-proyecto.fecha' | translate}}</mat-label>
+        <input matInput formControlName="fechaEstado" [ngxMatDatetimePicker]="fechaEstado" required>
+        <mat-datepicker-toggle matSuffix [for]="fechaEstado"></mat-datepicker-toggle>
+        <ngx-mat-datetime-picker #fechaEstado showSeconds="true">
+        </ngx-mat-datetime-picker>
+        <mat-error *ngIf="formGroup.get('fechaEstado').errors?.required">
+          {{'error.required.entity' | translate:msgParamFechaEstadoEntity}}
+        </mat-error>
+      </mat-form-field>
+    </div>
     <!-- Comentario -->
     <div fxLayout="row">
       <mat-form-field fxFill>

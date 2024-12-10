@@ -36,6 +36,15 @@ public class InvencionSpecifications {
   }
 
   /**
+   * {@link Invencion} con Activo a False
+   * 
+   * @return specification para obtener los {@link Invencion} no activos
+   */
+  public static Specification<Invencion> notActivos() {
+    return (root, query, cb) -> cb.isFalse(root.get(Activable_.activo));
+  }
+
+  /**
    * Solo {@link Invencion} distintas.
    * 
    * @return specification para obtener las {@link Invencion} distintas solamente.

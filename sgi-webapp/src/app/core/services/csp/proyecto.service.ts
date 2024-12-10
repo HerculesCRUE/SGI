@@ -1,6 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ESTADO_PROYECTO_CONVERTER } from '@core/converters/csp/estado-proyecto.converter';
 import { PROYECTO_AREA_CONOCIMIENTO_CONVERTER } from '@core/converters/csp/proyecto-area-conocimiento.converter';
 import { PROYECTO_CLASIFICACION_CONVERTER } from '@core/converters/csp/proyecto-clasificacion.converter';
 import { PROYECTO_CONCEPTO_GASTO_CODIGO_EC_CONVERTER } from '@core/converters/csp/proyecto-concepto-gasto-codigo-ec.converter';
@@ -20,7 +19,6 @@ import { PROYECTO_SOCIO_CONVERTER } from '@core/converters/csp/proyecto-socio.co
 import { PROYECTO_CONVERTER } from '@core/converters/csp/proyecto.converter';
 import { TipoPartida } from '@core/enums/tipo-partida';
 import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
-import { IEstadoProyectoBackend } from '@core/models/csp/backend/estado-proyecto-backend';
 import { IProyectoAreaConocimientoBackend } from '@core/models/csp/backend/proyecto-area-conocimiento-backend';
 import { IProyectoBackend } from '@core/models/csp/backend/proyecto-backend';
 import { IProyectoClasificacionBackend } from '@core/models/csp/backend/proyecto-clasificacion-backend';
@@ -72,6 +70,9 @@ import { IProyectoResponsableEconomico } from '@core/models/csp/proyecto-respons
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
 import { IProyectosCompetitivosPersonas } from '@core/models/csp/proyectos-competitivos-personas';
 import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-justificacion';
+import { ESTADO_PROYECTO_REQUEST_CONVERTER } from '@core/services/csp/estado-proyecto/estado-proyecto-request.converter';
+import { IEstadoProyectoResponse } from '@core/services/csp/estado-proyecto/estado-proyecto-response';
+import { ESTADO_PROYECTO_RESPONSE_CONVERTER } from '@core/services/csp/estado-proyecto/estado-proyecto-response.converter';
 import { environment } from '@env';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import {
@@ -364,10 +365,10 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @param options opciones de búsqueda.
    */
   findEstadoProyecto(proyectoId: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IEstadoProyecto>> {
-    return this.find<IEstadoProyectoBackend, IEstadoProyecto>(
+    return this.find<IEstadoProyectoResponse, IEstadoProyecto>(
       `${this.endpointUrl}/${proyectoId}/estadoproyectos`,
       options,
-      ESTADO_PROYECTO_CONVERTER
+      ESTADO_PROYECTO_RESPONSE_CONVERTER
     );
   }
 
@@ -621,7 +622,7 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @param estadoProyecto Nuevo estado del proyecto.
    */
   cambiarEstado(id: number, estadoProyecto: IEstadoProyecto): Observable<void> {
-    return this.http.patch<void>(`${this.endpointUrl}/${id}/cambiar-estado`, estadoProyecto);
+    return this.http.patch<void>(`${this.endpointUrl}/${id}/cambiar-estado`, ESTADO_PROYECTO_REQUEST_CONVERTER.fromTarget(estadoProyecto));
   }
 
   hasAnyProyectoSocio(proyectoId: number): Observable<boolean> {
@@ -757,6 +758,18 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
   }
 
   /**
+   * Comprueba si tiene permisos de visualizacion del proyecto
+   *
+   * @param id Id del proyecto
+   */
+  visible(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/visible`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
+  }
+
+  /**
    * Devuelve los objetos {@link IProyectoAnualidad} asociados a un {@link IProyecto}
    *
    * @param id Id del proyecto
@@ -838,12 +851,27 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
   /**
    * ProyectoEquipo que son investigador o investigadores principales del
    * proyecto con el id indicado.
-   * Se considera investiador principal a la ProyectoEquipo que a fecha actual
+   * Se considera investigador principal actual a los miembros del equipo que a fecha actual
    * tiene el rol Proyecto con el flag "principal" a
    * true. En caso de que varios coincidan se devuelven todos los que coincidan.
    *
    * @param id identificador del proyecto.
    * @return la lista de investigadores principales del proyecto en el momento actual.
+   */
+  findInvestigadoresPrincipalesActuales(id: number): Observable<IProyectoEquipo[]> {
+    return this.http.get<IProyectoEquipoBackend[]>(`${this.endpointUrl}/${id}/investigadoresprincipalesactuales`).pipe(
+      map((response => PROYECTO_EQUIPO_CONVERTER.toTargetArray(response ?? [])))
+    );
+  }
+
+  /**
+   * ProyectoEquipo que son investigador o investigadores principales del
+   * proyecto con el id indicado.
+   * Se considera investigador principal actual a los miembros del equipo que tienen el rol Proyecto con el flag "principal" a true.
+   * En caso de que varios coincidan se devuelven todos los que coincidan.
+   *
+   * @param id identificador del proyecto.
+   * @return la lista de investigadores principales del proyecto en cualquier momento.
    */
   findInvestigadoresPrincipales(id: number): Observable<IProyectoEquipo[]> {
     return this.http.get<IProyectoEquipoBackend[]>(`${this.endpointUrl}/${id}/investigadoresprincipales`).pipe(

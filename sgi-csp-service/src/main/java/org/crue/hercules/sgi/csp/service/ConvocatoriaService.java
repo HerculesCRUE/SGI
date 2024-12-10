@@ -218,4 +218,13 @@ public interface ConvocatoriaService {
    */
   List<Long> findIdsConvocatoriasEliminadas(String query);
 
+  /**
+   * Obtiene los ids de {@link Convocatoria} modificadas que esten activos y que
+   * cumplan las condiciones indicadas en el filtro de búsqueda
+   *
+   * @param query información del filtro.
+   * @return el listado de ids de {@link Convocatoria}.
+   */
+  List<Long> findIdsConvocatoriasModificadas(String query);
+
 }

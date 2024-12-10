@@ -238,4 +238,10 @@ public class Convocatoria extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final List<ConvocatoriaPalabraClave> palabrasClave = null;
+
+  @OneToMany(mappedBy = "convocatoria")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<ConvocatoriaPartida> partidas = null;
+
 }

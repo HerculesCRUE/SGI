@@ -1,5 +1,8 @@
 <mat-dialog-content>
-  {{message | translate:params}}
+  <p *ngIf="!!isHtmlMessage else plainMessage" [innerHTML]="message | translate:params"></p>
+  <ng-template #plainMessage>
+    {{message | translate:params}}
+  </ng-template>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button [color]="continuarButtonStyle" mat-raised-button (click)="confirmacionClick()" mat-dialog-close

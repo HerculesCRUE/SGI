@@ -1,11 +1,8 @@
-import { PercentPipe } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
 import { IGrupoEquipo } from '@core/models/csp/grupo-equipo';
-import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
-import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
 import { IPersona } from '@core/models/sgp/persona';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
@@ -14,7 +11,6 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
-import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -30,7 +26,6 @@ const EQUIPO_FECHA_INICIO_KEY = marker('csp.grupo-equipo.fecha-inicio');
 const EQUIPO_FECHA_FIN_KEY = marker('csp.grupo-equipo.fecha-fin');
 const EQUIPO_PARTICIPACION_KEY = marker('csp.grupo-equipo.participacion');
 
-const EQUIPO_FIELD = 'equipo';
 const EQUIPO_NOMBRE_FIELD = 'nombreEquipo';
 const EQUIPO_APELLIDOS_FIELD = 'apellidosEquipo';
 const EQUIPO_EMAIL_FIELD = 'emailEquipo';
@@ -40,13 +35,11 @@ const EQUIPO_FECHA_FIN_FIELD = 'fechaFinEquipo';
 const EQUIPO_PARTICIPACION_FIELD = 'participacion';
 
 @Injectable()
-export class GrupoEquipoListadoExportService extends AbstractTableExportFillService<IGrupoReportData, IGrupoReportOptions>{
+export class GrupoEquipoListadoExportService extends AbstractTableExportFillService<IGrupoReportData, IGrupoReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
-    private luxonDatePipe: LuxonDatePipe,
-    private readonly percentPipe: PercentPipe,
     private readonly grupoService: GrupoService,
     private personaService: PersonaService,
   ) {
@@ -91,36 +84,9 @@ export class GrupoEquipoListadoExportService extends AbstractTableExportFillServ
     reportConfig: IReportConfig<IGrupoReportOptions>
   ): ISgiColumnReport[] {
 
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      return this.getColumnsEquipoNotExcel();
-    } else {
+    if (this.isExcelOrCsv(reportConfig.outputType)) {
       return this.getColumnsEquipoExcel(grupos);
     }
-  }
-
-  private getColumnsEquipoNotExcel(): ISgiColumnReport[] {
-    const columns: ISgiColumnReport[] = [];
-    columns.push({
-      name: EQUIPO_FIELD,
-      title: this.translate.instant(MIEMBRO_KEY),
-      type: ColumnType.STRING
-    });
-    const titleI18n = this.translate.instant(EQUIPO_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR) +
-      ' (' + this.translate.instant(EQUIPO_NOMBRE_KEY) +
-      ' - ' + this.translate.instant(EQUIPO_EMAIL_KEY) +
-      ' - ' + this.translate.instant(EQUIPO_ROL_KEY) +
-      ' - ' + this.translate.instant(EQUIPO_FECHA_INICIO_KEY) +
-      ' - ' + this.translate.instant(EQUIPO_FECHA_FIN_KEY) +
-      ' - ' + this.translate.instant(EQUIPO_PARTICIPACION_KEY) +
-      ')';
-    const columnEquipo: ISgiColumnReport = {
-      name: EQUIPO_FIELD,
-      title: titleI18n,
-      type: ColumnType.SUBREPORT,
-      fieldOrientation: FieldOrientation.VERTICAL,
-      columns
-    };
-    return [columnEquipo];
   }
 
   private getColumnsEquipoExcel(grupos: IGrupoReportData[]): ISgiColumnReport[] {
@@ -180,9 +146,7 @@ export class GrupoEquipoListadoExportService extends AbstractTableExportFillServ
   public fillRows(grupos: IGrupoReportData[], index: number, reportConfig: IReportConfig<IGrupoReportOptions>): any[] {
     const grupo = grupos[index];
     const elementsRow: any[] = [];
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      this.fillRowsEquipoNotExcel(grupo, elementsRow);
-    } else {
+    if (this.isExcelOrCsv(reportConfig.outputType)) {
       const maxNumEquipo = Math.max(...grupos.map(g => g.equiposInvestigacion?.length));
       for (let i = 0; i < maxNumEquipo; i++) {
         const equipo = grupo.equiposInvestigacion[i] ?? null;
@@ -192,37 +156,6 @@ export class GrupoEquipoListadoExportService extends AbstractTableExportFillServ
     return elementsRow;
   }
 
-  private fillRowsEquipoNotExcel(grupo: IGrupoReportData, elementsRow: any[]) {
-    const rowsReport: ISgiRowReport[] = [];
-
-    grupo.equiposInvestigacion?.forEach(miembroEquipo => {
-      const equipoElementsRow: any[] = [];
-
-      let miembroEquipoTable = miembroEquipo?.persona?.nombre + ' ' + miembroEquipo?.persona?.apellidos;
-      miembroEquipoTable += '\n';
-      miembroEquipoTable += this.getEmailPrincipal(miembroEquipo?.persona) ?? '';
-      miembroEquipoTable += '\n';
-      miembroEquipoTable += miembroEquipo?.rol?.nombre ?? '';
-      miembroEquipoTable += '\n';
-      miembroEquipoTable += this.luxonDatePipe.transform(LuxonUtils.toBackend(miembroEquipo?.fechaInicio, true), 'shortDate') ?? '';
-      miembroEquipoTable += '\n';
-      miembroEquipoTable += this.luxonDatePipe.transform(LuxonUtils.toBackend(miembroEquipo?.fechaFin, true), 'shortDate') ?? '';
-      miembroEquipoTable += '\n';
-      miembroEquipoTable += miembroEquipo?.participacion ?
-        this.percentPipe.transform(miembroEquipo?.participacion / 100) : '';
-
-      equipoElementsRow.push(miembroEquipoTable);
-
-      const rowReport: ISgiRowReport = {
-        elements: equipoElementsRow
-      };
-      rowsReport.push(rowReport);
-    });
-
-    elementsRow.push({
-      rows: rowsReport
-    });
-  }
 
   private fillRowsEquipoExcel(elementsRow: any[], miembroEquipo: IGrupoEquipo) {
     if (miembroEquipo) {

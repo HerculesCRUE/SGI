@@ -24,7 +24,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, EMPTY, Observable, from } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, from, of } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 import { GrupoListadoExportModalComponent } from '../modals/grupo-listado-export-modal/grupo-listado-export-modal.component';
@@ -261,9 +261,9 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
       filter(investigadoresPrincipales => !!investigadoresPrincipales),
       map(investigadoresPrincipales => investigadoresPrincipales.map(investigador => investigador.persona.id)),
       tap(investigadoresPrincipales => idsInvestigadoresPrincipales = [...investigadoresPrincipales]),
-      switchMap(investigadoresPrincipales => this.personaService.findAllByIdIn(investigadoresPrincipales)),
+      switchMap(investigadoresPrincipales => investigadoresPrincipales?.length ? this.personaService.findAllByIdIn(investigadoresPrincipales).pipe(map(r => r.items)) : of([])),
       map(investigadoresPrincipales => {
-        grupo.investigadoresPrincipales = investigadoresPrincipales.items;
+        grupo.investigadoresPrincipales = investigadoresPrincipales;
         if (grupo.investigadoresPrincipales.length < idsInvestigadoresPrincipales.length) {
           grupo.investigadoresPrincipales.push(
             ...idsInvestigadoresPrincipales

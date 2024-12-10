@@ -35,6 +35,7 @@ import { SolicitudFooterListadoExportService } from './solicitud-footer-listado-
 import { SolicitudDatosGenerales } from './solicitud-formulario/solicitud-datos-generales/solicitud-datos-generales.fragment';
 import { SolicitudProyectoClasificacionListado } from './solicitud-formulario/solicitud-proyecto-clasificaciones/solicitud-proyecto-clasificaciones.fragment';
 import { SolicitudGeneralListadoExportService } from './solicitud-general-listado-export.service';
+import { ISolicitudGruposInvestigacionIpsData as ISolicitudGruposInvestigacionIpData, SolicitudGruposInvestigacionIpListadoExportService } from './solicitud-grupos-investigacion-ips-listado-export.service';
 import { SolicitudHeaderListadoExportService } from './solicitud-header-listado-export.service';
 import { ISolicitudListadoData } from './solicitud-listado/solicitud-listado.component';
 import { SolicitudProyectoAreaConocimientoListadoExportService } from './solicitud-proyecto-area-conocimiento-listado-export.service';
@@ -69,6 +70,7 @@ export interface ISolicitudReportData extends ISolicitudListadoData {
   requisitosTutorCategoriaProfesional: IRequisitoEquipoCategoriaProfesional[];
   requisitosAcreditadosNivelAcademico: ISolicitudRrhhRequisitoNivelAcademico[];
   requisitosAcreditadosCategoriaProfesional: ISolicitudRrhhRequisitoCategoria[];
+  gruposInvestigacionIp?: ISolicitudGruposInvestigacionIpData[];
 }
 
 export interface ISolicitudReportOptions extends IReportOptions {
@@ -82,6 +84,7 @@ export interface ISolicitudReportOptions extends IReportOptions {
   showSolicitudProyectoSocios: boolean;
   showSolicitudProyectoEntidadesFinanciadoras: boolean;
   showSolicitudRrhh: boolean;
+  showGruposInvestigacionIps: boolean;
 }
 
 @Injectable()
@@ -104,6 +107,7 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
     private readonly solicitudProyectoEntidadFinanciadoraListadoExportService: SolicitudProyectoEntidadFinanciadoraListadoExportService,
     private readonly solicitudRrhhListadoExportService: SolicitudRrhhListadoExportService,
     private readonly solicitudHeaderListadoExportService: SolicitudHeaderListadoExportService,
+    private readonly solicitudGruposInvestigacionIpListadoExportService: SolicitudGruposInvestigacionIpListadoExportService,
     private readonly solicitudFooterListadoExportService: SolicitudFooterListadoExportService
   ) {
     super(reportService);
@@ -160,6 +164,9 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
         if (reportConfig.reportOptions?.showSolicitudRrhh) {
           row.elements.push(...this.solicitudRrhhListadoExportService.fillRows(solicitudes, index, reportConfig));
         }
+        if (reportConfig.reportOptions?.showGruposInvestigacionIps) {
+          row.elements.push(...this.solicitudGruposInvestigacionIpListadoExportService.fillRows(solicitudes, index, reportConfig));
+        }
         if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
           row.elements.push(...this.solicitudFooterListadoExportService.fillRows(solicitudes, index, reportConfig));
         }
@@ -209,6 +216,7 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
       this.getDataReportSolicitudProyectoEntidadFinanciadora(solicitudData, reportOptions),
       this.getDataReportSolicitudProyectoEntidadFinanciadoraConv(solicitudData, reportOptions),
       this.getDataReportSolicitudRrhh(solicitudData, reportOptions),
+      this.getDataReportGruposInvestigacionIps(solicitudData, reportOptions),
       this.getDataReportFooter(solicitudData, output),
     ).pipe(
       takeLast(1),
@@ -333,6 +341,19 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
     }
   }
 
+  private getDataReportGruposInvestigacionIps(
+    proyectoData: ISolicitudReportData,
+    reportOptions: ISolicitudReportOptions
+  ): Observable<ISolicitudReportData> {
+    if (reportOptions?.showGruposInvestigacionIps) {
+      proyectoData.gruposInvestigacionIp = [];
+      return this.solicitudGruposInvestigacionIpListadoExportService.getData(proyectoData)
+        .pipe(tap({ error: (err) => this.logger.error(err) }));
+    } else {
+      return of(proyectoData);
+    }
+  }
+
   private getDataReportHeader(convocatoriaData: ISolicitudReportData,
     output: OutputReport
   ): Observable<ISolicitudReportData> {
@@ -402,6 +423,9 @@ export class SolicitudListadoExportService extends AbstractTableExportService<IS
     }
     if (reportConfig.reportOptions?.showSolicitudRrhh) {
       columns.push(... this.solicitudRrhhListadoExportService.fillColumns(resultados, reportConfig));
+    }
+    if (reportConfig.reportOptions?.showGruposInvestigacionIps) {
+      columns.push(... this.solicitudGruposInvestigacionIpListadoExportService.fillColumns(resultados, reportConfig));
     }
     if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
       columns.push(... this.solicitudFooterListadoExportService.fillColumns(resultados, reportConfig));

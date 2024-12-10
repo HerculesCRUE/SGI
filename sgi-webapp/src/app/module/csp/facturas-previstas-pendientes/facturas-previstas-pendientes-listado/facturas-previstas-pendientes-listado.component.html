@@ -39,15 +39,6 @@
   <div class="mat-elevation-z4">
     <table mat-table [dataSource]="dataSource" matSort matSortActive="fechaEmision" matSortDirection="asc"
       matSortDisableClear>
-      <!-- Titulo proyecto -->
-      <ng-container matColumnDef="tituloProyecto">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          {{'csp.facturas-previstas-pendientes.titulo-proyecto' | translate}}
-        </th>
-        <td mat-cell *matCellDef="let facturaPrevistaPendiente">
-          {{facturaPrevistaPendiente.tituloProyecto}}
-        </td>
-      </ng-container>
 
       <!-- Identificador interno -->
       <ng-container matColumnDef="proyectoIdSGI">
@@ -66,6 +57,17 @@
         </th>
         <td mat-cell *matCellDef="let facturaPrevistaPendiente">
           {{facturaPrevistaPendiente.proyectoIdSGE}}
+        </td>
+      </ng-container>
+
+      <!-- Entidades financiadoras -->
+      <ng-container matColumnDef="entidadesFinanciadoras">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.facturas-previstas-pendientes.entidades-financiadoras' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let facturaPrevistaPendiente"
+          matTooltip="{{facturaPrevistaPendiente.entidadesFinanciadoras | entidadFinanciadoraEmpresaNombre}}">
+          {{facturaPrevistaPendiente.entidadesFinanciadoras | entidadFinanciadoraEmpresaNombre}}
         </td>
       </ng-container>
 
@@ -119,13 +121,23 @@
         </td>
       </ng-container>
 
+      <!-- Comentario -->
+      <ng-container matColumnDef="comentario">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          {{'csp.facturas-previstas-pendientes.comentario' | translate}}
+        </th>
+        <td mat-cell *matCellDef="let facturaPrevistaPendiente" matTooltip="{{facturaPrevistaPendiente.comentario}}">
+          {{facturaPrevistaPendiente.comentario}}
+        </td>
+      </ng-container>
+
       <!-- Tipo facturación -->
       <ng-container matColumnDef="tipoFacturacion.nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.facturas-previstas-pendientes.tipo-facturacion' | translate}}
         </th>
         <td mat-cell *matCellDef="let facturaPrevistaPendiente">
-          {{facturaPrevistaPendiente.tipoFacturacion?.nombre}}
+          {{facturaPrevistaPendiente?.tipoFacturacion?.nombre}}
         </td>
       </ng-container>
 
@@ -153,10 +165,16 @@
       <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
     </table>
     <div class="paginator-export">
-      <button mat-button matTooltip="{{'btn.export' | translate}}" (click)="openExportModal()"
-        [disabled]="!dataSource.data?.length">
-        <mat-icon color="primary">insert_chart_outlined</mat-icon>
-      </button>
+      <div class="export-buttons">
+        <button mat-icon-button color="primary" matTooltip="{{'btn.export.xlsx' | translate}}" (click)="exportXLSX()"
+          [disabled]="!dataSource.data?.length">
+          <mat-icon>functions</mat-icon>
+        </button>
+        <button mat-icon-button color="primary" matTooltip="{{'btn.export.csv' | translate}}" (click)="exportCSV()"
+          [disabled]="!dataSource.data?.length">
+          <mat-icon>text_fields</mat-icon>
+        </button>
+      </div>
       <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
       </mat-paginator>
     </div>

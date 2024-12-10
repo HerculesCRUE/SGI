@@ -1,6 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogCommonComponent } from '@core/component/dialog-common.component';
+import { DateTime } from 'luxon';
+
+export interface ProyectoInfoModificarFechasModalData {
+  fechaInicio: DateTime;
+  fechaFinDefinitiva: DateTime;
+}
 
 @Component({
   templateUrl: './proyecto-info-modificar-fechas-modal.component.html',
@@ -8,8 +14,13 @@ import { DialogCommonComponent } from '@core/component/dialog-common.component';
 })
 export class ProyectoInfoModificarFechasModalComponent extends DialogCommonComponent implements OnInit {
 
+  get isFechaFinDefinivaLowerThanFechaInicio(): boolean {
+    return this.data?.fechaFinDefinitiva && this.data?.fechaInicio && this.data.fechaFinDefinitiva < this.data.fechaInicio;
+  }
+
   constructor(
-    matDialogRef: MatDialogRef<ProyectoInfoModificarFechasModalComponent>
+    matDialogRef: MatDialogRef<ProyectoInfoModificarFechasModalComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: ProyectoInfoModificarFechasModalData
   ) {
     super(matDialogRef);
   }

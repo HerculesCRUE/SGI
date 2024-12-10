@@ -303,4 +303,25 @@ public class InvencionService {
     return returnValue;
   }
 
+  /**
+   * Obtiene los ids de {@link Invencion} modificados que no esten activas y que
+   *
+   * cumplan las condiciones indicadas en el filtro de búsqueda
+   *
+   * @param query información del filtro.
+   * @return el listado de ids de {@link Invencion}.
+   */
+  public List<Long> findIdsInvencionesEliminadas(String query) {
+    log.debug("findIdsInvencionesEliminadas(String query) - start");
+
+    Specification<Invencion> specs = InvencionSpecifications.notActivos()
+        .and(SgiRSQLJPASupport.toSpecification(query, InvencionPredicateResolver.getInstance()));
+
+    List<Long> returnValue = repository.findIds(specs);
+
+    log.debug("findIdsInvencionesEliminadas(String query) - end");
+
+    return returnValue;
+  }
+
 }

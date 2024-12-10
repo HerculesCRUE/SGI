@@ -270,24 +270,26 @@ public class ProyectoEquipoServiceImpl implements ProyectoEquipoService {
 
   /**
    * Devuelve una lista filtrada de investigadores principales del
-   * {@link Proyecto} en el momento actual.
+   * {@link Proyecto}.
    *
-   * Son investiador principales los {@link ProyectoEquipo} que a fecha actual
-   * tiene el {@link RolProyecto} con el flag {@link RolProyecto#rolPrincipal} a
+   * Son investiador principales los {@link ProyectoEquipo} que tienen el
+   * {@link RolProyecto} con el flag {@link RolProyecto#rolPrincipal} a
    * <code>true</code>.
    * 
    * @param proyectoId Identificador del {@link Proyecto}.
-   * @return la lista de personaRef de los investigadores principales del
-   *         {@link Proyecto} en el momento actual.
+   * @return la lista investigadores principales del {@link Proyecto}.
    */
-  public List<String> findPersonaRefInvestigadoresPrincipales(Long proyectoId) {
-    log.debug("findPersonaRefInvestigadoresPrincipales(Long proyectoId) - start");
+  @Override
+  public List<ProyectoEquipo> findInvestigadoresPrincipales(Long proyectoId) {
+    log.debug("findInvestigadoresPrincipales(Long proyectoId) - start");
 
     AssertHelper.idNotNull(proyectoId, Proyecto.class);
-    Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
-    List<String> returnValue = repository.findPersonaRefInvestigadoresPrincipales(proyectoId, fechaActual);
+    Specification<ProyectoEquipo> specs = ProyectoEquipoSpecifications.byProyectoId(proyectoId)
+        .and(ProyectoEquipoSpecifications.byRolPrincipal(true));
 
-    log.debug("findPersonaRefInvestigadoresPrincipales(Long proyectoId) - end");
+    List<ProyectoEquipo> returnValue = repository.findAll(specs);
+
+    log.debug("findInvestigadoresPrincipales(Long proyectoId) - end");
     return returnValue;
   }
 
@@ -303,14 +305,15 @@ public class ProyectoEquipoServiceImpl implements ProyectoEquipoService {
    * @return la lista de los investigadores principales del
    *         {@link Proyecto} en el momento actual.
    */
-  public List<ProyectoEquipo> findInvestigadoresPrincipales(Long proyectoId) {
-    log.debug("findInvestigadoresPrincipales(Long proyectoId) - start");
+  @Override
+  public List<ProyectoEquipo> findInvestigadoresPrincipalesActuales(Long proyectoId) {
+    log.debug("findInvestigadoresPrincipalesActuales(Long proyectoId) - start");
 
     AssertHelper.idNotNull(proyectoId, Proyecto.class);
     Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
     List<ProyectoEquipo> returnValue = repository.findInvestigadoresPrincipales(proyectoId, fechaActual);
 
-    log.debug("findInvestigadoresPrincipales(Long proyectoId) - end");
+    log.debug("findInvestigadoresPrincipalesActuales(Long proyectoId) - end");
     return returnValue;
   }
 

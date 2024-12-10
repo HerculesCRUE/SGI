@@ -100,6 +100,23 @@ public class GrupoLineaInvestigadorService {
   }
 
   /**
+   * Obtener todas las entidades {@link GrupoLineaInvestigador} paginadas y/o
+   * filtradas
+   *
+   * @param paging la información de la paginación.
+   * @param query  la información del filtro.
+   * @return la lista de entidades {@link GrupoLineaInvestigador} paginadas y/o
+   *         filtradas.
+   */
+  public Page<GrupoLineaInvestigador> findAll(String query, Pageable paging) {
+    log.debug("findAll(Long grupoId, String query, Pageable paging) - start");
+    Specification<GrupoLineaInvestigador> specs = SgiRSQLJPASupport.toSpecification(query);
+    Page<GrupoLineaInvestigador> returnValue = repository.findAll(specs, paging);
+    log.debug("findAll(Long grupoId, String query, Pageable paging) - end");
+    return returnValue;
+  }
+
+  /**
    * Actualiza el listado de {@link GrupoLineaInvestigador} de la
    * {@link GrupoLineaInvestigacion}
    * con el

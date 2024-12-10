@@ -17,6 +17,20 @@
     </faultSequence>
   </resource>
 
+  <resource methods="GET" url-mapping="/invenciones/eliminadas-ids">
+    <inSequence>
+      <send>
+        <endpoint key="sgipii-endpoint" />
+      </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
   <resource methods="GET" url-mapping="/invenciones/modificados-ids">
     <inSequence>
       <send>

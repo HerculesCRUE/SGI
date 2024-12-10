@@ -4,7 +4,7 @@ import { IRolSocio } from '@core/models/csp/rol-socio';
 import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';
-import { ESTADO_PROYECTO_CONVERTER } from './estado-proyecto.converter';
+import { ESTADO_PROYECTO_RESPONSE_CONVERTER } from '../../services/csp/estado-proyecto/estado-proyecto-response.converter';
 import { PROYECTO_IVA_CONVERTER } from './proyecto-iva.converter';
 
 class ProyectoConverter extends SgiBaseConverter<IProyectoBackend, IProyecto> {
@@ -15,7 +15,7 @@ class ProyectoConverter extends SgiBaseConverter<IProyectoBackend, IProyecto> {
     }
     return {
       id: value.id,
-      estado: ESTADO_PROYECTO_CONVERTER.toTarget(value.estado),
+      estado: ESTADO_PROYECTO_RESPONSE_CONVERTER.toTarget(value.estado),
       activo: value.activo,
       titulo: value.titulo,
       acronimo: value.acronimo,
@@ -63,7 +63,7 @@ class ProyectoConverter extends SgiBaseConverter<IProyectoBackend, IProyecto> {
     }
     return {
       id: value.id,
-      estado: ESTADO_PROYECTO_CONVERTER.fromTarget(value.estado),
+      estado: ESTADO_PROYECTO_RESPONSE_CONVERTER.fromTarget(value.estado),
       titulo: value.titulo,
       acronimo: value.acronimo,
       codigoInterno: value.codigoInterno,

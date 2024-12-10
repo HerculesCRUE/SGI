@@ -19,6 +19,7 @@ import { GrupoFooterListadoExportService } from './grupo-footer-listado-export.s
 import { GrupoDatosGeneralesComponent } from './grupo-formulario/grupo-datos-generales/grupo-datos-generales.component';
 import { GrupoEnlaceComponent } from './grupo-formulario/grupo-enlace/grupo-enlace.component';
 import { GrupoEquipoInstrumentalComponent } from './grupo-formulario/grupo-equipo-instrumental/grupo-equipo-instrumental.component';
+import { GrupoEquipoInvestigacionExportService } from './grupo-formulario/grupo-equipo-investigacion/grupo-equipo-investigacion-export.service';
 import { GrupoEquipoInvestigacionComponent } from './grupo-formulario/grupo-equipo-investigacion/grupo-equipo-investigacion.component';
 import { GrupoLineaInvestigacionComponent } from './grupo-formulario/grupo-linea-investigacion-listado/grupo-linea-investigacion.component';
 import { GrupoPersonaAutorizadaComponent } from './grupo-formulario/grupo-persona-autorizada/grupo-persona-autorizada.component';
@@ -41,49 +42,50 @@ import { GrupoResponsableEconomicoModalComponent } from './modals/grupo-responsa
 @NgModule({
   declarations: [
     GrupoCrearComponent,
-    GrupoEditarComponent,
-    GrupoListadoComponent,
     GrupoDatosGeneralesComponent,
-    GrupoEquipoInvestigacionComponent,
-    GrupoEquipoModalComponent,
-    GrupoResponsableEconomicoComponent,
-    GrupoResponsableEconomicoModalComponent,
-    GrupoEquipoInstrumentalComponent,
-    GrupoEquipoInstrumentalModalComponent,
+    GrupoEditarComponent,
     GrupoEnlaceComponent,
     GrupoEnlaceModalComponent,
+    GrupoEquipoInstrumentalComponent,
+    GrupoEquipoInstrumentalModalComponent,
+    GrupoEquipoInvestigacionComponent,
+    GrupoEquipoModalComponent,
+    GrupoLineaInvestigacionComponent,
+    GrupoListadoComponent,
+    GrupoListadoExportModalComponent,
     GrupoPersonaAutorizadaComponent,
     GrupoPersonaAutorizadaModalComponent,
-    GrupoLineaInvestigacionComponent,
-    GrupoListadoExportModalComponent,
+    GrupoResponsableEconomicoComponent,
+    GrupoResponsableEconomicoModalComponent
   ],
   imports: [
     CommonModule,
-    SharedModule,
+    CspSharedModule,
+    FormsModule,
     GrupoRoutingModule,
     MaterialDesignModule,
     ReactiveFormsModule,
-    TranslateModule,
-    FormsModule,
+    SgeSharedModule,
     SgiAuthModule,
-    CspSharedModule,
     SgpSharedModule,
-    SgeSharedModule
+    SharedModule,
+    TranslateModule
   ],
   providers: [
     GrupoDataResolver,
-    GrupoListadoExportService,
-    LuxonDatePipe,
-    PercentPipe,
-    GrupoGeneralListadoExportService,
-    GrupoEquipoListadoExportService,
-    GrupoResponsableEconomicoListadoExportService,
     GrupoEnlaceListadoExportService,
-    GrupoPersonaAutorizadaListadoExportService,
     GrupoEquipoInstrumentalListadoExportService,
-    GrupoLineaInvestigacionListadoExportService,
+    GrupoEquipoInvestigacionExportService,
+    GrupoEquipoListadoExportService,
+    GrupoFooterListadoExportService,
+    GrupoGeneralListadoExportService,
     GrupoHeaderListadoExportService,
-    GrupoFooterListadoExportService
+    GrupoLineaInvestigacionListadoExportService,
+    GrupoListadoExportService,
+    GrupoPersonaAutorizadaListadoExportService,
+    GrupoResponsableEconomicoListadoExportService,
+    LuxonDatePipe,
+    PercentPipe
   ]
 })
 export class GrupoModule { }

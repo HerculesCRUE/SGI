@@ -13,8 +13,15 @@ import javax.persistence.criteria.Root;
 
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.model.Grupo;
+import org.crue.hercules.sgi.csp.model.GrupoEnlace;
 import org.crue.hercules.sgi.csp.model.GrupoEquipo;
+import org.crue.hercules.sgi.csp.model.GrupoEquipoInstrumental;
+import org.crue.hercules.sgi.csp.model.GrupoLineaClasificacion;
+import org.crue.hercules.sgi.csp.model.GrupoLineaInvestigacion;
+import org.crue.hercules.sgi.csp.model.GrupoLineaInvestigacion_;
+import org.crue.hercules.sgi.csp.model.GrupoLineaInvestigador;
 import org.crue.hercules.sgi.csp.model.GrupoPalabraClave;
+import org.crue.hercules.sgi.csp.model.GrupoResponsableEconomico;
 import org.crue.hercules.sgi.csp.model.Grupo_;
 import org.crue.hercules.sgi.csp.repository.specification.GrupoSpecifications;
 import org.crue.hercules.sgi.csp.util.PredicateResolverUtil;
@@ -143,12 +150,31 @@ public class GrupoPredicateResolver implements SgiRSQLPredicateResolver<Grupo> {
 
     String fechaModificacionArgument = node.getArguments().get(0);
     Instant fechaModificacion = Instant.parse(fechaModificacionArgument);
+    ListJoin<Grupo, GrupoEnlace> joinEnlaces = root.join(Grupo_.enlaces, JoinType.LEFT);
     ListJoin<Grupo, GrupoEquipo> joinEquipos = root.join(Grupo_.miembrosEquipo, JoinType.LEFT);
+    ListJoin<Grupo, GrupoEquipoInstrumental> joinEquipoInstrumental = root.join(Grupo_.equipoInstrumental,
+        JoinType.LEFT);
+    ListJoin<Grupo, GrupoLineaInvestigacion> joinLineasInvestigacion = root.join(Grupo_.lineasInvestigacion,
+        JoinType.LEFT);
     ListJoin<Grupo, GrupoPalabraClave> joinPalabrasClave = root.join(Grupo_.palabrasClave, JoinType.LEFT);
+    ListJoin<Grupo, GrupoResponsableEconomico> joinResponsablesEconomicos = root.join(Grupo_.responsableEconomicos,
+        JoinType.LEFT);
+    ListJoin<GrupoLineaInvestigacion, GrupoLineaClasificacion> joinClasificacionesLineasInvestigacion = joinLineasInvestigacion
+        .join(GrupoLineaInvestigacion_.clasificaciones, JoinType.LEFT);
+    ListJoin<GrupoLineaInvestigacion, GrupoLineaInvestigador> joinInvestigadoresLineasInvestigacion = joinLineasInvestigacion
+        .join(GrupoLineaInvestigacion_.investigadores, JoinType.LEFT);
 
     return cb.or(cb.greaterThanOrEqualTo(root.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinClasificacionesLineasInvestigacion.get(Auditable_.lastModifiedDate),
+            fechaModificacion),
+        cb.greaterThanOrEqualTo(joinEnlaces.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinEquipoInstrumental.get(Auditable_.lastModifiedDate), fechaModificacion),
         cb.greaterThanOrEqualTo(joinEquipos.get(Auditable_.lastModifiedDate), fechaModificacion),
-        cb.greaterThanOrEqualTo(joinPalabrasClave.get(Auditable_.lastModifiedDate), fechaModificacion));
+        cb.greaterThanOrEqualTo(joinInvestigadoresLineasInvestigacion.get(Auditable_.lastModifiedDate),
+            fechaModificacion),
+        cb.greaterThanOrEqualTo(joinLineasInvestigacion.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinPalabrasClave.get(Auditable_.lastModifiedDate), fechaModificacion),
+        cb.greaterThanOrEqualTo(joinResponsablesEconomicos.get(Auditable_.lastModifiedDate), fechaModificacion));
   }
 
   private Predicate buildByMiembroEquipo(ComparisonNode node, Root<Grupo> root, CriteriaQuery<?> query,

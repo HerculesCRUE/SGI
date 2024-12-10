@@ -116,7 +116,7 @@ export class ProyectoDataResolver extends SgiResolverResolver<IProyectoData> {
       return this.solicitudService.findById(data.proyecto.solicitudId)
         .pipe(
           map(solicitud => {
-            data.solicitanteRefSolicitud = solicitud.solicitante.id;
+            data.solicitanteRefSolicitud = solicitud.solicitante?.id;
             data.solicitudFormularioSolicitud = solicitud.formularioSolicitud;
             return data;
           })

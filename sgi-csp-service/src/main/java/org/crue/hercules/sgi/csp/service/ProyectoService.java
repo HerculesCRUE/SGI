@@ -151,6 +151,15 @@ public interface ProyectoService {
   boolean modificable(Long proyectoId);
 
   /**
+   * Hace las comprobaciones necesarias para determinar si el {@link Proyecto}
+   * puede ser visualizado.
+   * 
+   * @param proyectoId Id del {@link Proyecto}.
+   * @return true si puede ser visualizado / false si no puede ser visualizado
+   */
+  boolean visible(Long proyectoId);
+
+  /**
    * Obtiene los ids de {@link Proyecto} modificados que esten
    * activos y con {@link Proyecto#confidencial} a <code>false</code> que cumplan
    * las condiciones indicadas en el filtro de búsqueda

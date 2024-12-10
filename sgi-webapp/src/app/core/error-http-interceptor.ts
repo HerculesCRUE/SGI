@@ -39,7 +39,7 @@ export class SgiErrorHttpInterceptor implements HttpInterceptor {
               switchMap(problem => throwError(problem))
             );
           }
-          else {
+          else if (error.error != null) {
             return throwError(this.resolveHttpProblem(error, service));
           }
         }

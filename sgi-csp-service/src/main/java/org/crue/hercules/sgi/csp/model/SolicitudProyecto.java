@@ -177,4 +177,20 @@ public class SolicitudProyecto extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final List<SolicitudProyectoPresupuesto> presupuesto = null;
+
+  @OneToMany(mappedBy = "solicitudProyecto")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<SolicitudProyectoSocio> socios = null;
+
+  @OneToMany(mappedBy = "solicitudProyecto")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<SolicitudProyectoEntidad> entidades = null;
+
+  @OneToMany(mappedBy = "solicitudProyecto")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<SolicitudProyectoResponsableEconomico> responsablesEconomicos = null;
+
 }

@@ -138,7 +138,7 @@ export class ProyectoEconomicoFormlyModalComponent
       case ACTION_MODAL_MODE.VIEW:
         load$ = load$.pipe(
           switchMap((formlyData) => {
-            return this.fillProyectoSgeFormlyModelById(proyectoSgeId, formlyData);
+            return this.fillProyectoSgeFormlyModelById(proyectoSgeId, proyectoSgiId, formlyData);
           })
         );
         break;
@@ -165,11 +165,12 @@ export class ProyectoEconomicoFormlyModalComponent
       : this.updateProyectoSge(this.proyectoData.proyectoSge, this.formlyData);
   }
 
-  private fillProyectoSgeFormlyModelById(id: string, formlyData: IFormlyData): Observable<IFormlyData> {
+  private fillProyectoSgeFormlyModelById(id: string, proyectoSgiId: number, formlyData: IFormlyData): Observable<IFormlyData> {
     return this.proyectoSgeService.getFormlyModelById(id).pipe(
       map((model) => {
         FormlyUtils.convertJSONToFormly(model, formlyData.fields);
         formlyData.data.proyectoSge = model;
+        formlyData.data.proyectoSge.proyectoSGIId = proyectoSgiId;
         return formlyData;
       })
     );
@@ -225,9 +226,7 @@ export class ProyectoEconomicoFormlyModalComponent
               formlyData.data.porIva = proyecto.iva?.iva;
             }
 
-            if (action === ACTION_MODAL_MODE.EDIT) {
-              formlyData.data.sgeId = proyectoSgeId;
-            }
+            formlyData.data.sgeId = proyectoSgeId;
 
             return formlyData;
           })

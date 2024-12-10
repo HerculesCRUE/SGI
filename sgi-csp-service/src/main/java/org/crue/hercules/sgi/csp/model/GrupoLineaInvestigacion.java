@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.time.Instant;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -80,5 +82,15 @@ public class GrupoLineaInvestigacion extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final LineaInvestigacion lineaInvestigacion = null;
+
+  @OneToMany(mappedBy = "grupoLineaInvestigacion")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<GrupoLineaInvestigador> investigadores = null;
+
+  @OneToMany(mappedBy = "grupoLineaInvestigacion")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<GrupoLineaClasificacion> clasificaciones = null;
 
 }

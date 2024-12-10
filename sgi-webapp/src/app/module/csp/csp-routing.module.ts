@@ -20,6 +20,7 @@ const MSG_FUENTE_FINANCIACION_TITLE = marker('menu.csp.configuraciones.fuentes-f
 const MSG_GESTION_CONCEPTO_GASTO_TITLE = marker('menu.csp.configuraciones.conceptos-gasto');
 const MSG_GESTION_LINEA_INVESTIGACION_TITLE = marker('menu.csp.configuraciones.lineas-investigacion');
 const MSG_GRUPO_TITLE = marker('csp.grupo');
+const MSG_MIEMBROS_GRUPOS_INVESTIGACION_TITLE = marker('menu.csp.miembros-grupos-investigacion');
 const MSG_MODELO_EJECUCION_TITLE = marker('menu.csp.configuraciones.modelos-ejecucion');
 const MSG_NOTIFICACION_PRESUPUESTO_SGE_TITLE = marker('menu.csp.notificacion-presupuesto-sge');
 const MSG_PLAN_INVESTIGACION_TITLE = marker('menu.csp.configuraciones.planes-investigacion');
@@ -392,7 +393,19 @@ const routes: SgiRoutes = [
         canActivate: [SgiAuthGuard],
         data: {
           title: MSG_FACTURAS_PREVISTAS_PENDIENTES_TITLE,
-          hasAuthorityForAnyUO: 'CSP-PRO-E'
+          hasAnyAuthorityForAnyUO: ['CSP-PRO-E', 'CSP-PRO-V']
+        }
+      },
+      {
+        path: CSP_ROUTE_NAMES.MIEMBROS_GRUPOS_INVESTIGACION,
+        loadChildren: () =>
+          import('./miembros-grupos-investigacion/miembros-grupos-investigacion.module').then(
+            (m) => m.MiembrosGruposInvestigacionModule
+          ),
+        canActivate: [SgiAuthGuard],
+        data: {
+          title: MSG_MIEMBROS_GRUPOS_INVESTIGACION_TITLE,
+          hasAnyAuthorityForAnyUO: ['CSP-GIN-E', 'CSP-GIN-V']
         }
       },
       { path: '**', component: null }

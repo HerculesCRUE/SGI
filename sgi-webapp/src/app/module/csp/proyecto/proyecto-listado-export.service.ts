@@ -41,6 +41,7 @@ import { ProyectoFooterListadoExportService } from './proyecto-footer-listado-ex
 import { IProyectoFacturacionData } from './proyecto-formulario/proyecto-calendario-facturacion/proyecto-calendario-facturacion.fragment';
 import { ProyectoClasificacionListado } from './proyecto-formulario/proyecto-clasificaciones/proyecto-clasificaciones.fragment';
 import { ProyectoGeneralListadoExportService } from './proyecto-general-listado-export.service';
+import { IProyectoGruposInvestigacionIpsData, ProyectoGruposInvestigacionIpListadoExportService } from './proyecto-grupos-investigacion-ips-listado-export.service';
 import { ProyectoHeaderListadoExportService } from './proyecto-header-listado-export.service';
 import { IProyectoListadoData } from './proyecto-listado/proyecto-listado.component';
 import { ProyectoPartidaPresupuestariaListadoExportService } from './proyecto-partida-presupuestaria-listado-export.service';
@@ -72,6 +73,7 @@ export interface IProyectoReportData extends IProyectoListadoData {
   presupuesto?: IProyectoPresupuestoTotales;
   calendarioFacturacion?: IProyectoFacturacionData[];
   calendarioJustificacion?: IProyectoPeriodoJustificacion[];
+  gruposInvestigacionIps?: IProyectoGruposInvestigacionIpsData[];
 }
 
 export interface IProyectoReportOptions extends IReportOptions {
@@ -94,6 +96,7 @@ export interface IProyectoReportOptions extends IReportOptions {
   showPresupuesto: boolean;
   showCalendarioJustificacion: boolean;
   showCalendarioFacturacion: boolean;
+  showGruposInvestigacionIps: boolean;
 }
 
 @Injectable()
@@ -122,6 +125,7 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
     private readonly proyectoPresupuestoListadoExportService: ProyectoPresupuestoListadoExportService,
     private readonly proyectoCalendarioJustificacionListadoExportService: ProyectoCalendarioJustificacionListadoExportService,
     private readonly proyectoCalendarioFacturacionListadoExportService: ProyectoCalendarioFacturacionListadoExportService,
+    private readonly proyectoGruposInvestigacionIpListadoExportService: ProyectoGruposInvestigacionIpListadoExportService,
     protected reportService: ReportService,
     private readonly proyectoHeaderListadoExportService: ProyectoHeaderListadoExportService,
     private readonly proyectoFooterListadoExportService: ProyectoFooterListadoExportService
@@ -207,6 +211,9 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
         if (reportConfig.reportOptions?.showCalendarioFacturacion) {
           row.elements.push(...this.proyectoCalendarioFacturacionListadoExportService.fillRows(proyectos, index, reportConfig));
         }
+        if (reportConfig.reportOptions?.showGruposInvestigacionIps) {
+          row.elements.push(...this.proyectoGruposInvestigacionIpListadoExportService.fillRows(proyectos, index, reportConfig));
+        }
         if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
           row.elements.push(...this.proyectoFooterListadoExportService.fillRows(proyectos, index, reportConfig));
         }
@@ -265,6 +272,7 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
       this.getDataReportPresupuesto(proyectoData, reportOptions),
       this.getDataReportCalendarioJustificacion(proyectoData, reportOptions),
       this.getDataReportCalendarioFacturacion(proyectoData, reportOptions),
+      this.getDataReportGruposInvestigacionIps(proyectoData, reportOptions),
       this.getDataReportFooter(proyectoData, output)
     ).pipe(
       takeLast(1),
@@ -502,6 +510,19 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
     }
   }
 
+  private getDataReportGruposInvestigacionIps(
+    proyectoData: IProyectoReportData,
+    reportOptions: IProyectoReportOptions
+  ): Observable<IProyectoReportData> {
+    if (reportOptions?.showGruposInvestigacionIps) {
+      proyectoData.gruposInvestigacionIps = [];
+      return this.proyectoGruposInvestigacionIpListadoExportService.getData(proyectoData)
+        .pipe(tap({ error: (err) => this.logger.error(err) }));
+    } else {
+      return of(proyectoData);
+    }
+  }
+
   private getDataReportHeader(convocatoriaData: IProyectoReportData,
     output: OutputReport
   ): Observable<IProyectoReportData> {
@@ -586,6 +607,9 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
     }
     if (reportConfig.reportOptions?.showCalendarioFacturacion) {
       columns.push(... this.proyectoCalendarioFacturacionListadoExportService.fillColumns(resultados, reportConfig));
+    }
+    if (reportConfig.reportOptions?.showGruposInvestigacionIps) {
+      columns.push(... this.proyectoGruposInvestigacionIpListadoExportService.fillColumns(resultados, reportConfig));
     }
     if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
       columns.push(... this.proyectoFooterListadoExportService.fillColumns(resultados, reportConfig));

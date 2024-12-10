@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DialogComponent, DialogData, DIALOG_BUTTON_STYLE } from '../../block/dialog/dialog.component';
+import { DIALOG_BUTTON_STYLE, DialogComponent, DialogData } from '../../block/dialog/dialog.component';
 
 const MSG_BUTTON_OK = marker('btn.ok');
 const MSG_BUTTON_CANCEL = marker('btn.cancel');
@@ -22,7 +22,8 @@ export class DialogService {
     ok: string = MSG_BUTTON_OK,
     cancel: string = MSG_BUTTON_CANCEL,
     okStyle: string = DIALOG_BUTTON_STYLE.BTN_STYLE_ACCENT,
-    cancelStyle: string = DIALOG_BUTTON_STYLE.BTN_STYLE_LINK
+    cancelStyle: string = DIALOG_BUTTON_STYLE.BTN_STYLE_LINK,
+    isHtmlMessage: boolean = false
   ): Observable<boolean> {
     const dialogRef = this.dialog.open(DialogComponent, {
       ...this.dialog,
@@ -32,7 +33,8 @@ export class DialogService {
         ok,
         cancel,
         okStyle,
-        cancelStyle
+        cancelStyle,
+        isHtmlMessage
       } as DialogData,
       panelClass: 'confirmacion-dialog',
       disableClose: true
@@ -40,6 +42,24 @@ export class DialogService {
     return dialogRef.afterClosed().pipe(
       map((confirmed: boolean) => confirmed ? confirmed : false)
     );
+  }
+
+  showConfirmationHtmlMessage(
+    message: string,
+    params: {} = {},
+    ok: string = MSG_BUTTON_OK,
+    cancel: string = MSG_BUTTON_CANCEL,
+    okStyle: string = DIALOG_BUTTON_STYLE.BTN_STYLE_ACCENT,
+    cancelStyle: string = DIALOG_BUTTON_STYLE.BTN_STYLE_LINK
+  ): Observable<boolean> {
+    return this.showConfirmation(
+      message,
+      params,
+      ok,
+      cancel,
+      okStyle,
+      cancelStyle,
+      true);
   }
 
   showInfoDialog(

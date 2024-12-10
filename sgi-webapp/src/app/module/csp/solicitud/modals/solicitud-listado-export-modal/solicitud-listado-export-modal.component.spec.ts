@@ -3,7 +3,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -16,6 +16,7 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { SolicitudEntidadConvocanteListadoExportService } from '../../solicitud-entidad-convocante-listado-export.service';
 import { SolicitudFooterListadoExportService } from '../../solicitud-footer-listado-export.service';
 import { SolicitudGeneralListadoExportService } from '../../solicitud-general-listado-export.service';
+import { SolicitudGruposInvestigacionIpListadoExportService } from '../../solicitud-grupos-investigacion-ips-listado-export.service';
 import { SolicitudHeaderListadoExportService } from '../../solicitud-header-listado-export.service';
 import { SolicitudListadoExportService } from '../../solicitud-listado-export.service';
 import { SolicitudProyectoAreaConocimientoListadoExportService } from '../../solicitud-proyecto-area-conocimiento-listado-export.service';
@@ -54,21 +55,22 @@ describe('SolicitudListadoExportModalComponent', () => {
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },
         { provide: MatDialogRef, useValue: TestUtils.buildDialogActionMatDialogRef() },
         { provide: MAT_DIALOG_DATA, useValue: {} as IBaseExportModalData },
-        SgiAuthService,
-        SolicitudListadoExportService,
         DecimalPipe,
-        SolicitudGeneralListadoExportService,
+        SgiAuthService,
         SolicitudEntidadConvocanteListadoExportService,
-        SolicitudProyectoFichaGeneralListadoExportService,
+        SolicitudFooterListadoExportService,
+        SolicitudGeneralListadoExportService,
+        SolicitudGruposInvestigacionIpListadoExportService,
+        SolicitudHeaderListadoExportService,
+        SolicitudListadoExportService,
         SolicitudProyectoAreaConocimientoListadoExportService,
         SolicitudProyectoClasificacionListadoExportService,
+        SolicitudProyectoEntidadFinanciadoraListadoExportService,
         SolicitudProyectoEquipoListadoExportService,
+        SolicitudProyectoFichaGeneralListadoExportService,
         SolicitudProyectoResponsableEconomicoListadoExportService,
         SolicitudProyectoSocioListadoExportService,
-        SolicitudProyectoEntidadFinanciadoraListadoExportService,
-        SolicitudRrhhListadoExportService,
-        SolicitudHeaderListadoExportService,
-        SolicitudFooterListadoExportService
+        SolicitudRrhhListadoExportService
       ]
     })
       .compileComponents();

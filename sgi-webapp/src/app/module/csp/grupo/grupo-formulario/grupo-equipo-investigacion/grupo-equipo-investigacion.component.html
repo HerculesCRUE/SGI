@@ -86,7 +86,7 @@
       <ng-container matColumnDef="dedicacion">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.grupo-equipo.dedicacion' | translate}} </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.dedicacion}} </td>
+        <td mat-cell *matCellDef="let wrapper"> {{DEDICACION_MAP.get(wrapper.value.dedicacion) | translate}} </td>
       </ng-container>
 
       <!-- participacion equipo Column -->
@@ -117,8 +117,20 @@
 
     </table>
 
-    <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
-    </mat-paginator>
+    <div class="paginator-export">
+      <div *ngIf="!actionService.isInvestigador">
+        <button mat-icon-button color="primary" matTooltip="{{'btn.export.xlsx' | translate}}" (click)="exportXLSX()"
+          [disabled]="!dataSource.data?.length">
+          <mat-icon>functions</mat-icon>
+        </button>
+        <button mat-icon-button color="primary" matTooltip="{{'btn.export.csv' | translate}}" (click)="exportCSV()"
+          [disabled]="!dataSource.data?.length">
+          <mat-icon>text_fields</mat-icon>
+        </button>
+      </div>
+      <mat-paginator [pageSizeOptions]="elementosPagina" showFirstLastButtons>
+      </mat-paginator>
+    </div>
   </div>
   <ng-container *ngIf="!formPart.readonly">
     <div class="separation-button">

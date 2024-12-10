@@ -7,9 +7,13 @@ import javax.validation.Valid;
 import org.crue.hercules.sgi.csp.converter.GrupoLineaInvestigadorConverter;
 import org.crue.hercules.sgi.csp.dto.GrupoLineaInvestigadorInput;
 import org.crue.hercules.sgi.csp.dto.GrupoLineaInvestigadorOutput;
+import org.crue.hercules.sgi.csp.model.GrupoEquipo;
 import org.crue.hercules.sgi.csp.model.GrupoLineaInvestigacion;
 import org.crue.hercules.sgi.csp.model.GrupoLineaInvestigador;
 import org.crue.hercules.sgi.csp.service.GrupoLineaInvestigadorService;
+import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -79,6 +84,25 @@ public class GrupoLineaInvestigadorController {
             grupoLineasInvestigadores)));
     log.debug("update(Long id, List<GrupoLineaInvestigadorInput> grupoLineasInvestigadores) - end");
     return new ResponseEntity<>(returnValue, HttpStatus.CREATED);
+  }
+
+  /**
+   * Devuelve una lista paginada y filtrada {@link GrupoEquipo}.
+   *
+   * @param query  filtro de búsqueda.
+   * @param paging {@link Pageable}.
+   * @return el listado de entidades {@link GrupoEquipo} paginadas y
+   *         filtradas.
+   */
+  @GetMapping()
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-GIN-E', 'CSP-GIN-V')")
+  public ResponseEntity<Page<GrupoLineaInvestigadorOutput>> findAll(
+      @RequestParam(name = "q", required = false) String query,
+      @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAll(String query, Pageable paging) - start");
+    Page<GrupoLineaInvestigadorOutput> page = converter.convert(service.findAll(query, paging));
+    log.debug("findAll(String query, Pageable paging) - end");
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(page, HttpStatus.OK);
   }
 
 }

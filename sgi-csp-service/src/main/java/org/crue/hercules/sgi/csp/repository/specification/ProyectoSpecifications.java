@@ -141,15 +141,4 @@ public class ProyectoSpecifications {
     };
   }
 
-  /**
-   * {@link Proyecto} con {@link Proyecto#confidencial} con el valor indicado
-   * 
-   * @param confidencial flag confidencial
-   * @return specification para obtener los {@link Proyecto} con
-   *         {@link Proyecto#confidencial} con el valor indicado
-   */
-  public static Specification<Proyecto> confidencial(boolean confidencial) {
-    return (root, query, cb) -> cb.equal(root.get(Proyecto_.confidencial), confidencial);
-  }
-
 }

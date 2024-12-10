@@ -32,6 +32,7 @@ import org.crue.hercules.sgi.csp.repository.ConfiguracionRepository;
 import org.crue.hercules.sgi.csp.repository.GrupoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.GrupoRepository;
 import org.crue.hercules.sgi.csp.repository.RolProyectoRepository;
+import org.crue.hercules.sgi.csp.repository.predicate.GrupoEquipoPredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.GrupoEquipoSpecifications;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.GrupoAuthorityHelper;
@@ -143,7 +144,7 @@ public class GrupoEquipoService {
     authorityHelper.checkUserHasAuthorityViewGrupo(grupoId);
 
     Specification<GrupoEquipo> specs = GrupoEquipoSpecifications.byGrupoId(grupoId)
-        .and(SgiRSQLJPASupport.toSpecification(query));
+        .and(SgiRSQLJPASupport.toSpecification(query, GrupoEquipoPredicateResolver.getInstance(sgiConfigProperties)));
 
     Page<GrupoEquipo> returnValue = repository.findAll(specs, paging);
     log.debug("findAll(Long grupoId, String query, Pageable paging) - end");
@@ -359,7 +360,8 @@ public class GrupoEquipoService {
   public Page<GrupoEquipo> findAll(String query, Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
 
-    Specification<GrupoEquipo> specs = SgiRSQLJPASupport.toSpecification(query);
+    Specification<GrupoEquipo> specs = SgiRSQLJPASupport.toSpecification(query,
+        GrupoEquipoPredicateResolver.getInstance(sgiConfigProperties));
     Page<GrupoEquipo> returnValue = repository.findAll(specs, paging);
 
     log.debug("findAll(String query, Pageable paging) - end");

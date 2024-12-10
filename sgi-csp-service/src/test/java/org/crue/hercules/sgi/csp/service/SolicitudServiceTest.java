@@ -615,7 +615,8 @@ class SolicitudServiceTest extends BaseServiceTest {
     }
 
     BDDMockito
-        .given(repository.findAll(ArgumentMatchers.<Specification<Solicitud>>any(), ArgumentMatchers.<Pageable>any()))
+        .given(repository.findAllDistinct(ArgumentMatchers.<Specification<Solicitud>>any(),
+            ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<Solicitud>>() {
           @Override
           public Page<Solicitud> answer(InvocationOnMock invocation) throws Throwable {
@@ -656,7 +657,8 @@ class SolicitudServiceTest extends BaseServiceTest {
     }
 
     BDDMockito
-        .given(repository.findAll(ArgumentMatchers.<Specification<Solicitud>>any(), ArgumentMatchers.<Pageable>any()))
+        .given(repository.findAllDistinct(ArgumentMatchers.<Specification<Solicitud>>any(),
+            ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<Solicitud>>() {
           @Override
           public Page<Solicitud> answer(InvocationOnMock invocation) throws Throwable {
@@ -697,7 +699,8 @@ class SolicitudServiceTest extends BaseServiceTest {
     }
 
     BDDMockito
-        .given(repository.findAll(ArgumentMatchers.<Specification<Solicitud>>any(), ArgumentMatchers.<Pageable>any()))
+        .given(repository.findAllDistinct(ArgumentMatchers.<Specification<Solicitud>>any(),
+            ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<Solicitud>>() {
           @Override
           public Page<Solicitud> answer(InvocationOnMock invocation) throws Throwable {

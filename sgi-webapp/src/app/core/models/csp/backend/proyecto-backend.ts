@@ -1,16 +1,15 @@
 import { ClasificacionCVN } from '@core/enums/clasificacion-cvn';
 import { TipoSeguimiento } from '@core/enums/tipo-seguimiento';
+import { IEstadoProyectoResponse } from '../../../services/csp/estado-proyecto/estado-proyecto-response';
 import { CausaExencion } from '../proyecto';
-import { ITipoAmbitoGeografico } from '../tipos-configuracion';
-import { IModeloEjecucion, ITipoFinalidad } from '../tipos-configuracion';
-import { IEstadoProyectoBackend } from './estado-proyecto-backend';
+import { IModeloEjecucion, ITipoAmbitoGeografico, ITipoFinalidad } from '../tipos-configuracion';
 import { IProyectoIVABackend } from './proyecto-iva-backend';
 
 export interface IProyectoBackend {
   /** Id */
   id: number;
   /** EstadoProyecto */
-  estado: IEstadoProyectoBackend;
+  estado: IEstadoProyectoResponse;
   /** Titulo */
   titulo: string;
   /** Acronimo */

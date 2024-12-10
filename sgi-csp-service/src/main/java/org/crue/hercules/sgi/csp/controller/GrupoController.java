@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.controller;
 
+import java.time.Instant;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -92,6 +93,7 @@ public class GrupoController {
   public static final String PATH_GRUPO_BAREMABLE_GRUPO_REF_ANIO = PATH_DELIMITER + "grupo-baremable/{grupoRef}/{anio}";
   public static final String PATH_BAREMABLES_ANIO = PATH_DELIMITER + "baremables/{anio}";
   public static final String PATH_GRUPOS_INVESTIGADOR = PATH_DELIMITER + "investigador";
+  public static final String PATH_GRUPOS_PERSONA = PATH_DELIMITER + "persona";
   public static final String PATH_ELIMINADOS_IDS = PATH_DELIMITER + "eliminados-ids";
   public static final String PATH_MODIFICADOS_IDS = PATH_DELIMITER + "modificados-ids";
   public static final String PATH_INVESTIGADORES_PRINCIPALES_PERSONAS_AUTORIZADAS = PATH_DELIMITER
@@ -233,6 +235,30 @@ public class GrupoController {
     log.debug("findGruposInvestigador() - start");
     Page<GrupoOutput> page = converter.convert(service.findGruposUsuario(paging));
     log.debug("findGruposInvestigador() - end");
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve la lista de {@link Grupo} a los que pertenece la persona en el rango
+   * de fechas.
+   *
+   * @param personaRef  Identificador de la persona
+   * @param fechaInicio fecha de inicio para la que se hace la comprobracion
+   * @param fechaFin    fecha de fin para la que se hace la comprobracion
+   * @param paging      {@link Pageable}.
+   * @return el listado de entidades {@link Grupo} paginadas y
+   *         filtradas.
+   */
+  @GetMapping(PATH_GRUPOS_PERSONA)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E', 'CSP-PRO-V')")
+  public ResponseEntity<Page<GrupoOutput>> findGruposPersona(
+      @RequestParam String personaRef,
+      @RequestParam(required = false) Instant fechaInicio,
+      @RequestParam(required = false) Instant fechaFin,
+      @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findGruposPersona(String personaRef, Instant fechaInicio, Instant fechaFin, Pageable paging) - start");
+    Page<GrupoOutput> page = converter.convert(service.findGruposPersona(personaRef, fechaInicio, fechaFin, paging));
+    log.debug("findGruposPersona(String personaRef, Instant fechaInicio, Instant fechaFin, Pageable paging) - end");
     return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(page, HttpStatus.OK);
   }
 

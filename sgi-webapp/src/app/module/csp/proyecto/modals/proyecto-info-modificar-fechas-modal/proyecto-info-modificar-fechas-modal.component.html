@@ -1,5 +1,7 @@
 <sgi-dialog-content>
-  <p>{{ 'msg.csp.proyecto.info-modificar-fechas' | translate}}</p>
+  <p>{{ (isFechaFinDefinivaLowerThanFechaInicio
+    ? 'msg.csp.proyecto.info-modificar-fechas.fecha-fin-definitiva-menor'
+    : 'msg.csp.proyecto.info-modificar-fechas') | translate}}</p>
   <ul>
     <li>{{'csp.proyecto.info-modificar-fechas.fase' | translate}}</li>
     <li>{{'csp.proyecto.info-modificar-fechas.hito' | translate}}</li>

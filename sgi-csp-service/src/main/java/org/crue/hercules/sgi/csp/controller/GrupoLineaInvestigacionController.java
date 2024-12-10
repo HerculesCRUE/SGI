@@ -117,6 +117,25 @@ public class GrupoLineaInvestigacionController {
   }
 
   /**
+   * Devuelve una lista paginada y filtrada {@link GrupoLineaInvestigacion}.
+   *
+   * @param query  filtro de búsqueda.
+   * @param paging {@link Pageable}.
+   * @return el listado de entidades {@link GrupoLineaInvestigacion} paginadas y
+   *         filtradas.
+   */
+  @GetMapping()
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-GIN-E', 'CSP-GIN-V')")
+  public ResponseEntity<Page<GrupoLineaInvestigacionOutput>> findAll(
+      @RequestParam(name = "q", required = false) String query,
+      @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findAll(String query, Pageable paging) - start");
+    Page<GrupoLineaInvestigacionOutput> page = converter.convert(service.findAll(query, paging));
+    log.debug("findAll(String query, Pageable paging) - end");
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  /**
    * Devuelve el {@link GrupoLineaInvestigacion} con el id indicado.
    * 
    * @param id Identificador de {@link GrupoLineaInvestigacion}.

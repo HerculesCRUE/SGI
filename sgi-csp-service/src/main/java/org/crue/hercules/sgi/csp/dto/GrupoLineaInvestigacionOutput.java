@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class GrupoLineaInvestigacionOutput implements Serializable {
 
   private Long id;
+  private Long grupoId;
   private Long lineaInvestigacionId;
   private Instant fechaInicio;
   private Instant fechaFin;

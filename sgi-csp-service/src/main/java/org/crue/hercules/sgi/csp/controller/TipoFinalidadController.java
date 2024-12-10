@@ -132,7 +132,7 @@ public class TipoFinalidadController {
    * @return el listado de entidades {@link TipoFinalidad} paginadas y filtradas.
    */
   @GetMapping("/todos")
-  @PreAuthorize("hasAnyAuthority('CSP-TFIN-V','CSP-TFIN-C','CSP-TFIN-E', 'CSP-TFIN-B', 'CSP-TFIN-R', 'CSP-PRO-V', 'CSP-PRO-E', 'CSP-CNV-V', 'CSP-CNV-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-TFIN-V', 'CSP-TFIN-C', 'CSP-TFIN-E', 'CSP-TFIN-B', 'CSP-TFIN-R', 'CSP-PRO-V', 'CSP-PRO-E', 'CSP-CNV-V', 'CSP-CNV-E', 'CSP-SOL-V', 'CSP-SOL-E')")
   public ResponseEntity<Page<TipoFinalidad>> findAllTodos(@RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllTodos(String query,Pageable paging) - start");

@@ -31,8 +31,8 @@ import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, EMPTY, Observable, Subject, Subscription, forkJoin, from, merge, of } from 'rxjs';
-import { catchError, filter, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, Observable, Subject, Subscription, forkJoin, merge, of } from 'rxjs';
+import { catchError, filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { IProyectoRelacionTableData } from '../proyecto-relaciones/proyecto-relaciones.fragment';
 
 interface IProyectoDatosGenerales extends IProyecto {
@@ -169,7 +169,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
         palabrasClave: this.service.findPalabrasClave(proyecto.id).pipe(map(({ items }) => items.map(proyectoPalabraClave => proyectoPalabraClave.palabraClave))),
         rolUniversidad: this.getRolUniversidad(proyecto),
         solicitudProyecto: this.getSocilictudProyecto(proyecto),
-        ultimaProrroga: this.getUltimaProrroga(proyecto),
+        ultimaProrroga: this.getUltimaProrrogaTiempo(proyecto),
         unidadGestion: this.getUnidadGestion(proyecto.unidadGestion.id),
         proyectosSgeIds: this.service.findAllProyectosSgeProyecto(proyecto.id).pipe(map(({ items }) => items.map(p => p.proyectoSge.id)))
       }).pipe(
@@ -220,7 +220,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       codigoInterno: new FormControl(null, [Validators.maxLength(50)]),
       codigoExterno: new FormControl(null, [Validators.maxLength(50)]),
       fechaInicio: new FormControl(null),
-      fechaFin: new FormControl(null, [this.buildValidatorFechaFin()]),
+      fechaFin: new FormControl(null),
       fechaFinDefinitiva: new FormControl(null),
       convocatoria: new FormControl({
         value: '',
@@ -258,7 +258,9 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       {
         validators: [
           DateValidator.isAfter('fechaInicio', 'fechaFin'),
-          DateValidator.isAfterOrEqual('fechaInicio', 'fechaFinDefinitiva'),
+          this.isAfterOrEqualAndNotRenunciadoOrRescindido('fechaInicio', 'fechaFinDefinitiva'),
+          this.isFechaFinBeforeOrEqualFechaUltimaProrroga(),
+          this.isFechaFinDefinitivaBeforeOrEqualFechaUltimaProrroga(),
           this.validateCanAddfechaFinDefinitiva()
         ]
       });
@@ -435,19 +437,99 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       const fechaInicioControl = formGroup.controls.fechaInicio;
       const fechaFinControl = formGroup.controls.fechaFin;
       const fechaFinDefinitivaControl = formGroup.controls.fechaFinDefinitiva;
+      const isEstadoRenunciado = [Estado.RENUNCIADO, Estado.RESCINDIDO].includes(formGroup.controls.estado.value);
 
       if (fechaInicioControl.errors && fechaFinControl.errors) {
         return;
       }
 
-      if (!fechaInicioControl.value && !fechaFinControl.value && !!fechaFinDefinitivaControl.value) {
+      if (!isEstadoRenunciado && !fechaInicioControl.value && !fechaFinControl.value && !!fechaFinDefinitivaControl.value) {
         fechaFinDefinitivaControl.setErrors({ fechaFinRequired: true });
         fechaFinDefinitivaControl.markAsTouched({ onlySelf: true });
-      } else if (fechaFinDefinitivaControl.errors) {
+      } else if (fechaFinDefinitivaControl.errors?.fechaFinRequired) {
         delete fechaFinDefinitivaControl.errors.fechaFinRequired;
         fechaFinDefinitivaControl.updateValueAndValidity({ onlySelf: true });
       }
 
+    };
+  }
+
+  private isAfterOrEqualAndNotRenunciadoOrRescindido(firstDateFieldName: string, secondDateFieldName: string): ValidatorFn {
+    return (formGroup: FormGroup): ValidationErrors | null => {
+
+      const fechaAnteriorControl = formGroup.controls[firstDateFieldName];
+      const fechaPosteriorControl = formGroup.controls[secondDateFieldName];
+
+      if (fechaPosteriorControl.errors && !fechaPosteriorControl.errors.after) {
+        return;
+      }
+
+      const fechaAnteriorDate: DateTime = fechaAnteriorControl.value;
+      const fechaPosteriorDate: DateTime = fechaPosteriorControl.value;
+      const isEstadoRenunciado = [Estado.RENUNCIADO, Estado.RESCINDIDO].includes(formGroup.controls.estado.value);
+
+      if (!isEstadoRenunciado && fechaPosteriorDate && (fechaAnteriorDate > fechaPosteriorDate)) {
+        fechaPosteriorControl.setErrors({ after: true });
+        fechaPosteriorControl.markAsTouched({ onlySelf: true });
+      } else if (fechaPosteriorControl.errors?.after) {
+        delete fechaPosteriorControl.errors.after;
+        fechaPosteriorControl.updateValueAndValidity({ onlySelf: true });
+      }
+    };
+  }
+
+  /**
+   * Comprueba que la fecha de fin sea anterior o igual a la fecha de la ultima prorroga de tiempo o importe y tiempo si la fecha definitiva no esta informada
+   */
+  private isFechaFinBeforeOrEqualFechaUltimaProrroga(): ValidatorFn {
+    return (formGroup: FormGroup): ValidationErrors | null => {
+
+      const fechaFinControl = formGroup.controls.fechaFin;
+      const fechaFinDefinitivaControl = formGroup.controls.fechaFinDefinitiva;
+
+      if (fechaFinControl.errors && !fechaFinControl.errors.afterThanProrroga) {
+        return;
+      }
+
+      const fechaFinDate: DateTime = fechaFinControl.value;
+      const fechaFinDefinitivaDate: DateTime = fechaFinDefinitivaControl.value;
+
+      if (!!this.ultimaProrroga
+        && fechaFinDate
+        && !fechaFinDefinitivaDate
+        && this.ultimaProrroga.fechaFin > fechaFinDate) {
+        fechaFinControl.setErrors({ afterThanProrroga: true });
+        fechaFinControl.markAsTouched({ onlySelf: true });
+      } else if (fechaFinControl.errors?.afterThanProrroga) {
+        delete fechaFinControl.errors.afterThanProrroga;
+        fechaFinControl.updateValueAndValidity({ onlySelf: true });
+      }
+    };
+  }
+
+  /**
+   * Comprueba que la fecha de fin definitiva sea anterior o igual a la fecha de la ultima prorroga de tiempo o importe y tiempo si la fecha definitiva esta informada
+   */
+  private isFechaFinDefinitivaBeforeOrEqualFechaUltimaProrroga(): ValidatorFn {
+    return (formGroup: FormGroup): ValidationErrors | null => {
+
+      const fechaFinDefinitivaControl = formGroup.controls.fechaFinDefinitiva;
+
+      if (fechaFinDefinitivaControl.errors && !fechaFinDefinitivaControl.errors.afterThanProrroga) {
+        return;
+      }
+
+      const fechaFinDefinitivaDate: DateTime = fechaFinDefinitivaControl.value;
+
+      if (!!this.ultimaProrroga
+        && !!fechaFinDefinitivaDate
+        && this.ultimaProrroga.fechaFin > fechaFinDefinitivaDate) {
+        fechaFinDefinitivaControl.setErrors({ afterThanProrroga: true });
+        fechaFinDefinitivaControl.markAsTouched({ onlySelf: true });
+      } else if (fechaFinDefinitivaControl.errors?.afterThanProrroga) {
+        delete fechaFinDefinitivaControl.errors.afterThanProrroga;
+        fechaFinDefinitivaControl.updateValueAndValidity({ onlySelf: true });
+      }
     };
   }
 
@@ -696,8 +778,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
         Validators.required
       ]);
       formgroup.get('fechaFin').setValidators([
-        Validators.required,
-        this.buildValidatorFechaFin()
+        Validators.required
       ]);
       this.abiertoRequired = true;
     } else if (proyecto.estado.estado === Estado.RENUNCIADO || proyecto.estado.estado === Estado.RESCINDIDO) {
@@ -771,18 +852,6 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
    */
   private getUnidadGestion(id: number): Observable<IUnidadGestion> {
     return this.unidadGestionService.findById(id);
-  }
-
-  private buildValidatorFechaFin(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      if (this.ultimaProrroga
-        && control.value
-        && this.ultimaProrroga.tipo !== Tipo.IMPORTE
-        && this.ultimaProrroga.fechaFin <= control.value) {
-        return { afterThanProrroga: true };
-      }
-      return null;
-    };
   }
 
   private subscribeToOnChangeHasPopulatedSocios(): void {
@@ -883,9 +952,10 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
     return this.solicitudService.findSolicitudProyecto(proyecto.solicitudId);
   }
 
-  private getUltimaProrroga(proyecto: IProyecto): Observable<IProyectoProrroga> {
+  private getUltimaProrrogaTiempo(proyecto: IProyecto): Observable<IProyectoProrroga> {
     const options: SgiRestFindOptions = {
-      sort: new RSQLSgiRestSort('numProrroga', SgiRestSortDirection.DESC)
+      sort: new RSQLSgiRestSort('numProrroga', SgiRestSortDirection.DESC),
+      filter: new RSQLSgiRestFilter('tipo', SgiRestFilterOperator.IN, [Tipo.TIEMPO, Tipo.TIEMPO_IMPORTE])
     };
 
     return this.service.findAllProyectoProrrogaProyecto(proyecto.id, options).pipe(

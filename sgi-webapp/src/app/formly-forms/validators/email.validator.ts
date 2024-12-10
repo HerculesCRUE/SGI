@@ -10,7 +10,7 @@ export function emailValidator(
 
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-  if (emailPattern.test(control.value)) {
+  if (!control.value || emailPattern.test(control.value)) {
     return null;
   }
 

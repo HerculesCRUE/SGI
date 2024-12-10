@@ -109,7 +109,7 @@ export class RequerimientoJustificacionListadoExportService
       switchMap(response =>
         from(response.items).pipe(
           mergeMap(relacion => {
-            return this.proyectoService.findInvestigadoresPrincipales(relacion.id).pipe(
+            return this.proyectoService.findInvestigadoresPrincipalesActuales(relacion.id).pipe(
               filter(personaRefs => !!personaRefs),
               map(investigadoresPrincipales => investigadoresPrincipales.map(investigador => investigador.persona.id)),
               switchMap(personaRefs => this.personaService.findAllByIdIn(personaRefs).pipe(

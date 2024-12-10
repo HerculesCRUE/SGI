@@ -653,4 +653,30 @@ public class GrupoService {
     return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-GIN-E");
   }
 
+  /**
+   * Obtener todas las entidades {@link Grupo} activas paginadas y/o filtradas.
+   *
+   * @param personaRef  Identificador de la persona
+   * @param fechaInicio fecha de inicio para la que se hace la comprobracion
+   * @param fechaFin    fecha de fin para la que se hace la comprobracion
+   * @param paging      la información de la paginación.
+   * @return la lista de entidades {@link Grupo} activas paginadas y/o
+   *         filtradas.
+   */
+  public Page<Grupo> findGruposPersona(String personaRef, Instant fechaInicio, Instant fechaFin, Pageable paging) {
+    log.debug("findGruposPersona(String personaRef, Instant fechaInicio, Instant fechaFin) - start");
+
+    if (fechaInicio != null && fechaFin != null && fechaInicio.isAfter(fechaFin)) {
+      return Page.empty();
+    }
+
+    Specification<Grupo> specs = GrupoSpecifications.distinct()
+        .and(GrupoSpecifications.activos())
+        .and(GrupoSpecifications.byPersonaInGrupoEquipo(personaRef, fechaInicio, fechaFin));
+    Page<Grupo> returnValue = repository.findAll(specs, paging);
+
+    log.debug("findGruposPersona(String personaRef, Instant fechaInicio, Instant fechaFin) - end");
+    return returnValue;
+  }
+
 }

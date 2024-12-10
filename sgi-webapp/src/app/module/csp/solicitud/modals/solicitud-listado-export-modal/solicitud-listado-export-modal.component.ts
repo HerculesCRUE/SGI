@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { BaseExportModalComponent } from '@core/component/base-export/base-export-modal.component';
@@ -65,7 +65,8 @@ export class SolicitudListadoExportModalComponent extends BaseExportModalCompone
       showSolicitudProyectoResponsableEconomico: new FormControl(true),
       showSolicitudProyectoSocios: new FormControl(true),
       showSolicitudProyectoEntidadesFinanciadoras: new FormControl(true),
-      showSolicitudRrhh: new FormControl(true)
+      showSolicitudRrhh: new FormControl(true),
+      showGruposInvestigacionIp: new FormControl(true)
     });
 
     Object.keys(formGroup.controls).forEach(key => {
@@ -111,6 +112,7 @@ export class SolicitudListadoExportModalComponent extends BaseExportModalCompone
         showSolicitudProyectoSocios: this.formGroup.controls.showSolicitudProyectoSocios.value,
         showSolicitudProyectoEntidadesFinanciadoras: this.formGroup.controls.showSolicitudProyectoEntidadesFinanciadoras.value,
         showSolicitudRrhh: this.formGroup.controls.showSolicitudRrhh.value,
+        showGruposInvestigacionIps: this.formGroup.controls.showGruposInvestigacionIp.value,
         columnMinWidth: 120
       }
     };

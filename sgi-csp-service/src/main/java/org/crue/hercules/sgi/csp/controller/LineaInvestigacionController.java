@@ -150,7 +150,7 @@ public class LineaInvestigacionController {
    *         filtradas.
    */
   @GetMapping("/todos")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-LIN-C', 'CSP-LIN-E', 'CSP-LIN-B', 'CSP-LIN-R', 'CSP-GIN-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-LIN-C', 'CSP-LIN-E', 'CSP-LIN-B', 'CSP-LIN-R', 'CSP-GIN-E', 'CSP-GIN-V')")
   public ResponseEntity<Page<LineaInvestigacionOutput>> findAllTodos(
       @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {

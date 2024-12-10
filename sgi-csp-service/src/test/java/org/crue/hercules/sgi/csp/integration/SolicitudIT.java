@@ -1053,7 +1053,8 @@ class SolicitudIT extends BaseIT {
     "classpath:scripts/tipo_regimen_concurrencia.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
     "classpath:scripts/convocatoria.sql",
-    "classpath:scripts/solicitud.sql"
+    "classpath:scripts/solicitud.sql",
+    "classpath:scripts/estado_solicitud.sql"
     // @formatter:on
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")

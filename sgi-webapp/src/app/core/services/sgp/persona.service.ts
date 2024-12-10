@@ -8,8 +8,8 @@ import { FormlyFieldConfig } from '@ngx-formly/core';
 import {
   RSQLSgiRestFilter, SgiMutableRestService, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult
 } from '@sgi/framework/http';
-import { Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { from, Observable, of } from 'rxjs';
+import { map, mergeMap, reduce, switchMap } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 
 @Injectable({
@@ -39,6 +39,33 @@ export class PersonaService extends SgiMutableRestService<string, IPersonaBacken
     };
 
     return this.findAll(options);
+  }
+
+  /**
+   * Busca todas las personas que tengan alguno de los ids de la lista,
+   * dividiendo la lista de ids en lotes con el tamaño maximo de batchSize 
+   * y haciendo tantas peticiones como lotes se generen para hacer la busqueda
+   *
+   * @param ids lista de identificadores de persona
+   * @param batchSize tamaño maximo de los lotes
+   * @param maxConcurrentRequests maxConcurrentBatches número máximo de llamadas paralelas para recuperar los lotes (por defecto 10)
+   * @returns la lista de personas
+   */
+  findAllInBactchesByIdIn(ids: string[], batchSize: number, maxConcurrentRequests: number = 10): Observable<IPersona[]> {
+    const batches: string[][] = [];
+    for (let i = 0; i < ids.length; i += batchSize) {
+      batches.push(ids.slice(i, i + batchSize));
+    }
+
+    return from(batches).pipe(
+      mergeMap(batch =>
+        this.findAllByIdIn(batch).pipe(
+          map(response => response.items)
+        ),
+        maxConcurrentRequests
+      ),
+      reduce((acc, items) => acc.concat(items), [] as IPersona[])
+    );
   }
 
   /**

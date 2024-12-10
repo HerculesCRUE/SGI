@@ -20,5 +20,6 @@ public class GrupoLineaInvestigadorOutput implements Serializable {
   private String personaRef;
   private Instant fechaInicio;
   private Instant fechaFin;
+  private Long grupoLineaInvestigacionId;
 
 }

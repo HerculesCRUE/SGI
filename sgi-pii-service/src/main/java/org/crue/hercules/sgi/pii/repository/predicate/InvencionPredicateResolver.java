@@ -36,6 +36,8 @@ public class InvencionPredicateResolver implements SgiRSQLPredicateResolver<Inve
   private enum Property {
     /* Tipo proteccion */
     TIPO_PROTECCION("tipoProteccion"),
+    /* Fecha eliminacion */
+    FECHA_ELIMINACION("fechaEliminacion"),
     /* Fecha modificación */
     FECHA_MODIFICACION("fechaModificacion");
 
@@ -80,6 +82,21 @@ public class InvencionPredicateResolver implements SgiRSQLPredicateResolver<Inve
         cb.or(
             cb.equal(joinTipoProteccion.get(TipoProteccion_.id), tipoProteccionId),
             cb.equal(joinSubtipoProteccion.get(TipoProteccion_.id), tipoProteccionId)));
+  }
+
+  private Predicate buildByFechaEliminacion(ComparisonNode node, Root<Invencion> root, CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.GREATER_THAN_OR_EQUAL,
+        RSQLOperators.LESS_THAN_OR_EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    String fechaEliminacionArgument = node.getArguments().get(0);
+    Instant fechaEliminacion = Instant.parse(fechaEliminacionArgument);
+
+    if (node.getOperator().equals(RSQLOperators.GREATER_THAN_OR_EQUAL)) {
+      return cb.greaterThanOrEqualTo(root.get(Auditable_.lastModifiedDate), fechaEliminacion);
+    } else {
+      return cb.lessThanOrEqualTo(root.get(Auditable_.lastModifiedDate), fechaEliminacion);
+    }
   }
 
   private Predicate buildByFechaModificacion(ComparisonNode node, Root<Invencion> root, CriteriaBuilder cb) {
@@ -137,6 +154,8 @@ public class InvencionPredicateResolver implements SgiRSQLPredicateResolver<Inve
     switch (property) {
       case TIPO_PROTECCION:
         return buildByTipoProteccion(node, root, criteriaBuilder);
+      case FECHA_ELIMINACION:
+        return buildByFechaEliminacion(node, root, criteriaBuilder);
       case FECHA_MODIFICACION:
         return buildByFechaModificacion(node, root, criteriaBuilder);
       default:

@@ -8,6 +8,7 @@ export interface DialogData {
   cancel: string;
   okStyle?: string;
   cancelStyle?: string;
+  isHtmlMessage?: boolean;
 }
 
 export enum DIALOG_BUTTON_STYLE {
@@ -29,6 +30,7 @@ export class DialogComponent {
   continuarButtonText: string;
   cancelButtonStyle: string;
   continuarButtonStyle: string;
+  isHtmlMessage = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) data: DialogData,
@@ -41,6 +43,7 @@ export class DialogComponent {
       this.continuarButtonText = data.ok || '';
       this.cancelButtonStyle = data.cancelStyle;
       this.continuarButtonStyle = data.okStyle;
+      this.isHtmlMessage = data.isHtmlMessage ?? false;
     }
   }
 
