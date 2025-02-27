@@ -23,7 +23,7 @@ const INVESTIGADOR_KEY = marker('csp.grupo.investigador-principal');
 const GRUPO_ESPECIAL_INVESTIGACION_KEY = marker('csp.grupo.especial-investigacion');
 
 @Injectable()
-export class GrupoGeneralListadoExportService extends AbstractTableExportFillService<IGrupoReportData, IGrupoReportOptions>{
+export class GrupoGeneralListadoExportService extends AbstractTableExportFillService<IGrupoReportData, IGrupoReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -37,16 +37,13 @@ export class GrupoGeneralListadoExportService extends AbstractTableExportFillSer
   public getData(grupoData: IGrupoReportData): Observable<IGrupoReportData> {
     return this.grupoService.findInvestigadoresPrincipales(grupoData?.id).pipe(
       map(investigadoresPrincipales => investigadoresPrincipales.map(investigador => investigador.persona.id)),
-      map((response) => {
-        grupoData.investigadoresPrincipales = '';
-        return response;
-      }),
-      switchMap(response => {
-        if (!response) {
+      switchMap(investigadoresPrincipales => {
+        if (!investigadoresPrincipales?.length) {
+          grupoData.investigadoresPrincipales = '';
           return of(grupoData);
         }
 
-        return this.personaService.findAllByIdIn([...response]).pipe(
+        return this.personaService.findAllByIdIn([...investigadoresPrincipales]).pipe(
           map((result) => {
             const personas = result.items;
 

@@ -85,6 +85,11 @@ public class ProyectoAnualidad extends BaseEntity {
   @Setter(AccessLevel.NONE)
   private final List<AnualidadGasto> anualidadesGasto = null;
 
+  @OneToMany(mappedBy = "proyectoAnualidad")
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final List<AnualidadIngreso> anualidadesIngreso = null;
+
   /**
    * Interfaz para marcar validaciones en la creación de la entidad.
    */

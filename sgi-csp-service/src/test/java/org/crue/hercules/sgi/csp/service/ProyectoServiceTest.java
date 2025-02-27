@@ -61,6 +61,7 @@ import org.crue.hercules.sgi.csp.repository.SolicitudProyectoSocioPeriodoPagoRep
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoSocioRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.impl.ProyectoServiceImpl;
+import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgempService;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -180,6 +181,8 @@ class ProyectoServiceTest extends BaseServiceTest {
   private EstadoProyectoPeriodoJustificacionRepository estadoProyectoPeriodoJustificacionRepository;
   @Mock
   private ProyectoEquipoRepository proyectoEquipoRepository;
+  @Mock
+  private SgiApiSgempService sgiApiSgempService;
 
   private ProyectoHelper proyectoHelper;
   ProyectoFacturacionService proyectoFacturacionService;
@@ -195,20 +198,20 @@ class ProyectoServiceTest extends BaseServiceTest {
     service = new ProyectoServiceImpl(sgiConfigProperties, repository, estadoProyectoRepository, modeloUnidadRepository,
         convocatoriaRepository, convocatoriaEntidadFinanciadoraRepository, proyectoEntidadFinanciadoraService,
         convocatoriaEntidadConvocanteRepository, proyectoEntidadConvocanteService, convocatoriaEntidadGestoraRepository,
-        proyectoEntidadGestoraService, contextoProyectoService,
-        convocatoriaPeriodoSeguimientoCientificoRepository, proyectoPeriodoSeguimientoService, solicitudRepository,
-        solicitudProyectoRepository, solicitudModalidadRepository, solicitudEquipoRepository, proyectoEquipoService,
-        solicitudSocioRepository, proyectoSocioService, solicitudEquipoSocioRepository, proyectoEquipoSocioService,
+        proyectoEntidadGestoraService, contextoProyectoService, convocatoriaPeriodoSeguimientoCientificoRepository,
+        proyectoPeriodoSeguimientoService, solicitudRepository, solicitudProyectoRepository,
+        solicitudModalidadRepository, solicitudEquipoRepository, proyectoEquipoService, solicitudSocioRepository,
+        proyectoSocioService, solicitudEquipoSocioRepository, proyectoEquipoSocioService,
         solicitudPeriodoPagoRepository, proyectoSocioPeriodoPagoService, solicitudPeriodoJustificacionRepository,
         proyectoSocioPeriodoJustificacionService, convocatoriaConceptoGastoRepository,
-        solicitudProyectoEntidadFinanciadoraAjenaRepository, proyectoProrrogaRepository,
-        proyectoAreaConocimientoRepository, proyectoClasificacionRepository,
-        solicitudProyectoAreaConocimientoRepository, solicitudProyectoClasificacionRepository, programaRepository,
+        solicitudProyectoEntidadFinanciadoraAjenaRepository, proyectoAreaConocimientoRepository,
+        proyectoClasificacionRepository, solicitudProyectoAreaConocimientoRepository,
+        solicitudProyectoClasificacionRepository, programaRepository, proyectoProrrogaRepository,
         proyectoPartidaService, convocatoriaPartidaService, proyectoIVARepository, proyectoProyectoSgeRepository,
         proyectoConceptoGastoService, proyectoConceptoGastoCodigoEcService, convocatoriaConceptoGastoCodigoEcRepository,
         solicitudProyectoResponsableEconomicoRepository, proyectoResponsableEconomicoService, validator,
         convocatoriaPeriodoJustificacionRepository, proyectoPeriodoJustificacionRepository,
-        estadoProyectoPeriodoJustificacionRepository, proyectoFacturacionService, this.proyectoHelper);
+        estadoProyectoPeriodoJustificacionRepository, proyectoFacturacionService, proyectoHelper, sgiApiSgempService);
   }
 
   @Test

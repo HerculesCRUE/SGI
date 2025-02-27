@@ -62,6 +62,10 @@ export class GrupoEquipoListadoExportService extends AbstractTableExportFillServ
         const miembrosEquipo = responseEquipo.items;
 
         const miembrosEquipoIds = new Set<string>(responseEquipo.items.map((miembroEquipo) => miembroEquipo.persona.id));
+        if (!miembrosEquipoIds?.size) {
+          return of(grupoData);
+        }
+
         return this.personaService.findAllByIdIn([...miembrosEquipoIds]).pipe(
           map((result) => {
             const personas = result.items;

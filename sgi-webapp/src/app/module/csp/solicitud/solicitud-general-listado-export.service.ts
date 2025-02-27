@@ -26,9 +26,10 @@ const EMAIL_KEY = marker('sgp.email');
 const ESTADO_KEY = marker('csp.solicitud.estado');
 const TITULO_KEY = marker('csp.solicitud.titulo-listado');
 const FECHA_ESTADO_KEY = marker('csp.solicitud.estado-solicitud.fecha');
+const COMENTARIO_ESTADO_KEY = marker('csp.solicitud.estado-solicitud.comentario');
 
 @Injectable()
-export class SolicitudGeneralListadoExportService extends AbstractTableExportFillService<ISolicitudReportData, ISolicitudReportOptions>{
+export class SolicitudGeneralListadoExportService extends AbstractTableExportFillService<ISolicitudReportData, ISolicitudReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -140,6 +141,11 @@ export class SolicitudGeneralListadoExportService extends AbstractTableExportFil
         title: this.translate.instant(FECHA_ESTADO_KEY),
         name: 'fechaEstado',
         type: ColumnType.DATE
+      },
+      {
+        title: this.translate.instant(COMENTARIO_ESTADO_KEY),
+        name: 'comentarioEstado',
+        type: ColumnType.STRING
       }
     ];
 
@@ -170,6 +176,7 @@ export class SolicitudGeneralListadoExportService extends AbstractTableExportFil
     elementsRow.push(solicitud.convocatoriaExterna ?? '');
     elementsRow.push(solicitud.estado?.estado ?? '');
     elementsRow.push(LuxonUtils.toBackend(solicitud.estado?.fechaEstado));
+    elementsRow.push(solicitud.estado?.comentario ?? '');
     return elementsRow;
   }
 }

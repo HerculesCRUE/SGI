@@ -165,32 +165,24 @@
 
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <!-- Ámbito geográfico -->
-        <mat-form-field fxFlex="25">
+        <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
           <mat-label>{{'csp.proyecto.ambito-geografico' | translate}}</mat-label>
           <sgi-select-entity formControlName="ambitoGeografico" [options]="ambitoGeografico$ | async">
           </sgi-select-entity>
         </mat-form-field>
 
         <!-- Responsable de proyecto -->
-        <mat-form-field fxFlex="25%">
+        <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
           <mat-label>{{'csp.proyecto.responsable' | translate}}</mat-label>
           <sgi-select-persona placeholder="{{'csp.proyecto.responsable' | translate}}"
             formControlName="responsableProyecto" [colectivos]="colectivosResponsableProyecto"></sgi-select-persona>
         </mat-form-field>
 
         <!-- Miembro de equipo -->
-        <mat-form-field fxFlex="25%">
+        <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
           <mat-label>{{'csp.proyecto.miembro-equipo' | translate}}</mat-label>
           <sgi-select-persona placeholder="{{'csp.proyecto.miembro-equipo' | translate}}"
             formControlName="miembroEquipo" [colectivos]="colectivosMiembroEquipo"></sgi-select-persona>
-        </mat-form-field>
-
-        <!-- Socio colaborador -->
-        <mat-form-field fxFlex="25%">
-          <mat-label>{{'csp.proyecto-socio' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
-          <sgi-select-empresa placeholder="{{'csp.proyecto-socio' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"
-            formControlName="socioColaborador">
-          </sgi-select-empresa>
         </mat-form-field>
       </div>
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
@@ -236,13 +228,26 @@
       </div>
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <!-- Rol Universidad -->
-        <div fxFlex="20%">
-          <mat-form-field fxFill>
-            <mat-label>{{'csp.proyecto.rol-participacion-universidad' | translate}}</mat-label>
-            <sgi-select-rol-socio formControlName="rolUniversidad" extended="false">
-            </sgi-select-rol-socio>
-          </mat-form-field>
-        </div>
+        <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
+          <mat-label>{{'csp.proyecto.rol-participacion-universidad' | translate}}</mat-label>
+          <sgi-select-rol-socio formControlName="rolUniversidad" extended="false">
+          </sgi-select-rol-socio>
+        </mat-form-field>
+
+        <!-- Socio -->
+        <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 4)">
+          <mat-label>{{'csp.proyecto-socio' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
+          <sgi-select-empresa placeholder="{{'csp.proyecto-socio' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"
+            formControlName="socioColaborador">
+          </sgi-select-empresa>
+        </mat-form-field>
+
+        <!-- Pais socio -->
+        <mat-form-field fxFlex="0 1 calc((100% - (10px * 3)) / 4)" *ngIf="isProyectoSocioPaisFilterEnabled">
+          <mat-label>{{'csp.proyecto.pais.socio' | translate}}</mat-label>
+          <sgi-select-pais formControlName="paisSocio">
+          </sgi-select-pais>
+        </mat-form-field>
       </div>
       <!-- Palabras clave -->
       <div fxFlex fxLayout="row" fxLayoutGap="10px">

@@ -142,4 +142,10 @@ export class ConfigService extends _ConfigServiceMixinBase implements TimeZoneCo
     );
   }
 
+  isProyectoSocioPaisFilterEnabled(): Observable<boolean> {
+    return this.findById(ConfigCsp.CSP_PROYECTO_SOCIO_PAIS_FILTER_ENABLED).pipe(
+      map(configValue => configValue?.value && configValue.value === 'true')
+    );
+  }
+
 }

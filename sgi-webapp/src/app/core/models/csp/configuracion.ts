@@ -92,4 +92,6 @@ export interface IConfiguracion {
   viajesDietasColumnasFijasVisibles: FacturasJustificantesColumnasFijasConfigurables[];
   /** Columnas a mostrar en Personal Contratado (ejecución económica - facturas y justificantes) */
   personalContratadoColumnasFijasVisibles: FacturasJustificantesColumnasFijasConfigurables[];
+  /** Habilitar el filtro de busqueda por pais de socio en el listado de proyectos */
+  proyectoSocioPaisFilterEnabled: boolean;
 }

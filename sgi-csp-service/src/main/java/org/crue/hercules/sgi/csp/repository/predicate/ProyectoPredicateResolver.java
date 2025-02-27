@@ -4,12 +4,14 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.ListJoin;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
@@ -43,9 +45,11 @@ import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
 import org.crue.hercules.sgi.csp.model.ProyectoResponsableEconomico;
 import org.crue.hercules.sgi.csp.model.ProyectoResponsableEconomico_;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
+import org.crue.hercules.sgi.csp.model.ProyectoSocio_;
 import org.crue.hercules.sgi.csp.model.Proyecto_;
 import org.crue.hercules.sgi.csp.model.RolProyecto_;
 import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
+import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgempService;
 import org.crue.hercules.sgi.csp.util.PredicateResolverUtil;
 import org.crue.hercules.sgi.framework.data.jpa.domain.Auditable_;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLPredicateResolver;
@@ -71,7 +75,9 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
     /* Fecha modificación */
     FECHA_MODIFICACION("fechaModificacion"),
     /* Con participación actual */
-    PARTICIPACION_ACTUAL("participacionActual");
+    PARTICIPACION_ACTUAL("participacionActual"),
+    /* Pais socio proyecto */
+    PROYECTO_SOCIO_PAIS_ID("socios.paisRef");
 
     private String code;
 
@@ -90,17 +96,21 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
   }
 
   private final ProgramaRepository programaRepository;
+  private final SgiApiSgempService sgiApiSgempService;
   private final SgiConfigProperties sgiConfigProperties;
 
   private ProyectoPredicateResolver(ProgramaRepository programaRepository,
+      SgiApiSgempService sgiApiSgempService,
       SgiConfigProperties sgiConfigProperties) {
     this.programaRepository = programaRepository;
+    this.sgiApiSgempService = sgiApiSgempService;
     this.sgiConfigProperties = sgiConfigProperties;
   }
 
   public static ProyectoPredicateResolver getInstance(ProgramaRepository programaRepository,
+      SgiApiSgempService sgiApiSgempService,
       SgiConfigProperties sgiConfigProperties) {
-    return new ProyectoPredicateResolver(programaRepository, sgiConfigProperties);
+    return new ProyectoPredicateResolver(programaRepository, sgiApiSgempService, sgiConfigProperties);
   }
 
   private Predicate buildByPlanInvestigacion(ComparisonNode node, Root<Proyecto> root, CriteriaBuilder cb) {
@@ -303,6 +313,31 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
     return cb.or(participacionActualEquipo, participacionActualResponsableEconomico);
   }
 
+  private Predicate buildByProyectoSocioPaisId(ComparisonNode node, Root<Proyecto> root, CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    String paisId = node.getArguments().get(0);
+
+    List<String> empresaIds = sgiApiSgempService.findAllEmpresaIdsByPaisId(paisId);
+
+    if (empresaIds.isEmpty()) {
+      return cb.disjunction();
+    }
+
+    int sublistSize = 1000;
+    Join<Proyecto, ProyectoSocio> sociosJoin = root.join(Proyecto_.socios);
+    Path<String> empresaRefPath = sociosJoin.get(ProyectoSocio_.empresaRef);
+
+    return IntStream.range(0, (empresaIds.size() + sublistSize - 1) /
+        sublistSize)
+        .mapToObj(i -> empresaRefPath.in(empresaIds.subList(
+            i * sublistSize,
+            Math.min((i + 1) * sublistSize, empresaIds.size()))))
+        .reduce(cb::or)
+        .orElse(cb.disjunction());
+  }
+
   @Override
   public boolean isManaged(ComparisonNode node) {
     Property property = Property.fromCode(node.getSelector());
@@ -333,6 +368,8 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
         return buildByFechaModificacion(node, root, criteriaBuilder);
       case PARTICIPACION_ACTUAL:
         return buildByParticipacionActual(node, root, criteriaBuilder);
+      case PROYECTO_SOCIO_PAIS_ID:
+        return buildByProyectoSocioPaisId(node, root, criteriaBuilder);
       default:
         return null;
     }

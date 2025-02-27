@@ -8,7 +8,7 @@
   <ng-container *ngIf="!rowConfig || rowConfig.aplicacionPresupuestariaShow">
     <p>{{'sge.dato-economico.partida-presupuestaria' | translate}}: {{detalle?.partidaPresupuestaria}}</p>
   </ng-container>
-  <p>{{'sge.dato-economico.codigo-economico' | translate}}: {{detalle?.codigoEconomico.id}}
+  <p>{{'sge.dato-economico.codigo-economico' | translate}}: {{detalle?.codigoEconomico?.id}}
     {{detalle?.codigoEconomico?.nombre ? ' - ' + detalle?.codigoEconomico.nombre : '' }}
   </p>
   <p>{{'sge.dato-economico.fecha-devengo' | translate}}: {{detalle?.fechaDevengo | luxon:'shortDate'}}</p>

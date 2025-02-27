@@ -4,7 +4,6 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IGrupoLineaEquipoInstrumental } from '@core/models/csp/grupo-linea-equipo-instrumental';
 import { IGrupoLineaInvestigacion } from '@core/models/csp/grupo-linea-investigacion';
 import { IGrupoLineaInvestigador } from '@core/models/csp/grupo-linea-investigador';
-import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
 import { IPersona } from '@core/models/sgp/persona';
@@ -27,11 +26,9 @@ import { GrupoLineaClasificacionListado } from '../grupo-linea-investigacion/gru
 import { IGrupoReportData, IGrupoReportOptions } from '../grupo/grupo-listado-export.service';
 
 const LINEA_KEY = marker('csp.grupo-linea-investigacion.linea');
-const LINEA_INVESTIGACION_KEY = marker('csp.grupo-linea-investigacion');
 const LINEA_INVESTIGACION_NOMBRE_KEY = marker('csp.grupo-linea-investigacion.nombre');
 const LINEA_INVESTIGACION_FECHA_INICIO_KEY = marker('csp.grupo-linea-investigacion.fecha-inicio');
 const LINEA_INVESTIGACION_FECHA_FIN_KEY = marker('csp.grupo-linea-investigacion.fecha-fin');
-const LINEA_INVESTIGACION_MIEMBROS_ADSCRITOS_KEY = marker('csp.grupo-linea-investigador');
 const LINEA_INVESTIGACION_MIEMBRO_KEY = marker('csp.grupo-linea-investigador.miembro');
 const LINEA_INVESTIGACION_CLASIFICACIONES_KEY = marker('csp.grupo-linea-clasificacion');
 const LINEA_INVESTIGACION_EQUIPO_KEY = marker('csp.grupo-linea-equipo-instrumental');
@@ -39,7 +36,6 @@ const LINEA_INVESTIGACION_MIEMBRO_APELLIDOS_KEY = marker('csp.grupo-linea-invest
 const LINEA_INVESTIGACION_MIEMBRO_EMAIL_KEY = marker('csp.grupo-linea-investigador.email');
 const LINEA_INVESTIGACION_CLASIFICACION_CODIGO_KEY = marker('csp.grupo-linea-clasificacion.codigo');
 
-const LINEA_INVESTIGACION_FIELD = 'lineaInvestigacion';
 const LINEA_INVESTIGACION_NOMBRE_FIELD = 'lineaInvestigacionNombreInvestigador';
 const LINEA_INVESTIGACION_FECHA_INICIO_FIELD = 'lineaInvestigacionFechaInicio';
 const LINEA_INVESTIGACION_FECHA_FIN_FIELD = 'lineaInvestigacionFechaFin';
@@ -53,7 +49,7 @@ const LINEA_INVESTIGACION_CLASIFICACION_CODIGO_FIELD = 'lineaInvestigacionClasif
 const LINEA_INVESTIGACION_EQUIPO_INSTRUMENTAL_NOMBRE_FIELD = 'lineaInvestigacionEquipoInstrumentalNombre';
 
 @Injectable()
-export class GrupoLineaInvestigacionListadoExportService extends AbstractTableExportFillService<IGrupoReportData, IGrupoReportOptions>{
+export class GrupoLineaInvestigacionListadoExportService extends AbstractTableExportFillService<IGrupoReportData, IGrupoReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -128,15 +124,19 @@ export class GrupoLineaInvestigacionListadoExportService extends AbstractTableEx
     Observable<IGrupoLineaInvestigacion> {
     return this.grupoLineaInvestigacionService.findLineasInvestigadores(grupoLineaInvestigacion.id).pipe(
       map((responseLineaInvestigador) => {
-        grupoData.lineasInvestigador.push(...responseLineaInvestigador.items);
-        grupoData.lineasInvestigador.forEach(lineaInvestigador => {
-          if (!lineaInvestigador.grupoLineaInvestigacion) {
+        grupoData.lineasInvestigador.push(
+          ...responseLineaInvestigador.items.map(lineaInvestigador => {
             lineaInvestigador.grupoLineaInvestigacion = grupoLineaInvestigacion;
-          }
-        });
+            return lineaInvestigador;
+          })
+        );
         return responseLineaInvestigador;
       }),
       switchMap(responseLineaInvestigador => {
+        if (!responseLineaInvestigador.items?.length) {
+          return of(grupoLineaInvestigacion);
+        }
+
         return from(responseLineaInvestigador.items).pipe(
           concatMap(element => {
             return this.personaService.findById(element.persona.id).pipe(
@@ -167,6 +167,10 @@ export class GrupoLineaInvestigacionListadoExportService extends AbstractTableEx
         return clasificacionListado;
       })),
       switchMap((result) => {
+        if (!result?.length) {
+          return of(grupoLineaInvestigacion);
+        }
+
         grupoData.clasificaciones.push(...result);
         return from(result).pipe(
           concatMap((grupoLineaClasificacion) => {
@@ -204,15 +208,17 @@ export class GrupoLineaInvestigacionListadoExportService extends AbstractTableEx
     Observable<IGrupoLineaInvestigacion> {
     return this.grupoLineaInvestigacionService.findLineasEquiposInstrumentales(grupoLineaInvestigacion.id).pipe(
       map((responseLineaEquipoInstrumental) => {
-        grupoData.lineasEquiposInstrumentales.push(...responseLineaEquipoInstrumental.items);
-        grupoData.lineasEquiposInstrumentales.forEach(lineaEquipoInstrumental => {
-          if (!lineaEquipoInstrumental.grupoLineaInvestigacion) {
-            lineaEquipoInstrumental.grupoLineaInvestigacion = grupoLineaInvestigacion;
-          }
-        });
+        grupoData.lineasEquiposInstrumentales.push(...responseLineaEquipoInstrumental.items.map(lineaEquipoInstrumental => {
+          lineaEquipoInstrumental.grupoLineaInvestigacion = grupoLineaInvestigacion;
+          return lineaEquipoInstrumental;
+        }));
         return responseLineaEquipoInstrumental;
       }),
       switchMap(result => {
+        if (!result.items?.length) {
+          return of(grupoLineaInvestigacion);
+        }
+
         return from(result.items).pipe(
           concatMap(element => {
             return this.grupoEquipoInstrumentalService.findById(element.grupoEquipoInstrumental.id).pipe(
@@ -247,36 +253,9 @@ export class GrupoLineaInvestigacionListadoExportService extends AbstractTableEx
     reportConfig: IReportConfig<IGrupoReportOptions>
   ): ISgiColumnReport[] {
 
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      return this.getColumnsLineaNotExcel();
-    } else {
+    if (this.isExcelOrCsv(reportConfig.outputType)) {
       return this.getColumnsLineaExcel(grupos);
     }
-  }
-
-  private getColumnsLineaNotExcel(): ISgiColumnReport[] {
-    const columns: ISgiColumnReport[] = [];
-    columns.push({
-      name: LINEA_INVESTIGACION_FIELD,
-      title: this.translate.instant(LINEA_KEY),
-      type: ColumnType.STRING
-    });
-    const titleI18n = this.translate.instant(LINEA_INVESTIGACION_KEY, MSG_PARAMS.CARDINALIRY.PLURAL) +
-      ' (' + this.translate.instant(LINEA_INVESTIGACION_NOMBRE_KEY) +
-      ' - ' + this.translate.instant(LINEA_INVESTIGACION_FECHA_INICIO_KEY) +
-      ' - ' + this.translate.instant(LINEA_INVESTIGACION_FECHA_FIN_KEY) +
-      ' - ' + this.translate.instant(LINEA_INVESTIGACION_MIEMBROS_ADSCRITOS_KEY, MSG_PARAMS.CARDINALIRY.PLURAL) +
-      ' - ' + this.translate.instant(LINEA_INVESTIGACION_CLASIFICACIONES_KEY, MSG_PARAMS.CARDINALIRY.PLURAL) +
-      ' - ' + this.translate.instant(LINEA_INVESTIGACION_EQUIPO_KEY, MSG_PARAMS.CARDINALIRY.PLURAL) +
-      ')';
-    const columnEquipo: ISgiColumnReport = {
-      name: LINEA_INVESTIGACION_FIELD,
-      title: titleI18n,
-      type: ColumnType.SUBREPORT,
-      fieldOrientation: FieldOrientation.VERTICAL,
-      columns
-    };
-    return [columnEquipo];
   }
 
   private getColumnsLineaExcel(grupos: IGrupoReportData[]): ISgiColumnReport[] {
@@ -406,9 +385,7 @@ export class GrupoLineaInvestigacionListadoExportService extends AbstractTableEx
   public fillRows(grupos: IGrupoReportData[], index: number, reportConfig: IReportConfig<IGrupoReportOptions>): any[] {
     const grupo = grupos[index];
     const elementsRow: any[] = [];
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      this.fillRowsLineaNotExcel(grupo, elementsRow);
-    } else {
+    if (this.isExcelOrCsv(reportConfig.outputType)) {
       const maxNumLineas = Math.max(...grupos.map(g => g.lineasInvestigacion?.length));
       let maxNumNiveles = 0;
       for (let i = 0; i < maxNumLineas; i++) {
@@ -453,63 +430,6 @@ export class GrupoLineaInvestigacionListadoExportService extends AbstractTableEx
       }
     }
     return elementsRow;
-  }
-
-  private fillRowsLineaNotExcel(grupo: IGrupoReportData, elementsRow: any[]) {
-    const rowsReport: ISgiRowReport[] = [];
-
-    grupo.lineasInvestigacion?.forEach(grupoLineaInvestigacion => {
-      const equipoElementsRow: any[] = [];
-
-      const miembrosAdscritos = grupo.lineasInvestigador?.filter(grupoLineaInvestigador =>
-        grupoLineaInvestigador.grupoLineaInvestigacion?.id === grupoLineaInvestigacion?.id &&
-        grupoLineaInvestigador.grupoLineaInvestigacion?.lineaInvestigacion?.id === grupoLineaInvestigacion?.lineaInvestigacion?.id)
-        .map(grupoLineaInvestigador => {
-          return grupoLineaInvestigador.persona.nombre + ' ' + grupoLineaInvestigador.persona.apellidos + ' '
-            + this.translate.instant(LINEA_INVESTIGACION_FECHA_INICIO_KEY) + ': ' + this.luxonDatePipe.transform(LuxonUtils.toBackend(grupoLineaInvestigador?.fechaInicio, true), 'shortDate')
-            + this.translate.instant(LINEA_INVESTIGACION_FECHA_FIN_KEY) + ': ' + (this.luxonDatePipe.transform(LuxonUtils.toBackend(grupoLineaInvestigador?.fechaFin, true), 'shortDate') ?? ' - ');
-        }).join('; ');
-
-      const clasificaciones =
-        grupo.clasificaciones?.filter(grupoLineaClasificacion =>
-          grupoLineaClasificacion.grupoLineaInvestigacion?.id === grupoLineaInvestigacion?.id &&
-          grupoLineaClasificacion.grupoLineaInvestigacion?.lineaInvestigacion?.id === grupoLineaInvestigacion?.lineaInvestigacion?.id)
-          .map(grupoLineaClasificacion => {
-            return grupoLineaClasificacion.clasificacion?.nombre ?? '';
-          }).join('; ');
-
-      const equiposInstrumentales =
-        grupo.lineasEquiposInstrumentales?.filter(grupoLineaEquipoInstrumental =>
-          grupoLineaEquipoInstrumental.grupoLineaInvestigacion?.id === grupoLineaInvestigacion?.id &&
-          grupoLineaEquipoInstrumental.grupoLineaInvestigacion?.lineaInvestigacion?.id === grupoLineaInvestigacion?.lineaInvestigacion?.id)
-          .map(grupoLineaEquipoInstrumental => {
-            return grupoLineaEquipoInstrumental.grupoEquipoInstrumental?.nombre ?? '';
-          }).join('; ');
-
-
-      let grupoLineaInvestigacionTable = grupoLineaInvestigacion?.lineaInvestigacion?.nombre;
-      grupoLineaInvestigacionTable += '\n';
-      grupoLineaInvestigacionTable += this.luxonDatePipe.transform(LuxonUtils.toBackend(grupoLineaInvestigacion?.fechaInicio, true), 'shortDate') ?? '';
-      grupoLineaInvestigacionTable += '\n';
-      grupoLineaInvestigacionTable += this.luxonDatePipe.transform(LuxonUtils.toBackend(grupoLineaInvestigacion?.fechaFin, true), 'shortDate') ?? '';
-      grupoLineaInvestigacionTable += '\n';
-      grupoLineaInvestigacionTable += miembrosAdscritos;
-      grupoLineaInvestigacionTable += '\n';
-      grupoLineaInvestigacionTable += clasificaciones;
-      grupoLineaInvestigacionTable += '\n';
-      grupoLineaInvestigacionTable += equiposInstrumentales;
-
-      equipoElementsRow.push(grupoLineaInvestigacionTable);
-
-      const rowReport: ISgiRowReport = {
-        elements: equipoElementsRow
-      };
-      rowsReport.push(rowReport);
-    });
-
-    elementsRow.push({
-      rows: rowsReport
-    });
   }
 
   private fillRowsLineaExcel(elementsRow: any[], grupoLineaInvestigacion: IGrupoLineaInvestigacion,

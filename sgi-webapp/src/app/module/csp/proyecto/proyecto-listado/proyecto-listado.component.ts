@@ -13,8 +13,8 @@ import { IProyecto } from '@core/models/csp/proyecto';
 import { ITipoAmbitoGeografico } from '@core/models/csp/tipos-configuracion';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ConfigService } from '@core/services/cnf/config.service';
+import { ConfigService as CspConfigService } from '@core/services/csp/configuracion/config.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
-import { ProgramaService } from '@core/services/csp/programa.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { RolProyectoService } from '@core/services/csp/rol-proyecto/rol-proyecto.service';
 import { TipoAmbitoGeograficoService } from '@core/services/csp/tipo-ambito-geografico/tipo-ambito-geografico.service';
@@ -85,6 +85,12 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
 
   private limiteRegistrosExportacionExcel: string;
 
+  private _isProyectoSocioPaisFilterEnabled: boolean;
+
+  get isProyectoSocioPaisFilterEnabled(): boolean {
+    return this._isProyectoSocioPaisFilterEnabled ?? false;
+  }
+
   get ESTADO_MAP() {
     return ESTADO_MAP;
   }
@@ -104,13 +110,13 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
     private readonly dialogService: DialogService,
     public authService: SgiAuthService,
     private tipoAmbitoGeograficoService: TipoAmbitoGeograficoService,
-    private programaService: ProgramaService,
     private rolProyectoService: RolProyectoService,
     private readonly translate: TranslateService,
     private convocatoriaService: ConvocatoriaService,
     private matDialog: MatDialog,
     route: ActivatedRoute,
-    private readonly cnfService: ConfigService
+    private readonly cnfService: ConfigService,
+    private readonly cspConfigService: CspConfigService
   ) {
     super();
     if (route.snapshot.queryParamMap.get(CONVOCATORIA_ACTION_LINK_KEY)) {
@@ -148,6 +154,12 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
       this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-proyecto-listado').subscribe(value => {
         this.limiteRegistrosExportacionExcel = value;
       }));
+
+    this.subscriptions.push(
+      this.cspConfigService.isProyectoSocioPaisFilterEnabled().subscribe(isProyectoSocioPaisFilterEnabled => {
+        this._isProyectoSocioPaisFilterEnabled = isProyectoSocioPaisFilterEnabled;
+      })
+    );
   }
 
   private loadForm() {
@@ -166,6 +178,7 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
       codigoSge: new FormControl(''),
       responsableProyecto: new FormControl({ value: '', disabled: true }),
       miembroEquipo: new FormControl({ value: '', disabled: true }),
+      paisSocio: new FormControl(''),
       socioColaborador: new FormControl(''),
       convocatoria: new FormControl(undefined),
       entidadConvocante: new FormControl(''),
@@ -370,6 +383,7 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
       .and('responsableProyecto', SgiRestFilterOperator.EQUALS, controls.responsableProyecto.value?.id)
       .and('equipo.personaRef', SgiRestFilterOperator.EQUALS, controls.miembroEquipo.value?.id)
       .and('socios.empresaRef', SgiRestFilterOperator.EQUALS, controls.socioColaborador.value?.id)
+      .and('socios.paisRef', SgiRestFilterOperator.EQUALS, controls.paisSocio.value?.id)
       .and('convocatoria.id', SgiRestFilterOperator.EQUALS, controls.convocatoria.value?.id?.toString())
       .and('entidadesConvocantes.entidadRef', SgiRestFilterOperator.EQUALS, controls.entidadConvocante.value?.id)
       .and('planInvestigacion', SgiRestFilterOperator.EQUALS, controls.planInvestigacion.value?.id?.toString())

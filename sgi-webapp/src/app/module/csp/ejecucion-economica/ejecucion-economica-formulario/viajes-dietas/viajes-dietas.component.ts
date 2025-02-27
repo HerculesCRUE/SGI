@@ -115,6 +115,7 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
   }
 
   openModalClasificacion(element: IDesglose): void {
+    this.formPart.clearProblems();
     this.subscriptions.push(
       this.ejecucionEconomicaService.getViajeDieta(element.id).pipe(
         map(detalle => {
@@ -193,9 +194,8 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
     ));
   }
 
-
   openExportModal(): void {
-
+    this.formPart.clearProblems();
     this.subscriptions.push(this.formPart.loadDataExport().subscribe(
       (exportData) => {
         const data: IDesgloseEconomicoExportData = {

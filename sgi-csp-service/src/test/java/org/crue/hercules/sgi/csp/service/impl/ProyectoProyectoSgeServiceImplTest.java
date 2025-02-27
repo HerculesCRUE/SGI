@@ -13,12 +13,14 @@ import org.crue.hercules.sgi.csp.exceptions.ProyectoProyectoSgeNotFoundException
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessProyectoException;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
+import org.crue.hercules.sgi.csp.repository.GastoProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoProyectoSgeRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoResponsableEconomicoRepository;
 import org.crue.hercules.sgi.csp.service.BaseServiceTest;
 import org.crue.hercules.sgi.csp.service.ConfiguracionService;
+import org.crue.hercules.sgi.csp.service.ProyectoAnualidadService;
 import org.crue.hercules.sgi.csp.service.ProyectoProyectoSgeService;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,6 +49,10 @@ class ProyectoProyectoSgeServiceImplTest extends BaseServiceTest {
   private ProyectoRepository proyectoRepository;
   @Mock
   private ConfiguracionService configuracionService;
+  @Mock
+  private ProyectoAnualidadService proyectoAnualidadService;
+  @Mock
+  private GastoProyectoRepository gastoProyectoRepository;
 
   private ProyectoHelper proyectoHelper;
   private ProyectoProyectoSgeService service;
@@ -56,7 +62,7 @@ class ProyectoProyectoSgeServiceImplTest extends BaseServiceTest {
     this.proyectoHelper = new ProyectoHelper(proyectoRepository, proyectoEquipoRepository,
         proyectoResponsableEconomicoRepository);
     this.service = new ProyectoProyectoSgeServiceImpl(repository, proyectoRepository, this.proyectoHelper,
-        sgiConfigProperties, configuracionService);
+        sgiConfigProperties, configuracionService, proyectoAnualidadService, gastoProyectoRepository);
   }
 
   @Test

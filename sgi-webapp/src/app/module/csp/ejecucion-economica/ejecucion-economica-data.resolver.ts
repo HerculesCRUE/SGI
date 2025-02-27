@@ -72,7 +72,7 @@ export class EjecucionEconomicaDataResolver extends SgiResolverResolver<IEjecuci
             switch (relacion.tipoEntidad) {
               case TipoEntidad.GRUPO:
                 responsables$ = this.grupoService.findInvestigadoresPrincipales(relacion.id).pipe(
-                  filter(responsables => !!responsables),
+                  filter(responsables => !!responsables?.length),
                   switchMap(responsables => this.personaService.findAllByIdIn(responsables.map(responsable => responsable.persona.id)).pipe(
                     map(personas => {
                       responsables.forEach(responsable => {
@@ -96,7 +96,7 @@ export class EjecucionEconomicaDataResolver extends SgiResolverResolver<IEjecuci
                 break;
               case TipoEntidad.PROYECTO:
                 responsables$ = this.proyectoService.findInvestigadoresPrincipalesActuales(relacion.id).pipe(
-                  filter(responsables => !!responsables),
+                  filter(responsables => !!responsables?.length),
                   switchMap(responsables => this.personaService.findAllByIdIn(responsables.map(responsable => responsable.persona.id)).pipe(
                     map(personas => {
                       responsables.forEach(responsable => {

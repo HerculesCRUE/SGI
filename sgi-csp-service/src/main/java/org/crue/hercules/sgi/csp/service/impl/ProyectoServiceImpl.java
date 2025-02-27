@@ -132,6 +132,7 @@ import org.crue.hercules.sgi.csp.service.ProyectoSocioEquipoService;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioPeriodoJustificacionService;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioPeriodoPagoService;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioService;
+import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgempService;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.PeriodDateUtil;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
@@ -147,6 +148,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -155,6 +157,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class ProyectoServiceImpl implements ProyectoService {
 
   /**
@@ -215,101 +218,7 @@ public class ProyectoServiceImpl implements ProyectoService {
   private final EstadoProyectoPeriodoJustificacionRepository estadoProyectoPeriodoJustificacionRepository;
   private final ProyectoFacturacionService proyectoFacturacionService;
   private final ProyectoHelper proyectoHelper;
-
-  public ProyectoServiceImpl(SgiConfigProperties sgiConfigProperties, ProyectoRepository repository,
-      EstadoProyectoRepository estadoProyectoRepository, ModeloUnidadRepository modeloUnidadRepository,
-      ConvocatoriaRepository convocatoriaRepository,
-      ConvocatoriaEntidadFinanciadoraRepository convocatoriaEntidadFinanciadoraRepository,
-      ProyectoEntidadFinanciadoraService proyectoEntidadFinanciadoraService,
-      ConvocatoriaEntidadConvocanteRepository convocatoriaEntidadConvocanteRepository,
-      ProyectoEntidadConvocanteService proyectoEntidadConvocanteService,
-      ConvocatoriaEntidadGestoraRepository convocatoriaEntidadGestoraRepository,
-      ProyectoEntidadGestoraService proyectoEntidadGestoraService,
-      ContextoProyectoService contextoProyectoService,
-      ConvocatoriaPeriodoSeguimientoCientificoRepository convocatoriaPeriodoSeguimientoCientificoRepository,
-      ProyectoPeriodoSeguimientoService proyectoPeriodoSeguimientoService, SolicitudRepository solicitudRepository,
-      SolicitudProyectoRepository solicitudProyectoRepository,
-      SolicitudModalidadRepository solicitudModalidadRepository,
-      SolicitudProyectoEquipoRepository solicitudEquipoRepository, ProyectoEquipoService proyectoEquipoService,
-      SolicitudProyectoSocioRepository solicitudSocioRepository, ProyectoSocioService proyectoSocioService,
-      SolicitudProyectoSocioEquipoRepository solicitudEquipoSocioRepository,
-      ProyectoSocioEquipoService proyectoEquipoSocioService,
-      SolicitudProyectoSocioPeriodoPagoRepository solicitudPeriodoPagoRepository,
-      ProyectoSocioPeriodoPagoService proyectoSocioPeriodoPagoService,
-      SolicitudProyectoSocioPeriodoJustificacionRepository solicitudPeriodoJustificacionRepository,
-      ProyectoSocioPeriodoJustificacionService proyectoSocioPeriodoJustificacionService,
-      ConvocatoriaConceptoGastoRepository convocatoriaConceptoGastoRepository,
-      SolicitudProyectoEntidadFinanciadoraAjenaRepository solicitudProyectoEntidadFinanciadoraAjenaRepository,
-      ProyectoProrrogaRepository proyectoProrrogaRepository,
-      ProyectoAreaConocimientoRepository proyectoAreaConocimientoRepository,
-      ProyectoClasificacionRepository proyectoClasificacionRepository,
-      SolicitudProyectoAreaConocimientoRepository solicitudProyectoAreaConocimientoRepository,
-      SolicitudProyectoClasificacionRepository solicitudProyectoClasificacionRepository,
-      ProgramaRepository programaRepository, ProyectoPartidaService proyectoPartidaService,
-      ConvocatoriaPartidaService convocatoriaPartidaService, ProyectoIVARepository proyectoIVARepository,
-      ProyectoProyectoSgeRepository proyectoProyectoSGERepository,
-      ProyectoConceptoGastoService proyectoConceptoGastoService,
-      ProyectoConceptoGastoCodigoEcService proyectoConceptoGastoCodigoEcService,
-      ConvocatoriaConceptoGastoCodigoEcRepository convocatoriaConceptoGastoCodigoEcRepository,
-      SolicitudProyectoResponsableEconomicoRepository solicitudProyectoResponsableEconomicoRepository,
-      ProyectoResponsableEconomicoService proyectoResponsableEconomicoService, Validator validator,
-      ConvocatoriaPeriodoJustificacionRepository convocatoriaPeriodoJustificacionRepository,
-      ProyectoPeriodoJustificacionRepository proyectoPeriodoJustificacionRepository,
-      EstadoProyectoPeriodoJustificacionRepository estadoProyectoPeriodoJustificacionRepository,
-      ProyectoFacturacionService proyectoFacturacionService,
-      ProyectoHelper proyectoHelper) {
-
-    this.sgiConfigProperties = sgiConfigProperties;
-    this.repository = repository;
-    this.estadoProyectoRepository = estadoProyectoRepository;
-    this.modeloUnidadRepository = modeloUnidadRepository;
-    this.convocatoriaRepository = convocatoriaRepository;
-    this.convocatoriaEntidadFinanciadoraRepository = convocatoriaEntidadFinanciadoraRepository;
-    this.proyectoEntidadFinanciadoraService = proyectoEntidadFinanciadoraService;
-    this.convocatoriaEntidadConvocanteRepository = convocatoriaEntidadConvocanteRepository;
-    this.proyectoEntidadConvocanteService = proyectoEntidadConvocanteService;
-    this.contextoProyectoService = contextoProyectoService;
-    this.convocatoriaPeriodoSeguimientoCientificoRepository = convocatoriaPeriodoSeguimientoCientificoRepository;
-    this.proyectoPeriodoSeguimientoService = proyectoPeriodoSeguimientoService;
-    this.convocatoriaEntidadGestoraRepository = convocatoriaEntidadGestoraRepository;
-    this.proyectoEntidadGestoraService = proyectoEntidadGestoraService;
-    this.solicitudRepository = solicitudRepository;
-    this.solicitudProyectoRepository = solicitudProyectoRepository;
-    this.solicitudModalidadRepository = solicitudModalidadRepository;
-    this.solicitudEquipoRepository = solicitudEquipoRepository;
-    this.proyectoEquipoService = proyectoEquipoService;
-    this.solicitudSocioRepository = solicitudSocioRepository;
-    this.proyectoSocioService = proyectoSocioService;
-    this.solicitudEquipoSocioRepository = solicitudEquipoSocioRepository;
-    this.proyectoEquipoSocioService = proyectoEquipoSocioService;
-    this.solicitudPeriodoPagoRepository = solicitudPeriodoPagoRepository;
-    this.proyectoSocioPeriodoPagoService = proyectoSocioPeriodoPagoService;
-    this.solicitudPeriodoJustificacionRepository = solicitudPeriodoJustificacionRepository;
-    this.proyectoSocioPeriodoJustificacionService = proyectoSocioPeriodoJustificacionService;
-    this.convocatoriaConceptoGastoRepository = convocatoriaConceptoGastoRepository;
-    this.solicitudProyectoEntidadFinanciadoraAjenaRepository = solicitudProyectoEntidadFinanciadoraAjenaRepository;
-    this.proyectoAreaConocimientoRepository = proyectoAreaConocimientoRepository;
-    this.proyectoClasificacionRepository = proyectoClasificacionRepository;
-    this.solicitudProyectoAreaConocimientoRepository = solicitudProyectoAreaConocimientoRepository;
-    this.solicitudProyectoClasificacionRepository = solicitudProyectoClasificacionRepository;
-    this.programaRepository = programaRepository;
-    this.proyectoProrrogaRepository = proyectoProrrogaRepository;
-    this.proyectoPartidaService = proyectoPartidaService;
-    this.convocatoriaPartidaService = convocatoriaPartidaService;
-    this.proyectoIVARepository = proyectoIVARepository;
-    this.proyectoProyectoSGERepository = proyectoProyectoSGERepository;
-    this.proyectoConceptoGastoService = proyectoConceptoGastoService;
-    this.proyectoConceptoGastoCodigoEcService = proyectoConceptoGastoCodigoEcService;
-    this.convocatoriaConceptoGastoCodigoEcRepository = convocatoriaConceptoGastoCodigoEcRepository;
-    this.solicitudProyectoResponsableEconomicoRepository = solicitudProyectoResponsableEconomicoRepository;
-    this.proyectoResponsableEconomicoService = proyectoResponsableEconomicoService;
-    this.validator = validator;
-    this.convocatoriaPeriodoJustificacionRepository = convocatoriaPeriodoJustificacionRepository;
-    this.proyectoPeriodoJustificacionRepository = proyectoPeriodoJustificacionRepository;
-    this.estadoProyectoPeriodoJustificacionRepository = estadoProyectoPeriodoJustificacionRepository;
-    this.proyectoFacturacionService = proyectoFacturacionService;
-    this.proyectoHelper = proyectoHelper;
-  }
+  private final SgiApiSgempService sgiApiSgempService;
 
   /**
    * Guarda la entidad {@link Proyecto}.
@@ -645,7 +554,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("findAllRestringidos(String query, Pageable paging) - start");
 
     Specification<Proyecto> specs = ProyectoSpecifications.activos().and(SgiRSQLJPASupport.toSpecification(query,
-        ProyectoPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
+        ProyectoPredicateResolver.getInstance(programaRepository, sgiApiSgempService, sgiConfigProperties)));
 
     // No tiene acceso a todos los UO
     List<String> unidadesGestion = proyectoHelper.getUserUOsProyecto();
@@ -682,7 +591,7 @@ public class ProyectoServiceImpl implements ProyectoService {
             .or(ProyectoSpecifications.byResponsableEconomicoId(authentication.getName())))
         .and(ProyectoSpecifications.byEstadoNotBorrador())
         .and(SgiRSQLJPASupport.toSpecification(query,
-            ProyectoPredicateResolver.getInstance(programaRepository, sgiConfigProperties))));
+            ProyectoPredicateResolver.getInstance(programaRepository, sgiApiSgempService, sgiConfigProperties))));
 
     Page<Proyecto> returnValue = repository.findAll(specs, paging);
     log.debug("findAllActivosInvestigador(String query, Pageable paging) - end");
@@ -702,7 +611,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     Specification<Proyecto> specs = ProyectoSpecifications.distinct()
         .and(SgiRSQLJPASupport.toSpecification(query,
-            ProyectoPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
+            ProyectoPredicateResolver.getInstance(programaRepository, sgiApiSgempService, sgiConfigProperties)));
 
     List<String> unidadesGestion = SgiSecurityContextHolder
         .getUOsForAnyAuthority(new String[] { "CSP-PRO-V", "CSP-PRO-C", "CSP-PRO-E", "CSP-PRO-B", "CSP-PRO-R" });
@@ -2418,7 +2327,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     Specification<Proyecto> specs = ProyectoSpecifications.activos()
         .and(SgiRSQLJPASupport.toSpecification(query,
-            ProyectoPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
+            ProyectoPredicateResolver.getInstance(programaRepository, sgiApiSgempService, sgiConfigProperties)));
 
     List<Long> returnValue = repository.findIds(specs);
 
@@ -2441,7 +2350,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     Specification<Proyecto> specs = ProyectoSpecifications.notActivos()
         .and(SgiRSQLJPASupport.toSpecification(query,
-            ProyectoPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
+            ProyectoPredicateResolver.getInstance(programaRepository, sgiApiSgempService, sgiConfigProperties)));
 
     List<Long> returnValue = repository.findIds(specs);
 

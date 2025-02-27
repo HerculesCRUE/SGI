@@ -115,8 +115,9 @@ export class PersonalContratadoComponent extends FragmentComponent implements On
   }
 
   openModalClasificacion(element: IDesglose): void {
+    this.formPart.clearProblems();
     this.subscriptions.push(
-      this.ejecucionEconomicaService.getFacturaGasto(element.id).pipe(
+      this.ejecucionEconomicaService.getPersonaContratada(element.id).pipe(
         map(detalle => {
           const datoEconomicoDetalle = detalle as DatoEconomicoDetalleClasificacionModalData;
           datoEconomicoDetalle.proyectosSgiIds = this.formPart.relaciones$.value.map(relacion => relacion.id);
@@ -170,7 +171,7 @@ export class PersonalContratadoComponent extends FragmentComponent implements On
   }
 
   openExportModal(): void {
-
+    this.formPart.clearProblems();
     this.subscriptions.push(this.formPart.loadDataExport().subscribe(
       (exportData) => {
         const data: IDesgloseEconomicoExportData = {

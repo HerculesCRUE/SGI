@@ -129,7 +129,7 @@ export class GrupoListadoExportService extends AbstractTableExportService<IGrupo
     findOptions.page.index = 0;
     findOptions.page.size = undefined;
 
-    observable$ = this.grupoService.findAll(findOptions);
+    observable$ = this.grupoService.findTodos(findOptions);
 
     return observable$.pipe(
       map((grupos) => {

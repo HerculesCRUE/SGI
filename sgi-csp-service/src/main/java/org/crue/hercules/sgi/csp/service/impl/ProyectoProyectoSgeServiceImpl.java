@@ -4,16 +4,21 @@ import java.util.List;
 
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.exceptions.CardinalidadRelacionSgiSgeException;
+import org.crue.hercules.sgi.csp.exceptions.ProyectoAnualidadWithProyectoSgeRefEnviadoException;
+import org.crue.hercules.sgi.csp.exceptions.ProyectoHasGastosProyectoException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoProyectoSgeNotFoundException;
 import org.crue.hercules.sgi.csp.model.Configuracion;
+import org.crue.hercules.sgi.csp.model.GastoProyecto;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
+import org.crue.hercules.sgi.csp.repository.GastoProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoProyectoSgeRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.ProyectoProyectoSgePredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoProyectoSgeSpecifications;
 import org.crue.hercules.sgi.csp.service.ConfiguracionService;
+import org.crue.hercules.sgi.csp.service.ProyectoAnualidadService;
 import org.crue.hercules.sgi.csp.service.ProyectoProyectoSgeService;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -43,6 +48,8 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
   private final ProyectoHelper proyectoHelper;
   private final SgiConfigProperties sgiConfigProperties;
   private final ConfiguracionService configuracionService;
+  private final ProyectoAnualidadService proyectoAnualidadService;
+  private final GastoProyectoRepository gastoProyectoRepository;
 
   /**
    * Guarda la entidad {@link ProyectoProyectoSge}.
@@ -91,8 +98,15 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
 
     validateCardinalidadRelacionSgiSge(proyectoProyectoSge.getId(), proyectoProyectoSge.getProyectoId(),
         proyectoProyectoSge.getProyectoSgeRef());
+    validateProyectoWithoutGastosProyecto(proyectoProyectoSge.getProyectoId());
 
     return repository.findById(proyectoProyectoSge.getId()).map(data -> {
+
+      validateNotPresupuestoWithProyectoSgeRefEnviado(proyectoProyectoSge.getProyectoId(), data.getProyectoSgeRef());
+
+      updatePresupuestoWithProyectoSgeRef(proyectoProyectoSge.getProyectoId(), data.getProyectoSgeRef(),
+          proyectoProyectoSge.getProyectoSgeRef());
+
       data.setProyectoSgeRef(proyectoProyectoSge.getProyectoSgeRef());
       ProyectoProyectoSge returnValue = repository.save(proyectoProyectoSge);
 
@@ -235,6 +249,53 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
   }
 
   /**
+   * Comprueba si el proyecto tiene {@link GastoProyecto}
+   * 
+   * @param proyectoId Identificador del {@link Proyecto}
+   */
+  private void validateProyectoWithoutGastosProyecto(Long proyectoId) {
+    log.debug("validateProyectoWithoutGastosProyecto({}) - start", proyectoId);
+
+    if (gastoProyectoRepository.existsByProyectoId(proyectoId)) {
+      throw new ProyectoHasGastosProyectoException();
+    }
+
+    log.debug("validateProyectoWithoutGastosProyecto({}) - end", proyectoId);
+  }
+
+  /**
+   * Actualiza el proyectoSgeRef en las anualidades del presupuesto
+   * 
+   * @param proyectoSgiId     Identificador del {@link Proyecto} del SGI
+   * @param proyectoSgeRefOld Identificador del proyecto del SGE actual
+   * @param proyectoSgeRefNew Identificador del proyecto del SGE nuevo
+   */
+  private void updatePresupuestoWithProyectoSgeRef(Long proyectoSgiId, String proyectoSgeRefOld,
+      String proyectoSgeRefNew) {
+    log.debug("updatePresupuestoWithProyectoSgeRef({}, {}, {}) - start", proyectoSgiId, proyectoSgeRefOld,
+        proyectoSgeRefNew);
+    proyectoAnualidadService.updatePresupuestoWithProyectoSgeRef(proyectoSgiId, proyectoSgeRefOld, proyectoSgeRefNew);
+    log.debug("updatePresupuestoWithProyectoSgeRef({}, {}, {}) - end", proyectoSgiId, proyectoSgeRefOld,
+        proyectoSgeRefNew);
+  }
+
+  /**
+   * Comprueba si el proyecto tiene anualidades asociadas al proyectoSgeRef
+   * 
+   * @param proyectoSgiId  Identificador del {@link Proyecto} del SGI
+   * @param proyectoSgeRef Identificador del proyecto del SGE
+   */
+  private void validateNotPresupuestoWithProyectoSgeRefEnviado(Long proyectoSgiId, String proyectoSgeRef) {
+    log.debug("validateNotPresupuestoWithProyectoSgeRefEnviado({}, {}) - start", proyectoSgiId, proyectoSgeRef);
+
+    if (proyectoAnualidadService.hasGastosOrIngresosWithProyectoSgeRefEnviados(proyectoSgiId, proyectoSgeRef)) {
+      throw new ProyectoAnualidadWithProyectoSgeRefEnviadoException();
+    }
+
+    log.debug("validateNotPresupuestoWithProyectoSgeRefEnviado({}, {}) - end", proyectoSgiId, proyectoSgeRef);
+  }
+
+  /**
    * Comprueba si con la cardinalidad definida en la configuracion es posible
    * actualizar una relacion entre los proyectos
    * 
@@ -243,7 +304,7 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
    * @param proyectoSgeRef Identificador del proyecto del SGE
    */
   private void validateCardinalidadRelacionSgiSge(Long id, Long proyectoSgiId, String proyectoSgeRef) {
-    log.debug("validateCardinalidadRelacionSgiSge({}, {}) - start", proyectoSgiId, proyectoSgeRef);
+    log.debug("validateCardinalidadRelacionSgiSge({}, {}, {}) - start", id, proyectoSgiId, proyectoSgeRef);
 
     Specification<ProyectoProyectoSge> specs = ProyectoProyectoSgeSpecifications.byProyectoId(proyectoSgiId).or(
         ProyectoProyectoSgeSpecifications.byProyectoSgeRef(proyectoSgeRef));
@@ -260,32 +321,32 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
         if (!relaciones.isEmpty()) {
           throw new CardinalidadRelacionSgiSgeException();
         }
-        log.debug("validateCardinalidadRelacionSgiSge({}, {}) - Cardinalidad (1:1) validada", proyectoSgiId,
-            proyectoSgeRef);
+        log.debug("validateCardinalidadRelacionSgiSge({}, {}, {}) - Cardinalidad (1:1) validada",
+            id, proyectoSgiId, proyectoSgeRef);
         break;
       case SGI_1_SGE_N:
         if (relaciones.stream().map(ProyectoProyectoSge::getProyectoSgeRef)
             .anyMatch(ref -> ref.equals(proyectoSgeRef))) {
           throw new CardinalidadRelacionSgiSgeException();
         }
-        log.debug("validateCardinalidadRelacionSgiSge({}, {}) - Cardinalidad (1:n) validada", proyectoSgiId,
-            proyectoSgeRef);
+        log.debug("validateCardinalidadRelacionSgiSge({}, {}, {}) - Cardinalidad (1:n) validada",
+            id, proyectoSgiId, proyectoSgeRef);
         break;
       case SGI_N_SGE_1:
         if (relaciones.stream().map(ProyectoProyectoSge::getProyectoId)
             .anyMatch(proyectoId -> proyectoId.equals(proyectoSgiId))) {
           throw new CardinalidadRelacionSgiSgeException();
         }
-        log.debug("validateCardinalidadRelacionSgiSge({}, {}) - Cardinalidad (n:1) validada", proyectoSgiId,
-            proyectoSgeRef);
+        log.debug("validateCardinalidadRelacionSgiSge({}, {}, {}) - Cardinalidad (n:1) validada",
+            id, proyectoSgiId, proyectoSgeRef);
         break;
       case SGI_N_SGE_N:
-        log.debug("validateCardinalidadRelacionSgiSge({}, {}) - Cardinalidad (n:n) validada", proyectoSgiId,
-            proyectoSgeRef);
+        log.debug("validateCardinalidadRelacionSgiSge({}, {}, {}) - Cardinalidad (n:n) validada",
+            id, proyectoSgiId, proyectoSgeRef);
         break;
     }
 
-    log.debug("validateCardinalidadRelacionSgiSge({}, {}) - end", proyectoSgiId, proyectoSgeRef);
+    log.debug("validateCardinalidadRelacionSgiSge({}, {}, {}) - end", id, proyectoSgiId, proyectoSgeRef);
   }
 
 }

@@ -132,6 +132,7 @@ export class FacturasEmitidasFragment extends DesgloseFacturaEmitidaFragment<IFa
       if (!factura) {
         factura = new RowTreeDesgloseFacturaEmitida(
           {
+            id: element.id,
             anualidad: '',
             numeroFactura: element.numeroFactura,
             columnas: this.processColumnsValues(element.columnas, this.columns, false)

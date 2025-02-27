@@ -172,7 +172,12 @@ public class Configuracion extends BaseEntity {
      * Columnas a mostrar en Personal Contratado (ejecución económica - facturas y
      * justificantes)
      */
-    PERSONAL_CONTRATADO_COLUMNAS_FIJAS_VISIBLES("personalContratadoColumnasFijasVisibles");
+    PERSONAL_CONTRATADO_COLUMNAS_FIJAS_VISIBLES("personalContratadoColumnasFijasVisibles"),
+    /**
+     * Determina si se esta habilitado el filtro de proyectos con algun socio del
+     * pais seleccionado
+     */
+    PROYECTO_SOCIO_PAIS_FILTER_ENABLED("proyectoSocioPaisFilterEnabled");
 
     private final String key;
 
@@ -338,6 +343,13 @@ public class Configuracion extends BaseEntity {
   @Column(name = "sge_calendario_facturacion", columnDefinition = "boolean default true", nullable = false, unique = true)
   private Boolean calendarioFacturacionSgeEnabled;
 
+  /**
+   * Determina si se esta habilitado el filtro de proyectos con algun socio del
+   * pais seleccionado
+   */
+  @Column(name = "csp_pro_socio_pais_filter_enabled", columnDefinition = "boolean default true", nullable = false, unique = true)
+  private Boolean proyectoSocioPaisFilterEnabled;
+
   public Object getParamValue(Param key) {
     switch (key) {
       case DEDICACION_MINIMA_GRUPO:
@@ -386,6 +398,8 @@ public class Configuracion extends BaseEntity {
         return this.getViajesDietasColumnasFijasVisibles();
       case PERSONAL_CONTRATADO_COLUMNAS_FIJAS_VISIBLES:
         return this.getPersonalContratadoColumnasFijasVisibles();
+      case PROYECTO_SOCIO_PAIS_FILTER_ENABLED:
+        return this.getProyectoSocioPaisFilterEnabled();
       default:
         return null;
     }
@@ -467,6 +481,9 @@ public class Configuracion extends BaseEntity {
         if (isValidEnumString(newValue, SgeFacturasJustificantesColumnasFijas.class, true)) {
           this.setPersonalContratadoColumnasFijasVisibles(newValue);
         }
+        break;
+      case PROYECTO_SOCIO_PAIS_FILTER_ENABLED:
+        this.setProyectoSocioPaisFilterEnabled(new Boolean(newValue));
         break;
     }
   }

@@ -22,4 +22,5 @@ export interface IConfiguracionResponse {
   facturasGastosColumnasFijasVisibles: string;
   viajesDietasColumnasFijasVisibles: string;
   personalContratadoColumnasFijasVisibles: string;
+  proyectoSocioPaisFilterEnabled: boolean;
 }

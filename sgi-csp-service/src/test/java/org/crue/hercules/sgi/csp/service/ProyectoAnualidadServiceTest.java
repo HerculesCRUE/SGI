@@ -9,6 +9,7 @@ import javax.persistence.PersistenceUnitUtil;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadGastosTotales;
 import org.crue.hercules.sgi.csp.repository.AnualidadGastoRepository;
+import org.crue.hercules.sgi.csp.repository.AnualidadIngresoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoAnualidadRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
@@ -32,6 +33,8 @@ public class ProyectoAnualidadServiceTest extends BaseServiceTest {
   private ProyectoRepository proyectoRepository;
   @MockBean
   private AnualidadGastoRepository anualidadGastoRepository;
+  @MockBean
+  private AnualidadIngresoRepository anualidadIngresoRepository;
 
   @MockBean
   private EntityManager entityManager;

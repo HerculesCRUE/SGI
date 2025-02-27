@@ -21,8 +21,12 @@ import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad.OnCrear;
 import org.crue.hercules.sgi.csp.repository.AnualidadGastoRepository;
+import org.crue.hercules.sgi.csp.repository.AnualidadIngresoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoAnualidadRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
+import org.crue.hercules.sgi.csp.repository.specification.AnualidadGastoSpecifications;
+import org.crue.hercules.sgi.csp.repository.specification.AnualidadIngresoSpecifications;
+import org.crue.hercules.sgi.csp.repository.specification.ProyectoAnualidadSpecifications;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -51,14 +55,17 @@ public class ProyectoAnualidadService {
   private final ProyectoAnualidadRepository repository;
   private final ProyectoRepository proyectoRepository;
   private final AnualidadGastoRepository anualidadGastoRepository;
+  private final AnualidadIngresoRepository anualidadIngresoRepository;
 
   public ProyectoAnualidadService(Validator validator, ProyectoAnualidadRepository proyectoAnualidadepository,
-      ProyectoRepository proyectoRepository, AnualidadGastoRepository anualidadGastoRepository) {
+      ProyectoRepository proyectoRepository, AnualidadGastoRepository anualidadGastoRepository,
+      AnualidadIngresoRepository anualidadIngresoRepository) {
 
     this.validator = validator;
     this.repository = proyectoAnualidadepository;
     this.proyectoRepository = proyectoRepository;
     this.anualidadGastoRepository = anualidadGastoRepository;
+    this.anualidadIngresoRepository = anualidadIngresoRepository;
   }
 
   /**
@@ -248,6 +255,58 @@ public class ProyectoAnualidadService {
 
     log.debug("findAllNotificacionesSge(String query) - end");
     return returnValue;
+  }
+
+  /**
+   * Comprueba si hay {@link ProyectoAnualidad} del proyecto asociadas al
+   * proyectoSgeRef que esten enviadas al SGE.
+   * 
+   * @param proyectoId     Identificador del {@link Proyecto}.
+   * @param proyectoSgeRef Identificador del proyecto en el SGE.
+   * @return <code>true</code> si existen o <code>false</code> si no.
+   */
+  public boolean hasGastosOrIngresosWithProyectoSgeRefEnviados(Long proyectoId, String proyectoSgeRef) {
+    log.debug("hasGastosOrIngresosWithProyectoSgeRefEnviados(Long proyectoId, String proyectoSgeRef) - start");
+
+    Specification<ProyectoAnualidad> specs = ProyectoAnualidadSpecifications.byProyectoId(proyectoId)
+        .and(ProyectoAnualidadSpecifications.isEnviadoSge())
+        .and(ProyectoAnualidadSpecifications.byAnualidadGastoProyectoSgeRef(proyectoSgeRef)
+            .or(ProyectoAnualidadSpecifications.byAnualidadIngresoProyectoSgeRef(proyectoSgeRef)));
+
+    boolean returnValue = repository.count(specs) > 0;
+
+    log.debug("hasGastosOrIngresosWithProyectoSgeRefEnviados(Long proyectoId, String proyectoSgeRef) - end");
+    return returnValue;
+  }
+
+  /**
+   * Actualiza el proyectoSgeRef de los {@link AnualidadGasto} y
+   * {@link AnualidadIngreso} del {@link Proyecto} que tengan el
+   * proyectoSgeRefOld.
+   * 
+   * @param proyectoId        Identificador del {@link Proyecto}.
+   * @param proyectoSgeRefOld Identificador del proyecto en el SGE actual.
+   * @param proyectoSgeRefNew Identificador del proyecto en el SGE nuevo.
+   */
+  @Transactional
+  public void updatePresupuestoWithProyectoSgeRef(Long proyectoId, String proyectoSgeRefOld, String proyectoSgeRefNew) {
+    log.debug("updatePresupuestoWithProyectoSgeRef(String query) - start");
+
+    List<AnualidadGasto> gastosAnualidades = anualidadGastoRepository.findAll(AnualidadGastoSpecifications
+        .byProyectoId(proyectoId).and(AnualidadGastoSpecifications.byProyectoSgeRef(proyectoSgeRefOld)));
+    gastosAnualidades.forEach(gastoAnualidad -> {
+      gastoAnualidad.setProyectoSgeRef(proyectoSgeRefNew);
+    });
+    anualidadGastoRepository.saveAll(gastosAnualidades);
+
+    List<AnualidadIngreso> ingresosAnualidades = anualidadIngresoRepository.findAll(AnualidadIngresoSpecifications
+        .byProyectoId(proyectoId).and(AnualidadIngresoSpecifications.byProyectoSgeRef(proyectoSgeRefOld)));
+    ingresosAnualidades.forEach(ingresoAnualidad -> {
+      ingresoAnualidad.setProyectoSgeRef(proyectoSgeRefNew);
+    });
+    anualidadIngresoRepository.saveAll(ingresosAnualidades);
+
+    log.debug("updatePresupuestoWithProyectoSgeRef(String query) - end");
   }
 
   /**

@@ -23,7 +23,7 @@ export class DocumentoService extends SgiRestBaseService {
   }
 
   downloadFichero(id: string): Observable<Blob> {
-    return this.http.get(`${this.endpointUrl}/${id}/archivo`, {
+    return this.http.get(`${this.endpointUrl}/${encodeURIComponent(id)}/archivo`, {
       headers: new HttpHeaders().set('Accept', 'application/octet-stream'), responseType: 'blob'
     });
   }
